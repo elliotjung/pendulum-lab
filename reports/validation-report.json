@@ -28,7 +28,7 @@
     {
       "id": "canonical-midpoint-residual",
       "status": "PASS",
-      "measured": "1.599e-11 in 4 iterations",
+      "measured": "1.547e-11 in 4 iterations",
       "threshold": "< 1e-8"
     }
   ],

@@ -40,3 +40,5 @@ jobs:
       - run: pip install numpy scipy
       # Independent external reference: SciPy DOP853 vs the TS engine.
       - run: npm run validate:cross
+      # Published / closed-form literature anchors vs engine-computed values.
+      - run: npm run validate:literature

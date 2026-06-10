@@ -37,13 +37,13 @@ export class BasinTab {
       this.labels = result.labels;
       this.gridWidth = result.width;
       this.gridHeight = result.height;
-      setText('basinSb', result.basinEntropy.toFixed(4));
-      setText('basinSbb', result.boundaryBasinEntropy.toFixed(4));
-      setText('basinDim', result.boxCountingDimension.toFixed(3));
+      setText('basinSb', `${result.basinEntropy.toFixed(4)} ± ${result.basinEntropyStdError.toFixed(4)}`);
+      setText('basinSbb', `${result.boundaryBasinEntropy.toFixed(4)} ± ${result.boundaryBasinEntropyStdError.toFixed(4)}`);
+      setText('basinDim', `${result.boxCountingDimension.toFixed(3)} ± ${result.boxCountingStdError.toFixed(3)}`);
       setText('basinFractal', result.fractalBoundary ? 'Sbb > ln2 ✓' : `dim≈${result.boxCountingDimension.toFixed(2)}`);
       this.render();
       const wada = result.wadaCandidate ? 'Wada candidate ✓' : `Wada fraction ${(result.wadaFraction * 100).toFixed(0)}%`;
-      setText('basinStatus', `done · Sb=${result.basinEntropy.toFixed(3)} · dim=${result.boxCountingDimension.toFixed(3)} · ${wada}`);
+      setText('basinStatus', `done · Sb=${result.basinEntropy.toFixed(3)}±${result.basinEntropyStdError.toFixed(3)} · dim=${result.boxCountingDimension.toFixed(3)}±${result.boxCountingStdError.toFixed(3)} (R²=${result.boxCountingR2.toFixed(3)}) · ${wada}`);
     } catch (err) {
       setText('basinStatus', `error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {

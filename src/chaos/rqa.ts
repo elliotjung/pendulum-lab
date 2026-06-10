@@ -256,3 +256,62 @@ export function recurrenceQuantification(series: readonly number[], options: Rqa
     embeddedLength: count
   };
 }
+
+/** Mean ± standard error of one RQA measure across blocks. */
+export interface RqaMeasureUncertainty {
+  mean: number;
+  stdError: number;
+}
+
+export interface RqaUncertainty {
+  /** Number of contiguous blocks the series was split into. */
+  blocks: number;
+  /** Per-block full RQA results (same options; threshold re-fit per block). */
+  blockResults: RqaResult[];
+  determinism: RqaMeasureUncertainty;
+  laminarity: RqaMeasureUncertainty;
+  divergence: RqaMeasureUncertainty;
+  entropy: RqaMeasureUncertainty;
+  trappingTime: RqaMeasureUncertainty;
+  recurrenceRate: RqaMeasureUncertainty;
+}
+
+/**
+ * Block-resampled uncertainty for the RQA measures: split the series into
+ * `blocks` contiguous segments, quantify each independently, and report the
+ * mean ± standard error across blocks. Contiguous blocks respect the temporal
+ * correlation structure (the same batched-means idea as the Lyapunov
+ * `batchedStandardError`), unlike an i.i.d. bootstrap which would shuffle the
+ * very recurrence structure being measured. RQA is O(N²), so k blocks of N/k
+ * points cost ~1/k of the full quantification — the uncertainty is cheaper
+ * than the estimate itself.
+ */
+export function rqaBlockUncertainty(series: readonly number[], options: RqaOptions = {}, blocks = 4): RqaUncertainty {
+  const k = Math.max(2, Math.floor(blocks));
+  const blockLength = Math.floor(series.length / k);
+  const blockResults: RqaResult[] = [];
+  for (let b = 0; b < k; b += 1) {
+    const slice = series.slice(b * blockLength, (b + 1) * blockLength);
+    blockResults.push(recurrenceQuantification(slice, options));
+  }
+  const summarize = (pick: (r: RqaResult) => number): RqaMeasureUncertainty => {
+    const values = blockResults.map(pick);
+    let mean = 0;
+    for (const v of values) mean += v;
+    mean /= values.length;
+    let varSum = 0;
+    for (const v of values) varSum += (v - mean) * (v - mean);
+    const stdError = values.length > 1 ? Math.sqrt(varSum / (values.length - 1) / values.length) : 0;
+    return { mean, stdError };
+  };
+  return {
+    blocks: k,
+    blockResults,
+    determinism: summarize((r) => r.determinism),
+    laminarity: summarize((r) => r.laminarity),
+    divergence: summarize((r) => r.divergence),
+    entropy: summarize((r) => r.entropy),
+    trappingTime: summarize((r) => r.trappingTime),
+    recurrenceRate: summarize((r) => r.recurrenceRate)
+  };
+}

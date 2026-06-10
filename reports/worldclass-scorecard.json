@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-10T03:13:34.704Z",
+  "generatedAt": "2026-06-10T10:18:43.642Z",
   "totals": {
     "done": 4,
     "partial": 4,
     "gap": 0
   },
   "legacyRisk": {
-    "generatedAt": "2026-06-10T03:13:18.848Z",
+    "generatedAt": "2026-06-10T10:11:50.858Z",
     "pass": true,
     "counts": {
       "innerHTML": 0,
@@ -260,6 +260,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\app\\UiPolish.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\app\\ValidationTab.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -285,6 +293,14 @@
         "globalRuntimeExports": 0
       },
       "src\\chaos\\basin.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\chaos\\branchSwitching.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -341,6 +357,14 @@
         "globalRuntimeExports": 0
       },
       "src\\chaos\\lyapunov.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\chaos\\melnikov.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -580,22 +604,6 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
-      "src\\runtime\\IndexPhysicsBridge.ts": {
-        "innerHTML": 0,
-        "onclick": 0,
-        "inlineWorkerBlob": 0,
-        "evalLike": 0,
-        "dynamicScript": 0,
-        "globalRuntimeExports": 0
-      },
-      "src\\runtime\\LegacyBridge.ts": {
-        "innerHTML": 0,
-        "onclick": 0,
-        "inlineWorkerBlob": 0,
-        "evalLike": 0,
-        "dynamicScript": 0,
-        "globalRuntimeExports": 0
-      },
       "src\\runtime\\PendulumRuntime.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -677,6 +685,14 @@
         "globalRuntimeExports": 0
       },
       "src\\validation\\importSchema.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\validation\\literatureAnchors.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -827,9 +843,7 @@
         "legacy js/ runtime fully removed (archived); index.html loads only src/main.ts",
         "legacy-risk audit score is 0"
       ],
-      "remaining": [
-        "LegacyBridge/IndexPhysicsBridge remain as inert compatibility shims that can be deleted"
-      ]
+      "remaining": []
     },
     {
       "area": "Index simulator UI/UX",
@@ -845,20 +859,24 @@
       "area": "Numerics and physics depth",
       "status": "partial",
       "evidence": [
-        "RKF45, Dormand-Prince 5(4), DOP853-adjacent GBS extrapolation, Gauss-Legendre 4/6, TR-BDF2, canonical midpoint, N-pendulum, driven, spring systems are present in src"
+        "RKF45, Dormand-Prince 5(4), DOP853-adjacent GBS extrapolation, Gauss-Legendre 4/6, TR-BDF2, canonical midpoint, N-pendulum, driven, spring systems are present in src",
+        "Floquet multipliers, natural + pseudo-arclength continuation, period-doubling branch switching, and the Melnikov analytic threshold are implemented and tested",
+        "external cross-validation vs an independent SciPy DOP853 reference covers the double AND triple pendulum; literature anchors pin the elliptic period, normal modes, and the period-doubling onset"
       ],
       "remaining": [
-        "Floquet multipliers, CLV, AUTO-style continuation, WebGPU ensemble simulation, and external SciPy/MATLAB/Julia comparison remain future work"
+        "WebGPU ensemble simulation, Neimark-Sacker torus continuation, and optional MATLAB/Julia second references remain future work"
       ]
     },
     {
       "area": "Chaos analysis",
       "status": "partial",
       "evidence": [
-        "Maximal Lyapunov convergence, full spectrum, Kaplan-Yorke dimension, SALI/FLI, Poincare, bifurcation modules exist and are tested"
+        "Maximal Lyapunov convergence, full spectrum, Kaplan-Yorke dimension, SALI/FLI, Poincare, bifurcation modules exist and are tested",
+        "covariant Lyapunov vectors (Ginelli), 0-1 test, RQA, FTLE fields, basin entropy and the Wada grid test are implemented as tabs + library APIs",
+        "every non-variational diagnostic reports an uncertainty estimate (bootstrap / block-resampled / regression CI)"
       ],
       "remaining": [
-        "Full spectrum is CPU-side; GPU acceleration and covariant vectors are not implemented"
+        "Full spectrum, CLV and FTLE are CPU-side; GPU acceleration is not implemented"
       ]
     },
     {

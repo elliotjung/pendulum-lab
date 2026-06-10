@@ -38,6 +38,10 @@ export interface BasinEntropyResult {
   /** Sbb > ln 2 is a sufficient condition for a fractal basin boundary. */
   fractalBoundary: boolean;
   boxSide: number;
+  /** Standard error of the mean of Sb over boxes. */
+  basinEntropyStdError: number;
+  /** Standard error of the mean of Sbb over boundary boxes. */
+  boundaryBasinEntropyStdError: number;
 }
 
 /**
@@ -53,7 +57,9 @@ export function basinEntropy(grid: LabelGrid, boxSide = 5): BasinEntropyResult {
   const boxesX = Math.floor(width / boxSide);
   const boxesY = Math.floor(height / boxSide);
   let entropySum = 0;
+  let entropySqSum = 0;
   let boundaryEntropySum = 0;
+  let boundaryEntropySqSum = 0;
   let numBoxes = 0;
   let numBoundaryBoxes = 0;
 
@@ -82,15 +88,26 @@ export function basinEntropy(grid: LabelGrid, boxSide = 5): BasinEntropyResult {
         }
       }
       entropySum += entropy;
+      entropySqSum += entropy * entropy;
       numBoxes += 1;
       if (distinct > 1) {
         boundaryEntropySum += entropy;
+        boundaryEntropySqSum += entropy * entropy;
         numBoundaryBoxes += 1;
       }
     }
   }
 
   const boundaryBasinEntropy = numBoundaryBoxes > 0 ? boundaryEntropySum / numBoundaryBoxes : 0;
+  // SEM over boxes: Sb is a mean of per-box entropies, so its sampling error is
+  // std(per-box entropy)/√n. Boxes are nearly independent at boxSide ≥ the
+  // boundary correlation length; treat the SEM as a (slightly optimistic) floor.
+  const sem = (sum: number, sqSum: number, n: number): number => {
+    if (n < 2) return 0;
+    const mean = sum / n;
+    const variance = Math.max(0, sqSum / n - mean * mean) * (n / (n - 1));
+    return Math.sqrt(variance / n);
+  };
   return {
     basinEntropy: numBoxes > 0 ? entropySum / numBoxes : 0,
     boundaryBasinEntropy,
@@ -98,7 +115,9 @@ export function basinEntropy(grid: LabelGrid, boxSide = 5): BasinEntropyResult {
     numBoundaryBoxes,
     numColors,
     fractalBoundary: boundaryBasinEntropy > Math.LN2,
-    boxSide
+    boxSide,
+    basinEntropyStdError: sem(entropySum, entropySqSum, numBoxes),
+    boundaryBasinEntropyStdError: sem(boundaryEntropySum, boundaryEntropySqSum, numBoundaryBoxes)
   };
 }
 
@@ -125,6 +144,12 @@ export interface BoxCountingResult {
   dimension: number;
   /** (ε, N(ε)) pairs used in the fit, coarse → fine. */
   points: { epsilon: number; count: number }[];
+  /** Standard error of the regression slope (scaling-fit quality, not sampling error). */
+  stdError: number;
+  /** Coefficient of determination R² of the log-log fit. */
+  r2: number;
+  /** Student-t 95% confidence interval for the slope (n−2 degrees of freedom). */
+  ci95: [number, number];
 }
 
 /**
@@ -154,13 +179,17 @@ export function boxCountingDimension(mask: Uint8Array, width: number, height: nu
     if (count > 0) points.push({ epsilon, count });
   }
 
-  // Least-squares slope of ln(count) vs ln(1/epsilon).
+  // Least-squares slope of ln(count) vs ln(1/epsilon), with the regression
+  // standard error of the slope and R² as scaling-quality diagnostics: a true
+  // power law gives a tight straight line, so a large slope SE / low R² flags
+  // a dimension estimate that should not be trusted.
   const n = points.length;
-  if (n < 2) return { dimension: 0, points };
+  if (n < 2) return { dimension: 0, points, stdError: 0, r2: 0, ci95: [0, 0] };
   let sx = 0;
   let sy = 0;
   let sxx = 0;
   let sxy = 0;
+  let syy = 0;
   for (const { epsilon, count } of points) {
     const lx = Math.log(1 / epsilon);
     const ly = Math.log(count);
@@ -168,10 +197,31 @@ export function boxCountingDimension(mask: Uint8Array, width: number, height: nu
     sy += ly;
     sxx += lx * lx;
     sxy += lx * ly;
+    syy += ly * ly;
   }
   const denom = n * sxx - sx * sx;
   const dimension = denom !== 0 ? (n * sxy - sx * sy) / denom : 0;
-  return { dimension, points };
+  const intercept = n > 0 ? (sy - dimension * sx) / n : 0;
+  let sse = 0;
+  for (const { epsilon, count } of points) {
+    const lx = Math.log(1 / epsilon);
+    const resid = Math.log(count) - (dimension * lx + intercept);
+    sse += resid * resid;
+  }
+  const meanY = sy / n;
+  const sst = syy - n * meanY * meanY;
+  const r2 = sst > 0 ? 1 - sse / sst : 1;
+  const sxxCentered = sxx - (sx * sx) / n;
+  const stdError = n > 2 && sxxCentered > 0 ? Math.sqrt(sse / (n - 2) / sxxCentered) : 0;
+  const t = tQuantile975(n - 2);
+  return { dimension, points, stdError, r2, ci95: [dimension - t * stdError, dimension + t * stdError] };
+}
+
+/** Two-sided 97.5% Student-t quantile for small degrees of freedom (≈1.96 beyond the table). */
+function tQuantile975(dof: number): number {
+  const table = [12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 2.16, 2.145, 2.131];
+  if (dof < 1) return 0;
+  return dof <= table.length ? table[dof - 1]! : 1.96 + 4.4 / dof;
 }
 
 function defaultScales(maxExtent: number): number[] {

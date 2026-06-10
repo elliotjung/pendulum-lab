@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Pendulum Lab: a validated chaotic-pendulum research laboratory"
+type: software
+authors:
+  - family-names: "Jung"
+    given-names: "Elliot"
+    email: "chanminyoo0417@gmail.com"
+version: "10.28.0"
+date-released: "2026-06-10"
+license: MIT
+keywords:
+  - nonlinear dynamics
+  - chaos
+  - double pendulum
+  - Lyapunov exponents
+  - Melnikov method
+  - numerical integration
+  - bifurcation analysis
+abstract: >-
+  A framework-free, zero-runtime-dependency TypeScript engine and browser
+  laboratory for nonlinear pendulum dynamics: twelve order-certified
+  integrators, full Lyapunov spectra with uncertainty estimates, covariant
+  Lyapunov vectors, 0-1 test, RQA, FTLE fields, basin entropy, Floquet
+  analysis with continuation and branch switching, and a Melnikov analytic
+  chaos threshold. Validated against an independent SciPy DOP853 reference
+  (double and triple pendulum), a double-double extended-precision reference,
+  and published literature anchors.

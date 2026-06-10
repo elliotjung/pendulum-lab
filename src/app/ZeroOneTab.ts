@@ -32,10 +32,10 @@ export class ZeroOneTab {
       this.qPath = result.qPath;
       this.kValues = result.kValues;
       const verdict = result.K > 0.5 ? 'chaotic' : 'regular';
-      setText('zeroOneK', result.K.toFixed(3));
+      setText('zeroOneK', `${result.K.toFixed(3)} ± ${result.kStdError.toFixed(3)}`);
       setText('zeroOneVerdict', `${verdict} (K${result.K > 0.5 ? ' ≈ 1' : ' ≈ 0'})`);
       this.render();
-      setText('zeroOneStatus', `done · K=${result.K.toFixed(3)} · ${verdict}`);
+      setText('zeroOneStatus', `done · K=${result.K.toFixed(3)}±${result.kStdError.toFixed(3)} · 95% CI [${result.kCi95[0].toFixed(3)}, ${result.kCi95[1].toFixed(3)}] · ${verdict}`);
     } catch (err) {
       setText('zeroOneStatus', `error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {

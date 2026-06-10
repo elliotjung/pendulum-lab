@@ -40,6 +40,10 @@ export interface ZeroOneResult {
   kValues: number[];
   /** The frequencies c the test was run at, aligned with `kValues`. */
   cValues: number[];
+  /** Bootstrap standard error of the median K (resampling the K_c values). */
+  kStdError: number;
+  /** Percentile-bootstrap 95% confidence interval for the median K. */
+  kCi95: [number, number];
 }
 
 /** Pearson correlation coefficient of two equal-length series. */
@@ -73,6 +77,37 @@ function median(values: readonly number[]): number {
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   return sorted.length % 2 === 1 ? sorted[mid]! : ((sorted[mid - 1]! + sorted[mid]!) / 2);
+}
+
+/**
+ * Seeded bootstrap of the median over the per-frequency K_c values: the K_c are
+ * i.i.d. draws over random frequencies c (not a time series), so the ordinary
+ * bootstrap is the appropriate resampling scheme — no block structure needed.
+ */
+function bootstrapMedian(
+  values: readonly number[],
+  seed: number,
+  resamples = 400
+): { stdError: number; ci95: [number, number] } {
+  const n = values.length;
+  if (n < 2) return { stdError: 0, ci95: [median(values), median(values)] };
+  const rng = mulberry32(seed);
+  const medians: number[] = [];
+  const draw: number[] = new Array<number>(n);
+  for (let b = 0; b < resamples; b += 1) {
+    for (let i = 0; i < n; i += 1) draw[i] = values[Math.floor(rng() * n)] ?? 0;
+    medians.push(median(draw));
+  }
+  let mean = 0;
+  for (const m of medians) mean += m;
+  mean /= medians.length;
+  let varSum = 0;
+  for (const m of medians) varSum += (m - mean) * (m - mean);
+  const stdError = Math.sqrt(varSum / (medians.length - 1));
+  const sorted = [...medians].sort((a, b) => a - b);
+  const lo = sorted[Math.floor(0.025 * (sorted.length - 1))] ?? mean;
+  const hi = sorted[Math.ceil(0.975 * (sorted.length - 1))] ?? mean;
+  return { stdError, ci95: [lo, hi] };
 }
 
 /**
@@ -131,7 +166,8 @@ export function zeroOneTest(series: readonly number[], options: ZeroOneOptions =
     cValues.push(c);
   }
 
-  return { K: median(kValues), kValues, cValues };
+  const boot = bootstrapMedian(kValues, (options.seed ?? 0x0101) ^ 0x9e3779b9);
+  return { K: median(kValues), kValues, cValues, kStdError: boot.stdError, kCi95: boot.ci95 };
 }
 
 /**

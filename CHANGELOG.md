@@ -1,5 +1,16 @@
 # Changelog
 
+## 10.28.0 - 2026-06-10
+
+Validation hardening (Tier-1 batch 1): every headline claim now rests on an external reference, a published value, or an explicit error bar.
+
+- **Triple-pendulum external cross-validation**: `scripts/scipy_reference.py` gains an independently derived triple-pendulum reference (general N-chain mass-matrix formulation solved with `numpy.linalg.solve` — a different derivation *and* linear-solve path than the engine's hand-expanded 3×3 elimination), with deliberately asymmetric masses/lengths so index transpositions cannot cancel. Measured: regular ~6e-14 over 20 s, strongly chaotic ~4e-8 at T = 8 s (tolerance floor × e^{λ₁t}). Closes the long-standing "triple pendulum needs an independent reference" limitation.
+- **Melnikov analytic chaos threshold** (`src/chaos/melnikov.ts`, CLI `npm run research -- melnikov`): closed-form M(τ₀) = −8δ + 2πf·sech(πΩ/2)·cos(Ωτ₀) and A_c = (4γω₀/π)·cosh(πω/2ω₀) for the damped driven pendulum, pinned three ways — Simpson quadrature along the separatrix (≤1e-8), the known A_c ≈ 1.0187 at γ = 0.5, ω = 2/3, and 0–1-test physics consistency (regular well below A_c; the chaotic preset above it).
+- **Literature anchors** (`src/validation/literatureAnchors.ts`, `npm run validate:literature`, new CI step): engine output vs published/closed-form values — elliptic-integral pendulum period (|Δ| < 1e-6), equal-double-pendulum normal modes (2 ∓ √2)g/l, Melnikov quadrature-vs-closed-form, and the **period-doubling onset measured from the Floquet multiplier crossing −1: A_PD = 1.06637 vs 1.0663 published** (Baker & Gollub). Structural checks: A_c < A_PD ordering; flip-basin boundary strictly fractal. Report: `reports/literature-anchors.{md,json}`.
+- **Uncertainty for every non-variational diagnostic**: 0–1 test K now carries a seeded-bootstrap SE + percentile 95% CI (over the i.i.d. per-frequency K_c); RQA DET/DIV carry block-resampled SEs (contiguous blocks, batched-means style, ~1/k of the O(N²) cost); basin entropy Sb/Sbb carry SEMs over boxes; box-counting dimension carries the regression slope SE, Student-t 95% CI and R². All surfaced in the 0–1 / RQA / Basin tab readouts, status lines and CSV/metrics exports.
+- **Citability**: root `LICENSE` (MIT) and `CITATION.cff` added; README links them.
+- New tests: `tests/melnikov.test.ts` (8), `tests/literature-anchors.test.ts` (6), `tests/uncertainty.test.ts` (9).
+
 ## 10.27.0 - 2026-06-10
 
 Premium UI pass: a fourth presentation layer (`css/04-premium.css`) plus a small visual-interaction module (`src/app/UiPolish.ts`). **278 unit tests; full cross-browser e2e at baseline parity (103/104, the one failure being a pre-existing environment-dependent webkit audio case that fails identically on the unmodified baseline); typecheck/build green.**

@@ -11,6 +11,7 @@ import {
   boxCountingDimension,
   recurrenceQuantification,
   recurrenceMatrix,
+  rqaBlockUncertainty,
   doublePendulumFtleField,
   finiteTimeLyapunov,
   wadaCandidate,
@@ -209,6 +210,10 @@ export interface ZeroOneResponse {
   /** The translation-variable trajectory (p_c, q_c) for the median frequency: bounded ⇒ regular, Brownian ⇒ chaotic. */
   pPath: number[];
   qPath: number[];
+  /** Bootstrap standard error of the median K over the per-frequency K_c. */
+  kStdError: number;
+  /** Percentile-bootstrap 95% confidence interval for K. */
+  kCi95: [number, number];
 }
 
 export interface ClvResponse {
@@ -239,6 +244,14 @@ export interface BasinResponse {
   fractalBoundary: boolean;
   /** Minkowski–Bouligand box-counting dimension of the classification boundary. */
   boxCountingDimension: number;
+  /** SEM of Sb over boxes. */
+  basinEntropyStdError: number;
+  /** SEM of Sbb over boundary boxes. */
+  boundaryBasinEntropyStdError: number;
+  /** Regression slope standard error of the box-counting log-log fit. */
+  boxCountingStdError: number;
+  /** R² of the box-counting log-log fit (scaling quality). */
+  boxCountingR2: number;
   /** Fraction of boundary cells whose neighbourhood touches ≥ 3 basins (grid Wada test). */
   wadaFraction: number;
   /** True when ≥ 3 basins and the Wada fraction clears the candidacy threshold. */
@@ -261,6 +274,12 @@ export interface RqaResponse {
   /** Row-major recurrence plot (0/1), `plotSize`×`plotSize`. */
   plot: number[];
   plotSize: number;
+  /** Block-resampled standard error of DET (contiguous blocks; batched-means style). */
+  determinismStdError: number;
+  /** Block-resampled standard error of DIV. */
+  divergenceStdError: number;
+  /** Number of blocks used for the uncertainty estimates. */
+  uncertaintyBlocks: number;
 }
 
 export interface FtleResponse {
@@ -419,7 +438,9 @@ function runZeroOne(req: ZeroOneRequest): ZeroOneResponse {
     K: result.K,
     kValues: result.kValues,
     pPath: decimate(p, 2000),
-    qPath: decimate(q, 2000)
+    qPath: decimate(q, 2000),
+    kStdError: result.kStdError,
+    kCi95: result.kCi95
   };
 }
 
@@ -456,6 +477,10 @@ function runBasin(req: BasinRequest): BasinResponse {
     boundaryBasinEntropy: entropy.boundaryBasinEntropy,
     fractalBoundary: entropy.fractalBoundary,
     boxCountingDimension: box.dimension,
+    basinEntropyStdError: entropy.basinEntropyStdError,
+    boundaryBasinEntropyStdError: entropy.boundaryBasinEntropyStdError,
+    boxCountingStdError: box.stdError,
+    boxCountingR2: box.r2,
     wadaFraction: wada.wadaFraction,
     wadaCandidate: wada.wadaCandidate
   };
@@ -484,6 +509,8 @@ function runRqa(req: RqaRequest): RqaResponse {
   const r = recurrenceQuantification(series, rqaOptions);
   // Same series + options ⇒ identical embedding/threshold, so the plot matches.
   const mat = recurrenceMatrix(series, rqaOptions);
+  // Block-resampled error bars (4 contiguous blocks ≈ 1/4 the O(N²) cost).
+  const unc = rqaBlockUncertainty(series, rqaOptions, 4);
   return {
     id: req.id,
     kind: 'rqa',
@@ -498,7 +525,10 @@ function runRqa(req: RqaRequest): RqaResponse {
     trappingTime: r.trappingTime,
     epsilon: r.epsilon,
     plot: Array.from(mat.matrix),
-    plotSize: mat.size
+    plotSize: mat.size,
+    determinismStdError: unc.determinism.stdError,
+    divergenceStdError: unc.divergence.stdError,
+    uncertaintyBlocks: unc.blocks
   };
 }
 

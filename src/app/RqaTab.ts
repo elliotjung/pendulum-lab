@@ -40,17 +40,19 @@ export class RqaTab {
         { key: 'rqa_laminarity', value: r.laminarity.toPrecision(6) },
         { key: 'rqa_longest_diagonal', value: String(r.longestDiagonal) },
         { key: 'rqa_divergence', value: r.divergence.toPrecision(6) },
-        { key: 'rqa_entropy', value: r.entropy.toPrecision(6) }
+        { key: 'rqa_entropy', value: r.entropy.toPrecision(6) },
+        { key: 'rqa_determinism_std_error', value: r.determinismStdError.toPrecision(6) },
+        { key: 'rqa_divergence_std_error', value: r.divergenceStdError.toPrecision(6) }
       ];
       setText('rqaRR', r.recurrenceRate.toFixed(3));
-      setText('rqaDET', r.determinism.toFixed(3));
+      setText('rqaDET', `${r.determinism.toFixed(3)} ± ${r.determinismStdError.toFixed(3)}`);
       setText('rqaLAM', r.laminarity.toFixed(3));
       setText('rqaLmax', String(r.longestDiagonal));
-      setText('rqaDIV', r.divergence.toFixed(4));
+      setText('rqaDIV', `${r.divergence.toFixed(4)} ± ${r.divergenceStdError.toFixed(4)}`);
       setText('rqaENTR', r.entropy.toFixed(3));
       this.render();
       const verdict = r.determinism > 0.85 && r.divergence < 0.1 ? 'regular/structured' : 'chaotic/stochastic';
-      setText('rqaStatus', `done · DET=${r.determinism.toFixed(3)} · DIV=${r.divergence.toFixed(3)} · ${verdict}`);
+      setText('rqaStatus', `done · DET=${r.determinism.toFixed(3)}±${r.determinismStdError.toFixed(3)} · DIV=${r.divergence.toFixed(3)}±${r.divergenceStdError.toFixed(3)} (${r.uncertaintyBlocks} blocks) · ${verdict}`);
     } catch (err) {
       setText('rqaStatus', `error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {

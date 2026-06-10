@@ -22,11 +22,14 @@ export type { LabelGrid, BasinEntropyResult, BoxCountingResult, FlipBasinOptions
 export { covariantLyapunovVectors } from './clv';
 export type { ClvSettings, ClvResult } from './clv';
 
-export { recurrenceQuantification, recurrenceMatrix } from './rqa';
-export type { RqaOptions, RqaResult, RecurrenceMatrix } from './rqa';
+export { recurrenceQuantification, recurrenceMatrix, rqaBlockUncertainty } from './rqa';
+export type { RqaOptions, RqaResult, RecurrenceMatrix, RqaUncertainty, RqaMeasureUncertainty } from './rqa';
 
 export { flowMapGradient, largestSingularValue, determinant, finiteTimeLyapunov, doublePendulumFtleField } from './ftle';
 export type { FtleOptions, FlowMapGradient, FtleFieldOptions, FtleField } from './ftle';
+
+export { melnikovScaled, melnikovCriticalAmplitude, melnikovFunction, melnikovFunctionNumeric, melnikovVerdict } from './melnikov';
+export type { MelnikovScaled, MelnikovVerdict } from './melnikov';
 
 export { eigenvalues2x2, monodromyMatrix, floquetAnalysis, drivenPeriodicOrbit } from './floquet';
 export type { FloquetMultiplier, FloquetResult, DrivenOrbitOptions, DrivenOrbitResult } from './floquet';

@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-06-10T10:02:09.128Z",
+  "anchors": [
+    {
+      "id": "elliptic-period",
+      "description": "Free pendulum period at θ₀ = 2 rad vs T = 4K(sin(θ₀/2))/ω₀",
+      "reference": "Landau & Lifshitz, Mechanics §11 (complete elliptic integral)",
+      "published": 8.349752926918493,
+      "computed": 8.349752926921992,
+      "tolerance": 0.000001,
+      "pass": true
+    },
+    {
+      "id": "normal-mode-fast",
+      "description": "Equal double pendulum normal mode ω²+ = (2 + √2)g/l",
+      "reference": "Goldstein, Classical Mechanics, ch. 6 (small oscillations)",
+      "published": 33.493435046880066,
+      "computed": 33.493435046880066,
+      "tolerance": 1e-8,
+      "pass": true
+    },
+    {
+      "id": "normal-mode-slow",
+      "description": "Equal double pendulum normal mode ω²− = (2 − √2)g/l",
+      "reference": "Goldstein, Classical Mechanics, ch. 6 (small oscillations)",
+      "published": 5.746564953119937,
+      "computed": 5.746564953119938,
+      "tolerance": 1e-8,
+      "pass": true
+    },
+    {
+      "id": "melnikov-threshold",
+      "description": "Melnikov critical amplitude A_c at γ = 0.5, ω = 2/3: quadrature vs closed form (2/π)cosh(π/3)",
+      "reference": "Guckenheimer & Holmes, Nonlinear Oscillations, §4.5",
+      "published": 1.0187742550733252,
+      "computed": 1.018774255073282,
+      "tolerance": 1e-8,
+      "pass": true,
+      "note": "closed form ≈ 1.0187; first-order perturbation theory, so a guide rather than an exact onset at γ = 0.5"
+    },
+    {
+      "id": "period-doubling-onset",
+      "description": "Damped driven pendulum (γ = 0.5, ω = 2/3) period-doubling onset A_PD from ρ → −1",
+      "reference": "Baker & Gollub, Chaotic Dynamics (damped driven pendulum cascade)",
+      "published": 1.0663,
+      "computed": 1.0663715404102452,
+      "tolerance": 0.005,
+      "pass": true,
+      "note": "Floquet multiplier −1 crossing bracketed in [1.0649999999999997, 1.0674999999999997]"
+    }
+  ],
+  "checks": [
+    {
+      "id": "melnikov-precedes-pd",
+      "description": "Melnikov threshold lies below the period-doubling onset (tangle precedes attractor chaos)",
+      "reference": "Guckenheimer & Holmes, Nonlinear Oscillations, §4.5",
+      "detail": "A_c ≈ 1.0188 < A_PD ≈ 1.0664",
+      "pass": true
+    },
+    {
+      "id": "flip-basin-fractal",
+      "description": "Double-pendulum flip-basin boundary box-counting dimension is strictly fractal (1 < d < 2)",
+      "reference": "Daza et al., basin entropy framework (fractal exit boundaries)",
+      "detail": "measured d ≈ 1.623 at n = 48",
+      "pass": true
+    }
+  ],
+  "allPass": true
+}

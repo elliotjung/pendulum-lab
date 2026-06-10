@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T09:26:11.425Z",
+  "generatedAt": "2026-06-10T10:11:50.858Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -357,6 +357,14 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\chaos\\melnikov.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\chaos\\poincare.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -670,6 +678,14 @@
       "globalRuntimeExports": 0
     },
     "src\\validation\\importSchema.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\validation\\literatureAnchors.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

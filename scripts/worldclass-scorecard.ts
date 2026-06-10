@@ -68,14 +68,22 @@ const items: ScorecardItem[] = [
   {
     area: 'Numerics and physics depth',
     status: 'partial',
-    evidence: ['RKF45, Dormand-Prince 5(4), DOP853-adjacent GBS extrapolation, Gauss-Legendre 4/6, TR-BDF2, canonical midpoint, N-pendulum, driven, spring systems are present in src'],
-    remaining: ['Floquet multipliers, CLV, AUTO-style continuation, WebGPU ensemble simulation, and external SciPy/MATLAB/Julia comparison remain future work']
+    evidence: [
+      'RKF45, Dormand-Prince 5(4), DOP853-adjacent GBS extrapolation, Gauss-Legendre 4/6, TR-BDF2, canonical midpoint, N-pendulum, driven, spring systems are present in src',
+      'Floquet multipliers, natural + pseudo-arclength continuation, period-doubling branch switching, and the Melnikov analytic threshold are implemented and tested',
+      'external cross-validation vs an independent SciPy DOP853 reference covers the double AND triple pendulum; literature anchors pin the elliptic period, normal modes, and the period-doubling onset'
+    ],
+    remaining: ['WebGPU ensemble simulation, Neimark-Sacker torus continuation, and optional MATLAB/Julia second references remain future work']
   },
   {
     area: 'Chaos analysis',
     status: 'partial',
-    evidence: ['Maximal Lyapunov convergence, full spectrum, Kaplan-Yorke dimension, SALI/FLI, Poincare, bifurcation modules exist and are tested'],
-    remaining: ['Full spectrum is CPU-side; GPU acceleration and covariant vectors are not implemented']
+    evidence: [
+      'Maximal Lyapunov convergence, full spectrum, Kaplan-Yorke dimension, SALI/FLI, Poincare, bifurcation modules exist and are tested',
+      'covariant Lyapunov vectors (Ginelli), 0-1 test, RQA, FTLE fields, basin entropy and the Wada grid test are implemented as tabs + library APIs',
+      'every non-variational diagnostic reports an uncertainty estimate (bootstrap / block-resampled / regression CI)'
+    ],
+    remaining: ['Full spectrum, CLV and FTLE are CPU-side; GPU acceleration is not implemented']
   },
   {
     area: 'Testing and browser coverage',

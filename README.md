@@ -12,7 +12,7 @@ dynamics, organized as tested layers (see `docs/engine-overview.md`):
 - **Chaos** — maximal & full-spectrum Lyapunov, Kaplan-Yorke dimension, SALI/FLI, Poincaré sections, bifurcation sweeps.
 - **Visualization** — pure-canvas, colorblind-safe (Okabe-Ito) renderers, unit-tested against a stub context.
 - **Performance** — heavy chaos jobs run in a typed Web Worker with a graceful main-thread fallback.
-- **Validation** — every integrator cross-checked against closed-form, energy, and reference-method criteria (12 / 12 pass), plus an **automated external cross-check against an independent SciPy DOP853 reference** (regular orbit agrees to ~4e-14 over 20 s; chaotic to ~6e-11 at T = 10 s — the tolerance floor amplified by e^{λ₁t}).
+- **Validation** — every integrator cross-checked against closed-form, energy, and reference-method criteria (12 / 12 pass), plus an **automated external cross-check against an independent SciPy DOP853 reference** for both the double *and* triple pendulum (regular orbits agree to ~6e-14 over 20 s; chaotic to the e^{λ₁t}-amplified tolerance floor), **literature anchors** (elliptic-integral period, normal modes, Melnikov threshold, period-doubling onset A_PD = 1.0664 measured vs 1.0663 published), and a **Melnikov analytic chaos threshold** pinned against quadrature and the 0–1 test. Every non-variational diagnostic (0–1 K, RQA, basin entropy, box-counting dimension) reports an uncertainty estimate.
 - **Reproducibility** — hash-stamped run manifests that re-verify to the bit.
 
 Entry point: the full simulator runs from `index.html`. The TypeScript modules in `src/` now reinforce that page directly instead of maintaining separate demo pages.
@@ -49,8 +49,9 @@ npm test
 | `npm run test:e2e` / `npm run smoke` | Playwright end-to-end / smoke; full E2E covers Chromium, Firefox, WebKit, and mobile Chrome |
 | `npm run benchmark` | FPS, physics ms/frame, memory, and worker latency report |
 | `npm run validate:reference` | Cross-validate every integrator → `reports/validation-reference.{md,json}` |
-| `npm run validate:cross` | **External** cross-validation vs an independent SciPy DOP853 reference → `reports/cross-validation.{md,json}` (needs python + scipy) |
-| `npm run research -- <cmd>` | Headless research CLI: `lyapunov`, `spectrum`, `zeroone`, `rqa`, `ftle`, `basin`, `wada`, `studypoint`, `orbit`, `continue`, `switch` |
+| `npm run validate:cross` | **External** cross-validation vs an independent SciPy DOP853 reference (double **and** triple pendulum) → `reports/cross-validation.{md,json}` (needs python + scipy) |
+| `npm run validate:literature` | **Literature anchors**: engine-computed values vs published/closed-form references (elliptic-integral period, normal modes, Melnikov A_c, period-doubling onset) → `reports/literature-anchors.{md,json}` |
+| `npm run research -- <cmd>` | Headless research CLI: `lyapunov`, `spectrum`, `zeroone`, `rqa`, `ftle`, `basin`, `wada`, `studypoint`, `orbit`, `continue`, `switch`, `melnikov` |
 | `npm run notebook` | Generate `reports/research-notebook.html` — a figure-rich research report (numbers from the shared job handler + figures captured from the live app) |
 | `npm run benchmark:energy` | Long-run energy-drift ranking → `reports/energy-benchmark.{md,json}` |
 | `npm run export:repro` | Build + verify reproducibility packages → `reports/reproducibility/` |
@@ -93,6 +94,10 @@ Symplectic claims require canonical theta/p coordinates, `gamma = 0`, and conver
 ## Why This Matters
 
 Chaotic pendulum simulation is a compact way to show numerical stability, state reproducibility, and validation discipline. The same habits matter in semiconductor and device-physics work: small integration errors, parameter drift, and unreported solver assumptions can become large interpretation errors. A capability-by-capability mapping onto TCAD / device-simulation problems (mesh convergence, analytic Newton Jacobians, TR-BDF2 stiff stepping, branch continuation through folds, simulator-to-simulator benchmarking) is in [`docs/device-simulation-mapping.md`](docs/device-simulation-mapping.md).
+
+## License and Citation
+
+MIT-licensed (`LICENSE`). If you use this software in academic work, please cite it via `CITATION.cff` (GitHub renders a "Cite this repository" button from it).
 
 ## Compatibility Notes
 

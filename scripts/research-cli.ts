@@ -25,7 +25,9 @@ import {
   wadaCandidate,
   drivenPeriodicOrbit,
   continueDrivenPeriodicOrbit,
-  switchPeriodDoubling
+  switchPeriodDoubling,
+  melnikovVerdict,
+  melnikovCriticalAmplitude
 } from '../src/chaos';
 import type { SystemSpec } from '../src/physics/systemSpec';
 
@@ -183,6 +185,25 @@ function run(args: CliArgs): unknown {
         }
       };
     }
+    case 'melnikov': {
+      // Analytic homoclinic-chaos threshold for the damped driven pendulum:
+      // verdict at the given parameters plus the A_c(ω) curve for context.
+      const base = {
+        g: flagNum(flags, 'g', 1),
+        length: flagNum(flags, 'l', 1),
+        damping: flagNum(flags, 'damping', 0.5),
+        driveAmplitude: flagNum(flags, 'amplitude', 1.15),
+        driveFrequency: flagNum(flags, 'frequency', 2 / 3)
+      };
+      const wFrom = flagNum(flags, 'wfrom', 0.2);
+      const wTo = flagNum(flags, 'wto', 2);
+      const wSteps = Math.max(2, Math.round(flagNum(flags, 'wsteps', 19)));
+      const curve = Array.from({ length: wSteps }, (_, i) => {
+        const driveFrequency = wFrom + ((wTo - wFrom) * i) / (wSteps - 1);
+        return { driveFrequency, criticalAmplitude: melnikovCriticalAmplitude({ ...base, driveFrequency }) };
+      });
+      return { base, verdict: melnikovVerdict(base), criticalCurve: curve };
+    }
     case 'continue': {
       const base = {
         g: flagNum(flags, 'g', 1),
@@ -201,7 +222,7 @@ function run(args: CliArgs): unknown {
     default:
       return {
         usage: 'npx tsx scripts/research-cli.ts <command> [--flags]',
-        commands: ['lyapunov', 'spectrum', 'zeroone', 'rqa', 'ftle', 'basin', 'wada', 'studypoint', 'orbit', 'continue', 'switch'],
+        commands: ['lyapunov', 'spectrum', 'zeroone', 'rqa', 'ftle', 'basin', 'wada', 'studypoint', 'orbit', 'continue', 'switch', 'melnikov'],
         sharedFlags: ['--m1 --m2 --l1 --l2 --g', '--state th1,th2,w1,w2', '--out file.json', '--full (keep raster arrays)'],
         examples: [
           'npx tsx scripts/research-cli.ts lyapunov --state 2,2.5,0,0',
