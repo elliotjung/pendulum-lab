@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   SphericalChain,
+  createSphericalChainWorkspace,
   rhsSphericalChain,
   sphericalChainEnergy,
   sphericalChainLz,
@@ -155,5 +156,24 @@ describe('spherical N-chain (3D double/triple pendulum)', () => {
       prev = e;
     }
     expect(chain.diagnostics().caveat).toContain('Damping');
+  });
+
+  it('rejects mismatched masses/lengths instead of silently changing N', () => {
+    expect(() => rhsSphericalChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81, damping: 0 }, new Float64Array(4))).toThrow(/same length/);
+  });
+
+  it('workspace-backed RHS matches the allocation path', () => {
+    const state = [1.7, 0.4, 2.1, -0.8, 0.3, 0.9, -0.5, 0.6];
+    const a = rhsSphericalChain(state, DOUBLE_3D, new Float64Array(8));
+    const b = rhsSphericalChain(state, DOUBLE_3D, new Float64Array(8), createSphericalChainWorkspace(2));
+    for (let i = 0; i < 8; i += 1) expect(Math.abs((a[i] ?? 0) - (b[i] ?? 0))).toBeLessThan(1e-14);
+  });
+
+  it('can run with a non-RK4 integrator for reference studies', () => {
+    const chain = new SphericalChain(DOUBLE_3D, [1.2, 0.1, 1.5, 0.5, 0.1, 0.4, -0.2, 0.3], { dt: 0.001, method: 'dopri5' });
+    chain.step(0.05);
+    const diag = chain.diagnostics();
+    expect(diag.method).toBe('dopri5');
+    expect(Number.isFinite(diag.energy)).toBe(true);
   });
 });

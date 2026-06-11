@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { rhsDouble, energyDouble } from '../src/physics/double';
 import { rhsTriple } from '../src/physics/triple';
 import { energyTriple } from '../src/physics/energy';
-import { rhsChain, energyChain, type ChainParameters } from '../src/physics/nPendulum';
+import { createChainWorkspace, rhsChain, energyChain, type ChainParameters } from '../src/physics/nPendulum';
 import { rhsSpring, energySpring, type SpringPendulumParameters } from '../src/physics/spring';
 import { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from '../src/physics/driven';
 import { rk4Step, leapfrogStep } from '../src/physics/integrators';
@@ -80,6 +80,21 @@ describe('N-pendulum generalization reduces to the existing systems', () => {
     expect(Number.isFinite(state[0] ?? NaN)).toBe(true);
     const e1 = energyChain(state, chain).total;
     expect(Math.abs((e1 - e0) / e0)).toBeLessThan(1e-3);
+  });
+
+  test('rejects mismatched masses/lengths instead of silently truncating N', () => {
+    expect(() => rhsChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81 }, 0, new Float64Array(4))).toThrow(/same length/);
+    expect(() => energyChain([0, 0], { masses: [1], lengths: [], g: 9.81 })).toThrow(/same length/);
+  });
+
+  test('workspace-backed RHS matches the allocation path for N = 5', () => {
+    const chain: ChainParameters = { masses: [1, 0.8, 1.2, 0.9, 1.1], lengths: [1, 0.7, 1.1, 0.9, 0.8], g: 9.81 };
+    const state = new Float64Array([0.4, -0.2, 0.7, -0.5, 0.1, 0.2, -0.1, 0.3, -0.4, 0.5]);
+    const a = new Float64Array(10);
+    const b = new Float64Array(10);
+    rhsChain(state, chain, 0.03, a);
+    rhsChain(state, chain, 0.03, b, createChainWorkspace(5));
+    expect(maxAbsDiff(a, b)).toBeLessThan(1e-14);
   });
 });
 

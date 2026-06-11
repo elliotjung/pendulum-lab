@@ -128,6 +128,11 @@ export interface JobPoolOptions {
   maxQueued?: number;
 }
 
+export function defaultJobPoolSize(concurrency = typeof navigator === 'undefined' ? 1 : navigator.hardwareConcurrency): number {
+  if (!Number.isFinite(concurrency) || concurrency <= 2) return 1;
+  return Math.min(4, Math.max(1, Math.floor(concurrency / 2)));
+}
+
 export class JobClient {
   private workers: { transport: JobTransport; busyJobId: string | null }[] = [];
   private jobs = new Map<string, PendingJob>();
@@ -136,7 +141,7 @@ export class JobClient {
   private readonly maxQueued: number;
 
   constructor(private readonly factory: JobTransportFactory = chaosWorkerTransportFactory(), options: JobPoolOptions = {}) {
-    this.poolSize = Math.max(1, Math.min(8, options.poolSize ?? 1));
+    this.poolSize = Math.max(1, Math.min(8, options.poolSize ?? defaultJobPoolSize()));
     this.maxQueued = options.maxQueued ?? 256;
   }
 

@@ -29,6 +29,27 @@ test('3D lab: rope pendulum goes slack with warnings and tension readout', async
   await expect(page.locator('#r3Readout')).toContainText('rod rendering');
 });
 
+test('3D lab: double string pendulum exposes tension-gated hybrid dynamics', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+
+  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
+  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
+  await expect(page.locator('#lab3dDoubleStringCard')).toBeVisible();
+
+  await page.locator('#ds3Reset').click();
+  await expect(page.locator('#ds3Readout')).toContainText('phase=TAUT');
+  await expect(page.locator('#ds3Readout')).toContainText('T1=');
+  await expect(page.locator('#ds3Readout')).toContainText('T2=');
+
+  await page.locator('#ds3Theta2').fill('2.5');
+  await page.locator('#ds3Omega1').fill('0');
+  await page.locator('#ds3Omega2').fill('0');
+  await page.locator('#ds3Reset').click();
+  await expect(page.locator('#ds3Readout')).toContainText('phase=OUTER-SLACK');
+  await expect(page.locator('#ds3Warning')).toContainText('slack');
+});
+
 test('3D lab: spherical double pendulum runs in 3D and conserves E and Lz', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/');

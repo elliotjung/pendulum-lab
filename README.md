@@ -50,7 +50,7 @@ npm test
 | `npm run build:standalone` | Single self-contained `standalone/index.html` that opens via `file://` (double-click) |
 | `npm run typecheck` | `tsc --noEmit` (strict, `noUncheckedIndexedAccess`) |
 | `npm run lint` | Source-policy lint (unsafe DOM/code-generation sinks, citation/license files, stale worker bundles) + strict typecheck |
-| `npm test` | Vitest unit suite (274 tests) |
+| `npm test` | Vitest unit suite (446 tests across 66 files; synced from `reports/vitest-results.json`) |
 | `npm run test:e2e` / `npm run smoke` | Playwright end-to-end / smoke; full E2E covers Chromium, Firefox, WebKit, and mobile Chrome |
 | `npm run benchmark` | FPS, physics ms/frame, memory, and worker latency report |
 | `npm run validate:reference` | Cross-validate every integrator → `reports/validation-reference.{md,json}` |

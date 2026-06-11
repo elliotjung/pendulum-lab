@@ -34,6 +34,10 @@ const legacy = await readJson('reports/legacy-risk-report.json', {
 
 const packageJson = await readJson<{ scripts?: Record<string, string> }>('package.json', {});
 const scripts = packageJson.scripts ?? {};
+const vitest = await readJson<{ numTotalTests?: number; numPassedTests?: number; testResults?: unknown[] }>('reports/vitest-results.json', {});
+const unitTestSummary = Number.isInteger(vitest.numTotalTests) && Array.isArray(vitest.testResults)
+  ? `${vitest.numPassedTests ?? 0}/${vitest.numTotalTests} unit tests across ${vitest.testResults.length} files`
+  : 'unit test JSON report missing; run npm run test:json';
 
 const has = {
   benchmark: await exists('reports/benchmark-report.md'),
@@ -44,8 +48,16 @@ const has = {
   numerics: await exists('docs/numerics.md'),
   limitations: await exists('docs/known-limitations.md'),
   ci: await exists('.github/workflows/ci.yml'),
+  pagesWorkflow: await exists('.github/workflows/pages.yml'),
+  distIndex: await exists('dist/index.html'),
+  license: await exists('LICENSE'),
+  citation: await exists('CITATION.cff'),
+  typedocIndex: await exists('docs/api/index.html'),
   index: await exists('index.html')
 };
+
+const pagesReady = has.pagesWorkflow && has.distIndex;
+const packagingReady = pagesReady && has.license && has.citation && has.typedocIndex;
 
 const items: ScorecardItem[] = [
   {
@@ -88,7 +100,7 @@ const items: ScorecardItem[] = [
   {
     area: 'Testing and browser coverage',
     status: scripts['test:e2e'] && has.ci ? 'done' : 'partial',
-    evidence: ['unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages', 'Playwright config includes Chromium, Firefox, WebKit, and mobile Chrome'],
+    evidence: [unitTestSummary, 'unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages', 'Playwright config includes Chromium, Firefox, WebKit, and mobile Chrome'],
     remaining: ['Visual regression, memory leak, and long-runtime soak tests are not yet first-class CI jobs']
   },
   {
@@ -105,9 +117,19 @@ const items: ScorecardItem[] = [
   },
   {
     area: 'Documentation and portfolio readiness',
-    status: has.architecture && has.numerics && has.limitations && has.validation ? 'done' : 'partial',
-    evidence: ['README, architecture, numerics, security, validation, energy benchmark, changelog, roadmap, and portfolio summary artifacts exist'],
-    remaining: ['Project introduction video, GitHub Pages deployment, npm package release, and full English API docs remain packaging tasks']
+    status: has.architecture && has.numerics && has.limitations && has.validation && packagingReady ? 'done' : 'partial',
+    evidence: [
+      'README, architecture, numerics, security, validation, energy benchmark, changelog, roadmap, and portfolio summary artifacts exist',
+      has.pagesWorkflow ? 'GitHub Pages workflow exists' : 'GitHub Pages workflow missing',
+      has.distIndex ? 'dist/index.html exists for Pages artifact deployment' : 'dist/index.html missing; run npm run build',
+      has.license ? 'LICENSE exists' : 'LICENSE missing',
+      has.citation ? 'CITATION.cff exists' : 'CITATION.cff missing',
+      has.typedocIndex ? 'TypeDoc API docs exist at docs/api/index.html' : 'TypeDoc API docs missing; run npm run docs:api'
+    ],
+    remaining: [
+      ...(packagingReady ? [] : ['Complete missing packaging artifacts reported in evidence']),
+      'Project introduction video and npm package release remain packaging tasks'
+    ]
   }
 ];
 

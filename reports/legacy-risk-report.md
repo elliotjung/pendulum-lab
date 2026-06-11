@@ -1,6 +1,6 @@
 # Legacy Risk Audit
 
-Generated: 2026-06-11T09:44:08.497Z
+Generated: 2026-06-11T12:53:41.869Z
 Status: PASS
 Weighted score: 0 (-482 vs baseline)
 

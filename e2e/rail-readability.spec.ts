@@ -12,8 +12,29 @@ test('desktop rail uses five top-level menus with click-open detail panels', asy
   await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
   await expect(page.locator('#rail-panel-chaos .tab[data-tab="ftle"] .tab-label')).toHaveText('FTLE');
 
+  const chaosPanelBox = await page.locator('#rail-panel-chaos').boundingBox();
+  expect(chaosPanelBox).toBeTruthy();
+  await page.mouse.move(chaosPanelBox!.x + 20, chaosPanelBox!.y + 20);
+  await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
+  await page.mouse.move(420, 180);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+
+  await page.locator('.rail-menu-button[data-rail-section-button="chaos"]').click();
+  await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
+  await page.mouse.click(420, 180);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+
+  await page.locator('.rail-menu-button[data-rail-section-button="chaos"]').click();
+  await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+
+  await page.locator('.rail-menu-button[data-rail-section-button="chaos"]').click();
   await page.locator('#rail-panel-chaos .tab[data-tab="rqa"]').click();
   await expect(page.locator('#tab-rqa')).toHaveClass(/active/);
+  await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
+  await page.mouse.move(420, 180);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
 });
 
 test('mobile rail keeps five top-level menus and opens detail panel above it', async ({ page }) => {

@@ -78,6 +78,13 @@ export class Shell {
     });
   }
 
+  private closeRailSections(): void {
+    document.querySelectorAll<HTMLElement>('.rail-section.open[data-rail-section]').forEach((section) => {
+      section.classList.remove('open');
+      section.querySelector<HTMLElement>('.rail-menu-button')?.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   private syncRailSectionForTab(tabName: string): void {
     const tab = document.querySelector<HTMLElement>(`.rail-section .tab[data-tab="${tabName}"]`);
     const section = tab?.closest<HTMLElement>('.rail-section');
@@ -111,11 +118,44 @@ export class Shell {
   }
 
   private bindRailSections(): void {
+    let closeTimer: number | null = null;
+    const clearCloseTimer = (): void => {
+      if (closeTimer === null) return;
+      window.clearTimeout(closeTimer);
+      closeTimer = null;
+    };
+    const schedulePointerClose = (event: PointerEvent): void => {
+      if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+      clearCloseTimer();
+      closeTimer = window.setTimeout(() => {
+        closeTimer = null;
+        if (document.querySelector('.rail-section.open:hover')) return;
+        this.closeRailSections();
+      }, 80);
+    };
+
     document.querySelectorAll<HTMLElement>('.rail-menu-button[data-rail-section-button]').forEach((btn) => {
       btn.addEventListener('click', () => {
+        clearCloseTimer();
         const section = btn.dataset.railSectionButton;
         if (section) this.openRailSection(section);
       });
+    });
+    document.querySelectorAll<HTMLElement>('.rail-section[data-rail-section]').forEach((section) => {
+      section.addEventListener('pointerenter', clearCloseTimer);
+      section.addEventListener('pointerleave', schedulePointerClose);
+    });
+    document.addEventListener('pointerdown', (event) => {
+      const target = event.target as Element | null;
+      if (target?.closest('.rail')) return;
+      clearCloseTimer();
+      this.closeRailSections();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        clearCloseTimer();
+        this.closeRailSections();
+      }
     });
   }
 

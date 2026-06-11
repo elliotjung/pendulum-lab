@@ -12,8 +12,10 @@
     "docs:api": "typedoc",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "lint": "tsx scripts/lint-source.ts && tsc --noEmit",
+    "lint": "tsx scripts/lint-source.ts",
+    "verify": "npm run lint && npm run typecheck && npm run test:json && npm run docs:sync",
     "test": "vitest run",
+    "test:json": "vitest run --reporter=json --outputFile=reports/vitest-results.json",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "smoke": "playwright test e2e/smoke.spec.ts --project=chromium",
@@ -32,7 +34,8 @@
     "notebook:validate": "tsx scripts/validate-notebook.ts",
     "reports": "tsx scripts/generate-validation-report.ts",
     "audit:legacy": "tsx scripts/audit-legacy.ts",
-    "audit:worldclass": "tsx scripts/worldclass-scorecard.ts"
+    "audit:worldclass": "tsx scripts/worldclass-scorecard.ts",
+    "docs:sync": "tsx scripts/sync-test-counts.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

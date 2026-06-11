@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T09:44:08.497Z",
+  "generatedAt": "2026-06-11T12:53:41.869Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -525,6 +525,14 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\physics\\doubleString.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\physics\\driven.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -558,6 +566,14 @@
       "globalRuntimeExports": 0
     },
     "src\\physics\\integrators.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\physics\\linearSolve.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-10T10:18:43.642Z",
+  "generatedAt": "2026-06-11T12:51:03.990Z",
   "totals": {
     "done": 4,
     "partial": 4,
     "gap": 0
   },
   "legacyRisk": {
-    "generatedAt": "2026-06-10T10:11:50.858Z",
+    "generatedAt": "2026-06-11T09:44:08.497Z",
     "pass": true,
     "counts": {
       "innerHTML": 0,
@@ -300,6 +300,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\chaos\\bifurcationDetect.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\chaos\\branchSwitching.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -316,7 +324,23 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\chaos\\codimTwo.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\chaos\\continuation.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\chaos\\fixedPointClassify.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -333,6 +357,14 @@
         "globalRuntimeExports": 0
       },
       "src\\chaos\\ftle.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\chaos\\ftleRidge.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -372,7 +404,23 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\chaos\\neimarkSacker.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\chaos\\poincare.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\chaos\\recurrenceNetwork.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -412,6 +460,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\chaos\\wadaConvergence.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\chaos\\zeroOneTest.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -429,6 +485,14 @@
         "globalRuntimeExports": 0
       },
       "src\\export\\manifest.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\lib.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -516,6 +580,30 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\physics\\rope.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\physics\\spherical.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\physics\\sphericalChain.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\physics\\spring.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -564,6 +652,22 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\render\\progressive.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\cliBatchSpec.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\research\\convergenceOrder.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -572,7 +676,79 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\research\\experimentDesign.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\figurePipeline.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\libraryUx.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\notebookBuilder.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\provenance.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\research\\reproPackage.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\researchDb.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\researchExportUtils.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\researchSampling.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\research\\zipBundle.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -597,6 +773,22 @@
         "globalRuntimeExports": 0
       },
       "src\\runtime\\EventBus.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\runtime\\gpuEnsemble.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\runtime\\JobClient.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -748,6 +940,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\viz\\orbit3d.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\viz\\palette.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -812,6 +1012,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\workers\\jobProtocol.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\workers\\physics.worker.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -831,6 +1039,11 @@
     "numerics": true,
     "limitations": true,
     "ci": true,
+    "pagesWorkflow": true,
+    "distIndex": true,
+    "license": true,
+    "citation": true,
+    "typedocIndex": true,
     "index": true
   },
   "items": [
@@ -883,6 +1096,7 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
+        "446/446 unit tests across 66 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
         "Playwright config includes Chromium, Firefox, WebKit, and mobile Chrome"
       ],
@@ -922,10 +1136,15 @@
       "area": "Documentation and portfolio readiness",
       "status": "done",
       "evidence": [
-        "README, architecture, numerics, security, validation, energy benchmark, changelog, roadmap, and portfolio summary artifacts exist"
+        "README, architecture, numerics, security, validation, energy benchmark, changelog, roadmap, and portfolio summary artifacts exist",
+        "GitHub Pages workflow exists",
+        "dist/index.html exists for Pages artifact deployment",
+        "LICENSE exists",
+        "CITATION.cff exists",
+        "TypeDoc API docs exist at docs/api/index.html"
       ],
       "remaining": [
-        "Project introduction video, GitHub Pages deployment, npm package release, and full English API docs remain packaging tasks"
+        "Project introduction video and npm package release remain packaging tasks"
       ]
     }
   ]

@@ -8,6 +8,7 @@ import {
   type JobSubmitMessage
 } from '../src/workers/jobProtocol';
 import {
+  defaultJobPoolSize,
   inProcessTransportFactory,
   JobCancelledError,
   JobClient,
@@ -50,6 +51,15 @@ describe('jobPhases', () => {
   it('splits studyPoint into three phases and everything else into one', () => {
     expect(jobPhases(studyRequest())).toEqual(['lyapunov', 'rqa', 'ftle']);
     expect(jobPhases({ id: 'x', kind: 'lyapunov', spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, state0: [1, 1, 0, 0] })).toEqual(['compute']);
+  });
+});
+
+describe('defaultJobPoolSize', () => {
+  it('scales research workers from hardware concurrency with a conservative cap', () => {
+    expect(defaultJobPoolSize(1)).toBe(1);
+    expect(defaultJobPoolSize(2)).toBe(1);
+    expect(defaultJobPoolSize(6)).toBe(3);
+    expect(defaultJobPoolSize(16)).toBe(4);
   });
 });
 

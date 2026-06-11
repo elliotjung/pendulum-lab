@@ -21,10 +21,13 @@ function rhsTripleFallback(state: StateVector, parameters: PendulumParameters, g
 export const physicsAdapter: PhysicsAdapter = Object.freeze({
   derivative(system: SystemType, state: StateVector, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector {
     if (system === 'triple') return rhsTripleFallback(state, parameters, gamma, out);
-    return rhsDouble(state, parameters, gamma, out);
+    if (system === 'double') return rhsDouble(state, parameters, gamma, out);
+    throw new Error(`physicsAdapter.derivative: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`);
   },
   energy(system: SystemType, state: StateVector, parameters: PendulumParameters) {
-    return system === 'triple' ? energyTriple(state, parameters) : energyDouble(state, parameters);
+    if (system === 'triple') return energyTriple(state, parameters);
+    if (system === 'double') return energyDouble(state, parameters);
+    throw new Error(`physicsAdapter.energy: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`);
   },
   step(method: import('../types/domain').IntegratorId, state: StateVector, dt: number, rhs: Derivative, out: StateVector, options?: StepOptions) {
     return step(method, state, dt, rhs, out, options);
@@ -35,22 +38,30 @@ export { energyDouble, energyTriple, relativeEnergyDrift } from './energy';
 export { integratorRegistry } from './integrators';
 export { rhsDouble } from './double';
 export { rhsTriple } from './triple';
-export { rhsChain, energyChain, chainLength } from './nPendulum';
-export type { ChainParameters } from './nPendulum';
+export { rhsChain, energyChain, chainLength, createChainWorkspace, validateChainParameters } from './nPendulum';
+export type { ChainParameters, ChainWorkspace } from './nPendulum';
 export {
   SphericalChain,
+  createSphericalChainWorkspace,
   rhsSphericalChain,
   sphericalChainEnergy,
   sphericalChainLz,
   sphericalChainPositions,
   sphericalChainVelocities,
-  sphericalChainLength
+  sphericalChainLength,
+  validateSphericalChainParams
 } from './sphericalChain';
-export type { SphericalChainParams, SphericalChainDiagnostics } from './sphericalChain';
+export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from './sphericalChain';
+export { assertLinearSolve, solveLinearInPlace } from './linearSolve';
+export type { LinearSolveFailureReason, LinearSolveOptions, LinearSolveResult } from './linearSolve';
 export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';
 export type { SpringPendulumParameters } from './spring';
+export { RopePendulum } from './rope';
+export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from './rope';
+export { DoubleStringPendulum, doubleStringEnergy, doubleStringTensions } from './doubleString';
+export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot } from './doubleString';
 export * from './canonical';
 export {
   step,

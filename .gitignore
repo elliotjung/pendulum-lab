@@ -3,6 +3,7 @@ dist/
 standalone/
 coverage/
 reports/*.tmp
+reports/vitest-results.json
 reports/playwright/
 reports/coverage/
 test-results/

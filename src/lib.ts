@@ -20,12 +20,16 @@ export * from './physics/types';
 export * from './physics/integrators';
 export { rhsDouble } from './physics/double';
 export { energyDouble } from './physics/energy';
-export { rhsChain, energyChain } from './physics/nPendulum';
-export type { ChainParameters } from './physics/nPendulum';
+export { rhsChain, energyChain, createChainWorkspace, validateChainParameters } from './physics/nPendulum';
+export type { ChainParameters, ChainWorkspace } from './physics/nPendulum';
+export { assertLinearSolve, solveLinearInPlace } from './physics/linearSolve';
+export type { LinearSolveFailureReason, LinearSolveOptions, LinearSolveResult } from './physics/linearSolve';
 export { buildRhs, buildJacobian } from './physics/systemSpec';
 export type { SystemSpec } from './physics/systemSpec';
 export { RopePendulum } from './physics/rope';
 export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from './physics/rope';
+export { DoubleStringPendulum, doubleStringEnergy, doubleStringTensions } from './physics/doubleString';
+export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot } from './physics/doubleString';
 export {
   SphericalPendulum,
   sphericalRhs,
@@ -38,13 +42,15 @@ export {
 export type { SphericalParams, SphericalState, SphericalDiagnostics } from './physics/spherical';
 export {
   SphericalChain,
+  createSphericalChainWorkspace,
   rhsSphericalChain,
   sphericalChainEnergy,
   sphericalChainLz,
   sphericalChainPositions,
-  sphericalChainVelocities
+  sphericalChainVelocities,
+  validateSphericalChainParams
 } from './physics/sphericalChain';
-export type { SphericalChainParams, SphericalChainDiagnostics } from './physics/sphericalChain';
+export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from './physics/sphericalChain';
 
 // Chaos diagnostics (re-exports the curated chaos index).
 export * from './chaos';

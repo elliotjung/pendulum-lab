@@ -46,6 +46,9 @@
  * which leaves the dynamics exact outside a 1e-6 neighbourhood of the poles.
  */
 import type { EnergyBreakdown } from '../types/domain';
+import type { IntegratorId } from '../types/domain';
+import { assertLinearSolve, solveLinearInPlace } from './linearSolve';
+import { step as integrateStep } from './integrators';
 
 export interface SphericalChainParams {
   /** Bob masses, length N. */
@@ -58,51 +61,52 @@ export interface SphericalChainParams {
 }
 
 const POLE_EPS = 1e-6;
-const DET_THRESHOLD = 1e-14;
+
+export interface SphericalChainWorkspace {
+  n: number;
+  dof: number;
+  suffix: Float64Array;
+  matrix: Float64Array;
+  force: Float64Array;
+}
 
 export function sphericalChainLength(params: SphericalChainParams): number {
-  return Math.min(params.masses.length, params.lengths.length);
+  validateSphericalChainParams(params);
+  return params.masses.length;
 }
 
-/** Gaussian elimination with partial pivoting; solution written into b. */
-function solveLinear(a: Float64Array, b: Float64Array, n: number): boolean {
-  for (let c = 0; c < n; c += 1) {
-    let pivot = c;
-    for (let r = c + 1; r < n; r += 1) {
-      if (Math.abs(a[r * n + c] ?? 0) > Math.abs(a[pivot * n + c] ?? 0)) pivot = r;
-    }
-    if (pivot !== c) {
-      for (let k = 0; k < n; k += 1) {
-        const tmp = a[c * n + k] ?? 0;
-        a[c * n + k] = a[pivot * n + k] ?? 0;
-        a[pivot * n + k] = tmp;
-      }
-      const tb = b[c] ?? 0;
-      b[c] = b[pivot] ?? 0;
-      b[pivot] = tb;
-    }
-    const diag = a[c * n + c] ?? 0;
-    if (Math.abs(diag) < DET_THRESHOLD) return false;
-    for (let r = 0; r < n; r += 1) {
-      if (r === c) continue;
-      const factor = (a[r * n + c] ?? 0) / diag;
-      if (factor === 0) continue;
-      for (let k = c; k < n; k += 1) a[r * n + k] = (a[r * n + k] ?? 0) - factor * (a[c * n + k] ?? 0);
-      b[r] = (b[r] ?? 0) - factor * (b[c] ?? 0);
-    }
+export function validateSphericalChainParams(params: SphericalChainParams): void {
+  if (params.masses.length !== params.lengths.length) {
+    throw new Error(`SphericalChainParams: masses (${params.masses.length}) and lengths (${params.lengths.length}) must have the same length`);
   }
-  for (let i = 0; i < n; i += 1) b[i] = (b[i] ?? 0) / (a[i * n + i] ?? 1);
-  return true;
+  if (params.masses.length === 0) throw new Error('SphericalChainParams: at least one link is required');
+  for (let i = 0; i < params.masses.length; i += 1) {
+    const mass = params.masses[i] ?? NaN;
+    const length = params.lengths[i] ?? NaN;
+    if (!Number.isFinite(mass) || mass <= 0) throw new Error(`SphericalChainParams: mass[${i}] must be positive and finite`);
+    if (!Number.isFinite(length) || length <= 0) throw new Error(`SphericalChainParams: length[${i}] must be positive and finite`);
+  }
+  if (!Number.isFinite(params.g) || params.g <= 0) throw new Error('SphericalChainParams: g must be positive and finite');
+  if (!Number.isFinite(params.damping) || params.damping < 0) throw new Error('SphericalChainParams: damping must be non-negative and finite');
 }
 
-function suffixMass(masses: readonly number[], n: number): Float64Array {
-  const s = new Float64Array(n);
+export function createSphericalChainWorkspace(n: number): SphericalChainWorkspace {
+  const dof = 2 * n;
+  return {
+    n,
+    dof,
+    suffix: new Float64Array(n),
+    matrix: new Float64Array(dof * dof),
+    force: new Float64Array(dof)
+  };
+}
+
+function fillSuffixMass(masses: readonly number[], n: number, s: Float64Array): void {
   let acc = 0;
   for (let j = n - 1; j >= 0; j -= 1) {
     acc += masses[j] ?? 0;
     s[j] = acc;
   }
-  return s;
 }
 
 /** Per-link geometric quantities (3-vectors stored flat as [x, y, z]). */
@@ -167,14 +171,20 @@ function linkFrames(state: ArrayLike<number>, params: SphericalChainParams, n: n
  * length 4N (see header for the layout). Near-pole configurations are chart-
  * regularised; a numerically singular mass matrix yields zero accelerations.
  */
-export function rhsSphericalChain(state: ArrayLike<number>, params: SphericalChainParams, out: Float64Array): Float64Array {
+export function rhsSphericalChain(
+  state: ArrayLike<number>,
+  params: SphericalChainParams,
+  out: Float64Array,
+  workspace = createSphericalChainWorkspace(sphericalChainLength(params))
+): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
-  const s = suffixMass(params.masses, n);
+  if (workspace.n !== n || workspace.dof !== dof) throw new Error(`rhsSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  const { suffix: s, matrix, force } = workspace;
+  fillSuffixMass(params.masses, n, s);
+  matrix.fill(0);
+  force.fill(0);
   const frames = linkFrames(state, params, n);
-
-  const matrix = new Float64Array(dof * dof);
-  const force = new Float64Array(dof);
 
   for (let j = 0; j < n; j += 1) {
     const fj = frames[j]!;
@@ -205,10 +215,11 @@ export function rhsSphericalChain(state: ArrayLike<number>, params: SphericalCha
     }
   }
 
-  const ok = solveLinear(matrix, force, dof);
+  const solve = solveLinearInPlace(matrix, force, dof);
+  assertLinearSolve(solve, 'rhsSphericalChain mass matrix');
   for (let i = 0; i < dof; i += 1) {
     const qDot = Number(state[dof + i] ?? 0);
-    out[dof + i] = (ok ? (force[i] ?? 0) : 0) - params.damping * qDot;
+    out[dof + i] = (force[i] ?? 0) - params.damping * qDot;
   }
   return out;
 }
@@ -326,25 +337,40 @@ export interface SphericalChainDiagnostics {
   energyDrift: number;
   lz: number;
   lzDrift: number;
-  method: 'rk4';
+  method: IntegratorId;
   dt: number;
   caveat: string;
 }
 
-/** Fixed-step RK4 integrator over the spherical chain, mirroring `SphericalPendulum`. */
+export interface SphericalChainOptions {
+  dt?: number;
+  method?: IntegratorId;
+  tolerance?: number;
+}
+
+/** Fixed-step integrator over the spherical chain, mirroring `SphericalPendulum`. */
 export class SphericalChain {
   private state: Float64Array;
   private time = 0;
   private readonly initialEnergy: number;
   private readonly initialLz: number;
   private readonly scratch: Float64Array[];
+  private readonly rhsWorkspace: SphericalChainWorkspace;
+  private readonly method: IntegratorId;
+  private readonly dt: number;
+  private readonly tolerance: number;
 
-  constructor(readonly params: SphericalChainParams, initial: ArrayLike<number>, readonly dt = 0.001) {
+  constructor(readonly params: SphericalChainParams, initial: ArrayLike<number>, options: number | SphericalChainOptions = 0.001) {
     const dof = 4 * sphericalChainLength(params);
     this.state = Float64Array.from({ length: dof }, (_, i) => Number(initial[i] ?? 0));
+    const parsed = typeof options === 'number' ? { dt: options } : options;
+    this.dt = parsed.dt ?? 0.001;
+    this.method = parsed.method ?? 'rk4';
+    this.tolerance = parsed.tolerance ?? 1e-10;
     this.initialEnergy = sphericalChainEnergy(this.state, params).total;
     this.initialLz = sphericalChainLz(this.state, params);
     this.scratch = [0, 1, 2, 3, 4].map(() => new Float64Array(dof));
+    this.rhsWorkspace = createSphericalChainWorkspace(sphericalChainLength(params));
   }
 
   current(): Float64Array {
@@ -360,7 +386,8 @@ export class SphericalChain {
     while (remaining > 1e-12) {
       const h = Math.min(this.dt, remaining);
       remaining -= h;
-      this.rk4(h);
+      if (this.method === 'rk4') this.rk4(h);
+      else this.genericStep(h);
       this.time += h;
     }
   }
@@ -368,16 +395,25 @@ export class SphericalChain {
   private rk4(h: number): void {
     const dof = this.state.length;
     const [k1, k2, k3, k4, tmp] = this.scratch as [Float64Array, Float64Array, Float64Array, Float64Array, Float64Array];
-    rhsSphericalChain(this.state, this.params, k1);
+    rhsSphericalChain(this.state, this.params, k1, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + (h / 2) * (k1[i] ?? 0);
-    rhsSphericalChain(tmp, this.params, k2);
+    rhsSphericalChain(tmp, this.params, k2, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + (h / 2) * (k2[i] ?? 0);
-    rhsSphericalChain(tmp, this.params, k3);
+    rhsSphericalChain(tmp, this.params, k3, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + h * (k3[i] ?? 0);
-    rhsSphericalChain(tmp, this.params, k4);
+    rhsSphericalChain(tmp, this.params, k4, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) {
       this.state[i] = (this.state[i] ?? 0) + (h / 6) * ((k1[i] ?? 0) + 2 * (k2[i] ?? 0) + 2 * (k3[i] ?? 0) + (k4[i] ?? 0));
     }
+  }
+
+  private genericStep(h: number): void {
+    const [, , , , out] = this.scratch as [Float64Array, Float64Array, Float64Array, Float64Array, Float64Array];
+    const rhs = (state: Float64Array, deriv: Float64Array): void => {
+      rhsSphericalChain(state, this.params, deriv, this.rhsWorkspace);
+    };
+    integrateStep(this.method, this.state, h, rhs, out, { tolerance: this.tolerance });
+    this.state.set(out);
   }
 
   diagnostics(): SphericalChainDiagnostics {
@@ -389,7 +425,7 @@ export class SphericalChain {
       energyDrift: Math.abs((energy - this.initialEnergy) / (Math.abs(this.initialEnergy) || 1)),
       lz,
       lzDrift: Math.abs(lz - this.initialLz) / Math.max(Math.abs(this.initialLz), 1e-12),
-      method: 'rk4',
+      method: this.method,
       dt: this.dt,
       caveat: this.params.damping > 0
         ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
