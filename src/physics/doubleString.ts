@@ -88,6 +88,62 @@ export function doubleStringEnergy(snapshot: Pick<DoubleStringSnapshot, 'x1' | '
     params.g * (params.m1 * snapshot.y1 + params.m2 * snapshot.y2);
 }
 
+/** Total energy of a taut-phase [θ₁, θ₂, ω₁, ω₂] state (pivot at the origin, y up). */
+export function doubleStringEnergyFromTautState(state: ArrayLike<number>, params: DoubleStringParams): number {
+  return doubleStringEnergy(tautToCartesian(state, params), params);
+}
+
+export interface TautFractionResult {
+  /** Fraction of simulated time both strings were taut (rigid-equivalent dynamics). */
+  tautFraction: number;
+  /** Number of slack events (a string went slack). */
+  slackEvents: number;
+  /** Number of recapture events (inelastic, each loses energy). */
+  captureEvents: number;
+  /** Total energy lost to inelastic recaptures. */
+  energyLost: number;
+  horizon: number;
+  caveat: string;
+}
+
+/**
+ * Validity probe for taut-phase analyses: simulate the full hybrid system for
+ * `horizon` seconds and report how much of the time both strings stayed taut.
+ * Smooth diagnostics (Lyapunov, RQA via the rigid-equivalent vector field) are
+ * trustworthy when this is ≈ 1 and meaningless when slack phases dominate.
+ */
+export function doubleStringTautFraction(
+  params: DoubleStringParams,
+  theta1: number,
+  theta2: number,
+  omega1 = 0,
+  omega2 = 0,
+  horizon = 30,
+  dt = 0.002
+): TautFractionResult {
+  const sim = new DoubleStringPendulum(params, theta1, theta2, omega1, omega2, dt);
+  let tautTime = 0;
+  const steps = Math.max(1, Math.round(horizon / dt));
+  for (let i = 0; i < steps; i += 1) {
+    sim.step(dt);
+    if (sim.currentPhase() === 'taut') tautTime += dt;
+  }
+  const slackEvents = sim.events.filter((e) => e.type === 'slack').length;
+  const captureEvents = sim.events.filter((e) => e.type === 'capture').length;
+  const energyLost = sim.events.reduce((sum, e) => sum + e.energyLoss, 0);
+  const tautFraction = tautTime / (steps * dt);
+  return {
+    tautFraction,
+    slackEvents,
+    captureEvents,
+    energyLost,
+    horizon,
+    caveat: tautFraction > 0.999
+      ? 'Strings stayed taut: rigid-equivalent (smooth) analyses are valid over this horizon.'
+      : `Strings went slack for ${((1 - tautFraction) * 100).toFixed(1)}% of the run; smooth-flow diagnostics only describe the taut phase.`
+  };
+}
+
 export function doubleStringTensions(state: ArrayLike<number>, params: DoubleStringParams): { tension1: number; tension2: number } {
   const t1 = Number(state[0] ?? 0);
   const t2 = Number(state[1] ?? 0);

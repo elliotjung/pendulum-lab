@@ -5,6 +5,7 @@ import { energyTriple } from './energy';
 import { rhsChain, energyChain } from './nPendulum';
 import { rhsDriven, energyDriven } from './driven';
 import { rhsSpring, energySpring } from './spring';
+import { createSphericalChainWorkspace, rhsSphericalChain, sphericalChainEnergy } from './sphericalChain';
 import type { EnergyBreakdown } from '../types/domain';
 
 /**
@@ -18,7 +19,20 @@ export type SystemSpec =
   | { kind: 'triple'; m1: number; m2: number; m3: number; l1: number; l2: number; l3: number; g: number }
   | { kind: 'chain'; masses: number[]; lengths: number[]; g: number }
   | { kind: 'driven'; g: number; length: number; damping: number; driveAmplitude: number; driveFrequency: number }
-  | { kind: 'spring'; mass: number; stiffness: number; restLength: number; g: number };
+  | { kind: 'spring'; mass: number; stiffness: number; restLength: number; g: number }
+  /**
+   * Spherical N-chain (3D ball joints). State layout (length 4N):
+   * [θ_0, φ_0, …, θ_{N−1}, φ_{N−1}, θ̇_0, φ̇_0, …]. Chart-regularised near the
+   * poles (|sinθ| < 1e-6); diagnostics there carry a caveat.
+   */
+  | { kind: 'spherical-chain'; masses: number[]; lengths: number[]; g: number; damping: number }
+  /**
+   * Planar double pendulum on inextensible strings (unilateral constraints):
+   * rods can only pull. State layout matches the rigid double pendulum
+   * [θ₁, θ₂, ω₁, ω₂]; taut-phase dynamics equal the rigid system, slack
+   * links fall ballistically (handled inside the RHS via phase detection).
+   */
+  | { kind: 'double-string'; m1: number; m2: number; l1: number; l2: number; g: number; damping: number };
 
 /** Reconstruct the (undamped unless the spec encodes damping) RHS for a spec. */
 export function buildRhs(spec: SystemSpec): Derivative {
@@ -51,6 +65,27 @@ export function buildRhs(spec: SystemSpec): Derivative {
       const p = spec;
       return (s, o) => {
         rhsSpring(s, p, o);
+      };
+    }
+    case 'spherical-chain': {
+      const p = { masses: spec.masses, lengths: spec.lengths, g: spec.g, damping: spec.damping };
+      // One workspace per closure: chaos jobs call the RHS millions of times,
+      // so the mass matrix / force buffers must not be reallocated per call.
+      const workspace = createSphericalChainWorkspace(spec.masses.length);
+      return (s, o) => {
+        rhsSphericalChain(s, p, o, workspace);
+      };
+    }
+    case 'double-string': {
+      // The smooth taut-branch vector field: exact while both tensions are
+      // ≥ 0, where the string system coincides with the rigid double pendulum.
+      // Slack/recapture phases are non-smooth events outside any single-chart
+      // ODE; use `DoubleStringPendulum` for the full hybrid flow and
+      // `doubleStringTautFraction` to check this chart's validity.
+      const p = { m1: spec.m1, m2: spec.m2, l1: spec.l1, l2: spec.l2, g: spec.g };
+      const damping = spec.damping;
+      return (s, o) => {
+        rhsDouble(s, p, damping, o);
       };
     }
     default: {
@@ -89,6 +124,11 @@ export function energyForSpec(spec: SystemSpec, state: ArrayLike<number>): Energ
       return energyDriven(state, spec);
     case 'spring':
       return energySpring(state, spec);
+    case 'spherical-chain':
+      return sphericalChainEnergy(state, { masses: spec.masses, lengths: spec.lengths, g: spec.g, damping: spec.damping });
+    case 'double-string':
+      // Taut chart: energies coincide with the rigid double pendulum's.
+      return energyDouble(state, { m1: spec.m1, m2: spec.m2, l1: spec.l1, l2: spec.l2, g: spec.g });
     default: {
       const exhaustive: never = spec;
       throw new Error(`unknown system spec: ${JSON.stringify(exhaustive)}`);

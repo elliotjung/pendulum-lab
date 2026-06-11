@@ -91,12 +91,21 @@ export const lab3d = {
   camera: new OrbitCamera(),
   chain: null as SphericalChain | null,
   chainRunning: false,
-  chainTrail1: [] as { x: number; y: number; z: number }[],
-  chainTrail2: [] as { x: number; y: number; z: number }[],
+  /** One trail per bob (the chain supports N links, not just two). */
+  chainTrails: [] as Array<Array<{ x: number; y: number; z: number }>>,
   chainCamera: new OrbitCamera(),
   rafId: 0,
   lastFrame: 0
 };
+
+/** Per-bob display colours for the N-chain (cycled when N exceeds the palette). */
+const CHAIN_COLORS: Array<{ r: number; g: number; b: number; css: string }> = [
+  { r: 244, g: 162, b: 97, css: '#f4a261' },
+  { r: 76, g: 201, b: 240, css: '#4cc9f0' },
+  { r: 56, g: 232, b: 140, css: '#38e88c' },
+  { r: 240, g: 196, b: 25, css: '#f0c419' },
+  { r: 230, g: 57, b: 70, css: '#e63946' }
+];
 
 export function lab3dRopeParams(): { l: number; g: number; damping: number } {
   return {
@@ -155,27 +164,61 @@ export function resetSphereSim(): void {
   renderSphereReadout();
 }
 
+/** Parse a comma-separated number list, padded/clamped to exactly `n` entries. */
+function numberList(id: string, n: number, fallback: number, min: number, max: number): number[] {
+  const el = $(id);
+  const raw = el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : '';
+  const parsed = raw
+    .split(/[,\s]+/)
+    .map((token) => Number.parseFloat(token))
+    .filter((value) => Number.isFinite(value));
+  const out: number[] = [];
+  for (let i = 0; i < n; i += 1) out.push(clampNumber(parsed[i], parsed[i - 1] ?? fallback, min, max));
+  return out;
+}
+
+export function lab3dChainN(): number {
+  return Math.round(clampNumber(numberFrom('d3N', 2), 2, 1, 5));
+}
+
+export function lab3dChainMethod(): IntegratorId {
+  const raw = $('d3Method');
+  const value = raw instanceof HTMLSelectElement ? raw.value : 'rk4';
+  return (['rk4', 'dopri5', 'gbs', 'gauss2', 'yoshida4'].includes(value) ? value : 'rk4') as IntegratorId;
+}
+
 export function lab3dChainParams(): SphericalChainParams {
+  const n = lab3dChainN();
   return {
-    masses: [1, clampNumber(numberFrom('d3M2', 0.8), 0.8, 0.1, 5)],
-    lengths: [
-      clampNumber(numberFrom('d3L1', 1), 1, 0.2, 3),
-      clampNumber(numberFrom('d3L2', 0.8), 0.8, 0.2, 3)
-    ],
+    masses: numberList('d3Masses', n, 1, 0.1, 5),
+    lengths: numberList('d3Lengths', n, 0.8, 0.2, 3),
     g: clampNumber(numberFrom('d3Gravity', 9.81), 9.81, 0.5, 30),
     damping: clampNumber(numberFrom('d3Damping', 0), 0, 0, 5)
   };
 }
 
+/** Full initial state [θ_k, φ_k …, θ̇_k, φ̇_k …] from the per-link IC lists. */
+export function lab3dChainInitialState(): number[] {
+  const n = lab3dChainN();
+  const thetas = numberList('d3Thetas', n, 1.6, -3.05, 3.05);
+  const phis = numberList('d3Phis', n, 0, -Math.PI, Math.PI);
+  const thetaDots = numberList('d3ThetaDots', n, 0, -10, 10);
+  const phiDots = numberList('d3PhiDots', n, 0, -10, 10);
+  const state: number[] = [];
+  for (let k = 0; k < n; k += 1) state.push(thetas[k]!, phis[k]!);
+  for (let k = 0; k < n; k += 1) state.push(thetaDots[k]!, phiDots[k]!);
+  return state;
+}
+
 export function resetChainSim(): void {
-  const theta1 = clampNumber(numberFrom('d3Theta1', 1.6), 1.6, -3.05, 3.05);
-  const theta2 = clampNumber(numberFrom('d3Theta2', 2.2), 2.2, -3.05, 3.05);
-  const phiDot1 = clampNumber(numberFrom('d3PhiDot1', 1.2), 1.2, -10, 10);
-  const phiDot2 = clampNumber(numberFrom('d3PhiDot2', -0.8), -0.8, -10, 10);
-  // State layout: [θ₁, φ₁, θ₂, φ₂, θ̇₁, φ̇₁, θ̇₂, φ̇₂].
-  lab3d.chain = new SphericalChain(lab3dChainParams(), [theta1, 0, theta2, 0, 0, phiDot1, 0, phiDot2], 0.001);
-  lab3d.chainTrail1 = [];
-  lab3d.chainTrail2 = [];
+  const params = lab3dChainParams();
+  const dt = clampNumber(numberFrom('d3Dt', 0.001), 0.001, 0.0001, 0.01);
+  lab3d.chain = new SphericalChain(params, lab3dChainInitialState(), {
+    dt,
+    method: lab3dChainMethod(),
+    tolerance: 10 ** clampNumber(numberFrom('d3Tol', -10), -10, -14, -4)
+  });
+  lab3d.chainTrails = params.masses.map(() => []);
   renderChainSim();
   renderChainReadout();
 }
@@ -219,13 +262,14 @@ export function lab3dFrame(timestamp: number): void {
   }
   if (lab3d.chainRunning && lab3d.chain) {
     lab3d.chain.step(dtWall);
-    const [inner, outer] = lab3d.chain.positions();
-    if (inner && outer) {
-      lab3d.chainTrail1.push(inner);
-      if (lab3d.chainTrail1.length > 500) lab3d.chainTrail1.shift();
-      lab3d.chainTrail2.push(outer);
-      if (lab3d.chainTrail2.length > 1500) lab3d.chainTrail2.shift();
-    }
+    const positions = lab3d.chain.positions();
+    positions.forEach((position, index) => {
+      const trail = lab3d.chainTrails[index];
+      if (!trail) return;
+      trail.push(position);
+      const cap = index === positions.length - 1 ? 1500 : 500;
+      if (trail.length > cap) trail.shift();
+    });
     renderChainSim();
     renderChainReadout();
   }
@@ -499,38 +543,40 @@ export function renderChainSim(): void {
   if (!(canvas instanceof HTMLCanvasElement) || !lab3d.chain) return;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  const reach = (lab3d.chain.params.lengths[0] ?? 1) + (lab3d.chain.params.lengths[1] ?? 1);
+  const reach = lab3d.chain.params.lengths.reduce((sum, l) => sum + l, 0);
   const scale = (Math.min(canvas.width, canvas.height) * 0.4) / reach;
   ctx.fillStyle = '#0b1020';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // Outer-reach envelope sphere (radius l₁ + l₂).
+  // Outer-reach envelope sphere (radius Σ l_k).
   drawSphereWireframe(ctx, lab3d.chainCamera, reach, scale);
-  drawPolyline3D(ctx, lab3d.chainCamera, lab3d.chainTrail1, scale, { r: 244, g: 162, b: 97 });
-  drawPolyline3D(ctx, lab3d.chainCamera, lab3d.chainTrail2, scale, { r: 76, g: 201, b: 240 });
-  const [inner, outer] = lab3d.chain.positions();
-  if (!inner || !outer) return;
+  lab3d.chainTrails.forEach((trail, index) => {
+    const color = CHAIN_COLORS[index % CHAIN_COLORS.length]!;
+    drawPolyline3D(ctx, lab3d.chainCamera, trail, scale, { r: color.r, g: color.g, b: color.b });
+  });
+  const positions = lab3d.chain.positions();
+  if (positions.length === 0) return;
   const pivot = lab3d.chainCamera.project({ x: 0, y: 0, z: 0 }, canvas.width, canvas.height, scale);
-  const bob1 = lab3d.chainCamera.project(inner, canvas.width, canvas.height, scale);
-  const bob2 = lab3d.chainCamera.project(outer, canvas.width, canvas.height, scale);
+  const projected = positions.map((p) => lab3d.chainCamera.project(p, canvas.width, canvas.height, scale));
   ctx.strokeStyle = '#cdd7ee';
   ctx.lineWidth = 2.4;
   ctx.beginPath();
   ctx.moveTo(pivot.screenX, pivot.screenY);
-  ctx.lineTo(bob1.screenX, bob1.screenY);
-  ctx.lineTo(bob2.screenX, bob2.screenY);
+  for (const bob of projected) ctx.lineTo(bob.screenX, bob.screenY);
   ctx.stroke();
   ctx.fillStyle = '#8fa3c2';
   ctx.beginPath();
   ctx.arc(pivot.screenX, pivot.screenY, 4, 0, 2 * Math.PI);
   ctx.fill();
-  ctx.fillStyle = '#f4a261';
-  ctx.beginPath();
-  ctx.arc(bob1.screenX, bob1.screenY, 7, 0, 2 * Math.PI);
-  ctx.fill();
-  ctx.fillStyle = '#4cc9f0';
-  ctx.beginPath();
-  ctx.arc(bob2.screenX, bob2.screenY, 8, 0, 2 * Math.PI);
-  ctx.fill();
+  // Painter's order: draw far bobs first so near bobs overlap them correctly.
+  projected
+    .map((bob, index) => ({ bob, index }))
+    .sort((a, b) => a.bob.depth - b.bob.depth)
+    .forEach(({ bob, index }) => {
+      ctx.fillStyle = CHAIN_COLORS[index % CHAIN_COLORS.length]!.css;
+      ctx.beginPath();
+      ctx.arc(bob.screenX, bob.screenY, index === projected.length - 1 ? 8 : 7, 0, 2 * Math.PI);
+      ctx.fill();
+    });
   ctx.fillStyle = '#8fa3c2';
   ctx.font = '10px system-ui';
   ctx.fillText('drag to orbit, wheel to zoom', 8, canvas.height - 8);
@@ -540,13 +586,120 @@ export function renderChainReadout(): void {
   if (!lab3d.chain) return;
   const diag = lab3d.chain.diagnostics();
   const state = lab3d.chain.current();
+  const n = lab3d.chain.params.masses.length;
+  const sub = (value: number): string => String(value).replace(/\d/g, (digit) => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)]!);
+  const angles = Array.from({ length: n }, (_, k) =>
+    `θ${sub(k + 1)}=${(state[2 * k] ?? 0).toFixed(2)}, φ${sub(k + 1)}=${(state[2 * k + 1] ?? 0).toFixed(2)}`).join(' ');
   setText('d3Readout', [
-    `θ₁=${(state[0] ?? 0).toFixed(3)}, φ₁=${(state[1] ?? 0).toFixed(3)}, θ₂=${(state[2] ?? 0).toFixed(3)}, φ₂=${(state[3] ?? 0).toFixed(3)}`,
+    `N=${n} | ${angles}`,
     `E=${diag.energy.toFixed(5)} J (drift ${diag.energyDrift.toExponential(2)})`,
     `Lz=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
     `method=${diag.method}, dt=${diag.dt}`,
     diag.caveat
   ].join(' | '));
+}
+
+/** Declarative spec of the current chain — the bridge into the research stack. */
+export function chainSpec(): Extract<SystemSpec, { kind: 'spherical-chain' }> {
+  const params = lab3dChainParams();
+  return {
+    kind: 'spherical-chain',
+    masses: [...params.masses],
+    lengths: [...params.lengths],
+    g: params.g,
+    damping: params.damping
+  };
+}
+
+let chainAnalysisClient: ChaosClient | null = null;
+
+/**
+ * Run the full research diagnostics (λ_max + block std error, RQA determinism /
+ * divergence, FTLE) for the current chain configuration on the chaos worker —
+ * the same `studyPoint` job the Research tab's batch runner uses.
+ */
+export async function analyzeChainDiagnostics(): Promise<void> {
+  const spec = chainSpec();
+  const state0 = lab3d.chain ? Array.from(lab3d.chain.current()) : lab3dChainInitialState();
+  if (!chainAnalysisClient) chainAnalysisClient = new ChaosClient();
+  setText('d3Analysis', `Computing λ/RQA/FTLE for the N=${spec.masses.length} spherical chain ${chainAnalysisClient.usesWorker() ? '(worker)' : '(main thread)'}…`);
+  try {
+    // The 3D chain needs a finer step than the planar default: dt 0.01 RK4 is
+    // unstable over the RQA sampling horizon for energetic chain states.
+    const result = await chainAnalysisClient.studyPoint(spec, state0, {
+      lyapunov: { steps: 6000, dt: 0.002 },
+      rqa: { samples: 240, dt: 0.002 },
+      ftleHorizon: 3,
+      ftleDt: 0.002
+    });
+    if (!result.ok) throw new Error('analysis failed');
+    const verdict = result.lambdaMax > 0.05 ? 'chaotic (finite-time estimate)' : 'regular/weakly chaotic (finite-time estimate)';
+    setText('d3Analysis', [
+      `λ_max=${result.lambdaMax.toFixed(4)} ± ${result.lambdaBlockStdError.toFixed(4)} /s`,
+      `RQA DET=${result.rqaDeterminism.toFixed(3)}, DIV=${result.rqaDivergence.toFixed(4)}`,
+      `FTLE(T=${result.ftleHorizon}s)=${result.ftle.toFixed(3)}`,
+      verdict,
+      'method: studyPoint worker job (dt=0.002, RK4 fiducial; same pipeline as the Research batch runner)'
+    ].join(' | '));
+    logResearchRun('probe', `3D chain diagnostics (N=${spec.masses.length})`, `λ=${result.lambdaMax.toFixed(4)}±${result.lambdaBlockStdError.toFixed(4)}, DET=${result.rqaDeterminism.toFixed(3)}, FTLE=${result.ftle.toFixed(3)}`);
+  } catch (error) {
+    setText('d3Analysis', `Chain analysis failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+/** Record a finite trajectory of the current chain and download it as CSV. */
+export function exportChainTrajectoryCsv(): void {
+  const params = lab3dChainParams();
+  const n = params.masses.length;
+  const dt = clampNumber(numberFrom('d3Dt', 0.001), 0.001, 0.0001, 0.01);
+  const horizon = clampNumber(numberFrom('d3ExportT', 20), 20, 1, 120);
+  const sampleEvery = Math.max(1, Math.round(0.01 / dt));
+  const sim = new SphericalChain(params, lab3d.chain ? lab3d.chain.current() : lab3dChainInitialState(), {
+    dt,
+    method: lab3dChainMethod()
+  });
+  const header = ['time', ...Array.from({ length: n }, (_, k) => [`theta${k + 1}`, `phi${k + 1}`, `thetaDot${k + 1}`, `phiDot${k + 1}`]).flat(), 'energy', 'lz'];
+  const rows: string[] = [header.join(',')];
+  const steps = Math.round(horizon / (dt * sampleEvery));
+  for (let i = 0; i < steps; i += 1) {
+    sim.step(dt * sampleEvery);
+    const state = sim.current();
+    const diag = sim.diagnostics();
+    const cols: number[] = [diag.time];
+    for (let k = 0; k < n; k += 1) {
+      cols.push(state[2 * k] ?? 0, state[2 * k + 1] ?? 0, state[2 * n + 2 * k] ?? 0, state[2 * n + 2 * k + 1] ?? 0);
+    }
+    cols.push(diag.energy, diag.lz);
+    rows.push(cols.map((value) => value.toPrecision(10)).join(','));
+  }
+  const csv = rows.join('\n');
+  downloadBytes(`pendulum_spherical_chain_n${n}_trajectory.csv`, textToBytes(csv), 'text/csv');
+  logResearchRun('export', `3D chain trajectory CSV (N=${n})`, `${steps} samples over ${horizon}s, dt=${dt}, method=${lab3dChainMethod()}`, `pendulum_spherical_chain_n${n}_trajectory.csv`);
+  toast('Chain trajectory CSV exported');
+}
+
+/** Paper-ready chain snapshot: scene PNG + diagnostics JSON with repro hash. */
+export function exportChainSnapshot(): void {
+  const canvas = $('d3Canvas');
+  if (!(canvas instanceof HTMLCanvasElement) || !lab3d.chain) {
+    toast('Run the spherical chain first');
+    return;
+  }
+  downloadBytes('pendulum_spherical_chain_snapshot.png', dataUrlToBytes(canvas.toDataURL('image/png')), 'image/png');
+  const diag = lab3d.chain.diagnostics();
+  const payload = {
+    schemaVersion: 'pendulum-3d-diagnostics/v1',
+    generatedAt: new Date().toISOString(),
+    system: `spherical-chain-n${lab3d.chain.params.masses.length}`,
+    spec: chainSpec(),
+    state: Array.from(lab3d.chain.current()),
+    diagnostics: diag,
+    camera: lab3d.chainCamera.state(),
+    reproducibilityHash: hashText(JSON.stringify({ spec: chainSpec(), state: Array.from(lab3d.chain.current()), dt: diag.dt, method: diag.method }))
+  };
+  downloadJson('pendulum_spherical_chain_diagnostics.json', payload);
+  logResearchRun('export', `3D chain snapshot (N=${lab3d.chain.params.masses.length})`, `E drift ${diag.energyDrift.toExponential(2)}, Lz drift ${diag.lzDrift.toExponential(2)}, method=${diag.method}`, 'pendulum_spherical_chain_snapshot.png');
+  toast('Chain snapshot exported (PNG + JSON)');
 }
 
 /** Export a paper-ready 3D diagnostic snapshot: PNG of the scene + JSON diagnostics. */
@@ -710,7 +863,7 @@ export function installLab3dTab(): void {
     html('div', { id: 's3Readout', className: 'research-summary', text: 'Reset to initialise. The spherical pendulum integrates θ̈ = sinθcosθ·φ̇² − (g/l)sinθ and conserves E and Lz when undamped — real 3D dynamics, not a camera trick.' })
   );
 
-  const chainCard = researchCard('Spherical Double Pendulum (3D Chaos, 4 DOF)', 'lab3dChainCard');
+  const chainCard = researchCard('Spherical N-Chain (3D Chaos, 2N DOF)', 'lab3dChainCard');
   chainCard.classList.add('research-wide');
   const chainCanvas = html('canvas', { id: 'd3Canvas' }) as HTMLCanvasElement;
   chainCanvas.width = 460;
@@ -719,17 +872,50 @@ export function installLab3dTab(): void {
   chainCanvas.style.maxWidth = '480px';
   chainCanvas.style.touchAction = 'none';
   bindOrbitControls(chainCanvas, lab3d.chainCamera, () => renderChainSim());
+  const chainN = researchSelect('d3N', [['1', 'N = 1 (spherical pendulum)'], ['2', 'N = 2 (spherical double)'], ['3', 'N = 3 (spherical triple)'], ['4', 'N = 4'], ['5', 'N = 5']]);
+  chainN.value = '2';
+  // Changing N re-seeds the per-link lists with sensible defaults of length N.
+  chainN.addEventListener('change', () => {
+    const n = lab3dChainN();
+    const seed = (id: string, values: number[]): void => {
+      const el = $(id);
+      if (el instanceof HTMLInputElement) el.value = values.map((v) => String(v)).join(',');
+    };
+    seed('d3Masses', Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8)));
+    seed('d3Lengths', Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8)));
+    seed('d3Thetas', Array.from({ length: n }, (_, k) => Number((1.6 + 0.6 * k).toFixed(2))));
+    seed('d3Phis', Array.from({ length: n }, () => 0));
+    seed('d3ThetaDots', Array.from({ length: n }, () => 0));
+    seed('d3PhiDots', Array.from({ length: n }, (_, k) => (k % 2 === 0 ? 1.2 : -0.8)));
+    lab3d.chainRunning = false;
+    resetChainSim();
+  });
+  const chainMethod = researchSelect('d3Method', [
+    ['rk4', 'RK4 (fixed step, order 4)'],
+    ['dopri5', 'Dormand–Prince 5(4) (adaptive)'],
+    ['gbs', 'Gragg–Bulirsch–Stoer (adaptive)'],
+    ['gauss2', 'Gauss–Legendre 2 (implicit, symplectic)'],
+    ['yoshida4', 'Yoshida 4 (symplectic splitting)']
+  ]);
+  chainMethod.addEventListener('change', () => {
+    lab3d.chainRunning = false;
+    resetChainSim();
+  });
   append(
     chainCard,
-    researchFormRow('θ₁₀ (rad)', researchInput('d3Theta1', 'number', '1.6', 'inner polar angle')),
-    researchFormRow('φ̇₁₀', researchInput('d3PhiDot1', 'number', '1.2', 'rad/s (inner azimuthal)')),
-    researchFormRow('θ₂₀ (rad)', researchInput('d3Theta2', 'number', '2.2', 'outer polar angle')),
-    researchFormRow('φ̇₂₀', researchInput('d3PhiDot2', 'number', '-0.8', 'rad/s (outer azimuthal)')),
-    researchFormRow('m₂ (m₁=1)', researchInput('d3M2', 'number', '0.8', 'kg')),
-    researchFormRow('l₁', researchInput('d3L1', 'number', '1', 'm')),
-    researchFormRow('l₂', researchInput('d3L2', 'number', '0.8', 'm')),
+    researchFormRow('Links N', chainN),
+    researchFormRow('Integrator', chainMethod),
+    researchFormRow('dt', researchInput('d3Dt', 'number', '0.001', 's (fixed step / adaptive base)')),
+    researchFormRow('log₁₀ tol', researchInput('d3Tol', 'number', '-10', 'adaptive/implicit tolerance')),
+    researchFormRow('θ list', researchInput('d3Thetas', 'text', '1.6,2.2', 'rad, comma separated per link')),
+    researchFormRow('φ list', researchInput('d3Phis', 'text', '0,0', 'rad, comma separated per link')),
+    researchFormRow('θ̇ list', researchInput('d3ThetaDots', 'text', '0,0', 'rad/s per link')),
+    researchFormRow('φ̇ list', researchInput('d3PhiDots', 'text', '1.2,-0.8', 'rad/s per link')),
+    researchFormRow('masses', researchInput('d3Masses', 'text', '1,0.8', 'kg per link')),
+    researchFormRow('lengths', researchInput('d3Lengths', 'text', '1,0.8', 'm per link')),
     researchFormRow('Gravity', researchInput('d3Gravity', 'number', '9.81', 'm/s²')),
     researchFormRow('Damping', researchInput('d3Damping', 'number', '0', '1/s')),
+    researchFormRow('Export T', researchInput('d3ExportT', 'number', '20', 's of trajectory for CSV export')),
     researchActions(
       button('d3Run', 'Run', () => {
         if (!lab3d.chain) resetChainSim();
@@ -744,8 +930,16 @@ export function installLab3dTab(): void {
         resetChainSim();
       })
     ),
+    researchActions(
+      button('d3Analyze', 'Analyze λ/RQA/FTLE', () => {
+        void analyzeChainDiagnostics();
+      }, 'primary'),
+      button('d3ExportCsv', 'Export Trajectory CSV', () => exportChainTrajectoryCsv()),
+      button('d3ExportSnap', 'Export Snapshot (PNG+JSON)', () => exportChainSnapshot())
+    ),
     chainCanvas,
-    html('div', { id: 'd3Readout', className: 'research-summary', text: 'Reset to initialise. Full 3D double pendulum (ball joints, 4 DOF): equations derived in manipulator form and cross-checked against an independent SymPy derivation; E and Lz are conserved when undamped.' })
+    html('div', { id: 'd3Analysis', className: 'research-summary', text: 'Analyze runs the same worker studyPoint job as the Research batch runner (Lyapunov + RQA + FTLE with uncertainties) on the current chain.' }),
+    html('div', { id: 'd3Readout', className: 'research-summary', text: 'Reset to initialise. Spherical N-chain (ball joints, 2N DOF): manipulator-form equations cross-checked against an independent SymPy derivation; E and Lz are conserved when undamped.' })
   );
 
   append(wrap, ropeCard, doubleStringCard, sphereCard, chainCard);

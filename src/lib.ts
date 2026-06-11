@@ -42,8 +42,8 @@ export { buildRhs, buildJacobian } from './physics/systemSpec';
 export type { SystemSpec } from './physics/systemSpec';
 export { RopePendulum } from './physics/rope';
 export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from './physics/rope';
-export { DoubleStringPendulum, doubleStringEnergy, doubleStringTensions } from './physics/doubleString';
-export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot } from './physics/doubleString';
+export { DoubleStringPendulum, doubleStringEnergy, doubleStringEnergyFromTautState, doubleStringTautFraction, doubleStringTensions } from './physics/doubleString';
+export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot, TautFractionResult } from './physics/doubleString';
 export {
   SphericalPendulum,
   sphericalRhs,
