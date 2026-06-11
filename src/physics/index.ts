@@ -37,6 +37,16 @@ export { rhsDouble } from './double';
 export { rhsTriple } from './triple';
 export { rhsChain, energyChain, chainLength } from './nPendulum';
 export type { ChainParameters } from './nPendulum';
+export {
+  SphericalChain,
+  rhsSphericalChain,
+  sphericalChainEnergy,
+  sphericalChainLz,
+  sphericalChainPositions,
+  sphericalChainVelocities,
+  sphericalChainLength
+} from './sphericalChain';
+export type { SphericalChainParams, SphericalChainDiagnostics } from './sphericalChain';
 export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';

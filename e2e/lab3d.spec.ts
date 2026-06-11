@@ -29,6 +29,48 @@ test('3D lab: rope pendulum goes slack with warnings and tension readout', async
   await expect(page.locator('#r3Readout')).toContainText('rod rendering');
 });
 
+test('3D lab: spherical double pendulum runs in 3D and conserves E and Lz', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+
+  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
+  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
+  await expect(page.locator('#lab3dChainCard')).toBeVisible();
+
+  await page.locator('#d3Reset').click();
+  await expect(page.locator('#d3Readout')).toContainText('E=');
+  await page.locator('#d3Run').click();
+  await page.waitForTimeout(3000);
+  await page.locator('#d3Pause').click();
+
+  const readout = await page.locator('#d3Readout').textContent();
+  expect(readout).toContain('E=');
+  expect(readout).toContain('Lz=');
+  expect(readout).toContain('Conservative');
+  // The default initial condition has both azimuths active: φ angles move.
+  const phi1 = Number.parseFloat(/φ₁=([0-9.e+-]+)/.exec(readout ?? '')?.[1] ?? '0');
+  expect(Math.abs(phi1)).toBeGreaterThan(0.01);
+  // Conservative run: drifts stay tiny (RK4 at dt=1ms over ~3s).
+  const driftMatches = [...(readout ?? '').matchAll(/drift ([0-9.e+-]+)/gi)].map((match) => Number.parseFloat(match[1]!));
+  expect(driftMatches.length).toBeGreaterThanOrEqual(2);
+  for (const drift of driftMatches) expect(drift).toBeLessThan(1e-4);
+
+  // The 3D scene inked (sphere wireframe + two bobs + trails).
+  const inked = await page.locator('#d3Canvas').evaluate((node) => {
+    const canvas = node as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return 0;
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let lit = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      if ((data[i] ?? 0) > 24 || (data[i + 1] ?? 0) > 28 || (data[i + 2] ?? 0) > 44) lit += 1;
+    }
+    return lit;
+  });
+  expect(inked).toBeGreaterThan(500);
+});
+
 test('3D lab: spherical pendulum conserves E and Lz, orbit camera rotates, snapshot exports', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/');

@@ -1,0 +1,63 @@
+{
+  "generated": "2026-06-11T09:13:18.346Z",
+  "tolerance": 1e-8,
+  "allPass": true,
+  "reports": [
+    {
+      "system": "double",
+      "description": "planar double pendulum — hand-derived closed form (rhsDouble) vs SymPy Euler–Lagrange",
+      "samples": 40,
+      "maxAbsDiff": 4.468647674116255e-15,
+      "maxRelDiff": 4.468647674116255e-15,
+      "worstComponent": {
+        "stateIndex": 22,
+        "component": 1,
+        "engine": -0.2002394765254683,
+        "sympy": -0.20023947652546384
+      },
+      "pass": true
+    },
+    {
+      "system": "triple",
+      "description": "planar triple pendulum — hand-expanded 3×3 elimination (rhsTriple) vs SymPy Euler–Lagrange",
+      "samples": 40,
+      "maxAbsDiff": 1.554312234475219e-14,
+      "maxRelDiff": 1.2490009027033011e-14,
+      "worstComponent": {
+        "stateIndex": 27,
+        "component": 2,
+        "engine": -2.6252119534560974,
+        "sympy": -2.625211953456113
+      },
+      "pass": true
+    },
+    {
+      "system": "sphericalDouble",
+      "description": "spherical double pendulum (3D, 4 DOF) — manipulator-form rhsSphericalChain vs SymPy Euler–Lagrange",
+      "samples": 40,
+      "maxAbsDiff": 1.7763568394002505e-14,
+      "maxRelDiff": 5.551115123125783e-15,
+      "worstComponent": {
+        "stateIndex": 27,
+        "component": 3,
+        "engine": -19.49538840967548,
+        "sympy": -19.495388409675463
+      },
+      "pass": true
+    },
+    {
+      "system": "sphericalTriple",
+      "description": "spherical triple pendulum (3D, 6 DOF) — manipulator-form rhsSphericalChain vs SymPy Euler–Lagrange",
+      "samples": 40,
+      "maxAbsDiff": 1.4210854715202004e-14,
+      "maxRelDiff": 9.728329253277934e-15,
+      "worstComponent": {
+        "stateIndex": 38,
+        "component": 5,
+        "engine": 18.69826582759931,
+        "sympy": 18.698265827599297
+      },
+      "pass": true
+    }
+  ]
+}

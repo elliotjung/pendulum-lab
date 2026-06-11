@@ -46,6 +46,7 @@ import {
 import { evaluatePerformanceBudget } from '../render/progressive';
 import { RopePendulum } from '../physics/rope';
 import { SphericalPendulum } from '../physics/spherical';
+import { SphericalChain, type SphericalChainParams } from '../physics/sphericalChain';
 import { bindOrbitControls, drawPolyline3D, drawSphereWireframe, OrbitCamera } from '../viz/orbit3d';
 import { ensembleGrid, runDoublePendulumEnsemble } from '../runtime/gpuEnsemble';
 import {
@@ -4041,6 +4042,11 @@ const lab3d = {
   spherePoincare: [] as { phi: number; theta: number }[],
   lastThetaDotSign: 0,
   camera: new OrbitCamera(),
+  chain: null as SphericalChain | null,
+  chainRunning: false,
+  chainTrail1: [] as { x: number; y: number; z: number }[],
+  chainTrail2: [] as { x: number; y: number; z: number }[],
+  chainCamera: new OrbitCamera(),
   rafId: 0,
   lastFrame: 0
 };
@@ -4079,6 +4085,31 @@ function resetSphereSim(): void {
   renderSphereReadout();
 }
 
+function lab3dChainParams(): SphericalChainParams {
+  return {
+    masses: [1, clampNumber(numberFrom('d3M2', 0.8), 0.8, 0.1, 5)],
+    lengths: [
+      clampNumber(numberFrom('d3L1', 1), 1, 0.2, 3),
+      clampNumber(numberFrom('d3L2', 0.8), 0.8, 0.2, 3)
+    ],
+    g: clampNumber(numberFrom('d3Gravity', 9.81), 9.81, 0.5, 30),
+    damping: clampNumber(numberFrom('d3Damping', 0), 0, 0, 5)
+  };
+}
+
+function resetChainSim(): void {
+  const theta1 = clampNumber(numberFrom('d3Theta1', 1.6), 1.6, -3.05, 3.05);
+  const theta2 = clampNumber(numberFrom('d3Theta2', 2.2), 2.2, -3.05, 3.05);
+  const phiDot1 = clampNumber(numberFrom('d3PhiDot1', 1.2), 1.2, -10, 10);
+  const phiDot2 = clampNumber(numberFrom('d3PhiDot2', -0.8), -0.8, -10, 10);
+  // State layout: [θ₁, φ₁, θ₂, φ₂, θ̇₁, φ̇₁, θ̇₂, φ̇₂].
+  lab3d.chain = new SphericalChain(lab3dChainParams(), [theta1, 0, theta2, 0, 0, phiDot1, 0, phiDot2], 0.001);
+  lab3d.chainTrail1 = [];
+  lab3d.chainTrail2 = [];
+  renderChainSim();
+  renderChainReadout();
+}
+
 function lab3dFrame(timestamp: number): void {
   const dtWall = lab3d.lastFrame > 0 ? Math.min(0.05, (timestamp - lab3d.lastFrame) / 1000) : 0.016;
   lab3d.lastFrame = timestamp;
@@ -4106,7 +4137,19 @@ function lab3dFrame(timestamp: number): void {
     renderSphereSim();
     renderSphereReadout();
   }
-  if (lab3d.ropeRunning || lab3d.sphereRunning) {
+  if (lab3d.chainRunning && lab3d.chain) {
+    lab3d.chain.step(dtWall);
+    const [inner, outer] = lab3d.chain.positions();
+    if (inner && outer) {
+      lab3d.chainTrail1.push(inner);
+      if (lab3d.chainTrail1.length > 500) lab3d.chainTrail1.shift();
+      lab3d.chainTrail2.push(outer);
+      if (lab3d.chainTrail2.length > 1500) lab3d.chainTrail2.shift();
+    }
+    renderChainSim();
+    renderChainReadout();
+  }
+  if (lab3d.ropeRunning || lab3d.sphereRunning || lab3d.chainRunning) {
     lab3d.rafId = window.requestAnimationFrame(lab3dFrame);
   } else {
     lab3d.rafId = 0;
@@ -4115,7 +4158,7 @@ function lab3dFrame(timestamp: number): void {
 }
 
 function lab3dEnsureLoop(): void {
-  if (lab3d.rafId === 0 && (lab3d.ropeRunning || lab3d.sphereRunning)) {
+  if (lab3d.rafId === 0 && (lab3d.ropeRunning || lab3d.sphereRunning || lab3d.chainRunning)) {
     lab3d.lastFrame = 0;
     lab3d.rafId = window.requestAnimationFrame(lab3dFrame);
   }
@@ -4280,6 +4323,61 @@ function renderSphereReadout(): void {
   }
 }
 
+function renderChainSim(): void {
+  const canvas = $('d3Canvas');
+  if (!(canvas instanceof HTMLCanvasElement) || !lab3d.chain) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const reach = (lab3d.chain.params.lengths[0] ?? 1) + (lab3d.chain.params.lengths[1] ?? 1);
+  const scale = (Math.min(canvas.width, canvas.height) * 0.4) / reach;
+  ctx.fillStyle = '#0b1020';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Outer-reach envelope sphere (radius l₁ + l₂).
+  drawSphereWireframe(ctx, lab3d.chainCamera, reach, scale);
+  drawPolyline3D(ctx, lab3d.chainCamera, lab3d.chainTrail1, scale, { r: 244, g: 162, b: 97 });
+  drawPolyline3D(ctx, lab3d.chainCamera, lab3d.chainTrail2, scale, { r: 76, g: 201, b: 240 });
+  const [inner, outer] = lab3d.chain.positions();
+  if (!inner || !outer) return;
+  const pivot = lab3d.chainCamera.project({ x: 0, y: 0, z: 0 }, canvas.width, canvas.height, scale);
+  const bob1 = lab3d.chainCamera.project(inner, canvas.width, canvas.height, scale);
+  const bob2 = lab3d.chainCamera.project(outer, canvas.width, canvas.height, scale);
+  ctx.strokeStyle = '#cdd7ee';
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(pivot.screenX, pivot.screenY);
+  ctx.lineTo(bob1.screenX, bob1.screenY);
+  ctx.lineTo(bob2.screenX, bob2.screenY);
+  ctx.stroke();
+  ctx.fillStyle = '#8fa3c2';
+  ctx.beginPath();
+  ctx.arc(pivot.screenX, pivot.screenY, 4, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = '#f4a261';
+  ctx.beginPath();
+  ctx.arc(bob1.screenX, bob1.screenY, 7, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = '#4cc9f0';
+  ctx.beginPath();
+  ctx.arc(bob2.screenX, bob2.screenY, 8, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.fillStyle = '#8fa3c2';
+  ctx.font = '10px system-ui';
+  ctx.fillText('drag to orbit, wheel to zoom', 8, canvas.height - 8);
+}
+
+function renderChainReadout(): void {
+  if (!lab3d.chain) return;
+  const diag = lab3d.chain.diagnostics();
+  const state = lab3d.chain.current();
+  setText('d3Readout', [
+    `θ₁=${(state[0] ?? 0).toFixed(3)}, φ₁=${(state[1] ?? 0).toFixed(3)}, θ₂=${(state[2] ?? 0).toFixed(3)}, φ₂=${(state[3] ?? 0).toFixed(3)}`,
+    `E=${diag.energy.toFixed(5)} J (drift ${diag.energyDrift.toExponential(2)})`,
+    `Lz=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
+    `method=${diag.method}, dt=${diag.dt}`,
+    diag.caveat
+  ].join(' | '));
+}
+
 /** Export a paper-ready 3D diagnostic snapshot: PNG of the scene + JSON diagnostics. */
 function exportSphereSnapshot(): void {
   const canvas = $('s3Canvas');
@@ -4403,12 +4501,51 @@ function installLab3dTab(): void {
     html('div', { id: 's3Readout', className: 'research-summary', text: 'Reset to initialise. The spherical pendulum integrates θ̈ = sinθcosθ·φ̇² − (g/l)sinθ and conserves E and Lz when undamped — real 3D dynamics, not a camera trick.' })
   );
 
-  append(wrap, ropeCard, sphereCard);
+  const chainCard = researchCard('Spherical Double Pendulum (3D Chaos, 4 DOF)', 'lab3dChainCard');
+  chainCard.classList.add('research-wide');
+  const chainCanvas = html('canvas', { id: 'd3Canvas' }) as HTMLCanvasElement;
+  chainCanvas.width = 460;
+  chainCanvas.height = 360;
+  chainCanvas.style.width = '100%';
+  chainCanvas.style.maxWidth = '480px';
+  chainCanvas.style.touchAction = 'none';
+  bindOrbitControls(chainCanvas, lab3d.chainCamera, () => renderChainSim());
+  append(
+    chainCard,
+    researchFormRow('θ₁₀ (rad)', researchInput('d3Theta1', 'number', '1.6', 'inner polar angle')),
+    researchFormRow('φ̇₁₀', researchInput('d3PhiDot1', 'number', '1.2', 'rad/s (inner azimuthal)')),
+    researchFormRow('θ₂₀ (rad)', researchInput('d3Theta2', 'number', '2.2', 'outer polar angle')),
+    researchFormRow('φ̇₂₀', researchInput('d3PhiDot2', 'number', '-0.8', 'rad/s (outer azimuthal)')),
+    researchFormRow('m₂ (m₁=1)', researchInput('d3M2', 'number', '0.8', 'kg')),
+    researchFormRow('l₁', researchInput('d3L1', 'number', '1', 'm')),
+    researchFormRow('l₂', researchInput('d3L2', 'number', '0.8', 'm')),
+    researchFormRow('Gravity', researchInput('d3Gravity', 'number', '9.81', 'm/s²')),
+    researchFormRow('Damping', researchInput('d3Damping', 'number', '0', '1/s')),
+    researchActions(
+      button('d3Run', 'Run', () => {
+        if (!lab3d.chain) resetChainSim();
+        lab3d.chainRunning = true;
+        lab3dEnsureLoop();
+      }, 'primary'),
+      button('d3Pause', 'Pause', () => {
+        lab3d.chainRunning = false;
+      }),
+      button('d3Reset', 'Reset', () => {
+        lab3d.chainRunning = false;
+        resetChainSim();
+      })
+    ),
+    chainCanvas,
+    html('div', { id: 'd3Readout', className: 'research-summary', text: 'Reset to initialise. Full 3D double pendulum (ball joints, 4 DOF): equations derived in manipulator form and cross-checked against an independent SymPy derivation; E and Lz are conserved when undamped.' })
+  );
+
+  append(wrap, ropeCard, sphereCard, chainCard);
   left.append(wrap);
   append(layout, left);
   panel.append(layout);
   resetRopeSim();
   resetSphereSim();
+  resetChainSim();
 }
 
 function installCanonicalTab(): void {

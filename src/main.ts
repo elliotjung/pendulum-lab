@@ -54,7 +54,7 @@ function installRuntimeApi(): void {
   installDefaultCommands();
   stateStore.syncFromLegacy();
   window.PendulumLabIndex = Object.freeze({
-    version: '10.28.0',
+    version: '10.30.0',
     commands: commandRegistry,
     events: eventBus,
     state: stateStore,

@@ -36,6 +36,15 @@ export {
   conicalRate
 } from './physics/spherical';
 export type { SphericalParams, SphericalState, SphericalDiagnostics } from './physics/spherical';
+export {
+  SphericalChain,
+  rhsSphericalChain,
+  sphericalChainEnergy,
+  sphericalChainLz,
+  sphericalChainPositions,
+  sphericalChainVelocities
+} from './physics/sphericalChain';
+export type { SphericalChainParams, SphericalChainDiagnostics } from './physics/sphericalChain';
 
 // Chaos diagnostics (re-exports the curated chaos index).
 export * from './chaos';

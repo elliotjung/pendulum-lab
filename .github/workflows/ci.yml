@@ -67,8 +67,11 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
-      - run: pip install numpy scipy
+      - run: pip install numpy scipy sympy
       # Independent external reference: SciPy DOP853 vs the TS engine.
       - run: npm run validate:cross
+      # Symbolic second reference: SymPy-derived Euler-Lagrange equations
+      # compared component-wise at random states (no integrator floor).
+      - run: npm run validate:sympy
       # Published / closed-form literature anchors vs engine-computed values.
       - run: npm run validate:literature
