@@ -11,6 +11,8 @@
  * wiring (a select in the rail footer + a body class + persistence).
  */
 
+import { installAdoptedStyle } from '../ui/adoptedStyles';
+
 export type AudienceMode = 'beginner' | 'student' | 'research';
 
 export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: string }> = {
@@ -100,12 +102,7 @@ export function installAudienceMode(): void {
   if (typeof document === 'undefined' || document.getElementById('audienceMode')) return;
   const rail = document.querySelector('.rail');
   if (!rail) return;
-  if (!document.getElementById(STYLE_ID)) {
-    const style = document.createElement('style');
-    style.id = STYLE_ID;
-    style.textContent = modeCss();
-    document.head.append(style);
-  }
+  installAdoptedStyle(STYLE_ID, modeCss());
   const wrap = document.createElement('div');
   wrap.className = 'audience-select';
   const label = document.createElement('label');

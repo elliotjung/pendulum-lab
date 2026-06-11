@@ -16,7 +16,9 @@ test('side-panel toggle collapses, persists, and restores', async ({ page }) => 
   await page.locator('#panelToggle').click();
   await expect(labControls).toBeHidden();
 
-  // …and on other tabs too (the class lives on <body>).
+  // …and on other tabs too (the class lives on <body>). The compare tab lives
+  // in the Simulate submenu, so open that section first (menus auto-close).
+  await page.locator('.rail-menu-button[data-rail-section-button="sim"]').click();
   await page.locator('.tab[data-tab="compare"]').first().click();
   await expect(page.locator('#tab-compare .controls')).toBeHidden();
 

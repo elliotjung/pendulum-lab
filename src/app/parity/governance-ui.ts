@@ -714,7 +714,8 @@ export function applyPerformanceMode(): void {
 
 export function recoverSimulation(): void {
   state.recoveries += 1;
-  $('nanOverlay')?.setAttribute('style', 'display:none');
+  const nanOverlay = $('nanOverlay');
+  if (nanOverlay) nanOverlay.style.display = 'none'; // CSSOM write (setAttribute('style') is CSP-blocked)
   $('resetBtn')?.click();
   $('riErrorPanel')?.classList.remove('show');
   toast('Simulation recovered');

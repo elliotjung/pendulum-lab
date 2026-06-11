@@ -61,20 +61,23 @@ test('ZIP research bundle downloads with expected layout, binary PNGs, and valid
     expect(Array.from(png.data.slice(0, 8))).toEqual([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
   }
 
-  // checksums.json covers every other member with matching crc32 + content hash.
+  // checksums.json covers every other member with matching crc32, content hash,
+  // and a cryptographic SHA-256 (verified independently with Node's crypto).
   const checksums = JSON.parse(bytesToText(entries.find((entry) => entry.path === 'manifest/checksums.json')!.data)) as {
     schemaVersion: string;
-    files: { path: string; bytes: number; crc32: string; hash: string }[];
+    files: { path: string; bytes: number; crc32: string; hash: string; sha256: string }[];
   };
-  expect(checksums.schemaVersion).toBe('pendulum-bundle-checksums/v1');
+  expect(checksums.schemaVersion).toBe('pendulum-bundle-checksums/v2');
   const others = entries.filter((entry) => entry.path !== 'manifest/checksums.json');
   expect(checksums.files).toHaveLength(others.length);
+  const { createHash } = await import('node:crypto');
   for (const entry of others) {
     const row = checksums.files.find((file) => file.path === entry.path);
     expect(row, `checksum row for ${entry.path}`).toBeTruthy();
     expect(row!.bytes).toBe(entry.data.length);
     expect(row!.crc32).toBe(crc32(entry.data).toString(16).padStart(8, '0'));
     expect(row!.hash).toBe(hashBytes(entry.data));
+    expect(row!.sha256).toBe(createHash('sha256').update(entry.data).digest('hex'));
   }
 
   // Notebook inside the ZIP is valid nbformat-4 JSON.

@@ -6,7 +6,7 @@ import type { RuntimeSnapshot } from '../../types/domain';
 import { createSubmissionManifest, downloadBytes, downloadJson } from '../../export/manifest';
 import { integratorRegistry } from '../../physics/integrators';
 import { csvCell, dataUrlByteEstimate, hashText } from '../../research/researchExportUtils';
-import { buildZip, checksumEntries, dataUrlToBytes, textToBytes, type ZipEntryInput } from '../../research/zipBundle';
+import { buildZip, checksumEntriesSha256, dataUrlToBytes, textToBytes, type ZipEntryInput } from '../../research/zipBundle';
 import { collectEnvironment, ProvenanceBuilder, type ProvenanceGraph } from '../../research/provenance';
 import { buildNotebookV2 } from '../../research/notebookBuilder';
 import {
@@ -738,7 +738,7 @@ export const RESEARCH_BUNDLE_ZIP_SCHEMA = 'pendulum-research-bundle-zip/v1';
  * binary PNG entries. The returned list drives both the ZIP writer and the
  * checksum manifest, so the two can never disagree.
  */
-export function buildResearchBundleZipEntries(): { entries: ZipEntryInput[]; figureCount: number } {
+export async function buildResearchBundleZipEntries(): Promise<{ entries: ZipEntryInput[]; figureCount: number }> {
   const snapshot = currentSnapshot();
   const figures = collectPaperFigures();
   const figureManifest = buildPaperFigureManifest(figures, snapshot);
@@ -771,10 +771,11 @@ export function buildResearchBundleZipEntries(): { entries: ZipEntryInput[]; fig
   entries.push({
     path: 'manifest/checksums.json',
     data: textToBytes(JSON.stringify({
-      schemaVersion: 'pendulum-bundle-checksums/v1',
+      schemaVersion: 'pendulum-bundle-checksums/v2',
       generatedAt: new Date().toISOString(),
-      algorithm: 'crc32 + fnv1a64',
-      files: checksumEntries(entries)
+      algorithm: 'sha256 + crc32 + fnv1a64',
+      verify: 'extract the archive, then check each file: `sha256sum <path>` must equal the sha256 field below',
+      files: await checksumEntriesSha256(entries)
     }, null, 2))
   });
   return { entries, figureCount: figures.length };
@@ -810,17 +811,19 @@ export function archiveBundleToDb(zip: Uint8Array, fileCount: number, figureCoun
 
 /** Export the research bundle as a real .zip archive (binary PNGs, per-file hashes). */
 export function exportResearchBundleZip(): void {
-  try {
-    const { entries, figureCount } = buildResearchBundleZipEntries();
-    const zip = buildZip(entries);
-    downloadBytes('pendulum_research_bundle.zip', zip, 'application/zip');
-    archiveBundleToDb(zip, entries.length, figureCount);
-    logResearchRun('export', 'Research ZIP bundle export', `${entries.length} files (${figureCount} binary figures), ${(zip.length / 1024).toFixed(1)} KiB, per-file checksums.`, 'pendulum_research_bundle.zip');
-    renderResearchWorkbench();
-    toast(`ZIP bundle exported (${entries.length} files)`);
-  } catch (error) {
-    state.lastFault = `ZIP bundle export failed: ${error instanceof Error ? error.message : String(error)}`;
-    toast('ZIP export failed — JSON bundle fallback still available');
-  }
+  void (async () => {
+    try {
+      const { entries, figureCount } = await buildResearchBundleZipEntries();
+      const zip = buildZip(entries);
+      downloadBytes('pendulum_research_bundle.zip', zip, 'application/zip');
+      archiveBundleToDb(zip, entries.length, figureCount);
+      logResearchRun('export', 'Research ZIP bundle export', `${entries.length} files (${figureCount} binary figures), ${(zip.length / 1024).toFixed(1)} KiB, SHA-256 per-file checksums.`, 'pendulum_research_bundle.zip');
+      renderResearchWorkbench();
+      toast(`ZIP bundle exported (${entries.length} files, SHA-256 manifest)`);
+    } catch (error) {
+      state.lastFault = `ZIP bundle export failed: ${error instanceof Error ? error.message : String(error)}`;
+      toast('ZIP export failed — JSON bundle fallback still available');
+    }
+  })();
 }
 

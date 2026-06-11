@@ -261,3 +261,35 @@ export function checksumEntries(entries: ZipEntryInput[]): BundleChecksum[] {
     hash: hashBytes(entry.data)
   }));
 }
+
+export interface BundleChecksumSha256 extends BundleChecksum {
+  /** Cryptographic SHA-256 of the file content (hex). */
+  sha256: string;
+}
+
+/** SHA-256 (hex) via WebCrypto — available in browsers and Node ≥ 16.7. */
+export async function sha256Hex(bytes: Uint8Array): Promise<string> {
+  const cryptoApi = globalThis.crypto;
+  if (!cryptoApi?.subtle) throw new Error('WebCrypto subtle API unavailable: cannot compute SHA-256');
+  const buffer = bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength
+    ? bytes.buffer
+    : bytes.slice().buffer;
+  const digest = await cryptoApi.subtle.digest('SHA-256', buffer as ArrayBuffer);
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Per-file checksum rows including cryptographic SHA-256, for integrity
+ * verification of exported archives (`sha256sum -c` compatible values).
+ */
+export async function checksumEntriesSha256(entries: ZipEntryInput[]): Promise<BundleChecksumSha256[]> {
+  return Promise.all(
+    entries.map(async (entry) => ({
+      path: entry.path,
+      bytes: entry.data.length,
+      crc32: crc32(entry.data).toString(16).padStart(8, '0'),
+      hash: hashBytes(entry.data),
+      sha256: await sha256Hex(entry.data)
+    }))
+  );
+}

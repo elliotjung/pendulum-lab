@@ -14,6 +14,8 @@
  *                            slack-phase hybrid events, low taut fraction…).
  */
 
+import { hasAdoptedStyle, installAdoptedStyle } from '../ui/adoptedStyles';
+
 export type ResultBadgeLevel = 'visual-only' | 'finite-time-estimate' | 'validated' | 'publication-ready' | 'caveat';
 
 export interface ResultBadge {
@@ -86,11 +88,8 @@ const BADGE_CSS = `
 `;
 
 function ensureBadgeStyle(): void {
-  if (typeof document === 'undefined' || document.getElementById(BADGE_STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = BADGE_STYLE_ID;
-  style.textContent = BADGE_CSS;
-  document.head.append(style);
+  if (typeof document === 'undefined' || hasAdoptedStyle(BADGE_STYLE_ID)) return;
+  installAdoptedStyle(BADGE_STYLE_ID, BADGE_CSS);
 }
 
 /** Build a badge element (tooltip carries the description + optional note). */

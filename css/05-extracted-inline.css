@@ -1,0 +1,24 @@
+/* Generated from former inline style="" attributes in app.html so the CSP
+   can drop 'unsafe-inline' for styles. Regenerate with
+   scripts/extract-inline-styles.py if markup styles change. */
+
+.xs-1{width:84px}
+.xs-2{margin-bottom:7px}
+.xs-3{margin-bottom:0}
+.xs-4{flex:0 0 52px;font-size:10.5px;color:var(--muted)}
+.xs-5{flex:1}
+.xs-6{font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:8px}
+.xs-7{margin-bottom:8px}
+.xs-8{display:none}
+.xs-9{margin-top:10px}
+.xs-10{font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px}
+.xs-11{font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px}
+.xs-12{aspect-ratio:1/1}
+.xs-13{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;border:1px solid var(--glass-stroke)}
+.xs-14{height:100%;width:0;background:var(--cyan);transition:width .15s}
+.xs-15{aspect-ratio:880/500}
+.xs-16{height:100%;width:0;background:var(--orange);transition:width .15s}
+.xs-17{aspect-ratio:800/600}
+.xs-18{margin-top:10px;align-items:center}
+.xs-19{margin-top:14px;font-family:var(--font-mono);font-size:12px}
+.xs-20{margin-top:18px}

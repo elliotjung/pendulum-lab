@@ -5,8 +5,9 @@
 <title>Pendulum Lab V10 — Nonlinear Dynamics Research Platform</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
 <!-- frame-ancestors is intentionally omitted: it is ignored in a <meta> CSP and must be sent as an HTTP header (see vite.config.ts server headers / your deploy config). -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'">
 <link rel="stylesheet" href="./css/00-base.css">
+<link rel="stylesheet" href="./css/05-extracted-inline.css">
 </head>
 <body>
 
@@ -148,7 +149,7 @@
           <div class="scrub-row">
             <button id="rewindBtn" class="pbtn">⏮</button>
             <input type="range" id="scrubber" min="0" max="0" value="0" step="1">
-            <span class="val" id="scrubVal" style="width:84px">live</span>
+            <span class="val xs-1" id="scrubVal">live</span>
           </div>
           <div class="plots-row">
             <div class="plot-cell"><canvas id="energy" width="220" height="120"></canvas><div class="canvas-label">ΔE / E₀</div></div>
@@ -167,14 +168,14 @@
           
           <div class="ctrl-sticky">
             <div class="ctrl-sticky-title">Simulation</div>
-            <div class="btnrow" style="margin-bottom:7px">
+            <div class="btnrow xs-2">
               <button class="primary" id="resetBtn">↺ Reset</button>
               <button id="pauseBtn">⏸ Pause</button>
               <button id="clearTrailBtn">Clear Trail</button>
               <button id="clearPoincBtn">Clear Poincaré</button>
             </div>
-            <div class="row" style="margin-bottom:0">
-              <label style="flex:0 0 52px;font-size:10.5px;color:var(--muted)">Speed</label>
+            <div class="row xs-3">
+              <label class="xs-4">Speed</label>
               <input id="speed" type="range" min="0.1" max="4" step="0.1" value="1.0">
               <span class="val" id="speedV">1.0×</span>
             </div>
@@ -198,7 +199,7 @@
               </div>
               <div class="row">
                 <label>Seed</label>
-                <input id="seed" type="number" value="1" style="flex:1">
+                <input class="xs-5" id="seed" type="number" value="1">
               </div>
               <div class="acc-sub">Initial Angles</div>
               <div class="row">
@@ -352,7 +353,7 @@
               <span class="acc-arrow">›</span>
             </summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:8px">
+              <p class="xs-6">
                 Ensemble members are perturbed copies of the main trajectory. 
                 They reveal chaos: nearby trajectories diverge exponentially.
               </p>
@@ -387,18 +388,18 @@
             </summary>
             <div class="acc-body">
               <div class="acc-sub">Data Export</div>
-              <div class="btnrow" style="margin-bottom:8px">
+              <div class="btnrow xs-7">
                 <button id="dlTrajBtn">⬇ CSV</button>
                 <button id="dlPoincBtn">⬇ Poincaré</button>
                 <button id="dlPNGBtn">⬇ PNG</button>
                 <button id="dlJsonBtn">⬇ JSON</button>
               </div>
-              <div class="btnrow" style="margin-bottom:8px">
+              <div class="btnrow xs-7">
                 <button id="dlReportBtn">⬇ Report</button>
                 <button id="loadJsonBtn">⬆ Load</button>
                 <button id="recBtn" class="danger">● Rec</button>
               </div>
-              <input type="file" id="jsonFile" accept=".json" style="display:none">
+              <input class="xs-8" type="file" id="jsonFile" accept=".json">
             </div>
           </details>
 
@@ -460,7 +461,7 @@
             <div class="plot-cell"><canvas id="cmpEnergy" width="430" height="180"></canvas><div class="canvas-label">|ΔE / E₀| log₁₀</div></div>
             <div class="plot-cell"><canvas id="cmpDiverge" width="430" height="180"></canvas><div class="canvas-label">‖Δx‖ vs RK4 (log)</div></div>
           </div>
-          <div class="plot-cell" style="margin-top:10px"><canvas id="cmpBench" width="880" height="120"></canvas><div class="canvas-label">Benchmark — steps / ms</div></div>
+          <div class="plot-cell xs-9"><canvas id="cmpBench" width="880" height="120"></canvas><div class="canvas-label">Benchmark — steps / ms</div></div>
         </div>
         <aside class="controls">
           <div class="ctrl-sticky">
@@ -497,11 +498,11 @@
         <div class="left-col">
           <div class="main-wrap"><canvas id="lyapSpecCanvas" width="880" height="440"></canvas></div>
           <div class="canvas-label">Full Lyapunov spectrum — QR-orthonormalization (Benettin's algorithm)</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="lyapStart" class="primary">▶ Start</button>
             <button id="lyapStop">■ Stop</button>
             <button id="lyapExport">⬇ CSV</button>
-            <span id="lyapStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="lyapStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -511,7 +512,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">λ</span><span class="acc-label">Computation Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 Computes {λ₁,…,λₙ} via QR-decomposition of perturbed orthonormal basis evolved 
                 alongside the trajectory. For conservative systems, Σλᵢ ≈ 0.
               </p>
@@ -544,16 +545,16 @@
     <div class="tabpanel" id="tab-sweep" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="sweepCanvas" width="600" height="600"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="sweepCanvas" width="600" height="600"></canvas></div>
           <div class="canvas-label">λ(θ₁, θ₂) chaos map · click to set initial conditions</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="sweepStart" class="primary">▶ Start</button>
             <button id="sweepStop">■ Cancel</button>
             <button id="sweepExportPNG">⬇ PNG</button>
             <button id="sweepExportCSV">⬇ CSV</button>
-            <span id="sweepStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="sweepStatus"></span>
           </div>
-          <div style="margin-top:10px"><div style="height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;border:1px solid var(--glass-stroke)"><div id="sweepProgress" style="height:100%;width:0;background:var(--cyan);transition:width .15s"></div></div></div>
+          <div class="xs-9"><div class="xs-13"><div class="xs-14" id="sweepProgress"></div></div></div>
         </div>
         <aside class="controls">
           <div class="ctrl-sticky">
@@ -562,7 +563,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">▦</span><span class="acc-label">Sweep Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 Maps λ₁(θ₁, θ₂) across initial condition space. 
                 Poincaré sections reveal hidden periodic structure.
               </p>
@@ -578,15 +579,15 @@
     <div class="tabpanel" id="tab-bifurc" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:880/500"><canvas id="bifCanvas" width="880" height="500"></canvas></div>
+          <div class="main-wrap xs-15"><canvas id="bifCanvas" width="880" height="500"></canvas></div>
           <div class="canvas-label">Bifurcation diagram — θ₂ at Poincaré section vs g</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="bifStart" class="primary">▶ Start</button>
             <button id="bifStop">■ Cancel</button>
             <button id="bifExport">⬇ PNG</button>
-            <span id="bifStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="bifStatus"></span>
           </div>
-          <div style="margin-top:10px"><div style="height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;border:1px solid var(--glass-stroke)"><div id="bifProgress" style="height:100%;width:0;background:var(--orange);transition:width .15s"></div></div></div>
+          <div class="xs-9"><div class="xs-13"><div class="xs-16" id="bifProgress"></div></div></div>
         </div>
         <aside class="controls">
           <div class="ctrl-sticky">
@@ -609,9 +610,9 @@
     <div class="tabpanel" id="tab-phase3d" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:800/600"><canvas id="p3dCanvas" width="800" height="600"></canvas></div>
+          <div class="main-wrap xs-17"><canvas id="p3dCanvas" width="800" height="600"></canvas></div>
           <div class="canvas-label">3D phase space (θ₁, θ₂, ω₂) — drag to rotate · scroll to zoom</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="p3dClear">Clear</button>
             <button id="p3dResetCam">Reset Camera</button>
           </div>
@@ -636,11 +637,11 @@
     <div class="tabpanel" id="tab-density" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="gpuCanvas" width="700" height="700"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="gpuCanvas" width="700" height="700"></canvas></div>
           <div class="canvas-label">Phase density (θ₁ vs ω₁) — GPU additive blending</div>
-          <div class="btnrow" style="margin-top:10px;align-items:center">
+          <div class="btnrow xs-18">
             <button id="gpuClear">Clear</button>
-            <span id="gpuStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px">initializing…</span>
+            <span class="xs-10" id="gpuStatus">initializing…</span>
           </div>
         </div>
         <aside class="controls">
@@ -664,8 +665,8 @@
           <div>
             <h2>Validation Suite</h2>
             <p>Automated tests verifying determinism, energy conservation, integrator convergence, replay reproducibility, and long-run NaN resilience.</p>
-            <div id="validateResults" style="margin-top:14px;font-family:var(--font-mono);font-size:12px"></div>
-            <div class="btnrow" style="margin-top:18px">
+            <div class="xs-19" id="validateResults"></div>
+            <div class="btnrow xs-20">
               <button id="runValidation" class="primary">▶ Run All Tests</button>
               <button id="runDeterminism">Determinism</button>
               <button id="runConvergence">Convergence</button>
@@ -696,13 +697,13 @@
     <div class="tabpanel" id="tab-zeroone" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="zeroOneCanvas" width="600" height="600"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="zeroOneCanvas" width="600" height="600"></canvas></div>
           <div class="canvas-label">0–1 test translation variables (p_c, q_c) — bounded ⇒ regular · Brownian ⇒ chaos</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="zeroOneStart" class="primary">▶ Start</button>
             <button id="zeroOneStop">■ Stop</button>
             <button id="zeroOneExport">⬇ CSV</button>
-            <span id="zeroOneStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="zeroOneStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -712,7 +713,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">◐</span><span class="acc-label">Test Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 Gottwald–Melbourne test on the bounded observable cos(θ₁). Independent of the
                 Lyapunov/variational machinery, so K ≈ 1 (chaotic) / K ≈ 0 (regular) is a genuine
                 cross-validation, not the same computation reported twice.
@@ -737,13 +738,13 @@
     <div class="tabpanel" id="tab-clv" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:880/500"><canvas id="clvCanvas" width="880" height="500"></canvas></div>
+          <div class="main-wrap xs-15"><canvas id="clvCanvas" width="880" height="500"></canvas></div>
           <div class="canvas-label">CLV exponents (top) and hyperbolicity-angle distribution (bottom) — Ginelli algorithm</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="clvStart" class="primary">▶ Start</button>
             <button id="clvStop">■ Stop</button>
             <button id="clvExport">⬇ CSV</button>
-            <span id="clvStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="clvStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -753,7 +754,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">⇌</span><span class="acc-label">About</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 The true (non-orthogonal) Oseledets stable/unstable directions — not the orthogonal
                 Gram–Schmidt frame. The hyperbolicity angle is the minimum angle between an expanding
                 and a contracting CLV; angles approaching 0 signal homoclinic tangencies.
@@ -778,13 +779,13 @@
     <div class="tabpanel" id="tab-basin" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="basinCanvas" width="600" height="600"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="basinCanvas" width="600" height="600"></canvas></div>
           <div class="canvas-label">Double-pendulum flip basin — colour = which rod flips first (fractal boundary)</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="basinStart" class="primary">▶ Start</button>
             <button id="basinStop">■ Stop</button>
             <button id="basinExport">⬇ PNG</button>
-            <span id="basinStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="basinStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -794,7 +795,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">❋</span><span class="acc-label">Basin Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 Each initial (θ₁, θ₂), released from rest, is coloured by which rod flips over the top
                 first. The Daza basin entropy (Sb, Sbb) and the Minkowski–Bouligand box-counting
                 dimension quantify the boundary — a measured fractal, not "it looks fractal".
@@ -822,13 +823,13 @@
     <div class="tabpanel" id="tab-rqa" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="rqaCanvas" width="600" height="600"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="rqaCanvas" width="600" height="600"></canvas></div>
           <div class="canvas-label">Recurrence plot of cos(θ₁) — long diagonals ⇒ regular · speckled texture ⇒ chaos</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="rqaStart" class="primary">▶ Start</button>
             <button id="rqaStop">■ Stop</button>
             <button id="rqaExport">⬇ CSV</button>
-            <span id="rqaStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="rqaStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -838,7 +839,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">▨</span><span class="acc-label">Embedding</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 Time-delay embeds cos(θ₁) and quantifies the recurrence plot (Marwan et al.).
                 Non-variational, so DET (structure vs noise) and DIV = 1/Lmax (a finite-size
                 λ proxy) cross-check the Lyapunov verdict. ε is fixed at a 10% recurrence rate.
@@ -868,13 +869,13 @@
     <div class="tabpanel" id="tab-ftle" role="tabpanel">
       <div class="layout">
         <div class="left-col">
-          <div class="main-wrap" style="aspect-ratio:1/1"><canvas id="ftleCanvas" width="600" height="600"></canvas></div>
+          <div class="main-wrap xs-12"><canvas id="ftleCanvas" width="600" height="600"></canvas></div>
           <div class="canvas-label">Finite-time Lyapunov exponent σ_T(θ₁, θ₂) — bright ridges are Lagrangian Coherent Structures</div>
-          <div class="btnrow" style="margin-top:10px">
+          <div class="btnrow xs-9">
             <button id="ftleStart" class="primary">▶ Start</button>
             <button id="ftleStop">■ Stop</button>
             <button id="ftleExport">⬇ PNG</button>
-            <span id="ftleStatus" style="font-size:10.5px;color:var(--muted);align-self:center;margin-left:6px"></span>
+            <span class="xs-10" id="ftleStatus"></span>
           </div>
         </div>
         <aside class="controls">
@@ -884,7 +885,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">⩜</span><span class="acc-label">Field Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <p style="font-size:10.5px;color:var(--muted);line-height:1.55;margin-bottom:9px">
+              <p class="xs-11">
                 σ_T = (1/T) ln σ_max(∂x(T)/∂x(0)) — the largest finite-time stretching rate of the
                 flow map, from the singular value of the variational state-transition matrix. Ridges
                 are Lagrangian Coherent Structures (transport barriers). Distinct from the Sweep,

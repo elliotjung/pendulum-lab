@@ -7,6 +7,7 @@ import { stateStore } from '../../state/StateStore';
 import { type ValidationCaseResult } from '../../validation/validationSuite';
 import { integratorRegistry } from '../../physics/integrators';
 import { type ParameterStudyStrategy } from '../../research/researchSampling';
+import { installAdoptedStyle } from '../../ui/adoptedStyles';
 
 
 export type Tone = 'good' | 'warn' | 'bad' | 'info' | '';
@@ -439,10 +440,9 @@ export function downloadText(filename: string, text: string, type = 'text/plain;
 }
 
 export function installStyle(id: string, css: string): void {
-  if ($(id)) return;
-  const style = html('style', { id });
-  style.textContent = css;
-  document.head.append(style);
+  // Adopted stylesheets are exempt from `style-src` (no 'unsafe-inline' in
+  // the CSP), unlike runtime-injected <style> elements.
+  installAdoptedStyle(id, css);
 }
 
 export function installStyles(): void {
