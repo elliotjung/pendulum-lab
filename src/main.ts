@@ -56,7 +56,7 @@ function installRuntimeApi(): void {
   installDefaultCommands();
   stateStore.syncFromLegacy();
   const api = Object.freeze({
-    version: '10.31.0',
+    version: '10.32.0',
     commands: commandRegistry,
     events: eventBus,
     state: stateStore,

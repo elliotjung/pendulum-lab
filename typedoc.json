@@ -6,7 +6,7 @@
   "includeVersion": false,
   "excludePrivate": true,
   "excludeInternal": true,
-  "readme": "none",
+  "readme": "docs/api-overview.md",
   "skipErrorChecking": true,
   "logLevel": "Warn"
 }

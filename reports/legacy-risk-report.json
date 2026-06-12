@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T12:53:41.869Z",
+  "generatedAt": "2026-06-12T04:25:50.317Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -21,6 +21,14 @@
   "baselineScore": 482,
   "delta": -482,
   "files": {
+    "src\\app\\audienceMode.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\app\\AudioSonifier.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -70,6 +78,14 @@
       "globalRuntimeExports": 0
     },
     "src\\app\\DensityTab.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\DomBinder.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -181,6 +197,86 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\app\\parity\\figure-export.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\governance-ui.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\lab3d-chain-config.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\lab3d-timing.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\lab3d-utils.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\lab3d.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\research-workbench.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\runtime-diagnostics.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\shared.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\parity\\storage-sync.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\app\\phase3d.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -206,6 +302,14 @@
       "globalRuntimeExports": 0
     },
     "src\\app\\railNavigation.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\resultBadges.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -246,6 +350,14 @@
       "globalRuntimeExports": 0
     },
     "src\\app\\systemControls.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\app\\TabController.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -485,6 +597,38 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\lib\\analysis.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\lib\\core.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\lib\\experimental.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\lib\\research.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\lib.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -509,7 +653,23 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\physics\\autodiff.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\physics\\canonical.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\physics\\constants.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -549,6 +709,14 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\physics\\eventLocator.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\physics\\events.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -566,6 +734,14 @@
       "globalRuntimeExports": 0
     },
     "src\\physics\\integrators.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\physics\\jacobians.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -789,6 +965,14 @@
       "dynamicScript": 0,
       "globalRuntimeExports": 0
     },
+    "src\\runtime\\globalApi.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
     "src\\runtime\\gpuEnsemble.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -854,6 +1038,14 @@
       "globalRuntimeExports": 0
     },
     "src\\ui\\accessibility.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0
+    },
+    "src\\ui\\adoptedStyles.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

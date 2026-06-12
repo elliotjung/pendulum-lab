@@ -37,7 +37,8 @@ UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 
 Full equations and derivations: [`docs/derivations.md`](docs/derivations.md) ·
 limitations: [`docs/known-limitations.md`](docs/known-limitations.md) ·
-step-by-step paper reproduction:
+API stability / SemVer policy: [`docs/api-overview.md`](docs/api-overview.md).
+Step-by-step paper reproduction:
 [`docs/tutorial-reproduce-paper.md`](docs/tutorial-reproduce-paper.md).
 
 ## What's inside (short version)
@@ -79,7 +80,7 @@ step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` | Vitest unit suite (497 tests across 72 files; synced from `reports/vitest-results.json`) |
+| `npm test` | Vitest unit suite (551 tests across 79 files; synced from `reports/vitest-results.json`) |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

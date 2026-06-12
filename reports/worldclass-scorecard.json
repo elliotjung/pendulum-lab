@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-06-11T23:24:41.882Z",
+  "generatedAt": "2026-06-12T04:25:50.859Z",
   "totals": {
     "done": 4,
     "partial": 4,
     "gap": 0
   },
   "legacyRisk": {
-    "generatedAt": "2026-06-11T12:53:41.869Z",
+    "generatedAt": "2026-06-12T04:25:50.317Z",
     "pass": true,
     "counts": {
       "innerHTML": 0,
@@ -28,6 +28,14 @@
     "baselineScore": 482,
     "delta": -482,
     "files": {
+      "src\\app\\audienceMode.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\app\\AudioSonifier.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -77,6 +85,14 @@
         "globalRuntimeExports": 0
       },
       "src\\app\\DensityTab.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\DomBinder.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -188,6 +204,86 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\app\\parity\\figure-export.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\governance-ui.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\lab3d-chain-config.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\lab3d-timing.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\lab3d-utils.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\lab3d.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\research-workbench.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\runtime-diagnostics.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\shared.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\parity\\storage-sync.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\app\\phase3d.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -213,6 +309,14 @@
         "globalRuntimeExports": 0
       },
       "src\\app\\railNavigation.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\resultBadges.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -253,6 +357,14 @@
         "globalRuntimeExports": 0
       },
       "src\\app\\systemControls.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\app\\TabController.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -492,6 +604,38 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\lib\\analysis.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\lib\\core.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\lib\\experimental.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\lib\\research.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\lib.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -516,7 +660,23 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\physics\\autodiff.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\physics\\canonical.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\physics\\constants.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -556,6 +716,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\physics\\eventLocator.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\physics\\events.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -573,6 +741,14 @@
         "globalRuntimeExports": 0
       },
       "src\\physics\\integrators.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\physics\\jacobians.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -796,6 +972,14 @@
         "dynamicScript": 0,
         "globalRuntimeExports": 0
       },
+      "src\\runtime\\globalApi.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
       "src\\runtime\\gpuEnsemble.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -861,6 +1045,14 @@
         "globalRuntimeExports": 0
       },
       "src\\ui\\accessibility.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0
+      },
+      "src\\ui\\adoptedStyles.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -1055,12 +1247,20 @@
     "numerics": true,
     "limitations": true,
     "ci": true,
+    "mainWorkflow": true,
+    "nightlyWorkflow": true,
+    "releaseWorkflow": true,
     "pagesWorkflow": true,
     "distIndex": true,
     "license": true,
     "citation": true,
     "typedocIndex": true,
-    "index": true
+    "index": true,
+    "coverageScopeBaseline": true,
+    "bundleBudget": true,
+    "longRunE2e": true,
+    "accessibilityE2e": true,
+    "railAutocloseE2e": true
   },
   "items": [
     {
@@ -1112,12 +1312,15 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
-        "497/497 unit tests across 72 files",
+        "551/551 unit tests across 79 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
-        "Playwright config includes Chromium, Firefox, WebKit, and mobile Chrome"
+        "PR, mainline, nightly mutation, and release workflows are split by cost and intent",
+        "coverage scope guard catches new source files missing from the v8 coverage map",
+        "long-run performance/soak e2e spec exists and runs in mainline full validation",
+        "accessibility e2e spec exists and runs in mainline full validation"
       ],
       "remaining": [
-        "Visual regression, memory leak, and long-runtime soak tests are not yet first-class CI jobs"
+        "Versioned visual golden artifacts and memory-regression baselines can still be promoted into explicit reviewed assets"
       ]
     },
     {
@@ -1125,7 +1328,8 @@
       "status": "done",
       "evidence": [
         "benchmark-report.md captures FPS, physics ms/frame, memory, worker latency",
-        "energy-benchmark.md compares long-run drift by integrator"
+        "energy-benchmark.md compares long-run drift by integrator",
+        "bundle budget gate splits initial/chunk/standalone assets across raw/gzip/brotli sizes"
       ],
       "remaining": [
         "True original-vs-candidate comparison needs distinct ORIGINAL_URL and CANDIDATE_URL inputs"
@@ -1154,6 +1358,9 @@
       "evidence": [
         "README, architecture, numerics, security, validation, energy benchmark, changelog, roadmap, and portfolio summary artifacts exist",
         "GitHub Pages workflow exists",
+        "mainline full-validation workflow exists",
+        "nightly mutation workflow exists",
+        "release artifact workflow exists",
         "dist/index.html exists for Pages artifact deployment",
         "LICENSE exists",
         "CITATION.cff exists",

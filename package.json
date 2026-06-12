@@ -1,6 +1,6 @@
 {
   "name": "pendulum-lab-v10",
-  "version": "10.31.0",
+  "version": "10.32.0",
   "private": true,
   "type": "module",
   "description": "Typed, modular Pendulum Lab V10 project with legacy runtime compatibility.",
@@ -36,7 +36,8 @@
     "audit:legacy": "tsx scripts/audit-legacy.ts",
     "audit:worldclass": "tsx scripts/worldclass-scorecard.ts",
     "docs:sync": "tsx scripts/sync-test-counts.ts",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage && npm run coverage:scope",
+    "coverage:scope": "tsx scripts/audit-coverage-scope.ts",
     "budget": "tsx scripts/bundle-budget.ts",
     "mutation": "stryker run"
   },
