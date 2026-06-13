@@ -71,3 +71,12 @@ export {
   validateSphericalChainParams
 } from '../physics/sphericalChain';
 export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from '../physics/sphericalChain';
+export {
+  detectConservedQuantities,
+  detectPlanarChainConservedQuantities,
+  detectSphericalChainConservedQuantities,
+  planarChainAngularMomentum,
+  rotateSphericalChainState,
+  sphericalChainAngularMomentum
+} from '../physics/conservedQuantities';
+export type { ConservedQuantityCandidate, ConservedQuantityOptions, ConservedQuantityReport } from '../physics/conservedQuantities';

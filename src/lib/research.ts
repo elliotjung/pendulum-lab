@@ -9,6 +9,7 @@
 
 export * from '../research/researchSampling';
 export * from '../research/experimentDesign';
+export * from '../research/sobolSensitivity';
 export * from '../research/zipBundle';
 export * from '../research/provenance';
 export * from '../research/notebookBuilder';

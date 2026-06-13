@@ -73,6 +73,15 @@ export {
   IMPLICIT_SOLVE_TOLERANCE
 } from './constants';
 export type { DampingConvention } from './constants';
+export {
+  detectConservedQuantities,
+  detectPlanarChainConservedQuantities,
+  detectSphericalChainConservedQuantities,
+  planarChainAngularMomentum,
+  rotateSphericalChainState,
+  sphericalChainAngularMomentum
+} from './conservedQuantities';
+export type { ConservedQuantityCandidate, ConservedQuantityOptions, ConservedQuantityReport } from './conservedQuantities';
 export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';
