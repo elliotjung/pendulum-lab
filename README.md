@@ -90,7 +90,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` | Vitest unit suite (756 tests across 111 files; synced from `reports/vitest-results.json`) |
+| `npm test` | Vitest unit suite (771 tests across 114 files; synced from `reports/vitest-results.json`) |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

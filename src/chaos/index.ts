@@ -27,6 +27,9 @@ export type { CorrelationDimensionOptions, CorrelationDimensionResult } from './
 export { findPeriodicOrbit, mapJacobianFD, ogyAnalyze, ogyControlSignal, simulateOgyControl } from './chaosControl';
 export type { MapFn, ParametrizedMapFn, PeriodicOrbitResult, OgySpec, OgyAnalysis, OgySimSpec, OgySimResult } from './chaosControl';
 
+export { renyiDimensions, boxProbabilities, generalizedDimensions, singularitySpectrum, binomialCascadeScales } from './multifractal';
+export type { ScaleMeasure, GeneralizedDimensions, GeneralizedDimensionOptions, SingularitySpectrum } from './multifractal';
+
 export { covariantLyapunovVectors } from './clv';
 export type { ClvSettings, ClvResult } from './clv';
 
