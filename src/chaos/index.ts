@@ -21,6 +21,9 @@ export type { ZeroOneOptions, ZeroOneResult } from './zeroOneTest';
 export { basinEntropy, boundaryMask, boxCountingDimension, doublePendulumFlipBasin, wadaCandidate } from './basin';
 export type { LabelGrid, BasinEntropyResult, BoxCountingResult, FlipBasinOptions, WadaResult } from './basin';
 
+export { correlationDimension, correlationSum, delayEmbed } from './correlationDimension';
+export type { CorrelationDimensionOptions, CorrelationDimensionResult } from './correlationDimension';
+
 export { covariantLyapunovVectors } from './clv';
 export type { ClvSettings, ClvResult } from './clv';
 

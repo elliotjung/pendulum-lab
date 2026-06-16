@@ -108,6 +108,22 @@ export {
 } from './magneticPendulum';
 export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions } from './magneticPendulum';
 export {
+  kramersRateOverdamped,
+  kramersMeanFirstPassage,
+  duffingKramersRate,
+  arrheniusMTTF,
+  simulateQuarticEscape
+} from './kramersEscape';
+export type { OverdampedRateSpec, QuarticEscapeSpec, QuarticEscapeResult } from './kramersEscape';
+export {
+  diatomicDispersion,
+  diatomicBandGap,
+  diatomicDispersionCurve,
+  acousticSoundSpeed,
+  diatomicGroupVelocity
+} from './latticeDispersion';
+export type { DiatomicChainParams, DispersionBranches, DiatomicBandGap, DispersionSample } from './latticeDispersion';
+export {
   rhsPendulumNetwork,
   pendulumNetworkEnergy,
   pendulumNetworkStiffnessMatrix,
