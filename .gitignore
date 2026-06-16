@@ -14,3 +14,5 @@ dist-lib/
 docs/api/
 .stryker-tmp/
 reports/mutation/
+desktop.ini
+Thumbs.db

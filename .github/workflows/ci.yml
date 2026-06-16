@@ -16,6 +16,8 @@ jobs:
       - run: npm ci
       # Fast PR signal: policy lint, typecheck, unit JSON report, synced docs.
       - run: npm run verify
+      # Keep the served-app CSP / no-legacy-risk contract from regressing on PRs.
+      - run: npm run audit:legacy
       # Coverage ratchet also runs on PRs, including the coverage-scope guard
       # that catches newly added source files missing from the v8 coverage map.
       - run: npm run test:coverage
@@ -24,3 +26,4 @@ jobs:
       - run: npm run budget
       - run: npx playwright install --with-deps chromium
       - run: npm run smoke
+      - run: npx playwright test e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts --project=chromium

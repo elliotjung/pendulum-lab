@@ -1,0 +1,45 @@
+name: Publish npm package
+
+# Manual-only: publishing the headless `pendulum-lab-core` library to npm is an
+# explicit, irreversible action, so this never runs automatically.
+#
+# Prerequisites (one-time, owner decisions — intentionally NOT automated):
+#   1. Set `"private": false` in package.json (it is `true` today so an accidental
+#      publish is impossible) and confirm the package `name` is the desired,
+#      available npm name.
+#   2. Add an `NPM_TOKEN` repository secret (an npm automation token with publish
+#      rights).
+#   3. Run this workflow from the Actions tab (workflow_dispatch). It re-runs the
+#      full verify gate and the library build before publishing, so only a green,
+#      reproducible artifact is ever pushed.
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Run npm publish with --dry-run (no upload)'
+        type: boolean
+        default: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm run verify
+      - run: npm run build:lib
+      - name: Publish (dry-run)
+        if: ${{ inputs.dry-run }}
+        run: npm publish --access public --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish
+        if: ${{ !inputs.dry-run }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

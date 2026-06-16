@@ -1,9 +1,10 @@
 import type { BenchmarkMetrics } from '../types/domain';
 import type { PendulumLegacyApp } from '../types/globals';
+import { legacyApp } from '../runtime/legacyCompat';
 
 /**
  * Resolve the legacy app through the DI container when available, falling back
- * to the deprecated read-only `window.App` accessor (e.g. before the runtime is
+ * to the centralized compatibility accessor (e.g. before the runtime is
  * installed, or under `file://` where the modern module does not boot).
  */
 function resolveLegacyApp(): PendulumLegacyApp | undefined {
@@ -13,7 +14,7 @@ function resolveLegacyApp(): PendulumLegacyApp | undefined {
   } catch {
     // Legacy runtime not yet adopted (pre-boot / file://) — fall back below.
   }
-  return window.App;
+  return legacyApp();
 }
 
 export function readRuntimeMetrics(label = 'candidate', url = location.href): BenchmarkMetrics {

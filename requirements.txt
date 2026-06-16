@@ -1,0 +1,15 @@
+# Python dependencies for the external validation ladder (claims 2 & 3 in the
+# README). These pin the *independent* references the engine is checked against:
+#
+#   scripts/scipy_reference.py  -> numpy, scipy   (DOP853 cross-validation)
+#   scripts/sympy_reference.py  -> sympy          (symbolic Euler–Lagrange RHS)
+#
+# Pinned for reproducibility: a reviewer running `npm run validate:cross` /
+# `validate:sympy` after `pip install -r requirements.txt` gets the same
+# reference numbers regardless of machine. Tested with CPython 3.11/3.12.
+#
+#   python -m venv .venv && . .venv/bin/activate   # (Windows: .venv\Scripts\activate)
+#   pip install -r requirements.txt
+numpy==1.26.4
+scipy==1.13.1
+sympy==1.12

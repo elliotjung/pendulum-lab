@@ -2,7 +2,9 @@ export {
   maximalLyapunov,
   lyapunovSpectrum,
   kaplanYorkeDimension,
-  batchedStandardError
+  batchedStandardError,
+  autoBatchedStandardError,
+  integratedAutocorrelationTime
 } from './lyapunov';
 export type {
   LyapunovSettings,
@@ -34,8 +36,18 @@ export type { MelnikovScaled, MelnikovVerdict } from './melnikov';
 export { eigenvalues2x2, monodromyMatrix, floquetAnalysis, drivenPeriodicOrbit } from './floquet';
 export type { FloquetMultiplier, FloquetResult, DrivenOrbitOptions, DrivenOrbitResult } from './floquet';
 
-export { drivenPeriodicOrbitN, switchPeriodDoubling, realEigenvector2x2 } from './branchSwitching';
-export type { PeriodNOrbitResult, BranchSwitchOptions, BranchSwitchResult } from './branchSwitching';
+export { drivenPeriodicOrbitN, switchPeriodDoubling, switchSymmetryBreaking, switchTranscriticalBranch, realEigenvector2x2 } from './branchSwitching';
+export type {
+  PeriodNOrbitResult,
+  BranchSwitchOptions,
+  BranchSwitchResult,
+  SymmetryBreakOptions,
+  SymmetryBreakResult,
+  BranchResidualSystem,
+  TranscriticalPoint,
+  TranscriticalSwitchOptions,
+  TranscriticalSwitchResult
+} from './branchSwitching';
 
 export { classifyBifurcation, continueDrivenPeriodicOrbit } from './continuation';
 export type {
@@ -82,8 +94,39 @@ export type { BifurcationEvent, BifurcationEventType, BifurcationDetectionOption
 export { classifyFixedPoint } from './fixedPointClassify';
 export type { FixedPointClass, FixedPointClassification } from './fixedPointClassify';
 
-export { detectNeimarkSacker, torusIndicator } from './neimarkSacker';
-export type { BranchSample, NeimarkSackerPoint, NeimarkSackerScan, TorusIndicator } from './neimarkSacker';
+export { detectNeimarkSacker, torusIndicator, continueNeimarkSackerTorus } from './neimarkSacker';
+export type {
+  BranchSample,
+  NeimarkSackerPoint,
+  NeimarkSackerScan,
+  TorusIndicator,
+  PlanarMapSystem,
+  InvariantTorusOptions,
+  InvariantTorusPoint,
+  InvariantTorusContinuation
+} from './neimarkSacker';
+
+export { sineCircleMap, rotationNumber, planarMapRotationNumber, scanModeLocking, continueNeimarkSackerTorusRobust } from './arnoldTongue';
+export type {
+  CircleMap,
+  RotationNumberOptions,
+  RotationNumberSample,
+  ArnoldTongue,
+  ModeLockingScan,
+  RobustInvariantTorusOptions,
+  RobustInvariantTorusPoint,
+  RobustInvariantTorusContinuation
+} from './arnoldTongue';
+
+export { torusLyapunovSpectrum, neimarkSackerSpectralConvergence } from './torusAnalysis';
+export type {
+  TorusLyapunovOptions,
+  TorusLyapunovResult,
+  NeimarkSackerConvergenceSample,
+  NeimarkSackerConvergenceResult
+} from './torusAnalysis';
 
 export { codimTwoDiagram } from './codimTwo';
 export type { CodimTwoOptions, CodimTwoCell, CodimTwoResult } from './codimTwo';
+
+export { createDrivenStroboscopicMap, continueExpansionNSBranch } from './neimarkSackerBranch';

@@ -312,11 +312,15 @@ export class ResearchMatrixTab extends TabController {
     this.dom.setText('matrixSummary', `${result.base.modelLabel}: ${result.summary.bestComparison}, sweep stable ${(result.summary.sweepStableRatio * 100).toFixed(0)}%`);
     this.renderMetrics(result);
     this.renderComparison(result.comparison);
-    this.drawSweep(result.sweep2d.cells, result.sweep2d.size, 'matrixSweepCanvas');
+    this.drawSweep(result.sweep2d.cells, result.sweep2d.size, 'matrixSweepCanvas', result.sweep2d.xAxis.label, result.sweep2d.yAxis.label);
     this.drawPoincare(result.diagnostics.poincare);
     this.drawLyapunov(result.diagnostics.lyapunovTimeline);
     this.drawBasin(result.diagnostics.basin.cells, result.diagnostics.basin.size);
-    this.drawEnergy(result.diagnostics.energyLandscape.cells, result.diagnostics.energyLandscape.size);
+    this.drawEnergy(
+      result.diagnostics.energyLandscape.cells,
+      result.diagnostics.energyLandscape.size,
+      result.diagnostics.energyLandscape.note
+    );
   }
 
   private renderMetrics(result: ExpansionResearchMatrixResult): void {
@@ -392,7 +396,7 @@ export class ResearchMatrixTab extends TabController {
     ctx.stroke();
   }
 
-  private drawSweep(cells: readonly ExpansionMatrixCell[], size: number, canvasId: string): void {
+  private drawSweep(cells: readonly ExpansionMatrixCell[], size: number, canvasId: string, xLabel: string, yLabel: string): void {
     const canvas = this.dom.el<HTMLCanvasElement>(canvasId);
     if (!canvas) return;
     const ctx = this.clear(canvas);
@@ -422,6 +426,7 @@ export class ResearchMatrixTab extends TabController {
       }
       ctx.stroke();
     }
+    this.drawCanvasLegend(ctx, canvas, `${xLabel} x ${yLabel}`, 'score/stability');
   }
 
   private drawPoincare(points: readonly ExpansionPoint[]): void {
@@ -478,7 +483,7 @@ export class ResearchMatrixTab extends TabController {
     });
   }
 
-  private drawEnergy(cells: readonly ExpansionEnergyCell[], size: number): void {
+  private drawEnergy(cells: readonly ExpansionEnergyCell[], size: number, note: string): void {
     const canvas = this.dom.el<HTMLCanvasElement>('matrixEnergyCanvas');
     if (!canvas) return;
     const ctx = this.clear(canvas);
@@ -499,5 +504,20 @@ export class ResearchMatrixTab extends TabController {
         ctx.fillRect(xi * cw + cw * 0.35, canvas.height - (yi + 1) * ch + ch * 0.35, Math.max(1, cw * 0.3), Math.max(1, ch * 0.3));
       }
     });
+    this.drawCanvasLegend(ctx, canvas, 'phase energy shell', note);
+  }
+
+  private drawCanvasLegend(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, title: string, detail: string): void {
+    ctx.save();
+    ctx.fillStyle = 'rgba(5,8,13,.78)';
+    ctx.fillRect(8, 8, Math.min(canvas.width - 16, 300), 38);
+    ctx.strokeStyle = 'rgba(255,255,255,.16)';
+    ctx.strokeRect(8.5, 8.5, Math.min(canvas.width - 16, 300), 38);
+    ctx.fillStyle = '#dbe8ff';
+    ctx.font = '10px ui-monospace, monospace';
+    ctx.fillText(title, 16, 23);
+    ctx.fillStyle = '#9fb3c8';
+    ctx.fillText(detail.slice(0, 54), 16, 39);
+    ctx.restore();
   }
 }

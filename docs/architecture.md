@@ -1,14 +1,15 @@
 # Architecture
 
 Pendulum Lab V10 is a **100% TypeScript** application. The original ~8,080-line legacy
-`js/` runtime has been fully removed (archived under `archive/`); `index.html` loads only
-`src/main.ts` plus the hand-written CSS that styles the static shell DOM. A single
-dependency-injection container (`runtime/ServiceContainer`, exposed as
-`window.PendulumRuntime`) is the canonical source of truth for every runtime service.
+`js/` runtime has been fully removed (archived under `archive/`). The live Vite shell
+(`app.html`) loads `src/main.ts` plus the hand-written CSS that styles the static shell
+DOM; the project-root `index.html` is the generated self-contained build. A single
+dependency-injection container (`runtime/ServiceContainer`, exposed through
+`window.PendulumLabDebug.runtime`) is the canonical source of truth for runtime services.
 
 ```mermaid
 flowchart LR
-  HTML[index.html\nstatic shell DOM + CSS] --> TS[src/main.ts]
+  HTML[app.html\nstatic shell DOM + CSS] --> TS[src/main.ts]
   TS --> Runtime[runtime/PendulumRuntime\nServiceContainer DI]
   TS --> Shell[app/Shell\nnav + sliders + presets + keys]
   TS --> Lab[app/LabApp\nsim + render + side plots]
@@ -38,39 +39,54 @@ Node and reusable outside the browser.
 | Application/runtime | `runtime/ServiceContainer`, `runtime/PendulumRuntime`, `EventBus`, `CommandRegistry`, `StateStore`, `app/Shell`, `app/LabApp`, `app/*Tab` | domain layer, `types/` | DOM specifics leaking into domain |
 | Infrastructure | `runtime/*Bridge`, `render/performance`, `ui/`, `workers/` | application + domain | — |
 
-The legacy `js/` runtime has been removed (see `archive/`); the `runtime/LegacyBridge` and
-`runtime/IndexPhysicsBridge` remain only as inert, guarded compatibility shims (they no-op
-when no legacy runtime is present) and can be deleted in a future cleanup.
+The legacy `js/` runtime has been removed (see `archive/`). The former
+`runtime/LegacyBridge` and `runtime/IndexPhysicsBridge` shims are gone; only
+small compatibility accessors remain for old scripts and tests that still read
+`window.App`, `window.Physics`, `window.PendulumLabIndex`, or
+`window.PendulumRuntime`.
 
 ## Dependency Injection Container
 
 `ServiceContainer<M>` is a zero-dependency typed container: lazy singletons by default,
 optional transients, throwing `resolve` plus non-throwing `tryResolve`, and a typed
 service map `PendulumServiceMap`. `installPendulumRuntime()` registers `events`,
-`commands`, `state`, `physics`, `worker`, and adopts the legacy `legacyApp` / `legacyPhysics`,
-then freezes the public surface onto `window.PendulumRuntime`. Modern modules resolve
-collaborators from the container instead of reading ambient globals.
+`commands`, `state`, `physics`, and `worker`, then publishes the DI surface under
+`window.PendulumLabDebug.runtime` with `window.PendulumRuntime` kept as a
+deprecated debug alias. Public scripting uses `window.PendulumLab`.
 
 ## Module Boundaries
 
-- `src/app/`: the modern Lab application layer — `LabSimulation` (headless integration core driving the typed `physicsAdapter`), `LabRenderer` (canvas pendulum renderer targeting the structural `Ctx2D`, legacy-parity geometry: pivot at `w/2, h·0.38`, 110 px/m), `LabController` (`mountModernLab`, an independently-mountable rAF loop), and `LabApp` (the full lab tab: loop + energy/Lyapunov/phase/Poincaré/FFT side plots + control wiring + legacy takeover). Analysis helpers: `fft`, `PoincareAccumulator`, `LyapunovEstimator`, `labPlots`. Mounted behind `?modernLabProbe` (standalone probe) and `?lab=modern` (real-canvas takeover).
+- `src/app/`: the modern Lab application layer — `LabSimulation` (headless integration core driving the typed `physicsAdapter`), `LabRenderer` (canvas pendulum renderer targeting the structural `Ctx2D`, legacy-parity geometry: pivot at `w/2, h·0.38`, 110 px/m), `LabController` (`mountModernLab`, an independently-mountable rAF loop), and `LabApp` (the full lab tab: loop + energy/Lyapunov/phase/Poincaré/FFT side plots + control wiring). Analysis helpers: `fft`, `PoincareAccumulator`, `LyapunovEstimator`, `labPlots`. Mounted by default in browser contexts; `?modernLabProbe` still mounts a standalone probe for diagnostics.
 - `src/physics/`: typed equations, energy helpers, integrator metadata, and pure integrator implementations.
 - `src/state/`: strict StateStore snapshot validation, state synchronization, and import-safe runtime patches.
-- `src/runtime/`: central event bus, command registry, legacy onclick migration, and module worker bridge.
+- `src/runtime/`: central event bus, command registry, public/debug API publishing, compatibility accessors, and module worker bridge.
 - `src/ui/`: safe DOM helpers and accessibility upgrades.
 - `src/validation/`: deterministic validation checks and strict JSON import parsing.
 - `src/export/`: typed submission manifest and report export helpers.
 - `src/render/`: runtime metric probes for FPS, physics time, memory, and worker latency.
 - `src/workers/`: separate module worker with main-thread fallback through `WorkerBridge`.
-- `index.html`: the single user-facing simulator page (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell.
+- `app.html`: the live Vite shell (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell. The project-root `index.html` is the self-contained portable build produced by `npm run build:standalone`.
+
+## Module Size Ratchet
+
+`npm run audit:modules` prevents new oversized source files and caps the known
+large modules while they are being split. The current ratchet targets are:
+`app/parity/research-workbench.ts`, `app/parity/figure-export.ts`,
+`app/parity/governance-ui.ts`, `app/ExpansionLabTab.ts`,
+`workers/chaosProtocol.ts`, and `app/parity/runtime-diagnostics.ts`.
+`physics/expandedModels.ts` has already left this list after being split into
+types, factory, suite-runner, Lyapunov, and research-matrix modules. A module
+should leave the known-large list only after its responsibilities have been
+extracted into smaller, tested units.
 
 ## Public API Surface (minimized)
 
-Exactly one frozen object is published for the modern runtime: `window.PendulumRuntime`
-(`{ version, container, resolve, tryResolve, has, events, commands, state, describe }`),
-plus `window.PendulumLabIndex` (the command-registry runtime surface used by the export
-commands). The Lab and analysis tab controllers are reachable for tooling via
-`window.__modernLab` and `window.__modernTabs`. No bare runtime globals are written.
+The public scripting API is `window.PendulumLab` (`{ version, commands, events,
+state, physics }`). Internal tooling uses `window.PendulumLabDebug`, including
+the DI runtime surface (`runtime: { version, container, resolve, tryResolve,
+has, events, commands, state, describe }`) and modern app handles. Deprecated
+aliases (`window.PendulumLabIndex`, `window.PendulumRuntime`, `window.__modernLab`,
+`window.__modernTabs`) remain for compatibility.
 
 ## Legacy Removal (complete)
 
@@ -90,5 +106,5 @@ ever moved down (482 → 0):
    chrome. The legacy `<script>` tags were removed from `index.html` and `js/00`–`js/11`
    moved to `archive/`. The app is now served entirely from `src/` via Vite.
 
-The `runtime/LegacyBridge` and `runtime/IndexPhysicsBridge` survive as inert, guarded
-compatibility shims (they no-op without a legacy runtime) and may be deleted later.
+The bridge shims were deleted after their useful responsibilities moved into
+`src/main.ts`, `runtime/globalApi.ts`, and the modern shell.

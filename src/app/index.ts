@@ -20,6 +20,7 @@ export { ClvTab } from './ClvTab';
 export { BasinTab } from './BasinTab';
 export { RqaTab } from './RqaTab';
 export { FtleTab } from './FtleTab';
+export { ResearchPlusTab } from './ResearchPlusTab';
 export { Shell } from './Shell';
 
 import { mountModernLab, type LabHandle } from './LabController';
@@ -40,6 +41,7 @@ import { ClvTab } from './ClvTab';
 import { BasinTab } from './BasinTab';
 import { RqaTab } from './RqaTab';
 import { FtleTab } from './FtleTab';
+import { ResearchPlusTab } from './ResearchPlusTab';
 import { Shell } from './Shell';
 import type { LabConfig } from './LabSimulation';
 
@@ -123,7 +125,7 @@ export function maybeMountModernAnalysisTabs(): boolean {
     __modernTabs?: {
       lyapunov: LyapunovTab; validation: ValidationTab; sweep: SweepTab;
       compare: CompareTab; bifurcation: BifurcationTab; phase3d: Phase3DTab; density: DensityTab; expansion: ExpansionLabTab; matrix: ResearchMatrixTab; golden: GoldenCenterTab;
-      zeroOne: ZeroOneTab; clv: ClvTab; basin: BasinTab; rqa: RqaTab; ftle: FtleTab;
+      zeroOne: ZeroOneTab; clv: ClvTab; basin: BasinTab; rqa: RqaTab; ftle: FtleTab; researchPlus: ResearchPlusTab;
     };
   };
   if (w.__modernTabs) return true;
@@ -160,6 +162,8 @@ export function maybeMountModernAnalysisTabs(): boolean {
   rqa.install();
   const ftle = new FtleTab();
   ftle.install();
-  w.__modernTabs = { lyapunov, validation, sweep, compare, bifurcation, phase3d, density, expansion, matrix, golden, zeroOne, clv, basin, rqa, ftle };
+  const researchPlus = new ResearchPlusTab();
+  researchPlus.install();
+  w.__modernTabs = { lyapunov, validation, sweep, compare, bifurcation, phase3d, density, expansion, matrix, golden, zeroOne, clv, basin, rqa, ftle, researchPlus };
   return true;
 }

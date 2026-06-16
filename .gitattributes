@@ -1,0 +1,33 @@
+# Normalise line endings so Windows checkouts don't churn whole files between
+# CRLF and LF (the repo is authored with LF; build tooling and PowerShell 5.1
+# both otherwise rewrite endings). `text=auto` lets git detect text vs binary,
+# and the explicit `eol=lf` pins the working-tree ending for source so a one-line
+# edit is a one-line diff.
+* text=auto eol=lf
+
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.js    text eol=lf
+*.mjs   text eol=lf
+*.cjs   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.py    text eol=lf
+*.cff   text eol=lf
+*.svg   text eol=lf
+
+# Binary assets — never normalise.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.zip   binary

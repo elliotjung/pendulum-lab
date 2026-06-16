@@ -66,6 +66,73 @@ export function batchedStandardError(samples: readonly number[], numBlocks = 10)
 }
 
 /**
+ * Estimate the integrated autocorrelation time τ_int = 1 + 2·Σ_{k≥1} ρ(k) of a
+ * series, with Sokal's self-consistent automatic windowing: the lag sum is
+ * truncated at the first window W with W ≥ c·τ(W) (default c = 5), which keeps
+ * the high-lag noise of the autocorrelation estimator from inflating the sum.
+ * The autocovariances use the biased (÷N) estimator — standard for τ_int. The
+ * value is floored at 1, so an uncorrelated (or constant) series gives τ = 1 and
+ * callers can safely divide by it. This is the number that says how many samples
+ * apart a series must be before they count as independent.
+ */
+export function integratedAutocorrelationTime(samples: readonly number[], c = 5): number {
+  const n = samples.length;
+  if (n < 2) return 1;
+  let mean = 0;
+  for (const v of samples) mean += v;
+  mean /= n;
+  let c0 = 0;
+  for (const v of samples) c0 += (v - mean) ** 2;
+  c0 /= n;
+  if (!(c0 > 0)) return 1;
+  let tau = 1;
+  for (let k = 1; k < n; k += 1) {
+    let ck = 0;
+    for (let i = 0; i < n - k; i += 1) ck += ((samples[i] ?? 0) - mean) * ((samples[i + k] ?? 0) - mean);
+    ck /= n;
+    tau += 2 * (ck / c0);
+    if (tau < 1) tau = 1;
+    if (k >= c * tau) break;
+  }
+  return tau < 1 ? 1 : tau;
+}
+
+/**
+ * Batched-means standard error with an *automatic* batch length, chosen from the
+ * estimated integrated autocorrelation time of the converged tail rather than a
+ * fixed block count. Each batch spans ≈ 2·τ_int samples, so the batch means are
+ * approximately independent however fast (or slowly) the local exponents
+ * decorrelate — a more honest decorrelated SE than the fixed-`numBlocks`
+ * {@link batchedStandardError}, which can under- or over-block when the
+ * correlation time is unknown a priori. Falls back to the fixed-block estimate
+ * (which itself falls back to the naive SE) when the tail is too short to resolve
+ * a batch length.
+ */
+export function autoBatchedStandardError(samples: readonly number[]): number {
+  const start = Math.floor(samples.length / 2);
+  const tail = samples.slice(start);
+  const m = tail.length;
+  if (m < 8) return batchedStandardError(samples);
+  const tau = integratedAutocorrelationTime(tail);
+  const batchLen = Math.max(1, Math.round(2 * tau));
+  const numBlocks = Math.floor(m / batchLen);
+  if (numBlocks < 2) return batchedStandardError(samples);
+  const means: number[] = [];
+  for (let b = 0; b < numBlocks; b += 1) {
+    let s = 0;
+    for (let i = 0; i < batchLen; i += 1) s += tail[b * batchLen + i] ?? 0;
+    means.push(s / batchLen);
+  }
+  let mean = 0;
+  for (const value of means) mean += value;
+  mean /= numBlocks;
+  let variance = 0;
+  for (const value of means) variance += (value - mean) ** 2;
+  variance /= numBlocks - 1;
+  return Math.sqrt(variance / numBlocks);
+}
+
+/**
  * Lyapunov exponent estimators. The maximal exponent uses the two-trajectory
  * Benettin method (no Jacobian needed); the full spectrum uses Gram-Schmidt
  * reorthonormalization of the variational flow. Every result carries the
@@ -94,9 +161,11 @@ export interface MaximalLyapunovResult {
    */
   stdError: number;
   /**
-   * Batched-means standard error over the converged tail. Unlike `stdError`,
-   * this decorrelates neighbouring renormalization intervals, so it is the more
-   * honest (typically larger) uncertainty to report.
+   * Batched-means standard error over the converged tail, using an automatic
+   * batch length derived from the estimated integrated autocorrelation time
+   * (Sokal windowing). Unlike `stdError`, this decorrelates neighbouring
+   * renormalization intervals, so it is the more honest (typically larger)
+   * uncertainty to report. See {@link autoBatchedStandardError}.
    */
   blockStdError: number;
   /** Approximate 95% confidence interval (lambdaMax ± 1.96 stdError). */
@@ -211,7 +280,7 @@ export function maximalLyapunov(state0: ArrayLike<number>, rhs: Derivative, opti
   return {
     lambdaMax,
     stdError,
-    blockStdError: batchedStandardError(localExponents),
+    blockStdError: autoBatchedStandardError(localExponents),
     ci95: [lambdaMax - 1.96 * stdError, lambdaMax + 1.96 * stdError],
     convergence,
     settings
@@ -277,7 +346,7 @@ export function lyapunovSpectrum(
   const paired = accum.map((value, j) => ({
     lambda: elapsed > 0 ? value / elapsed : 0,
     se: tailStandardError(localSeries[j] ?? []),
-    blockSe: batchedStandardError(localSeries[j] ?? [])
+    blockSe: autoBatchedStandardError(localSeries[j] ?? [])
   }));
   paired.sort((a, b) => b.lambda - a.lambda);
   const spectrum = paired.map((p) => p.lambda);

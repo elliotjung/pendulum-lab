@@ -3,7 +3,27 @@
   "version": "10.34.0",
   "private": true,
   "type": "module",
-  "description": "Typed, modular Pendulum Lab V10 project with legacy runtime compatibility.",
+  "description": "Typed, modular Pendulum Lab V10 research platform for nonlinear pendulum dynamics.",
+  "engines": {
+    "node": ">=22 <27"
+  },
+  "main": "./dist-lib/pendulum-lab-core.js",
+  "module": "./dist-lib/pendulum-lab-core.js",
+  "types": "./dist-lib/types/lib.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/types/lib.d.ts",
+      "import": "./dist-lib/pendulum-lab-core.js"
+    }
+  },
+  "files": [
+    "dist-lib",
+    "README.md",
+    "LICENSE",
+    "CITATION.cff",
+    "docs/api-overview.md"
+  ],
+  "sideEffects": false,
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build && node scripts/copy-legacy-assets.mjs",
@@ -13,7 +33,7 @@
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "lint": "tsx scripts/lint-source.ts",
-    "verify": "npm run lint && npm run typecheck && npm run test:json && npm run docs:sync",
+    "verify": "npm run lint && npm run typecheck && npm run audit:modules && npm run test:json && npm run docs:sync",
     "test": "vitest run",
     "test:json": "vitest run --reporter=json --outputFile=reports/vitest-results.json",
     "test:watch": "vitest",
@@ -23,16 +43,19 @@
     "benchmark:energy": "tsx scripts/energy-benchmark.ts",
     "validate:reference": "tsx scripts/validate-reference.ts",
     "validate:cross": "tsx scripts/cross-validate.ts",
+    "validate:ns": "tsx scripts/ns-cross-validate.ts",
     "validate:sympy": "tsx scripts/sympy-validate.ts",
     "validate:literature": "tsx scripts/literature-anchors.ts",
     "validate:julia": "tsx scripts/julia-compare.ts",
     "export:repro": "tsx scripts/export-repro.ts",
+    "reproduce": "tsx scripts/reproduce-all.ts",
     "research": "tsx scripts/research-cli.ts",
     "paper:study": "tsx scripts/paper-study.ts",
     "paper:build": "tsx scripts/build-paper.ts",
     "notebook": "tsx scripts/research-notebook.ts",
     "notebook:validate": "tsx scripts/validate-notebook.ts",
     "reports": "tsx scripts/generate-validation-report.ts",
+    "audit:modules": "tsx scripts/audit-module-size.ts",
     "audit:legacy": "tsx scripts/audit-legacy.ts",
     "audit:worldclass": "tsx scripts/worldclass-scorecard.ts",
     "docs:sync": "tsx scripts/sync-test-counts.ts",

@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-06-15T22:27:14.834Z",
+  "rows": [
+    {
+      "a": 2.05,
+      "scipyWinding": 0.16177247771851566,
+      "scipyLinear": 0.16887241042389053,
+      "engineCollocation": 0.1617724455307674,
+      "engineWinding": 0.1617722825271808,
+      "windingDiff": 1.9519133487300167e-7,
+      "collocationVsLinearDiff": 0.007099964893123145,
+      "pass": true
+    },
+    {
+      "a": 2.04,
+      "scipyWinding": 0.16280377158259007,
+      "scipyLinear": 0.16844537104451174,
+      "engineCollocation": 0.16280380143555864,
+      "engineWinding": 0.16280400682529939,
+      "windingDiff": 2.3524270931218894e-7,
+      "collocationVsLinearDiff": 0.005641569608953095,
+      "pass": true
+    },
+    {
+      "a": 2.03,
+      "scipyWinding": 0.16380716857772537,
+      "scipyLinear": 0.16801146792710184,
+      "engineCollocation": 0.16380705484023814,
+      "engineWinding": 0.16380725730986656,
+      "windingDiff": 8.873214119020645e-8,
+      "collocationVsLinearDiff": 0.004204413086863701,
+      "pass": true
+    },
+    {
+      "a": 2.02,
+      "scipyWinding": 0.16478427047841526,
+      "scipyLinear": 0.1675705138057342,
+      "engineCollocation": 0.16478415352184483,
+      "engineWinding": 0.16478457192162255,
+      "windingDiff": 3.014432072845352e-7,
+      "collocationVsLinearDiff": 0.002786360283889372,
+      "pass": true
+    },
+    {
+      "a": 2.01,
+      "scipyWinding": 0.16573692505484927,
+      "scipyLinear": 0.16712231412473927,
+      "engineCollocation": 0.1657368374699651,
+      "engineWinding": 0.16573700787680612,
+      "windingDiff": 8.282195684827798e-8,
+      "collocationVsLinearDiff": 0.001385476654774176,
+      "pass": true
+    }
+  ]
+}

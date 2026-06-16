@@ -13,7 +13,7 @@ import type { SphericalChain } from '../../physics/sphericalChain';
 import { OrbitCamera } from '../../viz/orbit3d';
 import { clampNumber } from './storage-sync';
 import { append, html } from './shared';
-import { researchCard, researchFormRow, researchInput, researchSelect } from './research-workbench';
+import { researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
 import {
   normalizeLab3dResearchStep,
   normalizeLab3dTimingMode,

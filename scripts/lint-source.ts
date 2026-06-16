@@ -7,6 +7,7 @@ interface Finding {
 }
 
 const SOURCE_ROOTS = ['src', 'scripts', 'tests', 'e2e'];
+const ROOT_TEXT_FILES = ['app.html'];
 const TEXT_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.mjs', '.html']);
 const REQUIRED_ROOT_FILES = ['LICENSE', 'CITATION.cff'];
 const AUDIT_TOOL_ALLOWLIST = /scripts[\\/](audit-legacy|worldclass-scorecard|lint-source)\.ts$/;
@@ -64,7 +65,10 @@ async function main(): Promise<void> {
     findings.push({ file: '.', message: `Root contains ${rootWorkers.length} hashed chaos worker bundles; stale copies should be cleaned by the standalone build.` });
   }
 
-  const files = (await Promise.all(SOURCE_ROOTS.map((root) => collectFiles(root).catch(() => [])))).flat();
+  const files = [
+    ...ROOT_TEXT_FILES.filter((file) => rootEntries.includes(file)),
+    ...(await Promise.all(SOURCE_ROOTS.map((root) => collectFiles(root).catch(() => [])))).flat()
+  ];
   for (const file of files) {
     const rel = relative('.', file);
     const text = await readFile(file, 'utf8');

@@ -175,19 +175,37 @@ export class ResearchDb {
   async importArchive(archive: ResearchDbArchive, mode: 'replace' | 'merge' = 'merge'): Promise<{ imported: number }> {
     const validation = validateResearchDbArchive(archive);
     if (!validation.ok) throw new Error(`invalid archive: ${validation.problems.join('; ')}`);
+    await this.open();
+    if (!this.db) throw new Error('IndexedDB unavailable');
     let imported = 0;
-    for (const name of RESEARCH_DB_STORES) {
-      const records = archive.stores[name] ?? [];
-      if (mode === 'replace') await this.clear(name);
-      if (records.length > 0) {
-        const { store, done } = await this.store(name, 'readwrite');
-        for (const record of records) {
+    // A single transaction over every store, so the whole import is atomic. A
+    // `replace` previously cleared each store in its own transaction and then
+    // refilled it in another — an interruption (tab close, quota/clone error)
+    // between the two left a store cleared-but-empty (silent data loss). Now any
+    // failure aborts the one transaction and the prior data is rolled back intact.
+    const tx = this.db.transaction([...RESEARCH_DB_STORES], 'readwrite');
+    const done = transactionDone(tx);
+    try {
+      for (const name of RESEARCH_DB_STORES) {
+        const store = tx.objectStore(name);
+        if (mode === 'replace') store.clear();
+        for (const record of archive.stores[name] ?? []) {
           store.put(record);
           imported += 1;
         }
-        await done;
       }
+    } catch (error) {
+      // A synchronous failure while queuing aborts the whole transaction, so a
+      // `replace` can never leave a store cleared-but-not-refilled. Asynchronous
+      // request failures abort the transaction the same way (rejecting `done`).
+      try {
+        tx.abort();
+      } catch {
+        // The transaction is already aborting/inactive; the abort is in flight.
+      }
+      throw error;
     }
+    await done;
     return { imported };
   }
 

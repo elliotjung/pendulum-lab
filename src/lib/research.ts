@@ -10,11 +10,14 @@
 export * from '../research/researchSampling';
 export * from '../research/experimentDesign';
 export * from '../research/sobolSensitivity';
+export * from '../research/surrogate';
+export * from '../research/parameterEstimation';
 export * from '../research/zipBundle';
 export * from '../research/provenance';
 export * from '../research/notebookBuilder';
 export * from '../research/figurePipeline';
 export * from '../research/libraryUx';
+export * from '../research/structurePreservation';
 export * from '../research/cliBatchSpec';
 export { hashText, csvCell, dataUrlByteEstimate } from '../research/researchExportUtils';
 

@@ -29,6 +29,27 @@ discipline that TCAD work demands at much larger scale.
 | **Worker architecture with a transparent main-thread fallback**, one pure job handler shared by UI, worker, CLI and tests | **HPC job orchestration** — the same solve must produce the same answer on a laptop and on the cluster; one code path, many execution contexts |
 | **Honest claim boundaries** — "Wada *candidate*", "finite-time estimate", "sufficient (not necessary) fractality condition" documented per result | **Model validity ranges** — every TCAD model card has a domain of validity; over-claiming beyond calibration is the cardinal sin of device modelling |
 
+## Concrete tool correspondences
+
+The table above maps capabilities to *categories* of device-simulation work. The
+correspondences below are deliberately specific — the exact algorithm in a named
+commercial tool, and the routine in this project that exercises the same idea.
+The point is not that a pendulum lab replaces a TCAD suite; it is that the
+*numerical machinery* is shared, so a worked, fully-validated instance here is
+direct evidence of understanding the machinery there.
+
+| Commercial-tool algorithm | This project's counterpart | Why they are the same problem |
+|---|---|---|
+| **Synopsys Sentaurus Device** solves the coupled Poisson + electron/hole continuity system by **damped Newton–Raphson**, ramping the applied bias in small steps and warm-starting each solve from the previous converged bias point (bias/voltage continuation). Near snapback or breakdown the bias-controlled branch turns back on itself and a plain bias ramp stalls. | **`continueDrivenPeriodicOrbit`** (natural-parameter continuation, warm-started Newton from the previous orbit) and **`continueArclength`** (Keller pseudo-arclength) trace the driven-pendulum periodic orbit across a parameter and *around folds*. `drivenPeriodicOrbit` is the Newton solve at a single parameter; `switchPeriodDoubling` / `switchSymmetryBreaking` continue onto the bifurcated branch. | A bias sweep and a parameter sweep of a periodic orbit are the *same continuation problem*: a nonlinear system `G(x, λ) = 0` followed as `λ` varies, with warm starts for robustness and pseudo-arclength to survive the turning points (snapback / latch-up in a device; folds in the orbit family here). |
+| **Synopsys/Silvaco transient device simulation** integrates the same stiff DAE in time with **TR-BDF2** (the trapezoidal/BDF2 composite step — invented for SPICE-class power-device transients) and an adaptive, error-controlled time step. | **`step('bdf2', …)`** in `src/physics/integrators.ts` (the `'bdf2'` id is the L-stable TR-BDF2 composite step, `trBdf2Step`) sits next to the explicit and other implicit methods behind one **`step()` dispatcher**; the implicit steppers accept an exact analytic Jacobian for quadratic Newton convergence. | Stiff transients (a fast RC/relaxation timescale coupled to a slow drive) make explicit methods either unstable or forced to a tiny step. Choosing an L-stable implicit method *and knowing why* is the daily judgement TR-BDF2 was built to support — demonstrated here on a system small enough to certify the order empirically (`empiricalOrder`). |
+| **COMSOL Multiphysics** time-dependent solver offers **BDF** and **generalized-α** integrators with automatic order/step-size control, and reports the local error estimate driving the step. | **Embedded RKF45 / Dormand–Prince 5(4)** in this engine carry an embedded lower-order solution whose difference is the per-step **local error estimate** used for step-size control; the same `step()` dispatcher selects them per problem. | Adaptive time-stepping is error estimation plus a controller. Whether the estimate comes from an embedded RK pair (here) or a BDF predictor–corrector (COMSOL), the engineering content — "trust the step only as far as the estimated local error allows" — is identical, and is what the credibility badges surface to the user. |
+| **Sentaurus / Silvaco Atlas** report **Newton convergence diagnostics** (residual norms, update norms, pivot quality) and refuse to silently return a non-converged solution. | **`assertLinearSolve` / `linearSolve`** return honest failure diagnostics (min/max pivot magnitude, matrix and RHS scales, `‖Ax − b‖` residual, a `not-positive-definite` reason) and never invent a fallback solution; `fallbackPolicy: 'throw'` fails loudly at the solve site. | A solver that hides non-convergence behind a plausible-looking number is worse than one that fails. Both the device tool and this project treat the linear-solve residual as a first-class, reportable quantity rather than an internal detail. |
+
+These are *structural* analogies, validated at small scale — not claims of feature
+parity with a production TCAD suite. The transferable asset is the judgement:
+when to reach for continuation vs a plain sweep, when stiffness forces an implicit
+method, and how to tell a converged result from an artifact.
+
 ## Why nonlinear dynamics specifically
 
 Semiconductor devices are themselves nonlinear dynamical systems. Negative

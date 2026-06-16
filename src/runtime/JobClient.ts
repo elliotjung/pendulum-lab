@@ -1,4 +1,5 @@
 import type { ChaosRequest, ChaosResponse } from '../workers/chaosProtocol';
+import { notifyWorkerFallback } from './workerFallbackNotice';
 import {
   JobEngine,
   JOB_PROTOCOL_V2,
@@ -62,14 +63,18 @@ export function inProcessTransportFactory(phaseRunner?: PhaseRunner): JobTranspo
 
 export function chaosWorkerTransportFactory(): JobTransportFactory {
   return (onEvent) => {
-    if (typeof Worker === 'undefined') return inProcessTransportFactory()(onEvent);
+    if (typeof Worker === 'undefined') {
+      notifyWorkerFallback('chaos-job-worker', 'worker unavailable');
+      return inProcessTransportFactory()(onEvent);
+    }
     let worker: Worker | null = null;
     try {
       worker = new Worker(new URL('../workers/chaos.worker.ts', import.meta.url), {
         type: 'module',
         name: 'pendulum-chaos-job-worker'
       });
-    } catch {
+    } catch (error) {
+      notifyWorkerFallback('chaos-job-worker', error);
       return inProcessTransportFactory()(onEvent);
     }
     worker.addEventListener('message', (event: MessageEvent<unknown>) => {

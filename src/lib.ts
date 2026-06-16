@@ -48,6 +48,21 @@ export { assertLinearSolve, solveLinearInPlace } from './physics/linearSolve';
 export type { LinearSolveFailureReason, LinearSolveFallbackPolicy, LinearSolveOptions, LinearSolveResult } from './physics/linearSolve';
 export { buildRhs, buildJacobian } from './physics/systemSpec';
 export type { SystemSpec } from './physics/systemSpec';
+export { gaussianSampler, eulerMaruyamaStep, milsteinStep, stochasticHeunStratonovichStep, commutativeMilsteinStep, runLangevinEnsemble, buildBrownianGrid, runAdaptiveLangevinPath, fixedGridLangevinPath } from './physics/stochastic';
+export { commutativityDefect } from './physics/noiseCommutativity';
+export type {
+  GaussianSampler,
+  StateDependentVector,
+  DiffusionMatrix,
+  DiffusionMatrixJacobian,
+  MatrixSdeScratch,
+  MultiplicativeNoise,
+  LangevinEnsembleSpec,
+  LangevinEnsembleResult,
+  BrownianGrid,
+  AdaptiveLangevinSpec,
+  AdaptiveLangevinResult
+} from './physics/stochastic';
 export type { CrossingDirection, EventFunction } from './physics/events';
 export { DAMPED_DRIVEN_CHAOS_PRESET, energyDriven, rhsDriven } from './physics/driven';
 export type { DrivenParameters } from './physics/driven';
@@ -66,6 +81,16 @@ export {
 } from './physics/spherical';
 export type { SphericalParams, SphericalState, SphericalDiagnostics } from './physics/spherical';
 export {
+  EmbeddedSphericalPendulum,
+  sphericalEmbeddedRhs,
+  sphericalEmbeddedEnergy,
+  sphericalEmbeddedLz,
+  sphericalEmbeddedPosition,
+  angleToEmbedded,
+  embeddedToAngle
+} from './physics/sphericalEmbedded';
+export type { EmbeddedSphericalState, EmbeddedSphericalDiagnostics } from './physics/sphericalEmbedded';
+export {
   SphericalChain,
   createSphericalChainWorkspace,
   rhsSphericalChain,
@@ -77,6 +102,18 @@ export {
   validateSphericalChainParams
 } from './physics/sphericalChain';
 export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from './physics/sphericalChain';
+export {
+  EmbeddedSphericalChain,
+  createEmbeddedChainWorkspace,
+  rhsEmbeddedChain,
+  embeddedChainEnergy,
+  embeddedChainLz,
+  embeddedChainPositions,
+  embeddedChainVelocities,
+  angleChainToEmbedded,
+  embeddedChainToAngle
+} from './physics/sphericalEmbeddedChain';
+export type { EmbeddedChainParams, EmbeddedChainState, EmbeddedChainDiagnostics, EmbeddedChainWorkspace } from './physics/sphericalEmbeddedChain';
 
 // Chaos diagnostics (re-exports the curated chaos index).
 export * from './chaos';
@@ -120,6 +157,8 @@ export type { JobControlMessage, JobEventMessage, JobInboundMessage, JobStatus, 
 // Research tooling
 export * from './research/researchSampling';
 export * from './research/experimentDesign';
+export * from './research/surrogate';
+export * from './research/parameterEstimation';
 export * from './research/zipBundle';
 export * from './research/provenance';
 export * from './research/notebookBuilder';
@@ -129,5 +168,5 @@ export * from './research/cliBatchSpec';
 export { hashText, csvCell, dataUrlByteEstimate } from './research/researchExportUtils';
 
 // Ensembles
-export { runDoublePendulumEnsemble, ensembleGrid } from './runtime/gpuEnsemble';
-export type { EnsembleOptions, EnsembleResult } from './runtime/gpuEnsemble';
+export { runDoublePendulumEnsemble, ensembleGrid, ensembleStatistics } from './runtime/gpuEnsemble';
+export type { EnsembleOptions, EnsembleResult, EnsembleStatistics } from './runtime/gpuEnsemble';

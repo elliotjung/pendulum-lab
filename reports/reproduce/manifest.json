@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2026-06-15T22:32:23.388Z",
+  "results": [
+    {
+      "id": "embedded-chain-pole-passage",
+      "description": "Embedded spherical chain: relative E/Lz drift through a near-pole passage (pole-clamp-free).",
+      "command": "(library) EmbeddedSphericalChain — tests/spherical-embedded-chain.test.ts",
+      "value": {
+        "energyDrift": 4.26793754185843e-12,
+        "lzDrift": 1.9016979453635598e-10,
+        "unitConstraintError": 0
+      },
+      "hash": "06e173457e4258"
+    },
+    {
+      "id": "ns-torus-rotation-number",
+      "description": "Neimark-Sacker invariant circle: rotation number ρ at a = 2.01 (→ 1/6 at onset).",
+      "command": "npm run research -- nstorus",
+      "value": {
+        "a": 2.01,
+        "rotationNumber": 0.1657368374699651,
+        "invarianceResidual": 2.25262586755878e-11,
+        "converged": true
+      },
+      "hash": "1205872ecd4244"
+    },
+    {
+      "id": "arnold-tongue-half",
+      "description": "Sine circle map (K=1): the 1/2 Arnold tongue interval and width.",
+      "command": "npm run research -- arnold --k 1",
+      "value": {
+        "start": 0.465,
+        "end": 0.5349999999999999,
+        "width": 0.0699999999999999,
+        "monotone": true
+      },
+      "hash": "13b2b8bd4697d6"
+    },
+    {
+      "id": "torus-lyapunov",
+      "description": "Lyapunov spectrum on the NS torus: neutral on-circle exponent, attracting transverse.",
+      "command": "npm run research -- toruslyap --a 2.02",
+      "value": {
+        "largest": -1.0780421669585316e-7,
+        "transverse": -0.02082950852290987,
+        "verdict": "quasi-periodic-torus"
+      },
+      "hash": "1cadaa68203c66"
+    },
+    {
+      "id": "ns-spectral-convergence",
+      "description": "NS collocation truncation error vs M: geometric (spectral) decay.",
+      "command": "npm run research -- nsconv --a 2.02",
+      "value": {
+        "spectral": true,
+        "geometricRate": -0.5542781525915116,
+        "dropFactor": 664248.4154332373,
+        "spectralR2": 0.9596038139090701,
+        "algebraicR2": 0.8918249572897727
+      },
+      "hash": "0b514c333e76a3"
+    },
+    {
+      "id": "structure-preservation",
+      "description": "Long-run energy drift: rk4 secular vs the symmetric Gauss method bounded (~1000 periods).",
+      "command": "npm run research -- drift",
+      "value": {
+        "rk4Secular": true,
+        "rk4MaxDrift": 0.00029024152665728153,
+        "gauss2Secular": false,
+        "gauss2MaxDrift": 6.714588015585217e-8
+      },
+      "hash": "0c653938faa6a3"
+    },
+    {
+      "id": "sde-gbm-moments",
+      "description": "Langevin/Milstein ensemble: geometric Brownian motion mean & variance vs the closed form.",
+      "command": "npm run research -- sde --scheme milstein",
+      "value": {
+        "mean": 1.3492223491049724,
+        "variance": 0.32246594543459345,
+        "expectedMean": 1.3498588075760032,
+        "expectedVar": 0.3161574201063097
+      },
+      "hash": "186cc1a9405332"
+    },
+    {
+      "id": "transcritical-switch",
+      "description": "Transcritical (+1) branch switch on r(x,λ)=λx−x²: lands on x=λ.",
+      "command": "npm run research -- transcritical --step 0.2",
+      "value": {
+        "switched": true,
+        "state": [
+          0.2
+        ],
+        "separation": 0.2,
+        "residual": 0
+      },
+      "hash": "18922d6bb87ab9"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import {
   type ExpansionJobResult,
   type ExpansionWorkerResponse
 } from '../workers/expansionJobProtocol';
+import { notifyWorkerFallback } from '../runtime/workerFallbackNotice';
 
 /**
  * Shared client that runs an Expansion-family job (`suite` / `matrix` /
@@ -18,26 +19,39 @@ export interface ExpansionJobOutcome {
   /** True when the result came from the worker, false when the main-thread fallback ran. */
   worker: boolean;
   elapsedMs: number;
+  fallbackReason?: string;
 }
 
 function uid(): string {
   return typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `exp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-function runOnMainThread(request: ExpansionJobRequest): ExpansionJobOutcome {
+function runOnMainThread(request: ExpansionJobRequest, fallbackReason?: string): ExpansionJobOutcome {
   const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const result = runExpansionJob(request);
   const elapsedMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) - started;
-  return { result, worker: false, elapsedMs };
+  return { result, worker: false, elapsedMs, ...(fallbackReason ? { fallbackReason } : {}) };
+}
+
+function workerLoadError(message: string): Error {
+  const error = new Error(message);
+  error.name = 'ExpansionWorkerLoadError';
+  return error;
 }
 
 export async function runExpansionWorkerJob(request: ExpansionJobRequest, timeoutMs = 30_000): Promise<ExpansionJobOutcome> {
-  if (typeof Worker === 'undefined') return runOnMainThread(request);
+  if (typeof Worker === 'undefined') {
+    const reason = 'worker unavailable';
+    notifyWorkerFallback('expansion-worker', reason);
+    return runOnMainThread(request, reason);
+  }
   let worker: Worker;
   try {
     worker = new Worker(new URL('../workers/expansion.worker.ts', import.meta.url), { type: 'module', name: 'pendulum-expansion-worker' });
-  } catch {
-    return runOnMainThread(request);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : 'worker creation failed';
+    notifyWorkerFallback('expansion-worker', reason);
+    return runOnMainThread(request, reason);
   }
   const id = uid();
   const started = performance.now();
@@ -55,22 +69,24 @@ export async function runExpansionWorkerJob(request: ExpansionJobRequest, timeou
       }, timeoutMs);
       const onError = (event: ErrorEvent): void => {
         cleanup();
-        reject(event.error instanceof Error ? event.error : new Error(event.message));
+        reject(workerLoadError(event.message || 'worker script failed to load'));
       };
       const onMessage = (event: MessageEvent<ExpansionWorkerResponse>): void => {
         if (event.data.id !== id) return;
         cleanup();
         if (event.data.ok) resolve(event.data.result);
-        else reject(new Error(event.data.error));
+        else reject(new Error(`expansion worker job failed: ${event.data.error}`));
       };
       worker.addEventListener('message', onMessage);
       worker.addEventListener('error', onError);
       worker.postMessage({ id, request });
     });
     return { result, worker: true, elapsedMs: performance.now() - started };
-  } catch {
-    // Worker failed (e.g. blocked over file://, timeout, or runtime error): run
-    // the identical computation on the main thread so the feature still works.
-    return runOnMainThread(request);
+  } catch (error) {
+    if (error instanceof Error && error.name === 'ExpansionWorkerLoadError') {
+      notifyWorkerFallback('expansion-worker', error.message);
+      return runOnMainThread(request, error.message);
+    }
+    throw error instanceof Error ? error : new Error(String(error));
   }
 }

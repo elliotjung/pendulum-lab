@@ -71,6 +71,32 @@ export class LabRenderer {
     return { width: this.opts.width, height: this.opts.height };
   }
 
+  /** Number of stored main-trail points, used by diagnostics and resize regression tests. */
+  trailPointCount(): number {
+    return this.trail.filled;
+  }
+
+  /**
+   * Resize the logical drawing surface without treating it as a physics reset.
+   * Changing a canvas backing store clears its pixels; preserving and rescaling
+   * the trail buffer keeps side-panel collapse/expand from looking like the
+   * pendulum restarted.
+   */
+  resize(options: Pick<LabRenderOptions, 'width' | 'height'>): void {
+    const oldWidth = this.opts.width;
+    const oldHeight = this.opts.height;
+    const nextWidth = Math.max(1, options.width);
+    const nextHeight = Math.max(1, options.height);
+    if (oldWidth === nextWidth && oldHeight === nextHeight) return;
+
+    const sx = nextWidth / Math.max(1, oldWidth);
+    const sy = nextHeight / Math.max(1, oldHeight);
+    this.scaleTrail(this.trail, sx, sy);
+    for (const trail of this.ensembleTrails) this.scaleTrail(trail, sx, sy);
+    this.opts.width = nextWidth;
+    this.opts.height = nextHeight;
+  }
+
   /** Pivot pixel position. */
   pivot(): Point2D {
     return { x: this.opts.width / 2, y: this.opts.height * this.opts.pivotYFraction };
@@ -196,6 +222,13 @@ export class LabRenderer {
     target.buf[target.idx * 2 + 1] = y;
     target.idx = (target.idx + 1) % cap;
     if (target.filled < cap) target.filled += 1;
+  }
+
+  private scaleTrail(target: TrailBuffer, sx: number, sy: number): void {
+    for (let i = 0; i < target.filled; i += 1) {
+      target.buf[i * 2] = (target.buf[i * 2] ?? 0) * sx;
+      target.buf[i * 2 + 1] = (target.buf[i * 2 + 1] ?? 0) * sy;
+    }
   }
 
   private drawMainTrail(mode: string, fallbackColor?: string): void {

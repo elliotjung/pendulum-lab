@@ -2,13 +2,22 @@
 
 ## CSP
 
-The project applies a Content Security Policy in `index.html` and the Vite dev server:
+The live application path (`app.html` in Vite, and any served deployment) uses a
+strict CSP without inline script execution:
 
 ```text
-default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'
+default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'
 ```
 
-`style-src 'unsafe-inline'` remains for the hand-written shell styling and a small number of runtime sizing styles, not for inline script execution. New TypeScript UI code should continue to use `createElement`, `textContent`, event listeners, and CSS classes instead of `innerHTML`. `npm run audit:legacy` tracks `innerHTML`, `.onclick`, inline worker, eval-like, dynamic script, and global export risks against the legacy baseline.
+The project-root `index.html` is the generated standalone, double-clickable
+artifact. It intentionally inlines JavaScript and permits `blob:` workers so it
+can run from `file://`; this portable artifact is documented separately from the
+served-app CSP and should not be used as evidence of the hosted security policy.
+
+New TypeScript UI code should continue to use `createElement`, `textContent`,
+event listeners, and CSS classes instead of `innerHTML`. `npm run audit:legacy`
+tracks `innerHTML`, `.onclick`, inline worker, eval-like, dynamic script, global
+export risks, and the served/standalone CSP split.
 
 ## JSON Import
 
@@ -26,11 +35,15 @@ default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src
 
 New code uses `new Worker(new URL('../workers/physics.worker.ts', import.meta.url), { type: 'module' })` through `WorkerBridge`. If module workers are unavailable, the bridge computes the fallback step on the main thread rather than returning a stale state.
 
-The legacy blob worker is now disabled when `index.html` is opened directly through `file://`, and worker creation failure explicitly falls back to the main thread so the pendulum keeps moving.
+When the standalone `index.html` is opened directly through `file://`, worker
+creation failure explicitly falls back to the main thread so the pendulum keeps
+moving.
 
 ## Event Policy
 
-New commands are registered through `CommandRegistry`; the legacy bridge migrates existing `.onclick` handlers into the registry where possible and emits typed events through `EventBus`.
+New commands are registered through `CommandRegistry` and emit typed events
+through `EventBus`. Deprecated global aliases remain only as compatibility
+readers for old scripts and tests.
 
 ## Export And Storage
 

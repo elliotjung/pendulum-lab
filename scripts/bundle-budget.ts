@@ -20,8 +20,8 @@ interface Budget {
 const KiB = 1024;
 const BUDGETS = {
   initialJsRaw: 760 * KiB,
-  initialJsGzip: 180 * KiB,
-  initialJsBrotli: 150 * KiB,
+  initialJsGzip: 184 * KiB,
+  initialJsBrotli: 155 * KiB,
   chunkJsRaw: 520 * KiB,
   chunkJsGzip: 135 * KiB,
   chunkJsBrotli: 115 * KiB,

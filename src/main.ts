@@ -14,6 +14,7 @@ import { installFeatureParityLayer, currentSnapshot } from './app/FeatureParityL
 import { installUiPolish } from './app/UiPolish';
 import { publishPublicApi } from './runtime/globalApi';
 import { installAudienceMode } from './app/audienceMode';
+import { APP_VERSION } from './runtime/version';
 
 function installIndexCommands(): void {
   commandRegistry.upsert({
@@ -56,7 +57,7 @@ function installRuntimeApi(): void {
   installDefaultCommands();
   stateStore.syncFromLegacy();
   const api = Object.freeze({
-    version: '10.34.0',
+    version: APP_VERSION,
     commands: commandRegistry,
     events: eventBus,
     state: stateStore,

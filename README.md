@@ -14,7 +14,8 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 490+ unit tests
+npm test           # 714 unit tests
+npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 ```
 
 UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
@@ -37,7 +38,9 @@ UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 
 Full equations and derivations: [`docs/derivations.md`](docs/derivations.md) ·
 limitations: [`docs/known-limitations.md`](docs/known-limitations.md) ·
-API stability / SemVer policy: [`docs/api-overview.md`](docs/api-overview.md).
+API stability / SemVer policy: [`docs/api-overview.md`](docs/api-overview.md) ·
+reproducing the external (SciPy/SymPy) checks:
+[`docs/reproducibility.md`](docs/reproducibility.md).
 Step-by-step paper reproduction:
 [`docs/tutorial-reproduce-paper.md`](docs/tutorial-reproduce-paper.md).
 
@@ -51,8 +54,15 @@ Step-by-step paper reproduction:
   ball-joint dynamics; exact closed-form mass matrix and Coriolis terms).
 - **Chaos** — Lyapunov max/spectrum (+ block std errors, symplectic pairing
   self-check), Kaplan–Yorke, RQA, 0–1 test, CLVs, FTLE/LCS + ridges, basin
-  entropy/Wada, Floquet + continuation + branch switching, Melnikov,
-  recurrence networks, Neimark–Sacker, codim-2 maps.
+  entropy/Wada, Floquet + continuation + branch switching (period-doubling
+  *and* symmetry-breaking pitchfork), Melnikov, recurrence networks,
+  Neimark–Sacker, codim-2 maps.
+- **Inverse & UQ** — parameter estimation (Levenberg–Marquardt recovery of
+  physical parameters from observed trajectories, with covariance/standard-error
+  uncertainties), additive- and multiplicative-noise Langevin SDEs
+  (Euler–Maruyama + Milstein) with ensemble statistics, and a polynomial-chaos
+  surrogate with analytic Sobol indices (alongside the sampling-based Sobol
+  analysis). Library APIs.
 - **Research workbench** — experiments/run-log/parameter & multi-variable
   adaptive designs, worker job protocol V2 (priority, checkpoints, resume),
   ZIP bundles with provenance DAG + SHA-256 manifest, IndexedDB long-term
@@ -80,12 +90,13 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` | Vitest unit suite (592 tests across 86 files; synced from `reports/vitest-results.json`) |
+| `npm test` | Vitest unit suite (714 tests across 104 files; synced from `reports/vitest-results.json`) |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |
 | `npm run paper:study` / `paper:build` | Mini-paper experiment + render |
-| `npm run research -- <cmd>` | Headless CLI: lyapunov, spectrum, zeroone, rqa, ftle, basin, wada, studypoint, orbit, continue, switch, melnikov |
+| `npm run reproduce` | Recompute all headline research results headlessly; writes `reports/reproduce/manifest.json` (hash-stamped, diff-able) |
+| `npm run research -- <cmd>` | Headless CLI: lyapunov, spectrum, zeroone, rqa, ftle, basin, wada, studypoint, orbit, continue, switch, pitchfork, melnikov, estimate, sde, nsbranch |
 | `npm run benchmark` / `benchmark:energy` | Performance · long-run energy-drift ranking |
 | `npm run notebook` / `notebook:validate` | Research notebook generation + headless execution check |
 | `npm run export:repro` / `reports` / `audit:legacy` / `audit:worldclass` | Repro packages · reports · audits |
@@ -118,6 +129,17 @@ simulator-to-simulator benchmarking. The capability-by-capability mapping is
 in [`docs/device-simulation-mapping.md`](docs/device-simulation-mapping.md);
 a Korean portfolio summary is in
 [`docs/portfolio-korean.md`](docs/portfolio-korean.md).
+
+## Portfolio context
+
+Built as a high-school research portfolio piece targeting semiconductor /
+TCAD simulation roles. The project demonstrates the same validation habits
+used in professional EDA tools — convergence orders, analytic Jacobians,
+external cross-validation, and branch-continuation — scaled to a dynamical
+system compact enough for a single developer to make every claim auditable.
+See [`docs/portfolio-korean.md`](docs/portfolio-korean.md) for the Korean
+summary and [`docs/device-simulation-mapping.md`](docs/device-simulation-mapping.md)
+for the explicit TCAD capability mapping.
 
 ## License and citation
 

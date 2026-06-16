@@ -32,7 +32,17 @@ export default defineConfig({
   base: './',
   plugins: [relaxCspForFileProtocol(), viteSingleFile()],
   worker: {
-    format: 'iife'
+    format: 'iife',
+    // Deterministic, hash-free worker filenames. The standalone build emits the
+    // chaos/expansion workers as siblings of index.html; with a content hash in
+    // the name every rebuild produced a *new* tracked file (and orphaned the
+    // old one in git), churning history and risking an index.html that points at
+    // an untracked worker. Stable names keep the tracked filename constant.
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js'
+      }
+    }
   },
   build: {
     outDir: 'standalone',

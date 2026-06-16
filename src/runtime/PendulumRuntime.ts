@@ -6,6 +6,8 @@ import { stateStore } from '../state/StateStore';
 import { physicsAdapter } from '../physics';
 import { workerBridge } from './WorkerBridge';
 import type { PendulumLegacyApp, PendulumLegacyPhysics } from '../types/globals';
+import { APP_VERSION } from './version';
+import { legacyAdopted, legacyApp, legacyPhysics } from './legacyCompat';
 
 /**
  * Typed service map for the application container. Modern services are always
@@ -24,12 +26,6 @@ export interface PendulumServiceMap {
 
 const container = new ServiceContainer<PendulumServiceMap>();
 
-/** Read the single legacy namespace object published by `js/01-core-app.js`. */
-function legacyNamespace(): { App?: PendulumLegacyApp; Physics?: PendulumLegacyPhysics } | undefined {
-  return (window as Window & { PendulumLabLegacyRuntime?: { App?: PendulumLegacyApp; Physics?: PendulumLegacyPhysics } })
-    .PendulumLabLegacyRuntime;
-}
-
 let installed = false;
 
 /**
@@ -45,23 +41,21 @@ export function installPendulumRuntime(): ServiceContainer<PendulumServiceMap> {
   container.registerValue('physics', physicsAdapter);
   container.registerValue('worker', workerBridge);
 
-  // The legacy app/physics are owned by the classic scripts. We resolve them
-  // lazily from the single legacy namespace (falling back to the deprecated
-  // `window.App`/`window.Physics` compatibility accessors) so the modern layer
-  // never writes a bare global of its own.
+  // Deprecated compatibility readers for old scripts/tests. They resolve
+  // lazily through `legacyCompat` so direct global access stays centralized.
   container.register('legacyApp', () => {
-    const app = legacyNamespace()?.App ?? window.App;
+    const app = legacyApp();
     if (!app) throw new Error('PendulumRuntime: legacy App is not available (file:// or pre-boot)');
     return app;
   }, { singleton: false });
   container.register('legacyPhysics', () => {
-    const physics = legacyNamespace()?.Physics ?? window.Physics;
+    const physics = legacyPhysics();
     if (!physics) throw new Error('PendulumRuntime: legacy Physics is not available');
     return physics;
   }, { singleton: false });
 
   const surface = Object.freeze({
-    version: '10.12.0',
+    version: APP_VERSION,
     container,
     resolve: <K extends keyof PendulumServiceMap>(token: K) => container.resolve(token),
     tryResolve: <K extends keyof PendulumServiceMap>(token: K) => container.tryResolve(token),
@@ -78,9 +72,9 @@ export function installPendulumRuntime(): ServiceContainer<PendulumServiceMap> {
     },
     /** Lightweight description for diagnostics panels. */
     describe: () => ({
-      version: '10.12.0',
+      version: APP_VERSION,
       services: container.tokens().map((token) => String(token)),
-      legacyAdopted: Boolean(legacyNamespace()?.App ?? window.App)
+      legacyAdopted: legacyAdopted()
     })
   });
 

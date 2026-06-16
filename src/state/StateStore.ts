@@ -1,6 +1,7 @@
 import type { ImportValidationResult, IntegratorId, PendulumParameters, RunMode, RuntimeSnapshot, SystemType } from '../types/domain';
 import { integratorRegistry } from '../physics/integrators';
 import { eventBus } from '../runtime/EventBus';
+import { legacyApp } from '../runtime/legacyCompat';
 
 const schemaVersion = 'pendulum-session/v10-ts';
 const systemTypes = new Set<SystemType>(['double', 'triple']);
@@ -81,7 +82,7 @@ export class StateStore {
     return structuredClone(this.snapshotValue);
   }
 
-  syncFromLegacy(app = window.App): RuntimeSnapshot {
+  syncFromLegacy(app = legacyApp()): RuntimeSnapshot {
     if (!app) return this.snapshot();
     const state = Array.from(app.state ?? []).slice(0, app.stateLen ?? app.state?.length ?? 0);
     this.snapshotValue = {
@@ -103,7 +104,7 @@ export class StateStore {
     return this.snapshot();
   }
 
-  applyPatch(patch: Partial<RuntimeSnapshot>, app = window.App): RuntimeSnapshot {
+  applyPatch(patch: Partial<RuntimeSnapshot>, app = legacyApp()): RuntimeSnapshot {
     const candidate = { ...this.snapshotValue, ...patch, hash: this.snapshotValue.hash };
     const validation = StateStore.validate(candidate);
     if (!validation.ok || !validation.value) {

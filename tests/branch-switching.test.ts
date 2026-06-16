@@ -1,6 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { drivenPeriodicOrbit } from '../src/chaos/floquet';
-import { drivenPeriodicOrbitN, realEigenvector2x2, switchPeriodDoubling } from '../src/chaos/branchSwitching';
+import {
+  drivenPeriodicOrbitN,
+  realEigenvector2x2,
+  switchPeriodDoubling,
+  switchSymmetryBreaking,
+  switchTranscriticalBranch
+} from '../src/chaos/branchSwitching';
+import { continueDrivenPeriodicOrbit } from '../src/chaos/continuation';
 
 /**
  * Period-doubling branch switching on the classic damped driven pendulum
@@ -76,5 +83,131 @@ describe('period-doubling of the driven pendulum', () => {
     expect(b.converged).toBe(true);
     expect(Math.abs(a.orbit[0] - b.orbit[0])).toBeLessThan(1e-6);
     expect(Math.abs(a.orbit[1] - b.orbit[1])).toBeLessThan(1e-6);
+  });
+});
+
+/**
+ * Symmetry-breaking pitchfork on the same system, but at the *earlier* +1
+ * crossing (A ≈ 1.005, before the period-doubling): the symmetric oscillating
+ * orbit loses stability via a real multiplier through +1, and two mirror-image
+ * asymmetric period-1 orbits branch off, straddling it. This is the +1 case the
+ * docs previously listed as future work.
+ */
+describe('symmetry-breaking pitchfork of the driven pendulum', () => {
+  // driveAmplitude is overridden by the continuation / per-A params below.
+  const base = { g: 1, length: 1, damping: 0.5, driveAmplitude: 0.7, driveFrequency: 2 / 3 };
+
+  test('follows the two mirror-image asymmetric orbits born at the +1 crossing', () => {
+    // Locate the first stability loss by continuing the symmetric branch from low A.
+    const cont = continueDrivenPeriodicOrbit(base, {
+      parameter: 'driveAmplitude',
+      start: 0.7,
+      end: 1.06,
+      step: 0.005,
+      dt: 0.004,
+      tolerance: 1e-11
+    });
+    expect(cont.bifurcation).not.toBeNull();
+    expect(cont.bifurcation!.type).toBe('tangent'); // a real +1 crossing
+    const aCrit = cont.bifurcation!.parameter;
+    expect(aCrit).toBeGreaterThan(1.0);
+    expect(aCrit).toBeLessThan(1.05);
+
+    // Re-find the (now unstable) symmetric orbit just past onset, warm-started
+    // from the last stable point on the branch.
+    const lastStable = cont.branch.filter((p) => p.parameter < aCrit).pop()!;
+    const params = { ...base, driveAmplitude: aCrit };
+    const sym = drivenPeriodicOrbitN(params, lastStable.orbit, 1, { dt: 0.004, tolerance: 1e-11 });
+    expect(sym.converged).toBe(true);
+    expect(sym.stable).toBe(false); // it has just lost stability
+
+    const result = switchSymmetryBreaking(params, sym.orbit, { dt: 0.004, tolerance: 1e-11 });
+
+    expect(result.switched).toBe(true);
+    expect(result.criticalMultiplier.re).toBeGreaterThan(1); // just past +1
+    expect(Math.abs(result.criticalMultiplier.im)).toBeLessThan(1e-9); // real
+
+    // Two genuinely distinct, stable period-1 orbits.
+    const [a, b] = result.branches;
+    expect(a.converged).toBe(true);
+    expect(b.converged).toBe(true);
+    expect(a.residual).toBeLessThan(1e-9);
+    expect(b.residual).toBeLessThan(1e-9);
+    expect(a.n).toBe(1);
+    expect(b.n).toBe(1);
+    expect(a.stable).toBe(true);
+    expect(b.stable).toBe(true);
+    expect(result.separation).toBeGreaterThan(0.05);
+
+    // Both branches differ from the symmetric orbit…
+    expect(Math.hypot(a.orbit[0] - sym.orbit[0], a.orbit[1] - sym.orbit[1])).toBeGreaterThan(0.02);
+    expect(Math.hypot(b.orbit[0] - sym.orbit[0], b.orbit[1] - sym.orbit[1])).toBeGreaterThan(0.02);
+
+    // …and the pitchfork signature holds: their midpoint is the symmetric orbit.
+    expect(result.pitchforkResidual).toBeLessThan(0.02);
+    expect(Math.hypot(result.midpoint[0] - sym.orbit[0], result.midpoint[1] - sym.orbit[1])).toBeLessThan(0.02);
+
+    // Deterministic ordering by θ.
+    expect(a.orbit[0]).toBeLessThanOrEqual(b.orbit[0]);
+  });
+
+  test('reports switched=false (no false positive) on a stable symmetric orbit', () => {
+    // Well below onset the symmetric orbit is stable: there is no pitchfork pair.
+    const params = { ...base, driveAmplitude: 0.9 };
+    const sym = drivenPeriodicOrbitN(params, [0, 0], 1, { dt: 0.004, tolerance: 1e-11 });
+    expect(sym.stable).toBe(true);
+    const result = switchSymmetryBreaking(params, sym.orbit, { dt: 0.004, tolerance: 1e-11 });
+    expect(result.switched).toBe(false);
+  });
+});
+
+describe('generic transcritical branch switching', () => {
+  test('switches from x = 0 onto x = lambda in the normal form x(lambda - x) = 0', () => {
+    const result = switchTranscriticalBranch(
+      {
+        dimension: 1,
+        residual: (state, lambda, out) => {
+          out[0] = state[0]! * (lambda - state[0]!);
+        },
+        jacobian: (state, lambda, out) => {
+          out[0] = lambda - 2 * state[0]!;
+        }
+      },
+      { state: [0], parameter: 0 },
+      {
+        parameterStep: 0.2,
+        branchTangent: [1],
+        referenceBranch: () => [0],
+        tolerance: 1e-12
+      }
+    );
+    expect(result.converged).toBe(true);
+    expect(result.switched).toBe(true);
+    expect(result.state[0]!).toBeCloseTo(0.2, 12);
+    expect(result.separation).toBeGreaterThan(0.19);
+  });
+
+  test('reports switched=false when Newton falls back onto the reference branch', () => {
+    const result = switchTranscriticalBranch(
+      {
+        dimension: 1,
+        residual: (state, lambda, out) => {
+          out[0] = state[0]! * (lambda - state[0]!);
+        },
+        jacobian: (state, lambda, out) => {
+          out[0] = lambda - 2 * state[0]!;
+        }
+      },
+      { state: [0], parameter: 0 },
+      {
+        parameterStep: 0.2,
+        branchTangent: [0],
+        referenceBranch: () => [0],
+        tolerance: 1e-12
+      }
+    );
+    expect(result.converged).toBe(true);
+    expect(result.switched).toBe(false);
+    expect(result.state[0]!).toBeCloseTo(0, 12);
   });
 });

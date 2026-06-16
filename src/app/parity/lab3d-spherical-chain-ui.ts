@@ -12,7 +12,7 @@ import type { SystemSpec } from '../../physics/systemSpec';
 import { bindOrbitControls, depthSortIndices, drawPolyline3D, drawSphereWireframe } from '../../viz/orbit3d';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-workbench';
+import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
 import { CHAIN_COLORS } from './lab3d-utils';
 import {
   buildLab3dChainInitialState,

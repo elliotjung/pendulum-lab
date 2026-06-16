@@ -86,6 +86,19 @@ export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';
 export type { SpringPendulumParameters } from './spring';
+export {
+  rhsPendulumNetwork,
+  pendulumNetworkEnergy,
+  pendulumNetworkStiffnessMatrix,
+  ringPhononDispersion,
+  buildCouplingMatrix,
+  ringCouplingMatrix,
+  networkSize,
+  validatePendulumNetworkParameters
+} from './pendulumNetwork';
+export type { PendulumNetworkParameters, NetworkEdge } from './pendulumNetwork';
+export { stochasticResonanceResponse, stochasticResonanceCurve } from './stochasticResonance';
+export type { BistableSrParameters, SrResponse } from './stochasticResonance';
 export { RopePendulum } from './rope';
 export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from './rope';
 export { DoubleStringPendulum, doubleStringEnergy, doubleStringTensions } from './doubleString';
@@ -139,6 +152,7 @@ export {
   EXPANSION_MODEL_IDS,
   EXPANSION_PRESETS,
   GOLDEN_EXPANSION_PRESET_IDS,
+  GOLDEN_REGRESSION_BASELINES,
   buildExpansionReport,
   configFromPreset,
   createExpansionSystem,
@@ -162,6 +176,7 @@ export type {
   ExpansionGhostFrame,
   ExpansionHeatmap,
   ExpansionLyapunovProfile,
+  ExpansionLyapunovProfiler,
   ExpansionLyapunovTimelinePoint,
   ExpansionMatrixCell,
   ExpansionMethodResult,

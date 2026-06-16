@@ -20,6 +20,7 @@ import {
 } from '../workers/chaosProtocol';
 import type { ClvSettings, CodimTwoOptions, FlipBasinOptions, FtleFieldOptions, LyapunovSettings, WadaConvergenceOptions } from '../chaos';
 import type { SystemSpec } from '../physics/systemSpec';
+import { notifyWorkerFallback } from './workerFallbackNotice';
 
 /**
  * Main-thread client for the chaos worker. It returns Promises and transparently
@@ -31,13 +32,17 @@ import type { SystemSpec } from '../physics/systemSpec';
 export type WorkerFactory = () => Worker | null;
 
 function defaultWorkerFactory(): Worker | null {
-  if (typeof Worker === 'undefined') return null;
+  if (typeof Worker === 'undefined') {
+    notifyWorkerFallback('chaos-worker', 'worker unavailable');
+    return null;
+  }
   try {
     return new Worker(new URL('../workers/chaos.worker.ts', import.meta.url), {
       type: 'module',
       name: 'pendulum-chaos-worker'
     });
-  } catch {
+  } catch (error) {
+    notifyWorkerFallback('chaos-worker', error);
     return null;
   }
 }
@@ -70,6 +75,7 @@ export class ChaosClient {
     this.ensureWorker();
     const worker = this.worker;
     if (!worker) {
+      notifyWorkerFallback('chaos-worker', 'worker unavailable');
       // Fallback: defer so the caller's "Computing…" UI can paint first.
       return new Promise<R>((resolve, reject) => {
         setTimeout(() => {

@@ -17,7 +17,7 @@ import type { IntegratorId } from '../types/domain';
  * `chaosProtocol.runChaosJob` backs both the chaos worker and its fallback.
  */
 export type ExpansionJobRequest =
-  | { kind: 'suite'; config: ExpansionSuiteConfig }
+  | { kind: 'suite'; config: ExpansionSuiteConfig; includeLyapunov?: boolean }
   | { kind: 'matrix'; config: ExpansionSuiteConfig; gridSize: number }
   | { kind: 'golden'; presetIds: string[]; methods?: IntegratorId[] };
 
@@ -39,7 +39,7 @@ export type ExpansionWorkerResponse =
 export function runExpansionJob(request: ExpansionJobRequest): ExpansionJobResult {
   switch (request.kind) {
     case 'suite':
-      return { kind: 'suite', result: runExpansionSuite(request.config, { includeLyapunov: true }) };
+      return { kind: 'suite', result: runExpansionSuite(request.config, { includeLyapunov: Boolean(request.includeLyapunov) }) };
     case 'matrix':
       return { kind: 'matrix', result: runResearchMatrixStudy(request.config, { gridSize: request.gridSize }) };
     case 'golden':

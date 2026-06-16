@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   EXPANSION_MODEL_IDS,
   EXPANSION_PRESETS,
+  GOLDEN_REGRESSION_BASELINES,
   buildExpansionReport,
   configFromPreset,
   parseExpansionShareHash,
@@ -112,12 +113,41 @@ describe('expanded physics model suite', () => {
     expect(matrix.manifest.hash).toMatch(/^exp-[0-9a-f]{8}$/);
   });
 
+  test('chain research matrix uses a real link-length scale axis', () => {
+    const matrix = runResearchMatrixStudy({
+      model: 'chain',
+      methods: ['rk4'],
+      horizon: 2,
+      dt: 0.004,
+      sampleLimit: 32,
+      bifurcationColumns: 4
+    }, { gridSize: 4 });
+    expect(matrix.sweep2d.yAxis.parameter).toBe('lengthScale');
+    expect(matrix.sweep2d.yAxis.label).toContain('link length');
+    const firstColumn = matrix.sweep2d.cells.filter((_, index) => index % matrix.sweep2d.size === 0);
+    expect(new Set(firstColumn.map((cell) => cell.score)).size).toBeGreaterThan(1);
+  });
+
+  test('energy landscape carries a caveat for driven or dissipative models', () => {
+    const matrix = runResearchMatrixStudy({
+      model: 'driven',
+      methods: ['rk4'],
+      horizon: 2,
+      dt: 0.012,
+      sampleLimit: 32,
+      bifurcationColumns: 4
+    }, { gridSize: 4 });
+    expect(matrix.diagnostics.energyLandscape.note).toContain('not a true separatrix');
+  });
+
   test('golden center separates integrator thresholds and regression signatures', () => {
     const center = runGoldenExpansionCenter(['coupled-normal-mode'], ['rk4', 'euler']);
     expect(center.schemaVersion).toBe('pendulum-golden-center/v1');
     expect(center.presets).toHaveLength(1);
     expect(center.summary.totalMethods).toBe(2);
     expect(center.presets[0]?.methods.every((row) => row.regressionHash.match(/^exp-[0-9a-f]{8}$/))).toBe(true);
+    expect(center.presets[0]?.methods[0]?.expectedRegressionHash).toBe(GOLDEN_REGRESSION_BASELINES['coupled-normal-mode']?.rk4);
+    expect(center.presets[0]?.methods.every((row) => row.regressionPass)).toBe(true);
     expect(center.manifest.hash).toMatch(/^exp-[0-9a-f]{8}$/);
   });
 });

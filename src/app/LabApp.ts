@@ -226,9 +226,11 @@ export class LabApp {
     const main = ctxOf('main');
     if (!main) return null;
     const size = this.renderer?.size();
-    if (!this.renderer || size?.width !== main.width || size?.height !== main.height) {
+    if (!this.renderer) {
       this.renderer = new LabRenderer(main.ctx, { width: main.width, height: main.height });
       this.renderer.clear();
+    } else if (size?.width !== main.width || size?.height !== main.height) {
+      this.renderer.resize({ width: main.width, height: main.height });
     }
     return this.renderer;
   }
@@ -338,14 +340,15 @@ export class LabApp {
   }
 
   /** Live diagnostics for tooling/tests. */
-  diagnostics(): { time: number; drift: number; poincarePoints: number; lambdaMax: number; fps: number; physicsMsPerFrame: number } {
+  diagnostics(): { time: number; drift: number; poincarePoints: number; lambdaMax: number; fps: number; physicsMsPerFrame: number; trailPoints: number } {
     return {
       time: this.lastTime,
       drift: this.lastDrift,
       poincarePoints: this.poincare.size,
       lambdaMax: this.lyap.value(),
       fps: this.lastFps,
-      physicsMsPerFrame: this.lastPhysicsMs
+      physicsMsPerFrame: this.lastPhysicsMs,
+      trailPoints: this.renderer?.trailPointCount() ?? 0
     };
   }
 

@@ -6,7 +6,7 @@
 import { RopePendulum } from '../../physics/rope';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-workbench';
+import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
 import { lab3d, lab3dEnsureLoop, registerLab3dFrameHook } from './lab3d-render-loop';
 
 export function lab3dRopeParams(): { l: number; g: number; damping: number } {

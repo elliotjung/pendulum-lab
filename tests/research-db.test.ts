@@ -63,6 +63,34 @@ describe('ResearchDb (IndexedDB store)', () => {
     expect((await replaced.get('experiments', 'exp-1'))?.payload).toEqual({ name: 'one' });
   });
 
+  it('replace import overwrites every store in one atomic transaction', async () => {
+    // The replace path now clears and refills all stores inside a single
+    // transaction, so it is all-or-nothing (no store left cleared-but-empty by an
+    // interruption). This pins the observable contract: old ids gone, new ids in,
+    // and a store omitted from the archive is emptied — all from one import call.
+    const db = freshDb();
+    await db.put('experiments', 'old-exp', { name: 'old' });
+    await db.put('runLog', 'old-run', { type: 'old' });
+    await db.put('settings', 'old-setting', { v: 0 });
+
+    const archive = {
+      schemaVersion: RESEARCH_DB_SCHEMA_VERSION,
+      exportedAt: new Date().toISOString(),
+      stores: {
+        experiments: [{ id: 'new-exp', updatedAt: new Date().toISOString(), payload: { name: 'new' } }],
+        runLog: [{ id: 'new-run', updatedAt: new Date().toISOString(), payload: { type: 'new' } }]
+        // `settings` intentionally omitted -> emptied by replace
+      }
+    } as unknown as ResearchDbArchive;
+
+    const { imported } = await db.importArchive(archive, 'replace');
+    expect(imported).toBe(2);
+    expect(await db.get('experiments', 'old-exp')).toBeUndefined();
+    expect((await db.get('experiments', 'new-exp'))?.payload).toEqual({ name: 'new' });
+    expect((await db.get('runLog', 'new-run'))?.payload).toEqual({ type: 'new' });
+    expect(await db.count('settings')).toBe(0);
+  });
+
   it('rejects malformed archives with explicit problems', async () => {
     expect(validateResearchDbArchive(null).ok).toBe(false);
     expect(validateResearchDbArchive({ schemaVersion: 'wrong', stores: {} }).ok).toBe(false);

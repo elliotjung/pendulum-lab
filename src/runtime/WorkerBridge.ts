@@ -1,5 +1,6 @@
 import { eventBus } from './EventBus';
 import { eulerStep, rk2Step, rk4Step } from '../physics/integrators';
+import { notifyWorkerFallback } from './workerFallbackNotice';
 
 export interface WorkerStepRequest {
   state: number[];
@@ -24,19 +25,26 @@ export class WorkerBridge {
   }
 
   start(): boolean {
-    if (!this.available()) return false;
+    if (!this.available()) {
+      notifyWorkerFallback('physics-worker', 'worker unavailable');
+      return false;
+    }
     if (this.worker) return true;
     try {
       this.worker = new Worker(this.url, { type: 'module', name: 'pendulum-physics-worker' });
       return true;
-    } catch {
+    } catch (error) {
       this.worker = null;
+      notifyWorkerFallback('physics-worker', error);
       return false;
     }
   }
 
   async step(request: WorkerStepRequest): Promise<WorkerStepResult> {
-    if (!this.available()) return this.fallbackStep(request);
+    if (!this.available()) {
+      notifyWorkerFallback('physics-worker', 'worker unavailable');
+      return this.fallbackStep(request);
+    }
     if (!this.start() || !this.worker) return this.fallbackStep(request);
     const started = performance.now();
     const worker = this.worker;

@@ -24,6 +24,22 @@ export { assertLinearSolve, choleskyFactor, choleskySolveFactored, solveCholesky
 export type { CholeskyFactorResult, LinearSolveFailureReason, LinearSolveFallbackPolicy, LinearSolveOptions, LinearSolveResult } from '../physics/linearSolve';
 export { buildRhs, buildJacobian, dampingConventionFor } from '../physics/systemSpec';
 export type { SystemSpec } from '../physics/systemSpec';
+// Stochastic (Langevin) dynamics — seeded, so deterministic for a given seed.
+export { gaussianSampler, eulerMaruyamaStep, milsteinStep, stochasticHeunStratonovichStep, commutativeMilsteinStep, runLangevinEnsemble, buildBrownianGrid, runAdaptiveLangevinPath, fixedGridLangevinPath } from '../physics/stochastic';
+export { commutativityDefect } from '../physics/noiseCommutativity';
+export type {
+  GaussianSampler,
+  StateDependentVector,
+  DiffusionMatrix,
+  DiffusionMatrixJacobian,
+  MatrixSdeScratch,
+  MultiplicativeNoise,
+  LangevinEnsembleSpec,
+  LangevinEnsembleResult,
+  BrownianGrid,
+  AdaptiveLangevinSpec,
+  AdaptiveLangevinResult
+} from '../physics/stochastic';
 export type { DampingConvention } from '../physics/constants';
 export {
   MASS_MATRIX_SINGULARITY_THRESHOLD,
@@ -43,6 +59,21 @@ export type { ChainJacobianWorkspace, SphericalChainJacobianWorkspace } from '..
 export type { CrossingDirection, EventFunction } from '../physics/events';
 export { DAMPED_DRIVEN_CHAOS_PRESET, energyDriven, rhsDriven } from '../physics/driven';
 export type { DrivenParameters } from '../physics/driven';
+// Coupled-pendulum network (lattice / phonon-dispersion extension).
+export {
+  rhsPendulumNetwork,
+  pendulumNetworkEnergy,
+  pendulumNetworkStiffnessMatrix,
+  ringPhononDispersion,
+  buildCouplingMatrix,
+  ringCouplingMatrix,
+  networkSize,
+  validatePendulumNetworkParameters
+} from '../physics/pendulumNetwork';
+export type { PendulumNetworkParameters, NetworkEdge } from '../physics/pendulumNetwork';
+// Stochastic resonance (noise-enhanced weak-signal detection).
+export { stochasticResonanceResponse, stochasticResonanceCurve } from '../physics/stochasticResonance';
+export type { BistableSrParameters, SrResponse } from '../physics/stochasticResonance';
 
 // Non-rigid and 3D systems
 export { RopePendulum } from '../physics/rope';
@@ -60,6 +91,16 @@ export {
 } from '../physics/spherical';
 export type { SphericalParams, SphericalState, SphericalDiagnostics } from '../physics/spherical';
 export {
+  EmbeddedSphericalPendulum,
+  sphericalEmbeddedRhs,
+  sphericalEmbeddedEnergy,
+  sphericalEmbeddedLz,
+  sphericalEmbeddedPosition,
+  angleToEmbedded,
+  embeddedToAngle
+} from '../physics/sphericalEmbedded';
+export type { EmbeddedSphericalState, EmbeddedSphericalDiagnostics } from '../physics/sphericalEmbedded';
+export {
   SphericalChain,
   createSphericalChainWorkspace,
   rhsSphericalChain,
@@ -71,6 +112,18 @@ export {
   validateSphericalChainParams
 } from '../physics/sphericalChain';
 export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from '../physics/sphericalChain';
+export {
+  EmbeddedSphericalChain,
+  createEmbeddedChainWorkspace,
+  rhsEmbeddedChain,
+  embeddedChainEnergy,
+  embeddedChainLz,
+  embeddedChainPositions,
+  embeddedChainVelocities,
+  angleChainToEmbedded,
+  embeddedChainToAngle
+} from '../physics/sphericalEmbeddedChain';
+export type { EmbeddedChainParams, EmbeddedChainState, EmbeddedChainDiagnostics, EmbeddedChainWorkspace } from '../physics/sphericalEmbeddedChain';
 export {
   detectConservedQuantities,
   detectPlanarChainConservedQuantities,

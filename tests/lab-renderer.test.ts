@@ -86,6 +86,22 @@ describe('LabRenderer', () => {
     expect(ctx.arcs[1]!.y).toBeCloseTo(pivotY + 1.2 * 100, 6);
     expect(ctx.arcs[2]!.y).toBeCloseTo(pivotY + 2.2 * 100, 6);
   });
+
+  it('preserves the main trail across logical resize', () => {
+    const ctx = makeStubCtx();
+    const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
+    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.1, y: 2.2 }], { trailLength: 8 });
+    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.2, y: 2.1 }], { trailLength: 8 });
+    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.3, y: 2.0 }], { trailLength: 8 });
+
+    expect(renderer.trailPointCount()).toBe(3);
+    renderer.resize({ width: 640, height: 420 });
+    expect(renderer.size()).toEqual({ width: 640, height: 420 });
+    expect(renderer.trailPointCount()).toBe(3);
+
+    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.4, y: 1.9 }], { trailLength: 8 });
+    expect(renderer.trailPointCount()).toBe(4);
+  });
 });
 
 /** Minimal canvas double whose getContext returns our recording stub. */

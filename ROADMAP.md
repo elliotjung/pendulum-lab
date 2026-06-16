@@ -31,6 +31,22 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 - Evaluate OffscreenCanvas and WebGPU ensemble simulation behind feature detection.
 - Add visual regression, memory leak, and long-runtime browser tests to CI after the UI stabilizes.
 
+## Architecture - Module Splits
+
+- **Done:** `expandedModels.ts` is now a facade. Its former responsibilities are split into
+  `expandedModels-types.ts`, `expandedModels-factory.ts`, `expandedModels-runners.ts`,
+  `expandedModels-lyapunov.ts`, and `expandedModels-research.ts`. The largest split file is
+  below the default module-size cap, and `src/physics/expandedModels.ts` has left the known-large
+  ratchet list. `tests/expanded-models.test.ts` and
+  `tests/expansion-lyapunov-injection.test.ts` cover preserved behavior and profiler injection.
+
+- **`research-workbench.ts`**: UI-component helpers extracted to `research-ui-components.ts`;
+  analysis superpack extracted to `superpack-panels.ts`. **Render coupling unblocked:**
+  `logResearchRun` now persists run-log state and emits
+  `pendulum-lab:research-workbench-changed`; the Research tab installs a render bridge for that
+  event. Remaining extraction candidates: run-log renderer (`renderResearchRunLog`, ~80 lines),
+  comparison matrix builder, design-study state, and batch-runner orchestration.
+
 ## Portfolio Packaging
 
 - Keep benchmark, validation, architecture, and limitation reports current for each release.

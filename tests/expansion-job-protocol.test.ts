@@ -8,8 +8,16 @@ import { runExpansionJob } from '../src/workers/expansionJobProtocol';
  * narrows on.
  */
 describe('expansion job protocol dispatcher', () => {
-  test('suite job returns a suite result carrying the variational/QR Lyapunov spectrum', () => {
+  test('suite job stays lightweight unless Lyapunov is explicitly requested', () => {
     const out = runExpansionJob({ kind: 'suite', config: { model: 'driven', methods: ['rk4'], horizon: 3 } });
+    expect(out.kind).toBe('suite');
+    if (out.kind === 'suite') {
+      expect(out.result.lyapunov).toBeUndefined();
+    }
+  });
+
+  test('suite job returns a suite result carrying the variational/QR Lyapunov spectrum', () => {
+    const out = runExpansionJob({ kind: 'suite', config: { model: 'driven', methods: ['rk4'], horizon: 3 }, includeLyapunov: true });
     expect(out.kind).toBe('suite');
     if (out.kind === 'suite') {
       expect(out.result.model).toBe('driven');

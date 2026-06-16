@@ -79,6 +79,7 @@
         </button>
         <div class="rail-submenu" id="rail-panel-check" aria-label="Validation and probes">
           <button class="tab" role="tab" aria-selected="false" data-tab="validate" data-tip="Validation Suite" aria-label="Validation Suite" title="Validation Suite"><span class="tab-icon" aria-hidden="true">Va</span><span class="tab-label">Validate</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="research" data-tip="Inverse · Surrogate · Stochastic" aria-label="Inverse, Surrogate and Stochastic" title="Inverse · Surrogate · Stochastic"><span class="tab-icon" aria-hidden="true">R+</span><span class="tab-label">Research+</span></button>
           <button class="dev-tool-btn rail-action" type="button" data-rail-action="floquet" aria-label="Run Floquet probe" title="Run Floquet probe" data-tip="Run Floquet probe">
             <span class="tab-icon" aria-hidden="true">Fl</span><span class="tab-label">Floquet</span>
           </button>
@@ -603,6 +604,30 @@
               <div class="row"><label>T (sim)</label><input id="bifT" type="range" min="20" max="200" step="10" value="60"><span class="val" id="bifTV">60 s</span></div>
             </div>
           </details>
+          <details class="acc">
+            <summary><span class="acc-icon">⤳</span><span class="acc-label">Driven Orbit: Floquet &amp; Pitchfork</span><span class="acc-arrow">›</span></summary>
+            <div class="acc-body">
+              <div class="row"><label>Drive A</label><input id="bifDrA" type="range" min="0.3" max="1.5" step="0.005" value="1.005"><span class="val" id="bifDrAV">1.005</span></div>
+              <div class="row"><label>Damping γ</label><input id="bifDrGamma" type="range" min="0.1" max="1" step="0.05" value="0.5"><span class="val" id="bifDrGammaV">0.50</span></div>
+              <div class="btnrow xs-9">
+                <button id="bifFloquet">Floquet @ A</button>
+                <button id="bifPitchfork">Find pitchfork</button>
+              </div>
+              <span class="xs-10" id="bifDrivenStatus"></span>
+              <pre id="bifDrivenOut" class="plx-log"></pre>
+            </div>
+          </details>
+          <details class="acc">
+            <summary><span class="acc-icon">◯</span><span class="acc-label">Neimark–Sacker invariant circle</span><span class="acc-arrow">›</span></summary>
+            <div class="acc-body">
+              <div class="btnrow xs-9">
+                <button id="bifTorus">Trace invariant circle</button>
+              </div>
+              <div class="plot-cell xs-9"><canvas id="bifTorusCanvas" width="300" height="300"></canvas><div class="canvas-label">NS invariant circle — delayed-logistic map, a: 2.05 → 2.01 (onset 2)</div></div>
+              <span class="xs-10" id="bifTorusStatus"></span>
+              <pre id="bifTorusOut" class="plx-log"></pre>
+            </div>
+          </details>
         </aside>
       </div>
     </div>
@@ -908,6 +933,55 @@
                 <div class="srow"><span class="skey">horizon</span><span class="sval" id="ftleT2">—</span></div>
                 <div class="srow"><span class="skey has-tip" data-tip="Cells flagged by the percentile + transverse local-maximum ridge proxy (repelling LCS candidates).">LCS ridge cells</span><span class="sval" id="ftleRidgeInfo">—</span></div>
               </div>
+            </div>
+          </details>
+        </aside>
+      </div>
+    </div>
+
+    <!-- TAB: RESEARCH+ (inverse problem, PCE surrogate, stochastic ensemble) -->
+    <div class="tabpanel" id="tab-research" role="tabpanel">
+      <div class="layout">
+        <div class="left-col">
+          <div class="main-wrap xs-12"><canvas id="rpSdeCanvas" width="600" height="320"></canvas></div>
+          <div class="canvas-label">SDE ensemble: log₁₀ Var[θ₁](t) of the double pendulum under a stochastic torque</div>
+          <pre id="rpOut" class="plx-log"></pre>
+        </div>
+        <aside class="controls">
+          <div class="ctrl-sticky">
+            <div class="ctrl-sticky-title">Inverse · Surrogate · Stochastic</div>
+          </div>
+          <details class="acc" open>
+            <summary><span class="acc-icon">∿</span><span class="acc-label">Stochastic ensemble (SDE)</span><span class="acc-arrow">›</span></summary>
+            <div class="acc-body">
+              <p class="xs-11">
+                Langevin ensemble of the double pendulum with additive angular-velocity noise (a stochastic
+                torque), advanced with Euler–Maruyama and accumulated with Welford online moments.
+              </p>
+              <button id="rpSdeRun" class="primary">Run ensemble</button>
+              <span class="xs-10" id="rpSdeStatus"></span>
+            </div>
+          </details>
+          <details class="acc">
+            <summary><span class="acc-icon">⊶</span><span class="acc-label">Inverse problem (parameter fit)</span><span class="acc-arrow">›</span></summary>
+            <div class="acc-body">
+              <p class="xs-11">
+                Recover g from a synthetic (θ₁, θ₂) trajectory by nonlinear least squares
+                (Levenberg–Marquardt) with the engine's own RHS in the fit loop, reporting the standard error.
+              </p>
+              <button id="rpFitRun" class="primary">Recover g</button>
+              <span class="xs-10" id="rpFitStatus"></span>
+            </div>
+          </details>
+          <details class="acc">
+            <summary><span class="acc-icon">∑</span><span class="acc-label">PCE surrogate (Sobol)</span><span class="acc-arrow">›</span></summary>
+            <div class="acc-body">
+              <p class="xs-11">
+                Polynomial-chaos surrogate on a total-degree Legendre basis (independent uniform inputs)
+                gives an <em>analytic</em> Sobol variance decomposition of a test response.
+              </p>
+              <button id="rpPceRun" class="primary">Fit surrogate</button>
+              <span class="xs-10" id="rpPceStatus"></span>
             </div>
           </details>
         </aside>

@@ -9,7 +9,7 @@ import { DoubleStringPendulum } from '../../physics/doubleString';
 import type { SystemSpec } from '../../physics/systemSpec';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-workbench';
+import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
 import { DOUBLE_STRING_PRESETS } from './lab3d-utils';
 import { lab3d, lab3dEnsureLoop, registerLab3dFrameHook } from './lab3d-render-loop';
 

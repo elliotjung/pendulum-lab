@@ -233,6 +233,7 @@ export class ExpansionLabTab extends TabController {
       ),
       this.detailsSection('∫', 'Integrators', el('div', { id: 'expMethodGrid', className: 'exp-method-grid' })),
       this.detailsSection('V', 'Visual Analysis',
+        this.controlRow('QR spectrum', inputEl('expIncludeLyap', { type: 'checkbox' })),
         this.controlRow('Ghost eps', inputEl('expGhost', { type: 'number', min: '0.000001', max: '0.01', step: '0.00001', value: '0.00001' }), 'expGhostV'),
         this.controlRow('Bif cols', inputEl('expBifColumns', { type: 'number', min: '4', max: '32', step: '1', value: '12' }), 'expBifColumnsV'),
         buttonEl('expClearHistory', 'Clear History')
@@ -414,18 +415,23 @@ export class ExpansionLabTab extends TabController {
     const config = this.config();
     this.dom.setText('expStatus', 'queued');
     this.dom.setText('expWorkerMode', 'starting');
-    const { result, worker, elapsedMs } = await this.runJob(config);
+    const { result, worker, elapsedMs, fallbackReason } = await this.runJob(config);
     this.latest = result;
-    this.dom.setText('expStatus', `done in ${fmt(elapsedMs, 1)} ms`);
+    this.dom.setText('expStatus', `done in ${fmt(elapsedMs, 1)} ms${fallbackReason ? ` (${fallbackReason})` : ''}`);
     this.dom.setText('expWorkerMode', worker ? 'worker' : 'fallback');
     this.remember(result);
     this.renderResult(result);
   }
 
-  private async runJob(config: ExpansionSuiteConfig): Promise<{ result: ExpansionSuiteResult; worker: boolean; elapsedMs: number }> {
-    const outcome = await runExpansionWorkerJob({ kind: 'suite', config });
+  private async runJob(config: ExpansionSuiteConfig): Promise<{ result: ExpansionSuiteResult; worker: boolean; elapsedMs: number; fallbackReason?: string }> {
+    const outcome = await runExpansionWorkerJob({ kind: 'suite', config, includeLyapunov: this.dom.bool('expIncludeLyap') });
     if (outcome.result.kind !== 'suite') throw new Error('expansion worker returned an unexpected job result');
-    return { result: outcome.result.result, worker: outcome.worker, elapsedMs: outcome.elapsedMs };
+    return {
+      result: outcome.result.result,
+      worker: outcome.worker,
+      elapsedMs: outcome.elapsedMs,
+      ...(outcome.fallbackReason ? { fallbackReason: outcome.fallbackReason } : {})
+    };
   }
 
   private renderResult(result: ExpansionSuiteResult): void {

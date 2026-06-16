@@ -20,7 +20,7 @@ TypeDoc is generated from `src/lib.ts`, the supported headless entry point.
 
 ## Deprecation Timeline
 
-| Surface | Status in 10.31 | Migration target | Earliest removal |
+| Surface | Status in 10.34.0 | Migration target | Earliest removal |
 |---|---|---|---|
 | `window.PendulumLabIndex` | Deprecated browser alias | `window.PendulumLab` for supported API; `window.PendulumLabDebug` for diagnostics | 11.0 |
 | `window.__modernLab` / `window.__modernTabs` | Debug-only compatibility alias | `window.PendulumLabDebug` | 11.0 |

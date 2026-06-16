@@ -5,19 +5,18 @@ export {};
 declare global {
   interface Window {
     /**
-     * @deprecated Read-only compatibility accessor backed by
-     * `PendulumLabLegacyRuntime` and the `PendulumRuntime` DI container.
-     * Resolve `'legacyApp'` from the container instead; this global is scheduled
-     * for per-tab removal as the modern app layer takes over each tab.
+     * @deprecated Compatibility accessor for older scripts/tests. Prefer
+     * `window.PendulumLab` for public scripting or `PendulumLabDebug.runtime`
+     * for internal diagnostics.
      */
     App?: PendulumLegacyApp;
-    /** @deprecated Read-only accessor; resolve `'legacyPhysics'` from `PendulumRuntime`. */
+    /** @deprecated Compatibility accessor; prefer the public `PendulumLab.physics` surface. */
     Physics?: PendulumLegacyPhysics;
     /** @deprecated Read-only accessor backed by `PendulumLabLegacyRuntime`. */
     Validation?: PendulumLegacyValidation;
     /** @deprecated Read-only accessor backed by `PendulumLabLegacyRuntime`. */
     WorkerMgr?: PendulumLegacyWorkerManager;
-    /** Single namespace published by the classic runtime, adopted by the container. */
+    /** Deprecated compatibility namespace retained for old archived scripts. */
     PendulumLabLegacyRuntime?: {
       readonly App?: PendulumLegacyApp;
       readonly Physics?: PendulumLegacyPhysics;

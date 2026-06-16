@@ -230,6 +230,60 @@ export async function runDoublePendulumEnsemble(
   };
 }
 
+export interface EnsembleStatistics {
+  n: number;
+  /** Mean of [θ1, θ2, ω1, ω2] across the ensemble. */
+  mean: Float64Array;
+  /** Per-component population variance. */
+  variance: Float64Array;
+  /** 4×4 population covariance (row-major). */
+  covariance: Float64Array;
+  /** Overall dispersion radius in state space, √(trace(covariance)). */
+  rmsSpread: number;
+  /** Fraction of trajectories whose first arm has wound past the upright (|θ1| > π). */
+  flipFraction: number;
+}
+
+/**
+ * Reduce a packed ensemble ([θ1, θ2, ω1, ω2] per trajectory) to the statistics
+ * a basin / uncertainty-cloud study consumes: mean, full covariance, dispersion
+ * radius and flip fraction. Single-pass Welford for the mean/covariance, so it
+ * is numerically stable for large clouds. (The integration backend may be
+ * WebGPU f32; these reductions are exact f64 over the returned states — when a
+ * GPU reduction is added it must match this within the f32 contract.)
+ */
+export function ensembleStatistics(states: Float64Array): EnsembleStatistics {
+  const n = Math.floor(states.length / 4);
+  const mean = new Float64Array(4);
+  const m2 = new Float64Array(16); // running co-moments (row-major 4×4)
+  let flips = 0;
+  for (let i = 0; i < n; i += 1) {
+    const base = i * 4;
+    const count = i + 1;
+    const delta = [0, 0, 0, 0];
+    for (let a = 0; a < 4; a += 1) delta[a] = (states[base + a] ?? 0) - (mean[a] ?? 0);
+    for (let a = 0; a < 4; a += 1) mean[a] = (mean[a] ?? 0) + (delta[a] ?? 0) / count;
+    // Co-moments use the new delta on one side (Welford for covariance).
+    for (let a = 0; a < 4; a += 1) {
+      const deltaA = delta[a] ?? 0;
+      for (let b = 0; b < 4; b += 1) {
+        const deltaB2 = (states[base + b] ?? 0) - (mean[b] ?? 0);
+        m2[a * 4 + b] = (m2[a * 4 + b] ?? 0) + deltaA * deltaB2;
+      }
+    }
+    if (Math.abs(states[base] ?? 0) > Math.PI) flips += 1;
+  }
+  const covariance = new Float64Array(16);
+  const variance = new Float64Array(4);
+  const denom = n > 0 ? n : 1;
+  for (let a = 0; a < 4; a += 1) {
+    for (let b = 0; b < 4; b += 1) covariance[a * 4 + b] = (m2[a * 4 + b] ?? 0) / denom;
+    variance[a] = covariance[a * 4 + a] ?? 0;
+  }
+  const rmsSpread = Math.sqrt((variance[0] ?? 0) + (variance[1] ?? 0) + (variance[2] ?? 0) + (variance[3] ?? 0));
+  return { n, mean, variance, covariance, rmsSpread, flipFraction: n > 0 ? flips / n : 0 };
+}
+
 /** Build a grid of initial conditions over (θ1, θ2), released from rest. */
 export function ensembleGrid(n: number, range: [number, number]): Float64Array {
   const out = new Float64Array(n * n * 4);

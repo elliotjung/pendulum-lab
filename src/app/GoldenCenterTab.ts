@@ -235,7 +235,7 @@ export class GoldenCenterTab extends TabController {
         cell(row.pass ? 'PASS' : 'FAIL'),
         cell(`${row.driftPass ? 'ok' : 'miss'} ${fmt(row.energyDrift, 3)}`),
         cell(`${row.runtimePass ? 'ok' : 'miss'} ${fmt(row.runtimeMs, 1)} ms`),
-        cell(`${row.regressionPass ? 'ok' : 'miss'} ${row.regressionHash}`),
+        cell(`${row.regressionPass ? 'ok' : 'miss'} ${row.regressionHash} / ${row.expectedRegressionHash ?? 'untracked'}`),
         cell(fmt(row.stabilityScore, 1)),
         cell(row.threshold)
       );
