@@ -86,6 +86,27 @@ export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';
 export type { SpringPendulumParameters } from './spring';
+export { rhsDuffing, energyDuffing, duffingPotential, duffingDoubleWell, DUFFING_CHAOS_PRESET } from './duffing';
+export type { DuffingParameters, DuffingDoubleWell } from './duffing';
+export { rhsVanDerPol, energyVanDerPol, vanDerPolPeriodEstimate } from './vanDerPol';
+export type { VanDerPolParameters } from './vanDerPol';
+export {
+  rhsKapitza,
+  energyKapitza,
+  kapitzaEffectivePotential,
+  kapitzaInvertedStable,
+  kapitzaInvertedFrequency,
+  KAPITZA_INVERTED_PRESET
+} from './kapitza';
+export type { KapitzaParameters } from './kapitza';
+export {
+  rhsMagneticPendulum,
+  magneticPendulumEnergy,
+  nearestMagnetIndex,
+  magneticPendulumSettle,
+  THREE_MAGNET_PRESET
+} from './magneticPendulum';
+export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions } from './magneticPendulum';
 export {
   rhsPendulumNetwork,
   pendulumNetworkEnergy,

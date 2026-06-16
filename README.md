@@ -14,7 +14,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 714 unit tests
+npm test           # 738 unit tests
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 ```
 
