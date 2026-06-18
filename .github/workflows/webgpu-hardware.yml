@@ -20,6 +20,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install chrome
+      - name: Free Vite test port
+        shell: pwsh
+        run: |
+          $listeners = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue
+          foreach ($listener in $listeners) {
+            Stop-Process -Id $listener.OwningProcess -Force -ErrorAction SilentlyContinue
+          }
       - run: npm run test:webgpu-hardware
         env:
           WEBGPU_BROWSER_CHANNEL: chrome
