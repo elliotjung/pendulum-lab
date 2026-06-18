@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 test('long-run: simulation stays healthy and the performance budget panel reports', async ({ page }) => {
   test.setTimeout(90_000);
@@ -16,9 +17,7 @@ test('long-run: simulation stays healthy and the performance budget panel report
   const alive = await page.evaluate(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   expect(alive).toBe(true);
 
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchPerfCard')).toBeVisible();
+  await openModernTab(page, 'research', '#researchPerfCard');
   await page.locator('#rwPerfRefresh').click();
   await expect(page.locator('#rwPerfBudget table')).toBeVisible({ timeout: 10_000 });
   await expect(page.locator('#rwPerfBudget')).toContainText('frame rate');

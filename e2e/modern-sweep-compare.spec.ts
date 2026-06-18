@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 function canvasSum(id: string): number {
   const c = document.getElementById(id) as HTMLCanvasElement | null;
@@ -11,9 +12,7 @@ function canvasSum(id: string): number {
 
 test('modern Sweep tab paints a chaos map and exports', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="sweep"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-sweep')).toBeVisible();
+  await openModernTab(page, 'sweep', '#tab-sweep');
 
   // Small/fast sweep for the test.
   await page.evaluate(() => {
@@ -34,9 +33,7 @@ test('modern Sweep tab paints a chaos map and exports', async ({ page }) => {
 
 test('modern Compare tab overlays integrators and benchmarks', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="compare"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-compare')).toBeVisible();
+  await openModernTab(page, 'compare', '#tab-compare');
 
   await page.evaluate(() => document.getElementById('cmpStart')?.click());
   const a = await page.evaluate(canvasSum, 'cmpCanvas');

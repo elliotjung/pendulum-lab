@@ -1,6 +1,6 @@
 # GPU / Scale Validation Contract
 
-Generated: 2026-06-18T08:29:46.438Z
+Generated: 2026-06-18T10:26:43.248Z
 
 Verdict: **cpu-reference-mock-and-contract-gates-ready**
 

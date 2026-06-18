@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * Stage-3: the modern Lyapunov-spectrum tab takeover. Switching to the λ tab and
@@ -7,11 +8,7 @@ import { expect, test } from '@playwright/test';
  */
 test('modern Lyapunov tab computes and renders the full spectrum', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  // Open the Lyapunov tab.
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="lyap"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-lyap')).toBeVisible();
+  await openModernTab(page, 'lyap', '#tab-lyap');
 
   // Start the computation and wait for results to populate.
   await page.evaluate(() => document.getElementById('lyapStart')?.click());

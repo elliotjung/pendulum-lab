@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { bytesToText, crc32, hashBytes, parseZip } from '../src/research/zipBundle';
+import { openModernTab } from './shell';
 
 test('ZIP research bundle downloads with expected layout, binary PNGs, and valid checksums', async ({ page }) => {
   await page.addInitScript(() => {
@@ -11,9 +12,7 @@ test('ZIP research bundle downloads with expected layout, binary PNGs, and valid
   // Let the lab draw a few frames so canvases have content for binary figures.
   await page.waitForTimeout(600);
 
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 
   // Generate a study so data/parameter-study-results.csv is included.
   await page.locator('#rwStudyVariable').selectOption('theta1');

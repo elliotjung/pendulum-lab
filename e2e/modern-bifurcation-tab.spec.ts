@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * Stage-3: the modern Bifurcation tab. Sweeping g must build the diagram in
@@ -6,9 +7,7 @@ import { expect, test } from '@playwright/test';
  */
 test('modern Bifurcation tab sweeps g and renders the diagram', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="bifurc"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-bifurc')).toBeVisible();
+  await openModernTab(page, 'bifurc', '#tab-bifurc');
 
   // Small/fast sweep for the test.
   await page.evaluate(() => {
@@ -31,9 +30,7 @@ test('modern Bifurcation tab sweeps g and renders the diagram', async ({ page })
 
 test('Bifurcation tab: driven-orbit Floquet & symmetry-breaking pitchfork', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="bifurc"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-bifurc')).toBeVisible();
+  await openModernTab(page, 'bifurc', '#tab-bifurc');
 
   // Floquet: trace the branch to the default A and report stability + multipliers.
   await page.evaluate(() => document.getElementById('bifFloquet')?.click());
@@ -63,9 +60,7 @@ test('Bifurcation tab: driven-orbit Floquet & symmetry-breaking pitchfork', asyn
 
 test('Bifurcation tab: Neimark–Sacker invariant circle is continued and drawn', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="bifurc"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-bifurc')).toBeVisible();
+  await openModernTab(page, 'bifurc', '#tab-bifurc');
 
   await page.evaluate(() => document.getElementById('bifTorus')?.click());
   await page.waitForFunction(

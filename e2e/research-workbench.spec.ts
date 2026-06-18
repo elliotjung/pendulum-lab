@@ -1,16 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { openModernTab } from './shell';
 
 test('research workbench saves experiments and prepares study exports', async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.removeItem('pendulum-lab/research-workbench/v1');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 
   await page.locator('#rwExperimentName').fill('E2E research experiment');
   await page.locator('#rwExperimentNotes').fill('baseline reproducibility check');
@@ -39,18 +36,14 @@ test('research storage recovers from invalid persisted entries', async ({ page }
     }));
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
   await expect(page.locator('#rwExperimentSummary')).toContainText('0 experiment');
 
   const savedSchema = await page.evaluate(() => {
     const raw = window.localStorage.getItem('pendulum-lab/research-workbench/v1');
     return raw ? JSON.parse(raw).schemaVersion : null;
   });
-  expect(savedSchema).toBe('pendulum-research-workbench/v2');
+  expect(savedSchema).toBe('pendulum-research-workbench/v4');
 });
 
 test('study batch fills lambda/RQA/FTLE per point on the chaos worker', async ({ page }) => {
@@ -58,11 +51,7 @@ test('study batch fills lambda/RQA/FTLE per point on the chaos worker', async ({
     window.localStorage.removeItem('pendulum-lab/research-workbench/v1');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 
   await page.locator('#rwStudyVariable').selectOption('theta1');
   await page.locator('#rwStudyMin').fill('1.5');
@@ -87,11 +76,7 @@ test('advanced research exports include bundle, LaTeX, notebook, and study data'
     window.localStorage.removeItem('pendulum-lab/research-workbench/v1');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 
   await page.locator('#rwStudyStrategy').selectOption('sobol');
   await page.locator('#rwStudyCount').fill('5');
@@ -128,11 +113,7 @@ test('advanced research exports include bundle, LaTeX, notebook, and study data'
 
 test('periodic-orbit finder converges and the branch trace reports stability', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchOrbitCard')).toBeVisible();
+  await openModernTab(page, 'research', '#researchOrbitCard');
 
   await page.locator('#rwFindOrbit').click();
   await expect(page.locator('#rwOrbitSummary')).toContainText('period-1 orbit');
@@ -147,13 +128,10 @@ test('periodic-orbit finder converges and the branch trace reports stability', a
 
 test('figure pack export downloads a captioned HTML gallery', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   // Let the lab draw a few frames so the main canvas has content to capture.
   await page.waitForTimeout(600);
 
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('#rwExportFigures').click();

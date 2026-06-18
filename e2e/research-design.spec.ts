@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { openModernTab } from './shell';
 
 test('multi-variable design generates, runs with adaptive refinement, and exports CSV', async ({ page }) => {
   test.setTimeout(120_000);
@@ -8,11 +9,7 @@ test('multi-variable design generates, runs with adaptive refinement, and export
     window.localStorage.removeItem('pendulum-lab/design-study/v1');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchDesignCard')).toBeVisible();
+  await openModernTab(page, 'research', '#researchDesignCard');
 
   await page.locator('#rwDesignVars').fill('theta1,1.4,2.6\ndamping,0,0.3');
   await page.locator('#rwDesignStrategy').selectOption('sobol');

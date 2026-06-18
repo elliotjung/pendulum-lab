@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * Stage-3: the modern Validation tab takeover. The buttons must drive the tested
@@ -6,10 +7,7 @@ import { expect, test } from '@playwright/test';
  */
 test('modern Validation tab runs the suites and renders results', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="validate"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-validate')).toBeVisible();
+  await openModernTab(page, 'validate', '#tab-validate');
 
   // Run all standard checks: 5 cases, all passing.
   await page.evaluate(() => document.getElementById('runValidation')?.click());

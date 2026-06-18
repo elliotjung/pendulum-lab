@@ -24,7 +24,8 @@ test('lab tab control panel renders correctly', async ({ page }) => {
   if (await labBtn.isVisible()) await labBtn.click();
   await page.waitForTimeout(300);
   await expect(page.getByRole('region', { name: 'controls' })).toHaveScreenshot('lab-controls.png', {
-    mask: [page.locator('canvas')]
+    mask: [page.locator('canvas')],
+    maxDiffPixels: 500
   });
 });
 

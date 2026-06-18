@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * The Research+ tab surfaces three previously library/CLI-only solvers as Lab UI:
@@ -7,9 +8,7 @@ import { expect, test } from '@playwright/test';
  */
 test('Research+ tab runs the SDE ensemble, parameter fit, and PCE surrogate', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="research"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-research')).toBeVisible();
+  await openModernTab(page, 'research', '#tab-research');
 
   // 1) Stochastic ensemble — variance reported and the canvas drawn.
   await page.evaluate(() => document.getElementById('rpSdeRun')?.click());

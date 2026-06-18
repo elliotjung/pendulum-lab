@@ -1,13 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { openModernTab } from './shell';
 
 test('3D lab: rope pendulum goes slack with warnings and tension readout', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
-  await expect(page.locator('#lab3dRopeCard')).toBeVisible();
+  await openModernTab(page, 'lab3d', '#lab3dRopeCard');
 
   // θ0 = 2.5 rad above horizontal at rest: string cannot hold — slack immediately.
   await page.locator('#r3Theta0').fill('2.5');
@@ -31,11 +28,7 @@ test('3D lab: rope pendulum goes slack with warnings and tension readout', async
 
 test('3D lab: double string pendulum exposes tension-gated hybrid dynamics', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
-  await expect(page.locator('#lab3dDoubleStringCard')).toBeVisible();
+  await openModernTab(page, 'lab3d', '#lab3dDoubleStringCard');
 
   await page.locator('#ds3Reset').click();
   await expect(page.locator('#ds3Readout')).toContainText('phase=TAUT');
@@ -53,11 +46,7 @@ test('3D lab: double string pendulum exposes tension-gated hybrid dynamics', asy
 test('3D lab: spherical double pendulum runs in 3D and conserves E and Lz', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
-  await expect(page.locator('#lab3dChainCard')).toBeVisible();
+  await openModernTab(page, 'lab3d', '#lab3dChainCard');
 
   await page.locator('#d3Reset').click();
   await expect(page.locator('#d3Readout')).toContainText('E=');
@@ -95,11 +84,7 @@ test('3D lab: spherical double pendulum runs in 3D and conserves E and Lz', asyn
 test('3D lab: spherical pendulum conserves E and Lz, orbit camera rotates, snapshot exports', async ({ page }) => {
   test.setTimeout(60_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
-  await expect(page.locator('#lab3dSphereCard')).toBeVisible();
+  await openModernTab(page, 'lab3d', '#lab3dSphereCard');
 
   await page.locator('#s3Reset').click();
   await page.locator('#s3Run').click();

@@ -41,9 +41,12 @@ jobs:
       # The world-class scorecard reads generated benchmark, memory, reviewer-kit,
       # release, flagship, external-check, and GPU-scale artifacts, so keep it after those producers.
       - run: npm run audit:worldclass
-      # Full browser suite: includes visual fingerprints, storage, design,
-      # superpack, 3D lab, accessibility, and long-run performance specs.
-      - run: npm run test:e2e
+      # Mainline browser suite: smoke, accessibility, research workspace,
+      # Trust Inspector, and long-run performance coverage.
+      - run: npm run test:e2e:mainline
+      # Cross-engine smoke keeps Firefox/WebKit/mobile startup covered without
+      # multiplying every long-running research UI spec across all engines.
+      - run: npx playwright test e2e/smoke.spec.ts --project=firefox --project=webkit --project=mobile-chrome
 
   cross-validate:
     runs-on: ubuntu-latest

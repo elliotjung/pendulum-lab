@@ -25,8 +25,11 @@ async function waitForServer(target: string, timeoutMs = 45_000): Promise<void> 
 
 async function ensureServer(): Promise<ChildProcess | null> {
   if (await isReachable(url)) return null;
-  const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-  const child = spawn(npm, ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'], {
+  const command = process.platform === 'win32' ? (process.env.ComSpec ?? 'cmd.exe') : 'npm';
+  const args = process.platform === 'win32'
+    ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1 --port 5173']
+    : ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'];
+  const child = spawn(command, args, {
     cwd: process.cwd(),
     stdio: 'ignore',
     windowsHide: true

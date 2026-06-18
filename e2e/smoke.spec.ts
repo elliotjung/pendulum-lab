@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 test('simulation runs, switches tabs, exports, and runs validation', async ({ page }) => {
   await page.goto('/');
@@ -7,7 +8,11 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
   // The modern Lab drives the simulation (no legacy runtime).
   await page.waitForFunction(() => Boolean((window as unknown as { __modernLab?: unknown }).__modernLab));
   const before = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
-  await page.waitForTimeout(600);
+  await page.waitForFunction(
+    (start) => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time > start,
+    before,
+    { timeout: 5000 }
+  );
   const after = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
   expect(after).toBeGreaterThan(before);
 
@@ -19,8 +24,7 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
   });
 
   // Tab switching (modern shell).
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="validate"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-validate')).toBeVisible();
+  await openModernTab(page, 'validate', '#tab-validate');
 
   // Validation (modern ValidationTab).
   await expect(page.locator('#runValidation')).toBeVisible();

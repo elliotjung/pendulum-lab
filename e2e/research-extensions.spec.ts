@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * E2E coverage for the v10.33 research extensions wired into the UI:
@@ -26,11 +27,7 @@ test('FTLE tab: LCS ridge overlay reports ridge cells alongside the field', asyn
 test('codim-2 regime map overlays the Melnikov A_c(γ) threshold curve', async ({ page }) => {
   test.setTimeout(150_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchSuperpackCard')).toBeVisible();
+  await openModernTab(page, 'research', '#researchSuperpackCard');
 
   await page.locator('#rwSpCodim2').click();
   await expect(page.locator('#rwSuperpackResults')).toContainText('Codim-2 Regime Map (A × γ)', { timeout: 120_000 });
@@ -40,11 +37,7 @@ test('codim-2 regime map overlays the Melnikov A_c(γ) threshold curve', async (
 test('3D chain: full Lyapunov spectrum, Noether scan, and energy-shell monitor', async ({ page }) => {
   test.setTimeout(180_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="lab3d"]').click();
-  await expect(page.locator('#lab3dChainCard')).toBeVisible();
+  await openModernTab(page, 'lab3d', '#lab3dChainCard');
 
   // Conserved-quantity scan is pure + fast (no worker): with gravity, energy
   // and the vertical angular momentum are conserved, the horizontal ones not.

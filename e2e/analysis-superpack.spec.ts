@@ -1,13 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 test('analysis superpack: Wada convergence, Melnikov, fixed point, shadowing', async ({ page }) => {
   test.setTimeout(150_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchSuperpackCard')).toBeVisible();
+  await openModernTab(page, 'research', '#researchSuperpackCard');
 
   // Melnikov: synchronous, instant.
   await page.locator('#rwSpMelnikov').click();

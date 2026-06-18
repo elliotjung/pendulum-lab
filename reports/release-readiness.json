@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-06-18T08:33:13.013Z",
+  "generatedAt": "2026-06-18T10:26:59.930Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
     "Enable GitHub Pages for the repository if it is not already enabled.",
@@ -30,7 +30,7 @@
       "path": ".github/workflows/publish-npm.yml",
       "required": true,
       "available": true,
-      "hash": "0b4da9c35499cd",
+      "hash": "0f4aeccb4bc5ac",
       "note": "Manual npm publish workflow is present; live publish requires an NPM_TOKEN repository secret."
     },
     {
@@ -45,7 +45,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "1f7cac1a1d9137",
+      "hash": "05194bda465343",
       "note": "Reviewer kit manifest exists."
     },
     {
@@ -53,7 +53,7 @@
       "path": "reports/webgpu-hardware-validation.md",
       "required": false,
       "available": true,
-      "hash": "075511ebcddbe0",
+      "hash": "0ef63c37d40100",
       "note": "Real WebGPU adapter validation report exists when run on a hardware target."
     },
     {

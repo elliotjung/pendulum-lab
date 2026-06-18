@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 test('research matrix compares experiments and renders diagnostic maps', async ({ page }) => {
   await page.addInitScript(() => {
@@ -7,8 +8,7 @@ test('research matrix compares experiments and renders diagnostic maps', async (
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { matrix?: unknown } }).__modernTabs?.matrix));
 
-  await page.evaluate(() => (document.querySelector('.tab[data-tab="matrix"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-matrix')).toHaveClass(/active/);
+  await openModernTab(page, 'matrix', '#tab-matrix');
   await page.locator('#matrixPreset').selectOption('cartpole-open-loop');
   await page.locator('#matrixHorizon').fill('2');
   await page.locator('#matrixGrid').fill('4');
@@ -42,8 +42,7 @@ test('golden center runs integrator threshold checks in its own tab', async ({ p
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { golden?: unknown } }).__modernTabs?.golden));
 
-  await page.evaluate(() => (document.querySelector('.tab[data-tab="golden"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-golden')).toHaveClass(/active/);
+  await openModernTab(page, 'golden', '#tab-golden');
   await page.evaluate(() => {
     document.querySelectorAll<HTMLInputElement>('input[data-golden-preset]').forEach((input) => {
       input.checked = input.value === 'cartpole-open-loop';

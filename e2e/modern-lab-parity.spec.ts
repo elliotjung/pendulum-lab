@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForModernShell } from './shell';
 
 /**
  * Exercises the Stage-2 parity features now wired into the default modern Lab:
@@ -11,7 +12,10 @@ test('modern Lab presets, export, and Poincaré work by default', async ({ page 
   // Preset application: clicking "periodic" sets θ1 ≈ 0.5 (the legacy app adds a
   // tiny seed perturbation) and the modern sim rebuilds from it.
   const th1Before = await page.evaluate(() => Number((document.getElementById('th1') as HTMLInputElement).value));
-  await page.evaluate(() => (document.querySelector('[data-preset="periodic"]') as HTMLButtonElement | null)?.click());
+  await waitForModernShell(page);
+  await page.evaluate(() => {
+    (window as unknown as { __modernShell?: { applyPreset(name: string): void } }).__modernShell?.applyPreset('periodic');
+  });
   await page.waitForFunction(() => Math.abs(Number((document.getElementById('th1') as HTMLInputElement).value) - 0.5) < 0.01);
   const th1After = await page.evaluate(() => Number((document.getElementById('th1') as HTMLInputElement).value));
   expect(th1Before).toBeGreaterThan(1); // was the chaotic default (~2.0)

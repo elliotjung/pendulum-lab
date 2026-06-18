@@ -1,12 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { openModernTab } from './shell';
 
 async function openWorkbench(page: import('@playwright/test').Page): Promise<void> {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
-  await expect(page.locator('#researchWorkbench')).toBeVisible();
+  await openModernTab(page, 'research', '#researchWorkbench');
 }
 
 test('IndexedDB store mirrors experiments and recovers them after localStorage loss', async ({ page }) => {
@@ -32,9 +30,7 @@ test('IndexedDB store mirrors experiments and recovers them after localStorage l
   // Simulate localStorage loss: the long-term IndexedDB archive must recover.
   await page.evaluate(() => window.localStorage.removeItem('pendulum-lab/research-workbench/v1'));
   await page.reload();
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
-  await page.locator('#rail-panel-govern .tab[data-tab="research"]').click();
+  await openModernTab(page, 'research', '#researchWorkbench');
   await expect(page.locator('#rwExperimentSummary')).toContainText('1 experiment', { timeout: 10_000 });
   await expect(page.locator('#rwExperimentSelect')).toContainText('IDB persistence check');
 });
@@ -49,7 +45,7 @@ test('full DB archive exports as validated JSON', async ({ page }) => {
   await page.locator('#rwExperimentName').fill('Archive roundtrip');
   await page.locator('#rwSaveExperiment').click();
   await page.locator('#rwDbRefresh').click();
-  await expect(page.locator('#rwStorageSummary')).toContainText('experiments', { timeout: 10_000 });
+  await expect(page.locator('#rwStorageSummary')).toContainText('1 experiments', { timeout: 10_000 });
 
   const downloadPromise = page.waitForEvent('download');
   await page.locator('#rwDbExport').click();

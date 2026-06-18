@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 function canvasSum(id: string): number {
   const c = document.getElementById(id) as HTMLCanvasElement | null;
@@ -11,9 +12,7 @@ function canvasSum(id: string): number {
 
 test('modern 3D phase tab renders a rotatable point cloud', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="phase3d"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-phase3d')).toBeVisible();
+  await openModernTab(page, 'phase3d', '#tab-phase3d');
 
   await page.waitForTimeout(500);
   const a = await page.evaluate(canvasSum, 'p3dCanvas');
@@ -25,9 +24,7 @@ test('modern 3D phase tab renders a rotatable point cloud', async ({ page }) => 
 
 test('modern density tab accumulates a phase-density field', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="density"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-density')).toBeVisible();
+  await openModernTab(page, 'density', '#tab-density');
 
   await page.waitForTimeout(700);
   expect(await page.evaluate(canvasSum, 'gpuCanvas')).toBeGreaterThan(0);

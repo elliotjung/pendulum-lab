@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-scale-validation/v2",
-  "generatedAt": "2026-06-18T08:29:46.438Z",
+  "generatedAt": "2026-06-18T10:26:43.248Z",
   "hardwareWebGpuAvailable": false,
   "verdict": "cpu-reference-mock-and-contract-gates-ready",
   "contracts": [

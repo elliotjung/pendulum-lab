@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 test('expansion lab runs a worker-backed model suite and records the result', async ({ page }) => {
   await page.addInitScript(() => {
@@ -7,8 +8,7 @@ test('expansion lab runs a worker-backed model suite and records the result', as
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { expansion?: unknown } }).__modernTabs?.expansion));
 
-  await page.evaluate(() => (document.querySelector('.tab[data-tab="expansion"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-expansion')).toHaveClass(/active/);
+  await openModernTab(page, 'expansion', '#tab-expansion');
   await page.locator('#expPreset').selectOption('cartpole-open-loop');
   await expect(page.locator('#expModelDoc')).toContainText('Cart-Pole');
   await page.locator('#expModel').selectOption('cartpole');
@@ -48,8 +48,7 @@ test('expansion lab restores a shared hash into controls', async ({ page }) => {
   });
   await page.goto('/#expansion=eyJtb2RlbCI6ImNhcnRwb2xlIiwiaG9yaXpvbiI6NCwiZHQiOjAuMDA2LCJwYXJhbWV0ZXJPdmVycmlkZXMiOnsiZm9yY2UiOjAuNX19');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { expansion?: unknown } }).__modernTabs?.expansion));
-  await page.evaluate(() => (document.querySelector('[data-rail-section-button="analysis"]') as HTMLButtonElement | null)?.click());
-  await page.evaluate(() => (document.querySelector('.tab[data-tab="expansion"]') as HTMLButtonElement | null)?.click());
+  await openModernTab(page, 'expansion', '#tab-expansion');
   await expect(page.locator('#expModel')).toHaveValue('cartpole');
   await expect(page.locator('#expHorizon')).toHaveValue('4');
   await expect(page.locator('#expSweepValue')).toHaveValue('0.5');

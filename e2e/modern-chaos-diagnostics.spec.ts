@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openModernTab } from './shell';
 
 /**
  * The research-grade chaos-diagnostics tabs (0–1 test, covariant Lyapunov
@@ -19,10 +20,7 @@ async function canvasInk(page: import('@playwright/test').Page, id: string): Pro
 
 test('0–1 test tab computes K and draws the translation path', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="zeroone"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-zeroone')).toBeVisible();
+  await openModernTab(page, 'zeroone', '#tab-zeroone');
 
   await page.evaluate(() => document.getElementById('zeroOneStart')?.click());
   await page.waitForFunction(() => (document.getElementById('zeroOneK')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
@@ -36,10 +34,7 @@ test('0–1 test tab computes K and draws the translation path', async ({ page }
 
 test('CLV tab computes exponents + hyperbolicity and renders', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="clv"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-clv')).toBeVisible();
+  await openModernTab(page, 'clv', '#tab-clv');
 
   await page.evaluate(() => document.getElementById('clvStart')?.click());
   await page.waitForFunction(() => (document.getElementById('clvLambda1')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
@@ -55,10 +50,7 @@ test('CLV tab computes exponents + hyperbolicity and renders', async ({ page }) 
 
 test('RQA tab computes measures and draws the recurrence plot', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="rqa"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-rqa')).toBeVisible();
+  await openModernTab(page, 'rqa', '#tab-rqa');
 
   await page.evaluate(() => document.getElementById('rqaStart')?.click());
   await page.waitForFunction(() => (document.getElementById('rqaDET')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
@@ -74,10 +66,7 @@ test('RQA tab computes measures and draws the recurrence plot', async ({ page })
 
 test('FTLE tab computes the field range and draws the heatmap', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="ftle"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-ftle')).toBeVisible();
+  await openModernTab(page, 'ftle', '#tab-ftle');
 
   // Small resolution for a fast e2e run.
   await page.evaluate(() => {
@@ -95,10 +84,7 @@ test('FTLE tab computes the field range and draws the heatmap', async ({ page })
 
 test('flip-basin tab computes entropy + dimension and draws the basin', async ({ page }) => {
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-
-  await page.evaluate(() => (document.querySelector('[role="tab"][data-tab="basin"]') as HTMLButtonElement | null)?.click());
-  await expect(page.locator('#tab-basin')).toBeVisible();
+  await openModernTab(page, 'basin', '#tab-basin');
 
   // Use a small resolution for a fast e2e run.
   await page.evaluate(() => {
