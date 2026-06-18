@@ -1,6 +1,6 @@
 # Certified Chaotic Dynamics Workbench - Reviewer Kit
 
-Generated: 2026-06-18T17:07:32.574Z
+Generated: 2026-06-18T17:57:49.302Z
 
 Status: **READY**
 
@@ -51,6 +51,8 @@ Reproduce the study with `npm run paper:study`, then render the paper with `npm 
 | recommended | yes | `reports/gpu-adapter-matrix.json` | `npm run benchmark:gpu-matrix` | Intel/NVIDIA/AMD physical-adapter evidence matrix with explicit missing rows. |
 | required | yes | `reviewer.html` | `npm run build` | GitHub Pages reviewer console that reads the machine-readable report artifacts. |
 | recommended | yes | `reports/publication-status.json` | `npm run release:status` | Public npm, Zenodo DOI, GitHub release, and Pages resolution audit. |
+| recommended | yes | `reports/zenodo-deposition.json` | `npm run zenodo:publish` | Authenticated-deposition result or an explicit credential-missing boundary with no fabricated DOI. |
+| recommended | yes | `reports/attestation-verification.json` | `npm run release:verify-attestations` | Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow. |
 | recommended | yes | `reports/npm-pack-dry-run.json` | `npm pack --dry-run --json` | Exact npm tarball coordinate, integrity digest, size, and included-file inventory. |
 | required | yes | `reports/release-readiness.json` | `npm run release:package` | Machine-readable DOI/Pages/npm/PDF/GIF release readiness manifest. |
 | recommended | yes | `reports/release-one-page.pdf` | `npm run release:package` | One-page reviewer handout for release notes and external review. |

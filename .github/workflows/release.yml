@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -50,11 +48,18 @@ jobs:
         with:
           subject-path: ${{ env.PACKAGE_FILE }}
           sbom-path: reports/sbom.cdx.json
+      - name: Verify release attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          source_ref="${GITHUB_REF}"
+          npm run release:verify-attestations -- --artifact "${PACKAGE_FILE}" --source-ref "${source_ref}"
       - name: Attach supply-chain artifacts to release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${GITHUB_REF_NAME}" "${PACKAGE_FILE}" reports/release-checksums.txt reports/sbom.cdx.json --clobber
+        run: gh release upload "${GITHUB_REF_NAME}" "${PACKAGE_FILE}" reports/release-checksums.txt reports/sbom.cdx.json reports/attestation-verification.json --clobber
       - uses: actions/upload-artifact@v4
         with:
           name: pendulum-lab-release
@@ -71,4 +76,5 @@ jobs:
             reports/npm-pack.json
             reports/release-checksums.txt
             reports/sbom.cdx.json
+            reports/attestation-verification.json
             *.tgz

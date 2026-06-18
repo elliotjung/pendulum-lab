@@ -1,12 +1,10 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-06-18T17:08:15.236Z",
+  "generatedAt": "2026-06-18T17:57:50.258Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
-    "Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.",
-    "Configure the npm trusted publisher for publish-npm.yml and environment npm, then dispatch dry-run=false.",
-    "Run npm run zenodo:publish with ZENODO_TOKEN, then npm run doi:sync.",
-    "Verify the GitHub SLSA/SBOM attestations with gh attestation verify."
+    "Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.",
+    "Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync."
   ],
   "artifacts": [
     {
@@ -45,7 +43,7 @@
       "path": ".github/workflows/release.yml",
       "required": true,
       "available": true,
-      "hash": "1f608d0b394714",
+      "hash": "17855e5822f731",
       "note": "Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation."
     },
     {
@@ -60,7 +58,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "0f727f3f087da8",
+      "hash": "0b4108f8ba8c23",
       "note": "Reviewer kit manifest exists."
     },
     {
@@ -92,7 +90,7 @@
       "path": "reports/gpu-adapter-matrix.json",
       "required": true,
       "available": true,
-      "hash": "0156e97f3461c7",
+      "hash": "0022f57d23c7e7",
       "note": "Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit."
     },
     {
@@ -100,8 +98,24 @@
       "path": "reports/publication-status.json",
       "required": true,
       "available": true,
-      "hash": "03c891a6746610",
+      "hash": "0d540c722f54b0",
       "note": "Public registry, DOI, release, and Pages resolution audit."
+    },
+    {
+      "id": "zenodo-deposition",
+      "path": "reports/zenodo-deposition.json",
+      "required": false,
+      "available": true,
+      "hash": "015120fde07fd7",
+      "note": "Authenticated deposition result or explicit credential boundary; no DOI is inferred."
+    },
+    {
+      "id": "attestation-verification",
+      "path": "reports/attestation-verification.json",
+      "required": false,
+      "available": true,
+      "hash": "0faf054b134ed0",
+      "note": "Cryptographic verification of SLSA and CycloneDX attestations against the release tarball."
     },
     {
       "id": "npm-pack-dry-run",

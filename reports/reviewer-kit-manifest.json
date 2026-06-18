@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-reviewer-kit/v1",
-  "generatedAt": "2026-06-18T17:07:32.574Z",
+  "generatedAt": "2026-06-18T17:57:49.302Z",
   "flagship": {
     "id": "melnikov-gap-map",
     "shortName": "Melnikov gap map",
@@ -157,6 +157,22 @@
       "command": "npm run release:status",
       "priority": "recommended",
       "description": "Public npm, Zenodo DOI, GitHub release, and Pages resolution audit.",
+      "available": true
+    },
+    {
+      "id": "zenodo-deposition",
+      "path": "reports/zenodo-deposition.json",
+      "command": "npm run zenodo:publish",
+      "priority": "recommended",
+      "description": "Authenticated-deposition result or an explicit credential-missing boundary with no fabricated DOI.",
+      "available": true
+    },
+    {
+      "id": "attestation-verification",
+      "path": "reports/attestation-verification.json",
+      "command": "npm run release:verify-attestations",
+      "priority": "recommended",
+      "description": "Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow.",
       "available": true
     },
     {

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "pendulum-zenodo-deposition/v1",
+  "generatedAt": "2026-06-18T17:48:07.955Z",
+  "status": "credential-missing",
+  "environment": "production",
+  "version": "10.35.0",
+  "doi": null,
+  "caveat": "ZENODO_TOKEN is required to create and publish a deposition; no DOI was fabricated."
+}

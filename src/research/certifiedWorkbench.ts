@@ -191,6 +191,20 @@ export const REVIEWER_KIT_ARTIFACTS: readonly ReviewerKitArtifact[] = [
     description: 'Public npm, Zenodo DOI, GitHub release, and Pages resolution audit.'
   },
   {
+    id: 'zenodo-deposition',
+    path: 'reports/zenodo-deposition.json',
+    command: 'npm run zenodo:publish',
+    priority: 'recommended',
+    description: 'Authenticated-deposition result or an explicit credential-missing boundary with no fabricated DOI.'
+  },
+  {
+    id: 'attestation-verification',
+    path: 'reports/attestation-verification.json',
+    command: 'npm run release:verify-attestations',
+    priority: 'recommended',
+    description: 'Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow.'
+  },
+  {
     id: 'npm-pack-dry-run',
     path: 'reports/npm-pack-dry-run.json',
     command: 'npm pack --dry-run --json',

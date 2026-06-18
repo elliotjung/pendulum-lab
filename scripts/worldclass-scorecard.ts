@@ -79,6 +79,15 @@ const publicationStatus = await readJson<{
   githubRelease?: { published?: boolean };
   pages?: { published?: boolean };
 }>('reports/publication-status.json', {});
+const attestationVerification = await readJson<{
+  status?: string;
+  predicates?: Array<{ status?: string; predicateType?: string }>;
+}>('reports/attestation-verification.json', {});
+const verifiedAttestationPredicates = new Set(
+  attestationVerification.predicates
+    ?.filter((item) => item.status === 'verified')
+    .map((item) => item.predicateType)
+);
 const releaseReadiness = await readJson<{ status?: string }>('reports/release-readiness.json', {});
 const unitTestSummary = Number.isInteger(vitest.numTotalTests) && Array.isArray(vitest.testResults)
   ? `${vitest.numPassedTests ?? 0}/${vitest.numTotalTests} unit tests across ${vitest.testResults.length} files`
@@ -220,6 +229,9 @@ const has = {
   nChainGpuPromotion: gpuNChainSource.includes('promotedNChainVariational') && gpuNChainSource.includes('WGSL_NCHAIN_VARIATIONAL_KERNEL'),
   npmOidcPublishing: npmWorkflow.includes('id-token: write') && npmWorkflow.includes('npm@11.5.1') && npmWorkflow.includes('npm publish --access public'),
   slsaAttestation: releaseWorkflow.includes('actions/attest@v4') && releaseWorkflow.includes('attestations: write') && releaseWorkflow.includes('sbom-path:'),
+  attestationsVerified: attestationVerification.status === 'verified'
+    && verifiedAttestationPredicates.has('https://slsa.dev/provenance/v1')
+    && verifiedAttestationPredicates.has('https://cyclonedx.org/bom'),
   publicationStatusReport: await exists('reports/publication-status.json'),
   npmPublished: publicationStatus.npm?.published === true,
   zenodoPublished: publicationStatus.zenodo?.published === true && Boolean(publicationStatus.zenodo?.doi),
@@ -240,7 +252,7 @@ const flagshipCertified = flagshipReady && has.flagshipCertifyCommand && has.fla
 const reviewerKitReady = flagshipCertified && has.reviewerKitDoc && has.reviewerKitScript && has.reviewerKitCommand && has.reviewerKitManifest && has.reviewerKitManifestMd;
 const gpuScaleReady = has.gpuScaleCommand && has.gpuScaleScript && has.gpuScaleReport && has.gpuScaleJson && has.gpuReductionOracle && has.ciRunsGpuScale && has.webgpuHardwareWorkflow && has.webgpuHardwareE2e && has.webgpuHardwareCommand && has.webgpuHardwareValidateCommand && has.gpuBenchmarkLadderCommand && has.gpuAdapterMatrixCommand && has.webgpuWorkflowRunsValidation && has.webgpuWorkflowRunsBenchmarkLadder && has.webgpuWorkflowRunsAdapterMatrix && has.webgpuHardwareReport && has.webgpuHardwareJson && has.gpuBenchmarkLadderReport && has.gpuBenchmarkLadderJson && has.gpuAdapterMatrixReport && has.gpuAdapterMatrixJson && has.webgpuHardwarePass && has.webgpuFullSpectrumPass && has.webgpuClvPass && has.webgpuVariationalFtlePass && has.webgpuNChainPass && has.gpuBenchmarkLadderPass;
 const chaosAccelerationReady = has.chaosAccelerationContracts && has.fullSpectrumGpuPromotion && has.clvFtleGpuPromotion && has.nChainGpuPromotion;
-const externalPublicationReady = has.npmOidcPublishing && has.slsaAttestation && has.publicationStatusReport && has.npmPublished && has.zenodoPublished && has.githubReleasePublished && has.pagesPublished;
+const externalPublicationReady = has.npmOidcPublishing && has.slsaAttestation && has.attestationsVerified && has.publicationStatusReport && has.npmPublished && has.zenodoPublished && has.githubReleasePublished && has.pagesPublished;
 const sparseFloquetReady = has.arnoldiSchurFloquet;
 const trustWorkspaceReady = has.trustInspectorUi && has.trustInspectorE2e && has.researchWorkspaceCard && has.researchWorkspaceList && has.researchProjectSessions;
 
@@ -409,6 +421,7 @@ const items: ScorecardItem[] = [
     evidence: [
       has.npmOidcPublishing ? 'npm workflow uses tokenless OIDC trusted publishing with an exact-version guard' : 'npm OIDC trusted publishing workflow missing',
       has.slsaAttestation ? 'release workflow emits SLSA/in-toto build provenance and CycloneDX SBOM attestations with actions/attest@v4' : 'SLSA/SBOM attestation workflow missing',
+      has.attestationsVerified ? 'published SLSA provenance and CycloneDX attestations pass signer-workflow and tarball SHA-256 verification' : 'published release attestations have not been cryptographically verified',
       has.githubReleasePublished ? 'GitHub release resolves publicly' : 'public GitHub release missing',
       has.pagesPublished ? 'Pages reviewer dashboard resolves publicly' : 'Pages reviewer dashboard not yet deployed',
       has.npmPublished ? 'exact npm package version resolves publicly' : 'npm package version is not published',
@@ -417,7 +430,8 @@ const items: ScorecardItem[] = [
     remaining: [
       ...(!has.npmPublished ? ['Configure npm trusted publisher for publish-npm.yml/environment npm or supply an owner token for the first publish'] : []),
       ...(!has.zenodoPublished ? ['Authenticate Zenodo, publish the deposition, then run npm run doi:sync'] : []),
-      ...(!has.pagesPublished ? ['Deploy the current reviewer.html build through Pages'] : [])
+      ...(!has.pagesPublished ? ['Deploy the current reviewer.html build through Pages'] : []),
+      ...(!has.attestationsVerified ? ['Run npm run release:verify-attestations against the published release tarball'] : [])
     ]
   },
   {

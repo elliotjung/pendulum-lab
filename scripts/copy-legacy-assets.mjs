@@ -15,6 +15,8 @@ const reviewerReports = [
   'gpu-adapter-matrix.json',
   'release-readiness.json',
   'publication-status.json',
+  'zenodo-deposition.json',
+  'attestation-verification.json',
   'npm-pack-dry-run.json',
   'reviewer-kit-manifest.json',
   'flagship-figure1.svg'

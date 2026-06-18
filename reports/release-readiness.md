@@ -1,6 +1,6 @@
 # Release Readiness Manifest
 
-Generated: 2026-06-18T17:08:15.236Z
+Generated: 2026-06-18T17:57:50.258Z
 
 Status: **ready-for-owner-publish**
 
@@ -18,6 +18,8 @@ Status: **ready-for-owner-publish**
 | yes | yes | `reports/gpu-benchmark-ladder.json` | Machine-readable GPU benchmark ladder for release artifacts. |
 | yes | yes | `reports/gpu-adapter-matrix.json` | Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit. |
 | yes | yes | `reports/publication-status.json` | Public registry, DOI, release, and Pages resolution audit. |
+| no | yes | `reports/zenodo-deposition.json` | Authenticated deposition result or explicit credential boundary; no DOI is inferred. |
+| no | yes | `reports/attestation-verification.json` | Cryptographic verification of SLSA and CycloneDX attestations against the release tarball. |
 | yes | yes | `reports/npm-pack-dry-run.json` | Exact npm tarball integrity, size, and included-file inventory from a successful dry run. |
 | yes | yes | `reports/release-one-page.pdf` | One-page reviewer PDF generated locally. |
 | yes | yes | `reports/walkthrough-30s.gif` | Thirty-second GIF walkthrough generated locally. |
@@ -25,8 +27,6 @@ Status: **ready-for-owner-publish**
 
 ## Owner Publish Steps
 
-- Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.
-- Configure the npm trusted publisher for publish-npm.yml and environment npm, then dispatch dry-run=false.
-- Run npm run zenodo:publish with ZENODO_TOKEN, then npm run doi:sync.
-- Verify the GitHub SLSA/SBOM attestations with gh attestation verify.
+- Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.
+- Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.
 

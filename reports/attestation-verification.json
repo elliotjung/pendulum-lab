@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "pendulum-attestation-verification/v1",
+  "generatedAt": "2026-06-18T17:57:42.696Z",
+  "status": "verified",
+  "repository": "Elliot-Jung-17/pendulum-lab",
+  "artifact": "pendulum-lab-v10-10.35.0.tgz",
+  "sha256": "5df81bf8ef3a51cb0e49f79ad7b4c5852aa3a06562dc07830219e99d11e85bb9",
+  "signerWorkflow": "Elliot-Jung-17/pendulum-lab/.github/workflows/release.yml",
+  "predicates": [
+    {
+      "predicateType": "https://slsa.dev/provenance/v1",
+      "status": "verified",
+      "subject": "pendulum-lab-v10-10.35.0.tgz",
+      "sha256": "5df81bf8ef3a51cb0e49f79ad7b4c5852aa3a06562dc07830219e99d11e85bb9",
+      "signerWorkflow": "Release Artifacts",
+      "sourceRepositoryDigest": "f4fd13de8f8c84c81ec340365e1287620d45b46d",
+      "sourceRepositoryRef": "refs/tags/v10.35.0",
+      "runnerEnvironment": "github-hosted",
+      "invocation": "https://github.com/Elliot-Jung-17/pendulum-lab/actions/runs/27778325081/attempts/1",
+      "certificateIdentity": "https://github.com/Elliot-Jung-17/pendulum-lab/.github/workflows/release.yml@refs/tags/v10.35.0",
+      "transparencyLog": {
+        "type": "Tlog",
+        "uri": "https://rekor.sigstore.dev",
+        "timestamp": "2026-06-19T02:45:30+09:00"
+      }
+    },
+    {
+      "predicateType": "https://cyclonedx.org/bom",
+      "status": "verified",
+      "subject": "pendulum-lab-v10-10.35.0.tgz",
+      "sha256": "5df81bf8ef3a51cb0e49f79ad7b4c5852aa3a06562dc07830219e99d11e85bb9",
+      "signerWorkflow": "Release Artifacts",
+      "sourceRepositoryDigest": "f4fd13de8f8c84c81ec340365e1287620d45b46d",
+      "sourceRepositoryRef": "refs/tags/v10.35.0",
+      "runnerEnvironment": "github-hosted",
+      "invocation": "https://github.com/Elliot-Jung-17/pendulum-lab/actions/runs/27778325081/attempts/1",
+      "certificateIdentity": "https://github.com/Elliot-Jung-17/pendulum-lab/.github/workflows/release.yml@refs/tags/v10.35.0",
+      "transparencyLog": {
+        "type": "Tlog",
+        "uri": "https://rekor.sigstore.dev",
+        "timestamp": "2026-06-19T02:45:32+09:00"
+      }
+    }
+  ]
+}

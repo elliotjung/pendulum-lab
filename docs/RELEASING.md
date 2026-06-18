@@ -22,6 +22,7 @@ tgz, generates a CycloneDX SBOM, and records SLSA/in-toto attestations through
 
 ```bash
 gh attestation verify pendulum-lab-v10-<version>.tgz --repo Elliot-Jung-17/pendulum-lab
+npm run release:verify-attestations -- --artifact pendulum-lab-v10-<version>.tgz --source-ref refs/tags/v<version>
 ```
 
 `.github/workflows/pages.yml` deploys the workbench, paper, report JSON, and

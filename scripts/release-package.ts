@@ -10,6 +10,18 @@ interface ReleaseArtifact {
   note: string;
 }
 
+interface PublicationStatus {
+  npm?: { published?: boolean };
+  zenodo?: { published?: boolean };
+  githubRelease?: { published?: boolean };
+  pages?: { published?: boolean };
+}
+
+interface AttestationStatus {
+  status?: string;
+  predicates?: Array<{ status?: string; predicateType?: string }>;
+}
+
 async function exists(path: string): Promise<boolean> {
   try {
     await access(path);
@@ -233,6 +245,10 @@ ${cards}
 const reviewerManifestText = await readOptional('reports/reviewer-kit-manifest.json');
 const scorecardText = await readOptional('reports/worldclass-scorecard.json');
 const flagshipText = await readOptional('reports/flagship-certification.json');
+const publicationText = await readOptional('reports/publication-status.json');
+const publication = publicationText ? JSON.parse(publicationText) as PublicationStatus : {};
+const attestationText = await readOptional('reports/attestation-verification.json');
+const attestation = attestationText ? JSON.parse(attestationText) as AttestationStatus : {};
 const summaryLines = [
   'Pendulum Lab Certified Chaotic Dynamics Workbench',
   `Generated: ${new Date().toISOString()}`,
@@ -266,6 +282,8 @@ const artifactSpecs = [
   ['gpu-benchmark-ladder-json', 'reports/gpu-benchmark-ladder.json', true, 'Machine-readable GPU benchmark ladder for release artifacts.'],
   ['gpu-adapter-matrix', 'reports/gpu-adapter-matrix.json', true, 'Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit.'],
   ['publication-status', 'reports/publication-status.json', true, 'Public registry, DOI, release, and Pages resolution audit.'],
+  ['zenodo-deposition', 'reports/zenodo-deposition.json', false, 'Authenticated deposition result or explicit credential boundary; no DOI is inferred.'],
+  ['attestation-verification', 'reports/attestation-verification.json', false, 'Cryptographic verification of SLSA and CycloneDX attestations against the release tarball.'],
   ['npm-pack-dry-run', 'reports/npm-pack-dry-run.json', true, 'Exact npm tarball integrity, size, and included-file inventory from a successful dry run.'],
   ['one-page-pdf', 'reports/release-one-page.pdf', true, 'One-page reviewer PDF generated locally.'],
   ['walkthrough-gif', 'reports/walkthrough-30s.gif', true, 'Thirty-second GIF walkthrough generated locally.'],
@@ -279,16 +297,21 @@ for (const [id, path, required, note] of artifactSpecs) {
   artifacts.push({ id, path, required, available, ...(text ? { hash: hashText(text).slice(0, 16) } : {}), note });
 }
 const missingRequired = artifacts.filter((artifact) => artifact.required && !artifact.available).map((artifact) => artifact.id);
+const externalPublishSteps: string[] = [];
+if (!publication.pages?.published) externalPublishSteps.push('Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.');
+if (!publication.npm?.published) externalPublishSteps.push('Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.');
+if (!publication.zenodo?.published) externalPublishSteps.push('Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.');
+const verifiedPredicateTypes = new Set(attestation.predicates?.filter((item) => item.status === 'verified').map((item) => item.predicateType));
+if (attestation.status !== 'verified'
+  || !verifiedPredicateTypes.has('https://slsa.dev/provenance/v1')
+  || !verifiedPredicateTypes.has('https://cyclonedx.org/bom')) {
+  externalPublishSteps.push('Run npm run release:verify-attestations against the published release tarball.');
+}
 const manifest = {
   schemaVersion: 'pendulum-release-readiness/v1',
   generatedAt: new Date().toISOString(),
   status: missingRequired.length ? 'missing-required' : 'ready-for-owner-publish',
-  externalPublishSteps: [
-    'Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.',
-    'Configure the npm trusted publisher for publish-npm.yml and environment npm, then dispatch dry-run=false.',
-    'Run npm run zenodo:publish with ZENODO_TOKEN, then npm run doi:sync.',
-    'Verify the GitHub SLSA/SBOM attestations with gh attestation verify.'
-  ],
+  externalPublishSteps,
   artifacts
 };
 const lines = [

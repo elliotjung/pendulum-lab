@@ -59,6 +59,7 @@ Required outputs:
 - `npm run benchmark:gpu-matrix`
 - `npm run benchmark:memory`
 - `npm run release:package`
+- `npm run release:verify-attestations -- --artifact <release-tarball> --source-ref refs/tags/<tag>`
 - `npm run reviewer:kit`
 - `npm run audit:worldclass`
 
