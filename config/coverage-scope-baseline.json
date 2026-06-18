@@ -37,6 +37,7 @@
     "src/app/parity/lab3d.ts",
     "src/app/systemControls.ts",
     "src/main.ts",
+    "src/reviewer/main.ts",
     "src/render/performance.ts",
     "src/runtime/PendulumRuntime.ts",
     "src/runtime/WorkerBridge.ts",
