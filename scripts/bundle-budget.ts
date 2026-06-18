@@ -51,6 +51,17 @@ async function fileSize(path: string): Promise<number> {
   }
 }
 
+async function readFirstExisting(paths: readonly string[]): Promise<string> {
+  for (const path of paths) {
+    try {
+      return await readFile(path, 'utf8');
+    } catch {
+      // Try the next build artifact name.
+    }
+  }
+  throw new Error(`none of these files exist: ${paths.join(', ')}`);
+}
+
 function compressedSizes(bytes: Buffer): SizeSet {
   return {
     raw: bytes.length,
@@ -81,7 +92,7 @@ function assetRefsFromIndex(indexHtml: string): Set<string> {
 async function main(): Promise<void> {
   const rows: Budget[] = [];
   const assetsDir = 'dist/assets';
-  const initialRefs = assetRefsFromIndex(await readFile('dist/index.html', 'utf8'));
+  const initialRefs = assetRefsFromIndex(await readFirstExisting(['dist/app.html', 'dist/index.html']));
   const initialJs: SizeSet = { raw: 0, gzip: 0, brotli: 0 };
   const chunkJsTotal: SizeSet = { raw: 0, gzip: 0, brotli: 0 };
   const chunkJsMax: SizeSet = { raw: 0, gzip: 0, brotli: 0 };
