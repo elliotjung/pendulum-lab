@@ -130,7 +130,7 @@
     "@playwright/test": "^1.44.0",
     "@stryker-mutator/core": "^8.7.1",
     "@stryker-mutator/vitest-runner": "^8.7.1",
-    "@types/node": "^20.12.12",
+    "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^1.6.0",
     "fake-indexeddb": "^6.2.5",
     "tsx": "^4.11.0",
