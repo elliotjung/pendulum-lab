@@ -14,8 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         shard:
-          - name: integrators-metadata
-            mutate: src/physics/integrators.ts:1-177
+          - name: integrators-helpers
+            mutate: src/physics/integrators.ts:1-40
+          - name: integrators-registry-a
+            mutate: src/physics/integrators.ts:41-108
+          - name: integrators-registry-b
+            mutate: src/physics/integrators.ts:109-177
           - name: integrators-explicit
             mutate: src/physics/integrators.ts:178-289
           - name: integrators-symplectic
@@ -26,8 +30,10 @@ jobs:
             mutate: src/physics/integrators.ts:461-520
           - name: linear-solve-gaussian
             mutate: src/physics/linearSolve.ts:1-160
-          - name: linear-solve-cholesky
-            mutate: src/physics/linearSolve.ts:161-289
+          - name: linear-solve-cholesky-core
+            mutate: src/physics/linearSolve.ts:161-230
+          - name: linear-solve-cholesky-api
+            mutate: src/physics/linearSolve.ts:231-289
           - name: n-pendulum
             mutate: src/physics/nPendulum.ts
           - name: double
