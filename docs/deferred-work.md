@@ -77,10 +77,12 @@ fully covered by the headless test suite.
   internals — defeating the purpose. Best added in a focused session with the
   coefficients checked against Hairer's reference source.
 
-## Long-running, not executed this session
+## Long-running gates
 
-- **Full `npm run mutation` (Stryker).** The mutation scope was extended in config
-  (numerical core: `lyapunov`, `melnikov`, `rqa`, `ftle`); a full run is long and
-  was not executed here. The new modules are designed to be mutation-friendly
-  (closed-form assertions), and can be folded into the Stryker scope when a full
-  run is scheduled.
+- **Monolithic `npm run mutation` remains too slow for ordinary PR feedback.**
+  The release gate is now the sharded Nightly Mutation workflow plus
+  `npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85`.
+  The latest aggregate artifact is committed as `reports/mutation-aggregate.json`
+  for reviewer visibility. Raising the aggregate threshold and reducing surviving
+  mutants is still hardening work; the existence of the gate is no longer
+  deferred.

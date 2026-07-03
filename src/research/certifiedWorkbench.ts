@@ -247,6 +247,13 @@ export const REVIEWER_KIT_ARTIFACTS: readonly ReviewerKitArtifact[] = [
     description: 'Machine-readable browser memory baseline consumed by the world-class audit.'
   },
   {
+    id: 'mutation-aggregate',
+    path: 'reports/mutation-aggregate.json',
+    command: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85',
+    priority: 'recommended',
+    description: 'Nightly sharded Stryker aggregate with total/covered mutation scores and status counts.'
+  },
+  {
     id: 'reviewer-kit-manifest',
     path: 'reports/reviewer-kit-manifest.json',
     command: 'npm run reviewer:kit',

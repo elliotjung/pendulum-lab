@@ -285,6 +285,7 @@ const artifactSpecs = [
   ['zenodo-deposition', 'reports/zenodo-deposition.json', false, 'Authenticated deposition result or explicit credential boundary; no DOI is inferred.'],
   ['attestation-verification', 'reports/attestation-verification.json', false, 'Cryptographic verification of SLSA and CycloneDX attestations against the release tarball.'],
   ['npm-pack-dry-run', 'reports/npm-pack-dry-run.json', true, 'Exact npm tarball integrity, size, and included-file inventory from a successful dry run.'],
+  ['mutation-aggregate', 'reports/mutation-aggregate.json', true, 'Nightly sharded mutation aggregate score from Stryker reports.'],
   ['one-page-pdf', 'reports/release-one-page.pdf', true, 'One-page reviewer PDF generated locally.'],
   ['walkthrough-gif', 'reports/walkthrough-30s.gif', true, 'Thirty-second GIF walkthrough generated locally.'],
   ['walkthrough-storyboard', 'reports/walkthrough-storyboard.svg', false, 'Editable storyboard companion for the GIF.']

@@ -22,7 +22,8 @@ const sources = {
   matrix: './reports/gpu-adapter-matrix.json',
   release: './reports/release-readiness.json',
   publication: './reports/publication-status.json',
-  reviewer: './reports/reviewer-kit-manifest.json'
+  reviewer: './reports/reviewer-kit-manifest.json',
+  mutation: './reports/mutation-aggregate.json'
 } as const;
 
 function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string): HTMLElementTagNameMap[K] {
@@ -43,6 +44,11 @@ async function fetchJson(path: string): Promise<Json> {
   const response = await fetch(path, { cache: 'no-store' });
   if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
   return object(await response.json());
+}
+
+async function fetchOptionalJson(path: string): Promise<Json> {
+  const response = await fetch(path, { cache: 'no-store' });
+  return response.ok ? object(await response.json()) : {};
 }
 
 function statusClass(status: string): string {
@@ -137,7 +143,9 @@ function table(headers: string[], rows: string[][]): HTMLElement {
 async function render(): Promise<void> {
   const root = document.querySelector<HTMLElement>('#reviewer-root');
   if (!root) return;
-  const data = Object.fromEntries(await Promise.all(Object.entries(sources).map(async ([key, path]) => [key, await fetchJson(path)]))) as Record<keyof typeof sources, Json>;
+  const requiredSourceEntries = Object.entries(sources).filter(([key]) => key !== 'mutation');
+  const data = Object.fromEntries(await Promise.all(requiredSourceEntries.map(async ([key, path]) => [key, await fetchJson(path)]))) as Record<keyof typeof sources, Json>;
+  data.mutation = await fetchOptionalJson(sources.mutation);
   const scoreTotals = object(data.scorecard.totals);
   const crossing = object(data.flagship.crossing);
   const ladderNChain = object(data.ladder.nChainVariational);
@@ -147,6 +155,8 @@ async function render(): Promise<void> {
   const releaseArtifacts = array(data.release.artifacts).map(object);
   const hardwareNChain = object(data.hardware.nChainVariational);
   const hardwareNChainComparison = object(hardwareNChain.comparison);
+  const mutationScore = number(data.mutation.mutationScore);
+  const coveredMutationScore = number(data.mutation.coveredMutationScore);
 
   const evidence: Evidence[] = [
     {
@@ -208,6 +218,16 @@ async function render(): Promise<void> {
       validation: json(releaseArtifacts.filter((item) => item.required === true && item.available !== true)),
       reproduce: 'npm run release:package && npm run reviewer:kit',
       caveat: 'Registry publication and DOI minting remain external owner-account operations until their public identifiers resolve.'
+    },
+    {
+      id: 'mutation', title: 'Mutation aggregate', status: text(data.mutation.status, 'missing'),
+      primary: mutationScore === null ? 'missing' : `${mutationScore.toFixed(2)}%`,
+      detail: coveredMutationScore === null ? 'Aggregate report not present in this build.' : `Covered score ${coveredMutationScore.toFixed(2)}% across ${text(data.mutation.reportCount)} shards.`,
+      source: sources.mutation,
+      parameters: json(data.mutation.thresholds ?? {}),
+      validation: json(data.mutation.statusCounts ?? {}),
+      reproduce: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85',
+      caveat: 'Nightly CI artifact is the source of truth; refresh this root report after mutation scope changes.'
     },
     {
       id: 'publication', title: 'Public identifiers', status: text(data.publication.status),

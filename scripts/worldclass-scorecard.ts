@@ -16,6 +16,14 @@ interface LegacyRiskReport {
   delta: number;
 }
 
+interface MutationAggregateReport {
+  status?: string;
+  thresholds?: { break?: number; low?: number; high?: number };
+  reportCount?: number;
+  mutationScore?: number;
+  coveredMutationScore?: number;
+}
+
 async function exists(path: string): Promise<boolean> {
   try {
     await access(path);
@@ -89,6 +97,8 @@ const verifiedAttestationPredicates = new Set(
     .map((item) => item.predicateType)
 );
 const releaseReadiness = await readJson<{ status?: string }>('reports/release-readiness.json', {});
+const mutationAggregateFallback = await readJson<MutationAggregateReport>('reports/mutation/mutation-aggregate.json', {});
+const mutationAggregate = await readJson<MutationAggregateReport>('reports/mutation-aggregate.json', mutationAggregateFallback);
 const unitTestSummary = Number.isInteger(vitest.numTotalTests) && Array.isArray(vitest.testResults)
   ? `${vitest.numPassedTests ?? 0}/${vitest.numTotalTests} unit tests across ${vitest.testResults.length} files`
   : 'unit test JSON report missing; run npm run test:json';
@@ -118,6 +128,10 @@ const has = {
   energy: await exists('reports/energy-benchmark.md'),
   memoryRegression: await exists('reports/memory-regression-report.md'),
   memoryBaseline: await exists('reports/memory-baseline.json'),
+  mutationAggregateReport: await exists('reports/mutation-aggregate.json') || await exists('reports/mutation/mutation-aggregate.json'),
+  mutationAggregatePass: mutationAggregate.status === 'passed'
+    && typeof mutationAggregate.mutationScore === 'number'
+    && mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60),
   flagshipDoc: await exists('docs/flagship-result.md'),
   flagshipCertification: await exists('reports/flagship-certification.json'),
   flagshipFigure: await exists('reports/flagship-figure1.svg'),
@@ -255,6 +269,7 @@ const chaosAccelerationReady = has.chaosAccelerationContracts && has.fullSpectru
 const externalPublicationReady = has.npmOidcPublishing && has.slsaAttestation && has.attestationsVerified && has.publicationStatusReport && has.npmPublished && has.zenodoPublished && has.githubReleasePublished && has.pagesPublished;
 const sparseFloquetReady = has.arnoldiSchurFloquet;
 const trustWorkspaceReady = has.trustInspectorUi && has.trustInspectorE2e && has.researchWorkspaceCard && has.researchWorkspaceList && has.researchProjectSessions;
+const mutationReady = has.nightlyWorkflow && has.mutationAggregateReport && has.mutationAggregatePass;
 
 const items: ScorecardItem[] = [
   {
@@ -366,7 +381,7 @@ const items: ScorecardItem[] = [
   },
   {
     area: 'Testing and browser coverage',
-    status: scripts['test:e2e'] && has.ci && has.mainWorkflow && has.longRunE2e && testTierReady && visualReady && memoryReady ? 'done' : 'partial',
+    status: scripts['test:e2e'] && has.ci && has.mainWorkflow && has.longRunE2e && testTierReady && visualReady && memoryReady && mutationReady ? 'done' : 'partial',
     evidence: [
       unitTestSummary,
       'unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages',
@@ -375,12 +390,14 @@ const items: ScorecardItem[] = [
       has.longRunE2e ? 'long-run performance/soak e2e spec exists and runs in mainline full validation' : 'long-run performance/soak e2e spec missing',
       has.accessibilityE2e ? 'accessibility e2e spec exists and runs in mainline full validation' : 'accessibility e2e spec missing',
       visualReady ? 'visual regression script, spec, and versioned Chromium snapshots exist' : 'visual regression command or snapshots are missing',
-      memoryReady ? 'memory-regression report and baseline exist from benchmark output' : 'memory-regression report or baseline missing'
+      memoryReady ? 'memory-regression report and baseline exist from benchmark output' : 'memory-regression report or baseline missing',
+      mutationReady ? `nightly mutation aggregate passes at ${mutationAggregate.mutationScore}% total / ${mutationAggregate.coveredMutationScore}% covered across ${mutationAggregate.reportCount} shards` : 'nightly mutation aggregate missing or below threshold'
     ],
     remaining: [
       ...(!testTierReady ? ['Wire quick/slow/full test tiers into CI'] : []),
       ...(!visualReady ? ['Promote visual regression command and golden snapshots'] : []),
-      ...(!memoryReady ? ['Run npm run benchmark and npm run benchmark:memory to create memory-regression report + baseline artifacts'] : [])
+      ...(!memoryReady ? ['Run npm run benchmark and npm run benchmark:memory to create memory-regression report + baseline artifacts'] : []),
+      ...(!mutationReady ? ['Run the Nightly Mutation workflow and publish reports/mutation-aggregate.json before a release review'] : [])
     ]
   },
   {
@@ -449,7 +466,7 @@ const items: ScorecardItem[] = [
       has.reviewerDashboard ? 'Pages build includes the JSON-backed reviewer dashboard' : 'reviewer dashboard missing',
       has.reviewerDashboardE2e ? 'reviewer dashboard evidence dialog, tabs, and ledger have browser coverage' : 'reviewer dashboard e2e missing',
       has.mainWorkflow ? 'mainline full-validation workflow exists' : 'mainline full-validation workflow missing',
-      has.nightlyWorkflow ? 'nightly mutation workflow exists' : 'nightly mutation workflow missing',
+      mutationReady ? 'nightly mutation workflow and aggregate report exist' : has.nightlyWorkflow ? 'nightly mutation workflow exists; aggregate report missing or below threshold' : 'nightly mutation workflow missing',
       has.releaseWorkflow ? 'release artifact workflow exists' : 'release artifact workflow missing',
       has.distIndex ? 'dist/index.html exists for Pages artifact deployment' : 'dist/index.html missing; run npm run build',
       has.license ? 'LICENSE exists' : 'LICENSE missing',

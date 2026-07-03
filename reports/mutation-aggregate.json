@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "pendulum-mutation-aggregate/v1",
+  "generatedAt": "2026-07-03T16:45:41.502Z",
+  "status": "passed",
+  "thresholds": {
+    "high": 85,
+    "low": 70,
+    "break": 60
+  },
+  "reportCount": 29,
+  "total": 6633,
+  "killedEquivalent": 4333,
+  "coveredTotal": 6340,
+  "coveredKilledEquivalent": 4333,
+  "mutationScore": 65.32,
+  "coveredMutationScore": 68.34,
+  "statusCounts": {
+    "Killed": 4064,
+    "NoCoverage": 293,
+    "RuntimeError": 1,
+    "Survived": 2006,
+    "Timeout": 269
+  },
+  "files": [
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-arnold-tongue/mutation-report.json",
+      "filePath": "src/chaos/arnoldTongue.ts",
+      "counts": {
+        "Killed": 109,
+        "NoCoverage": 9,
+        "Survived": 61,
+        "Timeout": 8
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-double-string/mutation-report.json",
+      "filePath": "src/physics/doubleString.ts",
+      "counts": {
+        "Killed": 303,
+        "NoCoverage": 11,
+        "Survived": 361,
+        "Timeout": 20
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-double/mutation-report.json",
+      "filePath": "src/physics/double.ts",
+      "counts": {
+        "Killed": 206,
+        "NoCoverage": 6,
+        "Survived": 4,
+        "Timeout": 1
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-ftle/mutation-report.json",
+      "filePath": "src/chaos/ftle.ts",
+      "counts": {
+        "Killed": 128,
+        "NoCoverage": 14,
+        "Survived": 72,
+        "Timeout": 20
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-adaptive/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 127,
+        "Survived": 16,
+        "Timeout": 8
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-dispatch/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 59,
+        "Survived": 18
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-explicit/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 75,
+        "NoCoverage": 2,
+        "Survived": 27,
+        "Timeout": 5
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-helpers/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 27,
+        "Survived": 7,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-registry-a/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 2,
+        "Survived": 55
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-registry-b/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Survived": 56
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-integrators-symplectic/mutation-report.json",
+      "filePath": "src/physics/integrators.ts",
+      "counts": {
+        "Killed": 51,
+        "Survived": 6,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-job-protocol/mutation-report.json",
+      "filePath": "src/workers/jobProtocol.ts",
+      "counts": {
+        "Killed": 173,
+        "NoCoverage": 42,
+        "RuntimeError": 1,
+        "Survived": 73,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-cholesky-api/mutation-report.json",
+      "filePath": "src/physics/linearSolve.ts",
+      "counts": {
+        "Killed": 32,
+        "NoCoverage": 4,
+        "Survived": 40,
+        "Timeout": 4
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-cholesky-core/mutation-report.json",
+      "filePath": "src/physics/linearSolve.ts",
+      "counts": {
+        "Killed": 81,
+        "Survived": 9,
+        "Timeout": 12
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-gaussian/mutation-report.json",
+      "filePath": "src/physics/linearSolve.ts",
+      "counts": {
+        "Killed": 124,
+        "NoCoverage": 1,
+        "Survived": 63,
+        "Timeout": 11
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-lyapunov/mutation-report.json",
+      "filePath": "src/chaos/lyapunov.ts",
+      "counts": {
+        "Killed": 181,
+        "NoCoverage": 32,
+        "Survived": 119,
+        "Timeout": 20
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-melnikov/mutation-report.json",
+      "filePath": "src/chaos/melnikov.ts",
+      "counts": {
+        "Killed": 55,
+        "Survived": 18,
+        "Timeout": 1
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-n-pendulum/mutation-report.json",
+      "filePath": "src/physics/nPendulum.ts",
+      "counts": {
+        "Killed": 125,
+        "NoCoverage": 7,
+        "Survived": 28,
+        "Timeout": 7
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-parameter-estimation/mutation-report.json",
+      "filePath": "src/research/parameterEstimation.ts",
+      "counts": {
+        "Killed": 225,
+        "NoCoverage": 15,
+        "Survived": 107,
+        "Timeout": 19
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-research-db/mutation-report.json",
+      "filePath": "src/research/researchDb.ts",
+      "counts": {
+        "Killed": 173,
+        "NoCoverage": 58,
+        "Survived": 70
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-rqa/mutation-report.json",
+      "filePath": "src/chaos/rqa.ts",
+      "counts": {
+        "Killed": 138,
+        "NoCoverage": 2,
+        "Survived": 162,
+        "Timeout": 16
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-spherical-chain/mutation-report.json",
+      "filePath": "src/physics/sphericalChain.ts",
+      "counts": {
+        "Killed": 489,
+        "NoCoverage": 7,
+        "Survived": 69,
+        "Timeout": 22
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-spherical-embedded-chain/mutation-report.json",
+      "filePath": "src/physics/sphericalEmbeddedChain.ts",
+      "counts": {
+        "Killed": 505,
+        "NoCoverage": 43,
+        "Survived": 97,
+        "Timeout": 27
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-stochastic/mutation-report.json",
+      "filePath": "src/physics/stochastic.ts",
+      "counts": {
+        "Killed": 315,
+        "NoCoverage": 19,
+        "Survived": 192,
+        "Timeout": 35
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-structure-preservation/mutation-report.json",
+      "filePath": "src/research/structurePreservation.ts",
+      "counts": {
+        "Killed": 54,
+        "Survived": 38,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-surrogate-basis/mutation-report.json",
+      "filePath": "src/research/surrogate.ts",
+      "counts": {
+        "Killed": 14,
+        "NoCoverage": 3,
+        "Survived": 49,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-surrogate-fit/mutation-report.json",
+      "filePath": "src/research/surrogate.ts",
+      "counts": {
+        "Killed": 50,
+        "NoCoverage": 7,
+        "Survived": 66,
+        "Timeout": 8
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-torus-analysis/mutation-report.json",
+      "filePath": "src/chaos/torusAnalysis.ts",
+      "counts": {
+        "Killed": 104,
+        "NoCoverage": 4,
+        "Survived": 76,
+        "Timeout": 3
+      }
+    },
+    {
+      "reportPath": "reports/mutation-shards/mutation-report-zip-bundle/mutation-report.json",
+      "filePath": "src/research/zipBundle.ts",
+      "counts": {
+        "Killed": 139,
+        "NoCoverage": 7,
+        "Survived": 47,
+        "Timeout": 7
+      }
+    }
+  ]
+}

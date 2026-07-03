@@ -19,6 +19,7 @@ const reviewerReports = [
   'attestation-verification.json',
   'npm-pack-dry-run.json',
   'reviewer-kit-manifest.json',
+  'mutation-aggregate.json',
   'flagship-figure1.svg'
 ];
 await mkdir('dist/reports', { recursive: true });
