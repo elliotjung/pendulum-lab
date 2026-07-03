@@ -7,8 +7,53 @@ on:
 
 jobs:
   mutation:
+    name: mutation (${{ matrix.shard.name }})
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        shard:
+          - name: integrators
+            mutate: src/physics/integrators.ts
+          - name: linear-solve
+            mutate: src/physics/linearSolve.ts
+          - name: n-pendulum
+            mutate: src/physics/nPendulum.ts
+          - name: double
+            mutate: src/physics/double.ts
+          - name: double-string
+            mutate: src/physics/doubleString.ts
+          - name: spherical-chain
+            mutate: src/physics/sphericalChain.ts
+          - name: spherical-embedded-chain
+            mutate: src/physics/sphericalEmbeddedChain.ts
+          - name: stochastic
+            mutate: src/physics/stochastic.ts
+          - name: melnikov
+            mutate: src/chaos/melnikov.ts
+          - name: lyapunov
+            mutate: src/chaos/lyapunov.ts
+          - name: rqa
+            mutate: src/chaos/rqa.ts
+          - name: ftle
+            mutate: src/chaos/ftle.ts
+          - name: arnold-tongue
+            mutate: src/chaos/arnoldTongue.ts
+          - name: torus-analysis
+            mutate: src/chaos/torusAnalysis.ts
+          - name: structure-preservation
+            mutate: src/research/structurePreservation.ts
+          - name: parameter-estimation
+            mutate: src/research/parameterEstimation.ts
+          - name: surrogate
+            mutate: src/research/surrogate.ts
+          - name: zip-bundle
+            mutate: src/research/zipBundle.ts
+          - name: research-db
+            mutate: src/research/researchDb.ts
+          - name: job-protocol
+            mutate: src/workers/jobProtocol.ts
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,9 +61,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run mutation
+      - run: npm run mutation -- --mutate "${{ matrix.shard.mutate }}"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: mutation-report
+          name: mutation-report-${{ matrix.shard.name }}
           path: reports/mutation/
