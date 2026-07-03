@@ -125,7 +125,10 @@ describe('expanded physics model suite', () => {
     expect(matrix.sweep2d.yAxis.parameter).toBe('lengthScale');
     expect(matrix.sweep2d.yAxis.label).toContain('link length');
     const firstColumn = matrix.sweep2d.cells.filter((_, index) => index % matrix.sweep2d.size === 0);
-    expect(new Set(firstColumn.map((cell) => cell.score)).size).toBeGreaterThan(1);
+    const yValues = firstColumn.map((cell) => cell.y);
+    expect(new Set(yValues.map((value) => value.toFixed(6))).size).toBe(matrix.sweep2d.size);
+    expect(Math.min(...yValues)).toBeCloseTo(matrix.sweep2d.yAxis.min, 6);
+    expect(Math.max(...yValues)).toBeCloseTo(matrix.sweep2d.yAxis.max, 6);
   });
 
   test('energy landscape carries a caveat for driven or dissipative models', () => {
