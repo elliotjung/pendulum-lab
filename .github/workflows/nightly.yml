@@ -61,9 +61,35 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run mutation -- --mutate "${{ matrix.shard.mutate }}"
+      - run: npm run mutation -- --mutate "${{ matrix.shard.mutate }}" --thresholds.break 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: mutation-report-${{ matrix.shard.name }}
           path: reports/mutation/
+
+  aggregate:
+    name: mutation aggregate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: mutation
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: mutation-report-*
+          path: reports/mutation-shards
+          merge-multiple: false
+      - run: npm run mutation:aggregate -- reports/mutation-shards --break 60 --low 70 --high 85
+      - name: Require every shard to complete
+        run: |
+          if [ "${{ needs.mutation.result }}" != "success" ]; then
+            echo "One or more mutation shards failed before producing a valid report."
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-aggregate
+          path: reports/mutation/mutation-aggregate.*
