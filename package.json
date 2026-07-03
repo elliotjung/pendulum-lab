@@ -124,7 +124,8 @@
     "test:coverage": "vitest run --coverage && npm run coverage:scope",
     "coverage:scope": "tsx scripts/audit-coverage-scope.ts",
     "budget": "tsx scripts/bundle-budget.ts",
-    "mutation": "stryker run"
+    "mutation": "stryker run",
+    "mutation:aggregate": "node scripts/mutation-aggregate.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
