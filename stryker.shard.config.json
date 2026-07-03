@@ -1,0 +1,44 @@
+{
+    "$schema":  "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+    "testRunner":  "vitest",
+    "coverageAnalysis":  "perTest",
+    "mutate":  [
+                   "src/physics/integrators.ts",
+                   "src/physics/linearSolve.ts",
+                   "src/physics/nPendulum.ts",
+                   "src/physics/double.ts",
+                   "src/physics/doubleString.ts",
+                   "src/physics/sphericalChain.ts",
+                   "src/physics/sphericalEmbeddedChain.ts",
+                   "src/physics/stochastic.ts",
+                   "src/chaos/melnikov.ts",
+                   "src/chaos/lyapunov.ts",
+                   "src/chaos/rqa.ts",
+                   "src/chaos/ftle.ts",
+                   "src/chaos/arnoldTongue.ts",
+                   "src/chaos/torusAnalysis.ts",
+                   "src/research/structurePreservation.ts",
+                   "src/research/parameterEstimation.ts",
+                   "src/research/surrogate.ts",
+                   "src/research/zipBundle.ts",
+                   "src/research/researchDb.ts",
+                   "src/workers/jobProtocol.ts"
+               ],
+    "thresholds":  {
+                       "high":  0,
+                       "low":  0,
+                       "break":  0
+                   },
+    "reporters":  [
+                      "clear-text",
+                      "progress",
+                      "json"
+                  ],
+    "jsonReporter":  {
+                         "fileName":  "reports/mutation/mutation-report.json"
+                     },
+    "tempDirName":  ".stryker-tmp",
+    "dryRunTimeoutMinutes":  20,
+    "timeoutMS":  20000,
+    "concurrency":  2
+}
