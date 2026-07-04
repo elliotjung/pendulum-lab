@@ -99,7 +99,7 @@ jobs:
           pattern: mutation-report-*
           path: reports/mutation-shards
           merge-multiple: false
-      - run: npm run mutation:aggregate -- reports/mutation-shards --break 60 --low 70 --high 85
+      - run: npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85
       - name: Require every shard to complete
         run: |
           if [ "${{ needs.mutation.result }}" != "success" ]; then
@@ -110,4 +110,4 @@ jobs:
         if: always()
         with:
           name: mutation-aggregate
-          path: reports/mutation/mutation-aggregate.*
+          path: reports/mutation-aggregate.*
