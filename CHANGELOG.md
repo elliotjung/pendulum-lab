@@ -4,7 +4,7 @@
 
 ## 10.35.0 - 2026-06-19
 
-### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 949)
+### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 969)
 
 The GPU acceleration claim now covers the missing chaos diagnostics without
 pretending beyond the verified scope.

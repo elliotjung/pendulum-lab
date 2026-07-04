@@ -1,6 +1,6 @@
 # GPU Benchmark Ladder
 
-Generated: 2026-07-04T10:26:59.246Z
+Generated: 2026-07-04T12:56:49.260Z
 
 Status: **pass**
 
@@ -21,9 +21,9 @@ Browser channel: `chrome`
 
 | steps | backend | n | GPU ms | CPU ms | reduction pass | reduction mean diff | f32/f64 mean drift | f32/f64 covariance drift |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|
-| 40 | webgpu | 25 | 259.90 | 2.90 | true | 1.527e-16 | 1.527e-16 | 7.320e-6 |
-| 80 | webgpu | 25 | 21.40 | 3.70 | true | 1.943e-16 | 1.943e-16 | 2.802e-6 |
-| 160 | webgpu | 25 | 17.30 | 5.20 | true | 6.765e-17 | 6.765e-17 | 4.896e-6 |
+| 40 | webgpu | 25 | 263.10 | 3.50 | true | 1.527e-16 | 1.527e-16 | 7.320e-6 |
+| 80 | webgpu | 25 | 26.50 | 2.60 | true | 1.943e-16 | 1.943e-16 | 2.802e-6 |
+| 160 | webgpu | 25 | 22.30 | 3.10 | true | 6.765e-17 | 6.765e-17 | 4.896e-6 |
 
 Max f32/f64 mean drift: `1.943e-16`
 
@@ -35,8 +35,8 @@ Caveat: Reduction comparisons use identical CPU f64 states to isolate GPU-side r
 
 | steps | backend | GPU ms | pass | spectrum max diff | sum diff | KY diff |
 |---:|---|---:|---:|---:|---:|---:|
-| 160 | webgpu | 187.30 | true | 1.618e-5 | 1.066e-7 | 0.000e+0 |
-| 320 | webgpu | 74.70 | true | 4.524e-6 | 4.072e-7 | 5.109e-7 |
+| 160 | webgpu | 180.00 | true | 1.618e-5 | 1.066e-7 | 0.000e+0 |
+| 320 | webgpu | 64.80 | true | 4.524e-6 | 4.072e-7 | 5.109e-7 |
 
 Max adjacent spectrum shift: `1.678e-1`
 
@@ -73,7 +73,7 @@ Caveat: Full-spectrum rows are promoted only after same-run CPU f64 oracle compa
 | final-state max abs diff | 2.591e-7 |
 | trajectory max abs diff | 4.384e-7 |
 | Jacobian-tape max abs diff | 1.109e-2 |
-| GPU ms | 864.30 |
+| GPU ms | 783.20 |
 
 ## N-chain Tiled STM/QR Promotion
 
@@ -84,7 +84,7 @@ Caveat: Full-spectrum rows are promoted only after same-run CPU f64 oracle compa
 | links / dimension | 3 / 6 |
 | CLV exponent max abs diff | 1.775e-4 |
 | FTLE abs diff | 3.416e-5 |
-| GPU ms | 831.30 |
+| GPU ms | 772.70 |
 | method | piecewise-jacobian-rk2-stm-qr |
 
 The hardware ladder validates GPU-side reductions and promoted chaos diagnostics against CPU f64 oracles while recording horizon drift separately.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-benchmark-ladder/v2",
-  "generatedAt": "2026-07-04T10:26:59.246Z",
+  "generatedAt": "2026-07-04T12:56:49.260Z",
   "channel": "chrome",
   "url": "http://127.0.0.1:5173/",
   "status": "pass",
@@ -40,8 +40,8 @@
         "steps": 40,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 259.8999999910593,
-        "cpuElapsedMs": 2.9000000059604645,
+        "gpuElapsedMs": 263.09999999403954,
+        "cpuElapsedMs": 3.5,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -81,8 +81,8 @@
         "steps": 80,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 21.400000005960464,
-        "cpuElapsedMs": 3.7000000029802322,
+        "gpuElapsedMs": 26.5,
+        "cpuElapsedMs": 2.5999999940395355,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -122,8 +122,8 @@
         "steps": 160,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 17.299999997019768,
-        "cpuElapsedMs": 5.200000002980232,
+        "gpuElapsedMs": 22.299999997019768,
+        "cpuElapsedMs": 3.0999999940395355,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -170,7 +170,7 @@
       {
         "steps": 160,
         "backend": "webgpu",
-        "elapsedMs": 187.29999999701977,
+        "elapsedMs": 180,
         "comparison": {
           "target": "lyapunov-spectrum",
           "passed": true,
@@ -204,7 +204,7 @@
       {
         "steps": 320,
         "backend": "webgpu",
-        "elapsedMs": 74.70000000298023,
+        "elapsedMs": 64.79999999701977,
         "comparison": {
           "target": "lyapunov-spectrum",
           "passed": true,
@@ -316,7 +316,7 @@
     "links": 3,
     "dimension": 6,
     "steps": 33,
-    "elapsedMs": 864.2999999970198,
+    "elapsedMs": 783.2000000029802,
     "caveat": "WebGPU f32 trajectory/Jacobian tape promoted for this run after same-run CPU f64 comparison; downstream science still requires its own CLV/FTLE oracle gate."
   },
   "nChainVariational": {
@@ -347,7 +347,7 @@
     "dimension": 6,
     "ftle": 7.877896308898926,
     "cpuFtle": 7.877862147870476,
-    "elapsedMs": 831.2999999970198,
+    "elapsedMs": 772.6999999880791,
     "method": "piecewise-jacobian-rk2-stm-qr",
     "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."
   }

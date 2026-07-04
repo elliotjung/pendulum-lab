@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { collectReportMetadata, freshnessPolicy } from './report-metadata';
 
 const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as { name: string; version: string };
 const repository = 'Elliot-Jung-17/pendulum-lab';
@@ -86,10 +87,12 @@ const doi = matchingZenodo ? String(matchingZenodo.doi ?? (matchingZenodo.metada
 const latestRelease = release.ok ? release.body as Record<string, unknown> : {};
 const npmPublished = npm.ok;
 const zenodoPublished = /^10\.\d{4,9}\/zenodo\.\d+$/i.test(doi);
+const metadata = await collectReportMetadata('npm run release:status', freshnessPolicy(7, 'warn'));
 
 const report = {
   schemaVersion: 'pendulum-publication-status/v1',
-  generatedAt: new Date().toISOString(),
+  generatedAt: metadata.generatedAt,
+  metadata,
   status: npmPublished && zenodoPublished && pages.ok && release.ok ? 'published' : 'partial',
   npm: {
     package: packageJson.name,

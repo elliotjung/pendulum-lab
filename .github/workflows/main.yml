@@ -34,6 +34,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run benchmark
       - run: npm run benchmark:memory
+      - run: npm run reproduce
       - run: npm run flagship:certify
       - run: npm run flagship:external
       - run: npm run release:package

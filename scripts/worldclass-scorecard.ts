@@ -1,4 +1,11 @@
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
+import {
+  collectReportMetadata,
+  freshnessPolicy,
+  reportAgeDays,
+  reportFreshnessStatus,
+  type ReportMetadata
+} from './report-metadata';
 
 type Status = 'done' | 'partial' | 'gap';
 
@@ -22,6 +29,11 @@ interface MutationAggregateReport {
   reportCount?: number;
   mutationScore?: number;
   coveredMutationScore?: number;
+}
+
+interface MetadataReport {
+  generatedAt?: string;
+  metadata?: ReportMetadata;
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -89,6 +101,9 @@ const publicationStatus = await readJson<{
   githubRelease?: { published?: boolean };
   pages?: { published?: boolean };
 }>('reports/publication-status.json', {});
+const reproduceManifest = await readJson<MetadataReport>('reports/reproduce/manifest.json', {});
+const reproduceFreshness = reportFreshnessStatus(reproduceManifest.metadata);
+const reproduceAgeDays = reportAgeDays(reproduceManifest.metadata);
 const attestationVerification = await readJson<{
   status?: string;
   predicates?: Array<{ status?: string; predicateType?: string }>;
@@ -131,6 +146,8 @@ const has = {
   memoryRegression: await exists('reports/memory-regression-report.md'),
   memoryBaseline: await exists('reports/memory-baseline.json'),
   mutationAggregateReport: await exists('reports/mutation-aggregate.json') || await exists('reports/mutation/mutation-aggregate.json'),
+  reproduceManifest: await exists('reports/reproduce/manifest.json'),
+  reproduceManifestFresh: reproduceFreshness === 'fresh',
   mutationAggregatePass: mutationAggregate.status === 'passed'
     && typeof mutationAggregate.mutationScore === 'number'
     && mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60),
@@ -271,6 +288,7 @@ const benchmarkReady = has.benchmark && has.energy && benchmarkHasComparison && 
 const flagshipReady = has.certifiedWorkbenchModule && has.flagshipDoc && certifiedWorkbenchSource.includes('melnikov-gap-map');
 const flagshipCertified = flagshipReady && has.flagshipCertifyCommand && has.flagshipCertification && has.flagshipFigure && has.flagshipExternalCommand && has.flagshipExternalCheck;
 const reviewerKitReady = flagshipCertified && has.reviewerKitDoc && has.reviewerKitScript && has.reviewerKitCommand && has.reviewerKitManifest && has.reviewerKitManifestMd;
+const reproduceReady = has.reproduceManifest && has.reproduceManifestFresh;
 const gpuScaleReady = has.gpuScaleCommand && has.gpuScaleScript && has.gpuScaleReport && has.gpuScaleJson && has.gpuReductionOracle && has.ciRunsGpuScale && has.webgpuHardwareWorkflow && has.webgpuHardwareE2e && has.webgpuHardwareCommand && has.webgpuHardwareValidateCommand && has.gpuBenchmarkLadderCommand && has.gpuAdapterMatrixCommand && has.webgpuWorkflowRunsValidation && has.webgpuWorkflowRunsBenchmarkLadder && has.webgpuWorkflowRunsAdapterMatrix && has.webgpuHardwareReport && has.webgpuHardwareJson && has.gpuBenchmarkLadderReport && has.gpuBenchmarkLadderJson && has.gpuAdapterMatrixReport && has.gpuAdapterMatrixJson && has.webgpuHardwarePass && has.webgpuFullSpectrumPass && has.webgpuClvPass && has.webgpuVariationalFtlePass && has.webgpuNChainTrajectoryTapePass && has.webgpuNChainPass && has.gpuBenchmarkLadderPass;
 const chaosAccelerationReady = has.chaosAccelerationContracts && has.fullSpectrumGpuPromotion && has.clvFtleGpuPromotion && has.nChainGpuPromotion;
 const externalPublicationReady = has.npmOidcPublishing && has.slsaAttestation && has.attestationsVerified && has.publicationStatusReport && has.npmPublished && has.zenodoPublished && has.githubReleasePublished && has.pagesPublished;
@@ -300,19 +318,23 @@ const items: ScorecardItem[] = [
   },
   {
     area: 'Flagship result and reviewer kit',
-    status: reviewerKitReady ? 'done' : flagshipReady ? 'partial' : 'gap',
+    status: reviewerKitReady && reproduceReady ? 'done' : flagshipReady ? 'partial' : 'gap',
     evidence: [
       flagshipReady ? 'flagship module and docs name the Melnikov threshold vs period-doubling gap map as the crown result' : 'flagship result contract missing',
       has.flagshipCertification ? 'flagship certification report exists with Figure 1 hash, crossing interval, onset table, and caveat map' : 'flagship certification report missing',
       has.flagshipExternalCheck ? 'dependency-free Python external check exists for A_c and ratio crossing arithmetic' : 'flagship external check missing',
       has.reviewerKitCommand ? 'npm run reviewer:kit exists' : 'reviewer kit command missing',
       has.reviewerKitManifest ? 'reviewer-kit manifest exists' : 'reviewer-kit manifest missing',
-      has.reviewerKitDoc ? 'reviewer-kit documentation exists' : 'reviewer-kit documentation missing'
+      has.reviewerKitDoc ? 'reviewer-kit documentation exists' : 'reviewer-kit documentation missing',
+      reproduceReady
+        ? `reproduce manifest is fresh and commit-bound (${reproduceManifest.metadata?.gitSha?.slice(0, 12) ?? 'unknown sha'})`
+        : `reproduce manifest freshness is ${reproduceFreshness}${typeof reproduceAgeDays === 'number' ? ` (${reproduceAgeDays.toFixed(1)} days old)` : ''}`
     ],
     remaining: [
       ...(!flagshipReady ? ['Define one flagship result contract and paper-facing doc'] : []),
       ...(!flagshipCertified ? ['Run npm run flagship:certify and npm run flagship:external to generate Figure 1 certification artifacts'] : []),
-      ...(!reviewerKitReady ? ['Generate reports/reviewer-kit-manifest.json and .md with npm run reviewer:kit'] : [])
+      ...(!reviewerKitReady ? ['Generate reports/reviewer-kit-manifest.json and .md with npm run reviewer:kit'] : []),
+      ...(!reproduceReady ? ['Run npm run reproduce so reports/reproduce/manifest.json has fresh git/command/environment metadata'] : [])
     ]
   },
   {
@@ -500,6 +522,7 @@ const totals = items.reduce(
 
 const report = {
   generatedAt: new Date().toISOString(),
+  metadata: await collectReportMetadata('npm run audit:worldclass', freshnessPolicy(7, 'warn')),
   totals,
   legacyRisk: legacy,
   artifacts: has,
@@ -527,3 +550,7 @@ await mkdir('reports', { recursive: true });
 await writeFile('reports/worldclass-scorecard.json', JSON.stringify(report, null, 2));
 await writeFile('reports/worldclass-scorecard.md', markdown());
 console.log(markdown());
+if (!reproduceReady) {
+  console.error('World-class freshness gate failed: reports/reproduce/manifest.json is missing, stale, or lacks pendulum-report-metadata/v1 metadata.');
+  process.exitCode = 1;
+}

@@ -1,5 +1,6 @@
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { hashText } from '../src/research/researchExportUtils';
+import { collectReportMetadata, freshnessPolicy } from './report-metadata';
 
 interface ReleaseArtifact {
   id: string;
@@ -316,9 +317,11 @@ if (attestation.status !== 'verified'
   || !verifiedPredicateTypes.has('https://cyclonedx.org/bom')) {
   externalPublishSteps.push('Run npm run release:verify-attestations against the published release tarball.');
 }
+const metadata = await collectReportMetadata('npm run release:package', freshnessPolicy(7, 'warn'));
 const manifest = {
   schemaVersion: 'pendulum-release-readiness/v1',
-  generatedAt: new Date().toISOString(),
+  generatedAt: metadata.generatedAt,
+  metadata,
   status: missingRequired.length ? 'missing-required' : 'ready-for-owner-publish',
   externalPublishSteps,
   artifacts

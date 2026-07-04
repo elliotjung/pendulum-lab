@@ -99,6 +99,30 @@ describe('integrators', () => {
     }
   });
 
+  test('integrator registry metadata is the public numerical contract', () => {
+    expect(Object.isFrozen(integratorRegistry)).toBe(true);
+    expect(Object.fromEntries(Object.entries(integratorRegistry).map(([id, meta]) => [id, {
+      order: meta.order,
+      symplectic: meta.symplectic,
+      dampingSupport: meta.dampingSupport,
+      recommendedDt: meta.recommendedDt
+    }]))).toEqual({
+      euler: { order: 1, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0005, 0.002] },
+      rk2: { order: 2, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0005, 0.004] },
+      rk4: { order: 4, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0005, 0.006] },
+      verlet: { order: 2, symplectic: 'separable-approximation', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.004] },
+      leapfrog: { order: 2, symplectic: 'separable-approximation', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.004] },
+      symplectic: { order: 1, symplectic: 'pseudo-coordinate', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.002] },
+      yoshida4: { order: 4, symplectic: 'separable-approximation', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.004] },
+      hmidpoint: { order: 'implicit', symplectic: 'canonical-only', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.008] },
+      gauss2: { order: 'implicit', symplectic: 'canonical-only', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.012] },
+      rkf45: { order: 'adaptive', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0002, 0.01] },
+      dopri5: { order: 5, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0002, 0.012] },
+      gbs: { order: 'adaptive', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.001, 0.05] },
+      bdf2: { order: 'implicit', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.001, 0.05] }
+    });
+  });
+
   test('unknown legacy method ids fail closed to the RK4 baseline', () => {
     const state = new Float64Array([0.25, -0.4]);
     const fallback = new Float64Array(2);

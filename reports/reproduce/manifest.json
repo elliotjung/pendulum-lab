@@ -1,5 +1,51 @@
 {
-  "generatedAt": "2026-06-15T22:32:23.388Z",
+  "generatedAt": "2026-07-04T12:51:04.724Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-04T12:51:04.724Z",
+    "gitSha": "490fb6de7ca3a1315902d22af375bd13de0cb848",
+    "dirty": true,
+    "dirtyFiles": [
+      ".github/workflows/main.yml",
+      "reports/publication-status.json",
+      "reports/release-one-page.pdf",
+      "reports/release-readiness.json",
+      "reports/release-readiness.md",
+      "reports/reproduce/manifest.json",
+      "reports/reviewer-kit-manifest.json",
+      "reports/reviewer-kit-manifest.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md",
+      "scripts/publication-status.ts",
+      "scripts/release-package.ts",
+      "scripts/reproduce-all.ts",
+      "scripts/reviewer-kit.ts",
+      "scripts/worldclass-scorecard.ts",
+      "src/runtime/gpuNChainVariational.ts",
+      "stryker.shard.config.json",
+      "tests/integrators.test.ts",
+      ".claude/",
+      ".gh-localappdata/",
+      "scripts/report-metadata.ts",
+      "src/runtime/gpuNChainVariationalCpu.ts",
+      "tmp/"
+    ],
+    "command": "npm run reproduce",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 30,
+      "staleAfter": "2026-08-03T12:51:04.723Z",
+      "action": "fail"
+    }
+  },
   "results": [
     {
       "id": "embedded-chain-pole-passage",

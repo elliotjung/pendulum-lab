@@ -1,5 +1,58 @@
 {
-  "generatedAt": "2026-07-04T10:58:38.514Z",
+  "generatedAt": "2026-07-04T13:01:17.232Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-04T13:01:17.232Z",
+    "gitSha": "490fb6de7ca3a1315902d22af375bd13de0cb848",
+    "dirty": true,
+    "dirtyFiles": [
+      ".github/workflows/main.yml",
+      "CHANGELOG.md",
+      "README.md",
+      "docs/engine-overview.md",
+      "docs/portfolio-korean.md",
+      "docs/tutorial-reproduce-paper.md",
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/publication-status.json",
+      "reports/release-one-page.pdf",
+      "reports/release-readiness.json",
+      "reports/release-readiness.md",
+      "reports/reproduce/manifest.json",
+      "reports/reviewer-kit-manifest.json",
+      "reports/reviewer-kit-manifest.md",
+      "reports/webgpu-hardware-validation.json",
+      "reports/webgpu-hardware-validation.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md",
+      "scripts/publication-status.ts",
+      "scripts/release-package.ts",
+      "scripts/report-metadata.ts",
+      "scripts/reproduce-all.ts",
+      "scripts/reviewer-kit.ts",
+      "scripts/worldclass-scorecard.ts",
+      "src/runtime/gpuNChainVariational.ts",
+      "src/runtime/gpuNChainVariationalCpu.ts",
+      "tests/integrators.test.ts"
+    ],
+    "command": "npm run audit:worldclass",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 7,
+      "staleAfter": "2026-07-11T13:01:17.232Z",
+      "action": "warn"
+    }
+  },
   "totals": {
     "done": 10,
     "partial": 2,
@@ -2372,6 +2425,8 @@
     "memoryRegression": true,
     "memoryBaseline": true,
     "mutationAggregateReport": true,
+    "reproduceManifest": true,
+    "reproduceManifestFresh": true,
     "mutationAggregatePass": true,
     "flagshipDoc": true,
     "flagshipCertification": true,
@@ -2505,7 +2560,8 @@
         "dependency-free Python external check exists for A_c and ratio crossing arithmetic",
         "npm run reviewer:kit exists",
         "reviewer-kit manifest exists",
-        "reviewer-kit documentation exists"
+        "reviewer-kit documentation exists",
+        "reproduce manifest is fresh and commit-bound (490fb6de7ca3)"
       ],
       "remaining": []
     },
@@ -2587,7 +2643,7 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
-        "949/949 unit tests across 143 files",
+        "969/969 unit tests across 143 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
         "quick, slow, and full test tiers are wired into PR/mainline workflows",
         "coverage scope guard catches new source files missing from the v8 coverage map",

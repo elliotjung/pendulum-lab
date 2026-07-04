@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-  "generatedAt": "2026-07-04T10:27:12.873Z",
+  "generatedAt": "2026-07-04T12:57:00.898Z",
   "status": "partial",
   "requiredVendors": [
     "intel",
@@ -18,7 +18,7 @@
       "vendor": "intel",
       "status": "pass",
       "source": "reports/gpu-benchmark-ladder.json",
-      "generatedAt": "2026-07-04T10:26:59.246Z",
+      "generatedAt": "2026-07-04T12:56:49.260Z",
       "adapter": {
         "vendor": "intel",
         "architecture": "xe-2lpg",

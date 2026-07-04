@@ -1,6 +1,59 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-07-04T10:58:37.389Z",
+  "generatedAt": "2026-07-04T12:59:41.501Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-04T12:59:41.501Z",
+    "gitSha": "490fb6de7ca3a1315902d22af375bd13de0cb848",
+    "dirty": true,
+    "dirtyFiles": [
+      ".github/workflows/main.yml",
+      "CHANGELOG.md",
+      "README.md",
+      "docs/engine-overview.md",
+      "docs/portfolio-korean.md",
+      "docs/tutorial-reproduce-paper.md",
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/publication-status.json",
+      "reports/release-one-page.pdf",
+      "reports/release-readiness.json",
+      "reports/release-readiness.md",
+      "reports/reproduce/manifest.json",
+      "reports/reviewer-kit-manifest.json",
+      "reports/reviewer-kit-manifest.md",
+      "reports/webgpu-hardware-validation.json",
+      "reports/webgpu-hardware-validation.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md",
+      "scripts/publication-status.ts",
+      "scripts/release-package.ts",
+      "scripts/report-metadata.ts",
+      "scripts/reproduce-all.ts",
+      "scripts/reviewer-kit.ts",
+      "scripts/worldclass-scorecard.ts",
+      "src/runtime/gpuNChainVariational.ts",
+      "src/runtime/gpuNChainVariationalCpu.ts",
+      "tests/integrators.test.ts"
+    ],
+    "command": "npm run release:package",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 7,
+      "staleAfter": "2026-07-11T12:59:41.501Z",
+      "action": "warn"
+    }
+  },
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
     "npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted. Configure npm trusted publishing for publish-npm.yml or authenticate an owner credential, then dispatch publish-npm.yml with dry-run=false.",
@@ -58,7 +111,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "17e285ba04bbf1",
+      "hash": "0cc24ef64065c0",
       "note": "Reviewer kit manifest exists."
     },
     {
@@ -66,7 +119,7 @@
       "path": "reports/webgpu-hardware-validation.md",
       "required": false,
       "available": true,
-      "hash": "1e4ee14f2a85c9",
+      "hash": "0302745073178d",
       "note": "Real WebGPU adapter validation report exists when run on a hardware target."
     },
     {
@@ -74,7 +127,7 @@
       "path": "reports/gpu-benchmark-ladder.md",
       "required": true,
       "available": true,
-      "hash": "044ec40362a5f2",
+      "hash": "02f224650855af",
       "note": "Hardware GPU benchmark ladder records adapter metadata, f32/f64 drift, and CPU-oracle promotion metrics."
     },
     {
@@ -82,7 +135,7 @@
       "path": "reports/gpu-benchmark-ladder.json",
       "required": true,
       "available": true,
-      "hash": "06040ce2687d91",
+      "hash": "144b53e1b1abbb",
       "note": "Machine-readable GPU benchmark ladder for release artifacts."
     },
     {
@@ -90,7 +143,7 @@
       "path": "reports/gpu-adapter-matrix.json",
       "required": true,
       "available": true,
-      "hash": "12a5513e937cf2",
+      "hash": "1789529b329408",
       "note": "Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit."
     },
     {
@@ -98,7 +151,7 @@
       "path": "reports/publication-status.json",
       "required": true,
       "available": true,
-      "hash": "1da1b69cd1d559",
+      "hash": "1884acc4f4db93",
       "note": "Public registry, DOI, release, and Pages resolution audit."
     },
     {
