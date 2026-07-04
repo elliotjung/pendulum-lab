@@ -176,6 +176,8 @@ export function fitPolynomialChaos(
   const mean = coefficients[0]!;
   let variance = 0;
   for (let k = 1; k < terms; k += 1) variance += coefficients[k]! * coefficients[k]!;
+  const varianceTolerance = 32 * Number.EPSILON * Math.max(1, mean * mean) * terms;
+  if (variance <= varianceTolerance) variance = 0;
 
   const firstOrderSobol = new Array<number>(dimension).fill(0);
   const totalSobol = new Array<number>(dimension).fill(0);

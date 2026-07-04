@@ -65,3 +65,20 @@ Required outputs:
 
 The release is not research-grade until the generated reports are committed or
 attached to the release, and the DOI/Pages/npm targets point at the same commit.
+
+## Hardware Matrix Boundary
+
+`npm run benchmark:gpu-matrix` only counts physical self-hosted WebGPU runners
+with vendor labels. Missing NVIDIA or AMD rows mean the corresponding
+`gpu-ladder-nvidia` or `gpu-ladder-amd` artifact has not been supplied from a
+runner labelled `self-hosted`, `webgpu`, and that vendor. Do not replace those
+rows with SwiftShader, a mocked adapter, or an Intel run.
+
+## GPU Science Boundary
+
+CPU f64 remains the scientific oracle. The N-chain WebGPU path may promote an
+N<=3 nonlinear trajectory/Jacobian-tape candidate only after matching the
+same-run CPU f64 final state, trajectory, and Jacobian-tape tolerances; otherwise
+the CPU tape is used. The downstream N-chain STM/QR, CLV, and FTLE result still
+needs its own CPU-oracle promotion gate before it can be reported as GPU
+evidence.

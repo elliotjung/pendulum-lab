@@ -1,5 +1,5 @@
 import { access, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
 type Vendor = 'intel' | 'nvidia' | 'amd';
 type MatrixStatus = 'pass' | 'partial' | 'fail';
@@ -15,6 +15,11 @@ interface LadderEvidence {
     device?: string;
     description?: string;
   } | null;
+  nChainTrajectoryTape?: {
+    backend?: string;
+    comparison?: { passed?: boolean } | null;
+    dimension?: number;
+  } | null;
   nChainVariational?: {
     backend?: string;
     comparison?: { passed?: boolean; ftleAbsDiff?: number; clv?: { metrics?: Record<string, number | boolean> } } | null;
@@ -28,9 +33,14 @@ interface VendorRow {
   source: string | null;
   generatedAt: string | null;
   adapter: LadderEvidence['adapter'];
+  nChainTrajectoryTapePassed: boolean;
+  nChainTrajectoryTapeDimension: number | null;
   nChainPassed: boolean;
   nChainDimension: number | null;
   caveat: string;
+  expectedRunnerLabels: string[];
+  expectedArtifactName: string;
+  nextAction: string;
 }
 
 const vendors: Vendor[] = ['intel', 'nvidia', 'amd'];
@@ -83,25 +93,39 @@ const rows: VendorRow[] = vendors.map((vendor) => {
       source: null,
       generatedAt: null,
       adapter: null,
+      nChainTrajectoryTapePassed: false,
+      nChainTrajectoryTapeDimension: null,
       nChainPassed: false,
       nChainDimension: null,
-      caveat: `No ${vendor} hardware ladder artifact was supplied. This row is not simulated or inferred.`
+      caveat: `No ${vendor} hardware ladder artifact was supplied. This row is not simulated or inferred.`,
+      expectedRunnerLabels: ['self-hosted', 'webgpu', vendor],
+      expectedArtifactName: `gpu-ladder-${vendor}`,
+      nextAction: `Provision or enable a physical ${vendor} WebGPU runner labelled self-hosted, webgpu, ${vendor}; dispatch WebGPU Vendor Evidence with vendor=${vendor}; download artifact gpu-ladder-${vendor}; rerun npm run benchmark:gpu-matrix.`
     };
   }
   const nChainPassed = selected.evidence.nChainVariational?.backend === 'webgpu'
     && selected.evidence.nChainVariational?.comparison?.passed === true;
-  const passed = selected.evidence.status === 'pass' && nChainPassed;
+  const nChainTrajectoryTapePassed = selected.evidence.nChainTrajectoryTape?.backend === 'webgpu'
+    && selected.evidence.nChainTrajectoryTape?.comparison?.passed === true;
+  const passed = selected.evidence.status === 'pass' && nChainTrajectoryTapePassed && nChainPassed;
   return {
     vendor,
     status: passed ? 'pass' : 'fail',
-    source: selected.path.replace(/\\/g, '/'),
+    source: relative(process.cwd(), selected.path).replace(/\\/g, '/'),
     generatedAt: selected.evidence.generatedAt ?? null,
     adapter: selected.evidence.adapter ?? null,
+    nChainTrajectoryTapePassed,
+    nChainTrajectoryTapeDimension: selected.evidence.nChainTrajectoryTape?.dimension ?? null,
     nChainPassed,
     nChainDimension: selected.evidence.nChainVariational?.dimension ?? null,
     caveat: passed
-      ? 'Real-adapter ladder passed reductions, 4D diagnostics, and the N-chain STM/QR oracle gate.'
-      : 'A hardware artifact exists, but one or more CPU-oracle promotion gates failed.'
+      ? 'Real-adapter ladder passed reductions, 4D diagnostics, the N-chain trajectory/tape gate, and the N-chain STM/QR oracle gate.'
+      : 'A hardware artifact exists, but one or more CPU-oracle promotion gates failed.',
+    expectedRunnerLabels: ['self-hosted', 'webgpu', vendor],
+    expectedArtifactName: `gpu-ladder-${vendor}`,
+    nextAction: passed
+      ? 'Keep this vendor runner on the scheduled WebGPU evidence cadence and refresh after driver/browser updates.'
+      : `Inspect ${relative(process.cwd(), selected.path).replace(/\\/g, '/')} and rerun WebGPU Vendor Evidence for vendor=${vendor} after fixing the failed CPU-oracle gate.`
   };
 });
 
@@ -115,6 +139,8 @@ const report = {
   requiredVendors: vendors,
   coverage: { passed, required: vendors.length, missing: vendors.length - passed - failed, failed },
   rows,
+  missingVendors: rows.filter((row) => row.status === 'missing').map((row) => row.vendor),
+  actionItems: rows.filter((row) => row.status !== 'pass').map((row) => row.nextAction),
   reproduce: 'npm run benchmark:gpu-matrix',
   collectionContract: {
     runnerLabels: vendors.map((vendor) => ['self-hosted', 'webgpu', vendor]),
@@ -133,15 +159,16 @@ const lines = [
   '',
   `Status: **${status}** (${passed}/${vendors.length} required vendor classes passing)`,
   '',
-  '| Vendor | Evidence | Adapter | Architecture | N-chain | Source |',
-  '|---|---|---|---|---|---|',
-  ...rows.map((row) => `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} | ${row.adapter?.architecture ?? 'n/a'} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} |`),
+  '| Vendor | Evidence | Adapter | Architecture | N-chain tape | N-chain STM/QR | Source | Next action |',
+  '|---|---|---|---|---|---|---|---|',
+  ...rows.map((row) => `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} | ${row.adapter?.architecture ?? 'n/a'} | ${row.nChainTrajectoryTapePassed ? `pass (${row.nChainTrajectoryTapeDimension}D)` : 'missing/fail'} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} | ${row.nextAction} |`),
   '',
   '## Contract',
   '',
   '- Each row must come from a physical self-hosted runner labelled `webgpu` and `intel`, `nvidia`, or `amd`.',
-  '- The ladder must pass GPU-side reductions, full spectrum, CLV, variational FTLE, and N-chain STM/QR comparisons against CPU f64.',
+  '- The ladder must pass GPU-side reductions, full spectrum, CLV, variational FTLE, N-chain trajectory/tape, and N-chain STM/QR comparisons against CPU f64.',
   '- Missing hardware stays `missing`; the report never fills a vendor row with SwiftShader or another software adapter.',
+  '- Missing rows list the exact self-hosted labels and artifact name required to close the evidence gap.',
   '',
   `Caveat: ${report.caveat}`
 ];

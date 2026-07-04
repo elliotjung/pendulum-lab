@@ -46,6 +46,14 @@ interface SpectrumHorizonRow {
   cpuSpectrum: number[];
 }
 
+interface NChainTrajectoryTapeComparison {
+  passed: boolean;
+  maxFinalStateAbsDiff: number;
+  maxTrajectoryAbsDiff: number;
+  maxJacobianAbsDiff: number;
+  tolerances?: Record<string, number>;
+}
+
 interface GpuBenchmarkLadderReport {
   schemaVersion: 'pendulum-gpu-benchmark-ladder/v2';
   generatedAt: string;
@@ -80,6 +88,15 @@ interface GpuBenchmarkLadderReport {
     height: number;
     min: number;
     max: number;
+    caveat: string;
+  } | null;
+  nChainTrajectoryTape: {
+    backend: string;
+    comparison: NChainTrajectoryTapeComparison | null;
+    links: number;
+    dimension: number;
+    steps: number;
+    elapsedMs: number | null;
     caveat: string;
   } | null;
   nChainVariational: {
@@ -218,6 +235,19 @@ function markdown(report: GpuBenchmarkLadderReport): string {
     `| shape | ${report.variationalFtleField ? `${report.variationalFtleField.width}x${report.variationalFtleField.height}` : 'n/a'} |`,
     `| field max abs diff | ${fmt(report.variationalFtleField?.comparison?.metrics?.fieldMaxAbsDiff)} |`,
     `| field mean abs diff | ${fmt(report.variationalFtleField?.comparison?.metrics?.fieldMeanAbsDiff)} |`,
+    '',
+    '## N-chain Trajectory/Jacobian-Tape Promotion',
+    '',
+    '| Metric | Value |',
+    '|---|---:|',
+    `| backend | ${report.nChainTrajectoryTape?.backend ?? 'n/a'} |`,
+    `| pass | ${String(report.nChainTrajectoryTape?.comparison?.passed ?? false)} |`,
+    `| links / dimension | ${report.nChainTrajectoryTape ? `${report.nChainTrajectoryTape.links} / ${report.nChainTrajectoryTape.dimension}` : 'n/a'} |`,
+    `| steps | ${report.nChainTrajectoryTape?.steps ?? 'n/a'} |`,
+    `| final-state max abs diff | ${fmt(report.nChainTrajectoryTape?.comparison?.maxFinalStateAbsDiff)} |`,
+    `| trajectory max abs diff | ${fmt(report.nChainTrajectoryTape?.comparison?.maxTrajectoryAbsDiff)} |`,
+    `| Jacobian-tape max abs diff | ${fmt(report.nChainTrajectoryTape?.comparison?.maxJacobianAbsDiff)} |`,
+    `| GPU ms | ${report.nChainTrajectoryTape?.elapsedMs?.toFixed(2) ?? 'n/a'} |`,
     '',
     '## N-chain Tiled STM/QR Promotion',
     '',
@@ -363,6 +393,19 @@ try {
         tolerances: { field: 0.12, aggregate: 0.08 }
       }
     );
+    const nChainTrajectoryTape = await nChainMod.promotedNChainTrajectoryTape(
+      { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
+      [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
+      {
+        dt: 0.006,
+        renormEvery: 3,
+        forwardTransient: 3,
+        window: 8,
+        backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 }
+      },
+      0.01
+    );
     const nChainVariational = await nChainMod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
@@ -372,6 +415,7 @@ try {
         forwardTransient: 3,
         window: 8,
         backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 },
         clvTolerances: { exponents: 0.2, angle: 0.4 },
         ftleTolerance: 0.16
       },
@@ -396,6 +440,15 @@ try {
         min: variationalFtleField.field.min,
         max: variationalFtleField.field.max,
         caveat: variationalFtleField.caveat
+      },
+      nChainTrajectoryTape: {
+        backend: nChainTrajectoryTape.backend,
+        comparison: nChainTrajectoryTape.comparison,
+        links: nChainTrajectoryTape.result.links,
+        dimension: nChainTrajectoryTape.result.dimension,
+        steps: nChainTrajectoryTape.result.steps,
+        elapsedMs: nChainTrajectoryTape.gpuCandidate?.elapsedMs ?? null,
+        caveat: nChainTrajectoryTape.caveat
       },
       nChainVariational: {
         backend: nChainVariational.backend,
@@ -422,6 +475,7 @@ try {
   const allSpectrumPromotionsPassed = spectrumHorizons.every((row) => row.backend === 'webgpu' && row.comparison?.passed === true);
   const clv = payload.clv as GpuBenchmarkLadderReport['clv'];
   const variationalFtleField = payload.variationalFtleField as GpuBenchmarkLadderReport['variationalFtleField'];
+  const nChainTrajectoryTape = payload.nChainTrajectoryTape as GpuBenchmarkLadderReport['nChainTrajectoryTape'];
   const nChainVariational = payload.nChainVariational as GpuBenchmarkLadderReport['nChainVariational'];
   const status: Status = allReductionComparisonsPassed
     && allSpectrumPromotionsPassed
@@ -429,6 +483,8 @@ try {
     && clv.comparison?.passed === true
     && variationalFtleField?.backend === 'webgpu'
     && variationalFtleField.comparison?.passed === true
+    && nChainTrajectoryTape?.backend === 'webgpu'
+    && nChainTrajectoryTape.comparison?.passed === true
     && nChainVariational?.backend === 'webgpu'
     && nChainVariational.comparison?.passed === true
     ? 'pass'
@@ -455,6 +511,7 @@ try {
     },
     clv,
     variationalFtleField,
+    nChainTrajectoryTape,
     nChainVariational
   };
 } catch (error) {
@@ -480,6 +537,7 @@ try {
     },
     clv: null,
     variationalFtleField: null,
+    nChainTrajectoryTape: null,
     nChainVariational: null,
     error: error instanceof Error ? error.message : String(error)
   };

@@ -99,6 +99,20 @@ interface WebGpuHardwareReport {
     max?: number;
     caveat?: string;
   };
+  nChainTrajectoryTape?: {
+    backend?: string;
+    comparison?: {
+      passed?: boolean;
+      maxFinalStateAbsDiff?: number;
+      maxTrajectoryAbsDiff?: number;
+      maxJacobianAbsDiff?: number;
+      tolerances?: Record<string, number>;
+    } | null;
+    links?: number;
+    dimension?: number;
+    steps?: number;
+    caveat?: string;
+  };
   nChainVariational?: {
     backend?: string;
     comparison?: {
@@ -202,6 +216,19 @@ try {
         tolerances: { field: 0.12, aggregate: 0.08 }
       }
     );
+    const nChainTrajectoryTape = await nChainMod.promotedNChainTrajectoryTape(
+      { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
+      [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
+      {
+        dt: 0.006,
+        renormEvery: 3,
+        forwardTransient: 3,
+        window: 8,
+        backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 }
+      },
+      0.01
+    );
     const nChainPromotion = await nChainMod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
@@ -211,6 +238,7 @@ try {
         forwardTransient: 3,
         window: 8,
         backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 },
         clvTolerances: { exponents: 0.2, angle: 0.4 },
         ftleTolerance: 0.16
       },
@@ -252,6 +280,14 @@ try {
         max: ftlePromotion.field.max,
         caveat: ftlePromotion.caveat
       },
+      nChainTrajectoryTape: {
+        backend: nChainTrajectoryTape.backend,
+        comparison: nChainTrajectoryTape.comparison,
+        links: nChainTrajectoryTape.result.links,
+        dimension: nChainTrajectoryTape.result.dimension,
+        steps: nChainTrajectoryTape.result.steps,
+        caveat: nChainTrajectoryTape.caveat
+      },
       nChainVariational: {
         backend: nChainPromotion.backend,
         comparison: nChainPromotion.comparison,
@@ -268,13 +304,15 @@ try {
   const lyapunovSpectrum = payload.lyapunovSpectrum as WebGpuHardwareReport['lyapunovSpectrum'] | undefined;
   const clv = payload.clv as WebGpuHardwareReport['clv'] | undefined;
   const variationalFtleField = payload.variationalFtleField as WebGpuHardwareReport['variationalFtleField'] | undefined;
+  const nChainTrajectoryTape = payload.nChainTrajectoryTape as WebGpuHardwareReport['nChainTrajectoryTape'] | undefined;
   const nChainVariational = payload.nChainVariational as WebGpuHardwareReport['nChainVariational'] | undefined;
   const ensemblePassed = ensemble?.backend === 'webgpu' && ensemble.comparison?.passed;
   const spectrumPassed = lyapunovSpectrum?.backend === 'webgpu' && lyapunovSpectrum.comparison?.passed;
   const clvPassed = clv?.backend === 'webgpu' && clv.comparison?.passed;
   const ftlePassed = variationalFtleField?.backend === 'webgpu' && variationalFtleField.comparison?.passed;
+  const nChainTrajectoryTapePassed = nChainTrajectoryTape?.backend === 'webgpu' && nChainTrajectoryTape.comparison?.passed;
   const nChainPassed = nChainVariational?.backend === 'webgpu' && nChainVariational.comparison?.passed;
-  status = ensemblePassed && spectrumPassed && clvPassed && ftlePassed && nChainPassed ? 'pass' : 'fail';
+  status = ensemblePassed && spectrumPassed && clvPassed && ftlePassed && nChainTrajectoryTapePassed && nChainPassed ? 'pass' : 'fail';
 } catch (error) {
   payload = { error: error instanceof Error ? error.message : String(error) };
 } finally {
@@ -306,6 +344,7 @@ const clvComparison = report.clv?.comparison;
 const clvMetrics = clvComparison?.metrics ?? {};
 const ftleComparison = report.variationalFtleField?.comparison;
 const ftleMetrics = ftleComparison?.metrics ?? {};
+const nChainTrajectoryTapeComparison = report.nChainTrajectoryTape?.comparison;
 const nChainComparison = report.nChainVariational?.comparison;
 const nChainClvMetrics = nChainComparison?.clv?.metrics ?? {};
 const lines = [
@@ -324,6 +363,8 @@ const lines = [
   `CLV backend: \`${String(report.clv?.backend ?? 'n/a')}\``,
   '',
   `Variational-FTLE backend: \`${String(report.variationalFtleField?.backend ?? 'n/a')}\``,
+  '',
+  `N-chain trajectory/tape backend: \`${String(report.nChainTrajectoryTape?.backend ?? 'n/a')}\``,
   '',
   `N-chain variational backend: \`${String(report.nChainVariational?.backend ?? 'n/a')}\``,
   '',
@@ -365,6 +406,17 @@ const lines = [
   `| field max abs diff | ${typeof ftleMetrics.fieldMaxAbsDiff === 'number' ? ftleMetrics.fieldMaxAbsDiff.toExponential(3) : 'n/a'} |`,
   `| field mean abs diff | ${typeof ftleMetrics.fieldMeanAbsDiff === 'number' ? ftleMetrics.fieldMeanAbsDiff.toExponential(3) : 'n/a'} |`,
   '',
+  '## N-chain Trajectory/Jacobian-Tape Promotion',
+  '',
+  '| Metric | Value |',
+  '|---|---:|',
+  `| passed | ${String(nChainTrajectoryTapeComparison?.passed ?? false)} |`,
+  `| links / dimension | ${String(report.nChainTrajectoryTape?.links ?? 'n/a')} / ${String(report.nChainTrajectoryTape?.dimension ?? 'n/a')} |`,
+  `| steps | ${String(report.nChainTrajectoryTape?.steps ?? 'n/a')} |`,
+  `| final-state max abs diff | ${nChainTrajectoryTapeComparison?.maxFinalStateAbsDiff?.toExponential(3) ?? 'n/a'} |`,
+  `| trajectory max abs diff | ${nChainTrajectoryTapeComparison?.maxTrajectoryAbsDiff?.toExponential(3) ?? 'n/a'} |`,
+  `| Jacobian-tape max abs diff | ${nChainTrajectoryTapeComparison?.maxJacobianAbsDiff?.toExponential(3) ?? 'n/a'} |`,
+  '',
   '## N-chain Tiled STM/QR Promotion',
   '',
   '| Metric | Value |',
@@ -376,7 +428,7 @@ const lines = [
   `| method | ${String(report.nChainVariational?.method ?? 'n/a')} |`,
   '',
   status === 'pass'
-    ? 'The on-device WebGPU ensemble reduction, 4D chaos diagnostics, and N-chain tiled STM/QR candidate matched their CPU f64 oracles within the declared f32 tolerances.'
+    ? 'The on-device WebGPU ensemble reduction, 4D chaos diagnostics, N-chain trajectory/tape candidate, and N-chain tiled STM/QR candidate matched their CPU f64 oracles within the declared f32 tolerances.'
     : `Failure: ${String(report.error ?? 'comparison failed')}`,
   ''
 ];

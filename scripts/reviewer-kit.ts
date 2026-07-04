@@ -23,6 +23,14 @@ function priorityIcon(priority: string): string {
 const availability = new Map<string, boolean>();
 for (const artifact of REVIEWER_KIT_ARTIFACTS) availability.set(artifact.path, await exists(artifact.path));
 const evaluation = evaluateReviewerKit((path) => availability.get(path) ?? false);
+const pagesBaseUrl = 'https://elliot-jung-17.github.io/pendulum-lab/';
+const repositoryBlobBaseUrl = 'https://github.com/Elliot-Jung-17/pendulum-lab/blob/master/';
+
+function publicArtifactUrl(path: string): string {
+  if (path === 'reviewer.html') return `${pagesBaseUrl}reviewer.html`;
+  if (path.startsWith('paper/') || path.startsWith('reports/')) return `${pagesBaseUrl}${path.replaceAll('\\', '/')}`;
+  return `${repositoryBlobBaseUrl}${path.replaceAll('\\', '/')}`;
+}
 
 const manifest = {
   schemaVersion: 'pendulum-reviewer-kit/v1',
@@ -31,7 +39,8 @@ const manifest = {
   status: evaluation.status,
   artifacts: REVIEWER_KIT_ARTIFACTS.map((artifact) => ({
     ...artifact,
-    available: availability.get(artifact.path) ?? false
+    available: availability.get(artifact.path) ?? false,
+    publicUrl: publicArtifactUrl(artifact.path)
   })),
   missingRequired: evaluation.missingRequired.map((artifact) => artifact.id),
   missingRecommended: evaluation.missingRecommended.map((artifact) => artifact.id),

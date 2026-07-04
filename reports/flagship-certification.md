@@ -1,6 +1,6 @@
 # Flagship Certification
 
-Generated: 2026-06-18T16:46:14.019Z
+Generated: 2026-07-04T10:22:21.858Z
 
 Status: **CERTIFIED-WITH-CAVEATS**
 
@@ -13,6 +13,24 @@ Figure 1 SVG hash: `07f877d6fdb816`
 Figure 1 caption: Figure 1. Quantitative gap map between the analytic Melnikov homoclinic-tangle threshold A_c(gamma) and the measured period-doubling onset A_PD(gamma) of the primary period-1 attractor at omega=2/3. Error bars report the onset-localization contract, the dashed line marks A_PD/A_c=1, and the vertical marker is the interpolated reversal where the cascade begins below the first-order Melnikov prediction.
 
 Reviewer appendix note: The flagship claim is not that Melnikov theory predicts the attractor cascade. It is a measured separation map: A_c is analytic first-order geometry, A_PD is a Floquet-refined attractor-branch instability, and the reported reversal is bounded by the exported caveat map and the independent Python A_PD probes.
+
+Claim boundary: Narrow claim: for the specified damped driven pendulum branch at omega=2/3, the first-order Melnikov threshold and the Floquet-refined period-doubling onset cross near the reported gamma interval. The result is not a global basin statement, not a higher-order Melnikov bound, and not a claim about every coexisting attractor.
+
+## Figure Hashes
+
+| id | path | hash | description |
+|---|---|---|---|
+| certified-gap-map-svg | `reports/flagship-figure1.svg` | `07f877d6fdb816` | Certified A_PD/A_c gap-map SVG generated from reports/paper-study.json and the certification rows. |
+
+## Artifact Cross-References
+
+| artifact | produced by | used by |
+|---|---|---|
+| `reports/paper-study.json` | `npm run paper:study` | certification rows, paper figures, onset localization table |
+| `reports/flagship-certification.json` | `npm run flagship:certify` | Appendix A, reviewer dashboard, release package |
+| `reports/flagship-figure1.svg` | `npm run flagship:certify` | Figure hash provenance and reviewer-kit artifact ledger |
+| `reports/flagship-external-check.json` | `npm run flagship:external` | Appendix B external A_PD search trace |
+| `paper/index.html and paper/paper.pdf` | `npm run paper:build` | human-readable paper and release bundle |
 
 ## Onset Localization Table
 
@@ -52,5 +70,7 @@ Reviewer appendix note: The flagship claim is not that Melnikov theory predicts 
 npm run paper:study
 npm run flagship:certify
 npm run flagship:external
+npm run paper:build
+npm run reviewer:kit
 ```
 

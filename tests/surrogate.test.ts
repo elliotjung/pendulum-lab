@@ -39,6 +39,11 @@ describe('totalDegreeMultiIndices', () => {
     expect(idx[0]).toEqual([0, 0, 0]);
     for (const a of idx) expect(a.reduce((s, v) => s + v, 0)).toBeLessThanOrEqual(2);
   });
+
+  it('rejects dimensions and degrees that do not define a basis', () => {
+    expect(() => totalDegreeMultiIndices(0, 2)).toThrow(/dimension/);
+    expect(() => totalDegreeMultiIndices(2, -1)).toThrow(/degree/);
+  });
 });
 
 describe('fitPolynomialChaos — exactness on a representable polynomial', () => {
@@ -117,5 +122,33 @@ describe('fitPolynomialChaos — smooth non-polynomial approximation', () => {
     const variables: SurrogateVariable[] = [{ name: 'x', min: -1, max: 1 }];
     const samples: PolynomialChaosSample[] = [{ inputs: [0], output: 1 }];
     expect(() => fitPolynomialChaos(variables, samples, { degree: 4 })).toThrow(/under-determined/);
+  });
+});
+
+describe('fitPolynomialChaos input contracts and degenerate outputs', () => {
+  it('treats a constant response as zero variance with zero Sobol mass', () => {
+    const variables: SurrogateVariable[] = [
+      { name: 'x1', min: -1, max: 1 },
+      { name: 'x2', min: -1, max: 1 }
+    ];
+    const samples = sampleGrid(variables, 4, () => 2.75);
+    const model = fitPolynomialChaos(variables, samples, { degree: 1 });
+
+    expect(model.mean).toBeCloseTo(2.75, 12);
+    expect(model.variance).toBeCloseTo(0, 12);
+    expect(model.rSquared).toBe(1);
+    expect(model.firstOrderSobol).toEqual([0, 0]);
+    expect(model.totalSobol).toEqual([0, 0]);
+    expect(model.predict([0.33, -0.75])).toBeCloseTo(2.75, 12);
+  });
+
+  it('fails loudly for inconsistent sample dimension and zero-width variables', () => {
+    const variables: SurrogateVariable[] = [{ name: 'x', min: -1, max: 1 }];
+    expect(() => fitPolynomialChaos(variables, [{ inputs: [0, 1], output: 1 }, { inputs: [1, 0], output: 2 }], { degree: 1 }))
+      .toThrow(/dimension mismatch/);
+
+    const zeroWidth: SurrogateVariable[] = [{ name: 'locked', min: 2, max: 2 }];
+    expect(() => fitPolynomialChaos(zeroWidth, [{ inputs: [2], output: 1 }, { inputs: [2], output: 1 }], { degree: 1 }))
+      .toThrow(/zero range/);
   });
 });

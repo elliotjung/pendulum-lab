@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-  "generatedAt": "2026-06-18T17:08:48.187Z",
+  "generatedAt": "2026-07-04T10:27:12.873Z",
   "status": "partial",
   "requiredVendors": [
     "intel",
@@ -17,8 +17,8 @@
     {
       "vendor": "intel",
       "status": "pass",
-      "source": "C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json",
-      "generatedAt": "2026-06-18T16:45:48.879Z",
+      "source": "reports/gpu-benchmark-ladder.json",
+      "generatedAt": "2026-07-04T10:26:59.246Z",
       "adapter": {
         "vendor": "intel",
         "architecture": "xe-2lpg",
@@ -49,9 +49,18 @@
         ],
         "limits": {}
       },
+      "nChainTrajectoryTapePassed": true,
+      "nChainTrajectoryTapeDimension": 6,
       "nChainPassed": true,
       "nChainDimension": 6,
-      "caveat": "Real-adapter ladder passed reductions, 4D diagnostics, and the N-chain STM/QR oracle gate."
+      "caveat": "Real-adapter ladder passed reductions, 4D diagnostics, the N-chain trajectory/tape gate, and the N-chain STM/QR oracle gate.",
+      "expectedRunnerLabels": [
+        "self-hosted",
+        "webgpu",
+        "intel"
+      ],
+      "expectedArtifactName": "gpu-ladder-intel",
+      "nextAction": "Keep this vendor runner on the scheduled WebGPU evidence cadence and refresh after driver/browser updates."
     },
     {
       "vendor": "nvidia",
@@ -59,9 +68,18 @@
       "source": null,
       "generatedAt": null,
       "adapter": null,
+      "nChainTrajectoryTapePassed": false,
+      "nChainTrajectoryTapeDimension": null,
       "nChainPassed": false,
       "nChainDimension": null,
-      "caveat": "No nvidia hardware ladder artifact was supplied. This row is not simulated or inferred."
+      "caveat": "No nvidia hardware ladder artifact was supplied. This row is not simulated or inferred.",
+      "expectedRunnerLabels": [
+        "self-hosted",
+        "webgpu",
+        "nvidia"
+      ],
+      "expectedArtifactName": "gpu-ladder-nvidia",
+      "nextAction": "Provision or enable a physical nvidia WebGPU runner labelled self-hosted, webgpu, nvidia; dispatch WebGPU Vendor Evidence with vendor=nvidia; download artifact gpu-ladder-nvidia; rerun npm run benchmark:gpu-matrix."
     },
     {
       "vendor": "amd",
@@ -69,10 +87,27 @@
       "source": null,
       "generatedAt": null,
       "adapter": null,
+      "nChainTrajectoryTapePassed": false,
+      "nChainTrajectoryTapeDimension": null,
       "nChainPassed": false,
       "nChainDimension": null,
-      "caveat": "No amd hardware ladder artifact was supplied. This row is not simulated or inferred."
+      "caveat": "No amd hardware ladder artifact was supplied. This row is not simulated or inferred.",
+      "expectedRunnerLabels": [
+        "self-hosted",
+        "webgpu",
+        "amd"
+      ],
+      "expectedArtifactName": "gpu-ladder-amd",
+      "nextAction": "Provision or enable a physical amd WebGPU runner labelled self-hosted, webgpu, amd; dispatch WebGPU Vendor Evidence with vendor=amd; download artifact gpu-ladder-amd; rerun npm run benchmark:gpu-matrix."
     }
+  ],
+  "missingVendors": [
+    "nvidia",
+    "amd"
+  ],
+  "actionItems": [
+    "Provision or enable a physical nvidia WebGPU runner labelled self-hosted, webgpu, nvidia; dispatch WebGPU Vendor Evidence with vendor=nvidia; download artifact gpu-ladder-nvidia; rerun npm run benchmark:gpu-matrix.",
+    "Provision or enable a physical amd WebGPU runner labelled self-hosted, webgpu, amd; dispatch WebGPU Vendor Evidence with vendor=amd; download artifact gpu-ladder-amd; rerun npm run benchmark:gpu-matrix."
   ],
   "reproduce": "npm run benchmark:gpu-matrix",
   "collectionContract": {

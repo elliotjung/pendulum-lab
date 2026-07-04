@@ -152,6 +152,7 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
     lo = reported - width
     hi = reported + width
     guess = strobe_attractor(gamma, lo, omega_drive, dt0)
+    trace: list[dict[str, float | bool | str | None]] = []
 
     def rho_at(amplitude: float, seed: tuple[float, float]) -> tuple[float, tuple[float, float], bool, float]:
         orbit, converged, residual, jac = periodic_orbit(gamma, amplitude, omega_drive, seed, dt0)
@@ -159,7 +160,20 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
 
     rho_lo, guess, ok_lo, res_lo = rho_at(lo, guess)
     rho_hi, guess_hi, ok_hi, res_hi = rho_at(hi, guess)
-    for _ in range(6):
+    trace.append({
+        "stage": "initial-bracket",
+        "lo": lo,
+        "hi": hi,
+        "mid": None,
+        "rhoLow": rho_lo,
+        "rhoHigh": rho_hi,
+        "rhoMid": None,
+        "okLow": ok_lo,
+        "okHigh": ok_hi,
+        "residualLow": res_lo,
+        "residualHigh": res_hi,
+    })
+    for expand in range(6):
         if ok_lo and ok_hi and math.isfinite(rho_lo) and math.isfinite(rho_hi) and rho_lo > -1.0 and rho_hi < -1.0:
             break
         width *= 1.7
@@ -168,6 +182,19 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
         guess = strobe_attractor(gamma, lo, omega_drive, dt0)
         rho_lo, guess, ok_lo, res_lo = rho_at(lo, guess)
         rho_hi, guess_hi, ok_hi, res_hi = rho_at(hi, guess)
+        trace.append({
+            "stage": f"expand-{expand + 1}",
+            "lo": lo,
+            "hi": hi,
+            "mid": None,
+            "rhoLow": rho_lo,
+            "rhoHigh": rho_hi,
+            "rhoMid": None,
+            "okLow": ok_lo,
+            "okHigh": ok_hi,
+            "residualLow": res_lo,
+            "residualHigh": res_hi,
+        })
 
     if not (ok_lo and ok_hi and math.isfinite(rho_lo) and math.isfinite(rho_hi) and rho_lo > -1.0 and rho_hi < -1.0):
         return {
@@ -180,6 +207,7 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
             "rhoHigh": rho_hi,
             "residualLow": res_lo,
             "residualHigh": res_hi,
+            "searchTrace": trace,
             "caveat": "Could not bracket rho=-1 with the dependency-free finite-difference Newton probe.",
         }
 
@@ -189,6 +217,20 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
     for _ in range(18):
         mid = 0.5 * (left + right)
         rmid, orbit, ok_mid, _res_mid = rho_at(mid, seed)
+        trace.append({
+            "stage": "bisect",
+            "lo": left,
+            "hi": right,
+            "mid": mid,
+            "rhoLow": rleft,
+            "rhoHigh": rright,
+            "rhoMid": rmid,
+            "okLow": True,
+            "okHigh": True,
+            "okMid": ok_mid,
+            "residualLow": res_lo,
+            "residualHigh": res_hi,
+        })
         if not ok_mid or not math.isfinite(rmid):
             break
         seed = orbit
@@ -208,6 +250,7 @@ def external_apd(row: dict[str, float], omega_drive: float, dt0: float = 0.02) -
         "rhoHigh": rright,
         "residualLow": res_lo,
         "residualHigh": res_hi,
+        "searchTrace": trace,
         "caveat": "Stdlib RK4 + finite-difference monodromy; tolerance is intentionally looser than the TypeScript variational refinement.",
     }
 
@@ -216,6 +259,10 @@ def selected_rows(rows: Iterable[dict[str, float]]) -> list[dict[str, float]]:
     wanted = {0.5, 0.65, 0.7}
     out = [row for row in rows if round(float(row["gamma"]), 2) in wanted and row.get("Apd") is not None]
     return sorted(out, key=lambda item: float(item["gamma"]))
+
+
+def fmt_optional(value: object, digits: int = 8) -> str:
+    return f"{float(value):.{digits}g}" if isinstance(value, (int, float)) and math.isfinite(float(value)) else "n/a"
 
 
 def main() -> None:
@@ -277,6 +324,21 @@ def main() -> None:
             if isinstance(remeasured, (int, float)) and isinstance(abs_error, (int, float))
             else f"| {float(item['gamma']):.2f} | {float(item['reportedApd']):.6f} | n/a | n/a | false |"
         )
+    md.extend([
+        "",
+        "## A_PD Search Trace",
+        "",
+        "| gamma | stage | lo | hi | mid | rho(lo) | rho(mid) | rho(hi) |",
+        "|---:|---|---:|---:|---:|---:|---:|---:|",
+    ])
+    for item in apd_checks:
+        gamma = float(item["gamma"])
+        for trace in item.get("searchTrace", []):
+            md.append(
+                f"| {gamma:.2f} | {trace.get('stage', 'n/a')} | "
+                f"{fmt_optional(trace.get('lo'))} | {fmt_optional(trace.get('hi'))} | {fmt_optional(trace.get('mid'))} | "
+                f"{fmt_optional(trace.get('rhoLow'))} | {fmt_optional(trace.get('rhoMid'))} | {fmt_optional(trace.get('rhoHigh'))} |"
+            )
     md.extend(["", f"Caveat: {result['caveat']}", ""])
     OUT_MD.write_text("\n".join(md), encoding="utf-8")
     print("\n".join(md))

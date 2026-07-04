@@ -57,6 +57,19 @@ export interface FlagshipCrossingEstimate {
   ratioAfter: number;
 }
 
+export interface FlagshipFigureArtifact {
+  id: string;
+  path: string;
+  hash: string;
+  description: string;
+}
+
+export interface FlagshipArtifactCrossReference {
+  artifact: string;
+  producedBy: string;
+  usedBy: string;
+}
+
 export interface FlagshipCertification {
   schemaVersion: 'pendulum-flagship-certification/v1';
   generatedAt: string;
@@ -69,6 +82,10 @@ export interface FlagshipCertification {
   figureCaption: string;
   reviewerAppendixNote: string;
   figureHash: string;
+  figureArtifacts: FlagshipFigureArtifact[];
+  reproductionCommands: string[];
+  artifactCrossReferences: FlagshipArtifactCrossReference[];
+  claimBoundary: string;
   status: 'certified' | 'certified-with-caveats' | 'insufficient';
   caveats: string[];
 }
@@ -221,6 +238,7 @@ export function certifyFlagshipGapMap(report: FlagshipPaperStudyReport, sourceSt
   ];
   const partial = { rows, crossing };
   const figureSvg = buildFlagshipFigureSvg(partial);
+  const figureHash = hashText(figureSvg);
   return {
     schemaVersion: 'pendulum-flagship-certification/v1',
     generatedAt,
@@ -232,7 +250,30 @@ export function certifyFlagshipGapMap(report: FlagshipPaperStudyReport, sourceSt
     refinedGrid,
     figureCaption: FLAGSHIP_FIGURE_1_CAPTION,
     reviewerAppendixNote: FLAGSHIP_REVIEWER_APPENDIX_NOTE,
-    figureHash: hashText(figureSvg),
+    figureHash,
+    figureArtifacts: [
+      {
+        id: 'certified-gap-map-svg',
+        path: 'reports/flagship-figure1.svg',
+        hash: figureHash,
+        description: 'Certified A_PD/A_c gap-map SVG generated from reports/paper-study.json and the certification rows.'
+      }
+    ],
+    reproductionCommands: [
+      'npm run paper:study',
+      'npm run flagship:certify',
+      'npm run flagship:external',
+      'npm run paper:build',
+      'npm run reviewer:kit'
+    ],
+    artifactCrossReferences: [
+      { artifact: sourceStudy, producedBy: 'npm run paper:study', usedBy: 'certification rows, paper figures, onset localization table' },
+      { artifact: 'reports/flagship-certification.json', producedBy: 'npm run flagship:certify', usedBy: 'Appendix A, reviewer dashboard, release package' },
+      { artifact: 'reports/flagship-figure1.svg', producedBy: 'npm run flagship:certify', usedBy: 'Figure hash provenance and reviewer-kit artifact ledger' },
+      { artifact: 'reports/flagship-external-check.json', producedBy: 'npm run flagship:external', usedBy: 'Appendix B external A_PD search trace' },
+      { artifact: 'paper/index.html and paper/paper.pdf', producedBy: 'npm run paper:build', usedBy: 'human-readable paper and release bundle' }
+    ],
+    claimBoundary: 'Narrow claim: for the specified damped driven pendulum branch at omega=2/3, the first-order Melnikov threshold and the Floquet-refined period-doubling onset cross near the reported gamma interval. The result is not a global basin statement, not a higher-order Melnikov bound, and not a claim about every coexisting attractor.',
     status: crossing ? (caveats.length > 2 ? 'certified-with-caveats' : 'certified') : 'insufficient',
     caveats
   };

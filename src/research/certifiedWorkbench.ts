@@ -293,7 +293,7 @@ export const GPU_SCALE_VALIDATION_CONTRACTS: readonly GpuScaleValidationContract
     acceleratedPath: '4D kernels plus src/runtime/gpuNChainVariational.ts tiled STM/QR/CLV/FTLE pipeline',
     acceptanceRule: 'GPU candidates must pass compareClvAcceleration / compareFtleFieldAcceleration / compareLyapunovSpectrumAcceleration against the CPU oracle before promotion.',
     ciEvidence: ['tests/clv.test.ts', 'tests/ftle.test.ts', 'tests/lyapunov-spectrum-job.test.ts', 'tests/acceleration-contract.test.ts', 'e2e/webgpu-hardware-reductions.spec.ts'],
-    caveat: 'The 4D kernels and planar N-chain N<=8 hybrid pipeline are hardware-gated against CPU f64 oracles. N-chain nonlinear trajectory and Jacobian-tape construction remain CPU f64.'
+    caveat: 'The 4D kernels and planar N-chain N<=8 STM/QR pipeline are hardware-gated against CPU f64 oracles. The N-chain nonlinear trajectory/Jacobian-tape WebGPU candidate is scoped to N<=3 and promotes only after same-run CPU f64 final-state, trajectory, and Jacobian-tape comparison; otherwise the CPU f64 tape is used.'
   }
 ] as const;
 

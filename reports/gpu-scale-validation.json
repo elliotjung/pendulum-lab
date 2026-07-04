@@ -1,11 +1,11 @@
 {
   "schemaVersion": "pendulum-gpu-scale-validation/v3",
-  "generatedAt": "2026-06-18T16:45:57.650Z",
+  "generatedAt": "2026-07-04T10:27:55.170Z",
   "hardwareWebGpuAvailable": false,
   "verdict": "hardware-webgpu-oracle-gates-passed",
   "hardwareEvidence": {
     "schemaVersion": "pendulum-webgpu-hardware-validation/v2",
-    "generatedAt": "2026-06-18T16:45:41.770Z",
+    "generatedAt": "2026-07-04T10:26:43.335Z",
     "channel": "chrome",
     "url": "http://127.0.0.1:5173/",
     "status": "pass",
@@ -146,6 +146,24 @@
       "max": 9.638538360595703,
       "caveat": "WebGPU f32 variational-STM FTLE field promoted after same-run CPU f64 oracle comparison."
     },
+    "nChainTrajectoryTape": {
+      "backend": "webgpu",
+      "comparison": {
+        "passed": true,
+        "maxFinalStateAbsDiff": 2.5914979628893775e-7,
+        "maxTrajectoryAbsDiff": 4.3840401170447407e-7,
+        "maxJacobianAbsDiff": 0.011088176964037189,
+        "tolerances": {
+          "finalState": 0.008,
+          "trajectory": 0.008,
+          "jacobian": 0.08
+        }
+      },
+      "links": 3,
+      "dimension": 6,
+      "steps": 33,
+      "caveat": "WebGPU f32 trajectory/Jacobian tape promoted for this run after same-run CPU f64 comparison; downstream science still requires its own CLV/FTLE oracle gate."
+    },
     "nChainVariational": {
       "backend": "webgpu",
       "comparison": {
@@ -161,18 +179,18 @@
             "aggregate": 0.02
           },
           "metrics": {
-            "exponentMaxAbsDiff": 0.000002575877267929627,
-            "meanAngleAbsDiff": 0.00004180401381836951,
-            "minAngleAbsDiff": 0.00004218023114077596
+            "exponentMaxAbsDiff": 0.0001774760207950976,
+            "meanAngleAbsDiff": 0.00005229443129883826,
+            "minAngleAbsDiff": 0.00006041925244204549
           },
           "caveat": "Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller."
         },
-        "ftleAbsDiff": 6.480840992750814e-7,
+        "ftleAbsDiff": 0.000034161028449553044,
         "ftleTolerance": 0.16
       },
       "links": 3,
       "dimension": 6,
-      "ftle": 7.877861499786377,
+      "ftle": 7.877896308898926,
       "cpuFtle": 7.877862147870476,
       "method": "piecewise-jacobian-rk2-stm-qr",
       "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."
@@ -180,7 +198,7 @@
   },
   "gpuBenchmarkLadder": {
     "schemaVersion": "pendulum-gpu-benchmark-ladder/v2",
-    "generatedAt": "2026-06-18T16:45:48.879Z",
+    "generatedAt": "2026-07-04T10:26:59.246Z",
     "channel": "chrome",
     "url": "http://127.0.0.1:5173/",
     "status": "pass",
@@ -220,8 +238,8 @@
           "steps": 40,
           "backend": "webgpu",
           "n": 25,
-          "gpuElapsedMs": 154.69999998807907,
-          "cpuElapsedMs": 5,
+          "gpuElapsedMs": 259.8999999910593,
+          "cpuElapsedMs": 2.9000000059604645,
           "reductionComparison": {
             "passed": true,
             "nMatches": true,
@@ -261,8 +279,8 @@
           "steps": 80,
           "backend": "webgpu",
           "n": 25,
-          "gpuElapsedMs": 79.89999997615814,
-          "cpuElapsedMs": 2.600000023841858,
+          "gpuElapsedMs": 21.400000005960464,
+          "cpuElapsedMs": 3.7000000029802322,
           "reductionComparison": {
             "passed": true,
             "nMatches": true,
@@ -302,8 +320,8 @@
           "steps": 160,
           "backend": "webgpu",
           "n": 25,
-          "gpuElapsedMs": 50.10000002384186,
-          "cpuElapsedMs": 3.899999976158142,
+          "gpuElapsedMs": 17.299999997019768,
+          "cpuElapsedMs": 5.200000002980232,
           "reductionComparison": {
             "passed": true,
             "nMatches": true,
@@ -350,7 +368,7 @@
         {
           "steps": 160,
           "backend": "webgpu",
-          "elapsedMs": 274.4000000357628,
+          "elapsedMs": 187.29999999701977,
           "comparison": {
             "target": "lyapunov-spectrum",
             "passed": true,
@@ -384,7 +402,7 @@
         {
           "steps": 320,
           "backend": "webgpu",
-          "elapsedMs": 64.19999998807907,
+          "elapsedMs": 74.70000000298023,
           "comparison": {
             "target": "lyapunov-spectrum",
             "passed": true,
@@ -480,6 +498,25 @@
       "max": 9.638538360595703,
       "caveat": "WebGPU f32 variational-STM FTLE field promoted after same-run CPU f64 oracle comparison."
     },
+    "nChainTrajectoryTape": {
+      "backend": "webgpu",
+      "comparison": {
+        "passed": true,
+        "maxFinalStateAbsDiff": 2.5914979628893775e-7,
+        "maxTrajectoryAbsDiff": 4.3840401170447407e-7,
+        "maxJacobianAbsDiff": 0.011088176964037189,
+        "tolerances": {
+          "finalState": 0.008,
+          "trajectory": 0.008,
+          "jacobian": 0.08
+        }
+      },
+      "links": 3,
+      "dimension": 6,
+      "steps": 33,
+      "elapsedMs": 864.2999999970198,
+      "caveat": "WebGPU f32 trajectory/Jacobian tape promoted for this run after same-run CPU f64 comparison; downstream science still requires its own CLV/FTLE oracle gate."
+    },
     "nChainVariational": {
       "backend": "webgpu",
       "comparison": {
@@ -495,27 +532,27 @@
             "aggregate": 0.02
           },
           "metrics": {
-            "exponentMaxAbsDiff": 0.000002575877267929627,
-            "meanAngleAbsDiff": 0.00004180401381836951,
-            "minAngleAbsDiff": 0.00004218023114077596
+            "exponentMaxAbsDiff": 0.0001774760207950976,
+            "meanAngleAbsDiff": 0.00005229443129883826,
+            "minAngleAbsDiff": 0.00006041925244204549
           },
           "caveat": "Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller."
         },
-        "ftleAbsDiff": 6.480840992750814e-7,
+        "ftleAbsDiff": 0.000034161028449553044,
         "ftleTolerance": 0.16
       },
       "links": 3,
       "dimension": 6,
-      "ftle": 7.877861499786377,
+      "ftle": 7.877896308898926,
       "cpuFtle": 7.877862147870476,
-      "elapsedMs": 349.89999997615814,
+      "elapsedMs": 831.2999999970198,
       "method": "piecewise-jacobian-rk2-stm-qr",
       "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."
     }
   },
   "gpuAdapterMatrix": {
     "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-    "generatedAt": "2026-06-18T16:45:55.263Z",
+    "generatedAt": "2026-07-04T10:27:12.873Z",
     "status": "partial",
     "requiredVendors": [
       "intel",
@@ -532,8 +569,8 @@
       {
         "vendor": "intel",
         "status": "pass",
-        "source": "C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json",
-        "generatedAt": "2026-06-18T16:45:48.879Z",
+        "source": "reports/gpu-benchmark-ladder.json",
+        "generatedAt": "2026-07-04T10:26:59.246Z",
         "adapter": {
           "vendor": "intel",
           "architecture": "xe-2lpg",
@@ -564,9 +601,18 @@
           ],
           "limits": {}
         },
+        "nChainTrajectoryTapePassed": true,
+        "nChainTrajectoryTapeDimension": 6,
         "nChainPassed": true,
         "nChainDimension": 6,
-        "caveat": "Real-adapter ladder passed reductions, 4D diagnostics, and the N-chain STM/QR oracle gate."
+        "caveat": "Real-adapter ladder passed reductions, 4D diagnostics, the N-chain trajectory/tape gate, and the N-chain STM/QR oracle gate.",
+        "expectedRunnerLabels": [
+          "self-hosted",
+          "webgpu",
+          "intel"
+        ],
+        "expectedArtifactName": "gpu-ladder-intel",
+        "nextAction": "Keep this vendor runner on the scheduled WebGPU evidence cadence and refresh after driver/browser updates."
       },
       {
         "vendor": "nvidia",
@@ -574,9 +620,18 @@
         "source": null,
         "generatedAt": null,
         "adapter": null,
+        "nChainTrajectoryTapePassed": false,
+        "nChainTrajectoryTapeDimension": null,
         "nChainPassed": false,
         "nChainDimension": null,
-        "caveat": "No nvidia hardware ladder artifact was supplied. This row is not simulated or inferred."
+        "caveat": "No nvidia hardware ladder artifact was supplied. This row is not simulated or inferred.",
+        "expectedRunnerLabels": [
+          "self-hosted",
+          "webgpu",
+          "nvidia"
+        ],
+        "expectedArtifactName": "gpu-ladder-nvidia",
+        "nextAction": "Provision or enable a physical nvidia WebGPU runner labelled self-hosted, webgpu, nvidia; dispatch WebGPU Vendor Evidence with vendor=nvidia; download artifact gpu-ladder-nvidia; rerun npm run benchmark:gpu-matrix."
       },
       {
         "vendor": "amd",
@@ -584,10 +639,27 @@
         "source": null,
         "generatedAt": null,
         "adapter": null,
+        "nChainTrajectoryTapePassed": false,
+        "nChainTrajectoryTapeDimension": null,
         "nChainPassed": false,
         "nChainDimension": null,
-        "caveat": "No amd hardware ladder artifact was supplied. This row is not simulated or inferred."
+        "caveat": "No amd hardware ladder artifact was supplied. This row is not simulated or inferred.",
+        "expectedRunnerLabels": [
+          "self-hosted",
+          "webgpu",
+          "amd"
+        ],
+        "expectedArtifactName": "gpu-ladder-amd",
+        "nextAction": "Provision or enable a physical amd WebGPU runner labelled self-hosted, webgpu, amd; dispatch WebGPU Vendor Evidence with vendor=amd; download artifact gpu-ladder-amd; rerun npm run benchmark:gpu-matrix."
       }
+    ],
+    "missingVendors": [
+      "nvidia",
+      "amd"
+    ],
+    "actionItems": [
+      "Provision or enable a physical nvidia WebGPU runner labelled self-hosted, webgpu, nvidia; dispatch WebGPU Vendor Evidence with vendor=nvidia; download artifact gpu-ladder-nvidia; rerun npm run benchmark:gpu-matrix.",
+      "Provision or enable a physical amd WebGPU runner labelled self-hosted, webgpu, amd; dispatch WebGPU Vendor Evidence with vendor=amd; download artifact gpu-ladder-amd; rerun npm run benchmark:gpu-matrix."
     ],
     "reproduce": "npm run benchmark:gpu-matrix",
     "collectionContract": {
@@ -659,7 +731,7 @@
         "tests/acceleration-contract.test.ts",
         "e2e/webgpu-hardware-reductions.spec.ts"
       ],
-      "caveat": "The 4D kernels and planar N-chain N<=8 hybrid pipeline are hardware-gated against CPU f64 oracles. N-chain nonlinear trajectory and Jacobian-tape construction remain CPU f64."
+      "caveat": "The 4D kernels and planar N-chain N<=8 STM/QR pipeline are hardware-gated against CPU f64 oracles. The N-chain nonlinear trajectory/Jacobian-tape WebGPU candidate is scoped to N<=3 and promotes only after same-run CPU f64 final-state, trajectory, and Jacobian-tape comparison; otherwise the CPU f64 tape is used."
     }
   ],
   "cpuReference": {

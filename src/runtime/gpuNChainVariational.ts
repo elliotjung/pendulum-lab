@@ -5,9 +5,10 @@ import { numericalJacobian } from '../physics/variational';
 import { createChainWorkspace, rhsChain, validateChainParameters, type ChainParameters } from '../physics/nPendulum';
 import { rk4Step } from '../physics/integrators';
 import { runComputeKernel } from './gpuEnsemble';
-import { WGSL_NCHAIN_VARIATIONAL_KERNEL } from './gpuNChainVariationalKernel';
+import { WGSL_NCHAIN_TRAJECTORY_TAPE_KERNEL, WGSL_NCHAIN_VARIATIONAL_KERNEL } from './gpuNChainVariationalKernel';
 
 const MAX_LINKS = 8;
+const MAX_TRAJECTORY_TAPE_LINKS = 3;
 const MAX_DIMENSION = MAX_LINKS * 2;
 const MAX_WINDOW = 64;
 const OUTPUT_VECTOR_OFFSET = 32;
@@ -17,6 +18,48 @@ export interface NChainVariationalOptions extends Partial<ClvSettings> {
   forceCpu?: boolean;
   ftleTolerance?: number;
   clvTolerances?: AccelerationTolerance;
+  trajectoryTapeTolerances?: NChainTrajectoryTapeTolerances;
+}
+
+export interface NChainTrajectoryTapeTolerances {
+  finalState?: number;
+  trajectory?: number;
+  jacobian?: number;
+}
+
+export interface NChainTrajectoryTapeSummary {
+  dimension: number;
+  links: number;
+  steps: number;
+  dt: number;
+  finalState: number[];
+  trajectory: Float64Array;
+  jacobianTape: Float64Array;
+  method: 'rk4-central-difference-jacobian-tape';
+}
+
+export interface WebgpuNChainTrajectoryTapeCandidate {
+  backend: 'webgpu';
+  result: NChainTrajectoryTapeSummary;
+  elapsedMs: number;
+  caveat: string;
+}
+
+export interface NChainTrajectoryTapeComparison {
+  passed: boolean;
+  maxFinalStateAbsDiff: number;
+  maxTrajectoryAbsDiff: number;
+  maxJacobianAbsDiff: number;
+  tolerances: Required<NChainTrajectoryTapeTolerances>;
+}
+
+export interface NChainTrajectoryTapePromotion {
+  backend: 'webgpu' | 'cpu';
+  result: NChainTrajectoryTapeSummary;
+  cpuOracle: NChainTrajectoryTapeSummary;
+  gpuCandidate: WebgpuNChainTrajectoryTapeCandidate | null;
+  comparison: NChainTrajectoryTapeComparison | null;
+  caveat: string;
 }
 
 export interface NChainVariationalSummary {
@@ -26,11 +69,13 @@ export interface NChainVariationalSummary {
   variationalFtle: number;
   horizon: number;
   method: 'piecewise-jacobian-rk2-stm-qr';
+  trajectoryTapeSource: 'cpu-f64' | 'webgpu-f32-promoted';
 }
 
 export interface WebgpuNChainVariationalCandidate {
   backend: 'webgpu';
   result: NChainVariationalSummary;
+  trajectoryTapePromotion: NChainTrajectoryTapePromotion;
   elapsedMs: number;
   caveat: string;
 }
@@ -93,17 +138,35 @@ function validateInputs(parameters: ChainParameters, state0: ArrayLike<number>, 
   return dimension;
 }
 
+const DEFAULT_TRAJECTORY_TAPE_TOLERANCES: Required<NChainTrajectoryTapeTolerances> = {
+  finalState: 5e-3,
+  trajectory: 5e-3,
+  jacobian: 5e-2
+};
+
+function maxAbsDiff(a: ArrayLike<number>, b: ArrayLike<number>): number {
+  const n = Math.min(a.length, b.length);
+  let max = Math.abs(a.length - b.length);
+  for (let i = 0; i < n; i += 1) max = Math.max(max, Math.abs(Number(a[i] ?? 0) - Number(b[i] ?? 0)));
+  return max;
+}
+
+function resolveTapeTolerances(tolerances: NChainTrajectoryTapeTolerances | undefined): Required<NChainTrajectoryTapeTolerances> {
+  return { ...DEFAULT_TRAJECTORY_TAPE_TOLERANCES, ...tolerances };
+}
+
 /** Build the f64 reference trajectory and central-difference Jacobian tape. */
-export function buildNChainJacobianTape(
+export function buildNChainTrajectoryJacobianTape(
   parameters: ChainParameters,
   state0: ArrayLike<number>,
   damping: number,
   settings: Pick<ResolvedSettings, 'dt' | 'renormEvery' | 'forwardTransient' | 'window'>
-): Float64Array {
+): NChainTrajectoryTapeSummary {
   const links = parameters.masses.length;
   const dimension = links * 2;
   const steps = (settings.forwardTransient + settings.window) * settings.renormEvery;
   const tape = new Float64Array(steps * dimension * dimension);
+  const trajectory = new Float64Array((steps + 1) * dimension);
   const state = Float64Array.from(state0);
   const next = new Float64Array(dimension);
   const jacobian = new Float64Array(dimension * dimension);
@@ -115,12 +178,151 @@ export function buildNChainJacobianTape(
     rhsChain(value, parameters, damping, out, workspace);
   };
   for (let step = 0; step < steps; step += 1) {
+    trajectory.set(state, step * dimension);
     numericalJacobian(rhs, state, dimension, jacobian, scratch, plus, minus);
     tape.set(jacobian, step * dimension * dimension);
     rk4Step(state, settings.dt, rhs, next);
     state.set(next);
   }
-  return tape;
+  trajectory.set(state, steps * dimension);
+  return {
+    dimension,
+    links,
+    steps,
+    dt: settings.dt,
+    finalState: Array.from(state),
+    trajectory,
+    jacobianTape: tape,
+    method: 'rk4-central-difference-jacobian-tape'
+  };
+}
+
+/** Build only the f64 central-difference Jacobian tape consumed by legacy callers. */
+export function buildNChainJacobianTape(
+  parameters: ChainParameters,
+  state0: ArrayLike<number>,
+  damping: number,
+  settings: Pick<ResolvedSettings, 'dt' | 'renormEvery' | 'forwardTransient' | 'window'>
+): Float64Array {
+  return buildNChainTrajectoryJacobianTape(parameters, state0, damping, settings).jacobianTape;
+}
+
+export function compareNChainTrajectoryTape(
+  candidate: NChainTrajectoryTapeSummary,
+  oracle: NChainTrajectoryTapeSummary,
+  tolerances?: NChainTrajectoryTapeTolerances
+): NChainTrajectoryTapeComparison {
+  const resolved = resolveTapeTolerances(tolerances);
+  const maxFinalStateAbsDiff = maxAbsDiff(candidate.finalState, oracle.finalState);
+  const maxTrajectoryAbsDiff = maxAbsDiff(candidate.trajectory, oracle.trajectory);
+  const maxJacobianAbsDiff = maxAbsDiff(candidate.jacobianTape, oracle.jacobianTape);
+  return {
+    passed: candidate.dimension === oracle.dimension
+      && candidate.steps === oracle.steps
+      && maxFinalStateAbsDiff <= resolved.finalState
+      && maxTrajectoryAbsDiff <= resolved.trajectory
+      && maxJacobianAbsDiff <= resolved.jacobian,
+    maxFinalStateAbsDiff,
+    maxTrajectoryAbsDiff,
+    maxJacobianAbsDiff,
+    tolerances: resolved
+  };
+}
+
+export async function webgpuNChainTrajectoryTapeCandidate(
+  parameters: ChainParameters,
+  state0: ArrayLike<number>,
+  options: NChainVariationalOptions = {},
+  damping = 0
+): Promise<WebgpuNChainTrajectoryTapeCandidate | null> {
+  const dimension = parameters.masses.length * 2;
+  const settings = resolveSettings(dimension, options);
+  validateInputs(parameters, state0, settings);
+  if (options.forceCpu || parameters.masses.length > MAX_TRAJECTORY_TAPE_LINKS) return null;
+  const steps = (settings.forwardTransient + settings.window) * settings.renormEvery;
+  const trajectoryOffset = 16;
+  const trajectoryLength = (steps + 1) * dimension;
+  const tapeOffset = trajectoryOffset + trajectoryLength;
+  const tapeLength = steps * dimension * dimension;
+  const finalStateOffset = tapeOffset + tapeLength;
+  const io = new Float32Array(finalStateOffset + dimension);
+  for (let i = 0; i < dimension; i += 1) io[i] = Number(state0[i] ?? 0);
+  const masses = [parameters.masses[0] ?? 0, parameters.masses[1] ?? 0, parameters.masses[2] ?? 0];
+  const lengths = [parameters.lengths[0] ?? 0, parameters.lengths[1] ?? 0, parameters.lengths[2] ?? 0];
+  const uniform = new Float32Array([
+    masses[0]!, masses[1]!, masses[2]!, lengths[0]!,
+    lengths[1]!, lengths[2]!, parameters.g, damping,
+    parameters.masses.length, dimension, settings.dt, steps,
+    1e-3, trajectoryOffset, tapeOffset, finalStateOffset
+  ]);
+  const started = typeof performance === 'undefined' ? Date.now() : performance.now();
+  const reduced = await runComputeKernel(WGSL_NCHAIN_TRAJECTORY_TAPE_KERNEL, uniform, io, 1);
+  const elapsedMs = (typeof performance === 'undefined' ? Date.now() : performance.now()) - started;
+  if (!reduced || (reduced[0] ?? -1) < 0) return null;
+  const trajectory = new Float64Array(trajectoryLength);
+  const jacobianTape = new Float64Array(tapeLength);
+  const finalState = new Array<number>(dimension);
+  for (let i = 0; i < trajectoryLength; i += 1) trajectory[i] = Number(reduced[trajectoryOffset + i] ?? NaN);
+  for (let i = 0; i < tapeLength; i += 1) jacobianTape[i] = Number(reduced[tapeOffset + i] ?? NaN);
+  for (let i = 0; i < dimension; i += 1) finalState[i] = Number(reduced[finalStateOffset + i] ?? NaN);
+  if (![...finalState, ...Array.from(trajectory), ...Array.from(jacobianTape)].every(Number.isFinite)) return null;
+  return {
+    backend: 'webgpu',
+    elapsedMs,
+    result: {
+      dimension,
+      links: parameters.masses.length,
+      steps,
+      dt: settings.dt,
+      finalState,
+      trajectory,
+      jacobianTape,
+      method: 'rk4-central-difference-jacobian-tape'
+    },
+    caveat: `WebGPU f32 nonlinear trajectory and central-difference Jacobian-tape candidate for planar N-chain N<=${MAX_TRAJECTORY_TAPE_LINKS}; promotable only after same-run CPU f64 trajectory/tape comparison.`
+  };
+}
+
+export async function promotedNChainTrajectoryTape(
+  parameters: ChainParameters,
+  state0: ArrayLike<number>,
+  options: NChainVariationalOptions = {},
+  damping = 0
+): Promise<NChainTrajectoryTapePromotion> {
+  const dimension = parameters.masses.length * 2;
+  const settings = resolveSettings(dimension, options);
+  validateInputs(parameters, state0, settings);
+  const cpuOracle = buildNChainTrajectoryJacobianTape(parameters, state0, damping, settings);
+  const gpuCandidate = await webgpuNChainTrajectoryTapeCandidate(parameters, state0, options, damping);
+  if (!gpuCandidate) {
+    return {
+      backend: 'cpu',
+      result: cpuOracle,
+      cpuOracle,
+      gpuCandidate: null,
+      comparison: null,
+      caveat: `CPU f64 trajectory/Jacobian tape returned because WebGPU was unavailable, disabled, or outside the N<=${MAX_TRAJECTORY_TAPE_LINKS} trajectory-tape candidate scope.`
+    };
+  }
+  const comparison = compareNChainTrajectoryTape(gpuCandidate.result, cpuOracle, options.trajectoryTapeTolerances);
+  if (!comparison.passed) {
+    return {
+      backend: 'cpu',
+      result: cpuOracle,
+      cpuOracle,
+      gpuCandidate,
+      comparison,
+      caveat: 'CPU f64 trajectory/Jacobian tape returned because the WebGPU f32 trajectory-tape candidate failed its CPU oracle promotion gate.'
+    };
+  }
+  return {
+    backend: 'webgpu',
+    result: gpuCandidate.result,
+    cpuOracle,
+    gpuCandidate,
+    comparison,
+    caveat: 'WebGPU f32 trajectory/Jacobian tape promoted for this run after same-run CPU f64 comparison; downstream science still requires its own CLV/FTLE oracle gate.'
+  };
 }
 
 function identity(dimension: number): Float64Array {
@@ -271,7 +473,12 @@ export function nChainVariationalCpuOracle(
   return evaluateTapeCpu(tape, parameters.masses.length, settings);
 }
 
-function evaluateTapeCpu(tape: Float64Array, links: number, settings: ResolvedSettings): NChainVariationalSummary {
+function evaluateTapeCpu(
+  tape: Float64Array,
+  links: number,
+  settings: ResolvedSettings,
+  trajectoryTapeSource: NChainVariationalSummary['trajectoryTapeSource'] = 'cpu-f64'
+): NChainVariationalSummary {
   const dimension = links * 2;
   const matrixSize = dimension * dimension;
   const frame = identity(dimension);
@@ -322,6 +529,7 @@ function evaluateTapeCpu(tape: Float64Array, links: number, settings: ResolvedSe
     links,
     horizon,
     method: 'piecewise-jacobian-rk2-stm-qr',
+    trajectoryTapeSource,
     variationalFtle: largestSingularFtle(stm, dimension, horizon),
     clv: {
       exponents,
@@ -345,7 +553,8 @@ export async function webgpuNChainVariationalCandidate(
   const settings = resolveSettings(dimension, options);
   validateInputs(parameters, state0, settings);
   if (options.forceCpu) return null;
-  const tape = buildNChainJacobianTape(parameters, state0, damping, settings);
+  const trajectoryTapePromotion = await promotedNChainTrajectoryTape(parameters, state0, options, damping);
+  const tape = trajectoryTapePromotion.result.jacobianTape;
   const matrixSize = dimension * dimension;
   const jacobianOffset = OUTPUT_FLOATS;
   const framesOffset = jacobianOffset + tape.length;
@@ -377,6 +586,7 @@ export async function webgpuNChainVariationalCandidate(
       links: parameters.masses.length,
       horizon: Number(reduced[6] ?? settings.window * settings.renormEvery * settings.dt),
       method: 'piecewise-jacobian-rk2-stm-qr',
+      trajectoryTapeSource: trajectoryTapePromotion.backend === 'webgpu' ? 'webgpu-f32-promoted' : 'cpu-f64',
       variationalFtle: ftle,
       clv: {
         exponents,
@@ -388,7 +598,10 @@ export async function webgpuNChainVariationalCandidate(
         settings
       }
     },
-    caveat: 'Hybrid N-chain WebGPU candidate: the CPU f64 reference trajectory supplies a central-difference Jacobian tape; WebGPU f32 performs tiled STM propagation, QR tape, Ginelli backward solve, and the variational FTLE singular-value estimate.'
+    trajectoryTapePromotion,
+    caveat: trajectoryTapePromotion.backend === 'webgpu'
+      ? 'N-chain WebGPU candidate uses a promoted f32 nonlinear trajectory/Jacobian tape, then performs tiled STM propagation, QR tape, Ginelli backward solve, and the variational FTLE singular-value estimate. It remains promotable only after the final CPU f64 CLV/FTLE oracle gate.'
+      : 'Hybrid N-chain WebGPU candidate: the CPU f64 reference trajectory supplies a central-difference Jacobian tape; WebGPU f32 performs tiled STM propagation, QR tape, Ginelli backward solve, and the variational FTLE singular-value estimate.'
   };
 }
 

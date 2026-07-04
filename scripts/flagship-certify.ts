@@ -29,6 +29,20 @@ const lines = [
   '',
   `Reviewer appendix note: ${certification.reviewerAppendixNote}`,
   '',
+  `Claim boundary: ${certification.claimBoundary}`,
+  '',
+  '## Figure Hashes',
+  '',
+  '| id | path | hash | description |',
+  '|---|---|---|---|',
+  ...certification.figureArtifacts.map((artifact) => `| ${artifact.id} | \`${artifact.path}\` | \`${artifact.hash}\` | ${artifact.description} |`),
+  '',
+  '## Artifact Cross-References',
+  '',
+  '| artifact | produced by | used by |',
+  '|---|---|---|',
+  ...certification.artifactCrossReferences.map((ref) => `| \`${ref.artifact}\` | \`${ref.producedBy}\` | ${ref.usedBy} |`),
+  '',
   '## Onset Localization Table',
   '',
   '| gamma | A_c | A_PD | ratio | ratio err | rho below | rho above | K below | K above | caveat |',
@@ -41,7 +55,7 @@ for (const row of certification.rows) {
 
 lines.push('', '## Basin / Transient Caveat Map', '');
 for (const caveat of certification.caveats) lines.push(`- ${caveat}`);
-lines.push('', '## Reproduce', '', '```bash', 'npm run paper:study', 'npm run flagship:certify', 'npm run flagship:external', '```', '');
+lines.push('', '## Reproduce', '', '```bash', ...certification.reproductionCommands, '```', '');
 
 await mkdir('reports', { recursive: true });
 await writeFile('reports/flagship-certification.json', `${JSON.stringify(certification, null, 2)}\n`, 'utf8');

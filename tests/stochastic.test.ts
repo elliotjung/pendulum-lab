@@ -493,3 +493,63 @@ describe('adaptive SDE integration over a frozen Brownian grid', () => {
     expect(a.acceptedSteps).toBe(b.acceptedSteps);
   });
 });
+
+describe('stochastic validation and recording contracts', () => {
+  it('records the final sample even when recordEvery does not divide the run', () => {
+    const result = runLangevinEnsemble({
+      drift: (_s, out) => {
+        out[0] = 1;
+      },
+      initialState: [0],
+      diffusion: [0],
+      dt: 0.1,
+      steps: 5,
+      realizations: 2,
+      seed: 17,
+      recordEvery: 2
+    });
+
+    expect(result.times).toEqual([0, 0.2, 0.4, 0.5]);
+    expect(result.mean.map((row) => row[0])).toEqual([0, 0.2, 0.4, 0.5]);
+    expect(result.variance.map((row) => row[0])).toEqual([0, 0, 0, 0]);
+  });
+
+  it('rejects ensemble specs that cannot define statistics or time evolution', () => {
+    const base: LangevinEnsembleSpec = {
+      drift: (_s, out) => {
+        out[0] = 0;
+      },
+      initialState: [0],
+      diffusion: [0],
+      dt: 0.1,
+      steps: 1,
+      realizations: 2
+    };
+    expect(() => runLangevinEnsemble({ ...base, initialState: [] })).toThrow(/empty initial state/);
+    expect(() => runLangevinEnsemble({ ...base, realizations: 1 })).toThrow(/at least 2/);
+    expect(() => runLangevinEnsemble({ ...base, steps: 0 })).toThrow(/steps/);
+    expect(() => runLangevinEnsemble({ ...base, recordEvery: 0 })).toThrow(/recordEvery/);
+  });
+
+  it('rejects Brownian grids whose time, level, or dimension cannot form a dyadic path', () => {
+    expect(() => buildBrownianGrid(0, 4, 1)).toThrow(/totalTime/);
+    expect(() => buildBrownianGrid(1, 0, 1)).toThrow(/levels/);
+    expect(() => buildBrownianGrid(1, 25, 1)).toThrow(/levels/);
+    expect(() => buildBrownianGrid(1, 4, 0)).toThrow(/dimension/);
+  });
+
+  it('rejects adaptive paths when the frozen Brownian dimension differs from the state', () => {
+    const grid = buildBrownianGrid(1, 4, 1, 123);
+    expect(() =>
+      runAdaptiveLangevinPath({
+        drift: (_s, out) => {
+          out[0] = 0;
+          out[1] = 0;
+        },
+        diffusion: [0, 0],
+        initialState: [0, 0],
+        grid
+      })
+    ).toThrow(/grid dimension/);
+  });
+});

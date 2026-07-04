@@ -67,12 +67,16 @@ npm run validate:literature
 - Figure 1 is certified separately by `reports/flagship-certification.json`,
   `reports/flagship-certification.md`, and `reports/flagship-figure1.svg`.
 - The paper's Appendix A-C embeds the onset uncertainty table, independent
-  Python A_PD measurements, caveat ledger, and Figure 1 SHA-256 prefix, so the
-  figure and machine-readable evidence cross-reference each other.
+  Python A_PD measurements, the Python bracket/bisection search trace, caveat
+  ledger, embedded deterministic figure hashes, the certified SVG hash,
+  reproduction commands, and artifact cross-references.
 - A dependency-free Python external check recomputes `A_c`, recomputes the ratio
   crossing, and independently remeasures selected `A_PD` values by RK4
   stroboscopic integration plus finite-difference Floquet bisection in
   `reports/flagship-external-check.json`.
+- The claim boundary is narrow by design: Melnikov threshold versus
+  Floquet-refined period-doubling onset for the specified driven-pendulum branch
+  at `omega = 2/3`, not a global basin statement or higher-order Melnikov bound.
 - The caveat is part of the claim: first-order Melnikov theory is asymptotic
   and should not be treated as a strong-damping ordering bound.
 

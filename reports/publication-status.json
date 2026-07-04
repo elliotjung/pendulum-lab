@@ -1,19 +1,45 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-06-18T17:47:57.837Z",
+  "generatedAt": "2026-07-04T10:58:30.128Z",
   "status": "partial",
   "npm": {
     "package": "pendulum-lab-v10",
     "version": "10.35.0",
     "published": false,
     "registryStatus": 404,
-    "url": "https://www.npmjs.com/package/pendulum-lab-v10/v/10.35.0"
+    "url": "https://www.npmjs.com/package/pendulum-lab-v10/v/10.35.0",
+    "auth": {
+      "whoamiOk": false,
+      "user": null,
+      "npmTokenPresent": false,
+      "credentialBoundary": "npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted."
+    },
+    "trustedPublisher": {
+      "workflowReady": true,
+      "repository": "Elliot-Jung-17/pendulum-lab",
+      "workflow": "publish-npm.yml",
+      "environment": "npm",
+      "verified": false,
+      "status": "Workflow has OIDC/id-token publishing contract, but npm package settings are not publicly verifiable from this unauthenticated local CLI."
+    }
   },
   "zenodo": {
     "published": false,
     "apiStatus": 200,
     "doi": null,
-    "recordId": null
+    "recordId": null,
+    "auth": {
+      "zenodoTokenPresent": false,
+      "zenodoSandboxTokenPresent": false,
+      "credentialBoundary": "ZENODO_TOKEN is not set; production DOI minting was not attempted and no DOI was fabricated."
+    },
+    "githubIntegration": {
+      "checked": true,
+      "checkStatus": "ok",
+      "detected": false,
+      "matchingHooks": 0,
+      "credentialBoundary": "No Zenodo GitHub repository hook was visible to gh api repos/Elliot-Jung-17/pendulum-lab/hooks."
+    }
   },
   "githubRelease": {
     "published": true,
@@ -28,6 +54,9 @@
   },
   "caveats": [
     "npm registry does not resolve this exact package version.",
-    "No matching public Zenodo DOI record resolves for Pendulum Lab."
+    "npm publish is blocked locally: npm whoami is unauthenticated and NPM_TOKEN is missing.",
+    "No matching public Zenodo DOI record resolves for Pendulum Lab.",
+    "Zenodo production publish is blocked locally: ZENODO_TOKEN is missing.",
+    "GitHub-Zenodo integration is not visible in repository hooks."
   ]
 }
