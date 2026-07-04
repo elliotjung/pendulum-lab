@@ -11,6 +11,7 @@ import { workerBridge } from './runtime/WorkerBridge';
 import { installPendulumRuntime } from './runtime/PendulumRuntime';
 import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabProbe, maybeMountModernShell } from './app/bootstrap';
 import { installUiPolish } from './app/UiPolish';
+import { installHudEffects } from './app/hudEffects';
 import { publishPublicApi } from './runtime/globalApi';
 import { installAudienceMode } from './app/audienceMode';
 import { APP_VERSION } from './runtime/version';
@@ -118,6 +119,7 @@ function bootShell(): void {
   maybeMountModernShell();
   installAudienceMode();
   installUiPolish();
+  installHudEffects();
 }
 
 async function boot(): Promise<void> {

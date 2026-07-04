@@ -1,0 +1,566 @@
+/* ============================================================================
+   Futuristic HUD presentation layer
+   ----------------------------------------------------------------------------
+   The final visual pass, loaded after the premium layer. It reskins every
+   surface into a tactical heads-up-display language: gradient-bordered glass
+   panels, HUD corner brackets, holographic grid backdrop, luminous telemetry
+   chips, and a boot/loading sequence.
+
+   Rules of the layer (same contract as 03/04):
+   - Visual only: no display/position/sizing changes to interactive structure,
+     so every selector, test hook and behavior stays exactly as before.
+   - Continuous animations are gated behind `body.hud-fx`, which
+     src/app/hudEffects.ts only sets for real users (never under automation,
+     never with prefers-reduced-motion) — this repo has measured always-running
+     animations starving requestAnimationFrame under software compositors.
+   - Everything else is hover/one-shot motion wrapped in reduced-motion guards.
+   ========================================================================== */
+
+:root{
+  /* HUD tokens */
+  --hud-cyan:#1ee3ff;
+  --hud-cyan-soft:rgba(30,227,255,.55);
+  --hud-line:rgba(30,227,255,.16);
+  --hud-line-strong:rgba(30,227,255,.34);
+  --hud-purple:rgba(157,120,255,.45);
+  --hud-orange:rgba(255,122,44,.4);
+  --hud-panel:rgba(9,13,26,.74);
+  --hud-panel-deep:rgba(6,9,19,.88);
+  --hud-frame:linear-gradient(165deg,
+      rgba(30,227,255,.5), rgba(255,255,255,.07) 28%,
+      rgba(157,120,255,.4) 62%, rgba(255,122,44,.34));
+  --hud-frame-soft:linear-gradient(165deg,
+      rgba(30,227,255,.26), rgba(255,255,255,.05) 30%,
+      rgba(157,120,255,.22) 68%, rgba(255,122,44,.16));
+  --hud-glow:0 0 34px -10px rgba(30,227,255,.5);
+  --hud-glow-strong:0 0 52px -12px rgba(30,227,255,.75);
+
+  /* Sharper HUD accents on the shared palette */
+  --cyan:#1ee3ff;
+  --shadow-glow-cyan:0 0 48px -12px rgba(30,227,255,.5);
+  --focus:#ffd54a;
+}
+
+/* ---- Holographic grid backdrop --------------------------------------------
+   A static (zero-per-frame-cost) engineering grid over the aurora, faded out
+   towards the top so the header stays calm. html::after is unused by the
+   earlier layers, so the aurora (body::before) and grain (body::after) keep
+   working underneath. */
+html{ position:relative; }
+html::after{
+  content:"";
+  position:fixed; inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(30,227,255,.05) 1px, transparent 1px) 0 0/100% 44px,
+    linear-gradient(90deg, rgba(30,227,255,.05) 1px, transparent 1px) 0 0/44px 100%;
+  -webkit-mask-image:radial-gradient(130% 100% at 50% 108%, #000 30%, transparent 78%);
+  mask-image:radial-gradient(130% 100% at 50% 108%, #000 30%, transparent 78%);
+  opacity:.55;
+}
+
+/* ============================================================================
+   TYPOGRAPHY — clean HUD hierarchy
+   ========================================================================== */
+body{ text-rendering:optimizeLegibility; }
+
+h1{
+  text-transform:uppercase;
+  letter-spacing:2.2px;
+  font-weight:800;
+  background:linear-gradient(94deg, #f2fbff 0%, #9ceaff 42%, #cdbcff 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+h1 .h1-sub{
+  text-transform:none;
+  letter-spacing:.4px;
+  border-color:var(--hud-line);
+  background:rgba(30,227,255,.045);
+}
+h1::before{
+  width:7px; height:7px;
+  box-shadow:0 0 12px var(--green), 0 0 3px var(--green);
+}
+
+.canvas-label{
+  color:var(--subtle);
+  letter-spacing:1.8px;
+  font-size:9.5px;
+}
+.canvas-label::before{
+  content:"◢ ";
+  color:var(--hud-cyan);
+  opacity:.7;
+  font-size:8px;
+}
+
+.ctrl-sticky-title,
+.grp-title,
+.acc-sub,
+.dev-flyout-title{
+  letter-spacing:2.6px;
+}
+
+.val, .sval, .diag-val, .stats, kbd{
+  font-variant-numeric:tabular-nums;
+}
+
+/* ============================================================================
+   HEADER — status cluster
+   ========================================================================== */
+header{
+  border-bottom:1px solid var(--hud-line);
+  position:relative;
+}
+header::after{
+  content:"";
+  position:absolute; left:0; bottom:-1px; height:1px; width:34%;
+  background:linear-gradient(90deg, var(--hud-cyan), rgba(157,120,255,.6), transparent);
+  box-shadow:0 0 12px rgba(30,227,255,.55);
+  pointer-events:none;
+}
+.badge, #qualBadge, #fpsBadge{
+  border-radius:4px;
+  letter-spacing:1.2px;
+  clip-path:polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+.badge{
+  border-color:var(--hud-line-strong);
+  background:linear-gradient(180deg, rgba(30,227,255,.13), rgba(30,227,255,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 0 16px -8px rgba(30,227,255,.6);
+}
+
+/* ---- Telemetry strip -------------------------------------------------------- */
+.diag-row > span{
+  border-radius:4px;
+  border-color:rgba(30,227,255,.12);
+  background:linear-gradient(180deg, rgba(12,18,34,.72), rgba(8,12,24,.6));
+  letter-spacing:.4px;
+}
+.diag-row > span::before{
+  background:var(--hud-cyan);
+  opacity:.85;
+  box-shadow:0 0 6px rgba(30,227,255,.8);
+}
+.diag-row > span:hover{
+  border-color:var(--hud-line-strong);
+  box-shadow:0 0 18px -8px rgba(30,227,255,.7);
+}
+
+/* ============================================================================
+   MAJOR SURFACES — gradient-framed floating glass panels
+   ========================================================================== */
+.main-wrap,
+.plot-cell,
+.controls,
+.presets,
+.scrub-row{
+  border:1px solid transparent;
+  background:
+    linear-gradient(168deg, rgba(13,19,38,.78), var(--hud-panel)) padding-box,
+    var(--hud-frame-soft) border-box;
+  box-shadow:
+    0 18px 48px -22px rgba(0,0,0,.75),
+    0 2px 10px -6px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.09);
+}
+.main-wrap{
+  background:
+    linear-gradient(168deg, rgba(8,12,24,.85), rgba(4,6,14,.9)) padding-box,
+    var(--hud-frame) border-box;
+  transition:box-shadow .35s var(--ease);
+}
+.main-wrap:hover{
+  box-shadow:
+    0 22px 56px -22px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.1),
+    var(--hud-glow-strong);
+}
+.plot-cell{
+  transition:box-shadow .3s var(--ease), transform .3s var(--ease);
+}
+.plot-cell:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 22px 50px -20px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.1),
+    var(--hud-glow);
+}
+.controls{
+  background:
+    linear-gradient(168deg, rgba(14,20,40,.66), rgba(9,13,27,.74)) padding-box,
+    var(--hud-frame) border-box;
+  box-shadow:
+    0 22px 60px -24px rgba(0,0,0,.8),
+    inset 0 1px 0 rgba(255,255,255,.1),
+    0 0 60px -30px rgba(30,227,255,.45);
+}
+/* The specular sheens from the liquid-glass layer ride on ::after; retint. */
+.controls::after,
+.main-wrap::after{
+  background:linear-gradient(90deg, transparent, rgba(30,227,255,.75), transparent);
+}
+
+.rail-submenu,
+.dev-flyout{
+  border:1px solid transparent;
+  background:
+    linear-gradient(172deg, rgba(10,15,30,.97), var(--hud-panel-deep)) padding-box,
+    var(--hud-frame) border-box;
+  box-shadow:var(--shadow-lg), 0 0 44px -18px rgba(30,227,255,.5);
+}
+
+/* ---- HUD corner brackets (spans injected by hudEffects.ts) ----------------- */
+.hud-corner{
+  position:absolute;
+  width:15px; height:15px;
+  pointer-events:none;
+  z-index:4;
+  border:1.5px solid var(--hud-cyan);
+  opacity:.55;
+  filter:drop-shadow(0 0 4px rgba(30,227,255,.65));
+  transition:opacity .3s var(--ease), width .3s var(--ease), height .3s var(--ease);
+}
+.hud-corner-tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; border-top-left-radius:10px; }
+.hud-corner-tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; border-top-right-radius:10px; }
+.hud-corner-bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; border-bottom-left-radius:10px; }
+.hud-corner-br{ bottom:-1px; right:-1px; border-left:0; border-top:0; border-bottom-right-radius:10px; }
+.main-wrap:hover > .hud-corner,
+.plot-cell:hover > .hud-corner{
+  opacity:1;
+  width:22px; height:22px;
+}
+
+/* ---- Canvas scan sweep (element injected by hudEffects.ts, hud-fx only) ---- */
+.hud-scan{
+  position:absolute;
+  left:8px; right:8px; top:8px;
+  height:2px;
+  pointer-events:none;
+  z-index:3;
+  opacity:0;
+  background:linear-gradient(90deg, transparent, rgba(30,227,255,.5) 30%, rgba(30,227,255,.75) 50%, rgba(30,227,255,.5) 70%, transparent);
+  border-radius:2px;
+}
+body.hud-fx .main-wrap > .hud-scan{
+  animation:hud-scan-sweep 7s linear infinite;
+}
+@keyframes hud-scan-sweep{
+  0%{ opacity:0; transform:translateY(0); }
+  6%{ opacity:.32; }
+  46%{ opacity:.32; }
+  52%{ opacity:0; transform:translateY(min(46vh, 480px)); }
+  100%{ opacity:0; transform:translateY(min(46vh, 480px)); }
+}
+
+/* ============================================================================
+   RAIL — command spine
+   ========================================================================== */
+.rail{
+  border-right:1px solid rgba(30,227,255,.1);
+  box-shadow:4px 0 34px rgba(0,0,0,.42), inset -1px 0 0 rgba(30,227,255,.06);
+}
+.rail-logo{
+  box-shadow:var(--shadow-glow-cyan), 0 0 30px -6px rgba(157,120,255,.6);
+}
+.rail-menu-icon{
+  border-color:var(--hud-line);
+  background:linear-gradient(180deg, rgba(30,227,255,.14), rgba(30,227,255,.05));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  transition:box-shadow .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease-spring);
+}
+.rail-menu-button:hover .rail-menu-icon,
+.rail-menu-button[aria-expanded="true"] .rail-menu-icon{
+  border-color:var(--hud-line-strong);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 0 16px -5px rgba(30,227,255,.8);
+  transform:scale(1.06);
+}
+.rail-menu-label{
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  font-size:9px;
+}
+.rail-submenu .tab{
+  transition:color .16s var(--ease), background .16s var(--ease),
+             border-color .16s var(--ease), box-shadow .16s var(--ease),
+             transform .16s var(--ease);
+}
+.rail-submenu .tab:hover{ transform:translateX(3px); }
+.rail-submenu-hint{
+  border-color:var(--hud-line);
+  background:linear-gradient(180deg, rgba(30,227,255,.06), rgba(30,227,255,.02));
+}
+
+/* Mode selector chip at the rail foot */
+.audience-select select{
+  border-color:var(--hud-line);
+  background-color:rgba(10,15,30,.9);
+  border-radius:6px;
+  letter-spacing:.4px;
+}
+.audience-select select:hover{
+  border-color:var(--hud-line-strong);
+  box-shadow:0 0 14px -6px rgba(30,227,255,.65);
+}
+.audience-select label{ color:var(--hud-cyan-soft); }
+
+/* ============================================================================
+   PRESET BAR — quick-slot chips
+   ========================================================================== */
+.presets > span{
+  color:var(--hud-cyan-soft) !important;
+  letter-spacing:2.2px;
+}
+.pbtn{
+  border-radius:5px;
+  clip-path:polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  letter-spacing:.35px;
+  transition:border-color .16s var(--ease), color .16s var(--ease),
+             background .16s var(--ease), transform .14s var(--ease-spring),
+             box-shadow .2s var(--ease);
+}
+.pbtn:hover{
+  border-color:var(--hud-line-strong);
+  background:linear-gradient(180deg, rgba(30,227,255,.14), rgba(30,227,255,.05));
+  transform:translateY(-1px) scale(1.04);
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.6), 0 0 18px -8px rgba(30,227,255,.65);
+}
+.pbtn:active{ transform:translateY(0) scale(.97); }
+
+/* ============================================================================
+   BUTTONS — tactical keys: sheen, lift, scale, ripple recolor
+   ========================================================================== */
+button{
+  letter-spacing:.4px;
+}
+button:hover{
+  transform:translateY(-1px) scale(1.015);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 8px 20px -8px rgba(0,0,0,.65),
+             0 0 20px -9px rgba(30,227,255,.55);
+}
+button:active{ transform:translateY(0) scale(.98); }
+button.primary{
+  border:1px solid transparent;
+  background:
+    linear-gradient(120deg, rgba(30,227,255,.2), rgba(13,168,204,.1) 45%, rgba(157,120,255,.16)) padding-box,
+    linear-gradient(120deg, rgba(30,227,255,.85), rgba(157,120,255,.7)) border-box;
+  background-size:220% 100%, 100% 100%;
+  color:var(--fg-bright);
+  text-shadow:0 0 12px rgba(30,227,255,.45);
+}
+button.primary:hover{
+  background:
+    linear-gradient(120deg, rgba(30,227,255,.34), rgba(13,168,204,.18) 45%, rgba(157,120,255,.28)) padding-box,
+    linear-gradient(120deg, rgba(30,227,255,1), rgba(157,120,255,.9)) border-box;
+  background-size:220% 100%, 100% 100%;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), var(--hud-glow-strong);
+}
+.ui-ripple{
+  background:radial-gradient(circle, rgba(255,255,255,.34) 0%, rgba(30,227,255,.26) 35%, transparent 70%);
+}
+
+/* ============================================================================
+   CONTROL PANEL — instrument stack
+   ========================================================================== */
+.ctrl-sticky{
+  border-bottom:1px solid var(--hud-line);
+}
+.ctrl-sticky-title{ color:var(--hud-cyan); }
+.ctrl-sticky-title::after{
+  background:linear-gradient(90deg, rgba(30,227,255,.5), transparent);
+}
+.acc{ border-bottom:1px solid rgba(30,227,255,.07); }
+.acc[open] > summary{
+  background:linear-gradient(90deg, rgba(30,227,255,.07), transparent 70%);
+  box-shadow:inset 2px 0 0 rgba(30,227,255,.55);
+}
+.acc-icon{
+  border-color:var(--hud-line);
+  color:var(--hud-cyan);
+}
+.acc[open] > summary .acc-icon{
+  background:linear-gradient(180deg, rgba(30,227,255,.16), rgba(30,227,255,.05));
+  border-color:var(--hud-line-strong);
+  box-shadow:0 0 14px -4px rgba(30,227,255,.7);
+}
+.acc-icon .hud-icon{
+  width:13px; height:13px; display:block;
+  stroke:currentColor; fill:none;
+  stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+}
+
+.stats .srow{ border-bottom:1px solid rgba(30,227,255,.06); }
+.skey{ letter-spacing:.5px; }
+
+.chip{
+  border-radius:4px;
+  letter-spacing:.5px;
+}
+
+/* ============================================================================
+   TOAST & ALERTS — HUD comms
+   ========================================================================== */
+#toast{
+  border:1px solid transparent;
+  background:
+    linear-gradient(180deg, rgba(10,16,32,.97), rgba(7,11,22,.97)) padding-box,
+    linear-gradient(120deg, rgba(30,227,255,.8), rgba(157,120,255,.6)) border-box;
+  border-radius:7px;
+  letter-spacing:.4px;
+  box-shadow:var(--shadow-lg), var(--hud-glow);
+}
+#nanOverlay{
+  border-radius:7px;
+  box-shadow:var(--shadow-lg), 0 0 34px -10px rgba(245,100,100,.75);
+  letter-spacing:.3px;
+}
+
+/* Progress bars glow like charge meters */
+#sweepProgress, #bifProgress{
+  box-shadow:0 0 14px rgba(30,227,255,.5) !important;
+}
+
+/* ============================================================================
+   BOOT / LOADING SEQUENCE (#hudBoot markup lives in app.html)
+   ----------------------------------------------------------------------------
+   Always pointer-events:none so it can never block input; hudEffects.ts fades
+   it out at boot stage 5, with a pure-CSS failsafe fade at 9s in case scripts
+   fail to run at all.
+   ========================================================================== */
+#hudBoot{
+  position:fixed; inset:0;
+  z-index:20000;
+  display:grid; place-items:center;
+  pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 8%, rgba(13,22,44,.94), rgba(3,5,12,.985)),
+    #04050d;
+  transition:opacity .5s var(--ease), visibility .5s var(--ease);
+}
+#hudBoot.hud-boot-done{
+  opacity:0; visibility:hidden;
+}
+@media (prefers-reduced-motion: no-preference){
+  #hudBoot{ animation:hud-boot-failsafe .6s ease 9s forwards; }
+}
+@media (prefers-reduced-motion: reduce){
+  #hudBoot{ animation:hud-boot-failsafe .1s steps(1,end) 4s forwards; }
+}
+@keyframes hud-boot-failsafe{
+  to{ opacity:0; visibility:hidden; }
+}
+.hud-boot-stack{
+  display:grid; justify-items:center; gap:18px;
+  padding:20px;
+}
+.hud-boot-rings{
+  position:relative;
+  width:104px; height:104px;
+}
+.hud-boot-ring{
+  position:absolute; inset:0;
+  border-radius:50%;
+  border:1.5px solid transparent;
+  border-top-color:var(--hud-cyan);
+  border-right-color:rgba(30,227,255,.25);
+  filter:drop-shadow(0 0 6px rgba(30,227,255,.6));
+}
+.hud-boot-ring2{
+  inset:14px;
+  border-top-color:transparent;
+  border-bottom-color:var(--purple);
+  border-left-color:rgba(157,120,255,.3);
+  filter:drop-shadow(0 0 6px rgba(157,120,255,.55));
+}
+.hud-boot-ring3{
+  inset:30px;
+  border-top-color:var(--orange);
+  border-right-color:transparent;
+  border-left-color:rgba(255,122,44,.25);
+  filter:drop-shadow(0 0 5px rgba(255,122,44,.5));
+}
+.hud-boot-core{
+  position:absolute; inset:44px;
+  border-radius:50%;
+  background:radial-gradient(circle at 38% 32%, #eafcff, var(--hud-cyan) 60%, rgba(30,227,255,.4));
+  box-shadow:0 0 22px rgba(30,227,255,.85);
+}
+@media (prefers-reduced-motion: no-preference){
+  .hud-boot-ring{ animation:hud-spin 1.4s linear infinite; }
+  .hud-boot-ring2{ animation:hud-spin 2s linear infinite reverse; }
+  .hud-boot-ring3{ animation:hud-spin 1.1s linear infinite; }
+  .hud-boot-core{ animation:hud-core-pulse 1.6s ease-in-out infinite; }
+  .hud-boot-bar::after{ animation:hud-bar-sweep 1.3s var(--pm-ease-out,ease) infinite; }
+  .hud-boot-status::after{ animation:hud-ellipsis 1.4s steps(4,end) infinite; content:""; }
+}
+@keyframes hud-spin{ to{ transform:rotate(360deg); } }
+@keyframes hud-core-pulse{
+  0%,100%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(.82); opacity:.7; }
+}
+.hud-boot-title{
+  font:800 15px/1.2 var(--font-display);
+  letter-spacing:5px;
+  text-transform:uppercase;
+  color:var(--fg-bright);
+  text-shadow:0 0 24px rgba(30,227,255,.55);
+}
+.hud-boot-title b{ color:var(--hud-cyan); font-weight:800; }
+.hud-boot-bar{
+  position:relative;
+  width:190px; height:3px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+.hud-boot-bar::after{
+  content:"";
+  position:absolute; top:0; bottom:0; left:-40%;
+  width:40%;
+  border-radius:999px;
+  background:linear-gradient(90deg, transparent, var(--hud-cyan), transparent);
+  box-shadow:0 0 12px rgba(30,227,255,.8);
+}
+@keyframes hud-bar-sweep{ to{ left:100%; } }
+.hud-boot-status{
+  font:600 9.5px/1 var(--font-mono);
+  letter-spacing:2.6px;
+  text-transform:uppercase;
+  color:var(--subtle);
+}
+
+/* ============================================================================
+   AMBIENT PARTICLE FIELD (canvas created by hudEffects.ts, hud-fx only)
+   ========================================================================== */
+#hudParticles{
+  position:fixed; inset:0;
+  width:100%; height:100%;
+  z-index:-1;
+  pointer-events:none;
+  border:0; border-radius:0;
+  background:transparent;
+}
+
+/* ============================================================================
+   RESPONSIVE + MOTION GUARDS
+   ========================================================================== */
+@media(max-width:780px){
+  .hud-corner, .hud-scan{ display:none; }
+  html::after{ opacity:.35; }
+  h1{ letter-spacing:1.2px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .hud-corner{ transition:none; }
+  .hud-scan{ display:none; }
+  button:hover{ transform:none; }
+  .pbtn:hover{ transform:none; }
+  .plot-cell:hover{ transform:none; }
+  .rail-submenu .tab:hover{ transform:none; }
+  .rail-menu-button:hover .rail-menu-icon,
+  .rail-menu-button[aria-expanded="true"] .rail-menu-icon{ transform:none; }
+  .hud-boot-ring, .hud-boot-ring2, .hud-boot-ring3,
+  .hud-boot-core, .hud-boot-bar::after{ animation:none; }
+  #hudBoot{ transition:none; }
+}

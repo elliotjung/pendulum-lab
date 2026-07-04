@@ -11,6 +11,23 @@
 </head>
 <body>
 
+<!-- Boot / loading sequence. Decorative only (aria-hidden, pointer-events:none
+     in CSS); src/app/hudEffects.ts fades it out at boot stage 5 and a pure-CSS
+     failsafe fades it even if scripts never run. -->
+<div id="hudBoot" aria-hidden="true">
+  <div class="hud-boot-stack">
+    <div class="hud-boot-rings">
+      <span class="hud-boot-ring"></span>
+      <span class="hud-boot-ring hud-boot-ring2"></span>
+      <span class="hud-boot-ring hud-boot-ring3"></span>
+      <span class="hud-boot-core"></span>
+    </div>
+    <div class="hud-boot-title">Pendulum <b>Lab</b></div>
+    <div class="hud-boot-bar"></div>
+    <div class="hud-boot-status">Initializing systems</div>
+  </div>
+</div>
+
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="nanOverlay" role="alert">⚠ Numerical fault — paused / report available</div>
 
@@ -1000,6 +1017,8 @@
 <link id="liquid-glass-style" rel="stylesheet" href="./css/03-liquid-glass.css">
 <!-- Premium finish: gradients, motion, progress-filled sliders, animated panel collapse. -->
 <link id="premium-style" rel="stylesheet" href="./css/04-premium.css">
+<!-- Futuristic HUD reskin: gradient frames, corner brackets, boot sequence, ambience. -->
+<link id="futuristic-hud-style" rel="stylesheet" href="./css/06-futuristic-hud.css">
 
 <script type="module" src="./src/main.ts"></script>
 
