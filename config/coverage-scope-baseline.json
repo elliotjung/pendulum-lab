@@ -27,6 +27,7 @@
     "src/app/canvasQuality.ts",
     "src/app/domTakeover.ts",
     "src/app/expansionWorkerClient.ts",
+    "src/app/hudEffects.ts",
     "src/app/index.ts",
     "src/app/parity/lab3d-diagnostics.ts",
     "src/app/parity/lab3d-double-string-ui.ts",
