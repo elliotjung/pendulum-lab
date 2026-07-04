@@ -217,6 +217,9 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
 .audience-choice strong{display:block;color:var(--fg-bright);font-size:13px;margin-bottom:4px;letter-spacing:.8px;text-transform:uppercase}
 .audience-choice span{display:block;color:var(--text);font-size:11px;line-height:1.5}
 .audience-choice small{display:block;margin-top:8px;color:var(--muted);font:10px/1.4 var(--font-mono)}
+.audience-choice{position:relative}
+.audience-choice-current{border-color:rgba(30,227,255,.5);box-shadow:0 0 26px -12px rgba(30,227,255,.7)}
+.audience-choice-current::after{content:"ACTIVE";position:absolute;top:9px;right:9px;font:700 7.5px/1 var(--font-mono,monospace);letter-spacing:1.6px;color:var(--cyan);border:1px solid rgba(30,227,255,.42);border-radius:4px;padding:3px 5px;background:rgba(30,227,255,.09);pointer-events:none}
 @media(prefers-reduced-motion:reduce){.audience-choice,.audience-choice-icon{transition:none}.audience-choice:hover,.audience-choice:focus-visible{transform:none}.audience-choice:hover .audience-choice-icon,.audience-choice:focus-visible .audience-choice-icon{transform:none}}
 @media(max-width:1100px){
   body.audience-beginner #tab-lab .layout{grid-template-columns:1fr}
@@ -378,14 +381,30 @@ function hideAudienceChooser(): void {
   document.getElementById(CHOOSER_ID)?.setAttribute('hidden', '');
 }
 
+/** True under browser automation (Playwright/Selenium set navigator.webdriver). */
+function automatedSession(): boolean {
+  return typeof navigator !== 'undefined' && navigator.webdriver === true;
+}
+
+/** Badge the choice matching the active mode so returning users see it. */
+function markCurrentChoice(): void {
+  const current = currentAudienceMode();
+  document.querySelectorAll<HTMLElement>('[data-audience-choice]').forEach((button) => {
+    button.classList.toggle('audience-choice-current', button.dataset.audienceChoice === current);
+  });
+}
+
 function showAudienceChooser(): void {
-  if (document.getElementById(CHOOSER_ID)) {
-    document.getElementById(CHOOSER_ID)?.removeAttribute('hidden');
+  const existing = document.getElementById(CHOOSER_ID);
+  if (existing) {
+    existing.removeAttribute('hidden');
+    markCurrentChoice();
+    existing.querySelector<HTMLButtonElement>('.audience-choice')?.focus();
     return;
   }
-  // Full-screen first-run selection screen: a dimmed backdrop with a centered
-  // card so choosing a workspace is the first thing a new visitor does. The
-  // overlay element carries the chooser id; the visible panel is the card.
+  // Full-screen selection screen shown on every launch: a dimmed backdrop with
+  // a centered card so choosing a workspace is the first thing a visitor does.
+  // The overlay element carries the chooser id; the visible panel is the card.
   const overlay = document.createElement('div');
   overlay.id = CHOOSER_ID;
   overlay.className = 'audience-chooser';
@@ -458,6 +477,7 @@ function showAudienceChooser(): void {
   card.append(head, grid);
   overlay.append(card);
   document.body.append(overlay);
+  markCurrentChoice();
   // Move keyboard focus into the screen so it is reachable without a pointer.
   firstChoice?.focus();
 }
@@ -531,5 +551,9 @@ export function installAudienceMode(): void {
   rail.append(wrap);
   const stored = storedAudienceMode();
   applyAudienceMode(stored ?? 'research', Boolean(stored));
-  if (!stored) showAudienceChooser();
+  // The workspace chooser opens on EVERY real launch (closing it keeps the
+  // active mode). Automated sessions keep the first-run-only behavior so the
+  // E2E suite's stored-mode fixture starts on the workspace itself; the
+  // every-launch path is covered by a webdriver-masked E2E test.
+  if (!stored || !automatedSession()) showAudienceChooser();
 }

@@ -32,6 +32,35 @@ test('first visit offers a mode chooser with visual choices', async ({ page }) =
   await expect(page.locator('#audienceMode')).toHaveValue('student');
 });
 
+test('real (non-automated) sessions re-open the chooser on every launch', async ({ page }) => {
+  // The chooser suppresses its every-launch auto-show under automation so the
+  // rest of the suite starts on the workspace; masking navigator.webdriver
+  // exercises the path a real returning visitor takes.
+  await page.addInitScript(() => {
+    Object.defineProperty(Object.getPrototypeOf(navigator), 'webdriver', { get: () => false });
+    window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'student');
+  });
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+
+  await expect(page.locator('#audienceModeChooser')).toBeVisible();
+  await expect(page.locator('[data-audience-choice]')).toHaveCount(3);
+  await expect(page.locator('.audience-choice-current')).toHaveAttribute('data-audience-choice', 'student');
+
+  // Dismissing keeps the stored mode active.
+  await page.locator('.audience-chooser-close').click();
+  await expect(page.locator('#audienceModeChooser')).toBeHidden();
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
+
+  // The chooser comes back on the next launch and can switch modes.
+  await page.reload();
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await expect(page.locator('#audienceModeChooser')).toBeVisible();
+  await page.locator('[data-audience-choice="research"]').click();
+  await expect(page.locator('#audienceModeChooser')).toBeHidden();
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'research');
+});
+
 test('rail uses task-centered labels and icons', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
