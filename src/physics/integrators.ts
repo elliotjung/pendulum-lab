@@ -515,6 +515,10 @@ export function step(method: IntegratorId, state: StateVector, dt: number, rhs: 
       return trBdf2Step(state, dt, rhs, out, options);
     case 'rk4':
     default:
+      // Fail-closed contract for ids outside the registry (imported legacy
+      // sessions, forced casts): degrade to the RK4 baseline - never to a
+      // lower-order or diagnostic-only method. Pinned by integrators.test.ts
+      // and integrator-registry-contract.test.ts.
       return rk4Step(state, dt, rhs, out);
   }
 }

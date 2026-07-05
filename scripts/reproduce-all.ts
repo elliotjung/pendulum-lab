@@ -29,6 +29,7 @@ import { energyDriftProfile } from '../src/research/structurePreservation';
 import { runLangevinEnsemble } from '../src/physics/stochastic';
 import { rhsChain, energyChain, createChainWorkspace } from '../src/physics/nPendulum';
 import { hashText } from '../src/research/researchExportUtils';
+import { collectReportMetadata, freshnessPolicy } from './report-metadata';
 import type { Derivative, StateVector } from '../src/physics/types';
 
 interface Reproduction {
@@ -211,7 +212,8 @@ async function main(): Promise<void> {
     }
   }
   await mkdir('reports/reproduce', { recursive: true });
-  await writeFile('reports/reproduce/manifest.json', JSON.stringify({ generatedAt: new Date().toISOString(), results }, null, 2), 'utf8');
+  const metadata = await collectReportMetadata('npm run reproduce', freshnessPolicy(30, 'fail'));
+  await writeFile('reports/reproduce/manifest.json', JSON.stringify({ generatedAt: metadata.generatedAt, metadata, results }, null, 2), 'utf8');
   await writeFile('reports/reproduce/REPRODUCE.md', markdown(results), 'utf8');
   console.log(`\nWrote reports/reproduce/manifest.json (${results.length} results).`);
   if (failures > 0) process.exitCode = 1;

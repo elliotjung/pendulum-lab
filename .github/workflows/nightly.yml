@@ -73,14 +73,14 @@ jobs:
           - name: job-protocol
             mutate: src/workers/jobProtocol.ts
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run mutation -- --mutate "${{ matrix.shard.mutate }}" stryker.shard.config.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mutation-report-${{ matrix.shard.name }}
@@ -93,8 +93,8 @@ jobs:
     needs: mutation
     if: always()
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           pattern: mutation-report-*
           path: reports/mutation-shards
@@ -106,7 +106,7 @@ jobs:
             echo "One or more mutation shards failed before producing a valid report."
             exit 1
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: mutation-aggregate

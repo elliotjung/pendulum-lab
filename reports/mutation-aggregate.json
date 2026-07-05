@@ -1,7 +1,19 @@
 {
   "schemaVersion": "pendulum-mutation-aggregate/v1",
-  "generatedAt": "2026-07-03T16:45:41.502Z",
+  "generatedAt": "2026-07-04T10:49:26.607Z",
   "status": "passed",
+  "ci": {
+    "repository": "Elliot-Jung-17/pendulum-lab",
+    "runId": "28694326312",
+    "runAttempt": null,
+    "runUrl": "https://github.com/Elliot-Jung-17/pendulum-lab/actions/runs/28694326312",
+    "artifactId": "8078586099",
+    "artifactName": "mutation-aggregate",
+    "artifactUrl": "https://github.com/Elliot-Jung-17/pendulum-lab/actions/runs/28694326312/artifacts/8078586099",
+    "artifactDigest": "sha256:0c545bad8ab6de03c8944887de84554e502fc735f9abb54a2a50e71ae2ab2b3b",
+    "artifactExpiresAt": "2026-10-02T04:02:58Z",
+    "artifactBoundary": "GitHub Actions artifact metadata was supplied for this aggregate."
+  },
   "thresholds": {
     "high": 85,
     "low": 70,
@@ -15,15 +27,15 @@
   "mutationScore": 65.32,
   "coveredMutationScore": 68.34,
   "statusCounts": {
-    "Killed": 4064,
+    "Killed": 4065,
     "NoCoverage": 293,
     "RuntimeError": 1,
     "Survived": 2006,
-    "Timeout": 269
+    "Timeout": 268
   },
   "files": [
     {
-      "reportPath": "reports/mutation-shards/mutation-report-arnold-tongue/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-arnold-tongue\\mutation-report.json",
       "filePath": "src/chaos/arnoldTongue.ts",
       "counts": {
         "Killed": 109,
@@ -33,7 +45,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-double-string/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-double-string\\mutation-report.json",
       "filePath": "src/physics/doubleString.ts",
       "counts": {
         "Killed": 303,
@@ -43,7 +55,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-double/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-double\\mutation-report.json",
       "filePath": "src/physics/double.ts",
       "counts": {
         "Killed": 206,
@@ -53,7 +65,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-ftle/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-ftle\\mutation-report.json",
       "filePath": "src/chaos/ftle.ts",
       "counts": {
         "Killed": 128,
@@ -63,7 +75,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-adaptive/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-adaptive\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 127,
@@ -72,7 +84,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-dispatch/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-dispatch\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 59,
@@ -80,7 +92,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-explicit/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-explicit\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 75,
@@ -90,7 +102,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-helpers/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-helpers\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 27,
@@ -99,7 +111,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-registry-a/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-registry-a\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 2,
@@ -107,14 +119,14 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-registry-b/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-registry-b\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Survived": 56
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-integrators-symplectic/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-integrators-symplectic\\mutation-report.json",
       "filePath": "src/physics/integrators.ts",
       "counts": {
         "Killed": 51,
@@ -123,7 +135,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-job-protocol/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-job-protocol\\mutation-report.json",
       "filePath": "src/workers/jobProtocol.ts",
       "counts": {
         "Killed": 173,
@@ -134,7 +146,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-cholesky-api/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-linear-solve-cholesky-api\\mutation-report.json",
       "filePath": "src/physics/linearSolve.ts",
       "counts": {
         "Killed": 32,
@@ -144,7 +156,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-cholesky-core/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-linear-solve-cholesky-core\\mutation-report.json",
       "filePath": "src/physics/linearSolve.ts",
       "counts": {
         "Killed": 81,
@@ -153,7 +165,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-linear-solve-gaussian/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-linear-solve-gaussian\\mutation-report.json",
       "filePath": "src/physics/linearSolve.ts",
       "counts": {
         "Killed": 124,
@@ -163,17 +175,17 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-lyapunov/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-lyapunov\\mutation-report.json",
       "filePath": "src/chaos/lyapunov.ts",
       "counts": {
-        "Killed": 181,
+        "Killed": 182,
         "NoCoverage": 32,
         "Survived": 119,
-        "Timeout": 20
+        "Timeout": 19
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-melnikov/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-melnikov\\mutation-report.json",
       "filePath": "src/chaos/melnikov.ts",
       "counts": {
         "Killed": 55,
@@ -182,7 +194,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-n-pendulum/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-n-pendulum\\mutation-report.json",
       "filePath": "src/physics/nPendulum.ts",
       "counts": {
         "Killed": 125,
@@ -192,7 +204,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-parameter-estimation/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-parameter-estimation\\mutation-report.json",
       "filePath": "src/research/parameterEstimation.ts",
       "counts": {
         "Killed": 225,
@@ -202,7 +214,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-research-db/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-research-db\\mutation-report.json",
       "filePath": "src/research/researchDb.ts",
       "counts": {
         "Killed": 173,
@@ -211,7 +223,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-rqa/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-rqa\\mutation-report.json",
       "filePath": "src/chaos/rqa.ts",
       "counts": {
         "Killed": 138,
@@ -221,7 +233,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-spherical-chain/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-spherical-chain\\mutation-report.json",
       "filePath": "src/physics/sphericalChain.ts",
       "counts": {
         "Killed": 489,
@@ -231,7 +243,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-spherical-embedded-chain/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-spherical-embedded-chain\\mutation-report.json",
       "filePath": "src/physics/sphericalEmbeddedChain.ts",
       "counts": {
         "Killed": 505,
@@ -241,7 +253,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-stochastic/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-stochastic\\mutation-report.json",
       "filePath": "src/physics/stochastic.ts",
       "counts": {
         "Killed": 315,
@@ -251,7 +263,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-structure-preservation/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-structure-preservation\\mutation-report.json",
       "filePath": "src/research/structurePreservation.ts",
       "counts": {
         "Killed": 54,
@@ -260,7 +272,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-surrogate-basis/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-surrogate-basis\\mutation-report.json",
       "filePath": "src/research/surrogate.ts",
       "counts": {
         "Killed": 14,
@@ -270,7 +282,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-surrogate-fit/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-surrogate-fit\\mutation-report.json",
       "filePath": "src/research/surrogate.ts",
       "counts": {
         "Killed": 50,
@@ -280,7 +292,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-torus-analysis/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-torus-analysis\\mutation-report.json",
       "filePath": "src/chaos/torusAnalysis.ts",
       "counts": {
         "Killed": 104,
@@ -290,7 +302,7 @@
       }
     },
     {
-      "reportPath": "reports/mutation-shards/mutation-report-zip-bundle/mutation-report.json",
+      "reportPath": "reports\\mutation-shards\\mutation-report-zip-bundle\\mutation-report.json",
       "filePath": "src/research/zipBundle.ts",
       "counts": {
         "Killed": 139,

@@ -139,7 +139,7 @@ export function doubleStringTautFraction(
   const slackEvents = sim.events.filter((e) => e.type === 'slack').length;
   const captureEvents = sim.events.filter((e) => e.type === 'capture').length;
   const energyLost = sim.events.reduce((sum, e) => sum + e.energyLoss, 0);
-  const tautFraction = tautTime / (steps * dt);
+  const tautFraction = Math.min(1, Math.max(0, tautTime / (steps * dt)));
   return {
     tautFraction,
     slackEvents,

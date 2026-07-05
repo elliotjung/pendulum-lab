@@ -1,10 +1,45 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-06-18T17:57:50.258Z",
+  "generatedAt": "2026-07-05T07:23:20.096Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-05T07:23:20.096Z",
+    "gitSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "buildSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "sourceSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "attested": true,
+    "dirty": true,
+    "dirtyFiles": [
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/release-one-page.pdf",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md"
+    ],
+    "sourceDirty": false,
+    "sourceDirtyFiles": [],
+    "command": "npm run release:package",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 7,
+      "staleAfter": "2026-07-12T07:23:20.096Z",
+      "action": "warn"
+    }
+  },
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
-    "Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.",
-    "Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync."
+    "npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted. Configure npm trusted publishing for publish-npm.yml or authenticate an owner credential, then dispatch publish-npm.yml with dry-run=false.",
+    "ZENODO_TOKEN is not set; production DOI minting was not attempted and no DOI was fabricated. Publish with npm run zenodo:publish only after production credentials exist, then run npm run doi:sync."
   ],
   "artifacts": [
     {
@@ -20,7 +55,7 @@
       "path": ".github/workflows/pages.yml",
       "required": true,
       "available": true,
-      "hash": "00d30bffaf9b9e",
+      "hash": "09dfb85b33c892",
       "note": "GitHub Pages deploy workflow is present."
     },
     {
@@ -35,7 +70,7 @@
       "path": ".github/workflows/publish-npm.yml",
       "required": true,
       "available": true,
-      "hash": "1e71d58db24850",
+      "hash": "03d924d12aa446",
       "note": "Manual npm workflow uses OIDC trusted publishing and automatic provenance."
     },
     {
@@ -43,7 +78,7 @@
       "path": ".github/workflows/release.yml",
       "required": true,
       "available": true,
-      "hash": "17855e5822f731",
+      "hash": "0decd5a23fcf56",
       "note": "Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation."
     },
     {
@@ -58,7 +93,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "0b4108f8ba8c23",
+      "hash": "0cc24ef64065c0",
       "note": "Reviewer kit manifest exists."
     },
     {
@@ -66,7 +101,7 @@
       "path": "reports/webgpu-hardware-validation.md",
       "required": false,
       "available": true,
-      "hash": "06df9b5b93825f",
+      "hash": "0302745073178d",
       "note": "Real WebGPU adapter validation report exists when run on a hardware target."
     },
     {
@@ -74,7 +109,7 @@
       "path": "reports/gpu-benchmark-ladder.md",
       "required": true,
       "available": true,
-      "hash": "008886fa948d93",
+      "hash": "184c6ebdbad139",
       "note": "Hardware GPU benchmark ladder records adapter metadata, f32/f64 drift, and CPU-oracle promotion metrics."
     },
     {
@@ -82,7 +117,7 @@
       "path": "reports/gpu-benchmark-ladder.json",
       "required": true,
       "available": true,
-      "hash": "1df632f7f683b7",
+      "hash": "1d70f16587d823",
       "note": "Machine-readable GPU benchmark ladder for release artifacts."
     },
     {
@@ -90,7 +125,7 @@
       "path": "reports/gpu-adapter-matrix.json",
       "required": true,
       "available": true,
-      "hash": "0022f57d23c7e7",
+      "hash": "1253bd2aaea177",
       "note": "Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit."
     },
     {
@@ -98,7 +133,7 @@
       "path": "reports/publication-status.json",
       "required": true,
       "available": true,
-      "hash": "0d540c722f54b0",
+      "hash": "1884acc4f4db93",
       "note": "Public registry, DOI, release, and Pages resolution audit."
     },
     {
@@ -106,7 +141,7 @@
       "path": "reports/zenodo-deposition.json",
       "required": false,
       "available": true,
-      "hash": "015120fde07fd7",
+      "hash": "09a81d04d993ad",
       "note": "Authenticated deposition result or explicit credential boundary; no DOI is inferred."
     },
     {
@@ -124,6 +159,14 @@
       "available": true,
       "hash": "17034960483fba",
       "note": "Exact npm tarball integrity, size, and included-file inventory from a successful dry run."
+    },
+    {
+      "id": "mutation-aggregate",
+      "path": "reports/mutation-aggregate.json",
+      "required": true,
+      "available": true,
+      "hash": "0c26668d51c2bb",
+      "note": "Nightly sharded mutation aggregate score from Stryker reports."
     },
     {
       "id": "one-page-pdf",

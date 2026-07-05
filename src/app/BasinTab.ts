@@ -5,6 +5,7 @@ import { renderLabelGrid } from './labPlots';
 import { downloadDataUrl } from './labExport';
 import { num, readSystem } from './systemControls';
 import { flipBasinField } from '../runtime/gpuFields';
+import { gpuTierBadge } from '../runtime/promotionContract';
 import { basinEntropy, boundaryMask, boxCountingDimension, wadaCandidate } from '../chaos/basin';
 
 /**
@@ -93,18 +94,19 @@ export class BasinTab extends TabController {
       this.dom.setText('basinFractal', entropy.fractalBoundary ? 'Sbb > ln2 ✓' : `dim≈${box.dimension.toFixed(2)}`);
       this.render();
       const wadaText = wada.wadaCandidate ? 'Wada candidate ✓' : `Wada fraction ${(wada.wadaFraction * 100).toFixed(0)}%`;
+      const tier = gpuTierBadge({ backend: field.backend, oracleComparisonPassed: field.validation?.passed ?? null });
       const backendNote = field.backend === 'webgpu'
-        ? `WebGPU f32 · ${(field.validation?.maxAbsDiff ?? 0) === 0 ? 'probes match' : `probe Δ${((field.validation?.maxAbsDiff ?? 0) * 100).toFixed(0)}%`} vs CPU · ${field.elapsedMs.toFixed(0)} ms`
-        : `CPU fallback (f64) · ${field.elapsedMs.toFixed(0)} ms`;
+        ? `${tier.label} · f32 · ${(field.validation?.maxAbsDiff ?? 0) === 0 ? 'probes match' : `probe Δ${((field.validation?.maxAbsDiff ?? 0) * 100).toFixed(0)}%`} vs CPU · ${field.elapsedMs.toFixed(0)} ms`
+        : `${tier.label} (f64) · ${field.elapsedMs.toFixed(0)} ms`;
       this.dom.setText('basinStatus', `done · Sb=${entropy.basinEntropy.toFixed(3)}±${entropy.basinEntropyStdError.toFixed(3)} · dim=${box.dimension.toFixed(3)}±${box.stdError.toFixed(3)} (R²=${box.r2.toFixed(3)}) · ${wadaText} · ${backendNote}`);
       this.badge(
         'basinStatus',
-        field.backend === 'webgpu' ? (field.validation?.passed ? 'finite-time-estimate' : 'caveat') : 'finite-time-estimate',
+        tier.tier === 'promoted' || tier.tier === 'cpu-fallback' ? 'finite-time-estimate' : 'caveat',
         field.caveat,
         {
           title: 'GPU Flip Basin Trust',
           source: 'Basin tab -> flipBasinField',
-          parameters: { backend: field.backend, resolution: `${field.width}x${field.height}`, validationPassed: field.validation?.passed ?? 'cpu-fallback' },
+          parameters: { backend: field.backend, resultTier: tier.tier, resolution: `${field.width}x${field.height}`, validationPassed: field.validation?.passed ?? 'cpu-fallback' },
           uncertainty: `CPU probe disagreement fraction ${field.validation?.maxAbsDiff ?? 0}; box-counting SE ${box.stdError.toPrecision(4)}.`,
           externalValidation: 'GPU field output is accepted only after CPU probe validation, otherwise the CPU f64 grid is returned.',
           reproduce: 'npm run validate:gpu-scale',

@@ -83,9 +83,14 @@ checks. `npm run validate:webgpu-hardware` writes
 available, using the same CPU reference rules as the self-hosted CI workflow.
 `npm run benchmark:gpu-ladder` writes `reports/gpu-benchmark-ladder.md` with
 adapter metadata, f32/f64 horizon drift, full-spectrum horizon sensitivity, and
-CLV/variational-FTLE promotion metrics, including the planar N-chain tiled
-STM/QR gate. `reports/gpu-adapter-matrix.md` keeps Intel/NVIDIA/AMD hardware
-coverage explicit.
+CLV/variational-FTLE promotion metrics, including the N<=3 planar N-chain
+trajectory/Jacobian-tape gate and the planar N-chain tiled STM/QR gate.
+`reports/gpu-adapter-matrix.md` keeps Intel/NVIDIA/AMD hardware
+coverage explicit. Missing vendor rows are actionable rather than implied:
+each row records the required self-hosted labels (`self-hosted`, `webgpu`, and
+the vendor label), the expected artifact name (`gpu-ladder-<vendor>`), and the
+dispatch command path for the **WebGPU Vendor Evidence** workflow. Software
+adapters never satisfy a missing NVIDIA or AMD row.
 
 ## Release Packaging
 

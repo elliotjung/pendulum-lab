@@ -16,8 +16,8 @@ jobs:
   release-artifacts:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -30,6 +30,10 @@ jobs:
       - run: npm run docs:api
       - run: npm run release:package
       - run: npm run audit:worldclass
+      - run: npm run release:status
+      # Evidence must attest the exact released commit: regenerated at this ref
+      # on a source-clean tree, with sourceSha === buildSha === GITHUB_SHA.
+      - run: npm run release:verify-report-shas
       - name: Pack public library
         shell: bash
         run: |
@@ -60,7 +64,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "${GITHUB_REF_NAME}" "${PACKAGE_FILE}" reports/release-checksums.txt reports/sbom.cdx.json reports/attestation-verification.json --clobber
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pendulum-lab-release
           path: |

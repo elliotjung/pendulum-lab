@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-webgpu-hardware-validation/v2",
-  "generatedAt": "2026-06-18T16:45:41.770Z",
+  "generatedAt": "2026-07-04T12:56:00.401Z",
   "channel": "chrome",
   "url": "http://127.0.0.1:5173/",
   "status": "pass",
@@ -141,6 +141,24 @@
     "max": 9.638538360595703,
     "caveat": "WebGPU f32 variational-STM FTLE field promoted after same-run CPU f64 oracle comparison."
   },
+  "nChainTrajectoryTape": {
+    "backend": "webgpu",
+    "comparison": {
+      "passed": true,
+      "maxFinalStateAbsDiff": 2.5914979628893775e-7,
+      "maxTrajectoryAbsDiff": 4.3840401170447407e-7,
+      "maxJacobianAbsDiff": 0.011088176964037189,
+      "tolerances": {
+        "finalState": 0.008,
+        "trajectory": 0.008,
+        "jacobian": 0.08
+      }
+    },
+    "links": 3,
+    "dimension": 6,
+    "steps": 33,
+    "caveat": "WebGPU f32 trajectory/Jacobian tape promoted for this run after same-run CPU f64 comparison; downstream science still requires its own CLV/FTLE oracle gate."
+  },
   "nChainVariational": {
     "backend": "webgpu",
     "comparison": {
@@ -156,18 +174,18 @@
           "aggregate": 0.02
         },
         "metrics": {
-          "exponentMaxAbsDiff": 0.000002575877267929627,
-          "meanAngleAbsDiff": 0.00004180401381836951,
-          "minAngleAbsDiff": 0.00004218023114077596
+          "exponentMaxAbsDiff": 0.0001774760207950976,
+          "meanAngleAbsDiff": 0.00005229443129883826,
+          "minAngleAbsDiff": 0.00006041925244204549
         },
         "caveat": "Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller."
       },
-      "ftleAbsDiff": 6.480840992750814e-7,
+      "ftleAbsDiff": 0.000034161028449553044,
       "ftleTolerance": 0.16
     },
     "links": 3,
     "dimension": 6,
-    "ftle": 7.877861499786377,
+    "ftle": 7.877896308898926,
     "cpuFtle": 7.877862147870476,
     "method": "piecewise-jacobian-rk2-stm-qr",
     "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."

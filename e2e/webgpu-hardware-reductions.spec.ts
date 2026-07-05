@@ -146,6 +146,19 @@ test('real WebGPU N-chain tiled STM/QR pipeline passes its f64 oracle gate', asy
     }
     const modulePath = '/src/runtime/gpuNChainVariational.ts';
     const mod = await import(/* @vite-ignore */ modulePath) as typeof import('../src/runtime/gpuNChainVariational');
+    const trajectoryTape = await mod.promotedNChainTrajectoryTape(
+      { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
+      [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
+      {
+        dt: 0.006,
+        renormEvery: 3,
+        forwardTransient: 3,
+        window: 8,
+        backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 }
+      },
+      0.01
+    );
     const promotion = await mod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
@@ -155,6 +168,7 @@ test('real WebGPU N-chain tiled STM/QR pipeline passes its f64 oracle gate', asy
         forwardTransient: 3,
         window: 8,
         backwardTransient: 2,
+        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 },
         clvTolerances: { exponents: 0.2, angle: 0.4 },
         ftleTolerance: 0.16
       },
@@ -167,9 +181,16 @@ test('real WebGPU N-chain tiled STM/QR pipeline passes its f64 oracle gate', asy
       ftleAbsDiff: promotion.comparison?.ftleAbsDiff ?? null,
       ftleTolerance: promotion.comparison?.ftleTolerance ?? null,
       dimension: promotion.result.dimension,
-      method: promotion.result.method
+      method: promotion.result.method,
+      trajectoryTapeBackend: trajectoryTape.backend,
+      trajectoryTapePassed: trajectoryTape.comparison?.passed ?? false,
+      trajectoryTapeMetrics: trajectoryTape.comparison,
+      trajectoryTapeSource: promotion.result.trajectoryTapeSource
     };
   });
+  expect(result.trajectoryTapeBackend).toBe('webgpu');
+  expect(result.trajectoryTapePassed).toBe(true);
+  expect(result.trajectoryTapeMetrics).not.toBeNull();
   expect(result.backend).toBe('webgpu');
   expect(result.passed).toBe(true);
   expect(result.clvPassed).toBe(true);
@@ -177,4 +198,5 @@ test('real WebGPU N-chain tiled STM/QR pipeline passes its f64 oracle gate', asy
   expect(result.ftleAbsDiff!).toBeLessThanOrEqual(result.ftleTolerance!);
   expect(result.dimension).toBe(6);
   expect(result.method).toBe('piecewise-jacobian-rk2-stm-qr');
+  expect(result.trajectoryTapeSource).toBe('webgpu-f32-promoted');
 });

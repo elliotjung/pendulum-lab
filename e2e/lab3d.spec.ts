@@ -132,3 +132,22 @@ test('3D lab: spherical pendulum conserves E and Lz, orbit camera rotates, snaps
   expect(diagnostics.diagnostics.method).toBe('rk4');
   expect(diagnostics.reproducibilityHash).toMatch(/^[0-9a-f]+$/);
 });
+
+test('3D lab: polar vs embedded chart comparison verifies both formulations agree', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/');
+  await openModernTab(page, 'lab3d', '#lab3dChartCompareCard');
+
+  await expect(page.locator('#d3ChartCompareSummary')).toContainText('No comparison run yet.');
+  await page.locator('#d3RunChartCompare').click();
+
+  const summary = page.locator('#d3ChartCompareSummary');
+  await expect(summary).toContainText('max bob distance', { timeout: 30_000 });
+  await expect(summary).toContainText('Polar chart drift');
+  await expect(summary).toContainText('embedded chart drift');
+
+  // Per-sample agreement table fills: header row + one row per 0.5 s sample.
+  // (renderResearchTable appends tr directly to the table - no tbody.)
+  const rows = page.locator('#d3ChartCompareTable table tr');
+  await expect(rows).toHaveCount(7);
+});

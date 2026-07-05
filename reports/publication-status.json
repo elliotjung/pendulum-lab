@@ -1,19 +1,82 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-06-18T17:47:57.837Z",
+  "generatedAt": "2026-07-05T07:23:23.597Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-05T07:23:23.597Z",
+    "gitSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "buildSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "sourceSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "attested": true,
+    "dirty": true,
+    "dirtyFiles": [
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/release-one-page.pdf",
+      "reports/release-readiness.json",
+      "reports/release-readiness.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md"
+    ],
+    "sourceDirty": false,
+    "sourceDirtyFiles": [],
+    "command": "npm run release:status",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 7,
+      "staleAfter": "2026-07-12T07:23:23.597Z",
+      "action": "warn"
+    }
+  },
   "status": "partial",
   "npm": {
     "package": "pendulum-lab-v10",
     "version": "10.35.0",
     "published": false,
     "registryStatus": 404,
-    "url": "https://www.npmjs.com/package/pendulum-lab-v10/v/10.35.0"
+    "url": "https://www.npmjs.com/package/pendulum-lab-v10/v/10.35.0",
+    "auth": {
+      "whoamiOk": false,
+      "user": null,
+      "npmTokenPresent": false,
+      "credentialBoundary": "npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted."
+    },
+    "trustedPublisher": {
+      "workflowReady": true,
+      "repository": "Elliot-Jung-17/pendulum-lab",
+      "workflow": "publish-npm.yml",
+      "environment": "npm",
+      "verified": false,
+      "status": "Workflow has OIDC/id-token publishing contract, but npm package settings are not publicly verifiable from this unauthenticated local CLI."
+    }
   },
   "zenodo": {
     "published": false,
     "apiStatus": 200,
     "doi": null,
-    "recordId": null
+    "recordId": null,
+    "auth": {
+      "zenodoTokenPresent": false,
+      "zenodoSandboxTokenPresent": false,
+      "credentialBoundary": "ZENODO_TOKEN is not set; production DOI minting was not attempted and no DOI was fabricated."
+    },
+    "githubIntegration": {
+      "checked": true,
+      "checkStatus": "ok",
+      "detected": false,
+      "matchingHooks": 0,
+      "credentialBoundary": "No Zenodo GitHub repository hook was visible to gh api repos/Elliot-Jung-17/pendulum-lab/hooks."
+    }
   },
   "githubRelease": {
     "published": true,
@@ -28,6 +91,9 @@
   },
   "caveats": [
     "npm registry does not resolve this exact package version.",
-    "No matching public Zenodo DOI record resolves for Pendulum Lab."
+    "npm publish is blocked locally: npm whoami is unauthenticated and NPM_TOKEN is missing.",
+    "No matching public Zenodo DOI record resolves for Pendulum Lab.",
+    "Zenodo production publish is blocked locally: ZENODO_TOKEN is missing.",
+    "GitHub-Zenodo integration is not visible in repository hooks."
   ]
 }

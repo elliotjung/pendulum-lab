@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { recurrenceQuantification, sampleObservable } from '../src/chaos/index';
+import { recurrenceMatrix, recurrenceQuantification, rqaBlockUncertainty, sampleObservable } from '../src/chaos/index';
 import { mulberry32 } from '../src/chaos/variational';
 import { rhsDouble } from '../src/physics/double';
 
@@ -47,6 +47,31 @@ describe('RQA on synthetic signals', () => {
     const loose = recurrenceQuantification(sine, { dimension: 2, delay: 5, epsilon: 1e6 });
     expect(tight.recurrenceRate).toBeLessThan(0.01);
     expect(loose.recurrenceRate).toBeGreaterThan(0.99);
+  });
+
+  test('recurrenceMatrix shares the quantification threshold and symmetric geometry', () => {
+    const options = { dimension: 3, delay: 4, targetRecurrenceRate: 0.08 } as const;
+    const matrix = recurrenceMatrix(sine, options);
+    const rqa = recurrenceQuantification(sine, options);
+    expect(matrix.size).toBe(rqa.embeddedLength);
+    expect(matrix.epsilon).toBe(rqa.epsilon);
+    for (let i = 0; i < matrix.size; i += 1) {
+      expect(matrix.matrix[i * matrix.size + i]).toBe(1);
+      for (let j = 0; j < matrix.size; j += 37) {
+        expect(matrix.matrix[i * matrix.size + j]).toBe(matrix.matrix[j * matrix.size + i]);
+      }
+    }
+    expect(rqa.recurrenceRate).toBeGreaterThan(0.06);
+    expect(rqa.recurrenceRate).toBeLessThan(0.1);
+  });
+
+  test('block uncertainty preserves deterministic structure across contiguous blocks', () => {
+    const uncertainty = rqaBlockUncertainty(sine, embedding, 5);
+    expect(uncertainty.blocks).toBe(5);
+    expect(uncertainty.blockResults).toHaveLength(5);
+    expect(uncertainty.determinism.mean).toBeGreaterThan(0.9);
+    expect(Number.isFinite(uncertainty.determinism.stdError)).toBe(true);
+    expect(Number.isFinite(uncertainty.recurrenceRate.mean)).toBe(true);
   });
 });
 

@@ -1,6 +1,59 @@
 {
   "schemaVersion": "pendulum-reviewer-kit/v1",
-  "generatedAt": "2026-06-18T17:57:49.302Z",
+  "generatedAt": "2026-07-04T12:59:29.225Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-04T12:59:29.225Z",
+    "gitSha": "490fb6de7ca3a1315902d22af375bd13de0cb848",
+    "dirty": true,
+    "dirtyFiles": [
+      ".github/workflows/main.yml",
+      "CHANGELOG.md",
+      "README.md",
+      "docs/engine-overview.md",
+      "docs/portfolio-korean.md",
+      "docs/tutorial-reproduce-paper.md",
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/publication-status.json",
+      "reports/release-one-page.pdf",
+      "reports/release-readiness.json",
+      "reports/release-readiness.md",
+      "reports/reproduce/manifest.json",
+      "reports/reviewer-kit-manifest.json",
+      "reports/reviewer-kit-manifest.md",
+      "reports/webgpu-hardware-validation.json",
+      "reports/webgpu-hardware-validation.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md",
+      "scripts/publication-status.ts",
+      "scripts/release-package.ts",
+      "scripts/report-metadata.ts",
+      "scripts/reproduce-all.ts",
+      "scripts/reviewer-kit.ts",
+      "scripts/worldclass-scorecard.ts",
+      "src/runtime/gpuNChainVariational.ts",
+      "src/runtime/gpuNChainVariationalCpu.ts",
+      "tests/integrators.test.ts"
+    ],
+    "command": "npm run reviewer:kit",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 14,
+      "staleAfter": "2026-07-18T12:59:29.224Z",
+      "action": "warn"
+    }
+  },
   "flagship": {
     "id": "melnikov-gap-map",
     "shortName": "Melnikov gap map",
@@ -37,7 +90,8 @@
       "command": "npm run paper:study",
       "priority": "required",
       "description": "Numerical source of truth for the flagship Melnikov gap map.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/paper-study.json"
     },
     {
       "id": "flagship-certification",
@@ -45,7 +99,8 @@
       "command": "npm run flagship:certify",
       "priority": "required",
       "description": "Figure 1 hash, crossing interval, onset localization table, and caveat map.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/flagship-certification.json"
     },
     {
       "id": "flagship-figure-1",
@@ -53,7 +108,8 @@
       "command": "npm run flagship:certify",
       "priority": "recommended",
       "description": "Reviewer-facing Figure 1 SVG for the Melnikov gap map.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/flagship-figure1.svg"
     },
     {
       "id": "flagship-external-check",
@@ -61,7 +117,8 @@
       "command": "npm run flagship:external",
       "priority": "recommended",
       "description": "Dependency-free Python recomputation of A_c and the ratio crossing from exported A_PD values.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/flagship-external-check.json"
     },
     {
       "id": "flagship-paper-html",
@@ -69,7 +126,8 @@
       "command": "npm run paper:build",
       "priority": "required",
       "description": "Self-contained paper with figures rendered from the study JSON.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/paper/index.html"
     },
     {
       "id": "flagship-paper-pdf",
@@ -77,7 +135,8 @@
       "command": "npm run paper:build",
       "priority": "recommended",
       "description": "Print-reviewable PDF generated from the same HTML paper.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/paper/paper.pdf"
     },
     {
       "id": "one-command-manifest",
@@ -85,7 +144,8 @@
       "command": "npm run reproduce",
       "priority": "required",
       "description": "Hash-stamped deterministic manifest for headline claims.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/reproduce/manifest.json"
     },
     {
       "id": "external-cross-validation",
@@ -93,7 +153,8 @@
       "command": "npm run validate:cross",
       "priority": "recommended",
       "description": "Independent SciPy DOP853 trajectory comparison.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/cross-validation.json"
     },
     {
       "id": "symbolic-validation",
@@ -101,7 +162,8 @@
       "command": "npm run validate:sympy",
       "priority": "recommended",
       "description": "Independent SymPy Euler-Lagrange RHS derivation check.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/sympy-validation.json"
     },
     {
       "id": "notebook",
@@ -109,7 +171,8 @@
       "command": "npm run notebook",
       "priority": "optional",
       "description": "Figure-rich notebook driven through the same analysis handlers.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/research-notebook.html"
     },
     {
       "id": "gpu-scale-contract",
@@ -117,7 +180,8 @@
       "command": "npm run validate:gpu-scale",
       "priority": "recommended",
       "description": "CPU reference plus mocked-WebGPU contract for accelerated field/ensemble paths.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/gpu-scale-validation.md"
     },
     {
       "id": "webgpu-hardware-validation",
@@ -125,7 +189,8 @@
       "command": "npm run validate:webgpu-hardware",
       "priority": "recommended",
       "description": "Real-adapter WebGPU reduction comparison against the CPU f64 oracle.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/webgpu-hardware-validation.md"
     },
     {
       "id": "gpu-benchmark-ladder",
@@ -133,7 +198,8 @@
       "command": "npm run benchmark:gpu-ladder",
       "priority": "recommended",
       "description": "Real-adapter GPU ladder with f32/f64 drift, 4D diagnostics, and N-chain STM/QR promotion metrics.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/gpu-benchmark-ladder.md"
     },
     {
       "id": "gpu-adapter-matrix",
@@ -141,7 +207,8 @@
       "command": "npm run benchmark:gpu-matrix",
       "priority": "recommended",
       "description": "Intel/NVIDIA/AMD physical-adapter evidence matrix with explicit missing rows.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/gpu-adapter-matrix.json"
     },
     {
       "id": "reviewer-dashboard",
@@ -149,7 +216,8 @@
       "command": "npm run build",
       "priority": "required",
       "description": "GitHub Pages reviewer console that reads the machine-readable report artifacts.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reviewer.html"
     },
     {
       "id": "publication-status",
@@ -157,7 +225,8 @@
       "command": "npm run release:status",
       "priority": "recommended",
       "description": "Public npm, Zenodo DOI, GitHub release, and Pages resolution audit.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/publication-status.json"
     },
     {
       "id": "zenodo-deposition",
@@ -165,7 +234,8 @@
       "command": "npm run zenodo:publish",
       "priority": "recommended",
       "description": "Authenticated-deposition result or an explicit credential-missing boundary with no fabricated DOI.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/zenodo-deposition.json"
     },
     {
       "id": "attestation-verification",
@@ -173,7 +243,8 @@
       "command": "npm run release:verify-attestations",
       "priority": "recommended",
       "description": "Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/attestation-verification.json"
     },
     {
       "id": "npm-pack-dry-run",
@@ -181,7 +252,8 @@
       "command": "npm pack --dry-run --json",
       "priority": "recommended",
       "description": "Exact npm tarball coordinate, integrity digest, size, and included-file inventory.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/npm-pack-dry-run.json"
     },
     {
       "id": "release-readiness",
@@ -189,7 +261,8 @@
       "command": "npm run release:package",
       "priority": "required",
       "description": "Machine-readable DOI/Pages/npm/PDF/GIF release readiness manifest.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/release-readiness.json"
     },
     {
       "id": "release-one-page-pdf",
@@ -197,7 +270,8 @@
       "command": "npm run release:package",
       "priority": "recommended",
       "description": "One-page reviewer handout for release notes and external review.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/release-one-page.pdf"
     },
     {
       "id": "walkthrough-gif",
@@ -205,7 +279,8 @@
       "command": "npm run release:package",
       "priority": "recommended",
       "description": "Thirty-second walkthrough artifact for the GitHub release and project page.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/walkthrough-30s.gif"
     },
     {
       "id": "memory-regression-report",
@@ -213,7 +288,8 @@
       "command": "npm run benchmark:memory",
       "priority": "required",
       "description": "Browser memory regression report for the current build.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/memory-regression-report.md"
     },
     {
       "id": "memory-baseline",
@@ -221,7 +297,17 @@
       "command": "npm run benchmark:memory",
       "priority": "required",
       "description": "Machine-readable browser memory baseline consumed by the world-class audit.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/memory-baseline.json"
+    },
+    {
+      "id": "mutation-aggregate",
+      "path": "reports/mutation-aggregate.json",
+      "command": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85",
+      "priority": "recommended",
+      "description": "Nightly sharded Stryker aggregate with total/covered mutation scores and status counts.",
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/mutation-aggregate.json"
     },
     {
       "id": "reviewer-kit-manifest",
@@ -229,7 +315,8 @@
       "command": "npm run reviewer:kit",
       "priority": "required",
       "description": "Machine-readable checklist of the reviewer kit itself.",
-      "available": true
+      "available": true,
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reports/reviewer-kit-manifest.json"
     }
   ],
   "missingRequired": [],

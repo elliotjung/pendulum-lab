@@ -13,6 +13,18 @@ function stringArg(name, fallback) {
   return fallback;
 }
 const outDir = stringArg('out-dir', 'reports/mutation');
+const repository = stringArg('repository', process.env.GITHUB_REPOSITORY ?? 'Elliot-Jung-17/pendulum-lab');
+const serverUrl = stringArg('server-url', process.env.GITHUB_SERVER_URL ?? 'https://github.com');
+const runId = stringArg('run-id', process.env.GITHUB_RUN_ID ?? '');
+const runAttempt = stringArg('run-attempt', process.env.GITHUB_RUN_ATTEMPT ?? '');
+const artifactId = stringArg('artifact-id', process.env.MUTATION_AGGREGATE_ARTIFACT_ID ?? '');
+const artifactName = stringArg('artifact-name', process.env.MUTATION_AGGREGATE_ARTIFACT_NAME ?? 'mutation-aggregate');
+const artifactDigest = stringArg('artifact-digest', process.env.MUTATION_AGGREGATE_ARTIFACT_DIGEST ?? '');
+const artifactExpiresAt = stringArg('artifact-expires-at', process.env.MUTATION_AGGREGATE_ARTIFACT_EXPIRES_AT ?? '');
+const artifactUrl = stringArg(
+  'artifact-url',
+  runId && artifactId ? `${serverUrl}/${repository}/actions/runs/${runId}/artifacts/${artifactId}` : ''
+);
 function numberArg(name, fallback) {
   const prefix = '--' + name + '=';
   const inline = args.find((arg) => arg.startsWith(prefix));
@@ -79,6 +91,20 @@ const summary = {
   schemaVersion: 'pendulum-mutation-aggregate/v1',
   generatedAt,
   status,
+  ci: {
+    repository,
+    runId: runId || null,
+    runAttempt: runAttempt || null,
+    runUrl: runId ? `${serverUrl}/${repository}/actions/runs/${runId}` : null,
+    artifactId: artifactId || null,
+    artifactName,
+    artifactUrl: artifactUrl || null,
+    artifactDigest: artifactDigest || null,
+    artifactExpiresAt: artifactExpiresAt || null,
+    artifactBoundary: runId && artifactId
+      ? 'GitHub Actions artifact metadata was supplied for this aggregate.'
+      : 'No GitHub Actions run/artifact id was supplied; local aggregate evidence has no remote artifact link.'
+  },
   thresholds,
   reportCount: reports.length,
   total,
@@ -102,6 +128,8 @@ writeFileSync(path.join(outDir, 'mutation-aggregate.md'), [
   'Total score: ' + summary.mutationScore + '%',
   'Covered score: ' + summary.coveredMutationScore + '%',
   'Threshold: break >= ' + thresholds.break + '%',
+  'Actions run: ' + (summary.ci.runUrl ?? 'not supplied'),
+  'Aggregate artifact: ' + (summary.ci.artifactUrl ?? 'not supplied'),
   '',
   '```json',
   JSON.stringify(summary.statusCounts, null, 2),

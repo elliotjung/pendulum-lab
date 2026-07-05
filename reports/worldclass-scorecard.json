@@ -1,5 +1,39 @@
 {
-  "generatedAt": "2026-06-18T17:56:39.321Z",
+  "generatedAt": "2026-07-05T07:23:19.241Z",
+  "metadata": {
+    "schemaVersion": "pendulum-report-metadata/v1",
+    "generatedAt": "2026-07-05T07:23:19.241Z",
+    "gitSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "buildSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "sourceSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "attested": true,
+    "dirty": true,
+    "dirtyFiles": [
+      "reports/gpu-adapter-matrix.json",
+      "reports/gpu-adapter-matrix.md",
+      "reports/gpu-benchmark-ladder.json",
+      "reports/gpu-benchmark-ladder.md",
+      "reports/worldclass-scorecard.json",
+      "reports/worldclass-scorecard.md"
+    ],
+    "sourceDirty": false,
+    "sourceDirtyFiles": [],
+    "command": "npm run audit:worldclass",
+    "node": "v26.3.0",
+    "os": {
+      "type": "Windows_NT",
+      "platform": "win32",
+      "release": "10.0.26200"
+    },
+    "sourceRunId": null,
+    "sourceRunAttempt": null,
+    "sourceRunUrl": null,
+    "freshnessPolicy": {
+      "maxAgeDays": 7,
+      "staleAfter": "2026-07-12T07:23:19.241Z",
+      "action": "warn"
+    }
+  },
   "totals": {
     "done": 10,
     "partial": 2,
@@ -2371,10 +2405,15 @@
     "energy": true,
     "memoryRegression": true,
     "memoryBaseline": true,
+    "mutationAggregateReport": true,
+    "reproduceManifest": true,
+    "reproduceManifestFresh": true,
+    "mutationAggregatePass": true,
     "flagshipDoc": true,
     "flagshipCertification": true,
     "flagshipFigure": true,
     "flagshipExternalCheck": true,
+    "flagshipNamesGapMap": true,
     "reviewerKitDoc": true,
     "reviewerKitManifest": true,
     "reviewerKitManifestMd": true,
@@ -2398,6 +2437,7 @@
     "webgpuFullSpectrumPass": true,
     "webgpuClvPass": true,
     "webgpuVariationalFtlePass": true,
+    "webgpuNChainTrajectoryTapePass": true,
     "webgpuNChainPass": true,
     "gpuBenchmarkLadderPass": true,
     "mojibakeAudit": true,
@@ -2502,7 +2542,8 @@
         "dependency-free Python external check exists for A_c and ratio crossing arithmetic",
         "npm run reviewer:kit exists",
         "reviewer-kit manifest exists",
-        "reviewer-kit documentation exists"
+        "reviewer-kit documentation exists",
+        "reproduce manifest is fresh and commit-bound (490fb6de7ca3)"
       ],
       "remaining": []
     },
@@ -2545,6 +2586,7 @@
         "4D double-pendulum full-spectrum WebGPU candidate passed the hardware CPU-oracle promotion gate",
         "4D double-pendulum CLV WebGPU candidate passed the hardware CPU-oracle promotion gate",
         "4D double-pendulum variational-FTLE WebGPU candidate passed the hardware CPU-oracle promotion gate",
+        "N<=3 planar N-chain nonlinear trajectory/Jacobian-tape WebGPU candidate passed the hardware CPU-f64 oracle gate",
         "6D planar N-chain tiled STM/QR/CLV/FTLE candidate passed the hardware CPU-f64 oracle gate"
       ],
       "remaining": []
@@ -2559,7 +2601,7 @@
         "ensemble f32-candidate reduction passes the CPU f64 oracle comparison",
         "CI runs validate:gpu-scale",
         "self-hosted WebGPU hardware workflow exists and fails when a real adapter is absent",
-        "hardware e2e compares GPU-side ensemble reduction, full-spectrum, CLV, variational-FTLE, and N-chain STM/QR promotion with CPU f64",
+        "hardware e2e compares GPU-side ensemble reduction, full-spectrum, CLV, variational-FTLE, N-chain trajectory/tape, and N-chain STM/QR promotion with CPU f64",
         "npm run validate:webgpu-hardware exists",
         "npm run benchmark:gpu-ladder exists",
         "self-hosted WebGPU workflow writes the hardware validation report",
@@ -2568,9 +2610,10 @@
         "hardware WebGPU validation report records full-spectrum backend=webgpu and comparison pass",
         "hardware WebGPU validation report records CLV backend=webgpu and comparison pass",
         "hardware WebGPU validation report records variational-FTLE backend=webgpu and comparison pass",
+        "hardware WebGPU validation report records N-chain trajectory/tape backend=webgpu and comparison pass",
         "hardware WebGPU validation report records N-chain STM/QR backend=webgpu and comparison pass",
         "reports/gpu-benchmark-ladder.md records adapter metadata, horizon drift, and promotion metrics",
-        "reports/gpu-benchmark-ladder.json records status=pass across reductions, 4D diagnostics, and N-chain STM/QR gates",
+        "reports/gpu-benchmark-ladder.json records status=pass across reductions, 4D diagnostics, N-chain trajectory/tape, and N-chain STM/QR gates",
         "multi-adapter matrix records 1/3 Intel/NVIDIA/AMD vendor classes",
         "current contract treats CPU f64 as the scientific oracle; WebGPU may accelerate only after agreement or fallback"
       ],
@@ -2582,14 +2625,15 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
-        "949/949 unit tests across 143 files",
+        "1056/1056 unit tests across 155 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
         "quick, slow, and full test tiers are wired into PR/mainline workflows",
         "coverage scope guard catches new source files missing from the v8 coverage map",
         "long-run performance/soak e2e spec exists and runs in mainline full validation",
         "accessibility e2e spec exists and runs in mainline full validation",
         "visual regression script, spec, and versioned Chromium snapshots exist",
-        "memory-regression report and baseline exist from benchmark output"
+        "memory-regression report and baseline exist from benchmark output",
+        "nightly mutation aggregate passes at 65.32% total / 68.34% covered across 29 shards"
       ],
       "remaining": []
     },
@@ -2630,8 +2674,8 @@
         "published SLSA provenance and CycloneDX attestations pass signer-workflow and tarball SHA-256 verification",
         "GitHub release resolves publicly",
         "Pages reviewer dashboard resolves publicly",
-        "npm package version is not published",
-        "public Zenodo DOI is not minted"
+        "npm package version is not published (owner-side npm Trusted Publisher setup is required; this scorecard never reports npm as complete without public registry resolution)",
+        "public Zenodo DOI is not minted (owner-side Zenodo production auth is required; this scorecard never reports a DOI without public resolution)"
       ],
       "remaining": [
         "Configure npm trusted publisher for publish-npm.yml/environment npm or supply an owner token for the first publish",
@@ -2653,7 +2697,7 @@
         "Pages build includes the JSON-backed reviewer dashboard",
         "reviewer dashboard evidence dialog, tabs, and ledger have browser coverage",
         "mainline full-validation workflow exists",
-        "nightly mutation workflow exists",
+        "nightly mutation workflow and aggregate report exist",
         "release artifact workflow exists",
         "dist/index.html exists for Pages artifact deployment",
         "LICENSE exists",

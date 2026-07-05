@@ -16,6 +16,7 @@ import { buildLab3dTimingCard } from './lab3d-render-loop';
 import { buildRopeCard, resetRopeSim } from './lab3d-rope-ui';
 import { buildDoubleStringCard, resetDoubleStringSim } from './lab3d-double-string-ui';
 import { buildChainCard, buildSphereCard, resetChainSim, resetSphereSim } from './lab3d-spherical-chain-ui';
+import { buildChartComparisonCard } from './lab3d-chart-compare-ui';
 import {
   analyzeChainConserved,
   analyzeChainDiagnostics,
@@ -74,6 +75,7 @@ export {
   exportDoubleStringTrajectoryCsv,
   exportSphereSnapshot
 } from './lab3d-exports';
+export { buildChartComparisonCard, runChartComparison } from './lab3d-chart-compare-ui';
 
 export function installLab3dTab(): void {
   const panel = $('tab-lab3d');
@@ -108,7 +110,9 @@ export function installLab3dTab(): void {
     exportSnapshot: () => exportChainSnapshot()
   });
 
-  append(wrap, timingCard, ropeCard, doubleStringCard, sphereCard, chainCard);
+  const chartCompareCard = buildChartComparisonCard();
+
+  append(wrap, timingCard, ropeCard, doubleStringCard, sphereCard, chainCard, chartCompareCard);
   left.append(wrap);
   append(layout, left);
   panel.append(layout);

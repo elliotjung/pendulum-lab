@@ -1,5 +1,6 @@
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { hashText } from '../src/research/researchExportUtils';
+import { collectReportMetadata, freshnessPolicy } from './report-metadata';
 
 interface ReleaseArtifact {
   id: string;
@@ -11,8 +12,16 @@ interface ReleaseArtifact {
 }
 
 interface PublicationStatus {
-  npm?: { published?: boolean };
-  zenodo?: { published?: boolean };
+  npm?: {
+    published?: boolean;
+    auth?: { credentialBoundary?: string };
+    trustedPublisher?: { status?: string; workflowReady?: boolean; verified?: boolean };
+  };
+  zenodo?: {
+    published?: boolean;
+    auth?: { credentialBoundary?: string };
+    githubIntegration?: { credentialBoundary?: string; detected?: boolean; checkStatus?: string };
+  };
   githubRelease?: { published?: boolean };
   pages?: { published?: boolean };
 }
@@ -300,17 +309,19 @@ for (const [id, path, required, note] of artifactSpecs) {
 const missingRequired = artifacts.filter((artifact) => artifact.required && !artifact.available).map((artifact) => artifact.id);
 const externalPublishSteps: string[] = [];
 if (!publication.pages?.published) externalPublishSteps.push('Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.');
-if (!publication.npm?.published) externalPublishSteps.push('Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.');
-if (!publication.zenodo?.published) externalPublishSteps.push('Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.');
+if (!publication.npm?.published) externalPublishSteps.push(`${publication.npm?.auth?.credentialBoundary ?? 'npm publication is not publicly verified.'} Configure npm trusted publishing for publish-npm.yml or authenticate an owner credential, then dispatch publish-npm.yml with dry-run=false.`);
+if (!publication.zenodo?.published) externalPublishSteps.push(`${publication.zenodo?.auth?.credentialBoundary ?? 'Zenodo DOI publication is not publicly verified.'} Publish with npm run zenodo:publish only after production credentials exist, then run npm run doi:sync.`);
 const verifiedPredicateTypes = new Set(attestation.predicates?.filter((item) => item.status === 'verified').map((item) => item.predicateType));
 if (attestation.status !== 'verified'
   || !verifiedPredicateTypes.has('https://slsa.dev/provenance/v1')
   || !verifiedPredicateTypes.has('https://cyclonedx.org/bom')) {
   externalPublishSteps.push('Run npm run release:verify-attestations against the published release tarball.');
 }
+const metadata = await collectReportMetadata('npm run release:package', freshnessPolicy(7, 'warn'));
 const manifest = {
   schemaVersion: 'pendulum-release-readiness/v1',
-  generatedAt: new Date().toISOString(),
+  generatedAt: metadata.generatedAt,
+  metadata,
   status: missingRequired.length ? 'missing-required' : 'ready-for-owner-publish',
   externalPublishSteps,
   artifacts
@@ -325,6 +336,13 @@ const lines = [
   '| Required | Available | Artifact | Note |',
   '|---:|---:|---|---|',
   ...artifacts.map((artifact) => `| ${artifact.required ? 'yes' : 'no'} | ${artifact.available ? 'yes' : 'no'} | \`${artifact.path}\` | ${artifact.note} |`),
+  '',
+  '## Publication Boundary',
+  '',
+  `- npm: ${publication.npm?.auth?.credentialBoundary ?? 'not checked'}`,
+  `- npm trusted publisher: ${publication.npm?.trustedPublisher?.status ?? 'not checked'}`,
+  `- Zenodo: ${publication.zenodo?.auth?.credentialBoundary ?? 'not checked'}`,
+  `- GitHub-Zenodo integration: ${publication.zenodo?.githubIntegration?.credentialBoundary ?? 'not checked'}`,
   '',
   '## Owner Publish Steps',
   '',

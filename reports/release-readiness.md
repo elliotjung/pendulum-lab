@@ -1,6 +1,6 @@
 # Release Readiness Manifest
 
-Generated: 2026-06-18T17:57:50.258Z
+Generated: 2026-07-05T07:23:20.096Z
 
 Status: **ready-for-owner-publish**
 
@@ -21,12 +21,20 @@ Status: **ready-for-owner-publish**
 | no | yes | `reports/zenodo-deposition.json` | Authenticated deposition result or explicit credential boundary; no DOI is inferred. |
 | no | yes | `reports/attestation-verification.json` | Cryptographic verification of SLSA and CycloneDX attestations against the release tarball. |
 | yes | yes | `reports/npm-pack-dry-run.json` | Exact npm tarball integrity, size, and included-file inventory from a successful dry run. |
+| yes | yes | `reports/mutation-aggregate.json` | Nightly sharded mutation aggregate score from Stryker reports. |
 | yes | yes | `reports/release-one-page.pdf` | One-page reviewer PDF generated locally. |
 | yes | yes | `reports/walkthrough-30s.gif` | Thirty-second GIF walkthrough generated locally. |
 | no | yes | `reports/walkthrough-storyboard.svg` | Editable storyboard companion for the GIF. |
 
+## Publication Boundary
+
+- npm: npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted.
+- npm trusted publisher: Workflow has OIDC/id-token publishing contract, but npm package settings are not publicly verifiable from this unauthenticated local CLI.
+- Zenodo: ZENODO_TOKEN is not set; production DOI minting was not attempted and no DOI was fabricated.
+- GitHub-Zenodo integration: No Zenodo GitHub repository hook was visible to gh api repos/Elliot-Jung-17/pendulum-lab/hooks.
+
 ## Owner Publish Steps
 
-- Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.
-- Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.
+- npm whoami returned ENEEDAUTH and NPM_TOKEN is not set; real npm publication was not attempted. Configure npm trusted publishing for publish-npm.yml or authenticate an owner credential, then dispatch publish-npm.yml with dry-run=false.
+- ZENODO_TOKEN is not set; production DOI minting was not attempted and no DOI was fabricated. Publish with npm run zenodo:publish only after production credentials exist, then run npm run doi:sync.
 

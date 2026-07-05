@@ -1,6 +1,6 @@
 # Certified Chaotic Dynamics Workbench - Reviewer Kit
 
-Generated: 2026-06-18T17:57:49.302Z
+Generated: 2026-07-04T12:59:29.225Z
 
 Status: **READY**
 
@@ -59,6 +59,7 @@ Reproduce the study with `npm run paper:study`, then render the paper with `npm 
 | recommended | yes | `reports/walkthrough-30s.gif` | `npm run release:package` | Thirty-second walkthrough artifact for the GitHub release and project page. |
 | required | yes | `reports/memory-regression-report.md` | `npm run benchmark:memory` | Browser memory regression report for the current build. |
 | required | yes | `reports/memory-baseline.json` | `npm run benchmark:memory` | Machine-readable browser memory baseline consumed by the world-class audit. |
+| recommended | yes | `reports/mutation-aggregate.json` | `npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85` | Nightly sharded Stryker aggregate with total/covered mutation scores and status counts. |
 | required | yes | `reports/reviewer-kit-manifest.json` | `npm run reviewer:kit` | Machine-readable checklist of the reviewer kit itself. |
 
 ## Commands To Complete The Kit

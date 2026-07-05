@@ -49,6 +49,8 @@ export type { AccelerationComparison, AccelerationTolerance, ChaosAccelerationCo
 
 export { melnikovScaled, melnikovCriticalAmplitude, melnikovFunction, melnikovFunctionNumeric, melnikovVerdict } from './melnikov';
 export type { MelnikovScaled, MelnikovVerdict } from './melnikov';
+export { basinChaoticFraction, basinConditionedOnset } from './basinConditionedOnset';
+export type { BasinChaoticFraction, BasinConditionedOnsetResult, BasinOnsetOptions } from './basinConditionedOnset';
 
 export { eigenvalues2x2, monodromyMatrix, floquetAnalysis, floquetSpectrum, drivenPeriodicOrbit } from './floquet';
 export type { FloquetMultiplier, FloquetResult, FloquetSpectrumResult, DrivenOrbitOptions, DrivenOrbitResult } from './floquet';

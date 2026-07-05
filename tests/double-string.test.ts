@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DoubleStringPendulum, doubleStringTensions, type DoubleStringParams } from '../src/physics/doubleString';
+import { DoubleStringPendulum, doubleStringTautFraction, doubleStringTensions, type DoubleStringParams } from '../src/physics/doubleString';
 
 const params: DoubleStringParams = { m1: 1.2, m2: 0.8, l1: 1.1, l2: 0.9, g: 9.81, damping: 0 };
 
@@ -33,5 +33,36 @@ describe('double string pendulum', () => {
     const e0 = system.energy();
     system.step(4);
     expect(system.energy()).toBeLessThan(e0);
+  });
+
+  it('validates physical parameter signs before constructing a hybrid state', () => {
+    expect(() => new DoubleStringPendulum({ ...params, m1: 0 }, 0, 0)).toThrow(/masses/);
+    expect(() => new DoubleStringPendulum({ ...params, l2: -1 }, 0, 0)).toThrow(/lengths/);
+    expect(() => new DoubleStringPendulum({ ...params, g: 0 }, 0, 0)).toThrow(/g/);
+    expect(() => new DoubleStringPendulum({ ...params, damping: -0.01 }, 0, 0)).toThrow(/damping/);
+  });
+
+  it('reports taut-analysis validity when no slack event occurs over the horizon', () => {
+    const result = doubleStringTautFraction(params, 0.05, 0.04, 0, 0, 0.2, 0.001);
+    expect(result.tautFraction).toBe(1);
+    expect(result.slackEvents).toBe(0);
+    expect(result.captureEvents).toBe(0);
+    expect(result.energyLost).toBe(0);
+    expect(result.caveat).toMatch(/rigid-equivalent/);
+  });
+
+  it('locates a real outer-link release and inelastic recapture without energy gain', () => {
+    const system = new DoubleStringPendulum(params, 0.2, 1.5, -2, 0, 0.001);
+    const initialEnergy = system.energy();
+    for (let i = 0; i < 2000; i += 1) system.step(0.001);
+    const release = system.events.find((event) => event.type === 'slack' && event.link === 'outer');
+    const capture = system.events.find((event) => event.type === 'capture' && event.link === 'outer');
+
+    expect(release?.residual ?? Infinity).toBeLessThan(1e-6);
+    expect(capture?.residual ?? Infinity).toBeLessThan(1e-6);
+    expect(capture?.time ?? 0).toBeGreaterThan(release?.time ?? 0);
+    expect(capture?.energyLoss ?? 0).toBeGreaterThan(0);
+    expect(system.energy()).toBeLessThan(initialEnergy);
+    expect(system.snapshot().constraintError2).toBeLessThan(1e-8);
   });
 });

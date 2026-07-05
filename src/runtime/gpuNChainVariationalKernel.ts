@@ -281,3 +281,184 @@ fn main(@builtin(local_invocation_id) localId: vec3<u32>, @builtin(workgroup_id)
   }
 }
 `;
+
+/**
+ * Candidate kernel for the next promotion step: nonlinear planar N-chain
+ * trajectory integration plus central-difference Jacobian-tape construction.
+ *
+ * This kernel is deliberately narrower than the downstream STM/QR kernel:
+ * it covers N<=3 while the CPU f64 oracle remains authoritative. The caller
+ * may use this f32 tape only after comparing trajectory, final state, and
+ * Jacobian entries against the CPU f64 tape for the same settings.
+ */
+export const WGSL_NCHAIN_TRAJECTORY_TAPE_KERNEL = /* wgsl */ `
+struct Params {
+  m0: f32, m1: f32, m2: f32, l0: f32,
+  l1: f32, l2: f32, g: f32, damping: f32,
+  links: f32, dim: f32, dt: f32, steps: f32,
+  eps: f32, trajectoryOffset: f32, tapeOffset: f32, finalStateOffset: f32,
+};
+
+@group(0) @binding(0) var<storage, read_write> data: array<f32>;
+@group(0) @binding(1) var<uniform> params: Params;
+
+fn mass(i: u32) -> f32 {
+  if (i == 0u) { return params.m0; }
+  if (i == 1u) { return params.m1; }
+  return params.m2;
+}
+
+fn length(i: u32) -> f32 {
+  if (i == 0u) { return params.l0; }
+  if (i == 1u) { return params.l1; }
+  return params.l2;
+}
+
+fn suffix(i: u32, links: u32) -> f32 {
+  var total = 0.0;
+  for (var j = i; j < links; j = j + 1u) {
+    total = total + mass(j);
+  }
+  return total;
+}
+
+fn solve_linear(mIn: ptr<function, array<f32, 9>>, bIn: ptr<function, array<f32, 3>>, links: u32) -> bool {
+  for (var k = 0u; k < links; k = k + 1u) {
+    var pivot = k;
+    var pivotAbs = abs((*mIn)[k * 3u + k]);
+    for (var row = k + 1u; row < links; row = row + 1u) {
+      let candidate = abs((*mIn)[row * 3u + k]);
+      if (candidate > pivotAbs) {
+        pivotAbs = candidate;
+        pivot = row;
+      }
+    }
+    if (pivotAbs < 1e-7) { return false; }
+    if (pivot != k) {
+      for (var col = k; col < links; col = col + 1u) {
+        let tmp = (*mIn)[k * 3u + col];
+        (*mIn)[k * 3u + col] = (*mIn)[pivot * 3u + col];
+        (*mIn)[pivot * 3u + col] = tmp;
+      }
+      let rhsTmp = (*bIn)[k];
+      (*bIn)[k] = (*bIn)[pivot];
+      (*bIn)[pivot] = rhsTmp;
+    }
+    for (var row = k + 1u; row < links; row = row + 1u) {
+      let factor = (*mIn)[row * 3u + k] / (*mIn)[k * 3u + k];
+      (*mIn)[row * 3u + k] = 0.0;
+      for (var col = k + 1u; col < links; col = col + 1u) {
+        (*mIn)[row * 3u + col] = (*mIn)[row * 3u + col] - factor * (*mIn)[k * 3u + col];
+      }
+      (*bIn)[row] = (*bIn)[row] - factor * (*bIn)[k];
+    }
+  }
+  var row = i32(links) - 1i;
+  loop {
+    var value = (*bIn)[u32(row)];
+    for (var col = u32(row + 1i); col < links; col = col + 1u) {
+      value = value - (*mIn)[u32(row) * 3u + col] * (*bIn)[col];
+    }
+    (*bIn)[u32(row)] = value / (*mIn)[u32(row) * 3u + u32(row)];
+    if (row == 0i) { break; }
+    row = row - 1i;
+  }
+  return true;
+}
+
+fn rhs_chain(state: array<f32, 6>, links: u32) -> array<f32, 6> {
+  var out: array<f32, 6>;
+  var matrix: array<f32, 9>;
+  var rhs: array<f32, 3>;
+  for (var j = 0u; j < links; j = j + 1u) {
+    let thetaJ = state[j];
+    let omegaJ = state[links + j];
+    let lengthJ = length(j);
+    out[j] = omegaJ;
+    var coupling = 0.0;
+    for (var k = 0u; k < links; k = k + 1u) {
+      let thetaK = state[k];
+      let omegaK = state[links + k];
+      let lengthK = length(k);
+      let s = suffix(max(j, k), links);
+      let delta = thetaJ - thetaK;
+      matrix[j * 3u + k] = s * lengthJ * lengthK * cos(delta);
+      coupling = coupling + s * lengthJ * lengthK * sin(delta) * omegaK * omegaK;
+    }
+    rhs[j] = -coupling - params.g * lengthJ * sin(thetaJ) * suffix(j, links) - params.damping * omegaJ;
+  }
+  if (!solve_linear(&matrix, &rhs, links)) {
+    out[0] = 1e30;
+    return out;
+  }
+  for (var j = 0u; j < links; j = j + 1u) {
+    out[links + j] = rhs[j];
+  }
+  return out;
+}
+
+fn add_scaled(a: array<f32, 6>, b: array<f32, 6>, scale: f32, dim: u32) -> array<f32, 6> {
+  var out: array<f32, 6>;
+  for (var i = 0u; i < dim; i = i + 1u) {
+    out[i] = a[i] + scale * b[i];
+  }
+  return out;
+}
+
+fn rk4_step(state: array<f32, 6>, links: u32, dim: u32, dt: f32) -> array<f32, 6> {
+  let k1 = rhs_chain(state, links);
+  let k2 = rhs_chain(add_scaled(state, k1, 0.5 * dt, dim), links);
+  let k3 = rhs_chain(add_scaled(state, k2, 0.5 * dt, dim), links);
+  let k4 = rhs_chain(add_scaled(state, k3, dt, dim), links);
+  var out: array<f32, 6>;
+  for (var i = 0u; i < dim; i = i + 1u) {
+    out[i] = state[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
+  }
+  return out;
+}
+
+@compute @workgroup_size(1)
+fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
+  if (gid.x != 0u) { return; }
+  let links = u32(params.links);
+  let dim = u32(params.dim);
+  let steps = u32(params.steps);
+  if (links < 1u || links > 3u || dim != links * 2u || params.dt <= 0.0 || steps == 0u || params.eps <= 0.0) {
+    data[0] = -1.0;
+    return;
+  }
+
+  var state: array<f32, 6>;
+  for (var i = 0u; i < dim; i = i + 1u) {
+    state[i] = data[i];
+  }
+  let trajectoryOffset = u32(params.trajectoryOffset);
+  let tapeOffset = u32(params.tapeOffset);
+  let finalStateOffset = u32(params.finalStateOffset);
+  let matrixSize = dim * dim;
+
+  for (var step = 0u; step < steps; step = step + 1u) {
+    for (var i = 0u; i < dim; i = i + 1u) {
+      data[trajectoryOffset + step * dim + i] = state[i];
+    }
+    for (var col = 0u; col < dim; col = col + 1u) {
+      var plus = state;
+      var minus = state;
+      let delta = params.eps * max(1.0, abs(state[col]));
+      plus[col] = plus[col] + delta;
+      minus[col] = minus[col] - delta;
+      let fp = rhs_chain(plus, links);
+      let fm = rhs_chain(minus, links);
+      for (var row = 0u; row < dim; row = row + 1u) {
+        data[tapeOffset + step * matrixSize + row * dim + col] = (fp[row] - fm[row]) / (2.0 * delta);
+      }
+    }
+    state = rk4_step(state, links, dim, params.dt);
+  }
+  for (var i = 0u; i < dim; i = i + 1u) {
+    data[trajectoryOffset + steps * dim + i] = state[i];
+    data[finalStateOffset + i] = state[i];
+  }
+  data[0] = 1.0;
+}
+`;

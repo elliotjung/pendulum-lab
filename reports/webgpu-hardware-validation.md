@@ -1,6 +1,6 @@
 # WebGPU Hardware Validation
 
-Generated: 2026-06-18T16:45:41.770Z
+Generated: 2026-07-04T12:56:00.401Z
 
 Status: **pass**
 
@@ -13,6 +13,8 @@ Full-spectrum backend: `webgpu`
 CLV backend: `webgpu`
 
 Variational-FTLE backend: `webgpu`
+
+N-chain trajectory/tape backend: `webgpu`
 
 N-chain variational backend: `webgpu`
 
@@ -54,14 +56,25 @@ N-chain variational backend: `webgpu`
 | field max abs diff | 2.429e-5 |
 | field mean abs diff | 5.859e-6 |
 
+## N-chain Trajectory/Jacobian-Tape Promotion
+
+| Metric | Value |
+|---|---:|
+| passed | true |
+| links / dimension | 3 / 6 |
+| steps | 33 |
+| final-state max abs diff | 2.591e-7 |
+| trajectory max abs diff | 4.384e-7 |
+| Jacobian-tape max abs diff | 1.109e-2 |
+
 ## N-chain Tiled STM/QR Promotion
 
 | Metric | Value |
 |---|---:|
 | passed | true |
 | links / dimension | 3 / 6 |
-| CLV exponent max abs diff | 2.576e-6 |
-| FTLE abs diff | 6.481e-7 |
+| CLV exponent max abs diff | 1.775e-4 |
+| FTLE abs diff | 3.416e-5 |
 | method | piecewise-jacobian-rk2-stm-qr |
 
-The on-device WebGPU ensemble reduction, 4D chaos diagnostics, and N-chain tiled STM/QR candidate matched their CPU f64 oracles within the declared f32 tolerances.
+The on-device WebGPU ensemble reduction, 4D chaos diagnostics, N-chain trajectory/tape candidate, and N-chain tiled STM/QR candidate matched their CPU f64 oracles within the declared f32 tolerances.
