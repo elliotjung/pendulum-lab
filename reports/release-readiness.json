@@ -1,43 +1,25 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-07-04T12:59:41.501Z",
+  "generatedAt": "2026-07-05T07:23:20.096Z",
   "metadata": {
     "schemaVersion": "pendulum-report-metadata/v1",
-    "generatedAt": "2026-07-04T12:59:41.501Z",
-    "gitSha": "490fb6de7ca3a1315902d22af375bd13de0cb848",
+    "generatedAt": "2026-07-05T07:23:20.096Z",
+    "gitSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "buildSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "sourceSha": "5a2933cbb1ae6e1737c3cbabfb8fecf77581da07",
+    "attested": true,
     "dirty": true,
     "dirtyFiles": [
-      ".github/workflows/main.yml",
-      "CHANGELOG.md",
-      "README.md",
-      "docs/engine-overview.md",
-      "docs/portfolio-korean.md",
-      "docs/tutorial-reproduce-paper.md",
       "reports/gpu-adapter-matrix.json",
       "reports/gpu-adapter-matrix.md",
       "reports/gpu-benchmark-ladder.json",
       "reports/gpu-benchmark-ladder.md",
-      "reports/publication-status.json",
       "reports/release-one-page.pdf",
-      "reports/release-readiness.json",
-      "reports/release-readiness.md",
-      "reports/reproduce/manifest.json",
-      "reports/reviewer-kit-manifest.json",
-      "reports/reviewer-kit-manifest.md",
-      "reports/webgpu-hardware-validation.json",
-      "reports/webgpu-hardware-validation.md",
       "reports/worldclass-scorecard.json",
-      "reports/worldclass-scorecard.md",
-      "scripts/publication-status.ts",
-      "scripts/release-package.ts",
-      "scripts/report-metadata.ts",
-      "scripts/reproduce-all.ts",
-      "scripts/reviewer-kit.ts",
-      "scripts/worldclass-scorecard.ts",
-      "src/runtime/gpuNChainVariational.ts",
-      "src/runtime/gpuNChainVariationalCpu.ts",
-      "tests/integrators.test.ts"
+      "reports/worldclass-scorecard.md"
     ],
+    "sourceDirty": false,
+    "sourceDirtyFiles": [],
     "command": "npm run release:package",
     "node": "v26.3.0",
     "os": {
@@ -50,7 +32,7 @@
     "sourceRunUrl": null,
     "freshnessPolicy": {
       "maxAgeDays": 7,
-      "staleAfter": "2026-07-11T12:59:41.501Z",
+      "staleAfter": "2026-07-12T07:23:20.096Z",
       "action": "warn"
     }
   },
@@ -73,7 +55,7 @@
       "path": ".github/workflows/pages.yml",
       "required": true,
       "available": true,
-      "hash": "00d30bffaf9b9e",
+      "hash": "09dfb85b33c892",
       "note": "GitHub Pages deploy workflow is present."
     },
     {
@@ -88,7 +70,7 @@
       "path": ".github/workflows/publish-npm.yml",
       "required": true,
       "available": true,
-      "hash": "1e71d58db24850",
+      "hash": "03d924d12aa446",
       "note": "Manual npm workflow uses OIDC trusted publishing and automatic provenance."
     },
     {
@@ -96,7 +78,7 @@
       "path": ".github/workflows/release.yml",
       "required": true,
       "available": true,
-      "hash": "17855e5822f731",
+      "hash": "0decd5a23fcf56",
       "note": "Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation."
     },
     {
@@ -127,7 +109,7 @@
       "path": "reports/gpu-benchmark-ladder.md",
       "required": true,
       "available": true,
-      "hash": "02f224650855af",
+      "hash": "184c6ebdbad139",
       "note": "Hardware GPU benchmark ladder records adapter metadata, f32/f64 drift, and CPU-oracle promotion metrics."
     },
     {
@@ -135,7 +117,7 @@
       "path": "reports/gpu-benchmark-ladder.json",
       "required": true,
       "available": true,
-      "hash": "144b53e1b1abbb",
+      "hash": "1d70f16587d823",
       "note": "Machine-readable GPU benchmark ladder for release artifacts."
     },
     {
@@ -143,7 +125,7 @@
       "path": "reports/gpu-adapter-matrix.json",
       "required": true,
       "available": true,
-      "hash": "1789529b329408",
+      "hash": "1253bd2aaea177",
       "note": "Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit."
     },
     {
