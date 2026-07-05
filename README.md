@@ -2,8 +2,9 @@
 
 A framework-free, zero-runtime-dependency TypeScript platform for nonlinear
 pendulum dynamics: 8 physical systems (double/triple/N-chain, driven, spring,
-rope/string, double-string, **3D spherical N-chain**), 12 measured-order
-integrators, a full chaos-diagnostics stack with uncertainties, and a
+rope/string, double-string, **3D spherical N-chain**), 13 measured-order
+integrators, a full chaos-diagnostics stack with uncertainties, an
+optimal-control module (LQR balancing, energy swing-up, iLQR), and a
 reproducibility pipeline (provenance, SHA-256 bundles, executable notebooks).
 Every quantitative output carries a clickable Trust Inspector badge:
 *visual-only → finite-time estimate → validated → publication-ready*
@@ -32,7 +33,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 1056 unit tests
+npm test           # 1086 unit tests
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
@@ -68,7 +69,7 @@ Pick the depth that matches your time budget — each path is self-contained:
 
 | # | Claim | Equation / method | Parameters | Reproduce | Evidence (JSON/report) | Caveat |
 |---|---|---|---|---|---|---|
-| 1 | All 12 integrators converge at their theoretical order | dt-halving order fit per method | double pendulum, θ=(2.0, 2.5), dt halvings from 8 ms | `npm run validate:reference` | `reports/validation-reference.json` | adaptive methods report effective order |
+| 1 | All 13 integrators converge at their theoretical order | dt-halving order fit per method | double pendulum, θ=(2.0, 2.5), dt halvings from 8 ms | `npm run validate:reference` | `reports/validation-reference.json` | adaptive methods report effective order |
 | 2 | Engine RHS matches an independent SymPy symbolic derivation | component-wise Euler–Lagrange comparison at random states | double, triple, spherical double/triple; ~1e-14 agreement | `npm run validate:sympy` | `reports/sympy-validation.json` | needs python+sympy |
 | 3 | Trajectories match SciPy DOP853 externally | same IC/params, rtol=atol=1e-12, 20 s | double & triple, regular ≈6e-14; chaotic to the e^{λt} floor | `npm run validate:cross` | `reports/cross-validation.json` | chaotic comparison limited by exponential amplification |
 | 4 | Period-doubling onset matches literature | Floquet multiplier −1 crossing on the stroboscopic map | driven pendulum γ=0.5, ω=2/3; A_PD measured 1.0664 vs published 1.0663 | `npm run validate:literature` | `reports/literature-anchors.json` | onset localized to continuation tolerance 1e-10 |
@@ -89,8 +90,10 @@ Step-by-step paper reproduction:
 
 ## What's inside (short version)
 
-- **Numerics** — Euler → RK4, embedded RKF45 & Dormand–Prince 5(4),
-  Gauss–Legendre, Yoshida-4, Gragg–Bulirsch–Stoer, L-stable TR-BDF2.
+- **Numerics** — Euler → RK4, embedded RKF45, Dormand–Prince 5(4) &
+  Tsitouras 5(4) (the DifferentialEquations.jl non-stiff default; measurably
+  tighter error at equal cost), Gauss–Legendre, Yoshida-4,
+  Gragg–Bulirsch–Stoer, L-stable TR-BDF2.
 - **Physics** — planar double/triple/N-chain, driven/damped, elastic spring,
   rope/string and double-string (unilateral tension gates, hybrid
   slack/recapture), spherical pendulum and spherical N-chain (full 3D
@@ -99,7 +102,14 @@ Step-by-step paper reproduction:
   self-check), Kaplan–Yorke, RQA, 0–1 test, CLVs, FTLE/LCS + ridges, basin
   entropy/Wada, Floquet + continuation + branch switching (period-doubling
   *and* symmetry-breaking pitchfork), Melnikov, recurrence networks,
-  Neimark–Sacker, codim-2 maps.
+  Neimark–Sacker, codim-2 maps, alignment indices (SALI, FLI, and GALI_k
+  with torus-dimension discrimination).
+- **Control** (`experimental`) — actuated double pendulum with the
+  full/acrobot/pendubot modes of the DFKI benchmark, upright LQR designed by
+  Van Loan discretisation + Riccati value iteration (closed-loop eigenvalues
+  reported, not assumed), energy-shaping swing-up with a Lyapunov-gated LQR
+  capture, and iLQR trajectory optimisation (monotone line search) for the
+  underactuated swing-up. Design rationale: `docs/control-module.md`.
 - **Inverse & UQ** — parameter estimation (Levenberg–Marquardt recovery of
   physical parameters from observed trajectories, with covariance/standard-error
   uncertainties), additive- and multiplicative-noise Langevin SDEs
@@ -133,7 +143,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1056 tests across 155 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1086 tests across 160 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |
@@ -151,6 +161,7 @@ Step-by-step paper reproduction:
 ## Repository map
 
 `src/physics` equations & integrators · `src/chaos` diagnostics ·
+`src/control` actuated dynamics, LQR, swing-up, iLQR ·
 `src/research` reproducibility tooling · `src/workers` job protocol ·
 `src/runtime` DI/event/command/worker clients · `src/app` UI layer
 (`parity/` research & governance modules) · `src/lib.ts` headless core entry ·

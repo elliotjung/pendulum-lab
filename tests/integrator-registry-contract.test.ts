@@ -30,10 +30,10 @@ const state0 = () => new Float64Array([0.7, -0.3]);
 describe('registry metadata', () => {
   const ids = Object.keys(integratorRegistry) as IntegratorId[];
 
-  test('covers exactly the 13 shipped integrators with self-consistent entries', () => {
+  test('covers exactly the 14 shipped integrators with self-consistent entries', () => {
     expect(ids.sort()).toEqual([
       'bdf2', 'dopri5', 'euler', 'gauss2', 'gbs', 'hmidpoint', 'leapfrog',
-      'rk2', 'rk4', 'rkf45', 'symplectic', 'verlet', 'yoshida4'
+      'rk2', 'rk4', 'rkf45', 'symplectic', 'tsit5', 'verlet', 'yoshida4'
     ].sort());
     for (const id of ids) {
       const meta = integratorRegistry[id];
@@ -121,7 +121,7 @@ describe('step() dispatch', () => {
   test('adaptive/implicit ids run through the dispatcher and stay near the RK4 baseline', () => {
     const baseline = new Float64Array(2);
     step('rk4', state0(), 0.01, rhs, baseline);
-    for (const id of ['rkf45', 'dopri5', 'gbs', 'bdf2'] as IntegratorId[]) {
+    for (const id of ['rkf45', 'dopri5', 'tsit5', 'gbs', 'bdf2'] as IntegratorId[]) {
       const out = new Float64Array(2);
       step(id, state0(), 0.01, rhs, out);
       expect(Math.abs(out[0]! - baseline[0]!), id).toBeLessThan(1e-4);

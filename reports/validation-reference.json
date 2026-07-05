@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T04:09:58.457Z",
+  "generatedAt": "2026-07-05T12:21:06.553Z",
   "referenceMethod": "gbs",
   "checks": [
     {
@@ -61,6 +61,27 @@
       "agreement": {
         "value": 7.333192031389046e-8,
         "threshold": 0.01,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
+      "id": "verlet",
+      "name": "Velocity Verlet Alias",
+      "order": {
+        "measured": 2.0007783928982694,
+        "expected": 2,
+        "roundOffLimited": false,
+        "pass": true
+      },
+      "energy": {
+        "value": 0.23316304024106696,
+        "threshold": 5,
+        "pass": true
+      },
+      "agreement": {
+        "value": 0.0044217005730287084,
+        "threshold": 0.2,
         "pass": true
       },
       "pass": true
@@ -213,6 +234,27 @@
       "pass": true
     },
     {
+      "id": "tsit5",
+      "name": "Tsitouras 5(4)",
+      "order": {
+        "measured": 5.105349325622278,
+        "expected": 5,
+        "roundOffLimited": false,
+        "pass": true
+      },
+      "energy": {
+        "value": 6.245612078466878e-11,
+        "threshold": 0.01,
+        "pass": true
+      },
+      "agreement": {
+        "value": 1.379896197306607e-11,
+        "threshold": 0.001,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
       "id": "gbs",
       "name": "Gragg-Bulirsch-Stoer",
       "order": {
@@ -256,7 +298,7 @@
     }
   ],
   "summary": {
-    "integrators": 12,
-    "passed": 12
+    "integrators": 14,
+    "passed": 14
   }
 }

@@ -79,6 +79,9 @@ export type { ArclengthSystem, ArclengthOptions, ArclengthPoint, ArclengthFold, 
 export { saliIndicator, fliIndicator } from './indicators';
 export type { IndicatorSettings, SaliResult, FliResult } from './indicators';
 
+export { galiIndicator } from './gali';
+export type { GaliSettings, GaliResult } from './gali';
+
 export { shadowingHorizon } from './shadowing';
 export type { ShadowingOptions, ShadowingResult } from './shadowing';
 

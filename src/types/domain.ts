@@ -12,6 +12,7 @@ export type IntegratorId =
   | 'gauss2'
   | 'rkf45'
   | 'dopri5'
+  | 'tsit5'
   | 'gbs'
   | 'bdf2';
 

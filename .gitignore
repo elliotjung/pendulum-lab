@@ -16,3 +16,6 @@ docs/api/
 reports/mutation/
 desktop.ini
 Thumbs.db
+tmp/
+.gh-localappdata/
+.claude/

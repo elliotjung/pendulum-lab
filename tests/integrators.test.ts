@@ -75,6 +75,7 @@ describe('integrators', () => {
       'gauss2',
       'rkf45',
       'dopri5',
+      'tsit5',
       'gbs',
       'bdf2'
     ]);
@@ -118,6 +119,7 @@ describe('integrators', () => {
       gauss2: { order: 'implicit', symplectic: 'canonical-only', dampingSupport: 'diagnostic-only', recommendedDt: [0.0005, 0.012] },
       rkf45: { order: 'adaptive', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0002, 0.01] },
       dopri5: { order: 5, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0002, 0.012] },
+      tsit5: { order: 5, symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.0002, 0.012] },
       gbs: { order: 'adaptive', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.001, 0.05] },
       bdf2: { order: 'implicit', symplectic: 'no', dampingSupport: 'supported', recommendedDt: [0.001, 0.05] }
     });

@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+### Competitor-study integrations: Tsit5, GALI_k, and the control module (additive; suite 1056 -> 1086)
+
+Curated integrations from the 24-project source survey in
+`docs/learn-from-this-study.md` — ideas adopted and re-designed for this
+architecture, never transcribed:
+
+- **Tsitouras 5(4) integrator** (`tsit5`, `src/physics/adaptive.ts`): the
+  DifferentialEquations.jl non-stiff default pair, wired through the
+  integrator registry with full metadata and fail-closed dispatch. The
+  reference-validation ladder now measures it at order 5.11 with *smaller*
+  energy drift (6.2e-11 vs 7.6e-11) and 6x tighter reference agreement
+  (1.4e-11 vs 8.7e-11) than Dormand-Prince 5(4) at identical stage count —
+  the smaller-error-constant claim as a measured result
+  (`reports/validation-reference.json`, claim #1 now covers 13 methods).
+- **GALI_k alignment index** (`src/chaos/gali.ts`, `analysis` namespace):
+  the k-vector generalisation of SALI (Skokos-Bountis-Antonopoulos 2007,
+  via DynamicalSystems.jl), computed as the Gram-determinant volume of the
+  unit deviation frame on the existing variational machinery — no SVD
+  dependency, O(k^2 n) per sample. Tests pin the algebraic SALI bracket
+  (GALI_2 <= SALI <= sqrt(2) GALI_2 on the same tangent flow), chaotic
+  collapse, and torus-dimension discrimination (GALI_2 survives / GALI_4
+  decays on a calibrated regular double-pendulum orbit).
+- **Control module** (`src/control/`, exported via `experimental`): actuated
+  double-pendulum dynamics with the DFKI benchmark's full/acrobot/pendubot
+  modes (tau=0 pinned bitwise against `rhsDouble`; closed-form B matrix
+  verified against central differences), upright LQR designed dependency-free
+  (Van Loan block-exponential ZOH discretisation + Riccati value iteration,
+  closed-loop eigenvalues reported via `eigenvaluesGeneral`), energy-shaping
+  swing-up with a calibrated Lyapunov-gated LQR capture (hanging -> inverted
+  in ~7 s, pinned end to end), and a generic iLQR solver (Levenberg-regularised
+  backward pass, strictly monotone line search, torque-limit clamping) that
+  solves the fully-actuated swing-up and the underactuated acrobot recovery.
+  Design rationale and not-built list: `docs/control-module.md`.
+
 ### Architecture, evidence attestation, and science hardening (additive)
 
 - **Research workbench split** (`src/app/parity/`): the 1.8k-line

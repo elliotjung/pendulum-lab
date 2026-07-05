@@ -166,6 +166,74 @@ export function dormandPrince54StepDense(state: StateVector, dt: number, rhs: De
   };
 }
 
+// Tsitouras 5(4) Butcher tableau (Tsitouras 2011, Comput. Math. Appl. 62;
+// the non-stiff default pair of DifferentialEquations.jl). Like Dormand-Prince
+// it is FSAL (the 7th stage row equals the 5th-order weights), but the free
+// parameters were re-optimised so the leading truncation-error coefficients
+// are smaller — same seven stages, measurably tighter error at equal dt.
+const TS_A: readonly (readonly number[])[] = [
+  [],
+  [0.161],
+  [-0.008480655492356989, 0.335480655492357],
+  [2.8971530571054935, -6.359448489975075, 4.3622954328695815],
+  [5.325864828439257, -11.748883564062828, 7.4955393428898365, -0.09249506636175525],
+  [5.86145544294642, -12.92096931784711, 8.159367898576159, -0.071584973281401, -0.028269050394068383],
+  [0.09646076681806523, 0.01, 0.4798896504144996, 1.379008574103742, -3.290069515436081, 2.324710524099774]
+];
+// 5th-order solution weights (== 7th stage row, FSAL).
+const TS_B5 = [0.09646076681806523, 0.01, 0.4798896504144996, 1.379008574103742, -3.290069515436081, 2.324710524099774, 0];
+// Error weights btilde = b - bhat (5th minus embedded 4th order), transcribed
+// from the reference implementation; a transcription error here collapses the
+// measured convergence order, which the reference-validation suite pins.
+const TS_BTILDE = [
+  -0.00178001105222577714,
+  -0.0008164344596567469,
+  0.007880878010261995,
+  -0.1447110071732629,
+  0.5823571654525552,
+  -0.45808210592918697,
+  0.015151515151515152
+];
+
+/**
+ * One Tsitouras 5(4) step. Returns the 5th-order solution and an absolute
+ * infinity-norm error estimate from the embedded 4th-order weights. Does not
+ * mutate `state`. Adopted from the method DifferentialEquations.jl ships as
+ * its recommended non-stiff default (`Tsit5`).
+ */
+export function tsitouras54Step(state: StateVector, dt: number, rhs: Derivative): EmbeddedStepResult {
+  const n = state.length;
+  const k: StateVector[] = Array.from({ length: 7 }, () => new Float64Array(n));
+  const tmp = new Float64Array(n);
+  for (let s = 0; s < 7; s += 1) {
+    if (s === 0) {
+      rhs(state, k[0]!);
+      continue;
+    }
+    const a = TS_A[s]!;
+    for (let i = 0; i < n; i += 1) {
+      let acc = 0;
+      for (let j = 0; j < a.length; j += 1) acc += a[j]! * Number(k[j]![i] ?? 0);
+      tmp[i] = Number(state[i] ?? 0) + dt * acc;
+    }
+    rhs(tmp, k[s]!);
+  }
+  const y = new Float64Array(n);
+  let error = 0;
+  for (let i = 0; i < n; i += 1) {
+    let sum5 = 0;
+    let sumErr = 0;
+    for (let s = 0; s < 7; s += 1) {
+      const ki = Number(k[s]![i] ?? 0);
+      sum5 += TS_B5[s]! * ki;
+      sumErr += TS_BTILDE[s]! * ki;
+    }
+    y[i] = Number(state[i] ?? 0) + dt * sum5;
+    error = Math.max(error, Math.abs(dt * sumErr));
+  }
+  return { y, error };
+}
+
 export type StepControllerKind = 'basic' | 'pi';
 
 /**

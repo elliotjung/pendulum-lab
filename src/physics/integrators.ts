@@ -1,6 +1,6 @@
 import type { IntegratorId } from '../types/domain';
 import type { Derivative, IntegratorMeta, StateVector, StepOptions } from './types';
-import { dormandPrince54Step, bulirschStoerStep } from './adaptive';
+import { dormandPrince54Step, bulirschStoerStep, tsitouras54Step } from './adaptive';
 import { trBdf2Step } from './stiff';
 import { implicitMidpointNewton } from './implicitDiagnostics';
 
@@ -146,6 +146,18 @@ export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> 
     dampingSupport: 'supported',
     stabilityNotes: [
       'The fifth-order solution advances; the embedded fourth-order pair provides the error estimate (the method underlying MATLAB ode45).'
+    ],
+    recommendedDt: [0.0002, 0.012]
+  },
+  tsit5: {
+    id: 'tsit5',
+    name: 'Tsitouras 5(4)',
+    order: 5,
+    symplectic: 'no',
+    dampingSupport: 'supported',
+    stabilityNotes: [
+      'Same seven-stage FSAL structure as Dormand-Prince 5(4) but with re-optimised coefficients (Tsitouras 2011), giving smaller leading error terms at identical cost.',
+      'Adopted from the DifferentialEquations.jl ecosystem, where it is the recommended default for non-stiff problems.'
     ],
     recommendedDt: [0.0002, 0.012]
   },
@@ -501,6 +513,12 @@ export function step(method: IntegratorId, state: StateVector, dt: number, rhs: 
       return rkf45Step(state, dt, rhs, out, options);
     case 'dopri5': {
       const result = dormandPrince54Step(state, dt, rhs);
+      out.set(result.y);
+      if (options.previousError) options.previousError.value = result.error;
+      return out;
+    }
+    case 'tsit5': {
+      const result = tsitouras54Step(state, dt, rhs);
       out.set(result.y);
       if (options.previousError) options.previousError.value = result.error;
       return out;

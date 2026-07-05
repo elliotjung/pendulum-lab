@@ -60,7 +60,7 @@ const checksums = research.checksumEntries(entries);
 Command-line reproduction of every headline claim: `npm run reproduce`
 (writes the commit-bound `reports/reproduce/manifest.json`).
 
-### experimental - CPU-oracle-gated WebGPU acceleration
+### experimental - CPU-oracle-gated WebGPU acceleration + optimal control
 
 ```ts
 import { experimental } from 'pendulum-lab-core';
@@ -73,6 +73,13 @@ const promotion = await experimental.promotedDoublePendulumLyapunovSpectrum(
   { dt: 0.01, steps: 2_000 }
 );
 console.log(promotion.backend, promotion.result.spectrum, promotion.caveat);
+
+// Optimal control (docs/control-module.md): swing up the double pendulum
+// from hanging and hold it inverted with the LQR capture stage.
+const spec = { parameters: { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, gamma: 0, dt: 0.005 } as const;
+const controller = experimental.createHybridSwingUpController(spec);
+const run = experimental.simulateHybridSwingUp(controller, spec, [0.1, 0, 0, 0], { dt: 0.005, steps: 20_000 });
+console.log(run.captureTime, run.finalPhase, run.finalState);
 ```
 
 ## Stability Badges
