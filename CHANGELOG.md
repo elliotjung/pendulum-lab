@@ -2,6 +2,51 @@
 
 ## Unreleased
 
+### Control goes analytic, N-link, and on-screen (additive; suite 1086 -> 1107)
+
+Second wave of the competitor-study integration: every follow-up item from
+the survey review is now implemented.
+
+- **Analytic iLQR derivatives** (`makeRk4StepDerivatives`,
+  `jacobianDoubleActuated`): the discrete step-map Jacobians are now the
+  exact chain rule through the four RK4 stages, fed by closed-form state and
+  control Jacobians (including the torque term's configuration dependence).
+  Removes the ~1e-9 finite-difference floor and replaces 2(n+m) rollouts per
+  knot with four Jacobian evaluations; the FD path remains as fallback and
+  the two are pinned against each other.
+- **Box-DDP backward pass** (`boxQpSolve`): with a finite torque limit each
+  knot solves the box QP exactly by active-set enumeration (exact for m <= 3)
+  and zeroes feedback rows of clamped inputs — bang segments now come out of
+  the optimiser, not the rollout clamp.
+- **N-chain upright balancing** (`designChainUprightLqr`, `rhsChainActuated`,
+  `controlMatrixChain`, `jacobianChainActuated`): the LQR pipeline
+  generalises to the fully-actuated planar N-chain with analytic
+  linearisation (`jacobianChain` extended with a constant generalised force).
+  N=2 cross-checks against the double-pendulum gain; N=3 balances the
+  nonlinear inverted triple chain; N=4 is Schur-stable.
+- **Cooperative iLQR** (`ilqrSolveAsync`): warm-started chunks that yield to
+  the event loop with exact chunk boundaries (deterministic rollouts), so
+  long optimisations cannot freeze the page.
+- **Auto capture gate** (`autoCaptureLevel`): the hybrid swing-up's RoA gate
+  is now derived from the design's own cost-to-go at an anti-phase reference
+  deviation — it rescales with Q, R, dt, and plant parameters, reproducing
+  the previous hand-calibrated 2.5e3 on the unit pendulum.
+- **Tsit5 dense output** (`tsitouras54StepDense`): the method's free
+  4th-order interpolant, transcription-checked by b_i(1) reproducing the
+  FSAL weights — event localisation parity with the Dormand-Prince pair.
+- **Control tab** (`src/app/ControlTab.ts`, both shells): live swing-up and
+  balance animation with torque arcs, energy bar against the upright level,
+  controller-phase badge (pump/capture/plan/track), strategy selection
+  (hybrid, iLQR plan->track, LQR-only incl. acrobot/pendubot), speed and
+  torque-limit controls, CSV export, and a trust badge pointing at the
+  pinned tests. Covered by `e2e/control-tab.spec.ts`.
+- **CLI**: `npm run research -- gali|lqr|chainlqr|swingup|ilqr` join the
+  headless command set, so the new capabilities are scriptable and
+  reproducible outside the browser.
+- **Lab decluttering**: the keyboard-shortcuts accordion moved out of the
+  simulation controls into the Help dialog (documentation belongs to the
+  help surface); visual-regression snapshots refreshed.
+
 ### Competitor-study integrations: Tsit5, GALI_k, and the control module (additive; suite 1056 -> 1086)
 
 Curated integrations from the 24-project source survey in

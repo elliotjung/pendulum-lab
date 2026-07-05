@@ -19,6 +19,7 @@ import type { BasinTab } from './BasinTab';
 import type { RqaTab } from './RqaTab';
 import type { FtleTab } from './FtleTab';
 import type { ResearchPlusTab } from './ResearchPlusTab';
+import type { ControlTab } from './ControlTab';
 
 /**
  * Runtime bootstrap entry points for the browser app. Imported directly by
@@ -96,6 +97,7 @@ interface ModernTabs {
   rqa: RqaTab;
   ftle: FtleTab;
   researchPlus: ResearchPlusTab;
+  control: ControlTab;
 }
 
 type ModernTabsWindow = Window & {
@@ -126,7 +128,8 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
       { BasinTab },
       { RqaTab },
       { FtleTab },
-      { ResearchPlusTab }
+      { ResearchPlusTab },
+      { ControlTab }
     ] = await Promise.all([
       import('./LyapunovTab'),
       import('./ValidationTab'),
@@ -143,7 +146,8 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
       import('./BasinTab'),
       import('./RqaTab'),
       import('./FtleTab'),
-      import('./ResearchPlusTab')
+      import('./ResearchPlusTab'),
+      import('./ControlTab')
     ]);
 
     const lyapunov = new LyapunovTab();
@@ -178,8 +182,10 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
     ftle.install();
     const researchPlus = new ResearchPlusTab();
     researchPlus.install();
+    const control = new ControlTab();
+    control.install();
 
-    w.__modernTabs = { lyapunov, validation, sweep, compare, bifurcation, phase3d, density, expansion, matrix, golden, zeroOne, clv, basin, rqa, ftle, researchPlus };
+    w.__modernTabs = { lyapunov, validation, sweep, compare, bifurcation, phase3d, density, expansion, matrix, golden, zeroOne, clv, basin, rqa, ftle, researchPlus, control };
     return true;
   })();
 

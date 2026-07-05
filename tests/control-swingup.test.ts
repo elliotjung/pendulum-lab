@@ -69,6 +69,23 @@ describe('hybrid swing-up + LQR capture', () => {
     expect(Math.abs(f[3]!)).toBeLessThan(1e-3);
   });
 
+  test('auto capture level scales with the design instead of being a magic constant', () => {
+    const controller = createHybridSwingUpController(spec);
+    // 'auto' resolves to δᵀPδ at the reference deviation; on the unit pendulum
+    // with default weights this lands near the previously hand-calibrated 2.5e3.
+    expect(controller.captureLevel).toBeGreaterThan(1000);
+    expect(controller.captureLevel).toBeLessThan(5000);
+    // A heavier, longer pendulum has a different cost-to-go — the gate follows.
+    const heavy = createHybridSwingUpController({
+      ...spec,
+      parameters: { m1: 2, m2: 1.5, l1: 1.4, l2: 1.1, g: 9.81 }
+    });
+    expect(heavy.captureLevel).not.toBeCloseTo(controller.captureLevel, 1);
+    // Explicit numeric override is honoured verbatim.
+    const pinned = createHybridSwingUpController(spec, { captureLevel: 1234 });
+    expect(pinned.captureLevel).toBe(1234);
+  });
+
   test('records samples with torque and energy columns and reports the LQR design', () => {
     const controller = createHybridSwingUpController(spec);
     expect(controller.design.stabilising).toBe(true);

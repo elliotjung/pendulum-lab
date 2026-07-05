@@ -108,6 +108,7 @@ const SECTION_PRESENTATION: Record<string, { label: string; icon: IconName; hint
 const TAB_ICONS: Record<string, IconName> = {
   lab: 'play',
   compare: 'compare',
+  control: 'orbit',
   lyap: 'spectrum',
   sweep: 'grid',
   bifurc: 'branch',

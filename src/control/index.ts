@@ -1,15 +1,17 @@
 /**
- * Optimal control of the actuated double pendulum: controlled dynamics with
- * DFKI-benchmark actuation modes (full / acrobot / pendubot), upright LQR
- * balancing (Van Loan discretisation + Riccati value iteration), energy-
- * shaping swing-up with an LQR capture gate, and iLQR trajectory optimisation
- * for the underactuated swing-up. Design rationale and provenance:
+ * Optimal control of actuated pendulums: controlled dynamics with
+ * DFKI-benchmark actuation modes (full / acrobot / pendubot) plus the planar
+ * N-chain, upright LQR balancing (Van Loan discretisation + Riccati value
+ * iteration), energy-shaping swing-up with an LQR capture gate, and iLQR
+ * trajectory optimisation with analytic RK4 chain-rule derivatives and an
+ * exact box-constrained backward pass. Design rationale and provenance:
  * `docs/control-module.md`.
  */
 export {
   DOUBLE_UPRIGHT_STATE,
   applyActuationMode,
   controlMatrixDouble,
+  jacobianDoubleActuated,
   rhsDoubleActuated,
   uprightEnergyDouble,
   wrapAngle
@@ -17,18 +19,37 @@ export {
 export type { ActuationMode } from './actuated';
 
 export {
+  controlMatrixChain,
+  jacobianChainActuated,
+  rhsChainActuated,
+  uprightChainState,
+  uprightEnergyChain
+} from './actuatedChain';
+
+export {
   actuatedChannels,
+  designChainUprightLqr,
   designUprightLqr,
   discretizeLinear,
+  lqrChainTorque,
   lqrLyapunovLevel,
   lqrTorque,
   matExp,
   solveDare
 } from './lqr';
-export type { DareOptions, DareResult, LqrControllerOptions, LqrDesign, LqrSpec } from './lqr';
+export type {
+  ChainLqrDesign,
+  ChainLqrSpec,
+  DareOptions,
+  DareResult,
+  LqrControllerOptions,
+  LqrDesign,
+  LqrSpec
+} from './lqr';
 
 export {
   DEFAULT_SWINGUP_GAINS,
+  autoCaptureLevel,
   createHybridSwingUpController,
   energyPumpTorque,
   simulateHybridSwingUp
@@ -41,11 +62,22 @@ export type {
   SwingUpPhase
 } from './swingup';
 
-export { ilqrSolve, makeDoublePendulumStepMap, makeDoubleSwingUpProblem } from './ilqr';
+export {
+  boxQpSolve,
+  ilqrSolve,
+  ilqrSolveAsync,
+  makeDoublePendulumControlledSystem,
+  makeDoublePendulumStepMap,
+  makeDoubleSwingUpProblem,
+  makeRk4StepDerivatives
+} from './ilqr';
 export type {
+  ControlledSystem,
   DiscreteDynamics,
   DoubleSwingUpSpec,
+  IlqrAsyncOptions,
   IlqrOptions,
   IlqrProblem,
-  IlqrResult
+  IlqrResult,
+  StepDerivatives
 } from './ilqr';

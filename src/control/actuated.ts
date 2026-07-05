@@ -1,6 +1,7 @@
 import type { PendulumParameters } from '../types/domain';
 import type { StateVector } from '../physics/types';
 import { MASS_MATRIX_SINGULARITY_THRESHOLD as DET_THRESHOLD } from '../physics/constants';
+import { jacobianDouble } from '../physics/double';
 
 /**
  * Actuated double-pendulum dynamics — the control-input extension of
@@ -99,6 +100,53 @@ export function controlMatrixDouble(state: ArrayLike<number>, parameters: Pendul
   b[6] = -m12 / det; // ∂ω̇2/∂τ1
   b[7] = (m12 + m11) / det; // ∂ω̇2/∂τ2
   return b;
+}
+
+/**
+ * Exact state Jacobian ∂(rhsDoubleActuated)/∂x at fixed torque, row-major into
+ * `jac` (length 16). Equals `jacobianDouble` plus the torque term's
+ * configuration dependence: the applied generalised force Q = [τ1−τ2, τ2] is
+ * constant, but its acceleration contribution M(q)⁻¹Q varies with q through
+ * m12 = B·cos(θ1−θ2) and det(M). Differentiating the quotient N/det with
+ * N2 = m22·Q1 − m12·Q2, N3 = −m12·Q1 + m11·Q2 adds only θ-column terms.
+ * Verified against central differences of `rhsDoubleActuated` in the tests;
+ * this closed form is what lets the iLQR discrete derivatives stay analytic.
+ */
+export function jacobianDoubleActuated(
+  state: ArrayLike<number>,
+  parameters: PendulumParameters,
+  gamma: number,
+  tau: ArrayLike<number>,
+  jac: Float64Array
+): Float64Array {
+  jacobianDouble(state, parameters, gamma, jac);
+  const q1 = Number(tau[0] ?? 0) - Number(tau[1] ?? 0);
+  const q2 = Number(tau[1] ?? 0);
+  if (q1 === 0 && q2 === 0) return jac;
+
+  const t1 = Number(state[0] ?? 0);
+  const t2 = Number(state[1] ?? 0);
+  const { m1, m2, l1, l2 } = parameters;
+  const delta = t1 - t2;
+  const B = m2 * l1 * l2;
+  const m11 = (m1 + m2) * l1 * l1;
+  const m22 = m2 * l2 * l2;
+  const m12 = B * Math.cos(delta);
+  const det = m11 * m22 - m12 * m12;
+  if (Math.abs(det) < DET_THRESHOLD) return jac; // rows 2,3 already zeroed by jacobianDouble
+
+  const n2 = m22 * q1 - m12 * q2;
+  const n3 = -m12 * q1 + m11 * q2;
+  const det2 = det * det;
+  const dm12dt1 = -B * Math.sin(delta); // ∂m12/∂θ1; ∂m12/∂θ2 = −∂m12/∂θ1
+  for (const [col, dm12] of [[0, dm12dt1], [1, -dm12dt1]] as const) {
+    const ddet = -2 * m12 * dm12;
+    const dn2 = -dm12 * q2;
+    const dn3 = -dm12 * q1;
+    jac[8 + col] = (jac[8 + col] ?? 0) + (dn2 * det - n2 * ddet) / det2;
+    jac[12 + col] = (jac[12 + col] ?? 0) + (dn3 * det - n3 * ddet) / det2;
+  }
+  return jac;
 }
 
 /** Wrap an angle to (−π, π]. */

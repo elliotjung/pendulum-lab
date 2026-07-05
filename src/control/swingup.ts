@@ -40,24 +40,44 @@ export interface SwingUpGains {
   kickOmegaThreshold: number;
   /** Symmetric joint-torque saturation. */
   torqueLimit: number;
-  /** V(x) = δxᵀPδx level below which the LQR capture stage engages. */
-  captureLevel: number;
+  /**
+   * V(x) = δxᵀPδx level below which the LQR capture stage engages.
+   * `'auto'` (the default) derives it from the design's own P via
+   * {@link autoCaptureLevel}, so the gate rescales with Q, R, dt, and the
+   * plant parameters instead of being a hand-tuned absolute number.
+   */
+  captureLevel: number | 'auto';
 }
 
 /**
- * Defaults calibrated on the unit double pendulum (m = l = 1, g = 9.81) with
- * the default LQR weights at dt = 5 ms: the energy pump reaches the upright
- * level set in ~7 s and first dips to V ≈ 2.1e3 there, so the 2.5e3 gate
- * catches the first pass (`tests/control-swingup.test.ts` pins this run).
- * `captureLevel` is measured in units of the *discrete* cost-to-go δxᵀPδx and
- * must be recalibrated if Q, R, dt, or the plant parameters change.
+ * Reference deviation defining the automatic capture gate: 0.3 rad per angle,
+ * 0.5 rad/s per rate, in the *anti-phase* sign pattern (arms bent opposite
+ * ways). P's cross terms make sign patterns differ by an order of magnitude —
+ * on the unit pendulum V(0.3, −0.3, 0.5, −0.5) ≈ 3.1e3 versus ≈ 4.2e4 for the
+ * in-phase pattern — and the anti-phase direction is the small one, so it
+ * yields the conservative gate. With the 0.8 margin this evaluates to ≈ 2.5e3
+ * on the unit pendulum with default weights, matching (and replacing) the
+ * previous hand-calibrated constant; the swing-up tests pin the resulting
+ * capture behaviour end to end.
  */
+const CAPTURE_REFERENCE_DEVIATION = [0.3, -0.3, 0.5, -0.5] as const;
+
+export function autoCaptureLevel(design: LqrDesign): number {
+  let v = 0;
+  for (let i = 0; i < 4; i += 1) {
+    for (let j = 0; j < 4; j += 1) {
+      v += CAPTURE_REFERENCE_DEVIATION[i]! * (design.riccati.P[i]![j] ?? 0) * CAPTURE_REFERENCE_DEVIATION[j]!;
+    }
+  }
+  return 0.8 * v;
+}
+
 export const DEFAULT_SWINGUP_GAINS: SwingUpGains = {
   ke: 1.2,
   kick: 2,
   kickOmegaThreshold: 0.05,
   torqueLimit: 30,
-  captureLevel: 2500
+  captureLevel: 'auto'
 };
 
 export type SwingUpPhase = 'pump' | 'capture';
@@ -69,6 +89,8 @@ export interface HybridSwingUpController {
   phase(): SwingUpPhase;
   design: LqrDesign;
   gains: SwingUpGains;
+  /** Numeric capture gate actually in force ('auto' resolved against the design). */
+  captureLevel: number;
   reset(): void;
 }
 
@@ -108,18 +130,20 @@ export function createHybridSwingUpController(
   }
   const resolved: SwingUpGains = { ...DEFAULT_SWINGUP_GAINS, ...gains };
   const design = designUprightLqr(spec);
+  const captureLevel = resolved.captureLevel === 'auto' ? autoCaptureLevel(design) : resolved.captureLevel;
   let phase: SwingUpPhase = 'pump';
   return {
     design,
     gains: resolved,
+    captureLevel,
     phase: () => phase,
     reset: () => {
       phase = 'pump';
     },
     torque(state: ArrayLike<number>, out: Float64Array): Float64Array {
       const level = lqrLyapunovLevel(design, state);
-      if (phase === 'pump' && level <= resolved.captureLevel) phase = 'capture';
-      else if (phase === 'capture' && level > 10 * resolved.captureLevel) phase = 'pump';
+      if (phase === 'pump' && level <= captureLevel) phase = 'capture';
+      else if (phase === 'capture' && level > 10 * captureLevel) phase = 'pump';
       if (phase === 'capture') {
         return lqrTorque(design, state, out, { torqueLimit: resolved.torqueLimit });
       }

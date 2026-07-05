@@ -1,7 +1,7 @@
 import type { PendulumParameters } from '../types/domain';
 import type { StateVector } from '../physics/types';
 import { rk4Step } from '../physics/integrators';
-import { rhsDoubleActuated, type ActuationMode } from './actuated';
+import { controlMatrixDouble, jacobianDoubleActuated, rhsDoubleActuated, type ActuationMode } from './actuated';
 import { actuatedChannels, matZeros } from './lqr';
 
 /**
@@ -20,18 +20,40 @@ import { actuatedChannels, matZeros } from './lqr';
  *
  * The returned cost history is non-increasing by construction (steps are only
  * accepted on actual cost decrease), which the tests pin along with the
- * swing-up itself. Dynamics derivatives use central differences on the step
- * map (the map is one RK4 step, so an analytic discrete Jacobian would need
- * the chain rule through all four stages; central differencing at h ≈ 1e-5
- * gives ~1e-9 accuracy, far below iLQR's own linearisation error).
+ * swing-up itself.
  *
- * Torque limits are enforced by clamping inside the rollout (and on the
- * returned sequence). Near-active limits this leaves the derivative slightly
- * stale — the well-known clamping-iLQR caveat; the box-constrained backward
- * pass (Tassa's box-DDP, Crocoddyl's BoxFDDP) is the documented upgrade path.
+ * Dynamics derivatives: when the problem supplies `derivatives` (the analytic
+ * RK4 chain rule from {@link makeRk4StepDerivatives}, machine-precision and
+ * derivative-free of RHS re-evaluation counts), the solver uses it; otherwise
+ * it falls back to central differences on the step map (~1e-9 accuracy at
+ * h ≈ 1e-5, below iLQR's own linearisation error).
+ *
+ * Torque limits: with a finite `torqueLimit` the backward pass solves the
+ * box-constrained QP min ½δuᵀQ_uu δu + Q_uᵀδu on each knot exactly (active-set
+ * enumeration — exact for the m ≤ 3 inputs used here; Tassa's box-DDP,
+ * Crocoddyl's BoxFDDP), zeroing feedback rows of clamped inputs so the line
+ * search never fights a saturated channel. Rollouts clamp as a final guard.
  */
 
 export type DiscreteDynamics = (x: ArrayLike<number>, u: ArrayLike<number>, out: Float64Array) => void;
+
+/** Fill fx (n×n) and fu (n×m) with the discrete step-map Jacobians at (x, u). */
+export type StepDerivatives = (x: ArrayLike<number>, u: ArrayLike<number>, fx: number[][], fu: number[][]) => void;
+
+/**
+ * A continuous controlled system ẋ = f(x, u) with analytic Jacobians —
+ * everything {@link makeRk4StepDerivatives} needs to differentiate the RK4
+ * step map exactly instead of by finite differences.
+ */
+export interface ControlledSystem {
+  n: number;
+  m: number;
+  rhs(x: ArrayLike<number>, u: ArrayLike<number>, out: StateVector): void;
+  /** ∂f/∂x at fixed u, row-major n×n. */
+  stateJacobian(x: ArrayLike<number>, u: ArrayLike<number>, jac: Float64Array): void;
+  /** ∂f/∂u at fixed x, row-major n×m. */
+  controlJacobian(x: ArrayLike<number>, u: ArrayLike<number>, jac: Float64Array): void;
+}
 
 export interface IlqrProblem {
   dynamics: DiscreteDynamics;
@@ -49,6 +71,11 @@ export interface IlqrProblem {
   uInit?: readonly (readonly number[])[];
   /** Symmetric clamp |u_i| ≤ torqueLimit applied inside every rollout. */
   torqueLimit?: number;
+  /**
+   * Analytic step-map Jacobians. When present the backward pass uses these
+   * instead of central differences — machine-precision and cheaper.
+   */
+  derivatives?: StepDerivatives;
 }
 
 export interface IlqrOptions {
@@ -90,6 +117,156 @@ function quadCost(dx: readonly number[], W: readonly (readonly number[])[]): num
     for (let j = 0; j < dx.length; j += 1) acc += (dx[i] ?? 0) * (W[i]![j] ?? 0) * (dx[j] ?? 0);
   }
   return 0.5 * acc;
+}
+
+/**
+ * Exact analytic Jacobians of the classical RK4 step map by the chain rule
+ * through the four stages. With A_i = ∂f/∂x and B_i = ∂f/∂u evaluated at the
+ * stage states (u is zero-order-held, so ∂s_i/∂u also flows through A_i):
+ *
+ *   Dk1 = A1                        Ek1 = B1
+ *   Dk2 = A2(I + dt/2·Dk1)          Ek2 = A2·(dt/2·Ek1) + B2
+ *   Dk3 = A3(I + dt/2·Dk2)          Ek3 = A3·(dt/2·Ek2) + B3
+ *   Dk4 = A4(I + dt·Dk3)            Ek4 = A4·(dt·Ek3) + B4
+ *   fx  = I + dt/6(Dk1+2Dk2+2Dk3+Dk4)   fu = dt/6(Ek1+2Ek2+2Ek3+Ek4)
+ *
+ * This is the derivative of the *implemented* discrete map, so replacing the
+ * central-difference fallback changes nothing but the error floor (~1e-9 →
+ * machine precision) and the cost (4 Jacobian evaluations instead of
+ * 2(n+m) RK4 rollouts per knot). Pinned against finite differences in tests.
+ */
+export function makeRk4StepDerivatives(system: ControlledSystem, dt: number): StepDerivatives {
+  const { n, m } = system;
+  const stage = new Float64Array(n);
+  const k = new Float64Array(n);
+  const a = new Float64Array(n * n);
+  const bmat = new Float64Array(n * m);
+  const dPrev = new Float64Array(n * n);
+  const dCur = new Float64Array(n * n);
+  const dSum = new Float64Array(n * n);
+  const ePrev = new Float64Array(n * m);
+  const eCur = new Float64Array(n * m);
+  const eSum = new Float64Array(n * m);
+  const xBase = new Float64Array(n);
+
+  // dCur = A · (I + scale·dPrev); eCur = A · (scale·ePrev) + B.
+  const propagate = (scale: number): void => {
+    for (let i = 0; i < n; i += 1) {
+      for (let j = 0; j < n; j += 1) {
+        let acc = a[i * n + j] ?? 0; // A·I term
+        for (let r = 0; r < n; r += 1) acc += (a[i * n + r] ?? 0) * scale * (dPrev[r * n + j] ?? 0);
+        dCur[i * n + j] = acc;
+      }
+      for (let c = 0; c < m; c += 1) {
+        let acc = bmat[i * m + c] ?? 0;
+        for (let r = 0; r < n; r += 1) acc += (a[i * n + r] ?? 0) * scale * (ePrev[r * m + c] ?? 0);
+        eCur[i * m + c] = acc;
+      }
+    }
+  };
+  const accumulate = (weight: number): void => {
+    for (let i = 0; i < n * n; i += 1) dSum[i] = (dSum[i] ?? 0) + weight * (dCur[i] ?? 0);
+    for (let i = 0; i < n * m; i += 1) eSum[i] = (eSum[i] ?? 0) + weight * (eCur[i] ?? 0);
+  };
+
+  return (x, u, fx, fu) => {
+    for (let i = 0; i < n; i += 1) xBase[i] = Number(x[i] ?? 0);
+    dSum.fill(0);
+    eSum.fill(0);
+
+    // Stage 1 at x itself: Dk1 = A1, Ek1 = B1.
+    system.stateJacobian(xBase, u, a);
+    system.controlJacobian(xBase, u, bmat);
+    dCur.set(a);
+    eCur.set(bmat);
+    accumulate(1);
+    system.rhs(xBase, u, k);
+
+    // Stages 2..4: advance the stage state, then propagate the tangents.
+    const stageScales = [dt / 2, dt / 2, dt] as const;
+    const weights = [2, 2, 1] as const;
+    for (let s = 0; s < 3; s += 1) {
+      const scale = stageScales[s]!;
+      for (let i = 0; i < n; i += 1) stage[i] = xBase[i]! + scale * (k[i] ?? 0);
+      dPrev.set(dCur);
+      ePrev.set(eCur);
+      system.stateJacobian(stage, u, a);
+      system.controlJacobian(stage, u, bmat);
+      propagate(scale);
+      accumulate(weights[s]!);
+      if (s < 2) system.rhs(stage, u, k);
+    }
+
+    const h6 = dt / 6;
+    for (let i = 0; i < n; i += 1) {
+      for (let j = 0; j < n; j += 1) fx[i]![j] = (i === j ? 1 : 0) + h6 * (dSum[i * n + j] ?? 0);
+      for (let c = 0; c < m; c += 1) fu[i]![c] = h6 * (eSum[i * m + c] ?? 0);
+    }
+  };
+}
+
+/**
+ * Exact solver for the box QP  min ½uᵀHu + gᵀu  s.t. lo ≤ u ≤ hi  by active-set
+ * enumeration: with m inputs each dimension is free, at its lower, or at its
+ * upper bound — 3^m KKT candidates, and for a positive-definite H exactly one
+ * satisfies primal feasibility plus the sign conditions on the clamped
+ * gradient. Exhaustive and exact for the m ≤ 3 problems used here (Tassa's
+ * projected-Newton box QP solves the same problem iteratively for large m).
+ * Returns null when H is not positive definite (callers raise regularisation).
+ */
+export function boxQpSolve(
+  H: readonly (readonly number[])[],
+  g: readonly number[],
+  lo: readonly number[],
+  hi: readonly number[]
+): { u: number[]; free: boolean[] } | null {
+  const m = g.length;
+  if (m > 3) throw new Error('boxQpSolve: active-set enumeration is exact only for m <= 3');
+  if (!cholSmall(H)) return null;
+  const tol = 1e-12;
+  const status = new Array<number>(m).fill(0); // 0 free, 1 lower, 2 upper
+  const combos = 3 ** m;
+  for (let combo = 0; combo < combos; combo += 1) {
+    let rest = combo;
+    for (let i = 0; i < m; i += 1) {
+      status[i] = rest % 3;
+      rest = Math.floor(rest / 3);
+    }
+    const freeIdx: number[] = [];
+    const u = new Array<number>(m).fill(0);
+    for (let i = 0; i < m; i += 1) {
+      if (status[i] === 0) freeIdx.push(i);
+      else u[i] = status[i] === 1 ? lo[i]! : hi[i]!;
+    }
+    if (freeIdx.length > 0) {
+      // Solve H_FF u_F = -(g_F + H_FC u_C).
+      const hff = freeIdx.map((r) => freeIdx.map((c) => H[r]![c] ?? 0));
+      const rhs = freeIdx.map((r) => {
+        let acc = -(g[r] ?? 0);
+        for (let c = 0; c < m; c += 1) {
+          if (status[c] !== 0) acc -= (H[r]![c] ?? 0) * (u[c] ?? 0);
+        }
+        return [acc];
+      });
+      const chol = cholSmall(hff);
+      if (!chol) continue; // principal submatrix of PD is PD; defensive only
+      const sol = cholSolve(chol, rhs);
+      for (let f = 0; f < freeIdx.length; f += 1) u[freeIdx[f]!] = sol[f]![0] ?? 0;
+    }
+    // KKT check: free inside the box, clamped gradients push into the bound.
+    let ok = true;
+    for (let i = 0; i < m && ok; i += 1) {
+      if (status[i] === 0) {
+        ok = u[i]! >= lo[i]! - tol && u[i]! <= hi[i]! + tol;
+      } else {
+        let grad = g[i] ?? 0;
+        for (let c = 0; c < m; c += 1) grad += (H[i]![c] ?? 0) * (u[c] ?? 0);
+        ok = status[i] === 1 ? grad >= -tol : grad <= tol;
+      }
+    }
+    if (ok) return { u, free: status.map((s) => s === 0) };
+  }
+  return null;
 }
 
 /** In-place Cholesky of a small symmetric matrix; returns null when not PD. */
@@ -231,7 +408,8 @@ export function ilqrSolve(problem: IlqrProblem, options: IlqrOptions = {}): Ilqr
   for (let iter = 0; iter < maxIterations && !converged; iter += 1) {
     iterations = iter + 1;
     for (let k = 0; k < horizon; k += 1) {
-      stepJacobians(problem.dynamics, current.xs[k]!, us[k]!, n, m, h, fxs[k]!, fus[k]!);
+      if (problem.derivatives) problem.derivatives(current.xs[k]!, us[k]!, fxs[k]!, fus[k]!);
+      else stepJacobians(problem.dynamics, current.xs[k]!, us[k]!, n, m, h, fxs[k]!, fus[k]!);
     }
 
     // Backward pass with regularisation retries.
@@ -314,22 +492,57 @@ export function ilqrSolve(problem: IlqrProblem, options: IlqrOptions = {}): Ilqr
             Qux[i]![j] = acc;
           }
         }
-        const chol = cholSmall(Quu);
-        if (!chol) {
-          reg *= regFactor;
-          backwardOk = false;
-          break;
-        }
-        const rhs = matZeros(m, n + 1);
-        for (let i = 0; i < m; i += 1) {
-          rhs[i]![0] = Qu[i] ?? 0;
-          for (let j = 0; j < n; j += 1) rhs[i]![j + 1] = Qux[i]![j] ?? 0;
-        }
-        const sol = cholSolve(chol, rhs);
-        for (let i = 0; i < m; i += 1) {
-          kff[k]![i] = -(sol[i]![0] ?? 0);
-          for (let j = 0; j < n; j += 1) Kfb[k]![i]![j] = -(sol[i]![j + 1] ?? 0);
-          gradientNorm = Math.max(gradientNorm, Math.abs(kff[k]![i] ?? 0));
+        const limit = problem.torqueLimit ?? Infinity;
+        if (Number.isFinite(limit) && m <= 3) {
+          // Box-DDP feedforward: exact box QP relative to the current control,
+          // with feedback rows of clamped inputs zeroed (Tassa 2014).
+          const lo = Array.from({ length: m }, (_, i) => -limit - (u[i] ?? 0));
+          const hi = Array.from({ length: m }, (_, i) => limit - (u[i] ?? 0));
+          const qp = boxQpSolve(Quu, Qu, lo, hi);
+          if (!qp) {
+            reg *= regFactor;
+            backwardOk = false;
+            break;
+          }
+          const freeIdx: number[] = [];
+          for (let i = 0; i < m; i += 1) {
+            if (qp.free[i]) freeIdx.push(i);
+            kff[k]![i] = qp.u[i] ?? 0;
+            for (let j = 0; j < n; j += 1) Kfb[k]![i]![j] = 0;
+            gradientNorm = Math.max(gradientNorm, Math.abs(kff[k]![i] ?? 0));
+          }
+          if (freeIdx.length > 0) {
+            const hff = freeIdx.map((r) => freeIdx.map((c) => Quu[r]![c] ?? 0));
+            const cholFree = cholSmall(hff);
+            if (!cholFree) {
+              reg *= regFactor;
+              backwardOk = false;
+              break;
+            }
+            const rhsFree = freeIdx.map((r) => Array.from({ length: n }, (_, j) => Qux[r]![j] ?? 0));
+            const solFree = cholSolve(cholFree, rhsFree);
+            for (let f = 0; f < freeIdx.length; f += 1) {
+              for (let j = 0; j < n; j += 1) Kfb[k]![freeIdx[f]!]![j] = -(solFree[f]![j] ?? 0);
+            }
+          }
+        } else {
+          const chol = cholSmall(Quu);
+          if (!chol) {
+            reg *= regFactor;
+            backwardOk = false;
+            break;
+          }
+          const rhs = matZeros(m, n + 1);
+          for (let i = 0; i < m; i += 1) {
+            rhs[i]![0] = Qu[i] ?? 0;
+            for (let j = 0; j < n; j += 1) rhs[i]![j + 1] = Qux[i]![j] ?? 0;
+          }
+          const sol = cholSolve(chol, rhs);
+          for (let i = 0; i < m; i += 1) {
+            kff[k]![i] = -(sol[i]![0] ?? 0);
+            for (let j = 0; j < n; j += 1) Kfb[k]![i]![j] = -(sol[i]![j + 1] ?? 0);
+            gradientNorm = Math.max(gradientNorm, Math.abs(kff[k]![i] ?? 0));
+          }
         }
         // Value update: Vx = Qx + Kᵀ Quu k + Kᵀ Qu + Quxᵀ k ; Vxx analogous.
         const K = Kfb[k]!;
@@ -454,6 +667,46 @@ export function makeDoublePendulumStepMap(
   };
 }
 
+/**
+ * The actuated double pendulum as a {@link ControlledSystem}: analytic state
+ * Jacobian (`jacobianDoubleActuated`) and closed-form control Jacobian
+ * (`controlMatrixDouble`), with the control vector living on the actuated
+ * channels of `mode`. This is what upgrades the swing-up problem from
+ * finite-difference to machine-precision derivatives.
+ */
+export function makeDoublePendulumControlledSystem(
+  parameters: PendulumParameters,
+  gamma: number,
+  mode: ActuationMode = 'full'
+): ControlledSystem {
+  const channels = actuatedChannels(mode);
+  const m = channels.length;
+  const tau = new Float64Array(2);
+  const bFull = new Float64Array(8);
+  const spreadTau = (u: ArrayLike<number>): void => {
+    tau.fill(0);
+    for (let c = 0; c < m; c += 1) tau[channels[c]!] = Number(u[c] ?? 0);
+  };
+  return {
+    n: 4,
+    m,
+    rhs(x, u, out) {
+      spreadTau(u);
+      rhsDoubleActuated(x, parameters, gamma, tau, out);
+    },
+    stateJacobian(x, u, jac) {
+      spreadTau(u);
+      jacobianDoubleActuated(x, parameters, gamma, tau, jac);
+    },
+    controlJacobian(x, _u, jac) {
+      controlMatrixDouble(x, parameters, bFull);
+      for (let i = 0; i < 4; i += 1) {
+        for (let c = 0; c < m; c += 1) jac[i * m + c] = bFull[i * 2 + channels[c]!] ?? 0;
+      }
+    }
+  };
+}
+
 const SWINGUP_Q_DIAG = [0.1, 0.1, 0.1, 0.1];
 
 function diag(values: readonly number[]): number[][] {
@@ -475,8 +728,59 @@ export function makeDoubleSwingUpProblem(spec: DoubleSwingUpSpec): IlqrProblem {
     goal: [...(spec.goal ?? [Math.PI, Math.PI, 0, 0])],
     Q: spec.Q ?? diag(SWINGUP_Q_DIAG.map((v) => v * spec.dt)),
     R: spec.R ?? diag(new Array<number>(m).fill(0.1 * spec.dt)),
-    Qf: spec.Qf ?? diag([100, 100, 10, 10])
+    Qf: spec.Qf ?? diag([100, 100, 10, 10]),
+    derivatives: makeRk4StepDerivatives(makeDoublePendulumControlledSystem(spec.parameters, spec.gamma, mode), spec.dt)
   };
   if (spec.torqueLimit !== undefined) problem.torqueLimit = spec.torqueLimit;
   return problem;
+}
+
+export interface IlqrAsyncOptions extends IlqrOptions {
+  /** Iterations per cooperative chunk before yielding to the event loop. */
+  chunkIterations?: number;
+  /** Called with the accumulated result after every chunk. */
+  onProgress?: (partial: IlqrResult) => void;
+  /** Return true to stop early; the accumulated result is returned as-is. */
+  shouldStop?: () => boolean;
+}
+
+/**
+ * Cooperative iLQR for UI contexts: runs {@link ilqrSolve} in warm-started
+ * chunks, yielding to the event loop between chunks so a long optimisation
+ * cannot freeze the page. Because rollouts are deterministic, the chunk
+ * boundary is exact — each chunk resumes from the previous control sequence
+ * with an identical rollout cost, so the concatenated cost history stays
+ * non-increasing. (The Levenberg regulariser restarts at `regInit` per chunk;
+ * that can waste one backward pass, never an accepted step.)
+ */
+export async function ilqrSolveAsync(problem: IlqrProblem, options: IlqrAsyncOptions = {}): Promise<IlqrResult> {
+  const totalIterations = options.maxIterations ?? 200;
+  const chunk = Math.max(1, options.chunkIterations ?? 10);
+  let us: readonly (readonly number[])[] | undefined = problem.uInit;
+  let combined: IlqrResult | null = null;
+  let done = 0;
+  while (done < totalIterations) {
+    const chunkProblem: IlqrProblem = { ...problem };
+    if (us) chunkProblem.uInit = us;
+    const result = ilqrSolve(chunkProblem, { ...options, maxIterations: Math.min(chunk, totalIterations - done) });
+    done += result.iterations;
+    if (combined) {
+      combined = {
+        ...result,
+        iterations: combined.iterations + result.iterations,
+        // Each chunk's first entry replays the previous chunk's final cost.
+        costHistory: [...combined.costHistory, ...result.costHistory.slice(1)]
+      };
+    } else {
+      combined = result;
+    }
+    us = result.us.map((u) => Array.from(u));
+    options.onProgress?.(combined);
+    if (result.converged || options.shouldStop?.() || result.iterations === 0) {
+      combined.converged = result.converged;
+      break;
+    }
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+  }
+  return combined!;
 }

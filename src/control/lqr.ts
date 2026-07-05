@@ -2,6 +2,8 @@ import type { PendulumParameters } from '../types/domain';
 import type { Complex } from '../research/complexEig';
 import { eigenvaluesGeneral } from '../research/eigenGeneral';
 import { jacobianDouble } from '../physics/double';
+import { chainLength, type ChainParameters } from '../physics/nPendulum';
+import { jacobianChain } from '../physics/jacobians';
 import {
   DOUBLE_UPRIGHT_STATE,
   applyActuationMode,
@@ -9,6 +11,7 @@ import {
   wrapAngle,
   type ActuationMode
 } from './actuated';
+import { controlMatrixChain, uprightChainState } from './actuatedChain';
 
 /**
  * Infinite-horizon LQR for the inverted double pendulum — the balancing half
@@ -362,4 +365,106 @@ export function lqrLyapunovLevel(design: LqrDesign, state: ArrayLike<number>): n
     for (let j = 0; j < 4; j += 1) v += (dx[i] ?? 0) * (design.riccati.P[i]![j] ?? 0) * (dx[j] ?? 0);
   }
   return v;
+}
+
+// ---------------------------------------------------------------------------
+// N-chain upright balancing — none of the surveyed source projects attempt
+// this; it exists here because the exact chain linearisation (`jacobianChain`)
+// and the closed-form M⁻¹S control matrix were already available.
+// ---------------------------------------------------------------------------
+
+export interface ChainLqrSpec {
+  parameters: ChainParameters;
+  /** Force-level damping coefficient, matching the `rhsChain` convention. */
+  gamma: number;
+  dt: number;
+  /** State cost (2n×2n); defaults to diag(10 for angles, 1 for rates). */
+  Q?: number[][];
+  /** Control cost (n×n, all joints actuated); defaults to identity. */
+  R?: number[][];
+}
+
+export interface ChainLqrDesign {
+  n: number;
+  A: number[][];
+  B: number[][];
+  Ad: number[][];
+  Bd: number[][];
+  dt: number;
+  riccati: DareResult;
+  closedLoopEigenvalues: Complex[];
+  spectralRadius: number;
+  stabilising: boolean;
+}
+
+/**
+ * Upright LQR for the fully-actuated planar N-chain: exact linearisation at
+ * the all-inverted equilibrium (every θ_j = π) via `jacobianChain`, closed-form
+ * B = M⁻¹S, then the same Van Loan discretisation + Riccati value iteration
+ * as the double-pendulum design. The N = 2 case cross-checks against
+ * `designUprightLqr` in the tests; N = 3 and 4 are pinned by nonlinear
+ * balancing simulations.
+ */
+export function designChainUprightLqr(spec: ChainLqrSpec): ChainLqrDesign {
+  const n = chainLength(spec.parameters);
+  const upright = uprightChainState(n);
+
+  const jac = new Float64Array(4 * n * n);
+  jacobianChain(upright, spec.parameters, spec.gamma, jac);
+  const A = matZeros(2 * n, 2 * n);
+  for (let i = 0; i < 2 * n; i += 1) {
+    for (let j = 0; j < 2 * n; j += 1) A[i]![j] = jac[i * 2 * n + j] ?? 0;
+  }
+
+  const bFlat = new Float64Array(2 * n * n);
+  controlMatrixChain(upright, spec.parameters, bFlat);
+  const B = matZeros(2 * n, n);
+  for (let i = 0; i < 2 * n; i += 1) {
+    for (let c = 0; c < n; c += 1) B[i]![c] = bFlat[i * n + c] ?? 0;
+  }
+
+  const Q = spec.Q ?? (() => {
+    const q = matIdentity(2 * n);
+    for (let i = 0; i < n; i += 1) q[i]![i] = 10;
+    return q;
+  })();
+  const R = spec.R ?? matIdentity(n);
+  const { Ad, Bd } = discretizeLinear(A, B, spec.dt);
+  const riccati = solveDare(Ad, Bd, Q, R);
+
+  const closed = matAddScaled(Ad, matMul(Bd, riccati.K), -1);
+  const closedLoopEigenvalues = eigenvaluesGeneral(closed);
+  const spectralRadius = closedLoopEigenvalues.reduce((max, z) => Math.max(max, Math.hypot(z.re, z.im)), 0);
+
+  return {
+    n,
+    A,
+    B,
+    Ad,
+    Bd,
+    dt: spec.dt,
+    riccati,
+    closedLoopEigenvalues,
+    spectralRadius,
+    stabilising: riccati.converged && spectralRadius < 1
+  };
+}
+
+/**
+ * Chain LQR feedback u = −K·δx around the all-upright equilibrium, with
+ * per-link angle wrapping and symmetric saturation. Writes the n joint
+ * torques into `out`.
+ */
+export function lqrChainTorque(design: ChainLqrDesign, state: ArrayLike<number>, out: Float64Array, options: LqrControllerOptions = {}): Float64Array {
+  const n = design.n;
+  const limit = options.torqueLimit ?? Infinity;
+  for (let c = 0; c < n; c += 1) {
+    let u = 0;
+    for (let j = 0; j < n; j += 1) {
+      u -= (design.riccati.K[c]![j] ?? 0) * wrapAngle(Number(state[j] ?? 0) - Math.PI);
+      u -= (design.riccati.K[c]![n + j] ?? 0) * Number(state[n + j] ?? 0);
+    }
+    out[c] = Math.min(limit, Math.max(-limit, u));
+  }
+  return out;
 }

@@ -115,13 +115,19 @@ export function createChainJacobianWorkspace(n: number): ChainJacobianWorkspace 
  * written row-major into `jac` (length (2n)²). Mirrors the `rhsChain`
  * assembly in dual arithmetic; damping enters at force level, matching the
  * chain convention.
+ *
+ * `appliedForce` (optional, length n) is a constant generalised force added
+ * to f — the actuated-chain case. Its own derivative is zero, but it shifts
+ * the accelerations α, and the −(∂M/∂x)·α term then carries its configuration
+ * dependence automatically; no other change is needed.
  */
 export function jacobianChain(
   state: ArrayLike<number>,
   parameters: ChainParameters,
   gamma: number,
   jac: Float64Array,
-  workspace = createChainJacobianWorkspace(chainLength(parameters))
+  workspace = createChainJacobianWorkspace(chainLength(parameters)),
+  appliedForce?: ArrayLike<number>
 ): Float64Array {
   const n = chainLength(parameters);
   if (workspace.n !== n) throw new Error(`jacobianChain: workspace length ${workspace.n} does not match chain length ${n}`);
@@ -161,6 +167,10 @@ export function jacobianChain(
     dSin(t1, theta[j]!);
     dAddScaled(fj, t1, -g * lj * (suffix[j] ?? 0));
     dAddScaled(fj, omega[j]!, -gamma);
+    if (appliedForce) {
+      dConst(t1, Number(appliedForce[j] ?? 0));
+      dAdd(fj, fj, t1);
+    }
   }
 
   // Primal solve M α = f, factoring once for all columns.

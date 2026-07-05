@@ -263,13 +263,27 @@ export function installStableHelp(): void {
   if ($('siHelpBackdrop')) return;
   const backdrop = html('div', { id: 'siHelpBackdrop', className: 'si-help-backdrop', role: 'dialog', ariaLabel: 'Stable control help' });
   const box = html('div', { className: 'si-help' });
+  // Keyboard shortcuts live here (the help surface, opened with ?), not in the
+  // simulation controls — the Lab panel stays operational, docs stay findable.
+  const shortcuts = html('div', { className: 'shorts' });
+  const shortcutRows: Array<Array<[string, string]>> = [
+    [['Space', 'pause'], ['R', 'reset'], ['C', 'trail']],
+    [['P', 'Poincaré'], ['E', 'ensemble'], ['←/→', 'scrub']],
+    [['1-8', 'tabs'], ['?', 'help'], ['Ctrl+K', 'palette']]
+  ];
+  shortcutRows.forEach((row, index) => {
+    for (const [key, action] of row) shortcuts.append(html('kbd', { text: key }), ` ${action}  `);
+    if (index < shortcutRows.length - 1) shortcuts.append(html('br'));
+  });
   append(
     box,
     button('siCloseHelp', 'Close', () => backdrop.classList.remove('show'), 'si-close'),
     html('h2', { text: 'Stable Control Layer' }),
     paragraph('Stable Defaults keeps the current experiment readable without changing the scientific labels. Accuracy Mode tightens dt and tolerance. Performance Mode reduces rendering load first.'),
     html('h3', { text: 'Research mode policy' }),
-    paragraph('Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.')
+    paragraph('Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.'),
+    html('h3', { text: 'Keyboard shortcuts' }),
+    shortcuts
   );
   backdrop.addEventListener('click', (event) => {
     if (event.target === backdrop) backdrop.classList.remove('show');

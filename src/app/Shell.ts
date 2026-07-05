@@ -13,7 +13,7 @@ import { takeOverElement } from './domTakeover';
  * shell only needs to keep the DOM displays and navigation in sync.
  */
 
-const KNOWN_TABS = ['lab', 'compare', 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion', 'matrix', 'validate', 'golden', 'zeroone', 'clv', 'basin', 'rqa', 'ftle', 'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs'];
+const KNOWN_TABS = ['lab', 'compare', 'control', 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion', 'matrix', 'validate', 'golden', 'zeroone', 'clv', 'basin', 'rqa', 'ftle', 'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs'];
 const PANEL_COLLAPSED_KEY = 'pendulum-lab/ui/panel-collapsed';
 const TAB_KEYS: Record<string, string> = { '1': 'lab', '2': 'compare', '3': 'lyap', '4': 'sweep', '5': 'bifurc', '6': 'phase3d', '7': 'density', '8': 'validate', '9': 'architecture', '0': 'research' };
 

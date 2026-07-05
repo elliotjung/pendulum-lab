@@ -195,13 +195,8 @@ const TS_BTILDE = [
   0.015151515151515152
 ];
 
-/**
- * One Tsitouras 5(4) step. Returns the 5th-order solution and an absolute
- * infinity-norm error estimate from the embedded 4th-order weights. Does not
- * mutate `state`. Adopted from the method DifferentialEquations.jl ships as
- * its recommended non-stiff default (`Tsit5`).
- */
-export function tsitouras54Step(state: StateVector, dt: number, rhs: Derivative): EmbeddedStepResult {
+/** Shared stage computation for the plain and dense Tsitouras steps. */
+function tsitourasStages(state: StateVector, dt: number, rhs: Derivative): { k: StateVector[]; y: StateVector; error: number } {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 7 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -231,7 +226,60 @@ export function tsitouras54Step(state: StateVector, dt: number, rhs: Derivative)
     y[i] = Number(state[i] ?? 0) + dt * sum5;
     error = Math.max(error, Math.abs(dt * sumErr));
   }
+  return { k, y, error };
+}
+
+/**
+ * One Tsitouras 5(4) step. Returns the 5th-order solution and an absolute
+ * infinity-norm error estimate from the embedded 4th-order weights. Does not
+ * mutate `state`. Adopted from the method DifferentialEquations.jl ships as
+ * its recommended non-stiff default (`Tsit5`).
+ */
+export function tsitouras54Step(state: StateVector, dt: number, rhs: Derivative): EmbeddedStepResult {
+  const { y, error } = tsitourasStages(state, dt, rhs);
   return { y, error };
+}
+
+// Tsitouras 5(4) free 4th-order interpolant weights b_i(θ) (Tsitouras 2011;
+// the same polynomials OrdinaryDiffEq.jl ships for Tsit5). Transcription is
+// self-checking: b_i(1) must reproduce the 5th-order weights (the FSAL a7j
+// row), which the dense-output tests assert to the published coefficient
+// precision.
+function tsitourasInterpolantWeights(theta: number, b: Float64Array): void {
+  const t2 = theta * theta;
+  b[0] = theta * -1.0530884977290216 * (theta - 1.3299890189751412) * (t2 - 1.4364028541716351 * theta + 0.7139816917074209);
+  b[1] = 0.1017 * t2 * (t2 - 2.1966568338249754 * theta + 1.2949852507374631);
+  b[2] = 2.490627285651252793 * t2 * (t2 - 2.38535645472061657 * theta + 1.57803468208092486);
+  b[3] = -16.54810288924490272 * t2 * (theta - 1.21712927295533244) * (theta - 0.61620406037800089);
+  b[4] = 47.37952196281928122 * t2 * (theta - 1.203071208372362603) * (theta - 0.658047292653547382);
+  b[5] = -34.87065786149660974 * t2 * (theta - 1.2) * (theta - 2 / 3);
+  b[6] = 2.5 * t2 * (theta - 1) * (theta - 0.6);
+}
+
+/**
+ * Tsitouras 5(4) step with dense output: identical advance and error estimate
+ * to {@link tsitouras54Step}, plus the method's free 4th-order interpolant
+ * over the step (no extra RHS evaluations) — the same event-localisation tool
+ * {@link dormandPrince54StepDense} provides for the Dormand-Prince pair.
+ */
+export function tsitouras54StepDense(state: StateVector, dt: number, rhs: Derivative): DenseStepResult {
+  const n = state.length;
+  const { k, y, error } = tsitourasStages(state, dt, rhs);
+  const y0 = new Float64Array(state);
+  const bTheta = new Float64Array(7);
+  return {
+    y,
+    error,
+    interpolate(theta: number, out: StateVector): StateVector {
+      tsitourasInterpolantWeights(theta, bTheta);
+      for (let i = 0; i < n; i += 1) {
+        let acc = 0;
+        for (let s = 0; s < 7; s += 1) acc += Number(bTheta[s] ?? 0) * Number(k[s]![i] ?? 0);
+        out[i] = Number(y0[i] ?? 0) + dt * acc;
+      }
+      return out;
+    }
+  };
 }
 
 export type StepControllerKind = 'basic' | 'pi';

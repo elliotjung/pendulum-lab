@@ -61,6 +61,7 @@
         <div class="rail-submenu" id="rail-panel-sim" aria-label="Simulation tools">
           <button class="tab" role="tab" aria-selected="true"  data-tab="lab"      data-tip="Simulation Lab" aria-label="Simulation Lab" title="Simulation Lab"><span class="tab-icon" aria-hidden="true">L</span><span class="tab-label">Lab</span></button>
           <button class="tab" role="tab" aria-selected="false" data-tab="compare"  data-tip="Integrator Comparison" aria-label="Integrator Comparison" title="Integrator Comparison"><span class="tab-icon" aria-hidden="true">C</span><span class="tab-label">Compare</span></button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="control"  data-tip="Swing-Up Control" aria-label="Swing-Up Control" title="Swing-Up Control"><span class="tab-icon" aria-hidden="true">Ct</span><span class="tab-label">Control</span></button>
         </div>
       </section>
 
@@ -448,22 +449,8 @@
               </div>
             </div>
           </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">⌨</span>
-              <span class="acc-label">Keyboard Shortcuts</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="shorts">
-                <kbd>Space</kbd> pause &nbsp;<kbd>R</kbd> reset &nbsp;<kbd>C</kbd> trail<br>
-                <kbd>P</kbd> Poincaré &nbsp;<kbd>E</kbd> ensemble &nbsp;<kbd>←/→</kbd> scrub<br>
-                <kbd>1-8</kbd> tabs &nbsp;<kbd>?</kbd> help &nbsp;<kbd>Ctrl+K</kbd> palette
-              </div>
-            </div>
-          </details>
+          <!-- Keyboard shortcuts moved to the Help dialog (?) — documentation
+               lives in the help surface, not the simulation controls. -->
 
         </aside>
       </div>
@@ -504,6 +491,78 @@
                 <div class="srow"><span class="skey">RK2</span><span class="sval" id="bRK2">—</span></div>
                 <div class="srow"><span class="skey">Euler</span><span class="sval" id="bEuler">—</span></div>
               </div>
+            </div>
+          </details>
+        </aside>
+      </div>
+    </div>
+
+    <!-- TAB: CONTROL -->
+    <div class="tabpanel" id="tab-control" role="tabpanel">
+      <div class="layout">
+        <div class="left-col">
+          <div class="main-wrap">
+            <canvas id="ctlCanvas" width="680" height="460" aria-label="swing-up control animation"></canvas>
+          </div>
+          <div class="canvas-label">Swing-up &amp; balance (unit double pendulum) — <span id="ctlPhaseLabel">idle</span></div>
+        </div>
+        <aside class="controls" role="region" aria-label="swing-up controls">
+          <div class="ctrl-sticky">
+            <div class="ctrl-sticky-title">Controller</div>
+            <div class="btnrow xs-2">
+              <button class="primary" id="ctlRun">▶ Run</button>
+              <button id="ctlPause">⏸ Pause</button>
+              <button id="ctlReset">↺ Reset</button>
+              <button id="ctlExport">CSV</button>
+            </div>
+          </div>
+          <details class="acc" open>
+            <summary>
+              <span class="acc-icon">⚙</span>
+              <span class="acc-label">Strategy</span>
+              <span class="acc-arrow">›</span>
+            </summary>
+            <div class="acc-body">
+              <div class="row">
+                <label class="has-tip" data-tip="Energy pump swings up, a Lyapunov gate hands over to LQR; iLQR plans the whole trajectory first; LQR balances from a perturbed inverted start.">Strategy</label>
+                <select id="ctlStrategy">
+                  <option value="hybrid">Energy swing-up + LQR capture</option>
+                  <option value="ilqr">iLQR plan → track</option>
+                  <option value="lqr">LQR balance only</option>
+                </select>
+              </div>
+              <div class="row">
+                <label class="has-tip" data-tip="Which joints have motors. Acrobot (elbow only) and pendubot (shoulder only) are the underactuated benchmark cases.">Actuation</label>
+                <select id="ctlMode">
+                  <option value="full">Full (both joints)</option>
+                  <option value="acrobot">Acrobot (elbow only)</option>
+                  <option value="pendubot">Pendubot (shoulder only)</option>
+                </select>
+              </div>
+              <div class="row">
+                <label>τ limit (Nm)</label>
+                <input id="ctlTorque" type="range" min="2" max="40" step="1" value="30">
+                <span class="val" id="ctlTorqueV">30</span>
+              </div>
+              <div class="row">
+                <label>Speed</label>
+                <input id="ctlSpeed" type="range" min="0.25" max="4" step="0.25" value="1">
+                <span class="val" id="ctlSpeedV">1.00×</span>
+              </div>
+            </div>
+          </details>
+          <details class="acc" open>
+            <summary>
+              <span class="acc-icon">◉</span>
+              <span class="acc-label">Live Readouts</span>
+              <span class="acc-arrow">›</span>
+            </summary>
+            <div class="acc-body">
+              <div class="row"><label>Phase</label><span class="val" id="ctlPhase">idle</span></div>
+              <div class="row"><label class="has-tip" data-tip="Total energy relative to the upright equilibrium; the pump drives this to zero.">E − E↑</label><span class="val" id="ctlEnergyGap">—</span></div>
+              <div class="row"><label class="has-tip" data-tip="LQR cost-to-go V(x) against the capture gate; capture engages when V drops below the gate.">V / gate</label><span class="val" id="ctlLyapLevel">—</span></div>
+              <div class="row"><label>max |τ|</label><span class="val" id="ctlTauMax">—</span></div>
+              <div class="row"><span class="xs-10" id="ctlStatus">idle — pick a strategy and press Run</span></div>
             </div>
           </details>
         </aside>

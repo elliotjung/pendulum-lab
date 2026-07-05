@@ -33,7 +33,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 1086 unit tests
+npm test           # 1107 unit tests
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
@@ -104,12 +104,18 @@ Step-by-step paper reproduction:
   *and* symmetry-breaking pitchfork), Melnikov, recurrence networks,
   Neimark–Sacker, codim-2 maps, alignment indices (SALI, FLI, and GALI_k
   with torus-dimension discrimination).
-- **Control** (`experimental`) — actuated double pendulum with the
-  full/acrobot/pendubot modes of the DFKI benchmark, upright LQR designed by
-  Van Loan discretisation + Riccati value iteration (closed-loop eigenvalues
-  reported, not assumed), energy-shaping swing-up with a Lyapunov-gated LQR
-  capture, and iLQR trajectory optimisation (monotone line search) for the
-  underactuated swing-up. Design rationale: `docs/control-module.md`.
+- **Control** (`experimental` + the in-app **Control** tab) — actuated double
+  pendulum with the full/acrobot/pendubot modes of the DFKI benchmark plus
+  the fully-actuated planar N-chain; upright LQR designed by Van Loan
+  discretisation + Riccati value iteration (closed-loop eigenvalues reported,
+  not assumed; N=3 balances the inverted triple chain in simulation);
+  energy-shaping swing-up with an auto-scaled Lyapunov capture gate; and iLQR
+  trajectory optimisation with analytic RK4 chain-rule derivatives, an exact
+  box-constrained (box-DDP) backward pass for torque limits, a strictly
+  monotone line search, and a cooperative async runner. The Control tab
+  animates swing-up/balance live (torque arcs, energy bar, phase badge) and
+  every strategy is scriptable via `npm run research -- swingup|ilqr|lqr|chainlqr`.
+  Design rationale: `docs/control-module.md`.
 - **Inverse & UQ** — parameter estimation (Levenberg–Marquardt recovery of
   physical parameters from observed trajectories, with covariance/standard-error
   uncertainties), additive- and multiplicative-noise Langevin SDEs
@@ -143,7 +149,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1086 tests across 160 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1107 tests across 163 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |
