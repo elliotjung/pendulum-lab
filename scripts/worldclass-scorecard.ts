@@ -1,3 +1,11 @@
+/**
+ * World-class readiness scorecard.
+ *
+ * Evidence is declared as a config-driven SIGNAL registry: each signal is a
+ * small rule (file exists, npm script exists, file contains needles, JSON
+ * predicate). Adding a new evidence rule means adding one registry entry and
+ * referencing it from an area; the evaluator and report format never change.
+ */
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import {
   collectReportMetadata,
@@ -53,13 +61,21 @@ async function readJson<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
+const textCache = new Map<string, string>();
 async function readText(path: string): Promise<string> {
+  const cached = textCache.get(path);
+  if (cached !== undefined) return cached;
+  let text = '';
   try {
-    return await readFile(path, 'utf8');
+    text = await readFile(path, 'utf8');
   } catch {
-    return '';
+    text = '';
   }
+  textCache.set(path, text);
+  return text;
 }
+
+// --- JSON evidence sources ----------------------------------------------------
 
 const legacy = await readJson<LegacyRiskReport>('reports/legacy-risk-report.json', {
   counts: { innerHTML: -1, onclick: -1, inlineWorkerBlob: -1, dynamicScript: -1, globalRuntimeExports: -1 },
@@ -67,32 +83,24 @@ const legacy = await readJson<LegacyRiskReport>('reports/legacy-risk-report.json
   weightedScore: -1,
   delta: 0
 });
-
 const packageJson = await readJson<{ scripts?: Record<string, string> }>('package.json', {});
 const scripts = packageJson.scripts ?? {};
 const vitest = await readJson<{ numTotalTests?: number; numPassedTests?: number; testResults?: unknown[] }>('reports/vitest-results.json', {});
 const benchmark = await readJson<{ comparison?: { deltas?: unknown[] } }>('reports/benchmark-report.json', {});
 const gpuScaleValidation = await readJson<{ cpuReference?: { ensemble?: { f32ReductionOracle?: { passed?: boolean } } } }>('reports/gpu-scale-validation.json', {});
-const webgpuHardwareValidation = await readJson<{
+interface HardwareGateReport {
   status?: string;
   backend?: string;
-  ensemble?: { backend?: string; comparison?: { passed?: boolean } };
-  lyapunovSpectrum?: { backend?: string; comparison?: { passed?: boolean } | null };
-  clv?: { backend?: string; comparison?: { passed?: boolean } | null };
-  variationalFtleField?: { backend?: string; comparison?: { passed?: boolean } | null };
-  nChainTrajectoryTape?: { backend?: string; comparison?: { passed?: boolean } | null };
-  nChainVariational?: { backend?: string; comparison?: { passed?: boolean } | null };
-}>('reports/webgpu-hardware-validation.json', {});
-const gpuBenchmarkLadder = await readJson<{
-  status?: string;
   adapter?: unknown;
-  ensemble?: { allReductionComparisonsPassed?: boolean };
-  lyapunovSpectrum?: { allPromotionComparisonsPassed?: boolean };
+  ensemble?: { backend?: string; comparison?: { passed?: boolean }; allReductionComparisonsPassed?: boolean };
+  lyapunovSpectrum?: { backend?: string; comparison?: { passed?: boolean } | null; allPromotionComparisonsPassed?: boolean } | null;
   clv?: { backend?: string; comparison?: { passed?: boolean } | null } | null;
   variationalFtleField?: { backend?: string; comparison?: { passed?: boolean } | null } | null;
   nChainTrajectoryTape?: { backend?: string; comparison?: { passed?: boolean } | null } | null;
   nChainVariational?: { backend?: string; comparison?: { passed?: boolean } | null } | null;
-}>('reports/gpu-benchmark-ladder.json', {});
+}
+const webgpuHardwareValidation = await readJson<HardwareGateReport>('reports/webgpu-hardware-validation.json', {});
+const gpuBenchmarkLadder = await readJson<HardwareGateReport>('reports/gpu-benchmark-ladder.json', {});
 const gpuAdapterMatrix = await readJson<{ status?: string; coverage?: { passed?: number; required?: number } }>('reports/gpu-adapter-matrix.json', {});
 const publicationStatus = await readJson<{
   status?: string;
@@ -119,164 +127,226 @@ const mutationAggregate = await readJson<MutationAggregateReport>('reports/mutat
 const unitTestSummary = Number.isInteger(vitest.numTotalTests) && Array.isArray(vitest.testResults)
   ? `${vitest.numPassedTests ?? 0}/${vitest.numTotalTests} unit tests across ${vitest.testResults.length} files`
   : 'unit test JSON report missing; run npm run test:json';
-const ciWorkflow = await readText('.github/workflows/ci.yml');
-const mainWorkflow = await readText('.github/workflows/main.yml');
-const webgpuHardwareWorkflow = await readText('.github/workflows/webgpu-hardware.yml');
-const resultBadgesSource = await readText('src/app/resultBadges.ts');
-const researchWorkbenchSource = await readText('src/app/parity/research-workbench.ts');
-const storageSyncSource = await readText('src/app/parity/storage-sync.ts');
-const researchSessionStorageSource = await readText('src/app/parity/research-session-storage.ts');
-const certifiedWorkbenchSource = await readText('src/research/certifiedWorkbench.ts');
-const accelerationContractSource = await readText('src/chaos/accelerationContract.ts');
-const gpuLyapunovSource = await readText('src/runtime/gpuLyapunov.ts');
-const gpuChaosPromotionSource = await readText('src/runtime/gpuChaosPromotion.ts');
-const gpuNChainSource = await readText('src/runtime/gpuNChainVariational.ts');
-const npmWorkflow = await readText('.github/workflows/publish-npm.yml');
-const releaseWorkflow = await readText('.github/workflows/release.yml');
-const unitaryFloquetSource = await readText('src/research/unitaryFloquet.ts');
 const weightedLegacyCounts = Object.entries(legacy.counts)
   .filter(([key]) => (legacy.weights?.[key] ?? 1) > 0)
   .map(([, value]) => value);
 const legacyClean = legacy.weightedScore === 0 && weightedLegacyCounts.every((value) => value === 0);
 const benchmarkHasComparison = Array.isArray(benchmark.comparison?.deltas) && benchmark.comparison.deltas.length > 0;
 
-const has = {
-  benchmark: await exists('reports/benchmark-report.md'),
-  energy: await exists('reports/energy-benchmark.md'),
-  memoryRegression: await exists('reports/memory-regression-report.md'),
-  memoryBaseline: await exists('reports/memory-baseline.json'),
-  mutationAggregateReport: await exists('reports/mutation-aggregate.json') || await exists('reports/mutation/mutation-aggregate.json'),
-  reproduceManifest: await exists('reports/reproduce/manifest.json'),
-  reproduceManifestFresh: reproduceFreshness === 'fresh',
-  mutationAggregatePass: mutationAggregate.status === 'passed'
-    && typeof mutationAggregate.mutationScore === 'number'
-    && mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60),
-  flagshipDoc: await exists('docs/flagship-result.md'),
-  flagshipCertification: await exists('reports/flagship-certification.json'),
-  flagshipFigure: await exists('reports/flagship-figure1.svg'),
-  flagshipExternalCheck: await exists('reports/flagship-external-check.json'),
-  reviewerKitDoc: await exists('docs/reviewer-kit.md'),
-  reviewerKitManifest: await exists('reports/reviewer-kit-manifest.json'),
-  reviewerKitManifestMd: await exists('reports/reviewer-kit-manifest.md'),
-  reviewerKitScript: await exists('scripts/reviewer-kit.ts'),
-  releasePackagingDoc: await exists('docs/release-packaging.md'),
-  releaseReadiness: await exists('reports/release-readiness.json'),
-  releaseOnePagePdf: await exists('reports/release-one-page.pdf'),
-  walkthroughGif: await exists('reports/walkthrough-30s.gif'),
-  gpuScaleReport: await exists('reports/gpu-scale-validation.md'),
-  gpuScaleJson: await exists('reports/gpu-scale-validation.json'),
-  gpuScaleScript: await exists('scripts/gpu-scale-validation.ts'),
-  gpuReductionOracle: gpuScaleValidation.cpuReference?.ensemble?.f32ReductionOracle?.passed === true,
-  webgpuHardwareReport: await exists('reports/webgpu-hardware-validation.md'),
-  webgpuHardwareJson: await exists('reports/webgpu-hardware-validation.json'),
-  gpuBenchmarkLadderReport: await exists('reports/gpu-benchmark-ladder.md'),
-  gpuBenchmarkLadderJson: await exists('reports/gpu-benchmark-ladder.json'),
-  gpuAdapterMatrixReport: await exists('reports/gpu-adapter-matrix.md'),
-  gpuAdapterMatrixJson: await exists('reports/gpu-adapter-matrix.json'),
-  gpuAdapterMatrixPass: gpuAdapterMatrix.status === 'pass' && gpuAdapterMatrix.coverage?.passed === gpuAdapterMatrix.coverage?.required,
-  webgpuHardwarePass: webgpuHardwareValidation.status === 'pass' && webgpuHardwareValidation.backend === 'webgpu',
-  webgpuFullSpectrumPass: webgpuHardwareValidation.status === 'pass'
-    && webgpuHardwareValidation.lyapunovSpectrum?.backend === 'webgpu'
-    && webgpuHardwareValidation.lyapunovSpectrum?.comparison?.passed === true,
-  webgpuClvPass: webgpuHardwareValidation.status === 'pass'
-    && webgpuHardwareValidation.clv?.backend === 'webgpu'
-    && webgpuHardwareValidation.clv?.comparison?.passed === true,
-  webgpuVariationalFtlePass: webgpuHardwareValidation.status === 'pass'
-    && webgpuHardwareValidation.variationalFtleField?.backend === 'webgpu'
-    && webgpuHardwareValidation.variationalFtleField?.comparison?.passed === true,
-  webgpuNChainTrajectoryTapePass: webgpuHardwareValidation.status === 'pass'
-    && webgpuHardwareValidation.nChainTrajectoryTape?.backend === 'webgpu'
-    && webgpuHardwareValidation.nChainTrajectoryTape?.comparison?.passed === true,
-  webgpuNChainPass: webgpuHardwareValidation.status === 'pass'
-    && webgpuHardwareValidation.nChainVariational?.backend === 'webgpu'
-    && webgpuHardwareValidation.nChainVariational?.comparison?.passed === true,
-  gpuBenchmarkLadderPass: gpuBenchmarkLadder.status === 'pass'
-    && gpuBenchmarkLadder.adapter !== null
-    && gpuBenchmarkLadder.ensemble?.allReductionComparisonsPassed === true
-    && gpuBenchmarkLadder.lyapunovSpectrum?.allPromotionComparisonsPassed === true
-    && gpuBenchmarkLadder.clv?.backend === 'webgpu'
-    && gpuBenchmarkLadder.clv?.comparison?.passed === true
-    && gpuBenchmarkLadder.variationalFtleField?.backend === 'webgpu'
-    && gpuBenchmarkLadder.variationalFtleField?.comparison?.passed === true
-    && gpuBenchmarkLadder.nChainTrajectoryTape?.backend === 'webgpu'
-    && gpuBenchmarkLadder.nChainTrajectoryTape?.comparison?.passed === true
-    && gpuBenchmarkLadder.nChainVariational?.backend === 'webgpu'
-    && gpuBenchmarkLadder.nChainVariational?.comparison?.passed === true,
-  mojibakeAudit: await exists('reports/mojibake-audit.md'),
-  validation: await exists('reports/validation-report.md'),
-  reference: await exists('reports/validation-reference.md'),
-  architecture: await exists('docs/architecture.md'),
-  numerics: await exists('docs/numerics.md'),
-  limitations: await exists('docs/known-limitations.md'),
-  ci: await exists('.github/workflows/ci.yml'),
-  mainWorkflow: await exists('.github/workflows/main.yml'),
-  nightlyWorkflow: await exists('.github/workflows/nightly.yml'),
-  releaseWorkflow: await exists('.github/workflows/release.yml'),
-  pagesWorkflow: await exists('.github/workflows/pages.yml'),
-  reviewerDashboard: await exists('reviewer.html') && await exists('src/reviewer/main.ts'),
-  reviewerDashboardE2e: await exists('e2e/reviewer-dashboard.spec.ts'),
-  webgpuHardwareWorkflow: await exists('.github/workflows/webgpu-hardware.yml'),
-  webgpuHardwareE2e: await exists('e2e/webgpu-hardware-reductions.spec.ts'),
-  distIndex: await exists('dist/index.html'),
-  license: await exists('LICENSE'),
-  citation: await exists('CITATION.cff'),
-  typedocIndex: await exists('docs/api/index.html'),
-  index: await exists('index.html'),
-  coverageScopeBaseline: await exists('config/coverage-scope-baseline.json'),
-  bundleBudget: await exists('scripts/bundle-budget.ts'),
-  longRunE2e: await exists('e2e/long-run-performance.spec.ts'),
-  accessibilityE2e: await exists('e2e/accessibility.spec.ts'),
-  railAutocloseE2e: await exists('e2e/rail-autoclose.spec.ts'),
-  visualRegressionE2e: await exists('e2e/visual-regression.spec.ts'),
-  visualSnapshots: await exists('e2e/visual-regression.spec.ts-snapshots'),
-  certifiedWorkbenchModule: await exists('src/research/certifiedWorkbench.ts'),
-  trustInspectorUi: resultBadgesSource.includes('openTrustInspector') && resultBadgesSource.includes('trust-inspector-panel'),
-  trustInspectorE2e: await exists('e2e/trust-inspector.spec.ts'),
-  researchWorkspaceCard: researchWorkbenchSource.includes('researchWorkspaceCard') && researchWorkbenchSource.includes('rwWorkspaceSelect'),
-  researchWorkspaceList: researchWorkbenchSource.includes('workspaces') && storageSyncSource.includes('sanitizeWorkspaceList'),
-  researchProjectSessions: researchWorkbenchSource.includes('rwProjectName') && researchWorkbenchSource.includes('activeResearchSession') && researchSessionStorageSource.includes('sanitizeResearchSession'),
-  visualTier: Boolean(scripts['test:visual']),
-  quickTier: Boolean(scripts['test:quick']),
-  slowTier: Boolean(scripts['test:slow']),
-  flagshipCertifyCommand: Boolean(scripts['flagship:certify']),
-  flagshipExternalCommand: Boolean(scripts['flagship:external']),
-  releasePackageCommand: Boolean(scripts['release:package']),
-  webgpuHardwareCommand: Boolean(scripts['test:webgpu-hardware']),
-  webgpuHardwareValidateCommand: Boolean(scripts['validate:webgpu-hardware']),
-  gpuBenchmarkLadderCommand: Boolean(scripts['benchmark:gpu-ladder']),
-  gpuAdapterMatrixCommand: Boolean(scripts['benchmark:gpu-matrix']),
-  reviewerKitCommand: Boolean(scripts['reviewer:kit']),
-  gpuScaleCommand: Boolean(scripts['validate:gpu-scale']),
-  benchmarkMemoryScript: Boolean(scripts['benchmark:memory']),
-  ciRunsQuickTier: ciWorkflow.includes('npm run test:quick'),
-  ciRunsGpuScale: ciWorkflow.includes('npm run validate:gpu-scale') || mainWorkflow.includes('npm run validate:gpu-scale'),
-  webgpuWorkflowRunsValidation: webgpuHardwareWorkflow.includes('npm run validate:webgpu-hardware'),
-  webgpuWorkflowRunsBenchmarkLadder: webgpuHardwareWorkflow.includes('npm run benchmark:gpu-ladder'),
-  webgpuWorkflowRunsAdapterMatrix: webgpuHardwareWorkflow.includes('npm run benchmark:gpu-matrix'),
-  ciRunsReviewerKit: ciWorkflow.includes('npm run reviewer:kit') || mainWorkflow.includes('npm run reviewer:kit'),
-  ciRunsVerify: ciWorkflow.includes('npm run verify'),
-  mainRunsSlowTier: mainWorkflow.includes('npm run test:slow'),
-  mainRunsBenchmark: mainWorkflow.includes('npm run benchmark'),
-  mainRunsMemoryRegression: mainWorkflow.includes('npm run benchmark:memory'),
-  mainRunsMojibakeStrict: mainWorkflow.includes('npm run audit:mojibake:strict'),
-  mainRunsReleasePackage: mainWorkflow.includes('npm run release:package'),
-  releaseReadyStatus: releaseReadiness.status === 'ready-for-owner-publish',
-  chaosAccelerationContracts: accelerationContractSource.includes('compareClvAcceleration') && accelerationContractSource.includes('compareFtleFieldAcceleration') && accelerationContractSource.includes('compareLyapunovSpectrumAcceleration'),
-  fullSpectrumGpuPromotion: gpuLyapunovSource.includes('promotedDoublePendulumLyapunovSpectrum') && gpuLyapunovSource.includes('webgpuDoublePendulumLyapunovSpectrumCandidate'),
-  clvFtleGpuPromotion: gpuChaosPromotionSource.includes('promotedDoublePendulumClv') && gpuChaosPromotionSource.includes('promotedDoublePendulumVariationalFtleField'),
-  nChainGpuPromotion: gpuNChainSource.includes('promotedNChainVariational') && gpuNChainSource.includes('WGSL_NCHAIN_VARIATIONAL_KERNEL'),
-  npmOidcPublishing: npmWorkflow.includes('id-token: write') && npmWorkflow.includes('npm@11.5.1') && npmWorkflow.includes('npm publish --access public'),
-  slsaAttestation: releaseWorkflow.includes('actions/attest@v4') && releaseWorkflow.includes('attestations: write') && releaseWorkflow.includes('sbom-path:'),
-  attestationsVerified: attestationVerification.status === 'verified'
-    && verifiedAttestationPredicates.has('https://slsa.dev/provenance/v1')
-    && verifiedAttestationPredicates.has('https://cyclonedx.org/bom'),
-  publicationStatusReport: await exists('reports/publication-status.json'),
-  npmPublished: publicationStatus.npm?.published === true,
-  zenodoPublished: publicationStatus.zenodo?.published === true && Boolean(publicationStatus.zenodo?.doi),
-  githubReleasePublished: publicationStatus.githubRelease?.published === true,
-  pagesPublished: publicationStatus.pages?.published === true,
-  arnoldiSchurFloquet: unitaryFloquetSource.includes('complexUnitaryFloquetArnoldiSchurSpectrum')
-};
+/** A hardware promotion sub-gate: backend must be webgpu and the CPU-oracle comparison must pass. */
+function hardwareGatePassed(report: HardwareGateReport, key: 'clv' | 'variationalFtleField' | 'nChainTrajectoryTape' | 'nChainVariational' | 'lyapunovSpectrum'): boolean {
+  const entry = report[key];
+  return entry?.backend === 'webgpu' && entry?.comparison?.passed === true;
+}
+
+// --- Signal rule registry -------------------------------------------------------
+
+type SignalRule =
+  | { kind: 'file'; path: string }
+  | { kind: 'any-file'; paths: string[] }
+  | { kind: 'all-files'; paths: string[] }
+  | { kind: 'script'; name: string }
+  /** One file must contain every needle. */
+  | { kind: 'text'; path: string; needles: string[] }
+  /** At least one of the files must contain every needle. */
+  | { kind: 'any-text'; paths: string[]; needles: string[] }
+  /** Every requirement (file + its needles) must hold. */
+  | { kind: 'multi-text'; requirements: { path: string; needles: string[] }[] }
+  /** Arbitrary predicate over the pre-loaded JSON sources. */
+  | { kind: 'check'; check: () => boolean };
+
+const SIGNAL_RULES = {
+  benchmark: { kind: 'file', path: 'reports/benchmark-report.md' },
+  energy: { kind: 'file', path: 'reports/energy-benchmark.md' },
+  memoryRegression: { kind: 'file', path: 'reports/memory-regression-report.md' },
+  memoryBaseline: { kind: 'file', path: 'reports/memory-baseline.json' },
+  mutationAggregateReport: { kind: 'any-file', paths: ['reports/mutation-aggregate.json', 'reports/mutation/mutation-aggregate.json'] },
+  reproduceManifest: { kind: 'file', path: 'reports/reproduce/manifest.json' },
+  reproduceManifestFresh: { kind: 'check', check: () => reproduceFreshness === 'fresh' },
+  mutationAggregatePass: {
+    kind: 'check',
+    check: () => mutationAggregate.status === 'passed'
+      && typeof mutationAggregate.mutationScore === 'number'
+      && mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60)
+  },
+  flagshipDoc: { kind: 'file', path: 'docs/flagship-result.md' },
+  flagshipCertification: { kind: 'file', path: 'reports/flagship-certification.json' },
+  flagshipFigure: { kind: 'file', path: 'reports/flagship-figure1.svg' },
+  flagshipExternalCheck: { kind: 'file', path: 'reports/flagship-external-check.json' },
+  flagshipNamesGapMap: { kind: 'text', path: 'src/research/certifiedWorkbench.ts', needles: ['melnikov-gap-map'] },
+  reviewerKitDoc: { kind: 'file', path: 'docs/reviewer-kit.md' },
+  reviewerKitManifest: { kind: 'file', path: 'reports/reviewer-kit-manifest.json' },
+  reviewerKitManifestMd: { kind: 'file', path: 'reports/reviewer-kit-manifest.md' },
+  reviewerKitScript: { kind: 'file', path: 'scripts/reviewer-kit.ts' },
+  releasePackagingDoc: { kind: 'file', path: 'docs/release-packaging.md' },
+  releaseReadiness: { kind: 'file', path: 'reports/release-readiness.json' },
+  releaseOnePagePdf: { kind: 'file', path: 'reports/release-one-page.pdf' },
+  walkthroughGif: { kind: 'file', path: 'reports/walkthrough-30s.gif' },
+  gpuScaleReport: { kind: 'file', path: 'reports/gpu-scale-validation.md' },
+  gpuScaleJson: { kind: 'file', path: 'reports/gpu-scale-validation.json' },
+  gpuScaleScript: { kind: 'file', path: 'scripts/gpu-scale-validation.ts' },
+  gpuReductionOracle: { kind: 'check', check: () => gpuScaleValidation.cpuReference?.ensemble?.f32ReductionOracle?.passed === true },
+  webgpuHardwareReport: { kind: 'file', path: 'reports/webgpu-hardware-validation.md' },
+  webgpuHardwareJson: { kind: 'file', path: 'reports/webgpu-hardware-validation.json' },
+  gpuBenchmarkLadderReport: { kind: 'file', path: 'reports/gpu-benchmark-ladder.md' },
+  gpuBenchmarkLadderJson: { kind: 'file', path: 'reports/gpu-benchmark-ladder.json' },
+  gpuAdapterMatrixReport: { kind: 'file', path: 'reports/gpu-adapter-matrix.md' },
+  gpuAdapterMatrixJson: { kind: 'file', path: 'reports/gpu-adapter-matrix.json' },
+  gpuAdapterMatrixPass: { kind: 'check', check: () => gpuAdapterMatrix.status === 'pass' && gpuAdapterMatrix.coverage?.passed === gpuAdapterMatrix.coverage?.required },
+  webgpuHardwarePass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && webgpuHardwareValidation.backend === 'webgpu' },
+  webgpuFullSpectrumPass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && hardwareGatePassed(webgpuHardwareValidation, 'lyapunovSpectrum') },
+  webgpuClvPass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && hardwareGatePassed(webgpuHardwareValidation, 'clv') },
+  webgpuVariationalFtlePass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && hardwareGatePassed(webgpuHardwareValidation, 'variationalFtleField') },
+  webgpuNChainTrajectoryTapePass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && hardwareGatePassed(webgpuHardwareValidation, 'nChainTrajectoryTape') },
+  webgpuNChainPass: { kind: 'check', check: () => webgpuHardwareValidation.status === 'pass' && hardwareGatePassed(webgpuHardwareValidation, 'nChainVariational') },
+  gpuBenchmarkLadderPass: {
+    kind: 'check',
+    check: () => gpuBenchmarkLadder.status === 'pass'
+      && gpuBenchmarkLadder.adapter !== null
+      && gpuBenchmarkLadder.ensemble?.allReductionComparisonsPassed === true
+      && gpuBenchmarkLadder.lyapunovSpectrum?.allPromotionComparisonsPassed === true
+      && hardwareGatePassed(gpuBenchmarkLadder, 'clv')
+      && hardwareGatePassed(gpuBenchmarkLadder, 'variationalFtleField')
+      && hardwareGatePassed(gpuBenchmarkLadder, 'nChainTrajectoryTape')
+      && hardwareGatePassed(gpuBenchmarkLadder, 'nChainVariational')
+  },
+  mojibakeAudit: { kind: 'file', path: 'reports/mojibake-audit.md' },
+  validation: { kind: 'file', path: 'reports/validation-report.md' },
+  reference: { kind: 'file', path: 'reports/validation-reference.md' },
+  architecture: { kind: 'file', path: 'docs/architecture.md' },
+  numerics: { kind: 'file', path: 'docs/numerics.md' },
+  limitations: { kind: 'file', path: 'docs/known-limitations.md' },
+  ci: { kind: 'file', path: '.github/workflows/ci.yml' },
+  mainWorkflow: { kind: 'file', path: '.github/workflows/main.yml' },
+  nightlyWorkflow: { kind: 'file', path: '.github/workflows/nightly.yml' },
+  releaseWorkflow: { kind: 'file', path: '.github/workflows/release.yml' },
+  pagesWorkflow: { kind: 'file', path: '.github/workflows/pages.yml' },
+  reviewerDashboard: { kind: 'all-files', paths: ['reviewer.html', 'src/reviewer/main.ts'] },
+  reviewerDashboardE2e: { kind: 'file', path: 'e2e/reviewer-dashboard.spec.ts' },
+  webgpuHardwareWorkflow: { kind: 'file', path: '.github/workflows/webgpu-hardware.yml' },
+  webgpuHardwareE2e: { kind: 'file', path: 'e2e/webgpu-hardware-reductions.spec.ts' },
+  distIndex: { kind: 'file', path: 'dist/index.html' },
+  license: { kind: 'file', path: 'LICENSE' },
+  citation: { kind: 'file', path: 'CITATION.cff' },
+  typedocIndex: { kind: 'file', path: 'docs/api/index.html' },
+  index: { kind: 'file', path: 'index.html' },
+  coverageScopeBaseline: { kind: 'file', path: 'config/coverage-scope-baseline.json' },
+  bundleBudget: { kind: 'file', path: 'scripts/bundle-budget.ts' },
+  longRunE2e: { kind: 'file', path: 'e2e/long-run-performance.spec.ts' },
+  accessibilityE2e: { kind: 'file', path: 'e2e/accessibility.spec.ts' },
+  railAutocloseE2e: { kind: 'file', path: 'e2e/rail-autoclose.spec.ts' },
+  visualRegressionE2e: { kind: 'file', path: 'e2e/visual-regression.spec.ts' },
+  visualSnapshots: { kind: 'file', path: 'e2e/visual-regression.spec.ts-snapshots' },
+  certifiedWorkbenchModule: { kind: 'file', path: 'src/research/certifiedWorkbench.ts' },
+  trustInspectorUi: { kind: 'text', path: 'src/app/resultBadges.ts', needles: ['openTrustInspector', 'trust-inspector-panel'] },
+  trustInspectorE2e: { kind: 'file', path: 'e2e/trust-inspector.spec.ts' },
+  researchWorkspaceCard: { kind: 'text', path: 'src/app/parity/research-workbench-view.ts', needles: ['researchWorkspaceCard', 'rwWorkspaceSelect'] },
+  researchWorkspaceList: {
+    kind: 'multi-text',
+    requirements: [
+      { path: 'src/app/parity/research-workbench-state.ts', needles: ['workspaces'] },
+      { path: 'src/app/parity/storage-sync.ts', needles: ['sanitizeWorkspaceList'] }
+    ]
+  },
+  researchProjectSessions: {
+    kind: 'multi-text',
+    requirements: [
+      { path: 'src/app/parity/research-workbench-view.ts', needles: ['rwProjectName'] },
+      { path: 'src/app/parity/research-workbench-state.ts', needles: ['activeResearchSession'] },
+      { path: 'src/app/parity/research-session-storage.ts', needles: ['sanitizeResearchSession'] }
+    ]
+  },
+  visualTier: { kind: 'script', name: 'test:visual' },
+  quickTier: { kind: 'script', name: 'test:quick' },
+  slowTier: { kind: 'script', name: 'test:slow' },
+  flagshipCertifyCommand: { kind: 'script', name: 'flagship:certify' },
+  flagshipExternalCommand: { kind: 'script', name: 'flagship:external' },
+  releasePackageCommand: { kind: 'script', name: 'release:package' },
+  webgpuHardwareCommand: { kind: 'script', name: 'test:webgpu-hardware' },
+  webgpuHardwareValidateCommand: { kind: 'script', name: 'validate:webgpu-hardware' },
+  gpuBenchmarkLadderCommand: { kind: 'script', name: 'benchmark:gpu-ladder' },
+  gpuAdapterMatrixCommand: { kind: 'script', name: 'benchmark:gpu-matrix' },
+  reviewerKitCommand: { kind: 'script', name: 'reviewer:kit' },
+  gpuScaleCommand: { kind: 'script', name: 'validate:gpu-scale' },
+  benchmarkMemoryScript: { kind: 'script', name: 'benchmark:memory' },
+  ciRunsQuickTier: { kind: 'text', path: '.github/workflows/ci.yml', needles: ['npm run test:quick'] },
+  ciRunsGpuScale: { kind: 'any-text', paths: ['.github/workflows/ci.yml', '.github/workflows/main.yml'], needles: ['npm run validate:gpu-scale'] },
+  webgpuWorkflowRunsValidation: { kind: 'text', path: '.github/workflows/webgpu-hardware.yml', needles: ['npm run validate:webgpu-hardware'] },
+  webgpuWorkflowRunsBenchmarkLadder: { kind: 'text', path: '.github/workflows/webgpu-hardware.yml', needles: ['npm run benchmark:gpu-ladder'] },
+  webgpuWorkflowRunsAdapterMatrix: { kind: 'text', path: '.github/workflows/webgpu-hardware.yml', needles: ['npm run benchmark:gpu-matrix'] },
+  ciRunsReviewerKit: { kind: 'any-text', paths: ['.github/workflows/ci.yml', '.github/workflows/main.yml'], needles: ['npm run reviewer:kit'] },
+  ciRunsVerify: { kind: 'text', path: '.github/workflows/ci.yml', needles: ['npm run verify'] },
+  mainRunsSlowTier: { kind: 'text', path: '.github/workflows/main.yml', needles: ['npm run test:slow'] },
+  mainRunsBenchmark: { kind: 'text', path: '.github/workflows/main.yml', needles: ['npm run benchmark'] },
+  mainRunsMemoryRegression: { kind: 'text', path: '.github/workflows/main.yml', needles: ['npm run benchmark:memory'] },
+  mainRunsMojibakeStrict: { kind: 'text', path: '.github/workflows/main.yml', needles: ['npm run audit:mojibake:strict'] },
+  mainRunsReleasePackage: { kind: 'text', path: '.github/workflows/main.yml', needles: ['npm run release:package'] },
+  releaseReadyStatus: { kind: 'check', check: () => releaseReadiness.status === 'ready-for-owner-publish' },
+  chaosAccelerationContracts: { kind: 'text', path: 'src/chaos/accelerationContract.ts', needles: ['compareClvAcceleration', 'compareFtleFieldAcceleration', 'compareLyapunovSpectrumAcceleration'] },
+  fullSpectrumGpuPromotion: { kind: 'text', path: 'src/runtime/gpuLyapunov.ts', needles: ['promotedDoublePendulumLyapunovSpectrum', 'webgpuDoublePendulumLyapunovSpectrumCandidate'] },
+  clvFtleGpuPromotion: { kind: 'text', path: 'src/runtime/gpuChaosPromotion.ts', needles: ['promotedDoublePendulumClv', 'promotedDoublePendulumVariationalFtleField'] },
+  nChainGpuPromotion: { kind: 'text', path: 'src/runtime/gpuNChainVariational.ts', needles: ['promotedNChainVariational', 'WGSL_NCHAIN_VARIATIONAL_KERNEL'] },
+  npmOidcPublishing: { kind: 'text', path: '.github/workflows/publish-npm.yml', needles: ['id-token: write', 'npm@11.5.1', 'npm publish --access public'] },
+  slsaAttestation: { kind: 'text', path: '.github/workflows/release.yml', needles: ['actions/attest@v4', 'attestations: write', 'sbom-path:'] },
+  attestationsVerified: {
+    kind: 'check',
+    check: () => attestationVerification.status === 'verified'
+      && verifiedAttestationPredicates.has('https://slsa.dev/provenance/v1')
+      && verifiedAttestationPredicates.has('https://cyclonedx.org/bom')
+  },
+  publicationStatusReport: { kind: 'file', path: 'reports/publication-status.json' },
+  // Fail-closed: npm/Zenodo count as published ONLY when the public registry or
+  // a real DOI resolves (publication-status.ts probes them); owner credentials
+  // alone never flip these signals.
+  npmPublished: { kind: 'check', check: () => publicationStatus.npm?.published === true },
+  zenodoPublished: { kind: 'check', check: () => publicationStatus.zenodo?.published === true && Boolean(publicationStatus.zenodo?.doi) },
+  githubReleasePublished: { kind: 'check', check: () => publicationStatus.githubRelease?.published === true },
+  pagesPublished: { kind: 'check', check: () => publicationStatus.pages?.published === true },
+  arnoldiSchurFloquet: { kind: 'text', path: 'src/research/unitaryFloquet.ts', needles: ['complexUnitaryFloquetArnoldiSchurSpectrum'] }
+} satisfies Record<string, SignalRule>;
+
+async function textHasAll(path: string, needles: string[]): Promise<boolean> {
+  const text = await readText(path);
+  return text.length > 0 && needles.every((needle) => text.includes(needle));
+}
+
+async function evaluateSignal(rule: SignalRule): Promise<boolean> {
+  switch (rule.kind) {
+    case 'file':
+      return exists(rule.path);
+    case 'any-file': {
+      for (const path of rule.paths) if (await exists(path)) return true;
+      return false;
+    }
+    case 'all-files': {
+      for (const path of rule.paths) if (!(await exists(path))) return false;
+      return true;
+    }
+    case 'script':
+      return Boolean(scripts[rule.name]);
+    case 'text':
+      return textHasAll(rule.path, rule.needles);
+    case 'any-text': {
+      for (const path of rule.paths) if (await textHasAll(path, rule.needles)) return true;
+      return false;
+    }
+    case 'multi-text': {
+      for (const requirement of rule.requirements) {
+        if (!(await textHasAll(requirement.path, requirement.needles))) return false;
+      }
+      return true;
+    }
+    case 'check':
+      return rule.check();
+  }
+}
+
+const has = {} as Record<keyof typeof SIGNAL_RULES, boolean>;
+for (const [id, rule] of Object.entries(SIGNAL_RULES) as [keyof typeof SIGNAL_RULES, SignalRule][]) {
+  has[id] = await evaluateSignal(rule);
+}
+
+// --- Area readiness -------------------------------------------------------------
 
 const pagesReady = has.pagesWorkflow && has.distIndex && has.reviewerDashboard && has.reviewerDashboardE2e;
 const releasePackageReady = has.releasePackageCommand && has.releaseReadiness && has.releaseOnePagePdf && has.walkthroughGif && has.mainRunsReleasePackage && has.releaseReadyStatus;
@@ -285,7 +355,7 @@ const testTierReady = has.quickTier && has.slowTier && has.ciRunsQuickTier && ha
 const visualReady = has.visualRegressionE2e && has.visualSnapshots && has.visualTier;
 const memoryReady = has.benchmarkMemoryScript && has.memoryRegression && has.memoryBaseline;
 const benchmarkReady = has.benchmark && has.energy && benchmarkHasComparison && has.gpuBenchmarkLadderPass;
-const flagshipReady = has.certifiedWorkbenchModule && has.flagshipDoc && certifiedWorkbenchSource.includes('melnikov-gap-map');
+const flagshipReady = has.certifiedWorkbenchModule && has.flagshipDoc && has.flagshipNamesGapMap;
 const flagshipCertified = flagshipReady && has.flagshipCertifyCommand && has.flagshipCertification && has.flagshipFigure && has.flagshipExternalCommand && has.flagshipExternalCheck;
 const reviewerKitReady = flagshipCertified && has.reviewerKitDoc && has.reviewerKitScript && has.reviewerKitCommand && has.reviewerKitManifest && has.reviewerKitManifestMd;
 const reproduceReady = has.reproduceManifest && has.reproduceManifestFresh;
@@ -472,8 +542,8 @@ const items: ScorecardItem[] = [
       has.attestationsVerified ? 'published SLSA provenance and CycloneDX attestations pass signer-workflow and tarball SHA-256 verification' : 'published release attestations have not been cryptographically verified',
       has.githubReleasePublished ? 'GitHub release resolves publicly' : 'public GitHub release missing',
       has.pagesPublished ? 'Pages reviewer dashboard resolves publicly' : 'Pages reviewer dashboard not yet deployed',
-      has.npmPublished ? 'exact npm package version resolves publicly' : 'npm package version is not published',
-      has.zenodoPublished ? `Zenodo DOI ${publicationStatus.zenodo?.doi} resolves publicly` : 'public Zenodo DOI is not minted'
+      has.npmPublished ? 'exact npm package version resolves publicly' : 'npm package version is not published (owner-side npm Trusted Publisher setup is required; this scorecard never reports npm as complete without public registry resolution)',
+      has.zenodoPublished ? `Zenodo DOI ${publicationStatus.zenodo?.doi} resolves publicly` : 'public Zenodo DOI is not minted (owner-side Zenodo production auth is required; this scorecard never reports a DOI without public resolution)'
     ],
     remaining: [
       ...(!has.npmPublished ? ['Configure npm trusted publisher for publish-npm.yml/environment npm or supply an owner token for the first publish'] : []),

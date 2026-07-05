@@ -29,7 +29,7 @@ export interface EnsembleResult {
   caveat: string;
 }
 
-const WGSL_KERNEL = /* wgsl */ `
+export const WGSL_KERNEL = /* wgsl */ `
 struct Params {
   m1: f32, m2: f32, l1: f32, l2: f32,
   g: f32, damping: f32, dt: f32, steps: f32,
@@ -73,7 +73,7 @@ fn main(@builtin(global_invocation_id) gid: vec3<u32>) {
 }
 `;
 
-const WGSL_STATS_KERNEL = /* wgsl */ `
+export const WGSL_STATS_KERNEL = /* wgsl */ `
 struct Params {
   n: f32, outputOffset: f32, pad0: f32, pad1: f32,
 };

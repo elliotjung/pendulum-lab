@@ -1,3 +1,5 @@
+import { evidenceFreshness, evidenceProvenance, needsAttention, type EvidenceFreshness } from './evidenceFreshness';
+
 type Json = Record<string, unknown>;
 
 interface Evidence {
@@ -12,7 +14,23 @@ interface Evidence {
   reproduce: string;
   caveat: string;
   links?: EvidenceLink[];
+  /** Freshness of the backing report vs its TTL (stale badge + gap filter). */
+  freshness: EvidenceFreshness;
+  /** Attested SHA / source-run deep link from the report metadata. */
+  provenance: ReturnType<typeof evidenceProvenance>;
 }
+
+/** Per-source TTL in days; anything older gets a stale badge and the gap filter catches it. */
+const EVIDENCE_TTL_DAYS: Record<string, number> = {
+  flagship: 60,
+  external: 60,
+  hardware: 90,
+  matrix: 90,
+  nchain: 90,
+  release: 30,
+  mutation: 14,
+  publication: 30
+};
 
 interface EvidenceLink {
   label: string;
@@ -103,13 +121,19 @@ function evidenceDialog(): { dialog: HTMLDialogElement; open: (item: Evidence) =
       title.textContent = item.title;
       fields.replaceChildren();
       addField(fields, 'Status', item.status);
+      addField(fields, 'Freshness', item.freshness.label);
+      addField(fields, 'Provenance', `sha=${item.provenance.sourceSha ?? 'n/a'} run=${item.provenance.runId ?? 'n/a'} attested=${item.provenance.attested === null ? 'n/a' : String(item.provenance.attested)}`);
       addField(fields, 'Source', item.source);
       addField(fields, 'Parameters', item.parameters);
       addField(fields, 'Validation / Error', item.validation);
       addField(fields, 'Reproduce', item.reproduce);
       addField(fields, 'Caveat', item.caveat);
       links.replaceChildren();
-      for (const link of item.links ?? []) {
+      const allLinks = [
+        ...(item.links ?? []),
+        ...(item.provenance.runUrl ? [{ label: 'Source Run', url: item.provenance.runUrl }] : [])
+      ];
+      for (const link of allLinks) {
         const anchor = element('a', undefined, link.label);
         anchor.href = link.url;
         links.append(anchor);
@@ -122,8 +146,13 @@ function evidenceDialog(): { dialog: HTMLDialogElement; open: (item: Evidence) =
 function evidenceCard(item: Evidence, open: (item: Evidence) => void): HTMLElement {
   const card = element('article', 'evidence-card');
   card.dataset.evidenceId = item.id;
+  card.dataset.freshness = item.freshness.state;
+  card.dataset.needsAttention = String(needsAttention(item.status, item.freshness));
   const header = element('header');
   header.append(element('h3', undefined, item.title), element('span', statusClass(item.status), item.status));
+  if (item.freshness.state !== 'fresh') {
+    header.append(element('span', 'status-chip status-stale', item.freshness.state === 'stale' ? item.freshness.label : 'no timestamp'));
+  }
   const body = element('div', 'evidence-card-body');
   body.append(element('p', 'metric-primary', item.primary), element('p', 'metric-detail', item.detail));
   const actions = element('div', 'evidence-actions');
@@ -231,7 +260,7 @@ async function render(): Promise<void> {
   const githubRelease = object(data.publication.githubRelease);
   const pagesStatus = object(data.publication.pages);
 
-  const evidence: Evidence[] = [
+  const evidenceBase: Omit<Evidence, 'freshness' | 'provenance'>[] = [
     {
       id: 'flagship', title: 'Flagship crossing', status: 'pass',
       primary: `gamma = ${format(crossing.gamma, 6)}`,
@@ -332,6 +361,22 @@ async function render(): Promise<void> {
     }
   ];
 
+  const backingReport: Record<string, Json> = {
+    flagship: data.flagship,
+    external: data.external,
+    hardware: data.hardware,
+    matrix: data.matrix,
+    nchain: data.ladder,
+    release: data.release,
+    mutation: data.mutation,
+    publication: data.publication
+  };
+  const evidence: Evidence[] = evidenceBase.map((item) => ({
+    ...item,
+    freshness: evidenceFreshness(backingReport[item.id], EVIDENCE_TTL_DAYS[item.id] ?? 30),
+    provenance: evidenceProvenance(backingReport[item.id])
+  }));
+
   const shell = element('div', 'reviewer-shell');
   const header = element('header', 'reviewer-header');
   const brand = element('div', 'reviewer-brand');
@@ -398,15 +443,59 @@ async function render(): Promise<void> {
   });
 
   const inspector = evidenceDialog();
+  const controls = element('div', 'evidence-controls');
+  const gapFilter = element('button', 'evidence-button', 'Show gaps only');
+  gapFilter.type = 'button';
+  gapFilter.dataset.testid = 'gap-filter';
+  gapFilter.setAttribute('aria-pressed', 'false');
+  const bundleButton = element('button', 'evidence-button', 'Download offline bundle');
+  bundleButton.type = 'button';
+  bundleButton.dataset.testid = 'offline-bundle';
+  controls.append(gapFilter, bundleButton);
   const grid = element('div', 'evidence-grid');
   for (const item of evidence) grid.append(evidenceCard(item, inspector.open));
-  overview.content.append(grid);
+  gapFilter.addEventListener('click', () => {
+    const active = gapFilter.getAttribute('aria-pressed') !== 'true';
+    gapFilter.setAttribute('aria-pressed', String(active));
+    gapFilter.textContent = active ? 'Show all evidence' : 'Show gaps only';
+    for (const card of grid.querySelectorAll<HTMLElement>('.evidence-card')) {
+      card.hidden = active && card.dataset.needsAttention !== 'true';
+    }
+  });
+  // Offline bundle: every JSON this dashboard rendered from, in one file, so a
+  // reviewer can archive or inspect the exact evidence set without the server.
+  bundleButton.addEventListener('click', () => {
+    const bundle = {
+      schemaVersion: 'pendulum-reviewer-offline-bundle/v1',
+      generatedAt: new Date().toISOString(),
+      origin: window.location.href,
+      sources,
+      reports: data
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = element('a');
+    anchor.href = url;
+    anchor.download = 'pendulum-reviewer-offline-bundle.json';
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  });
+  overview.content.append(controls, grid);
 
   const matrixRows = array(data.matrix.rows).map((value) => {
     const row = object(value); const adapter = object(row.adapter);
-    return [text(row.vendor), text(row.status), text(adapter.vendor ?? adapter.name ?? adapter.description, 'missing'), text(adapter.architecture), text(row.nChainPassed), text(row.source, 'none')];
+    return [
+      text(row.vendor),
+      text(row.status),
+      `${text(row.freshness)}${number(row.ageDays) === null ? '' : ` (${text(row.ageDays)}d)`}`,
+      row.driftSincePrevious === true ? 'CHANGED' : row.driftSincePrevious === false ? 'stable' : 'n/a',
+      text(adapter.vendor ?? adapter.name ?? adapter.description, 'missing'),
+      text(adapter.architecture),
+      text(row.nChainPassed),
+      text(row.source, 'none')
+    ];
   });
-  gpu.content.append(table(['Vendor', 'Status', 'Adapter', 'Architecture', 'N-chain', 'Evidence source'], matrixRows));
+  gpu.content.append(table(['Vendor', 'Status', 'Freshness', 'Env drift', 'Adapter', 'Architecture', 'N-chain', 'Evidence source'], matrixRows));
   mutation.content.append(mutationHeatmap(array(data.mutation.files)));
 
   const artifactRows = reviewerArtifacts.map((item) => [

@@ -6,6 +6,7 @@ import { downloadDataUrl } from './labExport';
 import { num, readSystem } from './systemControls';
 import { extractFtleRidges, type FtleRidgeResult } from '../chaos/ftleRidge';
 import { ftleFieldFiniteDifference } from '../runtime/gpuFields';
+import { gpuTierBadge } from '../runtime/promotionContract';
 import type { ResultBadgeLevel } from './resultBadges';
 
 /**
@@ -73,10 +74,11 @@ export class FtleTab extends TabController {
         this.gridHeight = r.height;
         min = r.min;
         max = r.max;
+        const tier = gpuTierBadge({ backend: r.backend, oracleComparisonPassed: r.validation?.passed ?? null });
         backendNote = r.backend === 'webgpu'
-          ? ` · WebGPU f32 (probe Δ≤${(r.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU)`
-          : ' · CPU fallback (f64)';
-        badgeLevel = r.backend === 'webgpu' ? (r.validation?.passed ? 'finite-time-estimate' : 'caveat') : 'finite-time-estimate';
+          ? ` · ${tier.label} · f32 (probe Δ≤${(r.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU)`
+          : ` · ${tier.label} (f64)`;
+        badgeLevel = tier.tier === 'promoted' || tier.tier === 'cpu-fallback' ? 'finite-time-estimate' : 'caveat';
         badgeText = r.caveat;
       } else {
         const r = await this.client.ftle(doubleSpec, { n, totalTime });

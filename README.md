@@ -32,7 +32,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 969 unit tests
+npm test           # 1056 unit tests
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
@@ -40,6 +40,29 @@ npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
 
 UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 & validation) · **Research** (everything).
+
+## Three reviewer paths
+
+Pick the depth that matches your time budget — each path is self-contained:
+
+1. **5-minute reviewer path.** Open the
+   [reviewer console](https://elliot-jung-17.github.io/pendulum-lab/reviewer.html)
+   (or `reviewer.html` locally after `npm run build`): every headline claim as
+   an evidence card with status, freshness/TTL badge, source-run link, and a
+   one-click offline evidence bundle. Then skim
+   [`docs/flagship-result.md`](docs/flagship-result.md) and
+   `reports/release-one-page.pdf`.
+2. **30-minute reproduction path.** `npm install && npm test` (full unit
+   suite), then `npm run reproduce` — every headline number is recomputed
+   headlessly into a hash-stamped, commit-bound manifest
+   (`reports/reproduce/manifest.json`). Compare against the claims table below.
+3. **Full certification path.** `npm run verify`, `npm run validate:cross` /
+   `validate:sympy` / `validate:literature` (external SciPy/SymPy/literature
+   anchors), `npm run flagship:certify && npm run flagship:external`
+   (independent dependency-free Python check), `npm run audit:worldclass`
+   (scorecard gates), and — on WebGPU hardware — `npm run benchmark:gpu-ladder`
+   plus `npm run benchmark:gpu-matrix`. Step-by-step walkthrough:
+   [`docs/tutorial-reproduce-paper.md`](docs/tutorial-reproduce-paper.md).
 
 ## Claims, and how to reproduce each one
 
@@ -110,7 +133,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (969 tests across 143 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1056 tests across 155 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

@@ -21,7 +21,7 @@ const DEFAULT_GPU_TOLERANCES: AccelerationTolerance = {
   aggregate: 6e-2
 };
 
-const WGSL_FULL_SPECTRUM_KERNEL = /* wgsl */ `
+export const WGSL_FULL_SPECTRUM_KERNEL = /* wgsl */ `
 struct Params {
   m1: f32, m2: f32, l1: f32, l2: f32,
   g: f32, damping: f32, dt: f32, steps: f32,

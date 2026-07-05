@@ -88,7 +88,7 @@ fn rk4(s: vec4<f32>, h: f32) -> vec4<f32> {
 // Flip basin
 // ---------------------------------------------------------------------------
 
-const WGSL_BASIN = /* wgsl */ `
+export const WGSL_BASIN = /* wgsl */ `
 struct Params {
   m1: f32, m2: f32, l1: f32, l2: f32,
   g: f32, damping: f32, dt: f32, steps: f32,
@@ -238,7 +238,7 @@ export async function flipBasinField(params: PendulumParameters, options: FlipBa
 // Sweep λ_max
 // ---------------------------------------------------------------------------
 
-const WGSL_SWEEP = /* wgsl */ `
+export const WGSL_SWEEP = /* wgsl */ `
 struct Params {
   m1: f32, m2: f32, l1: f32, l2: f32,
   g: f32, damping: f32, dt: f32, steps: f32,

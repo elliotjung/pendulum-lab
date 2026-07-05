@@ -27,6 +27,17 @@ export type { SystemSpec } from '../physics/systemSpec';
 // Stochastic (Langevin) dynamics — seeded, so deterministic for a given seed.
 export { gaussianSampler, eulerMaruyamaStep, milsteinStep, stochasticHeunStratonovichStep, commutativeMilsteinStep, runLangevinEnsemble, buildBrownianGrid, runAdaptiveLangevinPath, fixedGridLangevinPath } from '../physics/stochastic';
 export { commutativityDefect } from '../physics/noiseCommutativity';
+// Levy areas: the rough-path correction that restores strong order 1.0 for
+// NON-commutative multiplicative noise (commutativityDefect > 0).
+export {
+  iteratedItoIntegrals,
+  levyAreaCount,
+  levyAreaPackedIndex,
+  levyAreasFromGrid,
+  milsteinLevyStep,
+  sampleBrownianStepWithAreas
+} from '../physics/levyArea';
+export type { BrownianStepWithAreas } from '../physics/levyArea';
 // Quantum chaos & Hamiltonian maps (frontier physics): the Chirikov standard map
 // and its quantisation, the quantum kicked rotor (dynamical localization).
 export { fftInPlace, ifftInPlace } from '../physics/fft';
@@ -224,6 +235,10 @@ export {
   embeddedChainToAngle
 } from '../physics/sphericalEmbeddedChain';
 export type { EmbeddedChainParams, EmbeddedChainState, EmbeddedChainDiagnostics, EmbeddedChainWorkspace } from '../physics/sphericalEmbeddedChain';
+// Chart verification: integrate the same chain through the polar AND embedded
+// formulations and measure their positional agreement.
+export { compareSphericalCharts } from '../physics/sphericalChartComparison';
+export type { ChartComparisonOptions, ChartComparisonResult, ChartComparisonSample } from '../physics/sphericalChartComparison';
 export {
   detectConservedQuantities,
   detectPlanarChainConservedQuantities,

@@ -1,16 +1,22 @@
 name: Mainline Full Validation
 
+# Runs on every mainline push, on manual dispatch, and as an opt-in lane for
+# release-candidate PRs: label a PR `full-validation` and every job below runs
+# for each subsequent push to that PR without waiting for the merge.
 on:
   push:
     branches: [main, master]
+  pull_request:
+    types: [labeled, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
   full-validation:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-validation')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -27,7 +33,7 @@ jobs:
       - run: npm run build:lib
       - run: npm run budget
       - run: npm run docs:api
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: npm run notebook:validate
@@ -50,14 +56,15 @@ jobs:
       - run: npx playwright test e2e/smoke.spec.ts --project=firefox --project=webkit --project=mobile-chrome
 
   cross-validate:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-validation')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: npm ci
@@ -67,11 +74,12 @@ jobs:
       - run: npm run validate:literature
 
   julia-reference:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-validation')
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -83,14 +91,15 @@ jobs:
       - run: npm run validate:julia
 
   os-smoke:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'full-validation')
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm

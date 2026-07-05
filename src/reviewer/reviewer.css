@@ -74,6 +74,10 @@ a { color: #075b66; text-underline-offset: 3px; }
 .status-pass, .status-passed { color: #17613b; border-color: #8fc5aa; background: #eff9f3; }
 .status-partial, .status-ready-for-owner-publish { color: #78510a; border-color: #ddc17f; background: #fff8e8; }
 .status-fail, .status-missing { color: #8a2d2d; border-color: #d8a1a1; background: #fff2f2; }
+.status-stale { color: #78510a; border-color: #ddc17f; background: #fff8e8; text-transform: none; }
+
+.evidence-controls { display: flex; gap: 10px; margin: 0 0 14px; flex-wrap: wrap; }
+.evidence-controls [aria-pressed="true"] { border-color: #173b41; color: #fff; background: #173b41; }
 
 .data-table-wrap { overflow-x: auto; border: 1px solid #cbd5d8; background: #fff; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }

@@ -22,8 +22,40 @@ fully covered by the headless test suite.
   trajectory/tape candidate beyond N=3, extending the STM/QR path beyond 16
   state dimensions, or adding spherical chains requires a new CPU-oracle
   promotion campaign rather than a silent widening of the current claim.
-- **Vendor breadth.** Intel evidence is recorded. Physical NVIDIA and AMD
-  runners are still required for a complete three-vendor matrix.
+- **N-chain Jacobian-tape precision before any N>3 expansion.** The recorded
+  tape-vs-CPU diff (~1.1e-2 at the 8e-2 gate) passes but is dominated by the
+  f32 tape and the finite-difference comparison floor (~1e-8 even on CPU, see
+  tests/jacobian-contract-table.test.ts). Before widening N, the planned order
+  is: (1) compare the GPU tape against the analytic/AD CPU Jacobian instead of
+  finite differences, (2) evaluate compensated (Kahan) or mixed-precision
+  accumulation inside the WGSL tape loops, (3) re-derive the tolerance table
+  from the tightened floor. Each step needs a hardware promotion campaign.
+- **Vendor breadth.** Intel evidence is recorded (now with kernel WGSL hashes,
+  adapter feature fingerprint, tolerance-table hash, and a warmup/steady-state
+  timing split). Physical NVIDIA and AMD runners are still required for a
+  complete three-vendor matrix; artifacts now expire under a TTL and carry an
+  environment fingerprint so driver/browser drift is visible.
+
+## Science extensions with a safe claim boundary
+
+- **Flagship (Melnikov vs period-doubling) follow-ups.** The basin-conditioned
+  onset now exists (`analysis.basinConditionedOnset`; measured onset 1.084 vs
+  A_c 1.019 for the chaos preset). The remaining safe extensions - a
+  multistability posterior over attractor classes, second-order Melnikov
+  corrections, and invariant-manifold comparisons - each need their own
+  external cross-check before any headline claim; "bigger conclusions" from
+  the same first-order Melnikov theory are out of scope by design.
+- **Continuation frontier.** The matrix-free Arnoldi-Schur Floquet wrapper for
+  large/sparse unitary operators is in-tree and scorecard-gated. Automated
+  branch selection and competing-bifurcation orchestration (following several
+  interacting branches with priority scheduling) remain open; they are solver
+  orchestration, so they need worked reference diagrams (e.g. AUTO/MatCont
+  comparisons) before their output can be trusted.
+- **Stochastic rough paths.** Levy-area sampling and the non-commutative
+  strong order-1.0 Milstein step are in-tree (`core.milsteinLevyStep`,
+  strong-order slope pinned). Wiktorsson-style tail-corrected area sampling
+  (exact conditional law rather than subdivision) is the next refinement if
+  free-running order-1.0 integration at large steps becomes a bottleneck.
 
 ## Needs an external toolchain or license
 
@@ -77,6 +109,17 @@ fully covered by the headless test suite.
   coefficient errors that headless convergence tests would not catch against SciPy's
   internals — defeating the purpose. Best added in a focused session with the
   coefficients checked against Hairer's reference source.
+
+## Toolchain modernization (separate branch, not a runtime blocker)
+
+- **Stryker 8 / Vitest 1 / Vite 5 major upgrades.** `npm audit --omit=dev` is
+  clean, so the published runtime carries no known vulnerable dependency; the
+  remaining dev-audit findings live in the test/build toolchain only. Upgrading
+  those majors changes the mutation runner, the coverage provider, and the
+  bundler at once, so it must happen on a dedicated branch that revalidates
+  mutation shards, coverage scope, and the full Playwright matrix together -
+  never as a drive-by bump inside a feature PR. Track it as a toolchain item,
+  decoupled from "published runtime blocker" language.
 
 ## Long-running gates
 

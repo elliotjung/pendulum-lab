@@ -103,6 +103,7 @@
     "reviewer:kit": "tsx scripts/reviewer-kit.ts",
     "release:package": "tsx scripts/release-package.ts",
     "release:verify-attestations": "tsx scripts/verify-release-attestations.ts",
+    "release:verify-report-shas": "tsx scripts/verify-report-shas.ts",
     "zenodo:draft": "tsx scripts/zenodo-release.ts",
     "zenodo:publish": "tsx scripts/zenodo-release.ts --publish",
     "doi:sync": "tsx scripts/sync-doi.ts",

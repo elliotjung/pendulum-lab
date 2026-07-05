@@ -14,6 +14,23 @@ npm run release:status
 The public package coordinate is read directly from `package.json`. Never reuse
 an npm version or a Git tag.
 
+## Release-candidate PRs
+
+Label a PR `full-validation` to run the entire Mainline Full Validation
+workflow (slow tier, coverage, benchmarks, reproduce, flagship certification,
+cross-validation, OS smoke) against the PR head before merging. The lane
+re-runs on every push while the label stays on.
+
+## Evidence must attest the released commit
+
+The release workflow regenerates `release-readiness`, `worldclass-scorecard`,
+and `publication-status` at the release ref and then runs
+`npm run release:verify-report-shas`, which fails unless each report's
+metadata is source-clean and `sourceSha === buildSha === GITHUB_SHA`. Locally,
+regenerate evidence AFTER committing source changes (a dirty source tree
+cannot attest a commit; regenerated `reports/` files alone do not un-attest
+it), then commit the reports.
+
 ## GitHub Release and Pages
 
 Push the release commit and tag. `.github/workflows/release.yml` builds the npm

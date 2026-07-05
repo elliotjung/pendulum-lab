@@ -13,9 +13,26 @@ export interface ReportFreshnessPolicy {
 export interface ReportMetadata {
   schemaVersion: 'pendulum-report-metadata/v1';
   generatedAt: string;
+  /** Compatibility alias for {@link buildSha} (pre-dual-field consumers). */
   gitSha: string | null;
+  /** HEAD of the checkout that ran the generator (what actually built the report). */
+  buildSha: string | null;
+  /**
+   * Commit this report attests to: GITHUB_SHA in CI, or HEAD for a
+   * source-clean local checkout. Null when source files are dirty and no CI
+   * SHA exists, because a modified source tree cannot attest any commit.
+   */
+  sourceSha: string | null;
+  /** True only when source files are clean and sourceSha === buildSha. */
+  attested: boolean;
   dirty: boolean | null;
   dirtyFiles: string[];
+  /**
+   * Like dirty/dirtyFiles but ignoring generated artifacts (reports/, dist*,
+   * docs/api, ...). Regenerating evidence must not un-attest the source.
+   */
+  sourceDirty: boolean | null;
+  sourceDirtyFiles: string[];
   command: string;
   node: string;
   os: {
@@ -51,6 +68,23 @@ function isLocalOnlyPath(path: string): boolean {
     || path.startsWith('tmp/');
 }
 
+const GENERATED_ARTIFACT_PREFIXES = [
+  'reports/',
+  'dist/',
+  'dist-lib/',
+  'standalone/',
+  'docs/api/',
+  'coverage/',
+  'test-results/'
+];
+
+/** Build outputs and evidence files: their churn never dirties the *source*. */
+export function isGeneratedArtifactPath(path: string): boolean {
+  return GENERATED_ARTIFACT_PREFIXES.some((prefix) => path.startsWith(prefix))
+    || path === 'paper/paper.pdf'
+    || path.endsWith('.tgz');
+}
+
 async function dirtyFiles(): Promise<string[] | null> {
   const [unstaged, staged, untracked] = await Promise.all([
     git(['diff', '--name-only']),
@@ -79,12 +113,23 @@ export async function collectReportMetadata(command: string, policy: ReportFresh
   const repository = process.env.GITHUB_REPOSITORY ?? null;
   const runId = process.env.GITHUB_RUN_ID ?? null;
   const serverUrl = process.env.GITHUB_SERVER_URL ?? 'https://github.com';
+  const buildSha = await git(['rev-parse', 'HEAD']);
+  const dirty = files === null ? null : files.length > 0;
+  const sourceFiles = files === null ? null : files.filter((path) => !isGeneratedArtifactPath(path));
+  const sourceDirty = sourceFiles === null ? null : sourceFiles.length > 0;
+  const ciSha = process.env.GITHUB_SHA?.trim() || null;
+  const sourceSha = ciSha ?? (sourceDirty === false ? buildSha : null);
   return {
     schemaVersion: 'pendulum-report-metadata/v1',
     generatedAt,
-    gitSha: await git(['rev-parse', 'HEAD']),
-    dirty: files === null ? null : files.length > 0,
+    gitSha: buildSha,
+    buildSha,
+    sourceSha,
+    attested: sourceDirty === false && sourceSha !== null && buildSha !== null && sourceSha === buildSha,
+    dirty,
     dirtyFiles: files ?? [],
+    sourceDirty,
+    sourceDirtyFiles: sourceFiles ?? [],
     command,
     node: process.version,
     os: {

@@ -29,6 +29,7 @@
     "src/app/expansionWorkerClient.ts",
     "src/app/hudEffects.ts",
     "src/app/index.ts",
+    "src/app/parity/lab3d-chart-compare-ui.ts",
     "src/app/parity/lab3d-diagnostics.ts",
     "src/app/parity/lab3d-double-string-ui.ts",
     "src/app/parity/lab3d-exports.ts",

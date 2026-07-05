@@ -1,31 +1,38 @@
 /**
  * @packageDocumentation
  *
- * `pendulum-lab-core` — the headless, dependency-free research core of
- * Pendulum Lab, organised into four audience-oriented groups:
+ * `pendulum-lab-core` - the headless, dependency-free research core of
+ * Pendulum Lab. The PRIMARY public API is the four audience-oriented
+ * namespaces:
  *
- * - {@link core} — physics: systems (double/triple/N-chain, rope, double
+ * - {@link core} - physics: systems (double/triple/N-chain, rope, double
  *   string, spherical, 3D spherical chain), integrators, energies, SystemSpec.
- * - {@link analysis} — chaos diagnostics: Lyapunov, RQA, basin/Wada, CLV,
- *   FTLE, Floquet/continuation, Melnikov, 0–1 test, recurrence networks.
- * - {@link research} — reproducibility tooling: sampling, experiment design,
+ * - {@link analysis} - chaos diagnostics: Lyapunov, RQA, basin/Wada, CLV,
+ *   FTLE, Floquet/continuation, Melnikov, 0-1 test, recurrence networks.
+ * - {@link research} - reproducibility tooling: sampling, experiment design,
  *   ZIP bundles, provenance, notebooks, figures, CLI batch spec, job protocol.
- * - {@link experimental} — unstable APIs (WebGPU ensemble runner).
+ * - {@link experimental} - unstable APIs (WebGPU ensemble runner).
  *
- * Every API is browser- and Node-compatible: no DOM, no Workers — the app's
+ * Every API is browser- and Node-compatible: no DOM, no Workers - the app's
  * UI layers build on exactly these exports.
- *
- * The flat re-exports below the namespace exports preserve the pre-10.31
- * import surface (`import { rhsChain } from 'pendulum-lab-core'`) so existing
- * scripts keep working; new code should prefer the grouped namespaces.
  *
  * Stability contract:
  * - `core`, `analysis`, and `research` are stable public namespaces governed
  *   by semantic versioning.
  * - `experimental` is tested but may change in minor releases; each change
  *   must be documented in `CHANGELOG.md`.
- * - Flat re-exports are compatibility aliases. They remain supported until a
- *   future major release announces a concrete removal version.
+ * - The flat re-exports below the namespace exports are DEPRECATED
+ *   compatibility aliases for the pre-10.31 import surface
+ *   (`import { rhsChain } from 'pendulum-lab-core'`). They stay supported
+ *   through every 10.x release and are reduced in stages starting with v11;
+ *   see `docs/v11-api-migration.md` for the schedule and the namespace
+ *   replacement for each alias group. New code must import from the
+ *   namespaces (or the `pendulum-lab-core/core|analysis|research|experimental`
+ *   subpath entries).
+ *
+ * This file intentionally uses ASCII-only doc comments: it is the first file
+ * npm consumers open, and legacy terminal encodings render typographic
+ * punctuation as `??`. Pinned by tests/public-surface-encoding.test.ts.
  */
 
 export * as core from './lib/core';
@@ -33,7 +40,9 @@ export * as analysis from './lib/analysis';
 export * as research from './lib/research';
 export * as experimental from './lib/experimental';
 
-// --- Flat compatibility surface (pre-10.31) --------------------------------
+// --- DEPRECATED flat compatibility surface (pre-10.31) ----------------------
+// Staged reduction plan (docs/v11-api-migration.md): frozen in 10.x, trimmed
+// to a compat subpath in v11, removed in v12. Prefer the namespaces above.
 
 export type { EnergyBreakdown, PendulumParameters, SystemType, IntegratorId, RunMode, RuntimeSnapshot } from './types/domain';
 

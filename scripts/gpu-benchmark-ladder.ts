@@ -1,9 +1,27 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
+import { hashText } from '../src/research/researchExportUtils';
+import { adapterFeatureFingerprint, gpuKernelHashes, gpuKernelSetHash, type GpuKernelHash } from '../src/runtime/gpuKernelRegistry';
 
 const url = process.env.WEBGPU_VALIDATION_URL ?? 'http://127.0.0.1:5173/';
 const channel = process.env.WEBGPU_BROWSER_CHANNEL ?? 'chrome';
+
+/**
+ * Every pass/fail tolerance used by the ladder, lifted to one table so the
+ * report can carry its hash: a reviewer can prove two runs were judged by the
+ * same criteria without diffing script versions.
+ */
+const LADDER_TOLERANCES = {
+  ensembleReduction: { mean: 4e-4, variance: 3e-3, covariance: 3e-3, rmsSpread: 3e-3, flipFraction: 0 },
+  ensembleIntegrationDrift: { mean: 5e-3, variance: 2e-2, covariance: 2e-2, rmsSpread: 2e-2, flipFraction: 0 },
+  lyapunovSpectrum: { spectrum: 0.14, aggregate: 0.16 },
+  clv: { exponents: 0.2, angle: 0.4 },
+  variationalFtleField: { field: 0.12, aggregate: 0.08 },
+  nChainTrajectoryTape: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 },
+  nChainClv: { exponents: 0.2, angle: 0.4 },
+  nChainFtle: 0.16
+} as const;
 
 type Status = 'pass' | 'fail';
 
@@ -61,6 +79,18 @@ interface GpuBenchmarkLadderReport {
   url: string;
   status: Status;
   adapter: AdapterMetadata | null;
+  /** Warmup/compile time is measured separately so horizon rows are steady-state. */
+  timing: {
+    warmupMs: number | null;
+    caveat: string;
+  };
+  /** Pins exactly which shaders and tolerances produced this evidence. */
+  provenance: {
+    kernels: GpuKernelHash[];
+    kernelSetHash: string;
+    adapterFeatureFingerprint: string | null;
+    toleranceTableHash: string;
+  };
   ensemble: {
     horizons: EnsembleHorizonRow[];
     allReductionComparisonsPassed: boolean;
@@ -193,6 +223,21 @@ function markdown(report: GpuBenchmarkLadderReport): string {
     `| device | ${adapter?.device ?? 'n/a'} |`,
     `| description | ${adapter?.description ?? 'n/a'} |`,
     `| features | ${(adapter?.features ?? []).join(', ') || 'n/a'} |`,
+    `| feature fingerprint | ${report.provenance.adapterFeatureFingerprint ?? 'n/a'} |`,
+    '',
+    '## Timing Discipline',
+    '',
+    `Warmup/compile pass: ${report.timing.warmupMs === null ? 'n/a' : `${report.timing.warmupMs.toFixed(2)} ms`}`,
+    '',
+    `${report.timing.caveat}`,
+    '',
+    '## Kernel Provenance',
+    '',
+    `Kernel-set hash: \`${report.provenance.kernelSetHash}\` · tolerance-table hash: \`${report.provenance.toleranceTableHash}\``,
+    '',
+    '| kernel | module | WGSL hash | bytes |',
+    '|---|---|---|---:|',
+    ...report.provenance.kernels.map((kernel) => `| ${kernel.id} | ${kernel.module} | \`${kernel.wgslHash}\` | ${kernel.bytes} |`),
     '',
     '## Ensemble f32/f64 Horizon Drift',
     '',
@@ -282,7 +327,7 @@ try {
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'domcontentloaded' });
-  const payload = await page.evaluate(async () => {
+  const payload = await page.evaluate(async (tolerances: typeof LADDER_TOLERANCES) => {
     type GpuAdapterLike = {
       features?: Set<string>;
       limits?: Record<string, number>;
@@ -314,6 +359,16 @@ try {
     const nChainMod = await import(/* @vite-ignore */ nChainModulePath) as typeof import('../src/runtime/gpuNChainVariational');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
     const initial = ensembleMod.ensembleGrid(5, [-1.2, 1.2]);
+
+    // Warmup: compile the ensemble + reduction pipelines once before any timed
+    // horizon so the timed rows measure steady-state kernel execution, not
+    // first-dispatch shader compilation. Single-shot sections (CLV, FTLE,
+    // N-chain) still include their own compile; the report caveat says so.
+    const warmupStarted = performance.now();
+    const warmupRun = await ensembleMod.runDoublePendulumEnsemble(params, initial, { steps: 8, dt: 0.01 });
+    await ensembleMod.webgpuEnsembleStatistics(warmupRun.states);
+    const warmupMs = performance.now() - warmupStarted;
+
     const ensembleHorizons = [];
     for (const steps of [40, 80, 160]) {
       const gpuRun = await ensembleMod.runDoublePendulumEnsemble(params, initial, { steps, dt: 0.01 });
@@ -329,20 +384,8 @@ try {
         n: gpuRun.n,
         gpuElapsedMs: gpuRun.elapsedMs,
         cpuElapsedMs: cpuRun.elapsedMs,
-        reductionComparison: ensembleMod.compareEnsembleStatistics(gpuReductionOnCpuStates, cpuStats, {
-          mean: 4e-4,
-          variance: 3e-3,
-          covariance: 3e-3,
-          rmsSpread: 3e-3,
-          flipFraction: 0
-        }),
-        integrationDriftComparison: ensembleMod.compareEnsembleStatistics(gpuReductionOnGpuStates, cpuStats, {
-          mean: 5e-3,
-          variance: 2e-2,
-          covariance: 2e-2,
-          rmsSpread: 2e-2,
-          flipFraction: 0
-        })
+        reductionComparison: ensembleMod.compareEnsembleStatistics(gpuReductionOnCpuStates, cpuStats, { ...tolerances.ensembleReduction }),
+        integrationDriftComparison: ensembleMod.compareEnsembleStatistics(gpuReductionOnGpuStates, cpuStats, { ...tolerances.ensembleIntegrationDrift })
       });
     }
 
@@ -357,7 +400,7 @@ try {
           renormEvery: 8,
           transientSteps: 40,
           seed: 0x1234,
-          tolerances: { spectrum: 0.14, aggregate: 0.16 }
+          tolerances: { ...tolerances.lyapunovSpectrum }
         }
       );
       spectrumHorizons.push({
@@ -380,7 +423,7 @@ try {
         window: 10,
         backwardTransient: 2,
         seed: 0x1234,
-        tolerances: { exponents: 0.2, angle: 0.4 }
+        tolerances: { ...tolerances.clv }
       }
     );
     const variationalFtleField = await chaosMod.promotedDoublePendulumVariationalFtleField(
@@ -390,7 +433,7 @@ try {
         range: [-1.1, 1.1],
         totalTime: 0.16,
         dt: 0.04,
-        tolerances: { field: 0.12, aggregate: 0.08 }
+        tolerances: { ...tolerances.variationalFtleField }
       }
     );
     const nChainTrajectoryTape = await nChainMod.promotedNChainTrajectoryTape(
@@ -402,7 +445,7 @@ try {
         forwardTransient: 3,
         window: 8,
         backwardTransient: 2,
-        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 }
+        trajectoryTapeTolerances: { ...tolerances.nChainTrajectoryTape }
       },
       0.01
     );
@@ -415,14 +458,15 @@ try {
         forwardTransient: 3,
         window: 8,
         backwardTransient: 2,
-        trajectoryTapeTolerances: { finalState: 8e-3, trajectory: 8e-3, jacobian: 8e-2 },
-        clvTolerances: { exponents: 0.2, angle: 0.4 },
-        ftleTolerance: 0.16
+        trajectoryTapeTolerances: { ...tolerances.nChainTrajectoryTape },
+        clvTolerances: { ...tolerances.nChainClv },
+        ftleTolerance: tolerances.nChainFtle
       },
       0.01
     );
     return {
       adapter: adapterMetadata,
+      warmupMs,
       ensembleHorizons,
       spectrumHorizons,
       clv: {
@@ -462,7 +506,7 @@ try {
         caveat: nChainVariational.caveat
       }
     };
-  });
+  }, LADDER_TOLERANCES);
   const ensembleHorizons = payload.ensembleHorizons as EnsembleHorizonRow[];
   const spectrumHorizons = payload.spectrumHorizons as SpectrumHorizonRow[];
   const maxIntegrationMeanDrift = Math.max(...ensembleHorizons.map((row) => row.integrationDriftComparison?.maxMeanAbsDiff ?? Infinity));
@@ -489,13 +533,24 @@ try {
     && nChainVariational.comparison?.passed === true
     ? 'pass'
     : 'fail';
+  const adapterMetadata = payload.adapter as AdapterMetadata;
   report = {
     schemaVersion: 'pendulum-gpu-benchmark-ladder/v2',
     generatedAt,
     channel,
     url,
     status,
-    adapter: payload.adapter as AdapterMetadata,
+    adapter: adapterMetadata,
+    timing: {
+      warmupMs: n(payload.warmupMs),
+      caveat: 'Ensemble/reduction pipelines are compiled in a separate warmup pass, so horizon GPU timings are steady-state. Single-shot sections (CLV, variational FTLE, N-chain) still include their own first-dispatch compile.'
+    },
+    provenance: {
+      kernels: gpuKernelHashes(),
+      kernelSetHash: gpuKernelSetHash(),
+      adapterFeatureFingerprint: adapterFeatureFingerprint(adapterMetadata),
+      toleranceTableHash: hashText(JSON.stringify(LADDER_TOLERANCES))
+    },
     ensemble: {
       horizons: ensembleHorizons,
       allReductionComparisonsPassed,
@@ -522,6 +577,13 @@ try {
     url,
     status: 'fail',
     adapter: null,
+    timing: { warmupMs: null, caveat: 'No warmup pass ran.' },
+    provenance: {
+      kernels: gpuKernelHashes(),
+      kernelSetHash: gpuKernelSetHash(),
+      adapterFeatureFingerprint: null,
+      toleranceTableHash: hashText(JSON.stringify(LADDER_TOLERANCES))
+    },
     ensemble: {
       horizons: [],
       allReductionComparisonsPassed: false,

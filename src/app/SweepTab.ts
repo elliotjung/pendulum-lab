@@ -6,6 +6,7 @@ import type { PendulumParameters } from '../types/domain';
 import { lambdaColor } from './sweepColor';
 import { downloadDataUrl, downloadText } from './labExport';
 import { sweepLambdaField } from '../runtime/gpuFields';
+import { gpuTierBadge } from '../runtime/promotionContract';
 
 /**
  * Modern port of the chaos-map (Sweep) tab. It computes the maximal Lyapunov
@@ -81,18 +82,19 @@ export class SweepTab extends TabController {
       }
       const bar = this.dom.el('sweepProgress');
       if (bar) bar.style.width = '100%';
+      const tier = gpuTierBadge({ backend: result.backend, oracleComparisonPassed: result.validation?.passed ?? null });
       const backendNote = result.backend === 'webgpu'
-        ? `WebGPU f32 · probe Δλ≤${(result.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU`
-        : 'CPU fallback (f64)';
+        ? `${tier.label} · f32 · probe Δλ≤${(result.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU`
+        : `${tier.label} (f64)`;
       this.dom.setText('sweepStatus', `done · ${this.res}×${this.res} · ${backendNote} · ${result.elapsedMs.toFixed(0)} ms`);
       this.badge(
         'sweepStatus',
-        result.backend === 'webgpu' ? (result.validation?.passed ? 'finite-time-estimate' : 'caveat') : 'finite-time-estimate',
+        tier.tier === 'promoted' || tier.tier === 'cpu-fallback' ? 'finite-time-estimate' : 'caveat',
         result.caveat,
         {
           title: 'GPU Chaos Map Trust',
           source: 'Sweep tab -> sweepLambdaField',
-          parameters: { backend: result.backend, resolution: `${result.width}x${result.height}`, steps: this.steps, dt: 0.02 },
+          parameters: { backend: result.backend, resultTier: tier.tier, resolution: `${result.width}x${result.height}`, steps: this.steps, dt: 0.02 },
           uncertainty: `CPU probe max difference ${result.validation?.maxAbsDiff ?? 0} with tolerance ${result.validation?.tolerance ?? 'cpu-fallback'}.`,
           externalValidation: 'GPU lambda field is accepted only after CPU probe validation, otherwise the CPU f64 field is returned.',
           reproduce: 'npm run validate:gpu-scale',

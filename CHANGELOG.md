@@ -2,9 +2,87 @@
 
 ## Unreleased
 
+### Architecture, evidence attestation, and science hardening (additive)
+
+- **Research workbench split** (`src/app/parity/`): the 1.8k-line
+  `research-workbench.ts` is now a thin facade over five focused modules -
+  `research-workbench-state` (workspace profile, experiment library, run log),
+  `study-batch-controller` (parameter studies + worker batches),
+  `design-study-controller` (multi-variable design + refinement),
+  `comparison-controller` (comparison matrix), and `research-workbench-view`
+  (DOM construction and render orchestration). All existing imports keep
+  working; behavior is pinned by the research-workbench e2e suite.
+- **v11 API migration plan** (`docs/v11-api-migration.md`): the four
+  namespaces (`core`/`analysis`/`research`/`experimental`) are the primary
+  API; the flat root exports are documented as DEPRECATED, frozen aliases with
+  a staged reduction schedule (compat subpath in 11.0, removal in 12.0).
+  `src/lib.ts` is pinned ASCII-only and all public-surface files are guarded
+  by a UTF-8/mojibake round-trip test (`tests/public-surface-encoding.test.ts`).
+- **Attested evidence SHAs** (`scripts/report-metadata.ts`,
+  `scripts/verify-report-shas.ts`): report metadata now carries
+  `sourceSha`/`buildSha`/`attested` plus source-scoped dirtiness
+  (`sourceDirty`, ignoring generated artifacts). The release workflow
+  regenerates release-critical reports at the release ref and fails unless
+  each attests `sourceSha === buildSha === GITHUB_SHA`.
+- **Config-driven scorecard** (`scripts/worldclass-scorecard.ts`): evidence
+  signals are a declarative rule registry (file / script / text / JSON-check
+  kinds); adding an evidence rule is one entry. Behavior verified identical to
+  the previous hard-coded checks. npm/Zenodo remain fail-closed: never
+  reported complete without public registry/DOI resolution.
+- **GPU evidence provenance** (`scripts/gpu-benchmark-ladder.ts`,
+  `scripts/gpu-adapter-matrix.ts`, `src/runtime/gpuKernelRegistry.ts`): the
+  ladder separates warmup/compile from steady-state timings, and pins WGSL
+  kernel hashes, an adapter feature fingerprint, and the tolerance-table hash
+  (verified on Intel hardware). The vendor matrix adds an artifact TTL,
+  freshness ages, and an environment fingerprint that flags driver/browser
+  drift between successive artifacts.
+- **GPU result tiers** (`src/runtime/promotionContract.ts`): one classifier
+  ("GPU promoted" / "GPU candidate" / "CPU fallback") documents the
+  oracle-candidate-promotion-report layer contract and drives the Basin,
+  Sweep, and FTLE tab badges.
+- **Jacobian oracle-independence table**
+  (`tests/jacobian-contract-table.test.ts`): analytic, dual-number-AD, and
+  central-difference Jacobians compared pairwise on shared seeded states
+  (double pendulum agrees analytic-vs-AD to 1.8e-14; FD floor ~1e-8 measured
+  and documented as the driver for tighter N-chain GPU tape gates).
+- **Levy areas / rough-path correction** (`src/physics/levyArea.ts`, `core`):
+  packed Levy-area sampling (subdivision law pinned), grid-exact block areas,
+  iterated Ito integrals, and `milsteinLevyStep` - strong order 1.0 on
+  non-commutative noise (measured slope 0.90 with areas vs 0.59 without,
+  51x finest-level error separation).
+- **Basin-conditioned onset** (`src/chaos/basinConditionedOnset.ts`,
+  `analysis`): the flagship-safe extension - drive amplitude at which a
+  chosen fraction of an initial-condition region sustains chaos (finite-time
+  lambda classifier, bracketed bisection that refuses unbracketed onsets).
+  Measured onset 1.084 for the chaos preset, 1.064x the Melnikov A_c,
+  matching the literature period-doubling accumulation.
+- **Polar vs embedded chart verification**
+  (`src/physics/sphericalChartComparison.ts`, `core`; 3D-lab card + e2e):
+  the same spherical-chain IC integrated through both formulations with
+  position-agreement and per-chart E/L_z drift reporting (regular ICs agree
+  to 7.5e-9 over 5 s; chaotic divergence grows with the Lyapunov time).
+- **Mutation hardening** (integrator registry, double-string, stochastic,
+  RQA/Lyapunov/estimation/embedded-chain): 34 new behavior tests along the
+  known survivor classes - dispatch equivalence, damping-support semantics,
+  the unknown-integrator fail-closed contract (unknown ids degrade bitwise to
+  the RK4 baseline, never a cheaper method), taut/slack transition
+  bracketing, event-storm boundedness,
+  seed reproducibility, Brownian-grid invariants, EM-vs-Milstein strong-order
+  separation, and machine-precision chart roundtrips.
+- **Reviewer console** (`src/reviewer/`): per-evidence TTL freshness badges,
+  attested-SHA/source-run provenance (deep links), a missing-evidence filter,
+  and a one-click offline evidence bundle.
+- **CI**: label a PR `full-validation` to run the entire mainline validation
+  lane pre-merge; all GitHub Actions bumped to their Node 24 majors
+  (checkout v7, setup-node v6, setup-python v6, upload-artifact v7,
+  download-artifact v8, Pages v5/v6). The module-size gate now covers
+  `scripts/` and `e2e/`. The Stryker/Vitest/Vite major upgrades are tracked
+  as a separate toolchain-modernization branch item in
+  `docs/deferred-work.md`.
+
 ## 10.35.0 - 2026-06-19
 
-### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 969)
+### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 1056)
 
 The GPU acceleration claim now covers the missing chaos diagnostics without
 pretending beyond the verified scope.

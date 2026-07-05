@@ -29,7 +29,7 @@ const DEFAULT_FTLE_TOLERANCES: AccelerationTolerance = {
   aggregate: 0.04
 };
 
-const WGSL_CLV_KERNEL = /* wgsl */ `
+export const WGSL_CLV_KERNEL = /* wgsl */ `
 struct Params {
   m1: f32, m2: f32, l1: f32, l2: f32,
   g: f32, damping: f32, dt: f32, renormEvery: f32,

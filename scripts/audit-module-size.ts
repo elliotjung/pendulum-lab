@@ -1,16 +1,19 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const SOURCE_ROOT = 'src';
+// The line gate covers operational code too: oversized scripts/ and e2e/
+// files rot just like src/ modules. Each root uses the same default cap.
+const SOURCE_ROOTS = ['src', 'scripts', 'e2e'];
 const DEFAULT_MAX_LINES = 650;
 
 const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> = {
-  'src/app/parity/research-workbench.ts': { maxLines: 2200, owner: 'split into experiment library, batch runner, design study, comparison matrix' },
   'src/app/parity/figure-export.ts': { maxLines: 850, owner: 'split exporters by artifact type' },
   'src/app/parity/governance-ui.ts': { maxLines: 800, owner: 'split command palette, manifest, mode controls' },
   'src/app/ExpansionLabTab.ts': { maxLines: 780, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
-  'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' }
+  'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' },
+  'scripts/research-cli.ts': { maxLines: 700, owner: 'split subcommand handlers from the CLI dispatcher' },
+  'scripts/worldclass-scorecard.ts': { maxLines: 800, owner: 'move the signal registry into config/scorecard-rules if it outgrows this' }
 };
 
 interface Finding {
@@ -44,7 +47,10 @@ async function lineCount(path: string): Promise<number> {
 }
 
 const findings: Finding[] = [];
-const files = await walk(SOURCE_ROOT);
+const files: string[] = [];
+for (const root of SOURCE_ROOTS) {
+  await walk(root, files);
+}
 
 for (const file of files) {
   const lines = await lineCount(file);
