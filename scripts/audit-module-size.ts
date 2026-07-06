@@ -8,11 +8,9 @@ const DEFAULT_MAX_LINES = 650;
 
 const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> = {
   'src/app/parity/figure-export.ts': { maxLines: 850, owner: 'split exporters by artifact type' },
-  'src/app/parity/governance-ui.ts': { maxLines: 800, owner: 'split command palette, manifest, mode controls' },
   'src/app/ExpansionLabTab.ts': { maxLines: 780, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
   'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' },
-  'scripts/research-cli.ts': { maxLines: 700, owner: 'split subcommand handlers from the CLI dispatcher' },
   'scripts/worldclass-scorecard.ts': { maxLines: 800, owner: 'move the signal registry into config/scorecard-rules if it outgrows this' }
 };
 

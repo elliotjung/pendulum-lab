@@ -45,7 +45,7 @@
     불필요) → 폐루프 고유값(`eigenvaluesGeneral` 재사용)으로 "안정화"를
     검증된 주장으로 만든다.
   - `swingup.ts` — 에너지 셰이핑 스윙업(dE/dt = k_e(E_up−E)‖ω‖² ≥ 0의
-    리아�노프 논증) + dfki RoA식 2차형식 캡처 게이트로 LQR에 인계.
+    리아푸노프 논증) + dfki RoA식 2차형식 캡처 게이트로 LQR에 인계.
   - dfki의 RL 컨트롤러(SAC/DQN)는 **불채택**: 학습 가중치 재현성이 이
     저장소의 "모든 수치에 증거 배지" 원칙과 충돌하고, 이미
     `reservoir.ts`/`hamiltonianLearning.ts`가 학습 계열을 담당한다.
@@ -59,14 +59,19 @@
   **궤적 최적화(백워드 리카티 + 라인서치)**로 푼다. 세 프로젝트 공통 구조:
   롤아웃 → 코스트/동역학 2차 전개 → 정칙화된 백워드 패스 → 피드백을 유지한
   포워드 라인서치.
-- **채택** → `src/control/ilqr.ts`: 임의의 이산 스텝맵 위 iLQR.
-  Levenberg 정칙화(Quu+μI, 콜레스키 실패 시 μ 증가 재시도), 백트래킹
-  라인서치(실제 감소만 수용 → 코스트 이력이 **구성상 단조**, 테스트로 고정),
-  중심차분 이산 야코비안. 완전구동 스윙업(매달림→도립, 3 s)과 acrobot
-  회복 시나리오가 테스트로 고정됨.
-- **불채택**: BoxDDP의 박스 제약 백워드 패스(클램핑 iLQR로 충분; 한계는
-  코드 주석에 업그레이드 경로로 문서화), MPC 리시딩 호라이즌(UI 통합
-  없이는 가치 낮음).
+- **채택** → `src/control/ilqr.ts` facade와 `box-qp.ts` / `rk4-derivatives.ts` /
+  `solver-core.ts` / `double-problems.ts` / `async-runner.ts`: 임의의 이산
+  스텝맵 위 iLQR. Levenberg 정칙화(Quu+μI, 콜레스키 실패 시 μ 증가
+  재시도), 백트래킹 라인서치(실제 감소만 수용 → 코스트 이력이 **구성상
+  단조**, 테스트로 고정), 해석적 RK4 chain-rule 미분, torqueLimit용 exact
+  box QP backward pass. 완전구동 스윙업(매달림→도립, 3 s), acrobot 회복,
+  포화 토크 KKT 사례가 테스트로 고정됨.
+- **추가 반영됨**: BoxDDP의 박스 제약 백워드 패스는 더 이상 불채택이 아니다.
+  최신 `docs/control-module.md` 기준으로 각 knot에서 box QP를 정확히 풀고,
+  포화 입력의 feedback row를 0으로 둬 rollout clamp와 라인서치가 싸우지
+  않게 했다.
+- **아직 불채택**: MPC 리시딩 호라이즌은 UI/worker JSON OCP spec과 warm-start
+  재현성 계층이 먼저 필요하므로 별도 확장 과제로 남긴다.
 
 ### 3. `DifferentialEquations.jl-master.zip` — SciML 적분기 생태계
 
@@ -193,7 +198,7 @@
 | `src/control/actuated` | dfki 플랜트 + 구동 모드 | `rhsDouble` 항별 미러 + 가상일 토크 매핑, 폐형식 B | τ=0 비트 일치, B vs 중심차분, 주입 파워 항등식 |
 | `src/control/lqr` | dfki `lqr.py` (scipy CARE) | Van Loan ZOH 이산화 + DARE 값 반복 + 폐루프 고유값 리포트(기존 `eigenvaluesGeneral` 재사용) | 행렬지수·이산화 폐형식 대조, DARE 고정점 잔차, 3개 구동 모드 Schur 안정, 비선형 밸런싱 시뮬레이션 |
 | `src/control/swingup` | Åström-Furuta 에너지 제어, Xin-Kaneda(dfki), dfki RoA 게이트 | 리아푸노프 단조 에너지 펌프 + 2차형식 캡처 래치(히스테리시스), 보정된 기본 게인 | 에너지 단조 수렴, 행잉→도립 스윙업 전 구간, 위상 래치/리셋 |
-| `src/control/ilqr` | Crocoddyl/Drake/OCS2/dfki의 DDP 계열 | 임의 스텝맵 iLQR, Levenberg 정칙화, 단조 라인서치, 중심차분 미분 | 코스트 단조성(엄밀), 완전구동 스윙업, acrobot 회복, 토크 제한 준수, 롤아웃 재현 일치 |
+| `src/control/ilqr` | Crocoddyl/Drake/OCS2/dfki의 DDP 계열 | facade + box QP / RK4 미분 / solver core / 문제 정의 / async runner 분리, Levenberg 정칙화, 단조 라인서치, exact box QP backward pass | 코스트 단조성(엄밀), 완전구동 스윙업, acrobot 회복, box QP KKT, 포화 토크 제한 준수, 롤아웃 재현 일치 |
 
 **API 배치**: 제어 모듈은 저장소의 SemVer 정책에 따라 `experimental`
 네임스페이스로 공개(공개 API 스냅샷 테스트 갱신), GALI는 `analysis`,
