@@ -1,0 +1,56 @@
+# Regenerates the Playwright visual-regression baselines on the Linux CI
+# runner. Snapshots are pixel-host-specific (the committed *-win32.png files
+# only match Windows hosts), so Linux baselines must be produced here — this
+# is the "baseline promotion stays a CI task" decision from ROADMAP.md made
+# executable. Run it manually after any intentional reskin; it opens a PR
+# with the refreshed *-linux.png files.
+name: Visual Baselines (Linux)
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_pr:
+        description: Open a pull request with the regenerated baselines
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Regenerate chromium + mobile-chrome baselines
+        run: npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium --project=mobile-chrome
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines-linux
+          path: e2e/visual-regression.spec.ts-snapshots/
+          if-no-files-found: error
+      - name: Open baseline-promotion PR
+        if: ${{ inputs.create_pr }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH="ci/visual-baselines-linux-${GITHUB_RUN_ID}"
+          git checkout -b "$BRANCH"
+          git add e2e/visual-regression.spec.ts-snapshots/
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged — nothing to promote."
+            exit 0
+          fi
+          git commit -m "ci: promote Linux visual-regression baselines (run ${GITHUB_RUN_ID})"
+          git push origin "$BRANCH"
+          gh pr create --title "ci: promote Linux visual-regression baselines" \
+            --body "Regenerated on ubuntu-latest by the Visual Baselines workflow (run ${GITHUB_RUN_ID}). Review the rendered PNGs, then merge to make the Linux lane's visual checks meaningful."

@@ -33,7 +33,12 @@ jobs:
       - run: npm run notebook:validate
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run benchmark
+      # Memory regression is a HARD gate now that a stable committed baseline
+      # exists (reports/memory-baseline.json, PASS with ~44x headroom). The
+      # condition keeps CI green if the baseline is ever intentionally removed.
       - run: npm run benchmark:memory
+        env:
+          MEMORY_FAIL_ON_REGRESSION: ${{ hashFiles('reports/memory-baseline.json') != '' && '1' || '' }}
       - run: npm run flagship:certify
       - run: npm run flagship:external
       - run: npm run release:package

@@ -140,11 +140,15 @@ export class Shell {
     };
 
     document.querySelectorAll<HTMLElement>('.rail-menu-button[data-rail-section-button]').forEach((btn) => {
-      btn.addEventListener('click', () => {
+      const open = (): void => {
         clearCloseTimer();
         const section = btn.dataset.railSectionButton;
         if (section) this.openRailSection(section);
-      });
+      };
+      btn.addEventListener('click', open);
+      // Keyboard path: focusing a section button opens its menu, so Tab
+      // reaches the submenu entries without needing a pointer.
+      btn.addEventListener('focus', open);
     });
     document.querySelectorAll<HTMLElement>('.rail-section[data-rail-section]').forEach((section) => {
       section.addEventListener('pointerenter', clearCloseTimer);

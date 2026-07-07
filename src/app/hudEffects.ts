@@ -273,6 +273,32 @@ function installParticleField(): void {
 }
 
 /* ---------------------------------------------------------------------------
+ * Cursor spotlight — a soft holographic glow that trails the pointer.
+ * Event-driven (no continuous rAF): pointermove schedules a single frame
+ * that moves one composited element via transform.
+ * ------------------------------------------------------------------------- */
+
+function installCursorGlow(): void {
+  if (document.getElementById('hudCursorGlow')) return;
+  const glow = document.createElement('div');
+  glow.id = 'hudCursorGlow';
+  glow.setAttribute('aria-hidden', 'true');
+  document.body.append(glow);
+  let pending = 0;
+  let x = -400;
+  let y = -400;
+  document.addEventListener('pointermove', (event) => {
+    x = event.clientX;
+    y = event.clientY;
+    if (pending) return;
+    pending = window.requestAnimationFrame(() => {
+      pending = 0;
+      glow.style.transform = `translate3d(${x - 210}px, ${y - 210}px, 0)`;
+    });
+  }, { passive: true });
+}
+
+/* ---------------------------------------------------------------------------
  * Install
  * ------------------------------------------------------------------------- */
 
@@ -284,6 +310,7 @@ export function installHudEffects(): void {
   if (fxEnabled()) {
     document.body.classList.add('hud-fx');
     installParticleField();
+    installCursorGlow();
   }
   dismissBootOverlay();
 }

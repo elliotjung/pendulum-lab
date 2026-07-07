@@ -21,12 +21,20 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 - **Research workspace UX:** the Research tab has a Certified Workspace card with persisted workspace profiles plus a Project -> Sessions -> Runs -> Artifacts storage model, density preference, export/import, reviewer-kit handoff, and run-log entries for workspace events.
 - **GPU/scale validation:** `npm run validate:gpu-scale` pins CPU reference behavior, mock WebGPU accept/fallback behavior, an executable CLV/full-spectrum/FTLE acceleration contract, and an ensemble f32-candidate reduction oracle. PR and mainline CI run this contract; `.github/workflows/webgpu-hardware.yml` is the opt-in self-hosted hardware lane for actual WebGPU reduction vs CPU-oracle checks.
 - **Reviewer kit:** `npm run reviewer:kit` generates `reports/reviewer-kit-manifest.json` and `.md`, tying the paper, flagship certification, external arithmetic check, notebook, validation reports, GPU contract, memory baseline, and reproducibility manifest into one checklist.
-- **Remaining crown work:** attach a Zenodo DOI/release archive, enable the external Pages/npm publish targets, run the hardware WebGPU lane on a GPU-equipped runner, and decide whether the mini-paper becomes a formal preprint or a longer notebook-first artifact.
+- **Remaining crown work:** attach a Zenodo DOI/release archive (`.zenodo.json`
+  metadata is synced with CITATION.cff as of 2026-07-07; minting the DOI needs
+  the Zenodo↔GitHub account link, an external credential), enable the external
+  npm publish target (dry-run passes; blocked only on `NPM_TOKEN`), run the
+  hardware WebGPU lane on NVIDIA/AMD-equipped runners (external hardware), and
+  decide whether the mini-paper becomes a formal preprint or a longer
+  notebook-first artifact.
 
 ## Numerical Research Upgrades
 
-- Replace finite-difference Hamiltonian gradients with analytic gradients.
-- Add full Newton solve for implicit midpoint with Jacobian diagnostics.
+- **Done:** analytic Hamiltonian gradients (`src/physics/canonical.ts` — exact
+  gradient of H(q,p), FD-verified in tests) and the full Newton implicit
+  midpoint with per-iteration residual/condition-number diagnostics
+  (`src/physics/implicitDiagnostics.ts`, `tests/implicit-diagnostics.test.ts`).
 - Store long-horizon energy drift curves by integrator.
 - Extend Lyapunov output from convergence curves and CPU full-spectrum/CLV reports to production GPU kernels once the implemented acceleration contracts pass on hardware candidates.
 - Add selectable Poincare section conditions and transient removal for bifurcation analysis.
@@ -43,10 +51,14 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   (`src/research/lanczos.ts`, matrix-free symmetric eigensolver scale-up), and a
   headless **Mathieu stability-diagram** sweep (`src/chaos/mathieuStability.ts`).
   Suite 875 → 907.
-- **Remaining spectral frontier:** sparse/large *non-symmetric* (Arnoldi–Schur)
-  eigensolvers building on the complex Krylov projection — the restarted Lanczos
-  above covers the symmetric case; the unitary-grid scale-up for bigger quantum
-  Floquet problems is the next step.
+- **Done (spectral frontier):** the non-symmetric Arnoldi–Schur eigensolver
+  landed in `src/research/arnoldi.ts` (`tests/arnoldi.test.ts`), joining the
+  symmetric restarted Lanczos; HAVOK (`src/research/havok.ts`), the coupled
+  pendulum-chain phonon dispersion (`src/physics/latticeDispersion.ts`,
+  `src/physics/pendulumNetwork.ts`), and thermal-noise stochastic resonance /
+  Kramers escape (`src/physics/stochasticResonance.ts`,
+  `src/physics/kramersEscape.ts`) are likewise implemented and unit-tested.
+  Next: the unitary-grid scale-up for bigger quantum Floquet problems.
 - **Deferred (needs resources this environment can't exercise, kept honest):**
   GPU-execution *validation* of the WebGPU ensemble/field kernels (the kernels +
   feature detection + CPU fallback are in `src/runtime/gpuEnsemble.ts` /
@@ -70,11 +82,14 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   - **Decision (recorded):** the Firefox/WebKit/mobile-Chrome Playwright projects
     already exist in `playwright.config.ts`; cross-platform *baselines* must be
     generated on the actual Linux/macOS/Windows runners (snapshots are
-    pixel-host-specific), so baseline promotion stays a CI task. The memory-
-    regression hard gate (`MEMORY_FAIL_ON_REGRESSION=1`) should flip on only
-    **after** a stable `reports/memory-baseline.json` is committed from a Chromium
-    CI run — flipping it before a baseline exists makes the gate throw
-    "metric missing", so it remains report-only until that baseline lands.
+    pixel-host-specific), so baseline promotion stays a CI task.
+  - **Done (2026-07-07):** baseline promotion is now executable — the manual
+    `Visual Baselines (Linux)` workflow (`.github/workflows/visual-baselines.yml`)
+    regenerates chromium + mobile-chrome snapshots on ubuntu and opens a
+    promotion PR. The memory-regression gate is now HARD on mainline
+    (`MEMORY_FAIL_ON_REGRESSION=1` in main.yml, conditioned on the committed
+    `reports/memory-baseline.json`, which has been stable at PASS with ~44×
+    headroom since 2026-06-18).
 
 ## Architecture - Module Splits
 

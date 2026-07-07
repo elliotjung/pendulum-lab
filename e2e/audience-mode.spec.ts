@@ -37,8 +37,15 @@ test('real (non-automated) sessions re-open the chooser on every launch', async 
   // rest of the suite starts on the workspace; masking navigator.webdriver
   // exercises the path a real returning visitor takes.
   await page.addInitScript(() => {
-    Object.defineProperty(Object.getPrototypeOf(navigator), 'webdriver', { get: () => false });
+    try {
+      Object.defineProperty(Object.getPrototypeOf(navigator), 'webdriver', { get: () => false });
+    } catch {
+      Object.defineProperty(navigator, 'webdriver', { get: () => false });
+    }
     window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'student');
+    // This test is about the chooser only; mark the onboarding tour done so it
+    // never races in after the chooser closes (masking webdriver also arms it).
+    window.localStorage.setItem('pendulum-lab/ui/tour-done', '1');
   });
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));

@@ -589,6 +589,56 @@ button.primary:hover{
   background:transparent;
 }
 
+/* ---- Cursor spotlight (element created by hudEffects.ts, hud-fx only) ----
+   One composited 420px disc moved via transform on pointermove. */
+#hudCursorGlow{
+  position:fixed; top:0; left:0;
+  width:420px; height:420px;
+  z-index:1;
+  pointer-events:none;
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(30,227,255,.075) 0%, rgba(157,120,255,.045) 38%, transparent 68%);
+  mix-blend-mode:screen;
+  transform:translate3d(-400px,-400px,0);
+  will-change:transform;
+}
+
+/* ---- The pendulum logo swings (hud-fx only; tiny element, cheap) -------- */
+body.hud-fx .rail-logo .pendulum-logo-svg{
+  transform-origin:29% 21%;
+  animation:hud-logo-swing 3.4s ease-in-out infinite alternate;
+}
+@keyframes hud-logo-swing{
+  from{ transform:rotate(-5deg); }
+  to{ transform:rotate(6deg); }
+}
+
+/* ---- Tab switch gets a brighter one-shot warp (hud-fx only) ------------- */
+body.hud-fx .tabpanel.active{
+  animation:hud-panel-warp .5s var(--ease);
+}
+@keyframes hud-panel-warp{
+  from{ opacity:0; transform:translateY(12px) scale(.992); filter:saturate(1.5) brightness(1.18); }
+  55%{ filter:none; }
+  to{ opacity:1; transform:none; }
+}
+
+/* ---- Command-palette launcher: charged key --------------------------------- */
+.rail-palette-launcher{
+  transition:border-color .18s var(--ease), background .18s var(--ease),
+             box-shadow .22s var(--ease), transform .14s var(--ease-spring);
+}
+.rail-palette-launcher:hover,
+.rail-palette-launcher:focus-visible{
+  border-color:var(--hud-line-strong);
+  background:linear-gradient(120deg, rgba(30,227,255,.14), rgba(157,120,255,.07));
+  box-shadow:0 0 22px -8px rgba(30,227,255,.75), inset 0 1px 0 rgba(255,255,255,.14);
+}
+body.hud-fx .rail-palette-launcher .tab-icon{
+  animation:hud-tab-live 3.2s ease-in-out infinite;
+}
+
 /* ============================================================================
    RESPONSIVE + MOTION GUARDS
    ========================================================================== */
@@ -607,7 +657,11 @@ button.primary:hover{
   /* hud-fx is never granted under reduced motion; this is belt-and-braces. */
   body.hud-fx header::after,
   body.hud-fx .rail-submenu .tab[aria-selected="true"]::before,
-  body.hud-fx .rail-section.open .rail-submenu > *{ animation:none; }
+  body.hud-fx .rail-section.open .rail-submenu > *,
+  body.hud-fx .rail-logo .pendulum-logo-svg,
+  body.hud-fx .tabpanel.active,
+  body.hud-fx .rail-palette-launcher .tab-icon{ animation:none; }
+  #hudCursorGlow{ display:none; }
   .rail-menu-button:hover .rail-menu-icon,
   .rail-menu-button[aria-expanded="true"] .rail-menu-icon{ transform:none; }
   .hud-boot-ring, .hud-boot-ring2, .hud-boot-ring3,

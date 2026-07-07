@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test('desktop rail uses five top-level menus with click-open detail panels', async ({ page }) => {
+test('desktop rail uses five top-level menus with click-open detail panels', async ({ page, browserName }) => {
+  // This test drives many open/close/hover cycles; on software-rendered WebKit
+  // each cycle is slow enough to approach the 30s budget under full-suite load.
+  // Triple the budget there (the behavior is correct, just slow) — the same
+  // software-render allowance the tour walkthrough documents.
+  test.slow(browserName === 'webkit', 'many rail cycles are slow on software-rendered WebKit');
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 

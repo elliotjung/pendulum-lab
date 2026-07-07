@@ -37,6 +37,7 @@
     "src/app/parity/lab3d-spherical-chain-ui.ts",
     "src/app/parity/lab3d.ts",
     "src/app/systemControls.ts",
+    "src/app/uiLocale.ts",
     "src/main.ts",
     "src/reviewer/main.ts",
     "src/render/performance.ts",

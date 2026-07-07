@@ -2,6 +2,42 @@
 
 ## Unreleased
 
+### Guided onboarding, Korean menu guide, and hardened gates
+
+- **Onboarding tour** (`src/app/onboardingTour.ts`): after the workspace
+  chooser, a four-step spotlight walks first-time visitors through the canvas,
+  presets, rail menu, and mode selector. One-shot (persisted flag), skippable
+  everywhere, bilingual, and never runs under automation — the hud-fx gating
+  philosophy. Pinned by `tests/onboarding-tour.test.ts` + `e2e/guided-ui.spec.ts`.
+- **Korean menu guide** (`navGuide.ts` locales + `src/app/uiLocale.ts`): a
+  Guide language select (EN/한국어) in the rail foot rewrites every menu
+  description line, section hint, and tooltip; English stays the pinned
+  default. Key-parity and bounds pinned in `tests/nav-guide.test.ts`.
+- **Command-palette launcher** (`app.html` + css): an always-visible Search
+  key at the rail foot opens the Ctrl+K palette; keyboard users can now open
+  rail sections by focusing them (`Shell.ts` focus binding).
+- **Export menu, two columns**: the govern submenu lays its six tabs and four
+  actions out in two columns so the whole menu fits on-screen without
+  internal scrolling.
+- **WebKit stability**: removed the invisible-but-expensive backdrop blur on
+  rail submenus (97%-opaque background) — WebKit's software compositor
+  re-blurred the taller panels every frame, starving rAF and timing out
+  Playwright's click-stability check under load.
+- **Verify gate hardening** (`scripts/check-test-results.ts`): a `test:check`
+  step in `npm run verify` re-reads `reports/vitest-results.json` and fails
+  loudly on any failed/missing tests, closing the silent-failure gap of the
+  JSON reporter.
+- **CI**: the memory-regression gate is now HARD on mainline (stable committed
+  baseline, PASS at ~44× headroom), and the manual `Visual Baselines (Linux)`
+  workflow regenerates and PRs Linux visual-regression baselines.
+- **Metadata**: `.zenodo.json` synced with CITATION.cff (title, author,
+  abstract, related identifier); ROADMAP updated to record the already-landed
+  frontier modules (Arnoldi–Schur, HAVOK, lattice dispersion, stochastic
+  resonance, analytic Hamiltonian gradients, Newton implicit midpoint).
+- **HUD motion, more alive (hud-fx only)**: cursor spotlight that trails the
+  pointer, a gently swinging pendulum logo, a brighter one-shot tab warp, and
+  a charged palette key.
+
 ### Guided navigation and HUD motion polish
 
 - **Plain-language menu guide** (`src/app/navGuide.ts`): every rail menu entry
@@ -21,7 +57,7 @@
 
 ## 10.35.0 - 2026-06-19
 
-### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 954)
+### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 959)
 
 The GPU acceleration claim now covers the missing chaos diagnostics without
 pretending beyond the verified scope.

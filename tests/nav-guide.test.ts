@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { NAV_ACTION_GUIDE, NAV_TAB_GUIDE, navTipText } from '../src/app/navGuide';
+import {
+  NAV_ACTION_GUIDE, NAV_ACTION_GUIDE_KO, NAV_TAB_GUIDE, NAV_TAB_GUIDE_KO,
+  actionGuideText, currentNavLocale, navTipText, normalizeNavLocale, setNavLocale, tabGuideText
+} from '../src/app/navGuide';
 import { EXTRA_RAIL_TABS } from '../src/app/railNavigation';
 
 /** The static rail tabs declared in app.html (data-tab values). */
@@ -46,5 +49,31 @@ describe('navigation guide', () => {
   it('composes tooltips as "Full name — description"', () => {
     expect(navTipText('Lyapunov Spectrum', 'Measures divergence')).toBe('Lyapunov Spectrum — Measures divergence');
     expect(navTipText('', 'Measures divergence')).toBe('Measures divergence');
+  });
+
+  it('mirrors every English key in the Korean locale (and nothing extra)', () => {
+    expect(Object.keys(NAV_TAB_GUIDE_KO).sort()).toEqual(Object.keys(NAV_TAB_GUIDE).sort());
+    expect(Object.keys(NAV_ACTION_GUIDE_KO).sort()).toEqual(Object.keys(NAV_ACTION_GUIDE).sort());
+    const all = [...Object.entries(NAV_TAB_GUIDE_KO), ...Object.entries(NAV_ACTION_GUIDE_KO)];
+    for (const [id, description] of all) {
+      expect(description.length, `"${id}" ko description bounds`).toBeGreaterThanOrEqual(8);
+      expect(description.length, `"${id}" ko description bounds`).toBeLessThanOrEqual(34);
+      expect(description.endsWith('.'), `"${id}" ko description should not end with a period`).toBe(false);
+    }
+  });
+
+  it('locale state defaults to English and serves the requested dictionary', () => {
+    expect(normalizeNavLocale('ko')).toBe('ko');
+    expect(normalizeNavLocale('fr')).toBe('en');
+    expect(currentNavLocale()).toBe('en');
+    expect(tabGuideText('lab')).toBe(NAV_TAB_GUIDE.lab);
+    setNavLocale('ko');
+    try {
+      expect(tabGuideText('lab')).toBe(NAV_TAB_GUIDE_KO.lab);
+      expect(actionGuideText('palette')).toBe(NAV_ACTION_GUIDE_KO.palette);
+    } finally {
+      setNavLocale('en');
+    }
+    expect(actionGuideText('palette')).toBe(NAV_ACTION_GUIDE.palette);
   });
 });

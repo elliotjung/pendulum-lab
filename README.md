@@ -22,6 +22,12 @@ The public reviewer surface is `reviewer.html` (deployed at
 committed report JSON and exposes each claim's source, parameters, validation,
 reproduce command, and caveat without hiding missing external evidence.
 
+The project landing page lives at
+[Elliot-Jung-17/pendulum-landing](https://github.com/Elliot-Jung-17/pendulum-landing)
+(deployed at `https://elliot-jung-17.github.io/pendulum-landing/`) — a
+cinematic overview of the engine, workspaces, frontier modules, and the
+validation ledger, with launch links back to this app.
+
 The Research tab is now a persisted workspace: save/switch workspace profiles,
 toggle compact density, export/import the full session, and keep GPU/scale claims
 behind `npm run validate:gpu-scale` CPU-reference gates.
@@ -32,7 +38,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 954 unit tests
+npm test           # 959 unit tests
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
@@ -110,7 +116,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (954 tests across 144 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (959 tests across 145 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

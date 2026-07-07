@@ -1,24 +1,31 @@
 {
-  "title": "Pendulum Lab: a browser-based research platform for nonlinear pendulum dynamics",
-  "description": "Typed, modular research platform for chaotic pendulum dynamics: double/triple/driven/rope/spherical pendulum physics, Lyapunov and RQA diagnostics, basin entropy with multi-resolution Wada convergence analysis, Floquet/continuation and Neimark-Sacker tracking, codim-2 regime scans, reproducible parameter studies with adaptive experiment design, provenance-tracked ZIP research bundles, and an executable notebook export. Runs fully in the browser with a headless CLI for batch studies.",
+  "title": "Pendulum Lab: a validated chaotic-pendulum research laboratory",
+  "description": "A framework-free, zero-runtime-dependency TypeScript engine and browser laboratory for nonlinear pendulum dynamics: twelve order-certified integrators, full Lyapunov spectra with uncertainty estimates, covariant Lyapunov vectors, 0-1 test, RQA, FTLE fields, basin entropy, Floquet analysis with continuation and branch switching, and a Melnikov analytic chaos threshold. Validated against an independent SciPy DOP853 reference (double and triple pendulum), a double-double extended-precision reference, and published literature anchors. Runs fully in the browser with a headless CLI for batch studies.",
   "creators": [
     {
-      "name": "Yoo, Chanmin"
+      "name": "Jung, Elliot"
     }
   ],
   "keywords": [
     "nonlinear dynamics",
     "chaos",
     "double pendulum",
-    "spherical pendulum",
-    "Lyapunov exponent",
-    "basin entropy",
-    "Wada basins",
+    "Lyapunov exponents",
+    "Melnikov method",
+    "numerical integration",
+    "bifurcation analysis",
     "recurrence quantification",
     "reproducible research",
     "browser simulation"
   ],
   "license": "MIT",
   "upload_type": "software",
-  "access_right": "open"
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Elliot-Jung-17/pendulum-lab",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
 }

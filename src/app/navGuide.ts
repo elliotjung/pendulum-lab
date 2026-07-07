@@ -57,3 +57,72 @@ export const NAV_ACTION_GUIDE: Record<string, string> = {
 export function navTipText(name: string, description: string): string {
   return name ? `${name} — ${description}` : description;
 }
+
+/* ---------------------------------------------------------------------------
+ * Locales. English is the default (and what the automated suites pin);
+ * Korean mirrors every key so first-time Korean visitors read the menus in
+ * their own words. The switcher UI lives in src/app/uiLocale.ts.
+ * ------------------------------------------------------------------------- */
+
+export type NavLocale = 'en' | 'ko';
+
+export const NAV_LOCALE_STORAGE_KEY = 'pendulum-lab/ui/nav-locale';
+
+/** 한국어 탭 설명 — 초보 방문자용 (메뉴 두 줄 안에 맞게 짧게). */
+export const NAV_TAB_GUIDE_KO: Record<string, string> = {
+  lab: '실시간 시뮬레이션을 돌리고 모든 값을 조절',
+  compare: '여러 적분기를 같은 조건에서 나란히 비교',
+  lyap: '가까운 궤적이 벌어지는 속도를 측정',
+  sweep: '시작 각도에 따른 카오스 세기를 지도로',
+  bifurc: '매개변수 변화에 따른 거동 변화를 관찰',
+  phase3d: '궤적을 3D로 돌려 보며 탐색',
+  density: '운동이 자주 지나는 상태를 밀도로 표시',
+  zeroone: '신호 하나로 카오스 여부를 판정',
+  clv: '카오스가 늘리고 접는 방향을 추적',
+  basin: '시작점별로 어느 막대가 먼저 뒤집히는지',
+  rqa: '운동 속 반복 패턴을 정량화',
+  ftle: '흐름을 가르는 숨은 경계를 드러내기',
+  validate: '내장 정확도·상태 점검을 실행',
+  research: '매개변수 적합·대리모델·노이즈 실험',
+  architecture: '앱 모듈 구조를 들여다보기',
+  lab3d: '3D 줄·구면 진자를 흔들어 보기',
+  canonical: '해밀토니안 형식의 품질을 감사',
+  aplus: '과학적 근거와 감사 기록을 검토',
+  docs: '모든 도구의 방법론 노트를 읽기',
+  expansion: '확장 물리 모델과 시나리오를 실험',
+  matrix: '독립적인 방법끼리 결과를 교차 검증',
+  golden: '고정 기준 데이터와 실행을 비교'
+};
+
+/** 한국어 액션 설명. */
+export const NAV_ACTION_GUIDE_KO: Record<string, string> = {
+  floquet: '현재 구동점에서 궤도 안정성을 검사',
+  manifest: '이 세션의 서명된 매니페스트를 저장',
+  integrity: '기능을 매니페스트와 대조 검증',
+  palette: '모든 명령을 키보드로 검색 (Ctrl+K)',
+  report: '현재 세션의 전체 리포트를 내보내기'
+};
+
+let currentLocale: NavLocale = 'en';
+
+export function normalizeNavLocale(value: unknown): NavLocale {
+  return value === 'ko' ? 'ko' : 'en';
+}
+
+export function currentNavLocale(): NavLocale {
+  return currentLocale;
+}
+
+export function setNavLocale(locale: NavLocale): void {
+  currentLocale = locale;
+}
+
+/** Tab description in the active locale (falls back to English). */
+export function tabGuideText(id: string): string | undefined {
+  return currentLocale === 'ko' ? NAV_TAB_GUIDE_KO[id] ?? NAV_TAB_GUIDE[id] : NAV_TAB_GUIDE[id];
+}
+
+/** Action description in the active locale (falls back to English). */
+export function actionGuideText(id: string): string | undefined {
+  return currentLocale === 'ko' ? NAV_ACTION_GUIDE_KO[id] ?? NAV_ACTION_GUIDE[id] : NAV_ACTION_GUIDE[id];
+}

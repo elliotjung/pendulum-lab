@@ -7,7 +7,7 @@
  */
 
 import { installAdoptedStyle } from '../ui/adoptedStyles';
-import { NAV_ACTION_GUIDE, NAV_TAB_GUIDE, navTipText } from './navGuide';
+import { actionGuideText, currentNavLocale, navTipText, tabGuideText } from './navGuide';
 
 export type AudienceMode = 'beginner' | 'student' | 'research';
 
@@ -98,12 +98,12 @@ const STUDENT_HIDDEN_SURFACES = [
   '#plxModeCard'
 ];
 
-const SECTION_PRESENTATION: Record<string, { label: string; icon: IconName; hint: string }> = {
-  sim: { label: 'Explore', icon: 'explore', hint: 'Run the pendulum, try presets, and compare the core motion.' },
-  analysis: { label: 'Analyze', icon: 'analyze', hint: 'Read energy, spectra, maps, and phase-space behavior.' },
-  chaos: { label: 'Chaos', icon: 'chaos', hint: 'Use advanced chaos diagnostics for research-mode studies.' },
-  check: { label: 'Validate', icon: 'validate', hint: 'Check accuracy, validation status, and numerical health.' },
-  govern: { label: 'Export', icon: 'export', hint: 'Save figures, manifests, reports, notebooks, and research bundles.' }
+const SECTION_PRESENTATION: Record<string, { label: string; icon: IconName; hint: string; hintKo: string }> = {
+  sim: { label: 'Explore', icon: 'explore', hint: 'Run the pendulum, try presets, and compare the core motion.', hintKo: '진자를 돌리고, 프리셋을 써 보고, 기본 운동을 비교하세요.' },
+  analysis: { label: 'Analyze', icon: 'analyze', hint: 'Read energy, spectra, maps, and phase-space behavior.', hintKo: '에너지·스펙트럼·지도·위상공간 거동을 읽어 보세요.' },
+  chaos: { label: 'Chaos', icon: 'chaos', hint: 'Use advanced chaos diagnostics for research-mode studies.', hintKo: '연구 모드용 고급 카오스 진단 도구를 사용하세요.' },
+  check: { label: 'Validate', icon: 'validate', hint: 'Check accuracy, validation status, and numerical health.', hintKo: '정확도·검증 상태·수치적 건전성을 확인하세요.' },
+  govern: { label: 'Export', icon: 'export', hint: 'Save figures, manifests, reports, notebooks, and research bundles.', hintKo: '그림·매니페스트·리포트·노트북·연구 번들을 저장하세요.' }
 };
 
 const TAB_ICONS: Record<string, IconName> = {
@@ -226,6 +226,11 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
   body.audience-beginner #tab-lab .layout{grid-template-columns:1fr}
 }
 @media(max-width:560px){
+  /* Bottom-bar rail: Mode + Guide compress to one label-less row so the rail
+     keeps its compact height (pinned <95px by the mobile rail e2e). */
+  .audience-select{flex-direction:row;align-items:center;gap:4px;padding:4px 6px}
+  .audience-select label{display:none}
+  .audience-select select{font-size:9.5px}
   body.audience-beginner #tab-lab .main-wrap{min-height:54vh}
   body.audience-beginner #tab-lab #main{min-height:52vh}
   body.audience-beginner .presets{top:0}
@@ -353,30 +358,37 @@ function describeMenuEntry(button: HTMLElement, description: string | undefined)
   const tip = navTipText(base, description);
   button.title = tip;
   button.setAttribute('aria-label', tip);
-  if (!button.querySelector('.tab-desc')) {
-    const desc = document.createElement('span');
+  let desc = button.querySelector('.tab-desc');
+  if (!desc) {
+    desc = document.createElement('span');
     desc.className = 'tab-desc';
     desc.setAttribute('aria-hidden', 'true');
-    desc.textContent = description;
     button.append(desc);
   }
+  // Always rewrite: decorateNavigation reruns when the locale changes.
+  desc.textContent = description;
 }
 
 function decorateNavigation(): void {
+  const korean = currentNavLocale() === 'ko';
   for (const [sectionName, config] of Object.entries(SECTION_PRESENTATION)) {
     const section = document.querySelector<HTMLElement>(`.rail-section[data-rail-section="${sectionName}"]`);
     if (!section) continue;
+    const hintText = korean ? config.hintKo : config.hint;
     const button = section.querySelector<HTMLElement>('.rail-menu-button');
     const submenu = section.querySelector<HTMLElement>('.rail-submenu');
     setIcon(button?.querySelector('.rail-menu-icon') ?? null, config.icon);
     setLabel(button?.querySelector('.rail-menu-label') ?? null, config.label);
-    button?.setAttribute('aria-label', `${config.label}: ${config.hint}`);
-    button?.setAttribute('title', config.hint);
-    if (submenu && !submenu.querySelector('.rail-submenu-hint')) {
-      const hint = document.createElement('div');
-      hint.className = 'rail-submenu-hint';
-      hint.textContent = config.hint;
-      submenu.prepend(hint);
+    button?.setAttribute('aria-label', `${config.label}: ${hintText}`);
+    button?.setAttribute('title', hintText);
+    if (submenu) {
+      let hint = submenu.querySelector('.rail-submenu-hint');
+      if (!hint) {
+        hint = document.createElement('div');
+        hint.className = 'rail-submenu-hint';
+        submenu.prepend(hint);
+      }
+      hint.textContent = hintText;
     }
   }
 
@@ -384,13 +396,13 @@ function decorateNavigation(): void {
     const tabName = tab.dataset.tab;
     const icon = tabName ? TAB_ICONS[tabName] : undefined;
     if (icon) setIcon(tab.querySelector('.tab-icon'), icon);
-    describeMenuEntry(tab, tabName ? NAV_TAB_GUIDE[tabName] : undefined);
+    describeMenuEntry(tab, tabName ? tabGuideText(tabName) : undefined);
   });
   document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((button) => {
     const action = button.dataset.railAction;
     const icon = action ? ACTION_ICONS[action] : undefined;
     if (icon) setIcon(button.querySelector('.tab-icon'), icon);
-    describeMenuEntry(button, action ? NAV_ACTION_GUIDE[action] : undefined);
+    describeMenuEntry(button, action ? actionGuideText(action) : undefined);
   });
 }
 

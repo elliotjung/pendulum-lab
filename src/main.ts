@@ -13,7 +13,9 @@ import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabP
 import { installUiPolish } from './app/UiPolish';
 import { installHudEffects } from './app/hudEffects';
 import { publishPublicApi } from './runtime/globalApi';
-import { installAudienceMode } from './app/audienceMode';
+import { applyAudienceMode, currentAudienceMode, installAudienceMode } from './app/audienceMode';
+import { initNavLocale, installLocaleSelect } from './app/uiLocale';
+import { installOnboardingTour } from './app/onboardingTour';
 import { APP_VERSION } from './runtime/version';
 
 function installIndexCommands(): void {
@@ -117,7 +119,10 @@ async function bootResearch(): Promise<void> {
  */
 function bootShell(): void {
   maybeMountModernShell();
+  initNavLocale(); // restore the guide language before the menus are decorated
   installAudienceMode();
+  installLocaleSelect(() => applyAudienceMode(currentAudienceMode(), false));
+  installOnboardingTour();
   installUiPolish();
   installHudEffects();
 }
