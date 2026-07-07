@@ -9,15 +9,7 @@ import type { StudyPointResponse } from '../../workers/chaosProtocol';
 import { csvCell, hashText } from '../../research/researchExportUtils';
 import { CERTIFIED_WORKBENCH_FLAGSHIP } from '../../research/certifiedWorkbench';
 import { generateStudyValues } from '../../research/researchSampling';
-import {
-  diffObjects,
-  filterExperiments,
-  forkExperimentData,
-  qualityBadges,
-  timelineGroups,
-  validateDoi,
-  type QualityBadge
-} from '../../research/libraryUx';
+import { forkExperimentData, validateDoi } from '../../research/libraryUx';
 import {
   adaptiveRefinement,
   boundaryRefinement,
@@ -25,22 +17,25 @@ import {
   generateDesign,
   uncertaintyResampling,
   type DesignBudget,
-  type DesignPoint,
   type EvaluatedPoint,
   type MultiStrategy,
   type StudyVariable
 } from '../../research/experimentDesign';
-import { ParameterStudyPlan, ParameterStudyPoint, ResearchBatchStatus, ResearchExperiment, ResearchMetrics, ResearchRunLogEntry, ResearchRunType, StudyPointResults, append, button, card, clear, currentParameters, currentSnapshot, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, researchUid, selectValue, setControl, setText, state, toast } from './shared';
+import { ParameterStudyPlan, ParameterStudyPoint, ResearchBatchStatus, ResearchExperiment, ResearchMetrics, ResearchRunLogEntry, ResearchRunType, append, button, card, clear, currentParameters, currentSnapshot, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, researchUid, selectValue, setControl, setText, state, toast } from './shared';
 import { MAX_RESEARCH_EXPERIMENTS, RESEARCH_STUDY_STRATEGIES, clampNumber, clearResearchDb, exportResearchDbArchive, exportWorkspaceJson, finiteNumber, importResearchDbArchive, importWorkspaceJson, persistResearchState, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
 import { orbitBaseFromControls, renderPerfBudgetPanel, runBranchTrace, runEnsembleBenchmark, runLegacyValidationSurface, runNumericalProbe, runOrbitFinder } from './runtime-diagnostics';
-import { FIGURE_CAPTIONS, exportPaperFigureManifestJson, exportPaperFiguresHtml, exportPaperMethodsLatex, exportPaperMethodsMarkdown, exportPaperPackJson, exportProvenanceJson, exportResearchBundleJson, exportResearchBundleZip, exportResearchNotebook, exportScaledCanvases, exportStudyFigureCsv, exportStudyFigurePng, exportStudyFigureSvg, renderFigureStudio, renderProvenanceViewer, saveSelectedFigureCaption } from './figure-export';
-import { exportManifest, setMode } from './governance-ui';
+import { exportPaperPackJson } from './figure-export';
+import { setMode } from './governance-ui';
 import { $ } from './shared';
 import { buildComparisonRows, renderComparisonMatrix, renderPaperSummary } from './research-comparison';
 import { renderResearchTable } from './research-renderers';
 import { renderResearchRunLog } from './research-run-log';
 import { studyBatch, studyBatchTargets, studySpecFromSnapshot } from './research-batch-runner';
 import { DESIGN_VARIABLE_KEYS, createDesignBudget, parseDesignVariableLines } from './research-design-controller';
+import type { DesignStudyState } from './research-design-types';
+import { renderDesignStudyState } from './research-design-renderers';
+import { renderExperimentDiff, renderExperimentTimeline, renderResearchExperiments as renderResearchExperimentsPanel } from './research-experiment-library-renderer';
+import { buildResearchExportPanels } from './research-export-panels';
 import { researchActions, researchCard, researchFormRow, researchInput, researchSelect, researchTextArea } from './research-ui-components';
 import {
   activeResearchSession,
@@ -56,6 +51,9 @@ export { buildComparisonRows, comparisonRowFromExperiment, comparisonRowFromRun,
 export { renderResearchTable } from './research-renderers';
 export { renderResearchRunLog } from './research-run-log';
 export { studySpecFromSnapshot } from './research-batch-runner';
+export type { DesignStudyPointState, DesignStudyState } from './research-design-types';
+export { DESIGN_ORIGIN_COLORS, designPointCanvasPosition, designSummaryText, designTableRows, drawDesignHeatmap, drawDesignPreview } from './research-design-renderers';
+export { currentLibraryFilter, experimentBadges } from './research-experiment-library-renderer';
 export { activeResearchSession, ensureWorkspaceList, upsertResearchSession, upsertWorkspaceProfile, workspaceOptions } from './research-workspace-controller';
 // eslint-disable-next-line import/no-cycle
 import { doubleSpecFromCurrent, runBifurcationDetectPanel, runCodimTwoPanel, runFixedPointPanel, runFtleRidgePanel, runMelnikovPanel, runRecurrenceNetworkPanel, runShadowingPanel, runSobolPanel, runWadaConvergencePanel, superpackChaosClient, superpackClient, superpackSection } from './superpack-panels';
@@ -335,51 +333,7 @@ export function installResearchTab(): void {
     html('div', { id: 'rwOrbitBranch', className: 'research-table-wrap' })
   );
 
-  const paperCard = researchCard('Paper Export Pack', 'researchPaperCard');
-  paperCard.classList.add('research-wide');
-  append(
-    paperCard,
-    researchActions(
-      button('rwExportPaperJson', 'Export Pack JSON', () => exportPaperPackJson(), 'primary'),
-      button('rwExportFigures', 'Export Figures', () => exportPaperFiguresHtml()),
-      button('rwExportFigureManifest', 'Figure Manifest', () => exportPaperFigureManifestJson()),
-      button('rwExportPaperMd', 'Export Methods MD', () => exportPaperMethodsMarkdown()),
-      button('rwExportPaperTex', 'Export LaTeX', () => exportPaperMethodsLatex()),
-      button('rwExportNotebook', 'Export Notebook', () => exportResearchNotebook()),
-      button('rwExportBundle', 'Export Bundle', () => exportResearchBundleJson()),
-      button('rwExportBundleZip', 'Export ZIP Bundle', () => exportResearchBundleZip(), 'primary'),
-      button('rwExportProvenance', 'Provenance JSON', () => exportProvenanceJson()),
-      button('rwViewProvenance', 'View Graph', () => renderProvenanceViewer()),
-      button('rwExportManifestPack', 'Export Manifest', () => exportManifest('pendulum_research_manifest_v10_ts.json'))
-    ),
-    html('div', { id: 'rwPaperSummary', className: 'research-summary', text: 'Paper pack not generated yet.' }),
-    html('div', { id: 'rwProvenanceView', className: 'research-table-wrap' })
-  );
-
-  const figureCard = researchCard('Figure Studio (Publication Pipeline)', 'researchFigureCard');
-  const figureSelect = researchSelect('rwFigSelect', Object.entries(FIGURE_CAPTIONS).map(([id, caption]) => [id, `${id} — ${caption.slice(0, 44)}`]));
-  figureSelect.addEventListener('change', () => renderFigureStudio());
-  const figureCaption = researchTextArea('rwFigCaption', 'Custom caption for the selected figure (blank restores the default)');
-  append(
-    figureCard,
-    researchFormRow('Theme', researchSelect('rwFigTheme', [
-      ['light', 'light'],
-      ['dark', 'dark'],
-      ['print', 'print (B/W)'],
-      ['colorblind', 'colourblind-safe (Okabe–Ito)']
-    ])),
-    researchFormRow('Scale', researchSelect('rwFigScale', [['1', '1x'], ['2', '2x'], ['4', '4x (print DPI)']])),
-    researchFormRow('Figure', figureSelect),
-    figureCaption,
-    researchActions(
-      button('rwFigSaveCaption', 'Save Caption', () => saveSelectedFigureCaption(), 'primary'),
-      button('rwFigExportSvg', 'Study Figure SVG', () => exportStudyFigureSvg()),
-      button('rwFigExportPng', 'Study Figure PNG', () => { void exportStudyFigurePng(); }),
-      button('rwFigExportCsv', 'Figure Source CSV', () => exportStudyFigureCsv()),
-      button('rwFigExportCanvases', 'Canvases PNG @ scale', () => exportScaledCanvases())
-    ),
-    html('div', { id: 'rwFigureSummary', className: 'research-summary', text: 'Vector SVG figures regenerate from saved study data — no physics re-run. PNG exports honour the selected scale.' })
-  );
+  const { paperCard, figureCard } = buildResearchExportPanels();
 
   const perfCard = researchCard('Performance Budget', 'researchPerfCard');
   append(
@@ -1108,30 +1062,6 @@ export function parameterStudyResultsCsvText(plan: ParameterStudyPlan): string {
 
 // --- Multi-variable experiment design ---------------------------------------
 
-export interface DesignStudyPointState {
-  id: string;
-  values: Record<string, number>;
-  origin: DesignPoint['origin'];
-  replicate: number;
-  attempts?: number;
-  results?: StudyPointResults;
-  error?: string;
-}
-
-export interface DesignStudyState {
-  schemaVersion: 'pendulum-design-study/v1';
-  id: string;
-  generatedAt: string;
-  variables: StudyVariable[];
-  strategy: MultiStrategy;
-  count: number;
-  replicates: number;
-  budget: DesignBudget;
-  points: DesignStudyPointState[];
-  status: 'idle' | 'running' | 'complete' | 'cancelled' | 'failed' | 'budget-stopped';
-  message: string;
-}
-
 export const DESIGN_STORAGE_KEY = 'pendulum-lab/design-study/v1';
 
 export let designStudy: DesignStudyState | null = null;
@@ -1389,101 +1319,8 @@ export function cancelDesignBatch(): void {
   toast('Cancelling design batch...');
 }
 
-export const DESIGN_ORIGIN_COLORS: Record<DesignPoint['origin'], string> = {
-  design: '#4cc9f0',
-  replicate: '#a3b3c9',
-  adaptive: '#f4a261',
-  boundary: '#e63946',
-  uncertainty: '#b388eb'
-};
-
-export function drawDesignPreview(design: DesignStudyState): void {
-  const canvas = $('rwDesignPreview');
-  if (!(canvas instanceof HTMLCanvasElement)) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  const [vx, vy] = [design.variables[0], design.variables[1] ?? design.variables[0]];
-  if (!vx || !vy) return;
-  ctx.fillStyle = '#0b1020';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const pad = 18;
-  const sx = (value: number) => pad + ((value - vx.min) / (vx.max - vx.min || 1)) * (canvas.width - 2 * pad);
-  const sy = (value: number) => canvas.height - pad - ((value - vy.min) / (vy.max - vy.min || 1)) * (canvas.height - 2 * pad);
-  ctx.strokeStyle = '#2a3550';
-  ctx.strokeRect(pad, pad, canvas.width - 2 * pad, canvas.height - 2 * pad);
-  for (const point of design.points) {
-    ctx.fillStyle = DESIGN_ORIGIN_COLORS[point.origin];
-    ctx.beginPath();
-    ctx.arc(sx(point.values[vx.key] ?? vx.min), sy(point.values[vy.key] ?? vy.min), 3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.fillStyle = '#8fa3c2';
-  ctx.font = '10px system-ui';
-  ctx.fillText(`${vx.key} →`, canvas.width - pad - 52, canvas.height - 4);
-  ctx.fillText(`${vy.key} ↑`, 2, pad - 6);
-}
-
-export function drawDesignHeatmap(design: DesignStudyState): void {
-  const canvas = $('rwDesignHeatmap');
-  if (!(canvas instanceof HTMLCanvasElement)) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  ctx.fillStyle = '#0b1020';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const evaluated = design.points.filter((point) => point.results);
-  const [vx, vy] = [design.variables[0], design.variables[1] ?? design.variables[0]];
-  if (!vx || !vy || evaluated.length === 0) {
-    ctx.fillStyle = '#8fa3c2';
-    ctx.font = '11px system-ui';
-    ctx.fillText('Heatmap appears after the design batch runs.', 12, canvas.height / 2);
-    return;
-  }
-  const lambdas = evaluated.map((point) => point.results!.lambdaMax).filter(Number.isFinite);
-  const maxAbs = Math.max(0.1, ...lambdas.map((lambda) => Math.abs(lambda)));
-  const pad = 18;
-  const sx = (value: number) => pad + ((value - vx.min) / (vx.max - vx.min || 1)) * (canvas.width - 2 * pad);
-  const sy = (value: number) => canvas.height - pad - ((value - vy.min) / (vy.max - vy.min || 1)) * (canvas.height - 2 * pad);
-  for (const point of evaluated) {
-    const lambda = point.results!.lambdaMax;
-    const t = Math.max(-1, Math.min(1, lambda / maxAbs));
-    // Diverging palette: blue (λ<0, regular) -> white (0) -> red (λ>0, chaotic).
-    const r = t > 0 ? 255 : Math.round(255 * (1 + t));
-    const b = t < 0 ? 255 : Math.round(255 * (1 - t));
-    const g = Math.round(255 * (1 - Math.abs(t)));
-    ctx.fillStyle = `rgb(${r},${g},${b})`;
-    ctx.beginPath();
-    ctx.arc(sx(point.values[vx.key] ?? vx.min), sy(point.values[vy.key] ?? vy.min), 6, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.strokeStyle = '#2a3550';
-  ctx.strokeRect(pad, pad, canvas.width - 2 * pad, canvas.height - 2 * pad);
-  ctx.fillStyle = '#8fa3c2';
-  ctx.font = '10px system-ui';
-  ctx.fillText(`λ heatmap: blue regular, red chaotic (|λ|max ${maxAbs.toFixed(2)})`, pad, 12);
-}
-
 export function renderDesignStudy(): void {
-  const summary = $('rwDesignSummary');
-  if (!summary) return;
-  const design = designStudy;
-  if (!design) {
-    summary.textContent = 'No design generated. Define variables and generate a multi-dimensional design.';
-    return;
-  }
-  const done = design.points.filter((point) => point.results).length;
-  const failed = design.points.filter((point) => point.error && !point.results).length;
-  summary.textContent = `${design.strategy} design over ${design.variables.map((variable) => variable.key).join(', ')} — ${design.points.length} points (${done} complete, ${failed} failed). Status: ${design.status}. ${design.message}`;
-  drawDesignPreview(design);
-  drawDesignHeatmap(design);
-  const rows = design.points.slice(0, 40).map((point) => [
-    point.origin,
-    design.variables.map((variable) => `${variable.key}=${(point.values[variable.key] ?? 0).toFixed(3)}`).join(' '),
-    point.results ? point.results.lambdaMax.toFixed(4) : '-',
-    point.results ? `±${point.results.lambdaBlockStdError.toFixed(4)}` : '-',
-    point.results ? point.results.ftle.toFixed(3) : '-',
-    point.error ?? ''
-  ]);
-  renderResearchTable('rwDesignResults', ['origin', 'point', 'lambda max', 'SE', 'FTLE', 'error'], rows, 'Design points appear here.');
+  renderDesignStudyState(designStudy);
 }
 
 export function designStudyCsvText(design: DesignStudyState): string {
@@ -1564,64 +1401,8 @@ export function renderResearchWorkbench(): void {
   renderResearchStoragePanel();
 }
 
-export function currentLibraryFilter(): { query: string; tag: string; favoritesOnly: boolean } {
-  const search = $('rwLibSearch');
-  const tag = $('rwLibTag');
-  const favOnly = $('rwLibFavOnly');
-  return {
-    query: search instanceof HTMLInputElement ? search.value : '',
-    tag: tag instanceof HTMLInputElement ? tag.value : '',
-    favoritesOnly: favOnly instanceof HTMLInputElement ? favOnly.checked : false
-  };
-}
-
-export function experimentBadges(experiment: ResearchExperiment): QualityBadge[] {
-  return qualityBadges({
-    hasSnapshotHash: Boolean(experiment.snapshot.hash && experiment.snapshot.hash !== 'unknown'),
-    validationStatus: experiment.metrics.validationStatus,
-    drift: experiment.metrics.drift,
-    lambdaMax: experiment.metrics.lambdaMax,
-    qualityScore: experiment.metrics.qualityScore,
-    hasNotes: experiment.notes.trim().length > 0,
-    hasTags: experiment.tags.length > 0
-  });
-}
-
 export function renderResearchExperiments(): void {
-  const filtered = filterExperiments(state.research.experiments, currentLibraryFilter());
-  const select = $('rwExperimentSelect');
-  if (select instanceof HTMLSelectElement) {
-    const previous = state.research.selectedExperimentId || select.value;
-    clear(select);
-    for (const experiment of filtered) {
-      select.append(html('option', { value: experiment.id, text: `${experiment.favorite ? '★ ' : ''}${experiment.name}` }));
-    }
-    if (filtered.some((experiment) => experiment.id === previous)) select.value = previous;
-    state.research.selectedExperimentId = select.value || filtered[0]?.id || state.research.experiments[0]?.id || '';
-  }
-  const diffSelect = $('rwDiffAgainst');
-  if (diffSelect instanceof HTMLSelectElement) {
-    const previousDiff = diffSelect.value;
-    clear(diffSelect);
-    for (const experiment of state.research.experiments) diffSelect.append(html('option', { value: experiment.id, text: experiment.name }));
-    if (state.research.experiments.some((experiment) => experiment.id === previousDiff)) diffSelect.value = previousDiff;
-  }
-  const selected = selectedResearchExperiment();
-  const filterNote = filtered.length !== state.research.experiments.length ? ` (${filtered.length} matching filter)` : '';
-  setText('rwExperimentSummary', selected
-    ? `${state.research.experiments.length} experiment(s)${filterNote}. Selected: ${selected.name}; method=${selected.snapshot.method}; hash=${selected.snapshot.hash}; score=${selected.metrics.qualityScore}`
-    : `${state.research.experiments.length} experiment(s)${filterNote}. Save current state to begin.`);
-  if (selected) {
-    const badges = experimentBadges(selected).map((badge) => `[${badge}]`).join(' ');
-    const citation = selected.citation?.doi ? ` DOI: ${selected.citation.doi}` : '';
-    setText('rwLibBadges', `Quality: ${badges || 'no badges'}${citation}`);
-    const doiInput = $('rwLibDoi');
-    const refInput = $('rwLibRef');
-    if (doiInput instanceof HTMLInputElement) doiInput.value = selected.citation?.doi ?? '';
-    if (refInput instanceof HTMLInputElement) refInput.value = selected.citation?.reference ?? '';
-  } else {
-    setText('rwLibBadges', '');
-  }
+  renderResearchExperimentsPanel();
 }
 
 export function toggleFavoriteExperiment(): void {
@@ -1663,17 +1444,8 @@ export function diffSelectedExperiments(): void {
     toast('Select two experiments to diff');
     return;
   }
-  const rows = diffObjects(
-    { snapshot: selected.snapshot, tags: selected.tags, notes: selected.notes },
-    { snapshot: other.snapshot, tags: other.tags, notes: other.notes }
-  );
-  renderResearchTable(
-    'rwLibDiff',
-    [`field`, selected.name.slice(0, 24), other.name.slice(0, 24)],
-    rows.slice(0, 40).map((row) => [row.field, row.a, row.b]),
-    'No differences — the two experiments are identical (excluding hashes/timestamps).'
-  );
-  toast(`${rows.length} differing field(s)`);
+  const count = renderExperimentDiff(selected, other);
+  toast(`${count} differing field(s)`);
 }
 
 export function saveCitationForSelected(): void {
@@ -1705,13 +1477,7 @@ export function toggleExperimentTimeline(): void {
     clear(target);
     return;
   }
-  const groups = timelineGroups(state.research.experiments);
-  if (groups.length === 0) {
-    setText('rwLibTimeline', 'No experiments yet.');
-    return;
-  }
-  const rows = groups.flatMap((group) => group.items.map((item, index) => [index === 0 ? group.day : '', item.time, item.name]));
-  renderResearchTable('rwLibTimeline', ['day', 'time', 'experiment'], rows.slice(0, 40), 'No experiments yet.');
+  renderExperimentTimeline();
 }
 
 export function renderParameterStudy(): void {

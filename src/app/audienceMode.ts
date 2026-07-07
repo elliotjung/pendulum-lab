@@ -233,6 +233,8 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
   .audience-select select{font-size:9.5px}
   body.audience-beginner #tab-lab .main-wrap{min-height:54vh}
   body.audience-beginner #tab-lab #main{min-height:52vh}
+  body.audience-beginner #tab-lab .layout{gap:8px}
+  body.audience-beginner #tab-lab .controls{max-height:32vh;overflow:auto}
   body.audience-beginner .presets{top:0}
   .audience-chooser{padding:12px}
   .audience-chooser-card{padding:16px}
@@ -415,6 +417,16 @@ function storedAudienceMode(): AudienceMode | null {
   }
 }
 
+function urlAudienceMode(): AudienceMode | null {
+  try {
+    const params = new URL(window.location.href).searchParams;
+    const value = params.get('audience') ?? params.get('mode');
+    return value === null ? null : normalizeAudienceMode(value);
+  } catch {
+    return null;
+  }
+}
+
 function hideAudienceChooser(): void {
   document.getElementById(CHOOSER_ID)?.setAttribute('hidden', '');
 }
@@ -587,11 +599,12 @@ export function installAudienceMode(): void {
   select.addEventListener('change', () => applyAudienceMode(normalizeAudienceMode(select.value)));
   wrap.append(label, select);
   rail.append(wrap);
+  const requested = urlAudienceMode();
   const stored = storedAudienceMode();
-  applyAudienceMode(stored ?? 'research', Boolean(stored));
+  applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored));
   // The workspace chooser opens on EVERY real launch (closing it keeps the
   // active mode). Automated sessions keep the first-run-only behavior so the
   // E2E suite's stored-mode fixture starts on the workspace itself; the
   // every-launch path is covered by a webdriver-masked E2E test.
-  if (!stored || !automatedSession()) showAudienceChooser();
+  if (!requested && (!stored || !automatedSession())) showAudienceChooser();
 }

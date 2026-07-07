@@ -17,6 +17,18 @@ const KNOWN_TABS = ['lab', 'compare', 'lyap', 'sweep', 'bifurc', 'phase3d', 'den
 const PANEL_COLLAPSED_KEY = 'pendulum-lab/ui/panel-collapsed';
 const TAB_KEYS: Record<string, string> = { '1': 'lab', '2': 'compare', '3': 'lyap', '4': 'sweep', '5': 'bifurc', '6': 'phase3d', '7': 'density', '8': 'validate', '9': 'architecture', '0': 'research' };
 
+function compactRail(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+}
+
+function urlParam(name: string): string | null {
+  try {
+    return new URL(window.location.href).searchParams.get(name);
+  } catch {
+    return null;
+  }
+}
+
 type Fmt = (v: string) => string;
 const f2: Fmt = (v) => Number.parseFloat(v).toFixed(2);
 const f3: Fmt = (v) => Number.parseFloat(v).toFixed(3);
@@ -86,6 +98,10 @@ export class Shell {
   }
 
   private syncRailSectionForTab(tabName: string): void {
+    if (compactRail()) {
+      this.closeRailSections();
+      return;
+    }
     const tab = document.querySelector<HTMLElement>(`.rail-section .tab[data-tab="${tabName}"]`);
     const section = tab?.closest<HTMLElement>('.rail-section');
     const sectionName = section?.dataset.railSection;
@@ -173,6 +189,7 @@ export class Shell {
       const clone = takeOverElement(btn);
       clone.addEventListener('click', () => {
         if (clone.dataset.tab) this.switchTo(clone.dataset.tab);
+        if (compactRail()) this.closeRailSections();
       });
     });
     // Dev-hub rail actions that correspond to tabs.
@@ -224,6 +241,13 @@ export class Shell {
     });
   }
 
+  private applyUrlDeepLink(): void {
+    const preset = urlParam('preset');
+    if (preset && PRESETS[preset]) this.applyPreset(preset);
+    const tab = urlParam('tab');
+    if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
+  }
+
   /** Collapse/expand every tab's right control panel (persisted; shortcut "\"). */
   togglePanel(force?: boolean): void {
     const collapsed = force ?? !document.body.classList.contains('panel-collapsed');
@@ -267,5 +291,7 @@ export class Shell {
     this.bindPresets();
     this.bindKeyboard();
     this.bindPanelToggle();
+    this.applyUrlDeepLink();
+    if (compactRail()) this.closeRailSections();
   }
 }

@@ -32,6 +32,10 @@ function ctxOf(id: CanvasId): ManagedCanvas2D | null {
   return configureCanvas2D(canvas);
 }
 
+function compactViewport(): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+}
+
 export class LabApp {
   private sim!: LabSimulation;
   private renderer: LabRenderer | null = null;
@@ -158,7 +162,7 @@ export class LabApp {
     this.push(this.record, { time: snapshot.time, state: snapshot.state }, this.recordCap);
 
     this.frameCount += 1;
-    const diag = this.frameCount % 6 === 0; // side plots/chrome at a reduced cadence
+    const diag = this.frameCount % this.sidePlotInterval() === 0; // side plots/chrome at a reduced cadence
 
     // Frame-time / fps tracking (every frame, cheap).
     const now = performance.now();
@@ -189,7 +193,7 @@ export class LabApp {
         ensembleTips: this.ensembleTips(),
         trailColor: this.trailColor(),
         trailMode: dom.str('trailMode', 'rainbow'),
-        trailLength: Math.max(2, Math.round(dom.num('trailLen', 1500))),
+        trailLength: this.effectiveTrailLength(),
         glow: dom.bool('glowMode')
       });
     }
@@ -289,9 +293,19 @@ export class LabApp {
    * control (a segment stays visible for roughly `trailLen/10` frames).
    */
   private readFade(): number {
-    if (dom.bool('longExpose')) return 0.008;
-    if (dom.bool('glowMode')) return 0.04;
-    return 0.12;
+    const compact = compactViewport();
+    if (dom.bool('longExpose')) return compact ? 0.018 : 0.008;
+    if (dom.bool('glowMode')) return compact ? 0.07 : 0.04;
+    return compact ? 0.18 : 0.12;
+  }
+
+  private effectiveTrailLength(): number {
+    const requested = Math.max(2, Math.round(dom.num('trailLen', 1500)));
+    return compactViewport() ? Math.min(requested, 520) : requested;
+  }
+
+  private sidePlotInterval(): number {
+    return compactViewport() ? 14 : 6;
   }
 
   private renderScrubFrame(): void {

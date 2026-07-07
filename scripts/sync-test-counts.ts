@@ -6,6 +6,14 @@ interface VitestJsonReport {
   testResults?: unknown[];
 }
 
+interface EvidenceSummaryReport {
+  tests?: {
+    total?: number;
+    passed?: number;
+    files?: number;
+  };
+}
+
 interface Replacement {
   file: string;
   pattern: RegExp;
@@ -38,6 +46,19 @@ async function readReport(path: string): Promise<TestSummary> {
   };
 }
 
+async function readEvidenceSummary(path: string): Promise<TestSummary> {
+  const report = JSON.parse(await readFile(path, 'utf8')) as EvidenceSummaryReport;
+  const tests = report.tests;
+  if (!tests || !Number.isInteger(tests.total) || !Number.isInteger(tests.passed) || !Number.isInteger(tests.files)) {
+    throw new Error(`Invalid evidence summary at ${path}`);
+  }
+  return {
+    totalTests: Number(tests.total),
+    passedTests: Number(tests.passed),
+    testFiles: Number(tests.files)
+  };
+}
+
 async function readPackageVersion(path: string): Promise<string> {
   const packageJson = JSON.parse(await readFile(path, 'utf8')) as PackageJson;
   if (typeof packageJson.version !== 'string' || packageJson.version.length === 0) {
@@ -58,7 +79,7 @@ async function replaceInFile({ file, pattern, replace }: Replacement, metadata: 
   await rename(tempFile, file);
 }
 
-const summary = await readReport('reports/vitest-results.json');
+const summary = await readEvidenceSummary('reports/evidence-summary.json').catch(() => readReport('reports/vitest-results.json'));
 const metadata: ProjectMetadata = {
   ...summary,
   version: await readPackageVersion('package.json')

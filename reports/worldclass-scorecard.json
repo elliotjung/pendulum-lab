@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T17:56:39.321Z",
+  "generatedAt": "2026-07-07T13:57:53.429Z",
   "totals": {
     "done": 10,
     "partial": 2,
@@ -2371,6 +2371,8 @@
     "energy": true,
     "memoryRegression": true,
     "memoryBaseline": true,
+    "mutationAggregateReport": true,
+    "mutationAggregatePass": true,
     "flagshipDoc": true,
     "flagshipCertification": true,
     "flagshipFigure": true,
@@ -2582,14 +2584,15 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
-        "949/949 unit tests across 143 files",
+        "971/971 unit tests across 150 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
         "quick, slow, and full test tiers are wired into PR/mainline workflows",
         "coverage scope guard catches new source files missing from the v8 coverage map",
         "long-run performance/soak e2e spec exists and runs in mainline full validation",
         "accessibility e2e spec exists and runs in mainline full validation",
         "visual regression script, spec, and versioned Chromium snapshots exist",
-        "memory-regression report and baseline exist from benchmark output"
+        "memory-regression report and baseline exist from benchmark output",
+        "nightly mutation aggregate passes at 65.32% total / 68.34% covered across 29 shards"
       ],
       "remaining": []
     },
@@ -2653,7 +2656,7 @@
         "Pages build includes the JSON-backed reviewer dashboard",
         "reviewer dashboard evidence dialog, tabs, and ledger have browser coverage",
         "mainline full-validation workflow exists",
-        "nightly mutation workflow exists",
+        "nightly mutation workflow and aggregate report exist",
         "release artifact workflow exists",
         "dist/index.html exists for Pages artifact deployment",
         "LICENSE exists",

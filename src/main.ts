@@ -12,6 +12,7 @@ import { installPendulumRuntime } from './runtime/PendulumRuntime';
 import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabProbe, maybeMountModernShell } from './app/bootstrap';
 import { installUiPolish } from './app/UiPolish';
 import { installHudEffects } from './app/hudEffects';
+import { installEducationCards } from './app/educationCards';
 import { publishPublicApi } from './runtime/globalApi';
 import { applyAudienceMode, currentAudienceMode, installAudienceMode } from './app/audienceMode';
 import { initNavLocale, installLocaleSelect } from './app/uiLocale';
@@ -122,6 +123,7 @@ function bootShell(): void {
   initNavLocale(); // restore the guide language before the menus are decorated
   installAudienceMode();
   installLocaleSelect(() => applyAudienceMode(currentAudienceMode(), false));
+  installEducationCards();
   installOnboardingTour();
   installUiPolish();
   installHudEffects();

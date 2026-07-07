@@ -12,6 +12,7 @@ export * from '../research/experimentDesign';
 export * from '../research/sobolSensitivity';
 export * from '../research/surrogate';
 export * from '../research/parameterEstimation';
+export * from '../research/experimentalDataImport';
 export * from '../research/sindy';
 export * from '../research/complexEig';
 export * from '../research/eigenGeneral';

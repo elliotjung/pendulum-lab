@@ -38,7 +38,8 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 959 unit tests
+npm test           # 971 unit tests
+npm run evidence:summary # sync README/landing evidence numbers from reports
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
@@ -69,6 +70,8 @@ reproducing the external (SciPy/SymPy) checks:
 [`docs/reproducibility.md`](docs/reproducibility.md).
 Step-by-step paper reproduction:
 [`docs/tutorial-reproduce-paper.md`](docs/tutorial-reproduce-paper.md).
+Final publication checklist:
+[`docs/public-release-routine.md`](docs/public-release-routine.md).
 
 ## What's inside (short version)
 
@@ -116,7 +119,7 @@ Step-by-step paper reproduction:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (959 tests across 145 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (971 tests across 150 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

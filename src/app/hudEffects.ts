@@ -27,8 +27,11 @@ const reducedMotion = (): boolean =>
 
 const automated = (): boolean => typeof navigator !== 'undefined' && navigator.webdriver === true;
 
+const compactViewport = (): boolean =>
+  typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+
 /** Continuous ambience is for real, motion-tolerant sessions only. */
-const fxEnabled = (): boolean => !automated() && !reducedMotion();
+const fxEnabled = (): boolean => !automated() && !reducedMotion() && !compactViewport();
 
 /* ---------------------------------------------------------------------------
  * Boot overlay

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "pendulum-evidence-summary/v1",
+  "generatedAt": "2026-07-07T13:57:53.708Z",
+  "sourceReports": {
+    "vitestResults": "reports/vitest-results.json",
+    "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
+    "publicationStatus": "reports/publication-status.json",
+    "literatureAnchors": "reports/literature-anchors.json",
+    "crossValidation": "reports/cross-validation.json",
+    "gpuAdapterMatrix": "reports/gpu-adapter-matrix.json"
+  },
+  "tests": {
+    "total": 971,
+    "passed": 971,
+    "failed": 0,
+    "suites": 472,
+    "files": 150,
+    "success": true,
+    "generatedAt": "2026-07-07T13:57:00.639Z",
+    "passLabel": "971 / 971 pass"
+  },
+  "validation": {
+    "scipyAgreement": {
+      "regularMaxDivergence": 5.762057497804562e-14,
+      "display": "~6e-14"
+    },
+    "periodDoubling": {
+      "computed": 1.0663715404102452,
+      "published": 1.0663,
+      "absError": 0.00007154041024515223,
+      "tolerance": 0.005,
+      "pass": true,
+      "display": "1.066372 vs 1.066300"
+    },
+    "melnikovThreshold": {
+      "computed": 1.018774255073282,
+      "published": 1.0187742550733252,
+      "absError": 4.3298697960381105e-14,
+      "tolerance": 1e-8,
+      "pass": true,
+      "display": "1.018774 vs 1.018774"
+    },
+    "literatureAllPass": true
+  },
+  "reviewerKit": {
+    "status": "ready",
+    "artifactCount": 25,
+    "requiredAvailable": 9,
+    "recommendedAvailable": 15,
+    "missingRequired": [],
+    "missingRecommended": []
+  },
+  "gpu": {
+    "status": "partial",
+    "passedVendors": 1,
+    "requiredVendors": 3,
+    "missingVendors": [
+      "nvidia",
+      "amd"
+    ],
+    "reproduce": "npm run benchmark:gpu-matrix",
+    "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract."
+  },
+  "publication": {
+    "status": "partial",
+    "npmPublished": false,
+    "zenodoPublished": false,
+    "zenodoDoi": null,
+    "githubReleaseUrl": "https://github.com/Elliot-Jung-17/pendulum-lab/releases/tag/v10.35.0",
+    "pagesUrl": "https://elliot-jung-17.github.io/pendulum-lab/reviewer.html",
+    "caveats": [
+      "npm registry does not resolve this exact package version.",
+      "No matching public Zenodo DOI record resolves for Pendulum Lab."
+    ]
+  },
+  "finalization": [
+    {
+      "id": "npm-publish",
+      "label": "npm package publication",
+      "status": "blocked-external",
+      "command": "npm publish --access public",
+      "note": "Requires npm credentials and an intentional publish."
+    },
+    {
+      "id": "zenodo-doi",
+      "label": "Zenodo DOI publication",
+      "status": "blocked-external",
+      "command": "npm run zenodo:publish && npm run doi:sync",
+      "note": "Requires Zenodo credentials and a final public record."
+    },
+    {
+      "id": "gpu-vendor-matrix",
+      "label": "NVIDIA/AMD self-hosted GPU evidence",
+      "status": "blocked-external",
+      "command": "npm run benchmark:gpu-matrix",
+      "note": "Missing physical runner evidence for nvidia, amd."
+    },
+    {
+      "id": "release-attestation",
+      "label": "release attestation verification",
+      "status": "complete",
+      "command": "npm run release:verify-attestations",
+      "note": "GitHub release exists; attestation verification remains the release gate."
+    }
+  ]
+}
