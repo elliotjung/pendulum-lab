@@ -532,6 +532,25 @@ function showAudienceChooser(): void {
   firstChoice?.focus();
 }
 
+/**
+ * Wire the double-pendulum rail logo so clicking it — or pressing Enter/Space
+ * while it is focused — reopens the workspace chooser, the app's home screen.
+ * Bound at most once; safe to call repeatedly.
+ */
+function bindHomeLogo(): void {
+  const logo = document.getElementById('railHome') ?? document.querySelector<HTMLElement>('.rail-logo');
+  if (!logo || logo.dataset.homeBound === '1') return;
+  logo.dataset.homeBound = '1';
+  const open = (event: Event): void => {
+    event.preventDefault();
+    showAudienceChooser();
+  };
+  logo.addEventListener('click', open);
+  logo.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') open(event);
+  });
+}
+
 function markClosest(id: string, selector: string, level: AudienceMode): void {
   const element = document.getElementById(id);
   const target = element?.closest<HTMLElement>(selector);
@@ -599,6 +618,7 @@ export function installAudienceMode(): void {
   select.addEventListener('change', () => applyAudienceMode(normalizeAudienceMode(select.value)));
   wrap.append(label, select);
   rail.append(wrap);
+  bindHomeLogo();
   const requested = urlAudienceMode();
   const stored = storedAudienceMode();
   applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored));

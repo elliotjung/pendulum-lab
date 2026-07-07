@@ -273,6 +273,15 @@ body.hud-fx .main-wrap > .hud-scan{
 .rail-logo{
   box-shadow:var(--shadow-glow-cyan), 0 0 30px -6px rgba(157,120,255,.6);
 }
+.rail-logo:hover,
+.rail-logo:focus-visible{
+  box-shadow:var(--shadow-glow-cyan), 0 0 40px -4px rgba(157,120,255,.85),
+             0 0 0 1px rgba(30,227,255,.55), 0 0 22px -6px rgba(30,227,255,.9);
+}
+/* Nudge the pendulum into a livelier swing while the home logo is hovered. */
+body.hud-fx .rail-logo:hover .pendulum-logo-svg{
+  animation-duration:1.5s;
+}
 .rail-menu-icon{
   border-color:var(--hud-line);
   background:linear-gradient(180deg, rgba(30,227,255,.14), rgba(30,227,255,.05));

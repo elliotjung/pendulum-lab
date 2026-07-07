@@ -110,6 +110,15 @@ html,body{
   background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 55%);
   pointer-events:none;
 }
+/* The logo doubles as a home control: click it to reopen the workspace chooser. */
+.rail-logo{
+  cursor:pointer; appearance:none; border:0;
+  transition:transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .25s ease, filter .25s ease;
+}
+.rail-logo .pendulum-logo-svg{ pointer-events:none; }
+.rail-logo:hover{ transform:translateY(-1px) scale(1.07); filter:brightness(1.08); }
+.rail-logo:active{ transform:scale(.93); }
+.rail-logo:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
 
 
 .tabs{
