@@ -21,7 +21,77 @@ test('rail palette launcher opens the command palette', async ({ page }) => {
   await expect(launcher).toHaveAttribute('title', /Ctrl\+K/);
   await launcher.click();
   await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
+  await expect(page.locator('#rgv7Palette')).not.toHaveClass(/show/);
   await page.keyboard.press('Escape');
+});
+
+test('command palette uses one modal and closes from search actions', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+
+  await page.locator('.rail-menu-button[data-rail-section-button="govern"]').click();
+  await expect(page.locator('.rail-section.open[data-rail-section="govern"]')).toBeVisible();
+
+  await page.keyboard.press('Control+K');
+  await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
+  await expect(page.locator('#rgv7Palette')).not.toHaveClass(/show/);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+
+  await page.locator('#rgv8CmdInput').fill('research');
+  await expect(page.locator('#rgv8CmdList [data-command-id]')).not.toHaveCount(0);
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#rgv8Cmd')).not.toHaveClass(/show/);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+
+  await page.keyboard.press('Control+K');
+  await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#rgv8Cmd')).not.toHaveClass(/show/);
+
+  await page.keyboard.press('Control+K');
+  await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
+  await page.mouse.click(16, 16);
+  await expect(page.locator('#rgv8Cmd')).not.toHaveClass(/show/);
+});
+
+test('rail search and mode controls do not overlap', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+
+  const layout = await page.evaluate(() => {
+    const box = (selector: string) => {
+      const el = document.querySelector<HTMLElement>(selector);
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height, display: cs.display };
+    };
+    const overlap = (a: ReturnType<typeof box>, b: ReturnType<typeof box>) => Boolean(
+      a && b && a.display !== 'none' && b.display !== 'none' &&
+      a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
+    );
+    const rail = box('.rail');
+    const search = box('.rail-palette-launcher');
+    const mode = box('#audienceMode');
+    const guide = box('#navLocale');
+    const audience = box('.audience-select');
+    return {
+      rail,
+      search,
+      mode,
+      guide,
+      audience,
+      searchAudienceOverlap: overlap(search, audience),
+      modeGuideOverlap: overlap(mode, guide),
+      searchInsideRail: Boolean(rail && search && search.left >= rail.left && search.right <= rail.right),
+      audienceInsideRail: Boolean(rail && audience && audience.left >= rail.left && audience.right <= rail.right)
+    };
+  });
+
+  expect(layout.searchAudienceOverlap).toBe(false);
+  expect(layout.modeGuideOverlap).toBe(false);
+  expect(layout.searchInsideRail).toBe(true);
+  expect(layout.audienceInsideRail).toBe(true);
 });
 
 test('focusing a rail section button opens its submenu for keyboard users', async ({ page }) => {

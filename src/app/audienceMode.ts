@@ -190,9 +190,9 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
 .rail-menu-icon .rail-icon-svg{width:19px;height:19px}
 .tab-icon .rail-icon-svg{width:18px;height:18px}
 .rail-submenu-hint{grid-column:1/-1;margin:0 0 4px;padding:7px 8px 7px 10px;border:1px solid var(--divider);border-left:2px solid rgba(30,227,255,.5);border-radius:8px;background:linear-gradient(90deg,rgba(30,227,255,.06),rgba(255,255,255,.02));color:var(--text);font-size:10.5px;line-height:1.4}
-.audience-select{margin-top:auto;padding:6px;display:flex;flex-direction:column;gap:4px}
-.audience-select label{font:700 8px/1 var(--font-mono,monospace);letter-spacing:1px;color:var(--subtle,#6b7894);text-transform:uppercase;text-align:center}
-.audience-select select{width:100%;font-size:10px}
+.audience-select{margin-top:8px;padding:7px;display:grid;grid-template-columns:1fr;gap:6px;border:1px solid rgba(24,212,248,.14);border-radius:12px;background:linear-gradient(180deg,rgba(24,212,248,.055),rgba(255,255,255,.018));box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.audience-select label{font:800 7.5px/1 var(--font-mono,monospace);letter-spacing:1.1px;color:var(--subtle,#6b7894);text-transform:uppercase;text-align:left}
+.audience-select select{width:100%;height:26px;font-size:9.5px;padding:4px 6px;border-radius:7px;background-color:rgba(4,8,18,.92)}
 .audience-chooser{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:24px;background:linear-gradient(rgba(30,227,255,.04) 1px,transparent 1px) 0 0/100% 44px,linear-gradient(90deg,rgba(30,227,255,.04) 1px,transparent 1px) 0 0/44px 100%,radial-gradient(130% 130% at 50% 0%,rgba(10,16,30,.87),rgba(3,5,12,.965));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:audienceChooserIn .26s ease both}
 .audience-chooser[hidden]{display:none!important}
 @keyframes audienceChooserIn{from{opacity:0}to{opacity:1}}
@@ -228,9 +228,9 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
 @media(max-width:560px){
   /* Bottom-bar rail: Mode + Guide compress to one label-less row so the rail
      keeps its compact height (pinned <95px by the mobile rail e2e). */
-  .audience-select{flex-direction:row;align-items:center;gap:4px;padding:4px 6px}
+  .audience-select{grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:4px;padding:4px 6px;margin-top:0;border:0;background:transparent;box-shadow:none}
   .audience-select label{display:none}
-  .audience-select select{font-size:9.5px}
+  .audience-select select{height:24px;font-size:9.5px;padding:3px 5px}
   body.audience-beginner #tab-lab .main-wrap{min-height:54vh}
   body.audience-beginner #tab-lab #main{min-height:52vh}
   body.audience-beginner #tab-lab .layout{gap:8px}

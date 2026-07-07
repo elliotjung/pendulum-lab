@@ -10,6 +10,8 @@ test('desktop rail uses five top-level menus with click-open detail panels', asy
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
   await expect(page.locator('.rail-menu-button')).toHaveCount(5);
+  await expect(page.locator('.rail-section.open')).toHaveCount(0);
+  await page.locator('.rail-menu-button[data-rail-section-button="sim"]').click();
   await expect(page.locator('.rail-section.open[data-rail-section="sim"]')).toBeVisible();
   await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"] .tab-label')).toHaveText('Lab');
 

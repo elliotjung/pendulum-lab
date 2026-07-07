@@ -102,10 +102,7 @@ export class Shell {
       this.closeRailSections();
       return;
     }
-    const tab = document.querySelector<HTMLElement>(`.rail-section .tab[data-tab="${tabName}"]`);
-    const section = tab?.closest<HTMLElement>('.rail-section');
-    const sectionName = section?.dataset.railSection;
-    if (sectionName) this.openRailSection(sectionName);
+    void tabName;
   }
 
   private setSlider(id: string, value: number): void {

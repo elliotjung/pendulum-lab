@@ -1076,23 +1076,28 @@ MODULE 00 - V10 SUPPLEMENTAL UI
 /* Always-visible command-palette launcher under the rail menu. */
 .rail-palette-launcher{
   width:100%;
-  margin-top:10px;
-  min-height:40px;
-  padding:5px 8px;
+  margin-top:8px;
+  min-height:38px;
+  padding:6px 7px;
   display:grid;
-  grid-template-columns:24px minmax(0,1fr) auto;
+  grid-template-columns:1fr;
+  grid-template-rows:18px auto;
   align-items:center;
+  justify-items:center;
   column-gap:6px;
-  border-radius:9px;
-  text-align:left;
+  row-gap:2px;
+  border-radius:12px;
+  text-align:center;
   color:var(--text);
-  background:rgba(255,255,255,.035);
-  border:1px solid var(--glass-stroke);
+  background:linear-gradient(180deg,rgba(24,212,248,.07),rgba(255,255,255,.02));
+  border:1px solid rgba(24,212,248,.14);
   font-family:var(--font-sans);
+  flex-shrink:0;
 }
 .rail-palette-launcher .tab-icon{ width:24px; font-size:13px; color:var(--cyan); }
-.rail-palette-launcher .tab-label{ font-size:10px; font-weight:700; }
+.rail-palette-launcher .tab-label{ max-width:100%;font-size:9px;line-height:1;font-weight:800;letter-spacing:.6px;text-transform:uppercase; }
 .rail-palette-launcher .tab-desc{ display:none; }
+.rail-palette-launcher .rail-kbd{ display:none; }
 .rail-kbd{
   font:600 7.5px/1 var(--font-mono);
   letter-spacing:.4px;
