@@ -127,11 +127,16 @@ export class Shell {
     const schedulePointerClose = (event: PointerEvent): void => {
       if (event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
       clearCloseTimer();
+      // Grace period for crossing the rail→submenu gap. 80ms raced against the
+      // pointer's dwell time in the gap (a single synthetic-mouse step can take
+      // ~80ms under load); 180ms keeps the close feeling instant while making
+      // the crossing reliable. An invisible hover bridge in css/00 covers the
+      // horizontal gap so the common path never leaves the section at all.
       closeTimer = window.setTimeout(() => {
         closeTimer = null;
         if (document.querySelector('.rail-section.open:hover')) return;
         this.closeRailSections();
-      }, 80);
+      }, 180);
     };
 
     document.querySelectorAll<HTMLElement>('.rail-menu-button[data-rail-section-button]').forEach((btn) => {

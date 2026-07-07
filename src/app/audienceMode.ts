@@ -7,6 +7,7 @@
  */
 
 import { installAdoptedStyle } from '../ui/adoptedStyles';
+import { NAV_ACTION_GUIDE, NAV_TAB_GUIDE, navTipText } from './navGuide';
 
 export type AudienceMode = 'beginner' | 'student' | 'research';
 
@@ -188,7 +189,7 @@ body.audience-research #tab-research .research-card:first-child{border-color:rgb
 .rail-icon-svg{width:20px;height:20px;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .rail-menu-icon .rail-icon-svg{width:19px;height:19px}
 .tab-icon .rail-icon-svg{width:18px;height:18px}
-.rail-submenu-hint{grid-column:1/-1;margin:0 0 4px;padding:7px 8px;border:1px solid var(--divider);border-radius:8px;background:rgba(255,255,255,.028);color:var(--text);font-size:10.5px;line-height:1.4}
+.rail-submenu-hint{grid-column:1/-1;margin:0 0 4px;padding:7px 8px 7px 10px;border:1px solid var(--divider);border-left:2px solid rgba(30,227,255,.5);border-radius:8px;background:linear-gradient(90deg,rgba(30,227,255,.06),rgba(255,255,255,.02));color:var(--text);font-size:10.5px;line-height:1.4}
 .audience-select{margin-top:auto;padding:6px;display:flex;flex-direction:column;gap:4px}
 .audience-select label{font:700 8px/1 var(--font-mono,monospace);letter-spacing:1px;color:var(--subtle,#6b7894);text-transform:uppercase;text-align:center}
 .audience-select select{width:100%;font-size:10px}
@@ -338,6 +339,29 @@ function setLabel(container: Element | null, text: string): void {
   if (container) container.textContent = text;
 }
 
+/**
+ * Add the plain-language guide to a menu entry: a `.tab-desc` second line in
+ * the submenu plus a "Full name — what it does" tooltip/accessible name.
+ * Idempotent — decorateNavigation reruns on every mode change, so the original
+ * full name is stashed in data-nav-name the first time through.
+ */
+function describeMenuEntry(button: HTMLElement, description: string | undefined): void {
+  if (!description) return;
+  const base = button.dataset.navName
+    ?? (button.title || button.querySelector('.tab-label')?.textContent || '');
+  button.dataset.navName = base;
+  const tip = navTipText(base, description);
+  button.title = tip;
+  button.setAttribute('aria-label', tip);
+  if (!button.querySelector('.tab-desc')) {
+    const desc = document.createElement('span');
+    desc.className = 'tab-desc';
+    desc.setAttribute('aria-hidden', 'true');
+    desc.textContent = description;
+    button.append(desc);
+  }
+}
+
 function decorateNavigation(): void {
   for (const [sectionName, config] of Object.entries(SECTION_PRESENTATION)) {
     const section = document.querySelector<HTMLElement>(`.rail-section[data-rail-section="${sectionName}"]`);
@@ -360,11 +384,13 @@ function decorateNavigation(): void {
     const tabName = tab.dataset.tab;
     const icon = tabName ? TAB_ICONS[tabName] : undefined;
     if (icon) setIcon(tab.querySelector('.tab-icon'), icon);
+    describeMenuEntry(tab, tabName ? NAV_TAB_GUIDE[tabName] : undefined);
   });
   document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((button) => {
     const action = button.dataset.railAction;
     const icon = action ? ACTION_ICONS[action] : undefined;
     if (icon) setIcon(button.querySelector('.tab-icon'), icon);
+    describeMenuEntry(button, action ? NAV_ACTION_GUIDE[action] : undefined);
   });
 }
 

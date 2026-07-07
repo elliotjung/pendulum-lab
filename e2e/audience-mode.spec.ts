@@ -71,6 +71,12 @@ test('rail uses task-centered labels and icons', async ({ page }) => {
   await expect(page.locator('.rail-section[data-rail-section="govern"] .rail-menu-label')).toHaveText('Export');
   await expect(page.locator('.rail-menu-button .rail-icon-svg').first()).toBeVisible();
   await expect(page.locator('#rail-panel-sim .rail-submenu-hint')).toContainText('Run the pendulum');
+
+  // Every menu entry carries a plain-language description line and an
+  // enriched "Full name — what it does" tooltip (see src/app/navGuide.ts).
+  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"] .tab-desc')).toContainText('Run the live simulation');
+  await expect(page.locator('#rail-panel-check .tab[data-tab="research"] .tab-desc')).toContainText('Fit parameters');
+  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"]')).toHaveAttribute('title', /Simulation Lab — Run the live simulation/);
 });
 
 test('beginner mode turns the lab into a focused simulator', async ({ page }) => {

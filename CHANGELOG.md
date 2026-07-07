@@ -2,9 +2,26 @@
 
 ## Unreleased
 
+### Guided navigation and HUD motion polish
+
+- **Plain-language menu guide** (`src/app/navGuide.ts`): every rail menu entry
+  and action now renders a one-line "what this does" description under its
+  label and folds the same text into its tooltip/accessible name
+  (`Full name — description`). Written for first-time visitors; pinned by
+  `tests/nav-guide.test.ts` and the audience-mode E2E spec.
+- **Preset tooltips** (`app.html`): each preset chip explains the motion it
+  sets up ("Butterfly — tiny change, huge difference").
+- **HUD motion layer** (`css/06-futuristic-hud.css`): rail submenu entries
+  sweep in with a light stagger, the selected workspace entry's accent spine
+  breathes, and the header underline pulses softly — all gated behind
+  `body.hud-fx` (real sessions only, never under automation or
+  prefers-reduced-motion, per the established HUD layer contract).
+- **Submenu hint restyle** (`audienceMode.ts` adopted sheet): section hints
+  carry a cyan HUD accent so orientation text reads as part of the interface.
+
 ## 10.35.0 - 2026-06-19
 
-### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 949)
+### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 954)
 
 The GPU acceleration claim now covers the missing chaos diagnostics without
 pretending beyond the verified scope.

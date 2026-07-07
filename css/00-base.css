@@ -1016,7 +1016,7 @@ MODULE 00 - V10 SUPPLEMENTAL UI
   position:absolute;
   left:calc(100% + 10px);
   top:0;
-  min-width:176px;
+  min-width:218px;
   max-height:min(520px, calc(100vh - 28px));
   overflow:auto;
   padding:8px;
@@ -1030,11 +1030,28 @@ MODULE 00 - V10 SUPPLEMENTAL UI
   display:grid;
   gap:5px;
 }
+/* Invisible hover bridge across the rail→submenu gap: while a section is
+   open the pointer can cross to its detail panel without ever leaving the
+   section, so the auto-close timer never races the crossing. */
+.rail-section.open::after{
+  content:"";
+  position:absolute;
+  left:100%;
+  top:0;
+  bottom:0;
+  width:22px;
+  z-index:519;
+}
+/* Lower sections open near the rail foot. Anchoring them to the viewport
+   (not the section) keeps the tall two-line menus fully on-screen; they are
+   still DOM children of their section, so the hover/close logic is unchanged. */
 .rail-section[data-rail-section="chaos"] .rail-submenu,
 .rail-section[data-rail-section="check"] .rail-submenu,
 .rail-section[data-rail-section="govern"] .rail-submenu{
+  position:fixed;
+  left:calc(var(--rail-w) + 10px);
   top:auto;
-  bottom:0;
+  bottom:14px;
 }
 .rail-tab-list,
 .rail-action-grid{
@@ -1049,13 +1066,15 @@ MODULE 00 - V10 SUPPLEMENTAL UI
 .rail-submenu .tab,
 .rail-submenu .dev-tool-btn.rail-action{
   width:100%;
-  height:34px;
-  padding:0 8px;
+  height:auto;
+  min-height:34px;
+  padding:5px 8px;
   display:grid;
   grid-template-columns:30px minmax(0,1fr);
   align-items:center;
   justify-items:start;
-  gap:7px;
+  column-gap:7px;
+  row-gap:2px;
   border-radius:8px;
   font-family:var(--font-sans);
   text-align:left;
@@ -1071,6 +1090,24 @@ MODULE 00 - V10 SUPPLEMENTAL UI
   width:30px;
   font-size:11px;
   color:var(--cyan);
+  grid-row:1 / span 2;
+}
+/* Plain-language second line under each menu label (built by audienceMode). */
+.rail-submenu .tab-desc{
+  grid-column:2;
+  min-width:0;
+  color:var(--muted);
+  font-size:9.5px;
+  font-weight:500;
+  line-height:1.35;
+  letter-spacing:.1px;
+  white-space:normal;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  overflow:hidden;
+  text-align:left;
 }
 .rail-submenu .dev-tool-btn.rail-action{
   color:var(--text);
@@ -1089,12 +1126,17 @@ MODULE 00 - V10 SUPPLEMENTAL UI
   .rail-menu-button{ min-height:42px; grid-template-rows:1fr; padding:5px; }
   .rail-menu-icon{ width:28px; height:28px; }
   .rail-submenu .tab-label{ display:block; }
+  /* Compact menus on small screens: labels only, no description line. */
+  .rail-submenu .tab-desc{ display:none; }
+  .rail-submenu{ min-width:176px; }
 }
 
 @media(max-width:560px){
   .rail{ z-index:960; overflow:visible; }
   .rail-menu{ flex-direction:row; justify-content:space-between; gap:5px; overflow:visible; }
   .rail-section{ flex:1 1 0; min-width:0; }
+  /* The hover bridge would cover the neighboring button in the bottom bar. */
+  .rail-section.open::after{ display:none; }
   .rail-menu-button{ height:54px; min-height:54px; }
   .rail-menu-label{ display:block; font-size:9px; }
   .rail-menu-icon{ width:26px; height:24px; font-size:10px; }

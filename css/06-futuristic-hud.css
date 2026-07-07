@@ -121,6 +121,14 @@ header::after{
   box-shadow:0 0 12px rgba(30,227,255,.55);
   pointer-events:none;
 }
+/* The header accent breathes softly — real sessions only (opacity-only). */
+body.hud-fx header::after{
+  animation:hud-header-breathe 5.5s ease-in-out infinite;
+}
+@keyframes hud-header-breathe{
+  0%,100%{ opacity:.7; }
+  50%{ opacity:1; }
+}
 .badge, #qualBadge, #fpsBadge{
   border-radius:4px;
   letter-spacing:1.2px;
@@ -291,6 +299,44 @@ body.hud-fx .main-wrap > .hud-scan{
 .rail-submenu-hint{
   border-color:var(--hud-line);
   background:linear-gradient(180deg, rgba(30,227,255,.06), rgba(30,227,255,.02));
+}
+
+/* Two-line menu entries: the description line brightens with its entry. */
+.rail-submenu .tab-desc{ color:var(--subtle); }
+.rail-submenu .tab:hover .tab-desc,
+.rail-submenu .dev-tool-btn.rail-action:hover .tab-desc,
+.rail-submenu .tab[aria-selected="true"] .tab-desc{ color:var(--text); }
+
+/* The selected workspace entry reads as the live channel. */
+.rail-submenu .tab[aria-selected="true"]{
+  background:linear-gradient(120deg, rgba(30,227,255,.16), rgba(157,120,255,.06));
+  box-shadow:inset 0 0 0 1px rgba(30,227,255,.28), 0 0 22px -8px rgba(30,227,255,.55);
+}
+/* Its accent spine breathes — real sessions only (hud-fx is never set under
+   automation or reduced motion; see the layer rules at the top of this file). */
+body.hud-fx .rail-submenu .tab[aria-selected="true"]::before{
+  animation:hud-tab-live 2.8s ease-in-out infinite;
+}
+@keyframes hud-tab-live{
+  0%,100%{ opacity:.65; }
+  50%{ opacity:1; }
+}
+
+/* Menu items sweep in with a light stagger when a section opens (hud-fx only,
+   one-shot per open — the animation ends in the resting state). */
+body.hud-fx .rail-section.open .rail-submenu > *{
+  animation:hud-menu-item-in .26s var(--ease) both;
+}
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(2){ animation-delay:.03s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(3){ animation-delay:.06s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(4){ animation-delay:.09s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(5){ animation-delay:.12s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(6){ animation-delay:.15s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(7){ animation-delay:.18s; }
+body.hud-fx .rail-section.open .rail-submenu > :nth-child(n+8){ animation-delay:.21s; }
+@keyframes hud-menu-item-in{
+  from{ opacity:0; transform:translateX(-7px); }
+  to{ opacity:1; transform:none; }
 }
 
 /* Mode selector chip at the rail foot */
@@ -558,6 +604,10 @@ button.primary:hover{
   .pbtn:hover{ transform:none; }
   .plot-cell:hover{ transform:none; }
   .rail-submenu .tab:hover{ transform:none; }
+  /* hud-fx is never granted under reduced motion; this is belt-and-braces. */
+  body.hud-fx header::after,
+  body.hud-fx .rail-submenu .tab[aria-selected="true"]::before,
+  body.hud-fx .rail-section.open .rail-submenu > *{ animation:none; }
   .rail-menu-button:hover .rail-menu-icon,
   .rail-menu-button[aria-expanded="true"] .rail-menu-icon{ transform:none; }
   .hud-boot-ring, .hud-boot-ring2, .hud-boot-ring3,
