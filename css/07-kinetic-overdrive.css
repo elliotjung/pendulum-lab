@@ -1,0 +1,295 @@
+/* ============================================================================
+   Kinetic Overdrive
+   ----------------------------------------------------------------------------
+   Final cinematic pass for real interactive sessions. This layer is activated
+   by src/app/kineticOverdrive.ts with body.kinetic-overdrive, so automated
+   tests and reduced-motion sessions keep the stable HUD surface.
+   ========================================================================== */
+
+:root{
+  --ko-cyan:#2ce8ff;
+  --ko-amber:#ffbe55;
+  --ko-green:#4df2a2;
+  --ko-rose:#ff5f8f;
+  --ko-grid:rgba(44,232,255,.08);
+  --ko-line:rgba(255,255,255,.13);
+  --ko-panel:rgba(7,11,23,.74);
+}
+
+.kinetic-field{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.78;
+  background:
+    repeating-linear-gradient(112deg, transparent 0 34px, rgba(44,232,255,.045) 35px, transparent 37px),
+    linear-gradient(90deg, transparent, rgba(255,190,85,.055) 52%, transparent),
+    linear-gradient(rgba(44,232,255,.045) 1px, transparent 1px) 0 0/100% 58px,
+    linear-gradient(90deg, rgba(44,232,255,.04) 1px, transparent 1px) 0 0/58px 100%;
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 18%, #000 88%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0%, #000 18%, #000 88%, transparent 100%);
+}
+
+body.kinetic-overdrive{
+  --shadow-glow-cyan:0 0 56px -12px rgba(44,232,255,.62);
+}
+
+body.kinetic-overdrive::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg, transparent 0 42%, rgba(44,232,255,.055) 43%, transparent 45%),
+    linear-gradient(245deg, transparent 0 64%, rgba(255,95,143,.04) 65%, transparent 67%);
+  mix-blend-mode:screen;
+}
+
+body.kinetic-overdrive .app-shell{
+  position:relative;
+  z-index:1;
+}
+
+body.kinetic-overdrive header{
+  overflow:hidden;
+  border-bottom-color:rgba(44,232,255,.18);
+}
+
+body.kinetic-overdrive header::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--ko-cyan), var(--ko-amber), transparent);
+  transform:translateX(-100%);
+  animation:ko-header-sweep 5.8s linear infinite;
+}
+
+@keyframes ko-header-sweep{
+  to{ transform:translateX(100%); }
+}
+
+.kinetic-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:-2px 0 12px;
+}
+
+.kinetic-channel{
+  position:relative;
+  min-width:0;
+  min-height:48px;
+  padding:9px 11px;
+  border:1px solid transparent;
+  border-radius:8px;
+  overflow:hidden;
+  background:
+    linear-gradient(160deg, rgba(9,15,29,.84), rgba(9,12,24,.7)) padding-box,
+    linear-gradient(120deg, rgba(44,232,255,.38), rgba(255,190,85,.22), rgba(255,95,143,.22)) border-box;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 34px -28px #000;
+}
+
+.kinetic-channel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, transparent, rgba(44,232,255,.1), transparent),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(255,255,255,.035) 19px, transparent 20px);
+  opacity:.65;
+  transform:translateX(-34%);
+  animation:ko-channel-flow 8s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes ko-channel-flow{
+  to{ transform:translateX(34%); }
+}
+
+.kinetic-label,
+.kinetic-value{
+  position:relative;
+  z-index:1;
+  display:block;
+  min-width:0;
+}
+
+.kinetic-label{
+  color:var(--subtle);
+  font:700 9px/1 var(--font-display);
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+}
+
+.kinetic-value{
+  margin-top:7px;
+  color:var(--fg-bright);
+  font:700 12px/1.15 var(--font-mono);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+
+.kinetic-channel:nth-child(2) .kinetic-value{ color:var(--ko-amber); }
+.kinetic-channel:nth-child(3) .kinetic-value{ color:var(--ko-green); }
+.kinetic-channel:nth-child(4) .kinetic-value{ color:var(--ko-rose); }
+
+.kinetic-flash{
+  animation:ko-value-flash .48s var(--ease);
+}
+
+@keyframes ko-value-flash{
+  from{ text-shadow:0 0 18px currentColor; filter:brightness(1.35); }
+  to{ text-shadow:none; filter:none; }
+}
+
+.kinetic-surface{
+  position:relative;
+  isolation:isolate;
+}
+
+.kinetic-surface::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:inherit;
+  opacity:0;
+  background:
+    radial-gradient(420px 240px at var(--mx,50%) var(--my,18%), rgba(44,232,255,.16), transparent 64%),
+    linear-gradient(135deg, rgba(255,190,85,.075), transparent 44%, rgba(255,95,143,.055));
+  transition:opacity .26s var(--ease);
+}
+
+body.kinetic-overdrive .kinetic-surface:hover::before{
+  opacity:1;
+}
+
+body.kinetic-overdrive .main-wrap,
+body.kinetic-overdrive .plot-cell,
+body.kinetic-overdrive .controls{
+  box-shadow:
+    0 24px 72px -34px rgba(0,0,0,.9),
+    inset 0 1px 0 rgba(255,255,255,.11),
+    0 0 48px -26px rgba(44,232,255,.62);
+}
+
+body.kinetic-overdrive .main-wrap canvas,
+body.kinetic-overdrive .plot-cell canvas{
+  box-shadow:inset 0 0 28px rgba(44,232,255,.055);
+}
+
+.kinetic-orbit{
+  position:absolute;
+  inset:13px;
+  z-index:3;
+  pointer-events:none;
+  border-radius:8px;
+  opacity:0;
+  transition:opacity .26s var(--ease);
+}
+
+.kinetic-orbit-a{
+  border:1px solid rgba(44,232,255,.18);
+  border-left-color:rgba(255,190,85,.55);
+  border-bottom-color:rgba(255,95,143,.26);
+}
+
+.kinetic-orbit-b{
+  inset:22px;
+  border:1px dashed rgba(77,242,162,.22);
+  border-right-color:rgba(44,232,255,.5);
+}
+
+body.kinetic-overdrive .main-wrap:hover .kinetic-orbit{
+  opacity:1;
+}
+
+body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-a{
+  animation:ko-orbit 8s linear infinite;
+}
+
+body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-b{
+  animation:ko-orbit 12s linear infinite reverse;
+}
+
+@keyframes ko-orbit{
+  to{ transform:rotate(360deg); }
+}
+
+body.kinetic-overdrive .rail-menu-button,
+body.kinetic-overdrive .rail-palette-launcher,
+body.kinetic-overdrive .pbtn{
+  position:relative;
+  overflow:hidden;
+}
+
+body.kinetic-overdrive .rail-menu-button::after,
+body.kinetic-overdrive .rail-palette-launcher::after,
+body.kinetic-overdrive .pbtn::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:-80%;
+  width:42%;
+  pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.22), transparent);
+  transform:skewX(-18deg);
+  transition:left .6s var(--ease);
+}
+
+body.kinetic-overdrive .rail-menu-button:hover::after,
+body.kinetic-overdrive .rail-palette-launcher:hover::after,
+body.kinetic-overdrive .pbtn:hover::after{
+  left:130%;
+}
+
+body.kinetic-overdrive .badge{
+  border-color:rgba(255,190,85,.44);
+  color:var(--ko-amber);
+  background:linear-gradient(180deg, rgba(255,190,85,.12), rgba(44,232,255,.035));
+}
+
+body.kinetic-overdrive #fpsBadge{
+  border-color:rgba(77,242,162,.34);
+  background:linear-gradient(180deg, rgba(77,242,162,.11), rgba(44,232,255,.035));
+}
+
+@media(max-width:980px){
+  .kinetic-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:560px){
+  .kinetic-field,
+  .kinetic-strip,
+  .kinetic-orbit{
+    display:none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .kinetic-field,
+  body.kinetic-overdrive::before{
+    display:none;
+  }
+  body.kinetic-overdrive header::before,
+  .kinetic-channel::before,
+  .kinetic-flash,
+  body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-a,
+  body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-b{
+    animation:none;
+  }
+  .kinetic-surface::before{
+    transition:none;
+  }
+}

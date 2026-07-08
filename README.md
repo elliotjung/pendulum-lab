@@ -45,6 +45,12 @@ npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
 ```
 
+## Documentation map
+
+Start with [`docs/README.md`](docs/README.md). It groups the architecture,
+API, numerics, validation, reviewer, release, and portfolio documents so the
+current source of truth is easy to find without scanning the whole repository.
+
 UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 & validation) · **Research** (everything).
 

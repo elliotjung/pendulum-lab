@@ -12,6 +12,7 @@ import { installPendulumRuntime } from './runtime/PendulumRuntime';
 import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabProbe, maybeMountModernShell } from './app/bootstrap';
 import { installUiPolish } from './app/UiPolish';
 import { installHudEffects } from './app/hudEffects';
+import { installKineticOverdrive } from './app/kineticOverdrive';
 import { installEducationCards } from './app/educationCards';
 import { publishPublicApi } from './runtime/globalApi';
 import { applyAudienceMode, currentAudienceMode, installAudienceMode } from './app/audienceMode';
@@ -127,6 +128,7 @@ function bootShell(): void {
   installOnboardingTour();
   installUiPolish();
   installHudEffects();
+  installKineticOverdrive();
 }
 
 async function boot(): Promise<void> {
