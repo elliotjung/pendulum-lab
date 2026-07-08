@@ -41,8 +41,30 @@ export class PoincareAccumulator {
     return this.points.length;
   }
 
+  get capacity(): number {
+    return this.cap;
+  }
+
+  policy(): { capacity: number; direction: 'rising' | 'falling' | 'both'; refined: boolean } {
+    return {
+      capacity: this.cap,
+      direction: this.direction,
+      refined: Boolean(this.refineRhs && this.refineDt > 0)
+    };
+  }
+
   list(): readonly Point2D[] {
     return this.points;
+  }
+
+  toFloat32Pairs(): Float32Array {
+    const out = new Float32Array(this.points.length * 2);
+    for (let i = 0; i < this.points.length; i += 1) {
+      const p = this.points[i]!;
+      out[i * 2] = p.x;
+      out[i * 2 + 1] = p.y;
+    }
+    return out;
   }
 
   clear(): void {

@@ -45,6 +45,10 @@ npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
 ```
 
+For the two-repo publish path, use
+[`docs/cross-project-release.md`](docs/cross-project-release.md): sim verify →
+standalone build → landing evidence sync → landing smoke → tag/release.
+
 ## Documentation map
 
 Start with [`docs/README.md`](docs/README.md). It groups the architecture,

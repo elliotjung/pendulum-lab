@@ -23,6 +23,10 @@ fully covered by the headless test suite.
   widening of the current claim.
 - **Vendor breadth.** Intel evidence is recorded. Physical NVIDIA and AMD
   runners are still required for a complete three-vendor matrix.
+- **SharedArrayBuffer plot transport.** The current side-plot path uses
+  transferable typed-array snapshots. A shared ring buffer is deferred until the
+  app and landing deployments both ship COOP/COEP, because enabling it in source
+  without those headers would create a false local-only claim.
 
 ## Needs an external toolchain or license
 
@@ -76,6 +80,10 @@ fully covered by the headless test suite.
   coefficient errors that headless convergence tests would not catch against SciPy's
   internals — defeating the purpose. Best added in a focused session with the
   coefficients checked against Hairer's reference source.
+- **Legacy public API removal.** `legacyCompat`, `copy-legacy-assets`, and
+  deprecated globals remain guarded by `npm run audit:legacy`. Removing them is a
+  major-version decision because older saved pages and reviewer artifacts may
+  still rely on the compatibility surface.
 
 ## Long-running gates
 

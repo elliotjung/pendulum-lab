@@ -9,16 +9,18 @@ import { DARK_THEME, type VizTheme } from './palette';
  */
 
 export interface EnergySeries {
-  time: readonly number[];
-  total: readonly number[];
-  drift: readonly number[];
+  time: NumericSeries;
+  total: NumericSeries;
+  drift: NumericSeries;
 }
 
 export interface EnergyPlotOptions {
   theme?: VizTheme;
 }
 
-function extent(values: readonly number[]): [number, number] {
+type NumericSeries = readonly number[] | Float32Array | Float64Array;
+
+function extent(values: NumericSeries): [number, number] {
   let lo = Infinity;
   let hi = -Infinity;
   for (const v of values) {
@@ -31,7 +33,7 @@ function extent(values: readonly number[]): [number, number] {
   return [lo, hi];
 }
 
-function finiteAbsMax(values: readonly number[], fallback: number): number {
+function finiteAbsMax(values: NumericSeries, fallback: number): number {
   let max = fallback;
   for (const v of values) {
     if (Number.isFinite(v)) max = Math.max(max, Math.abs(v));

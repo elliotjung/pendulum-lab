@@ -1,5 +1,11 @@
 import { getCanvasDprCap } from './canvasQuality';
-import type { LabSidePlotId, LabSidePlotPayload, LabSidePlotWorkerMessage } from './LabSidePlotProtocol';
+import {
+  sidePlotTransferables,
+  type LabSidePlotId,
+  type LabSidePlotPayload,
+  type LabSidePlotWorkerMessage,
+  type LabSidePlotWorkerResponse
+} from './LabSidePlotProtocol';
 
 type SidePlotCanvasMap = Partial<Record<LabSidePlotId, HTMLCanvasElement | undefined>>;
 
@@ -7,6 +13,7 @@ export class LabSidePlotWorkerClient {
   private worker: Worker | null = null;
   private enabled = false;
   private readonly canvases: SidePlotCanvasMap = {};
+  private lastRenderElapsedMs = 0;
 
   ensure(canvases: SidePlotCanvasMap): boolean {
     if (this.enabled) return true;
@@ -35,9 +42,11 @@ export class LabSidePlotWorkerClient {
       return false;
     }
 
-    worker.addEventListener('error', () => {
-      this.enabled = false;
+    worker.addEventListener('message', (event: MessageEvent<LabSidePlotWorkerResponse>) => {
+      if (event.data.kind === 'rendered') this.lastRenderElapsedMs = event.data.elapsedMs;
     });
+    worker.addEventListener('messageerror', () => this.disable());
+    worker.addEventListener('error', () => this.disable());
     this.worker = worker;
     this.enabled = Object.keys(this.canvases).length > 0;
     return this.enabled;
@@ -49,17 +58,18 @@ export class LabSidePlotWorkerClient {
     if (!canvas) return false;
     const size = measureCanvas(canvas);
     try {
-      this.worker.postMessage({
+      const message = {
         kind: 'render',
         plot: payload.plot,
         width: size.width,
         height: size.height,
         dpr: size.dpr,
         payload
-      } satisfies LabSidePlotWorkerMessage);
+      } satisfies LabSidePlotWorkerMessage;
+      this.worker.postMessage(message, sidePlotTransferables(payload));
       return true;
     } catch {
-      this.enabled = false;
+      this.disable();
       return false;
     }
   }
@@ -68,7 +78,15 @@ export class LabSidePlotWorkerClient {
     return this.enabled;
   }
 
+  renderMs(): number {
+    return this.lastRenderElapsedMs;
+  }
+
   dispose(): void {
+    this.disable();
+  }
+
+  private disable(): void {
     this.worker?.terminate();
     this.worker = null;
     this.enabled = false;

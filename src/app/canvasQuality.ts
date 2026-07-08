@@ -8,13 +8,39 @@ export interface ManagedCanvas2D {
 
 const MAX_DPR = 2;
 let dynamicDprCap = MAX_DPR;
+const qualityEvents: CanvasQualityEvent[] = [];
 
-export function setCanvasDprCap(cap: number): void {
+export interface CanvasQualityEvent {
+  timestamp: number;
+  dprCap: number;
+  reason: string;
+  fps?: number;
+  physicsMs?: number;
+  renderMs?: number;
+  sidePlotMs?: number;
+  stepsPerFrame?: number;
+}
+
+export function setCanvasDprCap(cap: number, reason = 'manual'): void {
   dynamicDprCap = Math.max(1, Math.min(MAX_DPR, cap));
+  recordCanvasQualityEvent({ dprCap: dynamicDprCap, reason });
 }
 
 export function getCanvasDprCap(): number {
   return dynamicDprCap;
+}
+
+export function recordCanvasQualityEvent(event: Omit<CanvasQualityEvent, 'timestamp'>): void {
+  qualityEvents.push({ ...event, timestamp: now() });
+  if (qualityEvents.length > 24) qualityEvents.splice(0, qualityEvents.length - 24);
+}
+
+export function canvasQualityDiagnostics(): readonly CanvasQualityEvent[] {
+  return qualityEvents;
+}
+
+export function latestCanvasQualityReason(): string {
+  return qualityEvents[qualityEvents.length - 1]?.reason ?? 'not adjusted';
 }
 
 function attrNumber(canvas: HTMLCanvasElement, name: 'width' | 'height', fallback: number): number {
@@ -41,4 +67,8 @@ export function configureCanvas2D(canvas: HTMLCanvasElement): ManagedCanvas2D | 
   ctx.imageSmoothingEnabled = false;
 
   return { canvas, ctx, width: logicalW, height: logicalH, dpr };
+}
+
+function now(): number {
+  return typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : Date.now();
 }

@@ -41,10 +41,17 @@ interface TrailBuffer {
   filled: number;
 }
 
+type TrailLayerCanvas = HTMLCanvasElement | OffscreenCanvas;
+type TrailLayerContext = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+type DrawableCtx = Ctx2D & {
+  drawImage?: (image: CanvasImageSource, dx: number, dy: number, dw: number, dh: number) => void;
+};
+
 const BOB_COLORS = ['#60a0d0', '#00d4ff', '#00d4ff'];
 const TRIPLE_BOB_COLORS = ['#90a0b8', '#60c0ff', '#00d4ff'];
 const ENSEMBLE_TRAIL_CAP = 200;
 const FULL_CIRCLE = Math.PI * 2;
+const LAYER_TRAIL_THRESHOLD = 1400;
 
 export class LabRenderer {
   private readonly ctx: Ctx2D;
@@ -52,6 +59,9 @@ export class LabRenderer {
   private trail: TrailBuffer = { buf: new Float32Array(0), idx: 0, filled: 0 };
   private ensembleTrails: TrailBuffer[] = [];
   private pixelsScratch: Point2D[] = [];
+  private trailLayer: TrailLayerCanvas | null = null;
+  private trailLayerCtx: TrailLayerContext | null = null;
+  private lastTrailTip: Point2D | null = null;
 
   constructor(ctx: Ctx2D, options: LabRenderOptions) {
     this.ctx = ctx;
@@ -126,6 +136,8 @@ export class LabRenderer {
     this.ctx.restore();
     this.trail = { buf: new Float32Array(0), idx: 0, filled: 0 };
     this.ensembleTrails = [];
+    this.lastTrailTip = null;
+    this.clearTrailLayer();
   }
 
   draw(bobsMeters: readonly BobPosition[], extras: LabDrawExtras = {}): void {
@@ -152,11 +164,16 @@ export class LabRenderer {
     const tip = pixels[pixels.length - 1];
 
     if (!extras.skipTrail && tip) {
-      this.pushTrail(this.trail, tip.x, tip.y, Math.max(2, Math.round(extras.trailLength ?? 1500)));
-      this.drawMainTrail(extras.trailMode ?? 'rainbow', extras.trailColor);
+      const trailLength = Math.max(2, Math.round(extras.trailLength ?? 1500));
+      this.pushTrail(this.trail, tip.x, tip.y, trailLength);
+      if (!this.drawLayerTrail(tip, trailLength, extras.trailMode ?? 'rainbow', extras.trailColor)) {
+        this.drawMainTrail(extras.trailMode ?? 'rainbow', extras.trailColor);
+      }
     } else if (extras.skipTrail) {
       this.trail.idx = 0;
       this.trail.filled = 0;
+      this.lastTrailTip = null;
+      this.clearTrailLayer();
     }
 
     if (extras.ensembleTips && extras.ensembleTips.length > 0) {
@@ -278,6 +295,58 @@ export class LabRenderer {
     ctx.restore();
   }
 
+  private drawLayerTrail(tip: Point2D, trailLength: number, mode: string, fallbackColor?: string): boolean {
+    if (trailLength < LAYER_TRAIL_THRESHOLD) return false;
+    const drawCtx = this.ctx as DrawableCtx;
+    if (typeof drawCtx.drawImage !== 'function') return false;
+    const layerCtx = this.ensureTrailLayer();
+    if (!layerCtx || !this.trailLayer) return false;
+
+    const fadeAlpha = Math.max(0.006, Math.min(0.045, 22 / trailLength));
+    layerCtx.save();
+    layerCtx.globalCompositeOperation = 'destination-out';
+    layerCtx.fillStyle = `rgba(0,0,0,${fadeAlpha.toFixed(4)})`;
+    layerCtx.fillRect(0, 0, this.opts.width, this.opts.height);
+    layerCtx.restore();
+
+    if (this.lastTrailTip) {
+      layerCtx.save();
+      layerCtx.globalCompositeOperation = 'source-over';
+      layerCtx.strokeStyle = fallbackColor && mode === 'fixed' ? fallbackColor : this.trailColor(1, mode, 0.86);
+      layerCtx.lineWidth = 1.4;
+      layerCtx.lineCap = 'round';
+      layerCtx.beginPath();
+      layerCtx.moveTo(this.lastTrailTip.x, this.lastTrailTip.y);
+      layerCtx.lineTo(tip.x, tip.y);
+      layerCtx.stroke();
+      layerCtx.restore();
+    }
+    this.lastTrailTip = { x: tip.x, y: tip.y };
+
+    drawCtx.save();
+    drawCtx.drawImage(this.trailLayer as CanvasImageSource, 0, 0, this.opts.width, this.opts.height);
+    drawCtx.restore();
+    return true;
+  }
+
+  private ensureTrailLayer(): TrailLayerContext | null {
+    if (this.trailLayer && this.trailLayer.width === this.opts.width && this.trailLayer.height === this.opts.height) return this.trailLayerCtx;
+
+    const layer = createTrailLayer(this.opts.width, this.opts.height);
+    if (!layer) return null;
+    const ctx = layer.getContext('2d') as TrailLayerContext | null;
+    if (!ctx) return null;
+    this.trailLayer = layer;
+    this.trailLayerCtx = ctx;
+    this.lastTrailTip = null;
+    return ctx;
+  }
+
+  private clearTrailLayer(): void {
+    if (!this.trailLayerCtx) return;
+    this.trailLayerCtx.clearRect(0, 0, this.opts.width, this.opts.height);
+  }
+
   private drawEnsemble(tips: readonly Point2D[]): void {
     const ctx = this.ctx;
     if (this.ensembleTrails.length !== tips.length) {
@@ -311,4 +380,15 @@ export class LabRenderer {
     }
     ctx.restore();
   }
+}
+
+function createTrailLayer(width: number, height: number): TrailLayerCanvas | null {
+  if (typeof OffscreenCanvas !== 'undefined') return new OffscreenCanvas(width, height);
+  if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+  }
+  return null;
 }

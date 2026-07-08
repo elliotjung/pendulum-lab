@@ -3,6 +3,8 @@
 ## Current Limitations
 
 - **WebGPU evidence is adapter-specific**: Intel hardware currently passes reductions, 4D full-spectrum/CLV/FTLE, and the 6D N-chain STM/QR gate. The vendor matrix remains partial until physical NVIDIA and AMD runners upload passing ladder artifacts; software adapters are not accepted.
+- **SharedArrayBuffer not yet enabled**: side-plot payloads use transferable typed-array buffers today. A SharedArrayBuffer ring requires COOP/COEP headers on every deployment surface, plus e2e coverage for GitHub Pages and local dev servers, before it can be claimed.
+- **Double-double arithmetic is validation-only**: `src/validation/doubleDouble.ts` and the double-double pendulum helpers are for short-horizon reference checks and numerical audits. They are intentionally excluded from real-time UI loops and should not be used for interactive Lab rendering.
 - **N-chain GPU is a hybrid variational path**: for planar chains up to N=8, CPU f64 integrates the nonlinear reference trajectory and constructs the central-difference Jacobian tape. WebGPU f32 performs tiled STM propagation, QR tape, Ginelli backward solves, and the singular-value FTLE estimate. A same-tape CPU f64 oracle controls promotion. Full nonlinear N-chain trajectory/Jacobian generation on GPU is not claimed.
 - **Visual regression golden baselines**: Chromium/Windows `toHaveScreenshot` baselines are version-controlled for `npm run test:visual`. The Ubuntu mainline CI keeps visual snapshots out of its default browser gate until Linux baselines are generated on a Linux runner and committed.
 - **MATLAB / Julia cross-checks optional and unpinned**: the Python/SciPy/SymPy stack is pinned via `requirements.txt` and `Dockerfile`; MATLAB and Julia comparisons remain manual and unpinned.

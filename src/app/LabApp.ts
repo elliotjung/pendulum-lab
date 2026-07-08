@@ -1,4 +1,3 @@
-import type { IntegratorId, SystemType } from '../types/domain';
 import type { Point2D } from '../viz/poincare';
 import { physicsAdapter } from '../physics';
 import { renderEnergyPlot, renderLyapunovConvergence, renderPoincareSection } from '../viz';
@@ -11,12 +10,19 @@ import { magnitudeSpectrum } from './fft';
 import { downloadDataUrl, downloadText, poincareCsv, runJson, trajectoryCsv } from './labExport';
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
-import { configureCanvas2D, getCanvasDprCap, setCanvasDprCap, type ManagedCanvas2D } from './canvasQuality';
+import {
+  canvasQualityDiagnostics,
+  configureCanvas2D,
+  type ManagedCanvas2D
+} from './canvasQuality';
 import { DiagnosticsScheduler } from './DiagnosticsScheduler';
 import { LabSidePlotWorkerClient } from './LabSidePlotWorkerClient';
-import type { LabSidePlotPayload } from './LabSidePlotProtocol';
+import { pairsToPoints, type LabSidePlotPayload } from './LabSidePlotProtocol';
 import { RenderScheduler } from './RenderScheduler';
 import { SimulationClock } from './SimulationClock';
+import { LabRecording } from './LabRecording';
+import { LabControls, readLabConfig } from './LabControls';
+import { compactViewport, LabQualityBudget, type QualityMode } from './LabQualityBudget';
 
 /**
  * Full modern Lab tab: the simulation/render loop plus every side plot
@@ -41,26 +47,12 @@ function ctxOf(id: CanvasId): ManagedCanvas2D | null {
   }
 }
 
-function compactViewport(): boolean {
-  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+function phaseSamples(theta: Float32Array, omega: Float32Array): PhaseSample[] {
+  const n = Math.min(theta.length, omega.length);
+  const samples: PhaseSample[] = new Array(n);
+  for (let i = 0; i < n; i += 1) samples[i] = { theta: theta[i] ?? 0, omega: omega[i] ?? 0 };
+  return samples;
 }
-
-type QualityMode = 'performance' | 'balanced' | 'cinematic';
-
-interface QualityProfile {
-  dprCap: number;
-  trailCap: number;
-  sideInterval: number;
-  ensembleCap: number;
-  glow: boolean;
-  className: string;
-}
-
-const QUALITY_PROFILES: Record<QualityMode, QualityProfile> = {
-  performance: { dprCap: 1, trailCap: 720, sideInterval: 3, ensembleCap: 24, glow: false, className: 'quality-performance' },
-  balanced: { dprCap: 1.5, trailCap: 1200, sideInterval: 2, ensembleCap: 60, glow: true, className: 'quality-balanced' },
-  cinematic: { dprCap: 2, trailCap: 3000, sideInterval: 1, ensembleCap: 200, glow: true, className: 'quality-cinematic' }
-};
 
 const SIDE_PLOT_COUNT = 5;
 
@@ -78,13 +70,16 @@ export class LabApp {
   private lastPhysicsMs = 0;
   private frameCount = 0;
   private spf = 6;
+  private requestedSpf = 6;
   private phaseAxis = '1';
-  private qualityMode: QualityMode = 'balanced';
-  private qualityStableFrames = 0;
   private readonly simulationClock = new SimulationClock();
   private readonly renderScheduler = new RenderScheduler();
   private readonly diagnosticsScheduler = new DiagnosticsScheduler(SIDE_PLOT_COUNT);
   private readonly sidePlotWorker = new LabSidePlotWorkerClient();
+  private readonly controls = new LabControls();
+  private readonly quality = new LabQualityBudget(() => {
+    this.renderer = null;
+  });
 
   // Ensemble of perturbed copies (chaos divergence visualization).
   private ensemble: Float64Array[] = [];
@@ -93,10 +88,7 @@ export class LabApp {
   private rhs: ((s: Float64Array, o: Float64Array) => void) | null = null;
 
   // Trajectory recording for export + scrubber/replay.
-  private record: Array<{ time: number; state: Float64Array }> = [];
-  private readonly recordCap = 4000;
-  private recordStart = 0;
-  private recordLength = 0;
+  private readonly recording = new LabRecording(4000);
   private scrubIndex = -1; // -1 = live; >=0 = showing a recorded frame
   private readonly bobsScratch: BobPosition[] = [];
 
@@ -109,45 +101,21 @@ export class LabApp {
   private phaseIndex = 0;
   private phaseCount = 0;
 
-  // Visual FX (glow / long-exposure) and drag interaction.
-  private dragTarget: number | null = null;
-
   // Audio sonification of the angular velocities.
   private audio = new AudioSonifier();
 
   /** Read the current control values into a LabConfig. */
   readConfig(): LabConfig {
-    const system: SystemType = dom.str('sysType', 'double') === 'triple' ? 'triple' : 'double';
-    const parameters = {
-      m1: dom.num('m1', 1),
-      m2: dom.num('m2', 1),
-      m3: dom.num('m3', 1),
-      l1: dom.num('l1', 1.2),
-      l2: dom.num('l2', 1.0),
-      l3: dom.num('l3', 0.8),
-      g: dom.num('g', 9.81)
-    };
-    const initialState =
-      system === 'triple'
-        ? [dom.num('th1', 2), dom.num('th2', 2.5), dom.num('th3', 1), dom.num('iw1', 0), dom.num('iw2', 0), dom.num('iw3', 0)]
-        : [dom.num('th1', 2), dom.num('th2', 2.5), dom.num('iw1', 0), dom.num('iw2', 0)];
-    return {
-      system,
-      parameters,
-      gamma: dom.num('gamma', 0),
-      method: dom.str('method', 'rk4') as IntegratorId,
-      dt: dom.num('dt', 0.003),
-      tolerance: 10 ** dom.num('tol', -6),
-      initialState
-    };
+    return readLabConfig();
   }
 
   /** (Re)build the simulation and clear all derived histories. */
   private build(): void {
     const config = this.readConfig();
-    this.spf = Math.max(1, Math.round(dom.num('spf', 6)));
+    this.requestedSpf = Math.max(1, Math.round(dom.num('spf', 6)));
+    this.spf = this.requestedSpf;
     this.phaseAxis = dom.str('phaseAxis', '1');
-    this.setQualityMode(this.readQualityMode(), 'silent');
+    this.quality.setMode(this.quality.readMode(), 'silent');
 
     this.sim = new LabSimulation(config);
     const dim = config.system === 'triple' ? 6 : 4;
@@ -163,10 +131,9 @@ export class LabApp {
     this.phaseCount = 0;
     this.theta1Frames = [];
     this.energy = { time: [], total: [], drift: [] };
-    this.record = [];
-    this.recordStart = 0;
-    this.recordLength = 0;
+    this.recording.clear();
     this.scrubIndex = -1;
+    this.quality.resetTrailScale();
     this.diagnosticsScheduler.reset();
     this.buildEnsemble(config, dim);
 
@@ -192,42 +159,17 @@ export class LabApp {
     this.phaseCount = Math.min(this.phaseCap, this.phaseCount + 1);
   }
 
-  private phaseSamplesForAxis(): PhaseSample[] {
+  private phaseSeriesForAxis(): { theta: Float32Array; omega: Float32Array } {
     const useArm2 = this.phaseAxis === '2';
-    const samples: PhaseSample[] = new Array(this.phaseCount);
+    const theta = new Float32Array(this.phaseCount);
+    const omega = new Float32Array(this.phaseCount);
     const start = this.phaseCount === this.phaseCap ? this.phaseIndex : 0;
     for (let i = 0; i < this.phaseCount; i += 1) {
       const j = (start + i) % this.phaseCap;
-      samples[i] = useArm2 ? { theta: this.phaseT2[j]!, omega: this.phaseW2[j]! } : { theta: this.phaseT1[j]!, omega: this.phaseW1[j]! };
+      theta[i] = useArm2 ? this.phaseT2[j]! : this.phaseT1[j]!;
+      omega[i] = useArm2 ? this.phaseW2[j]! : this.phaseW1[j]!;
     }
-    return samples;
-  }
-
-  private pushRecord(time: number, state: ArrayLike<number>): void {
-    const writeIndex = (this.recordStart + this.recordLength) % this.recordCap;
-    let slot = this.record[writeIndex];
-    if (!slot || slot.state.length !== state.length) {
-      slot = { time, state: new Float64Array(state.length) };
-      this.record[writeIndex] = slot;
-    }
-    slot.time = time;
-    for (let i = 0; i < state.length; i += 1) slot.state[i] = state[i] ?? 0;
-    if (this.recordLength < this.recordCap) {
-      this.recordLength += 1;
-    } else {
-      this.recordStart = (this.recordStart + 1) % this.recordCap;
-    }
-  }
-
-  private recordAt(index: number): { time: number; state: Float64Array } | undefined {
-    if (index < 0 || index >= this.recordLength) return undefined;
-    return this.record[(this.recordStart + index) % this.recordCap];
-  }
-
-  private recordSamples(): Array<{ time: number; state: Float64Array }> {
-    const out: Array<{ time: number; state: Float64Array }> = new Array(this.recordLength);
-    for (let i = 0; i < this.recordLength; i += 1) out[i] = this.recordAt(i)!;
-    return out;
+    return { theta, omega };
   }
 
   /** One animation frame: advance spf steps, update histories, render everything. */
@@ -258,7 +200,7 @@ export class LabApp {
     this.push(this.energy.time, frame.time, 600);
     this.push(this.energy.total, energy, 600);
     this.push(this.energy.drift, drift, 600);
-    this.pushRecord(frame.time, state);
+    this.recording.push(frame.time, state);
 
     this.frameCount += 1;
     const diag = this.diagnosticsScheduler.shouldRun(this.frameCount, this.sidePlotInterval());
@@ -284,8 +226,8 @@ export class LabApp {
           ensembleTips: this.ensembleTips(),
           trailColor: this.trailColor(),
           trailMode: dom.str('trailMode', 'rainbow'),
-          trailLength: this.effectiveTrailLength(),
-          glow: dom.bool('glowMode') && this.qualityProfile().glow
+          trailLength: this.quality.effectiveTrailLength(),
+          glow: dom.bool('glowMode') && this.quality.profile().glow
         });
       }
     });
@@ -303,7 +245,7 @@ export class LabApp {
       this.updateChrome({ time: frame.time, energy, drift, state }, w1Index, w2Index);
       const scrubber = dom.el<HTMLInputElement>('scrubber');
       if (scrubber) {
-        scrubber.max = String(Math.max(0, this.recordLength - 1));
+        scrubber.max = String(Math.max(0, this.recording.length - 1));
         if (this.scrubIndex < 0) scrubber.value = scrubber.max;
       }
     }
@@ -337,62 +279,21 @@ export class LabApp {
     return this.renderer;
   }
 
-  private readQualityMode(): QualityMode {
-    const raw = dom.str('qualityMode', 'balanced');
-    return raw === 'performance' || raw === 'cinematic' ? raw : 'balanced';
-  }
-
-  private qualityProfile(): QualityProfile {
-    return QUALITY_PROFILES[this.qualityMode];
-  }
-
-  private setQualityMode(mode: QualityMode, reason: 'manual' | 'auto' | 'silent' = 'manual'): void {
-    if (!QUALITY_PROFILES[mode]) mode = 'balanced';
-    const previous = this.qualityMode;
-    this.qualityMode = mode;
-    const profile = this.qualityProfile();
-    setCanvasDprCap(profile.dprCap);
-    document.body.classList.remove('quality-performance', 'quality-balanced', 'quality-cinematic');
-    document.body.classList.add(profile.className);
-
-    const select = dom.el<HTMLSelectElement>('qualityMode');
-    if (select && select.value !== mode) select.value = mode;
-    dom.setText('dQuality', mode);
-    dom.setText('dDpr', getCanvasDprCap().toFixed(1));
-
-    if (previous !== mode) {
-      this.renderer = null;
-      this.qualityStableFrames = 0;
-      if (reason === 'auto') {
-        const toast = (window as Window & { toast?: unknown }).toast;
-        if (typeof toast === 'function') toast(`Quality adjusted to ${mode}`);
-      }
-    }
-  }
-
   private maybeAutoAdjustQuality(): void {
-    if (!dom.bool('autoQual', true) || this.renderScheduler.sampleCount() < 20) return;
-    this.qualityStableFrames += 1;
-    if (this.qualityStableFrames < 45) return;
-
-    if ((this.renderScheduler.fps > 0 && this.renderScheduler.fps < 30) || this.renderScheduler.renderMs > 20) {
-      if (this.qualityMode !== 'performance') this.setQualityMode('performance', 'auto');
-      return;
-    }
-    if ((this.renderScheduler.fps > 0 && this.renderScheduler.fps < 45) || this.renderScheduler.renderMs > 12) {
-      if (this.qualityMode === 'cinematic') this.setQualityMode('balanced', 'auto');
-      return;
-    }
-
-    const canUpgrade = this.renderScheduler.fps > 57 && this.renderScheduler.renderMs < 7 && this.lastPhysicsMs < 5 && this.qualityStableFrames > 300;
-    if (!canUpgrade) return;
-    if (this.qualityMode === 'performance') this.setQualityMode('balanced', 'auto');
-    else if (this.qualityMode === 'balanced') this.setQualityMode('cinematic', 'auto');
+    this.spf = this.quality.maybeAutoAdjust({
+      sampleCount: this.renderScheduler.sampleCount(),
+      fps: this.renderScheduler.fps,
+      renderMs: this.renderScheduler.renderMs,
+      physicsMs: this.lastPhysicsMs,
+      sidePlotMs: this.sidePlotWorker.renderMs(),
+      stepsPerFrame: this.spf,
+      requestedStepsPerFrame: this.requestedSpf
+    });
   }
 
   /** Build N perturbed copies of the initial state for the ensemble view. */
   private buildEnsemble(config: LabConfig, dim: number): void {
-    const n = Math.max(0, Math.min(this.qualityProfile().ensembleCap, Math.round(dom.num('ensN', 0))));
+    const n = Math.max(0, Math.min(this.quality.profile().ensembleCap, Math.round(dom.num('ensN', 0))));
     const eps = 10 ** dom.num('ensEps', -4);
     this.ensemble = [];
     this.ensembleScratch = [];
@@ -452,25 +353,18 @@ export class LabApp {
    */
   private readFade(): number {
     const compact = compactViewport();
-    if (this.qualityMode === 'performance') return compact ? 0.22 : 0.16;
+    if (this.quality.mode === 'performance') return compact ? 0.22 : 0.16;
     if (dom.bool('longExpose')) return compact ? 0.018 : 0.008;
     if (dom.bool('glowMode')) return compact ? 0.07 : 0.04;
     return compact ? 0.18 : 0.12;
   }
 
-  private effectiveTrailLength(): number {
-    const requested = Math.max(2, Math.round(dom.num('trailLen', 1200)));
-    const cap = this.qualityProfile().trailCap;
-    return compactViewport() ? Math.min(requested, 520, cap) : Math.min(requested, cap);
-  }
-
   private sidePlotInterval(): number {
-    const interval = this.qualityProfile().sideInterval;
-    return compactViewport() ? Math.max(4, interval) : interval;
+    return this.quality.sidePlotInterval(this.sidePlotWorker.renderMs());
   }
 
   private renderScrubFrame(): void {
-    const frameRec = this.recordAt(this.scrubIndex);
+    const frameRec = this.recording.at(this.scrubIndex);
     if (!frameRec || !this.renderer) return;
     const bobs = this.bobsFromState(frameRec.state);
     this.renderer.draw(bobs, { skipTrail: true });
@@ -501,8 +395,10 @@ export class LabApp {
     set('fpsBadge', `${this.renderScheduler.fps.toFixed(0)} fps`);
     set('dPhys', this.lastPhysicsMs.toFixed(2));
     set('dRender', this.renderScheduler.renderMs.toFixed(2));
-    set('dQuality', this.qualityMode);
-    set('dDpr', getCanvasDprCap().toFixed(1));
+    set('dWorker', this.sidePlotWorker.renderMs().toFixed(2));
+    set('dQuality', this.quality.mode);
+    set('dQualityReason', this.quality.reason);
+    set('dDpr', this.quality.dprCap.toFixed(1));
     set('dBackend', this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main');
     set('tStat', `${snapshot.time.toFixed(2)} s`);
     set('th1Stat', `${st[0]!.toFixed(3)} / ${st[w1Index]!.toFixed(2)}`);
@@ -514,7 +410,8 @@ export class LabApp {
       driftEl.className = `sval ${snapshot.drift > 1e-2 ? 'bad' : snapshot.drift > 1e-4 ? 'warn' : 'good'}`;
     }
     set('lyapStat', `${this.lyap.value().toFixed(4)} /s`);
-    set('dPoinc', String(this.poincare.size));
+    const poincarePolicy = this.poincare.policy();
+    set('dPoinc', `${this.poincare.size}/${poincarePolicy.capacity} ${poincarePolicy.direction}${poincarePolicy.refined ? ' refined' : ' linear'}`);
     set('modeLabel', this.scrubIndex >= 0 ? 'replay' : this.running ? 'running' : 'paused');
   }
 
@@ -527,11 +424,17 @@ export class LabApp {
     fps: number;
     physicsMsPerFrame: number;
     renderMsPerFrame: number;
+    sidePlotMsPerFrame: number;
     trailPoints: number;
     qualityMode: QualityMode;
+    qualityReason: string;
     dprCap: number;
+    stepsPerFrame: number;
+    requestedStepsPerFrame: number;
+    trailQualityScale: number;
     sidePlotBackend: 'offscreen' | 'main';
     pendingUiTasks: number;
+    canvasQualityEvents: readonly ReturnType<typeof canvasQualityDiagnostics>[number][];
   } {
     return {
       time: this.lastTime,
@@ -541,11 +444,17 @@ export class LabApp {
       fps: this.renderScheduler.fps,
       physicsMsPerFrame: this.lastPhysicsMs,
       renderMsPerFrame: this.renderScheduler.renderMs,
+      sidePlotMsPerFrame: this.sidePlotWorker.renderMs(),
       trailPoints: this.renderer?.trailPointCount() ?? 0,
-      qualityMode: this.qualityMode,
-      dprCap: getCanvasDprCap(),
+      qualityMode: this.quality.mode,
+      qualityReason: this.quality.reason,
+      dprCap: this.quality.dprCap,
+      stepsPerFrame: this.spf,
+      requestedStepsPerFrame: this.requestedSpf,
+      trailQualityScale: this.quality.trailQualityScale,
       sidePlotBackend: this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main',
-      pendingUiTasks: this.diagnosticsScheduler.pendingCount()
+      pendingUiTasks: this.diagnosticsScheduler.pendingCount(),
+      canvasQualityEvents: canvasQualityDiagnostics()
     };
   }
 
@@ -557,6 +466,7 @@ export class LabApp {
   }
 
   private ensureSidePlotWorker(): boolean {
+    if (!dom.bool('useWorker', true)) return false;
     return this.sidePlotWorker.ensure({
       energy: dom.el<HTMLCanvasElement>('energy') ?? undefined,
       lyap: dom.el<HTMLCanvasElement>('lyap') ?? undefined,
@@ -571,23 +481,23 @@ export class LabApp {
       return {
         plot: 'energy',
         energy: {
-          time: [...this.energy.time],
-          total: [...this.energy.total],
-          drift: [...this.energy.drift]
+          time: Float32Array.from(this.energy.time),
+          total: Float32Array.from(this.energy.total),
+          drift: Float32Array.from(this.energy.drift)
         }
       };
     }
     if (phaseIndex === 1) {
-      return { plot: 'lyap', history: [...this.lyap.history()], value: this.lyap.value() };
+      return { plot: 'lyap', history: Float32Array.from(this.lyap.history()), value: this.lyap.value() };
     }
     if (phaseIndex === 2) {
-      return { plot: 'phase', samples: this.phaseSamplesForAxis() };
+      return { plot: 'phase', ...this.phaseSeriesForAxis() };
     }
     if (phaseIndex === 3) {
-      return { plot: 'poincare', points: this.poincare.list().map((p) => ({ x: p.x, y: p.y })) };
+      return { plot: 'poincare', points: this.poincare.toFloat32Pairs() };
     }
     const sampleRate = 1 / (this.sim.config.dt * this.spf);
-    return { plot: 'fft', theta1Frames: [...this.theta1Frames], sampleRate };
+    return { plot: 'fft', theta1Frames: Float32Array.from(this.theta1Frames), sampleRate };
   }
 
   private drawSidePlotOnMain(payload: LabSidePlotPayload): void {
@@ -599,14 +509,14 @@ export class LabApp {
     if (payload.plot === 'lyap') {
       const lyap = ctxOf('lyap');
       if (lyap) {
-        const history = payload.history.length > 1 ? payload.history : [0, payload.value];
+        const history = payload.history.length > 1 ? Array.from(payload.history) : [0, payload.value];
         renderLyapunovConvergence(lyap.ctx, { x: 0, y: 0, width: lyap.width, height: lyap.height }, history);
       }
       return;
     }
     if (payload.plot === 'phase') {
       const phase = ctxOf('phase');
-      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, payload.samples);
+      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, phaseSamples(payload.theta, payload.omega));
       return;
     }
     if (payload.plot === 'poincare') {
@@ -615,7 +525,7 @@ export class LabApp {
         renderPoincareSection(
           poincare.ctx,
           { x: 0, y: 0, width: poincare.width, height: poincare.height },
-          payload.points,
+          pairsToPoints(payload.points),
           { xLabel: 'θ₂', yLabel: 'ω₂' }
         );
       }
@@ -680,130 +590,56 @@ export class LabApp {
     this.reset();
   }
 
-  private controlsWired = false;
   private wireControls(): void {
-    if (this.controlsWired) return;
-    this.controlsWired = true;
-
-    const rebuildOn = [
-      'sysType', 'method', 'dt', 'gamma', 'g', 'm1', 'm2', 'm3', 'l1', 'l2', 'l3', 'spf', 'tol',
-      'phaseAxis', 'ensN', 'ensEps', 'th1', 'th2', 'th3', 'iw1', 'iw2', 'iw3', 'seed'
-    ];
-    for (const id of rebuildOn) dom.el(id)?.addEventListener('change', () => this.reset());
-    dom.el('qualityMode')?.addEventListener('change', () => {
-      this.setQualityMode(this.readQualityMode(), 'manual');
-      const cap = this.qualityProfile().ensembleCap;
-      if (this.ensemble.length > cap) {
-        this.ensemble.length = cap;
-        this.ensembleScratch.length = cap;
-        this.ensembleTipScratch.length = cap;
-      }
-    });
-
-    // Presets: legacy applyPreset updates the sliders first (registered earlier);
-    // our handler then rebuilds the modern sim from those values.
-    dom.all('[data-preset]').forEach((btn) => btn.addEventListener('click', () => setTimeout(() => this.reset(), 0)));
-
-    dom.el('resetBtn')?.addEventListener('click', () => this.reset());
-    dom.el('clearTrailBtn')?.addEventListener('click', () => {
-      this.renderer?.clear();
-    });
-    dom.el('clearPoincBtn')?.addEventListener('click', () => this.poincare.clear());
-    dom.el('pauseBtn')?.addEventListener('click', () => {
-      this.running = !this.running;
-      if (this.running) this.rafId = requestAnimationFrame(this.loop);
-    });
-
-    this.wireExport();
-    this.wireScrubber();
-    this.wireDrag();
-    this.wireAudio();
-  }
-
-  private wireAudio(): void {
-    // Take over the audio controls so the legacy audioInit never runs (no double
-    // AudioContext); the modern AudioSonifier owns sonification.
-    this.audio.setVolume(dom.num('audioVol', 0.08));
-    dom.takeOver('audioOn')?.addEventListener('change', (e) => this.audio.setEnabled((e.target as HTMLInputElement).checked));
-    dom.takeOver('audioVol')?.addEventListener('input', (e) => this.audio.setVolume(Number.parseFloat((e.target as HTMLInputElement).value)));
-  }
-
-  private wireExport(): void {
     const cfg = () => this.sim.config;
-    dom.el('dlTrajBtn')?.addEventListener('click', () =>
-      downloadText('pendulum_modern_trajectory.csv', trajectoryCsv(this.recordSamples(), cfg().system), 'text/csv')
-    );
-    dom.el('dlPoincBtn')?.addEventListener('click', () =>
-      downloadText('pendulum_modern_poincare.csv', poincareCsv(this.poincare.list()), 'text/csv')
-    );
-    dom.el('dlJsonBtn')?.addEventListener('click', () => {
-      const snap = this.sim.snapshot();
-      downloadText('pendulum_modern_run.json', JSON.stringify(runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift), null, 2), 'application/json');
-    });
-    dom.el('dlPNGBtn')?.addEventListener('click', () => {
-      const canvas = dom.el<HTMLCanvasElement>('main');
-      if (canvas) downloadDataUrl('pendulum_modern.png', canvas.toDataURL('image/png'));
+    this.controls.wire({
+      reset: () => this.reset(),
+      applyQualityMode: () => this.quality.setMode(this.quality.readMode(), 'manual'),
+      trimEnsembleToQuality: () => this.trimEnsembleToQuality(),
+      clearTrail: () => this.renderer?.clear(),
+      clearPoincare: () => this.poincare.clear(),
+      toggleRunning: () => {
+        this.running = !this.running;
+        if (this.running) this.rafId = requestAnimationFrame(this.loop);
+      },
+      exportTrajectory: () => downloadText('pendulum_modern_trajectory.csv', trajectoryCsv(this.recording.samples(), cfg().system), 'text/csv'),
+      exportPoincare: () => downloadText('pendulum_modern_poincare.csv', poincareCsv(this.poincare.list()), 'text/csv'),
+      exportJson: () => {
+        const snap = this.sim.snapshot();
+        downloadText('pendulum_modern_run.json', JSON.stringify(runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift), null, 2), 'application/json');
+      },
+      exportPng: () => {
+        const canvas = dom.el<HTMLCanvasElement>('main');
+        if (canvas) downloadDataUrl('pendulum_modern.png', canvas.toDataURL('image/png'));
+      },
+      scrubLength: () => this.recording.length,
+      setScrubIndex: (index) => {
+        this.scrubIndex = index;
+      },
+      scrubLabel: (index) => (this.scrubIndex < 0 ? 'live' : `${(this.recording.at(index)?.time ?? 0).toFixed(2)}s`),
+      rewindScrub: () => {
+        if (this.recording.length > 0) this.scrubIndex = 0;
+      },
+      setAudioEnabled: (enabled) => this.audio.setEnabled(enabled),
+      setAudioVolume: (volume) => this.audio.setVolume(volume),
+      drag: {
+        rendererSize: () => this.renderer?.size() ?? null,
+        bobPixels: () => (this.renderer ? this.bobsFromState(this.sim.stateView()).map((b) => this.renderer!.toPixels(b)) : []),
+        pivot: () => this.renderer?.pivot() ?? null,
+        stateAngles: () => {
+          const state = this.sim.stateView();
+          return this.sim.config.system === 'triple' ? [state[0]!, state[1]!, state[2]!] : [state[0]!, state[1]!];
+        },
+        setAngles: (angles) => this.setAngles(angles)
+      }
     });
   }
 
-  private wireScrubber(): void {
-    const scrubber = dom.el<HTMLInputElement>('scrubber');
-    const scrubVal = dom.el('scrubVal');
-    if (scrubber) {
-      scrubber.addEventListener('input', () => {
-        const max = Math.max(0, this.recordLength - 1);
-        const v = Math.min(max, Math.round(Number(scrubber.value)));
-        this.scrubIndex = v >= max ? -1 : v; // dragging to the end resumes live
-        if (scrubVal) scrubVal.textContent = this.scrubIndex < 0 ? 'live' : `${(this.recordAt(v)?.time ?? 0).toFixed(2)}s`;
-      });
-    }
-    dom.el('rewindBtn')?.addEventListener('click', () => {
-      if (this.recordLength > 0) this.scrubIndex = 0;
-    });
-  }
-
-  private wireDrag(): void {
-    const canvas = dom.el<HTMLCanvasElement>('main');
-    if (!canvas || !this.renderer) return;
-    const toCanvas = (e: PointerEvent): Point2D => ({
-      x: e.offsetX * (this.renderer!.size().width / canvas.offsetWidth),
-      y: e.offsetY * (this.renderer!.size().height / canvas.offsetHeight)
-    });
-    canvas.addEventListener('pointerdown', (e) => {
-      const bobs = this.bobsFromState(this.sim.stateView()).map((b) => this.renderer!.toPixels(b));
-      const p = toCanvas(e);
-      for (let i = 0; i < bobs.length; i += 1) {
-        if (Math.hypot(p.x - bobs[i]!.x, p.y - bobs[i]!.y) < 20) {
-          this.dragTarget = i;
-          canvas.setPointerCapture(e.pointerId);
-          break;
-        }
-      }
-    });
-    canvas.addEventListener('pointermove', (e) => {
-      if (this.dragTarget === null || !this.renderer) return;
-      const p = toCanvas(e);
-      const pivot = this.renderer.pivot();
-      const state = this.sim.stateView();
-      const angles = this.sim.config.system === 'triple' ? [state[0]!, state[1]!, state[2]!] : [state[0]!, state[1]!];
-      if (this.dragTarget === 0) {
-        angles[0] = Math.atan2(p.x - pivot.x, p.y - pivot.y);
-      } else {
-        const parent = this.bobsFromState(state).map((b) => this.renderer!.toPixels(b))[this.dragTarget - 1]!;
-        angles[this.dragTarget] = Math.atan2(p.x - parent.x, p.y - parent.y);
-      }
-      this.setAngles(angles);
-    });
-    const release = (e: PointerEvent): void => {
-      if (this.dragTarget === null) return;
-      this.dragTarget = null;
-      try {
-        canvas.releasePointerCapture(e.pointerId);
-      } catch {
-        /* capture may already be released */
-      }
-    };
-    canvas.addEventListener('pointerup', release);
-    canvas.addEventListener('pointercancel', release);
+  private trimEnsembleToQuality(): void {
+    const cap = this.quality.profile().ensembleCap;
+    if (this.ensemble.length <= cap) return;
+    this.ensemble.length = cap;
+    this.ensembleScratch.length = cap;
+    this.ensembleTipScratch.length = cap;
   }
 }

@@ -81,7 +81,7 @@ export interface Spectrum {
  * Hann-windowed, zero-padded to the next power of two, and transformed; only the
  * non-negative-frequency half is returned.
  */
-export function magnitudeSpectrum(signal: readonly number[], sampleRate: number, applyWindow = true): Spectrum {
+export function magnitudeSpectrum(signal: ArrayLike<number>, sampleRate: number, applyWindow = true): Spectrum {
   const m = signal.length;
   if (m < 2) return { freqs: [], mags: [] };
   const n = nextPow2(m);
