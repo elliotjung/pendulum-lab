@@ -45,21 +45,22 @@ Use these metrics instead:
 
 ## Current Architecture
 
+- `SimulationClock` owns the fixed-step physics advance and hot-loop observers.
+- `RenderScheduler` owns FPS/render timing, and `DiagnosticsScheduler` owns
+  side-plot cadence and backpressure.
 - `LabSimulation.stateView()` exposes the active typed-array state for hot-loop
   readers; snapshots still copy for exports and JSON payloads.
 - The trajectory recorder and phase portrait history use fixed-size ring
   buffers.
 - Poincare event detection reuses previous-state and RK4 refinement buffers.
-- Side plots redraw one panel per diagnostics cadence and use
-  `requestIdleCallback` when available instead of blocking the main canvas draw.
+- Side plots redraw one panel per diagnostics cadence, use the shared
+  `UiTaskQueue` to avoid task buildup, and render on an `OffscreenCanvas` worker
+  when the browser supports it.
 - `canvasQuality.ts` owns the adaptive DPR cap used by every managed canvas.
 
 ## Future Extensions
 
-- Move FFT, phase, and Poincare rendering to an `OffscreenCanvas` worker.
-- Split the Lab runtime into `SimulationClock`, `RenderScheduler`, and
-  `DiagnosticsScheduler`.
-- Add a UI priority queue so heavy analysis-tab jobs yield when the Lab canvas
-  is actively visible.
 - Add a long-run memory regression in Playwright once browser support is stable
   enough for repeatable heap measurements.
+- Consider transferring more analysis-tab preview renderers to the same
+  `UiTaskQueue` if future panels add expensive main-thread drawing.

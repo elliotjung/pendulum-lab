@@ -12,6 +12,11 @@ import { downloadDataUrl, downloadText, poincareCsv, runJson, trajectoryCsv } fr
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
 import { configureCanvas2D, getCanvasDprCap, setCanvasDprCap, type ManagedCanvas2D } from './canvasQuality';
+import { DiagnosticsScheduler } from './DiagnosticsScheduler';
+import { LabSidePlotWorkerClient } from './LabSidePlotWorkerClient';
+import type { LabSidePlotPayload } from './LabSidePlotProtocol';
+import { RenderScheduler } from './RenderScheduler';
+import { SimulationClock } from './SimulationClock';
 
 /**
  * Full modern Lab tab: the simulation/render loop plus every side plot
@@ -29,7 +34,11 @@ type CanvasId = (typeof CANVAS_IDS)[number];
 function ctxOf(id: CanvasId): ManagedCanvas2D | null {
   const canvas = dom.el<HTMLCanvasElement>(id);
   if (!canvas) return null;
-  return configureCanvas2D(canvas);
+  try {
+    return configureCanvas2D(canvas);
+  } catch {
+    return null;
+  }
 }
 
 function compactViewport(): boolean {
@@ -66,18 +75,16 @@ export class LabApp {
   private running = false;
   private lastTime = 0;
   private lastDrift = 0;
-  private lastFrameTs = 0;
-  private frameTimes: number[] = [];
-  private lastFps = 0;
   private lastPhysicsMs = 0;
-  private lastRenderMs = 0;
   private frameCount = 0;
   private spf = 6;
   private phaseAxis = '1';
   private qualityMode: QualityMode = 'balanced';
   private qualityStableFrames = 0;
-  private sidePlotPhase = 0;
-  private sidePlotPending = false;
+  private readonly simulationClock = new SimulationClock();
+  private readonly renderScheduler = new RenderScheduler();
+  private readonly diagnosticsScheduler = new DiagnosticsScheduler(SIDE_PLOT_COUNT);
+  private readonly sidePlotWorker = new LabSidePlotWorkerClient();
 
   // Ensemble of perturbed copies (chaos divergence visualization).
   private ensemble: Float64Array[] = [];
@@ -160,13 +167,14 @@ export class LabApp {
     this.recordStart = 0;
     this.recordLength = 0;
     this.scrubIndex = -1;
-    this.sidePlotPhase = 0;
+    this.diagnosticsScheduler.reset();
     this.buildEnsemble(config, dim);
 
     const main = ctxOf('main');
     this.renderer = main ? new LabRenderer(main.ctx, { width: main.width, height: main.height }) : null;
     this.renderer?.clear();
     this.frameCount = 0;
+    this.renderScheduler.reset();
   }
 
   private push<T>(arr: T[], value: T, cap: number): void {
@@ -233,41 +241,31 @@ export class LabApp {
     const triple = sim.config.system === 'triple';
     const w1Index = triple ? 3 : 2;
     const w2Index = triple ? 4 : 3;
-    const physStart = performance.now();
-    for (let s = 0; s < this.spf; s += 1) {
-      sim.step(1);
-      const state = sim.stateView();
-      this.poincare.push(state);
-      this.lyap.step(state);
-      this.pushPhase(state, w1Index, w2Index);
-    }
-    this.stepEnsemble();
-    this.lastPhysicsMs = performance.now() - physStart;
-    const state = sim.stateView();
-    const energy = sim.energy();
-    const drift = sim.driftForEnergy(energy);
-    const bobs = sim.bobPositionsInto(this.bobsScratch);
+    const frame = this.simulationClock.advance({
+      sim,
+      stepsPerFrame: this.spf,
+      bobsScratch: this.bobsScratch,
+      onStep: (state) => {
+        this.poincare.push(state);
+        this.lyap.step(state);
+        this.pushPhase(state, w1Index, w2Index);
+      },
+      afterSteps: () => this.stepEnsemble()
+    });
+    const { state, energy, drift, bobs } = frame;
+    this.lastPhysicsMs = frame.physicsMs;
     this.push(this.theta1Frames, state[0]!, 1024);
-    this.push(this.energy.time, sim.time, 600);
+    this.push(this.energy.time, frame.time, 600);
     this.push(this.energy.total, energy, 600);
     this.push(this.energy.drift, drift, 600);
-    this.pushRecord(sim.time, state);
+    this.pushRecord(frame.time, state);
 
     this.frameCount += 1;
-    const diag = this.frameCount % this.sidePlotInterval() === 0; // side plots/chrome at a reduced cadence
-
-    // Frame-time / fps tracking (every frame, cheap).
-    const now = performance.now();
-    if (this.lastFrameTs) {
-      this.frameTimes.push(now - this.lastFrameTs);
-      if (this.frameTimes.length > 30) this.frameTimes.shift();
-    }
-    this.lastFrameTs = now;
-    const avg = this.frameTimes.reduce((a, b) => a + b, 0) / (this.frameTimes.length || 1);
-    this.lastFps = avg > 0 ? 1000 / avg : 0;
+    const diag = this.diagnosticsScheduler.shouldRun(this.frameCount, this.sidePlotInterval());
+    this.renderScheduler.markFrame();
 
     this.audio.update(state[w1Index]!, state[w2Index]!);
-    this.lastTime = sim.time;
+    this.lastTime = frame.time;
     this.lastDrift = drift;
 
     // Skip all drawing while the Lab tab is hidden: the simulation keeps
@@ -278,32 +276,37 @@ export class LabApp {
     if (!labVisible) return;
 
     // Pendulum + trail render every frame, for smooth motion.
-    const renderStart = performance.now();
-    const renderer = !this.renderer || this.frameCount % 30 === 0 ? this.ensureRenderer() : this.renderer;
-    if (renderer) {
-      renderer.draw(bobs, {
-        fade: this.readFade(),
-        ensembleTips: this.ensembleTips(),
-        trailColor: this.trailColor(),
-        trailMode: dom.str('trailMode', 'rainbow'),
-        trailLength: this.effectiveTrailLength(),
-        glow: dom.bool('glowMode') && this.qualityProfile().glow
-      });
-    }
+    this.renderScheduler.measureRender(() => {
+      const renderer = !this.renderer || this.frameCount % 30 === 0 ? this.ensureRenderer() : this.renderer;
+      if (renderer) {
+        renderer.draw(bobs, {
+          fade: this.readFade(),
+          ensembleTips: this.ensembleTips(),
+          trailColor: this.trailColor(),
+          trailMode: dom.str('trailMode', 'rainbow'),
+          trailLength: this.effectiveTrailLength(),
+          glow: dom.bool('glowMode') && this.qualityProfile().glow
+        });
+      }
+    });
 
     // The side plots (FFT, scatter redraws) and the ~12 DOM chrome writes are an
     // order of magnitude more expensive than the main view, so run them at a
     // reduced cadence; the pendulum itself stays at full frame rate.
     if (diag) {
-      this.scheduleSidePlotSlice();
-      this.updateChrome({ time: sim.time, energy, drift, state }, w1Index, w2Index);
+      this.diagnosticsScheduler.schedule({
+        frameCount: this.frameCount,
+        interval: this.sidePlotInterval(),
+        visible: () => dom.tabActive('tab-lab'),
+        draw: (plotIndex) => this.drawSidePlotSlice(plotIndex)
+      });
+      this.updateChrome({ time: frame.time, energy, drift, state }, w1Index, w2Index);
       const scrubber = dom.el<HTMLInputElement>('scrubber');
       if (scrubber) {
         scrubber.max = String(Math.max(0, this.recordLength - 1));
         if (this.scrubIndex < 0) scrubber.value = scrubber.max;
       }
     }
-    this.lastRenderMs = performance.now() - renderStart;
     this.maybeAutoAdjustQuality();
   }
 
@@ -368,20 +371,20 @@ export class LabApp {
   }
 
   private maybeAutoAdjustQuality(): void {
-    if (!dom.bool('autoQual', true) || this.frameTimes.length < 20) return;
+    if (!dom.bool('autoQual', true) || this.renderScheduler.sampleCount() < 20) return;
     this.qualityStableFrames += 1;
     if (this.qualityStableFrames < 45) return;
 
-    if ((this.lastFps > 0 && this.lastFps < 30) || this.lastRenderMs > 20) {
+    if ((this.renderScheduler.fps > 0 && this.renderScheduler.fps < 30) || this.renderScheduler.renderMs > 20) {
       if (this.qualityMode !== 'performance') this.setQualityMode('performance', 'auto');
       return;
     }
-    if ((this.lastFps > 0 && this.lastFps < 45) || this.lastRenderMs > 12) {
+    if ((this.renderScheduler.fps > 0 && this.renderScheduler.fps < 45) || this.renderScheduler.renderMs > 12) {
       if (this.qualityMode === 'cinematic') this.setQualityMode('balanced', 'auto');
       return;
     }
 
-    const canUpgrade = this.lastFps > 57 && this.lastRenderMs < 7 && this.lastPhysicsMs < 5 && this.qualityStableFrames > 300;
+    const canUpgrade = this.renderScheduler.fps > 57 && this.renderScheduler.renderMs < 7 && this.lastPhysicsMs < 5 && this.qualityStableFrames > 300;
     if (!canUpgrade) return;
     if (this.qualityMode === 'performance') this.setQualityMode('balanced', 'auto');
     else if (this.qualityMode === 'balanced') this.setQualityMode('cinematic', 'auto');
@@ -495,11 +498,12 @@ export class LabApp {
   private updateChrome(snapshot: { time: number; energy: number; drift: number; state: ArrayLike<number> }, w1Index: number, w2Index: number): void {
     const set = (id: string, text: string): void => dom.setText(id, text);
     const st = snapshot.state;
-    set('fpsBadge', `${this.lastFps.toFixed(0)} fps`);
+    set('fpsBadge', `${this.renderScheduler.fps.toFixed(0)} fps`);
     set('dPhys', this.lastPhysicsMs.toFixed(2));
-    set('dRender', this.lastRenderMs.toFixed(2));
+    set('dRender', this.renderScheduler.renderMs.toFixed(2));
     set('dQuality', this.qualityMode);
     set('dDpr', getCanvasDprCap().toFixed(1));
+    set('dBackend', this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main');
     set('tStat', `${snapshot.time.toFixed(2)} s`);
     set('th1Stat', `${st[0]!.toFixed(3)} / ${st[w1Index]!.toFixed(2)}`);
     set('th2Stat', `${st[1]!.toFixed(3)} / ${st[w2Index]!.toFixed(2)}`);
@@ -526,78 +530,103 @@ export class LabApp {
     trailPoints: number;
     qualityMode: QualityMode;
     dprCap: number;
+    sidePlotBackend: 'offscreen' | 'main';
+    pendingUiTasks: number;
   } {
     return {
       time: this.lastTime,
       drift: this.lastDrift,
       poincarePoints: this.poincare.size,
       lambdaMax: this.lyap.value(),
-      fps: this.lastFps,
+      fps: this.renderScheduler.fps,
       physicsMsPerFrame: this.lastPhysicsMs,
-      renderMsPerFrame: this.lastRenderMs,
+      renderMsPerFrame: this.renderScheduler.renderMs,
       trailPoints: this.renderer?.trailPointCount() ?? 0,
       qualityMode: this.qualityMode,
-      dprCap: getCanvasDprCap()
+      dprCap: getCanvasDprCap(),
+      sidePlotBackend: this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main',
+      pendingUiTasks: this.diagnosticsScheduler.pendingCount()
     };
   }
 
-  private scheduleSidePlotSlice(): void {
-    if (this.sidePlotPending) return;
-    this.sidePlotPending = true;
-    const run = (): void => {
-      this.sidePlotPending = false;
-      if (dom.tabActive('tab-lab')) this.drawSidePlotSlice();
-    };
-    const idle = (window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
-    if (typeof idle === 'function') idle(run, { timeout: 120 });
-    else window.setTimeout(run, 0);
+  private drawSidePlotSlice(phaseIndex: number): void {
+    const payload = this.sidePlotPayload(phaseIndex);
+    if (!payload) return;
+    if (this.ensureSidePlotWorker() && this.sidePlotWorker.render(payload)) return;
+    this.drawSidePlotOnMain(payload);
   }
 
-  private drawSidePlotSlice(): void {
-    const phaseIndex = this.sidePlotPhase;
-    this.sidePlotPhase = (this.sidePlotPhase + 1) % SIDE_PLOT_COUNT;
+  private ensureSidePlotWorker(): boolean {
+    return this.sidePlotWorker.ensure({
+      energy: dom.el<HTMLCanvasElement>('energy') ?? undefined,
+      lyap: dom.el<HTMLCanvasElement>('lyap') ?? undefined,
+      phase: dom.el<HTMLCanvasElement>('phase') ?? undefined,
+      poincare: dom.el<HTMLCanvasElement>('poincare') ?? undefined,
+      fft: dom.el<HTMLCanvasElement>('fft') ?? undefined
+    });
+  }
 
+  private sidePlotPayload(phaseIndex: number): LabSidePlotPayload | null {
     if (phaseIndex === 0) {
+      return {
+        plot: 'energy',
+        energy: {
+          time: [...this.energy.time],
+          total: [...this.energy.total],
+          drift: [...this.energy.drift]
+        }
+      };
+    }
+    if (phaseIndex === 1) {
+      return { plot: 'lyap', history: [...this.lyap.history()], value: this.lyap.value() };
+    }
+    if (phaseIndex === 2) {
+      return { plot: 'phase', samples: this.phaseSamplesForAxis() };
+    }
+    if (phaseIndex === 3) {
+      return { plot: 'poincare', points: this.poincare.list().map((p) => ({ x: p.x, y: p.y })) };
+    }
+    const sampleRate = 1 / (this.sim.config.dt * this.spf);
+    return { plot: 'fft', theta1Frames: [...this.theta1Frames], sampleRate };
+  }
+
+  private drawSidePlotOnMain(payload: LabSidePlotPayload): void {
+    if (payload.plot === 'energy') {
       const energy = ctxOf('energy');
-      if (energy) renderEnergyPlot(energy.ctx, { x: 0, y: 0, width: energy.width, height: energy.height }, this.energy);
+      if (energy) renderEnergyPlot(energy.ctx, { x: 0, y: 0, width: energy.width, height: energy.height }, payload.energy);
       return;
     }
-
-    if (phaseIndex === 1) {
+    if (payload.plot === 'lyap') {
       const lyap = ctxOf('lyap');
       if (lyap) {
-        const history = this.lyap.history();
-        renderLyapunovConvergence(lyap.ctx, { x: 0, y: 0, width: lyap.width, height: lyap.height }, history.length > 1 ? [...history] : [0, this.lyap.value()]);
+        const history = payload.history.length > 1 ? payload.history : [0, payload.value];
+        renderLyapunovConvergence(lyap.ctx, { x: 0, y: 0, width: lyap.width, height: lyap.height }, history);
       }
       return;
     }
-
-    if (phaseIndex === 2) {
+    if (payload.plot === 'phase') {
       const phase = ctxOf('phase');
-      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, this.phaseSamplesForAxis());
+      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, payload.samples);
       return;
     }
-
-    if (phaseIndex === 3) {
+    if (payload.plot === 'poincare') {
       const poincare = ctxOf('poincare');
       if (poincare) {
         renderPoincareSection(
           poincare.ctx,
           { x: 0, y: 0, width: poincare.width, height: poincare.height },
-          this.poincare.list(),
+          payload.points,
           { xLabel: 'θ₂', yLabel: 'ω₂' }
         );
       }
       return;
     }
-
     const fft = ctxOf('fft');
-    if (fft && this.theta1Frames.length >= 16) {
-      const sampleRate = 1 / (this.sim.config.dt * this.spf);
-      const spectrum = magnitudeSpectrum(this.theta1Frames, sampleRate);
+    if (fft && payload.theta1Frames.length >= 16) {
+      const spectrum = magnitudeSpectrum(payload.theta1Frames, payload.sampleRate);
       renderSpectrum(fft.ctx, { x: 0, y: 0, width: fft.width, height: fft.height }, spectrum.mags, {
         log: true,
-        nyquist: sampleRate / 2
+        nyquist: payload.sampleRate / 2
       });
     }
   }
