@@ -41,7 +41,8 @@ Use these metrics instead:
 - `renderMsPerFrame` from the same diagnostics object.
 - canvas nonblank checks after a short simulation run.
 - console error checks during Playwright smoke tests.
-- memory-growth checks for long sessions when profiling manually.
+- memory-growth checks in Playwright when the browser exposes heap metrics,
+  plus manual profiling for browsers that do not.
 
 ## Current Architecture
 
@@ -57,10 +58,6 @@ Use these metrics instead:
   `UiTaskQueue` to avoid task buildup, and render on an `OffscreenCanvas` worker
   when the browser supports it.
 - `canvasQuality.ts` owns the adaptive DPR cap used by every managed canvas.
-
-## Future Extensions
-
-- Add a long-run memory regression in Playwright once browser support is stable
-  enough for repeatable heap measurements.
-- Consider transferring more analysis-tab preview renderers to the same
-  `UiTaskQueue` if future panels add expensive main-thread drawing.
+- `e2e/performance-smoke.spec.ts` covers physics/render budgets, UI task
+  backpressure, side-plot backend reporting, canvas paint, and heap growth when
+  the browser exposes `performance.memory`.

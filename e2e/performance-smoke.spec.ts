@@ -7,6 +7,8 @@ type LabDiagnostics = {
   trailPoints: number;
   qualityMode: string;
   dprCap: number;
+  sidePlotBackend: string;
+  pendingUiTasks: number;
 };
 
 test('lab performance diagnostics stay healthy during a short run', async ({ page }) => {
@@ -27,6 +29,8 @@ test('lab performance diagnostics stay healthy during a short run', async ({ pag
   expect(['performance', 'balanced', 'cinematic']).toContain(diag.qualityMode);
   expect(diag.dprCap).toBeGreaterThanOrEqual(1);
   expect(diag.dprCap).toBeLessThanOrEqual(2);
+  expect(['offscreen', 'main']).toContain(diag.sidePlotBackend);
+  expect(diag.pendingUiTasks).toBeLessThanOrEqual(1);
 
   const nonBlankPixels = await page.evaluate(() => {
     const canvas = document.getElementById('main') as HTMLCanvasElement | null;
@@ -45,3 +49,24 @@ test('lab performance diagnostics stay healthy during a short run', async ({ pag
   await expect(page.locator('#dQuality')).toContainText(/performance|balanced|cinematic/);
   expect(pageErrors).toEqual([]);
 });
+
+test('lab heap usage does not grow unbounded when heap metrics are available', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernLab?: unknown }).__modernLab));
+  await page.waitForTimeout(1000);
+
+  const before = await usedHeap(page);
+  test.skip(before === null, 'performance.memory is not available in this browser');
+
+  await page.waitForTimeout(5000);
+  const after = await usedHeap(page);
+  expect(after).not.toBeNull();
+  expect(after! - before!).toBeLessThan(24 * 1024 * 1024);
+});
+
+async function usedHeap(page: import('@playwright/test').Page): Promise<number | null> {
+  return page.evaluate(() => {
+    const memory = (performance as Performance & { memory?: { usedJSHeapSize?: number } }).memory;
+    return typeof memory?.usedJSHeapSize === 'number' ? memory.usedJSHeapSize : null;
+  });
+}
