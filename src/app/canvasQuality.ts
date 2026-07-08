@@ -7,6 +7,15 @@ export interface ManagedCanvas2D {
 }
 
 const MAX_DPR = 2;
+let dynamicDprCap = MAX_DPR;
+
+export function setCanvasDprCap(cap: number): void {
+  dynamicDprCap = Math.max(1, Math.min(MAX_DPR, cap));
+}
+
+export function getCanvasDprCap(): number {
+  return dynamicDprCap;
+}
 
 function attrNumber(canvas: HTMLCanvasElement, name: 'width' | 'height', fallback: number): number {
   const value = Number.parseInt(canvas.getAttribute(name) ?? '', 10);
@@ -17,7 +26,7 @@ export function configureCanvas2D(canvas: HTMLCanvasElement): ManagedCanvas2D | 
   const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
   if (!ctx) return null;
 
-  const dpr = Math.min(MAX_DPR, Math.max(1, window.devicePixelRatio || 1));
+  const dpr = Math.min(dynamicDprCap, Math.max(1, window.devicePixelRatio || 1));
   const rect = canvas.getBoundingClientRect();
   const attrW = attrNumber(canvas, 'width', canvas.width || 300);
   const attrH = attrNumber(canvas, 'height', canvas.height || 150);

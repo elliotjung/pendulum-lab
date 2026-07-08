@@ -263,6 +263,62 @@ body.kinetic-overdrive #fpsBadge{
   background:linear-gradient(180deg, rgba(77,242,162,.11), rgba(44,232,255,.035));
 }
 
+.cost-chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:16px;
+  margin-left:6px;
+  padding:1px 6px;
+  border:1px solid rgba(255,190,85,.28);
+  border-radius:999px;
+  color:var(--ko-amber);
+  background:rgba(255,190,85,.08);
+  font:700 9px/1 var(--font-mono);
+  text-transform:uppercase;
+}
+
+body.quality-performance .kinetic-field,
+body.quality-performance .kinetic-strip,
+body.quality-performance .kinetic-orbit,
+body.quality-performance .hud-scan,
+body.quality-performance #hudParticles,
+body.quality-performance #hudCursorGlow{
+  display:none !important;
+}
+
+body.quality-performance.kinetic-overdrive::before{
+  display:none;
+}
+
+body.quality-performance.kinetic-overdrive header::before,
+body.quality-performance .kinetic-channel::before,
+body.quality-performance .kinetic-flash,
+body.quality-performance.kinetic-overdrive .rail-menu-button::after,
+body.quality-performance.kinetic-overdrive .rail-palette-launcher::after,
+body.quality-performance.kinetic-overdrive .pbtn::after{
+  animation:none !important;
+  transition:none !important;
+}
+
+body.quality-performance.kinetic-overdrive .main-wrap,
+body.quality-performance.kinetic-overdrive .plot-cell,
+body.quality-performance.kinetic-overdrive .controls{
+  box-shadow:0 16px 42px -30px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+body.quality-performance.kinetic-overdrive .main-wrap canvas,
+body.quality-performance.kinetic-overdrive .plot-cell canvas{
+  box-shadow:none;
+}
+
+body.quality-balanced .kinetic-field{
+  opacity:.5;
+}
+
+body.quality-performance #dQuality{ color:var(--ko-green); }
+body.quality-balanced #dQuality{ color:var(--ko-amber); }
+body.quality-cinematic #dQuality{ color:var(--ko-rose); }
+
 @media(max-width:980px){
   .kinetic-strip{
     grid-template-columns:repeat(2,minmax(0,1fr));

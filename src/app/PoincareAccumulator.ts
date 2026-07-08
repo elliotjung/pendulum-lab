@@ -23,6 +23,13 @@ export class PoincareAccumulator {
   private readonly direction: 'rising' | 'falling' | 'both';
   private refineRhs: Derivative | null = null;
   private refineDt = 0;
+  private workDim = 0;
+  private k1 = new Float64Array(0);
+  private k2 = new Float64Array(0);
+  private k3 = new Float64Array(0);
+  private k4 = new Float64Array(0);
+  private tmp = new Float64Array(0);
+  private refineScratch = new Float64Array(0);
 
   constructor(cap = 4000, direction: 'rising' | 'falling' | 'both' = 'rising') {
     this.cap = Math.max(1, cap);
@@ -53,15 +60,27 @@ export class PoincareAccumulator {
     this.refineDt = dt;
   }
 
+  private ensureWork(dim: number): void {
+    if (this.workDim === dim) return;
+    this.workDim = dim;
+    this.k1 = new Float64Array(dim);
+    this.k2 = new Float64Array(dim);
+    this.k3 = new Float64Array(dim);
+    this.k4 = new Float64Array(dim);
+    this.tmp = new Float64Array(dim);
+    this.refineScratch = new Float64Array(dim);
+  }
+
+  private copyStateInto(target: Float64Array, state: ArrayLike<number>): void {
+    for (let i = 0; i < target.length; i += 1) target[i] = state[i] ?? 0;
+  }
+
   /** One RK4 step of size h from `from` into `out` using the refiner RHS. */
   private rk4Into(from: Float64Array, h: number, out: Float64Array): void {
     const rhs = this.refineRhs!;
     const n = from.length;
-    const k1 = new Float64Array(n);
-    const k2 = new Float64Array(n);
-    const k3 = new Float64Array(n);
-    const k4 = new Float64Array(n);
-    const tmp = new Float64Array(n);
+    this.ensureWork(n);
+    const { k1, k2, k3, k4, tmp } = this;
     rhs(from, k1);
     for (let i = 0; i < n; i += 1) tmp[i] = from[i]! + (h / 2) * k1[i]!;
     rhs(tmp, k2);
@@ -80,7 +99,8 @@ export class PoincareAccumulator {
    */
   private refineCrossing(previous: Float64Array, linearFrac: number): Point2D | null {
     const dt = this.refineDt;
-    const scratch = new Float64Array(previous.length);
+    this.ensureWork(previous.length);
+    const scratch = this.refineScratch;
     const thetaAt = (tau: number): number => {
       if (tau <= 0) return previous[0]!;
       this.rk4Into(previous, tau, scratch);
@@ -109,20 +129,32 @@ export class PoincareAccumulator {
    * section, otherwise null.
    */
   push(state: ArrayLike<number>): Point2D | null {
+    const length = state.length;
+    if (!this.prev || this.prev.length !== length) {
+      this.prev = new Float64Array(length);
+      this.copyStateInto(this.prev, state);
+      return null;
+    }
+
     const t1 = Number(state[0] ?? 0);
     const w1 = Number(state[2] ?? 0);
     const previous = this.prev;
-    // Store a copy for the next comparison.
-    this.prev = Float64Array.from(state as ArrayLike<number>);
-
-    if (!previous) return null;
     const t1Prev = previous[0]!;
     // Rising crossing of θ1 = 0 (θ̇1 > 0): previous below 0, current at/above 0.
     const rising = t1Prev < 0 && t1 >= 0 && w1 > 0;
     const falling = t1Prev > 0 && t1 <= 0 && w1 < 0;
-    if (this.direction === 'rising' && !rising) return null;
-    if (this.direction === 'falling' && !falling) return null;
-    if (this.direction === 'both' && !rising && !falling) return null;
+    if (this.direction === 'rising' && !rising) {
+      this.copyStateInto(previous, state);
+      return null;
+    }
+    if (this.direction === 'falling' && !falling) {
+      this.copyStateInto(previous, state);
+      return null;
+    }
+    if (this.direction === 'both' && !rising && !falling) {
+      this.copyStateInto(previous, state);
+      return null;
+    }
 
     // Linear interpolation factor to the zero crossing.
     const denom = t1 - t1Prev;
@@ -139,6 +171,7 @@ export class PoincareAccumulator {
     }
     this.points.push(point);
     if (this.points.length > this.cap) this.points.splice(0, this.points.length - this.cap);
+    this.copyStateInto(previous, state);
     return point;
   }
 }

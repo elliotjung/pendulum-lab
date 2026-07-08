@@ -82,7 +82,7 @@
     "test:slow": "vitest run --config vitest.slow.config.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:mainline": "playwright test e2e/smoke.spec.ts e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/research-design.spec.ts e2e/research-workbench.spec.ts e2e/trust-inspector.spec.ts e2e/long-run-performance.spec.ts --project=chromium",
+    "test:e2e:mainline": "playwright test e2e/smoke.spec.ts e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/research-design.spec.ts e2e/research-workbench.spec.ts e2e/trust-inspector.spec.ts e2e/long-run-performance.spec.ts e2e/performance-smoke.spec.ts --project=chromium",
     "test:visual": "playwright test e2e/visual-regression.spec.ts --project=chromium",
     "smoke": "playwright test e2e/smoke.spec.ts --project=chromium",
     "test:webgpu-hardware": "playwright test e2e/webgpu-hardware-reductions.spec.ts --project=chromium",

@@ -11,6 +11,8 @@ package; the docs are grouped by those jobs.
 - [`api-overview.md`](api-overview.md) - public package/API stability policy.
 - [`known-limitations.md`](known-limitations.md) - scientific and numerical
   caveats that the UI must surface honestly.
+- [`performance.md`](performance.md) - quality modes, slowdown triage, and
+  performance regression signals.
 - [`security.md`](security.md) - CSP, import validation, and DOM safety rules.
 
 ## Numerics And Physics

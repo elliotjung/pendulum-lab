@@ -51,6 +51,7 @@ export class LabRenderer {
   private readonly opts: Required<LabRenderOptions>;
   private trail: TrailBuffer = { buf: new Float32Array(0), idx: 0, filled: 0 };
   private ensembleTrails: TrailBuffer[] = [];
+  private pixelsScratch: Point2D[] = [];
 
   constructor(ctx: Ctx2D, options: LabRenderOptions) {
     this.ctx = ctx;
@@ -104,8 +105,17 @@ export class LabRenderer {
 
   /** Map a bob position in metres to canvas pixels. */
   toPixels(bob: BobPosition): Point2D {
-    const pivot = this.pivot();
-    return { x: pivot.x + bob.x * this.opts.scale, y: pivot.y + bob.y * this.opts.scale };
+    return this.toPixelsInto(bob, { x: 0, y: 0 });
+  }
+
+  toPixelsInto(bob: BobPosition, out: Point2D): Point2D {
+    return this.toPixelsXYInto(bob.x, bob.y, out);
+  }
+
+  toPixelsXYInto(x: number, y: number, out: Point2D): Point2D {
+    out.x = this.opts.width / 2 + x * this.opts.scale;
+    out.y = this.opts.height * this.opts.pivotYFraction + y * this.opts.scale;
+    return out;
   }
 
   /** Clear to the background colour (used for a hard reset, e.g. on trail clear). */
@@ -132,7 +142,13 @@ export class LabRenderer {
     ctx.restore();
 
     const pivot = this.pivot();
-    const pixels = bobsMeters.map((b) => this.toPixels(b));
+    this.pixelsScratch.length = bobsMeters.length;
+    for (let i = 0; i < bobsMeters.length; i += 1) {
+      const p = this.pixelsScratch[i] ?? { x: 0, y: 0 };
+      this.toPixelsInto(bobsMeters[i]!, p);
+      this.pixelsScratch[i] = p;
+    }
+    const pixels = this.pixelsScratch;
     const tip = pixels[pixels.length - 1];
 
     if (!extras.skipTrail && tip) {
@@ -237,7 +253,8 @@ export class LabRenderer {
     const ctx = this.ctx;
     const cap = buf.length / 2;
     const start = (this.trail.idx - filled + cap) % cap;
-    const buckets = 8;
+    const stride = Math.max(1, Math.ceil(filled / 1200));
+    const buckets = filled > 1600 ? 6 : 8;
 
     ctx.save();
     ctx.lineWidth = 1.4;
@@ -250,7 +267,7 @@ export class LabRenderer {
       ctx.beginPath();
       const first = Math.max(1, Math.floor(f0 * filled));
       const last = Math.min(filled - 1, Math.max(first, Math.ceil(f1 * filled) - 1));
-      for (let i = first; i <= last; i += 1) {
+      for (let i = first; i <= last; i += stride) {
         const i0 = (start + i - 1) % cap;
         const i1 = (start + i) % cap;
         if (i === first) ctx.moveTo(buf[i0 * 2]!, buf[i0 * 2 + 1]!);

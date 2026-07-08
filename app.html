@@ -144,6 +144,8 @@
       <span>worker <span class="diag-val" id="dWorker">—</span> ms</span>
       <span>state hash <span class="diag-val" id="dHash">—</span></span>
       <span>poincaré <span class="diag-val" id="dPoinc">0</span></span>
+      <span>quality <span class="diag-val" id="dQuality">balanced</span></span>
+      <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
       <span>backend <span class="diag-val" id="dBackend">—</span></span>
     </div>
 
@@ -309,9 +311,9 @@
                 </select>
               </div>
               <div class="row">
-                <label>Trail length</label>
-                <input id="trailLen" type="range" min="100" max="3000" step="50" value="1500">
-                <span class="val" id="trailLenV">1500</span>
+                <label>Trail length <span class="cost-chip">paint</span></label>
+                <input id="trailLen" type="range" min="100" max="3000" step="50" value="1200">
+                <span class="val" id="trailLenV">1200</span>
               </div>
               <div class="row">
                 <label>Phase axis</label>
@@ -321,7 +323,7 @@
                   <option value="both">Both</option>
                 </select>
               </div>
-              <div class="row"><label><input id="glowMode" type="checkbox"> Glow FX</label></div>
+              <div class="row"><label><input id="glowMode" type="checkbox"> Glow FX <span class="cost-chip">GPU</span></label></div>
               <div class="row"><label><input id="longExpose" type="checkbox"> Long exposure</label></div>
               <div class="row"><label><input id="interpolateRender" type="checkbox" checked> Interpolated render</label></div>
             </div>
@@ -364,6 +366,14 @@
                 <input id="spf" type="range" min="1" max="60" step="1" value="6">
                 <span class="val" id="spfV">6</span>
               </div>
+              <div class="row">
+                <label>Quality mode</label>
+                <select id="qualityMode">
+                  <option value="performance">Performance</option>
+                  <option value="balanced" selected>Balanced</option>
+                  <option value="cinematic">Cinematic</option>
+                </select>
+              </div>
               <div class="row"><label><input id="useWorker" type="checkbox" checked> Use worker pool</label></div>
               <div class="row"><label><input id="autoQual" type="checkbox" checked> Auto-quality scaling</label></div>
             </div>
@@ -381,7 +391,7 @@
                 Ensemble members are perturbed copies of the main trajectory. 
                 They reveal chaos: nearby trajectories diverge exponentially.
               </p>
-              <div class="row"><label>N copies</label><input id="ensN" type="range" min="0" max="80" step="1" value="12"><span class="val" id="ensNV">12</span></div>
+              <div class="row"><label>N copies <span class="cost-chip">CPU</span></label><input id="ensN" type="range" min="0" max="80" step="1" value="12"><span class="val" id="ensNV">12</span></div>
               <div class="row">
                 <label class="has-tip" data-tip="Initial separation ε between ensemble members and the reference trajectory.">ε (rad)</label>
                 <input id="ensEps" type="range" min="-7" max="-2" step="0.1" value="-4">

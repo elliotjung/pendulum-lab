@@ -9,13 +9,17 @@ import type { Point2D } from '../viz/poincare';
 
 export interface TrajectorySample {
   time: number;
-  state: readonly number[];
+  state: ArrayLike<number>;
 }
 
 /** Trajectory CSV: time then one column per state component. */
 export function trajectoryCsv(samples: readonly TrajectorySample[], system: LabConfig['system']): string {
   const header = system === 'triple' ? 't,th1,th2,th3,w1,w2,w3' : 't,th1,th2,w1,w2';
-  const rows = samples.map((s) => [s.time, ...s.state].map((v) => (typeof v === 'number' ? v.toPrecision(10) : '0')).join(','));
+  const rows = samples.map((s) => {
+    const values = [s.time];
+    for (let i = 0; i < s.state.length; i += 1) values.push(s.state[i] ?? 0);
+    return values.map((v) => v.toPrecision(10)).join(',');
+  });
   return [header, ...rows].join('\n');
 }
 

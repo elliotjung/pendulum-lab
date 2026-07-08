@@ -33,7 +33,7 @@ export interface BobPosition {
 
 export interface LabSnapshot {
   time: number;
-  state: number[];
+  state: readonly number[];
   energy: number;
   /** Relative energy drift |E − E₀| / |E₀| (a diagnostic, not valid under γ>0). */
   drift: number;
@@ -86,8 +86,12 @@ export class LabSimulation {
 
   /** Relative energy drift since t=0. Only physically meaningful when γ=0. */
   drift(): number {
+    return this.driftForEnergy(this.energy());
+  }
+
+  driftForEnergy(energy: number): number {
     const e0 = this.initialEnergy;
-    return Math.abs((this.energy() - e0) / (Math.abs(e0) || 1));
+    return Math.abs((energy - e0) / (Math.abs(e0) || 1));
   }
 
   residual(): number {
@@ -98,21 +102,47 @@ export class LabSimulation {
     return Array.from(this.state);
   }
 
+  stateView(): Readonly<StateVector> {
+    return this.state;
+  }
+
+  copyState(): number[] {
+    return Array.from(this.state);
+  }
+
   /** Cartesian bob positions in metres (pivot at origin, +y down). */
   bobPositionsMeters(): BobPosition[] {
+    return this.bobPositionsInto([]);
+  }
+
+  bobPositionsInto(out: BobPosition[]): BobPosition[] {
     const { l1, l2, l3 } = this.config.parameters;
     const s = this.state;
     const x1 = l1 * Math.sin(s[0]!);
     const y1 = l1 * Math.cos(s[0]!);
     const x2 = x1 + l2 * Math.sin(s[1]!);
     const y2 = y1 + l2 * Math.cos(s[1]!);
+    const b1 = out[0] ?? { x: 0, y: 0 };
+    const b2 = out[1] ?? { x: 0, y: 0 };
+    b1.x = x1;
+    b1.y = y1;
+    b2.x = x2;
+    b2.y = y2;
+    out[0] = b1;
+    out[1] = b2;
     if (this.config.system === 'triple') {
       const ell3 = l3 ?? 1;
       const x3 = x2 + ell3 * Math.sin(s[2]!);
       const y3 = y2 + ell3 * Math.cos(s[2]!);
-      return [{ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 }];
+      const b3 = out[2] ?? { x: 0, y: 0 };
+      b3.x = x3;
+      b3.y = y3;
+      out[2] = b3;
+      out.length = 3;
+      return out;
     }
-    return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+    out.length = 2;
+    return out;
   }
 
   snapshot(): LabSnapshot {
