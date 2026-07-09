@@ -13,6 +13,7 @@ export interface WorkerStepResult {
   state: number[];
   elapsedMs: number;
   fallback: boolean;
+  fallbackReason?: string;
 }
 
 export class WorkerBridge {
@@ -48,33 +49,44 @@ export class WorkerBridge {
     if (!this.start() || !this.worker) return this.fallbackStep(request);
     const started = performance.now();
     const worker = this.worker;
-    const result = await new Promise<WorkerStepResult>((resolve, reject) => {
-      const id = crypto.randomUUID();
-      const timeout = window.setTimeout(() => {
-        cleanup();
-        reject(new Error('worker step timed out'));
-      }, 2_000);
-      const cleanup = () => {
-        window.clearTimeout(timeout);
-        worker.removeEventListener('message', onMessage);
-        worker.removeEventListener('error', onError);
-      };
-      const onError = (event: ErrorEvent) => {
-        cleanup();
-        reject(event.error instanceof Error ? event.error : new Error(event.message));
-      };
-      const onMessage = (event: MessageEvent<{ id: string; state: number[]; elapsedMs: number }>) => {
-        if (event.data.id !== id) return;
-        cleanup();
-        const latencyMs = performance.now() - started;
-        eventBus.emit('worker:latency', { latencyMs });
-        resolve({ state: event.data.state, elapsedMs: event.data.elapsedMs, fallback: false });
-      };
-      worker.addEventListener('message', onMessage);
-      worker.addEventListener('error', onError);
-      worker.postMessage({ ...request, id });
-    });
-    return result;
+    try {
+      return await new Promise<WorkerStepResult>((resolve, reject) => {
+        const id = crypto.randomUUID();
+        const timeout = globalThis.setTimeout(() => {
+          cleanup();
+          reject(new Error('worker step timed out'));
+        }, 2_000);
+        const cleanup = () => {
+          globalThis.clearTimeout(timeout);
+          worker.removeEventListener('message', onMessage);
+          worker.removeEventListener('error', onError);
+        };
+        const onError = (event: ErrorEvent) => {
+          cleanup();
+          reject(event.error instanceof Error ? event.error : new Error(event.message));
+        };
+        const onMessage = (event: MessageEvent<{ id: string; state: number[]; elapsedMs: number }>) => {
+          if (event.data.id !== id) return;
+          cleanup();
+          const latencyMs = performance.now() - started;
+          eventBus.emit('worker:latency', { latencyMs });
+          resolve({ state: event.data.state, elapsedMs: event.data.elapsedMs, fallback: false });
+        };
+        worker.addEventListener('message', onMessage);
+        worker.addEventListener('error', onError);
+        try {
+          worker.postMessage({ ...request, id });
+        } catch (error) {
+          cleanup();
+          reject(error instanceof Error ? error : new Error(String(error)));
+        }
+      });
+    } catch (error) {
+      this.terminate();
+      const detail = notifyWorkerFallback('physics-worker', error, { once: false });
+      const fallback = this.fallbackStep(request);
+      return { ...fallback, fallbackReason: detail.reason };
+    }
   }
 
   terminate(): void {

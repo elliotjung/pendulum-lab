@@ -199,6 +199,7 @@ export {
   leapfrogStep,
   yoshida4Step,
   rkf45Step,
+  dop853Step,
   gaussLegendre4Step,
   gaussLegendre6Step
 } from './integrators';

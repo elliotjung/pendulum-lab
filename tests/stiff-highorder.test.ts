@@ -65,6 +65,24 @@ describe('Dormand-Prince 5(4) via step()', () => {
   });
 });
 
+describe('DOP853 high-order reference via step()', () => {
+  test('dop853 advances a large oscillator step at near reference accuracy', () => {
+    const state = new Float64Array([1, 0]);
+    const dop = new Float64Array(2);
+    const dp5 = new Float64Array(2);
+    const err = { value: 0 };
+    step('dop853', state, 0.2, oscillator, dop, { previousError: err });
+    step('dopri5', state, 0.2, oscillator, dp5);
+    const exact = new Float64Array([Math.cos(0.2), -Math.sin(0.2)]);
+    const dopErr = Math.hypot((dop[0] ?? 0) - exact[0]!, (dop[1] ?? 0) - exact[1]!);
+    const dp5Err = Math.hypot((dp5[0] ?? 0) - exact[0]!, (dp5[1] ?? 0) - exact[1]!);
+
+    expect(dopErr).toBeLessThan(1e-11);
+    expect(dopErr).toBeLessThan(dp5Err / 100);
+    expect(err.value).toBeGreaterThan(0);
+  });
+});
+
 describe('TR-BDF2 stiff solver', () => {
   test('is L-stable: a violently stiff mode decays where explicit Euler explodes', () => {
     const rhs = decay(1000);

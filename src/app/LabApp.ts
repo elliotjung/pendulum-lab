@@ -19,7 +19,7 @@ import { DiagnosticsScheduler } from './DiagnosticsScheduler';
 import { LabSidePlotWorkerClient } from './LabSidePlotWorkerClient';
 import { pairsToPoints, type LabSidePlotPayload } from './LabSidePlotProtocol';
 import { RenderScheduler } from './RenderScheduler';
-import { SimulationClock } from './SimulationClock';
+import { SimulationClock, type SimulationTimingMode } from './SimulationClock';
 import { LabRecording } from './LabRecording';
 import { LabControls, readLabConfig } from './LabControls';
 import { compactViewport, LabQualityBudget, type QualityMode } from './LabQualityBudget';
@@ -71,6 +71,7 @@ export class LabApp {
   private frameCount = 0;
   private spf = 6;
   private requestedSpf = 6;
+  private lastAdvancedSteps = 0;
   private phaseAxis = '1';
   private readonly simulationClock = new SimulationClock();
   private readonly renderScheduler = new RenderScheduler();
@@ -133,6 +134,7 @@ export class LabApp {
     this.energy = { time: [], total: [], drift: [] };
     this.recording.clear();
     this.scrubIndex = -1;
+    this.simulationClock.reset();
     this.quality.resetTrailScale();
     this.diagnosticsScheduler.reset();
     this.buildEnsemble(config, dim);
@@ -183,17 +185,24 @@ export class LabApp {
     const triple = sim.config.system === 'triple';
     const w1Index = triple ? 3 : 2;
     const w2Index = triple ? 4 : 3;
+    const speedMultiplier = Math.max(0, dom.num('speed', 1));
+    const timingMode = this.timingMode();
+    const effectiveStepsPerFrame = Math.max(0, Math.round(this.spf * speedMultiplier));
     const frame = this.simulationClock.advance({
       sim,
-      stepsPerFrame: this.spf,
+      stepsPerFrame: effectiveStepsPerFrame,
+      mode: timingMode,
+      timestampMs: nowMs(),
+      speedMultiplier,
       bobsScratch: this.bobsScratch,
       onStep: (state) => {
         this.poincare.push(state);
         this.lyap.step(state);
         this.pushPhase(state, w1Index, w2Index);
       },
-      afterSteps: () => this.stepEnsemble()
+      afterSteps: (stepsAdvanced) => this.stepEnsemble(stepsAdvanced)
     });
+    this.lastAdvancedSteps = frame.stepsAdvanced;
     const { state, energy, drift, bobs } = frame;
     this.lastPhysicsMs = frame.physicsMs;
     this.push(this.theta1Frames, state[0]!, 1024);
@@ -308,14 +317,18 @@ export class LabApp {
     }
   }
 
-  private stepEnsemble(): void {
+  private timingMode(): SimulationTimingMode {
+    return dom.str('timeMode', 'deterministic') === 'wall-clock' ? 'wall-clock' : 'deterministic';
+  }
+
+  private stepEnsemble(steps: number): void {
     if (this.ensemble.length === 0 || !this.rhs) return;
     const { method, dt, tolerance } = this.sim.config;
     const options = tolerance === undefined ? {} : { tolerance };
     for (let m = 0; m < this.ensemble.length; m += 1) {
       const state = this.ensemble[m]!;
       const scratch = this.ensembleScratch[m]!;
-      for (let s = 0; s < this.spf; s += 1) {
+      for (let s = 0; s < steps; s += 1) {
         physicsAdapter.step(method, state, dt, this.rhs, scratch, options);
         state.set(scratch);
       }
@@ -412,7 +425,7 @@ export class LabApp {
     set('lyapStat', `${this.lyap.value().toFixed(4)} /s`);
     const poincarePolicy = this.poincare.policy();
     set('dPoinc', `${this.poincare.size}/${poincarePolicy.capacity} ${poincarePolicy.direction}${poincarePolicy.refined ? ' refined' : ' linear'}`);
-    set('modeLabel', this.scrubIndex >= 0 ? 'replay' : this.running ? 'running' : 'paused');
+    set('modeLabel', this.scrubIndex >= 0 ? 'replay' : this.running ? `${this.timingMode()} · ${this.lastAdvancedSteps} step(s)` : 'paused');
   }
 
   /** Live diagnostics for tooling/tests. */
@@ -430,6 +443,8 @@ export class LabApp {
     qualityReason: string;
     dprCap: number;
     stepsPerFrame: number;
+    stepsAdvanced: number;
+    timingMode: SimulationTimingMode;
     requestedStepsPerFrame: number;
     trailQualityScale: number;
     sidePlotBackend: 'offscreen' | 'main';
@@ -450,6 +465,8 @@ export class LabApp {
       qualityReason: this.quality.reason,
       dprCap: this.quality.dprCap,
       stepsPerFrame: this.spf,
+      stepsAdvanced: this.lastAdvancedSteps,
+      timingMode: this.timingMode(),
       requestedStepsPerFrame: this.requestedSpf,
       trailQualityScale: this.quality.trailQualityScale,
       sidePlotBackend: this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main',
@@ -642,4 +659,8 @@ export class LabApp {
     this.ensembleScratch.length = cap;
     this.ensembleTipScratch.length = cap;
   }
+}
+
+function nowMs(): number {
+  return typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : Date.now();
 }

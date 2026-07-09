@@ -411,6 +411,7 @@ export function buildChainCard(handlers: ChainCardHandlers): HTMLElement {
   const chainMethod = researchSelect('d3Method', [
     ['rk4', 'RK4 (fixed step, order 4)'],
     ['dopri5', 'Dormand–Prince 5(4) (adaptive)'],
+    ['dop853', 'DOP853 (fixed step, order 8)'],
     ['gbs', 'Gragg–Bulirsch–Stoer (adaptive)'],
     ['gauss2', 'Gauss–Legendre 2 (implicit, symplectic)'],
     ['yoshida4', 'Yoshida 4 (symplectic splitting)']

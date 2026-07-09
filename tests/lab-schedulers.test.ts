@@ -64,5 +64,41 @@ describe('SimulationClock', () => {
     expect(frame.state).toBe(sim.stateView());
     expect(frame.bobs).toHaveLength(2);
     expect(Number.isFinite(frame.physicsMs)).toBe(true);
+    expect(frame.stepsAdvanced).toBe(4);
+    expect(frame.timingMode).toBe('deterministic');
+  });
+
+  it('can advance from wall-clock time with a catch-up cap', () => {
+    const sim = new LabSimulation(DOUBLE);
+    const clock = new SimulationClock();
+    const advanced: number[] = [];
+
+    const first = clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_000,
+      speedMultiplier: 1,
+      maxWallClockSteps: 5,
+      stepsPerFrame: 4,
+      bobsScratch: [],
+      onStep: () => {},
+      afterSteps: (steps) => advanced.push(steps)
+    });
+    const second = clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_300,
+      speedMultiplier: 1,
+      maxWallClockSteps: 5,
+      stepsPerFrame: 4,
+      bobsScratch: [],
+      onStep: () => {},
+      afterSteps: (steps) => advanced.push(steps)
+    });
+
+    expect(first.stepsAdvanced).toBe(4);
+    expect(second.stepsAdvanced).toBe(5);
+    expect(advanced).toEqual([4, 5]);
+    expect(second.timingMode).toBe('wall-clock');
   });
 });

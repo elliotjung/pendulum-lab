@@ -14,6 +14,7 @@ const REPORT_MD = join(ROOT, 'reports', 'mojibake-audit.md');
 
 const IGNORED_DIRS = new Set([
   '.git',
+  '.kilo',
   '.stryker-tmp',
   'coverage',
   'dist',
@@ -47,13 +48,46 @@ const TEXT_EXTENSIONS = new Set([
   '.yaml'
 ]);
 
+const DISPLAY_TEXT_EXTENSIONS = new Set([
+  '.css',
+  '.html',
+  '.json',
+  '.md',
+  '.txt',
+  '.yml',
+  '.yaml'
+]);
+
+const KNOWN_MOJIBAKE_TOKENS = [
+  '\uCA0C',
+  '\uCC55',
+  '\uD69E',
+  '\uBBB6',
+  '\uBD55',
+  '\uBC1A',
+  '\uBC23',
+  '\uBC04',
+  '\uBC2A',
+  '\uBC33',
+  '\uBC20',
+  '\uBC06',
+  '\uAC4E',
+  '\uBB56',
+  '\uBBCA',
+  '\uBBCB',
+  '\u7F50',
+  '\u6B3E',
+  '\u8CAB'
+] as const;
+
 const SUSPICIOUS_PATTERNS: { label: string; regex: RegExp }[] = [
   { label: 'replacement-character', regex: /\uFFFD/g },
   { label: 'latin1-utf8-c1', regex: /\u00C3[\u0080-\u00BF]/g },
   { label: 'stray-cp1252-latin1', regex: /\u00C2[\u0080-\u00BF]?/g },
   { label: 'cp1252-punctuation', regex: /\u00E2[\u0080-\u2122]{1,2}/g },
   { label: 'emoji-mojibake', regex: /\u00F0\u0178[\u0080-\u00BF]?/g },
-  { label: 'known-korean-mojibake-fragments', regex: /\uCC55|\uBC2A|\uCA0C|\uC9FC|\uD69E|\uBF58|\u7F50/g }
+  { label: 'known-korean-mojibake-fragments', regex: /[\uCA0C\uCC55\uD69E\uBBB6\uBD55\uBC1A\uBC23\uBC04\uBC2A\uBC33\uBC20\uBC06\uAC4E\uBB56\uBBCA\uBBCB\u7F50\u6B3E\u8CAB]/g },
+  { label: 'known-rendered-mojibake-token', regex: new RegExp(KNOWN_MOJIBAKE_TOKENS.map(escapeRegExp).join('|'), 'g') }
 ];
 
 function isIgnored(relativePath: string): boolean {
@@ -68,6 +102,29 @@ function isIgnored(relativePath: string): boolean {
 function hasTextExtension(path: string): boolean {
   const dot = path.lastIndexOf('.');
   return dot >= 0 && TEXT_EXTENSIONS.has(path.slice(dot).toLowerCase());
+}
+
+function hasDisplayTextExtension(path: string): boolean {
+  const dot = path.lastIndexOf('.');
+  return dot >= 0 && DISPLAY_TEXT_EXTENSIONS.has(path.slice(dot).toLowerCase());
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function lineLooksLikeCode(relativePath: string, lineText: string): boolean {
+  const normalized = relativePath.replace(/\\/g, '/');
+  if (normalized.endsWith('package-lock.json')) return true;
+  const trimmed = lineText.trim();
+  return (
+    trimmed.startsWith('http://')
+    || trimmed.startsWith('https://')
+    || trimmed.includes('${')
+    || trimmed.includes('=>')
+    || /\b(?:const|let|var|return|if|for|while|switch|case|type|interface|export|import)\b/.test(trimmed)
+    || ((trimmed.includes('??') || trimmed.includes('?.')) && /[`=;(){}[\]]/.test(trimmed))
+  );
 }
 
 function walk(dir: string): string[] {
@@ -95,6 +152,22 @@ function findSuspiciousText(path: string): Finding[] {
         path: rel,
         line: index + 1,
         pattern: label,
+        excerpt: lineText.trim().slice(0, 180)
+      });
+    }
+    if (hasDisplayTextExtension(path) && /\?{2,}/.test(lineText) && !lineLooksLikeCode(rel, lineText)) {
+      findings.push({
+        path: rel,
+        line: index + 1,
+        pattern: 'literal-question-run-in-display-text',
+        excerpt: lineText.trim().slice(0, 180)
+      });
+    }
+    if (hasDisplayTextExtension(path) && /\?{2,}<\/|<[^>]*>\?{2,}\/?[a-z]/i.test(lineText)) {
+      findings.push({
+        path: rel,
+        line: index + 1,
+        pattern: 'possibly-mangled-html-token',
         excerpt: lineText.trim().slice(0, 180)
       });
     }

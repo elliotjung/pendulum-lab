@@ -3,7 +3,7 @@ import type { SphericalChainParams } from '../../physics/sphericalChain';
 import type { SystemSpec } from '../../physics/systemSpec';
 import { parseClampedNumberList, type ClampNumber } from './lab3d-utils';
 
-export const LAB3D_CHAIN_METHODS = ['rk4', 'dopri5', 'gbs', 'gauss2', 'yoshida4'] as const;
+export const LAB3D_CHAIN_METHODS = ['rk4', 'dopri5', 'dop853', 'gbs', 'gauss2', 'yoshida4'] as const;
 
 export interface Lab3dChainInput {
   nValue: number;

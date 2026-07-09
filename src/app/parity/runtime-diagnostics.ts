@@ -402,12 +402,16 @@ export function toggleFloatingDiag(): void {
 export function installFloatingDiag(): void {
   if ($('ueFloatingDiag')) return;
   const box = html('div', { id: 'ueFloatingDiag' });
+  if (typeof window !== 'undefined' && window.matchMedia?.('(max-width: 560px)').matches) box.classList.add('collapsed');
   const header = html('div');
   header.style.display = 'flex';
   header.style.justifyContent = 'space-between';
   const collapse = button('ueCollapse', '-', () => {
     box.classList.toggle('collapsed');
+    collapse.setAttribute('aria-expanded', box.classList.contains('collapsed') ? 'false' : 'true');
   });
+  collapse.setAttribute('aria-label', 'Toggle engine diagnostics');
+  collapse.setAttribute('aria-expanded', box.classList.contains('collapsed') ? 'false' : 'true');
   append(header, html('b', { text: 'ENGINE' }), collapse);
   append(box, header, html('div', { id: 'ueFloatBody', className: 'ue-fbody' }));
   document.body.append(box);

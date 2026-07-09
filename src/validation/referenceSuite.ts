@@ -29,6 +29,7 @@ export const EXPECTED_ORDER: Readonly<Record<IntegratorId, number>> = {
   gauss2: 4,
   rkf45: 5,
   dopri5: 5,
+  dop853: 8,
   gbs: 6,
   bdf2: 2
 };
@@ -51,6 +52,7 @@ export const ENERGY_ENVELOPE: Readonly<Record<IntegratorId, number>> = {
   gauss2: 1e-2,
   rkf45: 1e-2,
   dopri5: 1e-2,
+  dop853: 1e-2,
   gbs: 1e-2,
   bdf2: 5
 };
@@ -70,6 +72,7 @@ export const AGREEMENT_ENVELOPE: Readonly<Record<IntegratorId, number>> = {
   gauss2: 1e-2,
   rkf45: 1e-3,
   dopri5: 1e-3,
+  dop853: 1e-6,
   gbs: 1e-9,
   bdf2: 2
 };

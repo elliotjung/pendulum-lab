@@ -215,6 +215,21 @@ export class Shell {
     });
   }
 
+  private bindWorkflowStrip(): void {
+    document.querySelectorAll<HTMLElement>('[data-workflow-tab], [data-workflow-section]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.workflowTab;
+        if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
+        const section = btn.dataset.workflowSection;
+        if (section && !compactRail()) this.openRailSection(section);
+        const focusId = btn.dataset.workflowFocus;
+        const focusTarget = focusId ? document.getElementById(focusId) : null;
+        focusTarget?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (focusTarget instanceof HTMLElement) focusTarget.focus({ preventScroll: true });
+      });
+    });
+  }
+
   private bindKeyboard(): void {
     document.addEventListener('keydown', (e) => {
       const target = e.target as HTMLElement | null;
@@ -241,6 +256,18 @@ export class Shell {
   private applyUrlDeepLink(): void {
     const preset = urlParam('preset');
     if (preset && PRESETS[preset]) this.applyPreset(preset);
+    const sysType = urlParam('sysType') ?? urlParam('system');
+    const systemSelect = document.getElementById('sysType') as HTMLSelectElement | null;
+    if (sysType && systemSelect && Array.from(systemSelect.options).some((option) => option.value === sysType)) {
+      systemSelect.value = sysType;
+      systemSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    for (const id of ['th1', 'th2', 'th3', 'iw1', 'iw2', 'iw3', 'm1', 'm2', 'm3', 'l1', 'l2', 'l3', 'g', 'gamma', 'dt', 'speed', 'spf']) {
+      const value = urlParam(id);
+      if (value === null) continue;
+      const numeric = Number.parseFloat(value);
+      if (Number.isFinite(numeric)) this.setSlider(id, numeric);
+    }
     const tab = urlParam('tab');
     if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
   }
@@ -286,6 +313,7 @@ export class Shell {
     this.bindNavigation();
     this.bindSliders();
     this.bindPresets();
+    this.bindWorkflowStrip();
     this.bindKeyboard();
     this.bindPanelToggle();
     this.applyUrlDeepLink();

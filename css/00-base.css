@@ -1255,6 +1255,48 @@ header{
   margin-bottom:10px;
 }
 
+.workflow-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:0 0 10px;
+}
+.workflow-strip button{
+  min-width:0;
+  display:grid;
+  gap:2px;
+  align-content:center;
+  min-height:46px;
+  padding:8px 10px;
+  border-radius:9px;
+  border:1px solid rgba(255,255,255,.065);
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  box-shadow:var(--shadow-xs);
+}
+.workflow-strip button:hover,
+.workflow-strip button:focus-visible{
+  color:var(--fg-bright);
+  border-color:rgba(24,212,248,.32);
+  background:linear-gradient(180deg,rgba(24,212,248,.085),rgba(255,255,255,.018));
+}
+.workflow-strip span{
+  color:var(--fg-bright);
+  font:800 10px/1.1 var(--font-display);
+  letter-spacing:1.2px;
+  text-transform:uppercase;
+}
+.workflow-strip small{
+  min-width:0;
+  color:var(--muted);
+  font:10px/1.25 var(--font-mono);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
 .diag-row > span,
 .presets,
 .main-wrap,
@@ -1390,7 +1432,7 @@ body.audience-beginner .row{
 
 @media(max-width:560px){
   .main-col{
-    padding:10px 10px 92px;
+    padding:10px 10px 128px;
   }
   header{
     gap:6px 8px;
@@ -1414,6 +1456,39 @@ body.audience-beginner .row{
     font-size:9px;
     text-transform:none;
     letter-spacing:.2px;
+  }
+  .diag-row{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:5px;
+    overflow-x:auto;
+    overscroll-behavior-inline:contain;
+    scrollbar-width:none;
+    margin-bottom:8px;
+  }
+  .diag-row::-webkit-scrollbar{
+    display:none;
+  }
+  .diag-row > span{
+    flex:0 0 auto;
+    max-width:160px;
+    padding:4px 7px;
+    font-size:9px;
+  }
+  .workflow-strip{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+  .workflow-strip button{
+    min-height:42px;
+    padding:7px 8px;
+    border-radius:8px;
+  }
+  .workflow-strip span{
+    font-size:9px;
+  }
+  .workflow-strip small{
+    font-size:9px;
   }
   .controls{
     border-radius:12px;

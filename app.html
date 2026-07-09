@@ -150,6 +150,21 @@
       <span>backend <span class="diag-val" id="dBackend">—</span></span>
     </div>
 
+    <div class="workflow-strip" aria-label="Primary workflows">
+      <button type="button" data-workflow-tab="lab" data-workflow-focus="resetBtn">
+        <span>Run</span><small>preset + reset</small>
+      </button>
+      <button type="button" data-workflow-tab="lab" data-workflow-focus="main">
+        <span>Observe</span><small>canvas + replay</small>
+      </button>
+      <button type="button" data-workflow-tab="lyap" data-workflow-section="analysis">
+        <span>Analyze</span><small>spectra + maps</small>
+      </button>
+      <button type="button" data-workflow-tab="research" data-workflow-section="govern">
+        <span>Export</span><small>figures + bundle</small>
+      </button>
+    </div>
+
     <div class="presets">
       <span title="One-click starting setups — pick one, then press Reset to replay it">Presets</span>
       <button class="pbtn" data-preset="classic" title="Classic — the textbook double-pendulum start">Classic</button>
@@ -205,6 +220,14 @@
               <label class="xs-4">Speed</label>
               <input id="speed" type="range" min="0.1" max="4" step="0.1" value="1.0">
               <span class="val" id="speedV">1.0×</span>
+            </div>
+            <div class="row xs-3">
+              <label class="xs-4" for="timeMode">Timing</label>
+              <select id="timeMode" title="Deterministic keeps a fixed step count per frame; wall-clock follows real elapsed time with a catch-up cap.">
+                <option value="deterministic" selected>Deterministic</option>
+                <option value="wall-clock">Wall-clock demo</option>
+              </select>
+              <span class="val">mode</span>
             </div>
           </div>
 
@@ -339,14 +362,18 @@
             </summary>
             <div class="acc-body">
               <div class="row">
-                <label class="has-tip" data-tip="Symplectic integrators preserve energy over long simulations. RKF45 uses adaptive step-size control.">Method</label>
+                <label class="has-tip" data-tip="Symplectic integrators preserve energy over long simulations. Adaptive/high-order methods expose residual or error metadata.">Method</label>
                 <select id="method">
                   <option value="rk4" selected>RK4 (4th order)</option>
-                  <option value="rkf45">RKF45 — adaptive PI</option>
+                  <option value="rkf45">RKF45 — embedded 5(4)</option>
+                  <option value="dopri5">Dormand-Prince 5(4)</option>
+                  <option value="dop853">DOP853 — fixed 8th-order reference</option>
+                  <option value="gbs">Gragg-Bulirsch-Stoer</option>
                   <option value="hmidpoint">Canonical implicit midpoint — conditional symplectic</option>
                   <option value="leapfrog">Leapfrog KDK — pseudo-symplectic θ/ω</option>
                   <option value="yoshida4">Yoshida4 — pseudo-symplectic θ/ω</option>
                   <option value="gauss2">Implicit midpoint θ/ω</option>
+                  <option value="bdf2">TR-BDF2 — stiff L-stable</option>
                   <option value="symplectic">Symplectic Euler — separable approximation</option>
                   <option value="rk2">RK2 midpoint</option>
                   <option value="euler">Euler 1st</option>
@@ -358,7 +385,7 @@
                 <span class="val" id="dtV">0.0030</span>
               </div>
               <div class="row">
-                <label>tol (RKF45)</label>
+                <label>tol (adaptive/implicit)</label>
                 <input id="tol" type="range" min="-9" max="-3" step="0.5" value="-6">
                 <span class="val" id="tolV">1.0e-6</span>
               </div>

@@ -59,6 +59,7 @@ describe('public grouped API surface', () => {
       'diatomicDispersion',
       'diatomicDispersionCurve',
       'diatomicGroupVelocity',
+      'dop853Step',
       'doubleStringEnergy',
       'doubleStringEnergyFromTautState',
       'doubleStringTautFraction',

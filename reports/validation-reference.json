@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T04:09:58.457Z",
+  "generatedAt": "2026-07-09T11:09:23.392Z",
   "referenceMethod": "gbs",
   "checks": [
     {
@@ -61,6 +61,27 @@
       "agreement": {
         "value": 7.333192031389046e-8,
         "threshold": 0.01,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
+      "id": "verlet",
+      "name": "Velocity Verlet Alias",
+      "order": {
+        "measured": 2.0007783928982694,
+        "expected": 2,
+        "roundOffLimited": false,
+        "pass": true
+      },
+      "energy": {
+        "value": 0.23316304024106696,
+        "threshold": 5,
+        "pass": true
+      },
+      "agreement": {
+        "value": 0.0044217005730287084,
+        "threshold": 0.2,
         "pass": true
       },
       "pass": true
@@ -213,6 +234,27 @@
       "pass": true
     },
     {
+      "id": "dop853",
+      "name": "DOP853 8(5,3)",
+      "order": {
+        "measured": null,
+        "expected": 8,
+        "roundOffLimited": true,
+        "pass": true
+      },
+      "energy": {
+        "value": 7.476445239991923e-15,
+        "threshold": 0.01,
+        "pass": true
+      },
+      "agreement": {
+        "value": 9.459100169806334e-14,
+        "threshold": 0.000001,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
       "id": "gbs",
       "name": "Gragg-Bulirsch-Stoer",
       "order": {
@@ -256,7 +298,7 @@
     }
   ],
   "summary": {
-    "integrators": 12,
-    "passed": 12
+    "integrators": 14,
+    "passed": 14
   }
 }

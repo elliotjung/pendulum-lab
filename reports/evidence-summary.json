@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-evidence-summary/v1",
-  "generatedAt": "2026-07-07T13:57:53.708Z",
+  "generatedAt": "2026-07-09T11:30:28.413Z",
   "sourceReports": {
     "vitestResults": "reports/vitest-results.json",
     "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
@@ -10,14 +10,14 @@
     "gpuAdapterMatrix": "reports/gpu-adapter-matrix.json"
   },
   "tests": {
-    "total": 971,
-    "passed": 971,
+    "total": 982,
+    "passed": 982,
     "failed": 0,
-    "suites": 472,
-    "files": 150,
+    "suites": 482,
+    "files": 152,
     "success": true,
-    "generatedAt": "2026-07-07T13:57:00.639Z",
-    "passLabel": "971 / 971 pass"
+    "generatedAt": "2026-07-09T11:25:47.887Z",
+    "passLabel": "982 / 982 pass"
   },
   "validation": {
     "scipyAgreement": {

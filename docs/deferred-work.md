@@ -73,13 +73,13 @@ fully covered by the headless test suite.
 
 ## Deferred on correctness-risk grounds
 
-- **DOP853 (8th-order Dormand–Prince) integrator.** Its only advantage over the
-  existing high-order adaptive options (GBS extrapolation, DoPri5) is matching
-  SciPy's `solve_ivp` default for cross-validation, which requires the *exact*
-  Hairer 8(5,3) Butcher tableau. Hand-transcribing a 12-stage tableau risks subtle
-  coefficient errors that headless convergence tests would not catch against SciPy's
-  internals — defeating the purpose. Best added in a focused session with the
-  coefficients checked against Hairer's reference source.
+- **DOP853 dense output and SciPy-style adaptive controller parity.** The fixed
+  Hairer/SciPy DOP853 8(5,3) macro-step is now implemented and test-pinned in
+  `src/physics/integrators.ts`. What remains deferred is the optional
+  `solve_ivp`-style adaptive controller and dense-output interpolation. That
+  should be added only if the UI needs event-located DOP853 traces with exact
+  replay metadata; the current browser engine already has RKF45/DoPri5 adaptive
+  control and keeps SciPy DOP853 as the independent external oracle.
 - **Legacy public API removal.** `legacyCompat`, `copy-legacy-assets`, and
   deprecated globals remain guarded by `npm run audit:legacy`. Removing them is a
   major-version decision because older saved pages and reviewer artifacts may

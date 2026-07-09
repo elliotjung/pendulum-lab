@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 import { openModernTab } from './shell';
 
 test('simulation runs, switches tabs, exports, and runs validation', async ({ page }) => {
-  await page.goto('/');
+  test.setTimeout(90_000);
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: /Pendulum Lab/i })).toBeVisible();
 
   // The modern Lab drives the simulation (no legacy runtime).

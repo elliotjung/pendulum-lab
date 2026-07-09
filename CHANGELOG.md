@@ -57,7 +57,7 @@
 
 ## 10.35.0 - 2026-06-19
 
-### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 971)
+### Certified WebGPU chaos pipeline and reviewer release (additive; suite 940 -> 982)
 
 The GPU acceleration claim now covers the missing chaos diagnostics without
 pretending beyond the verified scope.
@@ -484,7 +484,7 @@ Reproducibility-package exporter for machine-checkable run provenance. 121 unit 
 
 Integrator reference-validation suite proving each method matches trusted references. 111 unit tests pass.
 
-- **`src/validation/referenceSuite.ts`** validates every registered integrator three ways: (1) **theoretical convergence order** on the harmonic oscillator (closed form) — every method hits its order (euler 1.03, rk2/leapfrog/hmidpoint/bdf2 2.00, rk4/yoshida4/gauss2 4.00, rkf45/dopri5 5.00, gbs round-off-limited); (2) **energy-conservation envelope** on the conservative double pendulum; (3) **agreement** with the highest-accuracy method (`gbs`) as a numerical reference, reported as max state divergence. Result: **12 / 12 integrators within their expected envelopes.**
+- **`src/validation/referenceSuite.ts`** validates every registered integrator three ways: (1) **theoretical convergence order** on the harmonic oscillator (closed form) — every method hits its order (euler 1.03, rk2/leapfrog/hmidpoint/bdf2 2.00, rk4/yoshida4/gauss2 4.00, rkf45/dopri5 5.00, gbs round-off-limited); (2) **energy-conservation envelope** on the conservative double pendulum; (3) **agreement** with the highest-accuracy method (`gbs`) as a numerical reference, reported as max state divergence. Result: every then-registered integrator landed within its expected envelope.
 - Grading is done by pure helpers (`gradeOrder`, `gradeBelow`) that are unit-tested directly (`tests/reference-validation.test.ts`, 10 tests), alongside structural assertions on the full run (orders met, gbs self-agreement is exactly 0, higher-order methods beat Euler, no NaN/Inf blow-ups).
 - **`npm run validate:reference`** (`scripts/validate-reference.ts`, pure Node/tsx) writes `reports/validation-reference.{md,json}` and exits non-zero if any integrator falls outside its envelope.
 

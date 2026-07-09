@@ -2,8 +2,9 @@
 
 A framework-free, zero-runtime-dependency TypeScript platform for nonlinear
 pendulum dynamics: 8 physical systems (double/triple/N-chain, driven, spring,
-rope/string, double-string, **3D spherical N-chain**), 12 measured-order
-integrators, a full chaos-diagnostics stack with uncertainties, and a
+rope/string, double-string, **3D spherical N-chain**), 13 primary measured-order
+integrators (14 registered validation IDs including the velocity-Verlet alias),
+a full chaos-diagnostics stack with uncertainties, and a
 reproducibility pipeline (provenance, SHA-256 bundles, executable notebooks).
 Every quantitative output carries a clickable Trust Inspector badge:
 *visual-only → finite-time estimate → validated → publication-ready*
@@ -38,7 +39,7 @@ no server) — or:
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 971 unit tests
+npm test           # 982 unit tests
 npm run evidence:summary # sync README/landing evidence numbers from reports
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
@@ -62,7 +63,7 @@ UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 
 | # | Claim | Equation / method | Parameters | Reproduce | Evidence (JSON/report) | Caveat |
 |---|---|---|---|---|---|---|
-| 1 | All 12 integrators converge at their theoretical order | dt-halving order fit per method | double pendulum, θ=(2.0, 2.5), dt halvings from 8 ms | `npm run validate:reference` | `reports/validation-reference.json` | adaptive methods report effective order |
+| 1 | All 14 registered integrator IDs converge at their theoretical order | dt-halving order fit per method | double pendulum, θ=(2.0, 2.5), dt halvings from 8 ms | `npm run validate:reference` | `reports/validation-reference.json` | includes the velocity-Verlet alias; adaptive methods report effective order |
 | 2 | Engine RHS matches an independent SymPy symbolic derivation | component-wise Euler–Lagrange comparison at random states | double, triple, spherical double/triple; ~1e-14 agreement | `npm run validate:sympy` | `reports/sympy-validation.json` | needs python+sympy |
 | 3 | Trajectories match SciPy DOP853 externally | same IC/params, rtol=atol=1e-12, 20 s | double & triple, regular ≈6e-14; chaotic to the e^{λt} floor | `npm run validate:cross` | `reports/cross-validation.json` | chaotic comparison limited by exponential amplification |
 | 4 | Period-doubling onset matches literature | Floquet multiplier −1 crossing on the stroboscopic map | driven pendulum γ=0.5, ω=2/3; A_PD measured 1.0664 vs published 1.0663 | `npm run validate:literature` | `reports/literature-anchors.json` | onset localized to continuation tolerance 1e-10 |
@@ -85,8 +86,9 @@ Final publication checklist:
 
 ## What's inside (short version)
 
-- **Numerics** — Euler → RK4, embedded RKF45 & Dormand–Prince 5(4),
-  Gauss–Legendre, Yoshida-4, Gragg–Bulirsch–Stoer, L-stable TR-BDF2.
+- **Numerics** — Euler → RK4, embedded RKF45, Dormand–Prince 5(4),
+  DOP853 8(5,3), Gauss–Legendre, Yoshida-4, Gragg–Bulirsch–Stoer,
+  L-stable TR-BDF2.
 - **Physics** — planar double/triple/N-chain, driven/damped, elastic spring,
   rope/string and double-string (unilateral tension gates, hybrid
   slack/recapture), spherical pendulum and spherical N-chain (full 3D
@@ -129,7 +131,7 @@ Final publication checklist:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (971 tests across 150 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (982 tests across 152 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

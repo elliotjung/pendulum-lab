@@ -6,6 +6,7 @@ import {
   WORKER_FALLBACK_EVENT,
   type WorkerFallbackNoticeDetail
 } from '../src/runtime/workerFallbackNotice';
+import { WorkerBridge } from '../src/runtime/WorkerBridge';
 
 const globalWindow = globalThis as typeof globalThis & { window?: Window };
 
@@ -82,5 +83,23 @@ describe('worker fallback notice', () => {
     expect(detail.jobSizeWarning).toContain('Large ftle job');
     expect(events[0]!.detail.jobSizeWarning).toContain('block rendering');
     expect(toasts[0]).toContain('Large ftle job');
+  });
+
+  test('WorkerBridge falls back to main-thread stepping when Worker is unavailable', async () => {
+    const { events } = installFakeWindow('http:');
+    const originalWorker = Object.getOwnPropertyDescriptor(globalThis, 'Worker');
+    Object.defineProperty(globalThis, 'Worker', { configurable: true, value: undefined });
+    try {
+      const bridge = new WorkerBridge();
+      const result = await bridge.step({ state: [1, 0], dt: 0.01, steps: 2, method: 'rk4' });
+
+      expect(result.fallback).toBe(true);
+      expect(result.state).toHaveLength(2);
+      expect(result.state.every(Number.isFinite)).toBe(true);
+      expect(events.at(-1)?.detail.scope).toBe('physics-worker');
+    } finally {
+      if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
+      else Reflect.deleteProperty(globalThis, 'Worker');
+    }
   });
 });
