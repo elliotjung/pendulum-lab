@@ -3,19 +3,27 @@ import { commandRegistry, installDefaultCommands } from './runtime/CommandRegist
 import { eventBus } from './runtime/EventBus';
 import { stateStore } from './state/StateStore';
 import { physicsAdapter } from './physics';
-import { installJsonImportGuard } from './validation/importSchema';
+import { installJsonImportGuard } from './browser/installJsonImportGuard';
 import { runAllValidationChecks } from './validation/validationSuite';
 import { installPerformanceProbe } from './render/performance';
 import { installAccessibilityEnhancements } from './ui/accessibility';
 import { workerBridge } from './runtime/WorkerBridge';
 import { installPendulumRuntime } from './runtime/PendulumRuntime';
 import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabProbe, maybeMountModernShell } from './app/bootstrap';
+import { installTrustDrawer } from './app/trustDrawer';
 import { installUiPolish } from './app/UiPolish';
 import { installHudEffects } from './app/hudEffects';
 import { installKineticOverdrive } from './app/kineticOverdrive';
 import { installEducationCards } from './app/educationCards';
 import { publishPublicApi } from './runtime/globalApi';
-import { applyAudienceMode, currentAudienceMode, installAudienceMode } from './app/audienceMode';
+import {
+  AUDIENCE_MODE_CHANGED_EVENT,
+  applyAudienceMode,
+  currentAudienceMode,
+  hasExplicitAudienceMode,
+  installAudienceMode
+} from './app/audienceMode';
+import { TAB_ACTIVATED_EVENT } from './app/Shell';
 import { initNavLocale, installLocaleSelect } from './app/uiLocale';
 import { installOnboardingTour } from './app/onboardingTour';
 import { APP_VERSION } from './runtime/version';
@@ -92,6 +100,9 @@ function bootSafety(): void {
   installJsonImportGuard();
   installPerformanceProbe();
   installAccessibilityEnhancements();
+  // The Trust & Diagnostics drawer must exist before the parity layer mounts
+  // its health/validation/provenance/performance/fault cards into it.
+  installTrustDrawer();
 }
 
 /**
@@ -112,6 +123,29 @@ async function bootSimulation(): Promise<void> {
 async function bootResearch(): Promise<void> {
   const { installFeatureParityLayer } = await import('./app/FeatureParityLayer');
   installFeatureParityLayer();
+}
+
+const RESEARCH_SURFACE_TABS = new Set(['architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs']);
+let researchBoot: Promise<void> | null = null;
+
+function ensureResearch(tabAfterInstall?: string): Promise<void> {
+  researchBoot ??= bootResearch();
+  return researchBoot.then(() => {
+    if (tabAfterInstall) {
+      (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabAfterInstall);
+    }
+  });
+}
+
+function armResearchOnDemand(): void {
+  document.addEventListener(AUDIENCE_MODE_CHANGED_EVENT, (event) => {
+    const mode = (event as CustomEvent<{ mode?: string }>).detail?.mode;
+    if (mode === 'research') void ensureResearch();
+  });
+  document.addEventListener(TAB_ACTIVATED_EVENT, (event) => {
+    const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
+    if (tab && RESEARCH_SURFACE_TABS.has(tab) && researchBoot === null) void ensureResearch(tab);
+  });
 }
 
 /**
@@ -135,8 +169,9 @@ async function boot(): Promise<void> {
   bootCoreRuntime();
   bootSafety();
   await bootSimulation();
-  await bootResearch();
+  armResearchOnDemand();
   bootShell();
+  if (hasExplicitAudienceMode() && currentAudienceMode() === 'research') void ensureResearch();
 }
 
 if (document.readyState === 'loading') {

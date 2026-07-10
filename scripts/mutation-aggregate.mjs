@@ -73,12 +73,14 @@ for (const reportPath of reports) {
 
 const mutationScore = total > 0 ? (100 * killedLike) / total : 0;
 const coveredScore = coveredTotal > 0 ? (100 * coveredKilledLike) / coveredTotal : 0;
-const status = mutationScore >= thresholds.break ? 'passed' : 'failed';
+const gatePassed = mutationScore >= thresholds.break;
+const status = mutationScore >= thresholds.high ? 'high' : mutationScore >= thresholds.low ? 'standard' : 'low';
 const generatedAt = new Date().toISOString();
 const summary = {
   schemaVersion: 'pendulum-mutation-aggregate/v1',
   generatedAt,
   status,
+  gatePassed,
   thresholds,
   reportCount: reports.length,
   total,
@@ -101,7 +103,8 @@ writeFileSync(path.join(outDir, 'mutation-aggregate.md'), [
   'Reports: ' + reports.length,
   'Total score: ' + summary.mutationScore + '%',
   'Covered score: ' + summary.coveredMutationScore + '%',
-  'Threshold: break >= ' + thresholds.break + '%',
+  'Quality band: ' + status,
+  'Regression floor: ' + thresholds.break + '% (' + (gatePassed ? 'passed' : 'failed') + ')',
   '',
   '```json',
   JSON.stringify(summary.statusCounts, null, 2),
@@ -109,5 +112,5 @@ writeFileSync(path.join(outDir, 'mutation-aggregate.md'), [
   ''
 ].join('\n'));
 
-console.log('Mutation aggregate: ' + summary.mutationScore + '% total, ' + summary.coveredMutationScore + '% covered across ' + reports.length + ' shard reports.');
-if (status !== 'passed') process.exit(1);
+console.log('Mutation aggregate: ' + summary.mutationScore + '% total (' + status + ' band), ' + summary.coveredMutationScore + '% covered across ' + reports.length + ' shard reports.');
+if (!gatePassed) process.exit(1);

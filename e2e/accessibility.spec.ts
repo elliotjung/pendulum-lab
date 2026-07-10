@@ -35,3 +35,18 @@ test('dynamic canvases and rail controls receive stable accessible names', async
   expect(railLabel).toBeTruthy();
   expect(railLabel).not.toBe('SSim');
 });
+
+test('diagnostics drawer manages keyboard focus and system accessibility preferences', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+  await page.goto('/?audience=student');
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
+  expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+  expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+
+  await page.locator('#trustDrawerToggle').click();
+  await expect(page.locator('#trustDrawer')).toBeVisible();
+  expect(await page.evaluate(() => document.activeElement?.id)).toBe('trustDrawer');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#trustDrawer')).toBeHidden();
+  expect(await page.evaluate(() => document.activeElement?.id)).toBe('trustDrawerToggle');
+});

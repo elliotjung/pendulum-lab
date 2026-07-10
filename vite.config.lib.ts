@@ -17,7 +17,10 @@ export default defineConfig({
         core: 'src/lib/core.ts',
         analysis: 'src/lib/analysis.ts',
         research: 'src/lib/research.ts',
-        experimental: 'src/lib/experimental.ts'
+        experimental: 'src/lib/experimental.ts',
+        browser: 'src/lib/browser.ts',
+        worker: 'src/lib/worker.ts',
+        node: 'src/lib/node.ts'
       },
       name: 'PendulumLabCore',
       formats: ['es'],

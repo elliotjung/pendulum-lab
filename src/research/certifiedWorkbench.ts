@@ -249,7 +249,7 @@ export const REVIEWER_KIT_ARTIFACTS: readonly ReviewerKitArtifact[] = [
   {
     id: 'mutation-aggregate',
     path: 'reports/mutation-aggregate.json',
-    command: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85',
+    command: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85',
     priority: 'recommended',
     description: 'Nightly sharded Stryker aggregate with total/covered mutation scores and status counts.'
   },

@@ -14,6 +14,9 @@ import { takeOverElement } from './domTakeover';
  */
 
 const KNOWN_TABS = ['lab', 'compare', 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion', 'matrix', 'validate', 'golden', 'zeroone', 'clv', 'basin', 'rqa', 'ftle', 'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs'];
+
+/** Fired on document whenever a tab becomes active; detail: `{ tab }`. */
+export const TAB_ACTIVATED_EVENT = 'pendulum:tab-activated';
 const PANEL_COLLAPSED_KEY = 'pendulum-lab/ui/panel-collapsed';
 const TAB_KEYS: Record<string, string> = { '1': 'lab', '2': 'compare', '3': 'lyap', '4': 'sweep', '5': 'bifurc', '6': 'phase3d', '7': 'density', '8': 'validate', '9': 'architecture', '0': 'research' };
 
@@ -80,6 +83,8 @@ export class Shell {
     const app = (window as Window & { App?: { activeTab?: string } }).App;
     if (app) app.activeTab = name;
     this.syncRailSectionForTab(name);
+    // Lazily-mounted collaborators (analysis tab controllers) listen for this.
+    document.dispatchEvent(new CustomEvent(TAB_ACTIVATED_EVENT, { detail: { tab: name } }));
   }
 
   private openRailSection(name: string): void {

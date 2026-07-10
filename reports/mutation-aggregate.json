@@ -1,11 +1,12 @@
 {
   "schemaVersion": "pendulum-mutation-aggregate/v1",
   "generatedAt": "2026-07-03T16:45:41.502Z",
-  "status": "passed",
+  "status": "low",
+  "gatePassed": true,
   "thresholds": {
     "high": 85,
     "low": 70,
-    "break": 60
+    "break": 65
   },
   "reportCount": 29,
   "total": 6633,

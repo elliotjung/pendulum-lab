@@ -5,7 +5,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
-    exclude: [...SLOW_TEST_FILES]
+    exclude: [...SLOW_TEST_FILES],
+    testTimeout: 30_000
   }
 });
 

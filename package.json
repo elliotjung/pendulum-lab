@@ -55,6 +55,18 @@
     "./experimental": {
       "types": "./dist-lib/types/lib/experimental.d.ts",
       "import": "./dist-lib/experimental.js"
+    },
+    "./browser": {
+      "types": "./dist-lib/types/lib/browser.d.ts",
+      "import": "./dist-lib/browser.js"
+    },
+    "./worker": {
+      "types": "./dist-lib/types/lib/worker.d.ts",
+      "import": "./dist-lib/worker.js"
+    },
+    "./node": {
+      "types": "./dist-lib/types/lib/node.d.ts",
+      "import": "./dist-lib/node.js"
     }
   },
   "files": [
@@ -65,6 +77,9 @@
     "docs/api-overview.md"
   ],
   "sideEffects": false,
+  "overrides": {
+    "qs": "^6.15.3"
+  },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build && node scripts/copy-legacy-assets.mjs",
@@ -82,7 +97,7 @@
     "test:slow": "vitest run --config vitest.slow.config.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:mainline": "playwright test e2e/smoke.spec.ts e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/research-design.spec.ts e2e/research-workbench.spec.ts e2e/trust-inspector.spec.ts e2e/long-run-performance.spec.ts e2e/performance-smoke.spec.ts --project=chromium",
+    "test:e2e:mainline": "playwright test e2e/smoke.spec.ts e2e/accessibility.spec.ts e2e/lazy-mount.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/research-design.spec.ts e2e/research-workbench.spec.ts e2e/trust-inspector.spec.ts e2e/long-run-performance.spec.ts e2e/performance-smoke.spec.ts --project=chromium",
     "test:visual": "playwright test e2e/visual-regression.spec.ts --project=chromium",
     "smoke": "playwright test e2e/smoke.spec.ts --project=chromium",
     "test:webgpu-hardware": "playwright test e2e/webgpu-hardware-reductions.spec.ts --project=chromium",
@@ -116,6 +131,7 @@
     "notebook": "tsx scripts/research-notebook.ts",
     "notebook:validate": "tsx scripts/validate-notebook.ts",
     "reports": "tsx scripts/generate-validation-report.ts",
+    "audit:deps": "npm audit --audit-level=high",
     "audit:modules": "tsx scripts/audit-module-size.ts",
     "audit:legacy": "tsx scripts/audit-legacy.ts",
     "audit:mojibake": "tsx scripts/audit-mojibake.ts",
@@ -130,17 +146,18 @@
     "mutation:aggregate": "node scripts/mutation-aggregate.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.44.0",
-    "@stryker-mutator/core": "^8.7.1",
-    "@stryker-mutator/vitest-runner": "^8.7.1",
-    "@types/node": "^20.12.12",
-    "@vitest/coverage-v8": "^1.6.0",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.61.1",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
+    "@types/node": "^22.18.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "fake-indexeddb": "^6.2.5",
-    "tsx": "^4.11.0",
+    "tsx": "^4.23.0",
     "typedoc": "^0.28.19",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "vite": "^8.1.4",
     "vite-plugin-singlefile": "^2.3.3",
-    "vitest": "^1.6.0"
+    "vitest": "^4.1.10"
   }
 }

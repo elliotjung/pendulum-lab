@@ -1,70 +1,112 @@
 {
-  "generatedAt": "2026-06-18T16:54:19.233Z",
+  "schemaVersion": 2,
+  "mode": "profile",
+  "generatedAt": "2026-07-10T02:32:35.370Z",
+  "environment": {
+    "commitSha": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+    "dirtyWorktree": true,
+    "packageVersion": "10.35.0",
+    "browser": "149.0.7827.55",
+    "os": "win32 10.0.26200",
+    "cpu": "Intel(R) Core(TM) Ultra 7 256V",
+    "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "devicePixelRatio": 1,
+    "nodeVersion": "v26.3.0"
+  },
   "results": [
     {
-      "label": "original",
+      "label": "candidate",
       "url": "http://127.0.0.1:5173/",
-      "fps": 8.759379835968595,
-      "physicsMsPerFrame": 0.09999996423721313,
-      "memoryBytes": 11900000,
-      "workerLatencyMs": null
+      "sampleIndex": -1,
+      "fps": 8.525392403415331,
+      "physicsMsPerFrame": 0.14999999944120646,
+      "renderMsPerFrame": 0.14999999944120646,
+      "workerLatencyMs": 0.5,
+      "memoryBytes": 13400000,
+      "longTaskMs": 186
+    }
+  ],
+  "samples": [
+    {
+      "label": "candidate",
+      "url": "http://127.0.0.1:5173/",
+      "sampleIndex": 0,
+      "fps": 8.776292309040594,
+      "physicsMsPerFrame": 0.19999999925494194,
+      "renderMsPerFrame": 0.19999999925494194,
+      "workerLatencyMs": 0.5,
+      "memoryBytes": 13400000,
+      "longTaskMs": 210
     },
     {
       "label": "candidate",
       "url": "http://127.0.0.1:5173/",
-      "fps": 8.847208705560057,
-      "physicsMsPerFrame": 0.19999998807907104,
+      "sampleIndex": 1,
+      "fps": 8.274492497790067,
+      "physicsMsPerFrame": 0.09999999962747097,
+      "renderMsPerFrame": 0.09999999962747097,
+      "workerLatencyMs": 0.5,
       "memoryBytes": 13400000,
-      "workerLatencyMs": null
+      "longTaskMs": 162
     }
   ],
-  "comparison": {
-    "originalUrl": "http://127.0.0.1:5173/",
-    "candidateUrl": "http://127.0.0.1:5173/",
-    "sameUrl": true,
-    "failOnRegression": false,
-    "deltas": [
-      {
+  "aggregates": {
+    "candidate": {
+      "fps": {
         "metric": "fps",
-        "original": 8.759379835968595,
-        "candidate": 8.847208705560057,
-        "delta": 0.08782886959146197,
-        "relativeDelta": 0.010026836515390136,
-        "threshold": 0.25,
-        "direction": "higher-is-better",
-        "status": "pass"
+        "samples": [
+          8.776292309040594,
+          8.274492497790067
+        ],
+        "median": 8.525392403415331,
+        "mad": 0.3719842000800152
       },
-      {
+      "physicsMsPerFrame": {
         "metric": "physicsMsPerFrame",
-        "original": 0.09999996423721313,
-        "candidate": 0.19999998807907104,
-        "delta": 0.10000002384185791,
-        "relativeDelta": 1.000000596046661,
-        "threshold": 0.25,
-        "direction": "lower-is-better",
-        "status": "warn"
+        "samples": [
+          0.19999999925494194,
+          0.09999999962747097
+        ],
+        "median": 0.14999999944120646,
+        "mad": 0.07412999972384422
       },
-      {
+      "renderMsPerFrame": {
+        "metric": "renderMsPerFrame",
+        "samples": [
+          0.19999999925494194,
+          0.09999999962747097
+        ],
+        "median": 0.14999999944120646,
+        "mad": 0.07412999972384422
+      },
+      "memoryBytes": {
         "metric": "memoryBytes",
-        "original": 11900000,
-        "candidate": 13400000,
-        "delta": 1500000,
-        "relativeDelta": 0.12605042016806722,
-        "threshold": 50000000,
-        "direction": "lower-is-better",
-        "status": "pass"
+        "samples": [
+          13400000,
+          13400000
+        ],
+        "median": 13400000,
+        "mad": 0
       },
-      {
+      "workerLatencyMs": {
         "metric": "workerLatencyMs",
-        "original": null,
-        "candidate": null,
-        "delta": null,
-        "relativeDelta": null,
-        "threshold": 0.25,
-        "direction": "lower-is-better",
-        "status": "missing"
+        "samples": [
+          0.5,
+          0.5
+        ],
+        "median": 0.5,
+        "mad": 0
+      },
+      "longTaskMs": {
+        "metric": "longTaskMs",
+        "samples": [
+          210,
+          162
+        ],
+        "median": 186,
+        "mad": 35.5824
       }
-    ],
-    "status": "warn"
-  }
+    }
+  },
+  "comparison": null
 }

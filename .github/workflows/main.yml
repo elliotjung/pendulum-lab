@@ -5,6 +5,13 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: mainline-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   full-validation:
     runs-on: ubuntu-latest
@@ -15,6 +22,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run audit:deps
       - run: npm run verify
       - run: npm run test:slow
       - run: npm run test:coverage
@@ -32,13 +40,15 @@ jobs:
           python-version: '3.12'
       - run: npm run notebook:validate
       - run: npx playwright install --with-deps chromium firefox webkit
+      # Single-build profile (median of 5 samples + environment metadata).
+      # Honest A/B comparison against the merge-base runs on PRs (ci.yml
+      # benchmark-compare); mainline keeps the longitudinal memory gate below.
       - run: npm run benchmark
-      # Memory regression is a HARD gate now that a stable committed baseline
-      # exists (reports/memory-baseline.json, PASS with ~44x headroom). The
-      # condition keeps CI green if the baseline is ever intentionally removed.
+      # Memory regression is a HARD gate: min(50 MB absolute, 20% relative)
+      # growth over the committed baseline (reports/memory-baseline.json).
       - run: npm run benchmark:memory
         env:
-          MEMORY_FAIL_ON_REGRESSION: ${{ hashFiles('reports/memory-baseline.json') != '' && '1' || '' }}
+          MEMORY_FAIL_ON_REGRESSION: ${{ hashFiles('reports/memory-baseline.json') != '' && '1' || '0' }}
       - run: npm run flagship:certify
       - run: npm run flagship:external
       - run: npm run release:package

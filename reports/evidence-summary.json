@@ -1,13 +1,23 @@
 {
   "schemaVersion": "pendulum-evidence-summary/v1",
-  "generatedAt": "2026-07-09T11:30:28.413Z",
+  "generatedAt": "2026-07-10T07:45:40.372Z",
   "sourceReports": {
     "vitestResults": "reports/vitest-results.json",
     "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
     "publicationStatus": "reports/publication-status.json",
     "literatureAnchors": "reports/literature-anchors.json",
     "crossValidation": "reports/cross-validation.json",
-    "gpuAdapterMatrix": "reports/gpu-adapter-matrix.json"
+    "gpuAdapterMatrix": "reports/gpu-adapter-matrix.json",
+    "mutationAggregate": "reports/mutation-aggregate.json",
+    "energyBenchmark": "reports/energy-benchmark.json"
+  },
+  "provenance": {
+    "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+    "packageVersion": "10.35.0",
+    "lockfileSha256": "23ef43233734131116f1d598ea7f31b6159c63ba16b4c5607b01291c7d9b7e3c",
+    "dirtyWorktree": true,
+    "expiresAfterDays": 14,
+    "expiresAt": "2026-07-24T07:45:40.372Z"
   },
   "tests": {
     "total": 982,
@@ -16,7 +26,7 @@
     "suites": 482,
     "files": 152,
     "success": true,
-    "generatedAt": "2026-07-09T11:25:47.887Z",
+    "generatedAt": "2026-07-10T07:45:12.778Z",
     "passLabel": "982 / 982 pass"
   },
   "validation": {
@@ -41,6 +51,20 @@
       "display": "1.018774 vs 1.018774"
     },
     "literatureAllPass": true
+  },
+  "mutation": {
+    "status": "low",
+    "score": 65.32,
+    "coveredScore": 68.34,
+    "reportCount": 29,
+    "survived": 2006,
+    "noCoverage": 293
+  },
+  "energy": {
+    "profiledMethods": 13,
+    "stepsPerMethod": 100000,
+    "bestMethod": "Gragg-Bulirsch-Stoer",
+    "bestMaxRelativeDrift": 8.974070677127805e-13
   },
   "reviewerKit": {
     "status": "ready",
@@ -73,6 +97,74 @@
       "No matching public Zenodo DOI record resolves for Pendulum Lab."
     ]
   },
+  "claims": [
+    {
+      "id": "tests.unit",
+      "displayValue": "982 / 982 pass",
+      "status": "passed",
+      "uncertainty": null,
+      "sourceReport": "reports/vitest-results.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": null,
+      "reproduce": "npm run verify",
+      "publicUrl": null
+    },
+    {
+      "id": "validation.scipy.regular",
+      "displayValue": "~6e-14",
+      "status": "passed",
+      "uncertainty": "Maximum observed divergence for regular reference cases",
+      "sourceReport": "reports/cross-validation.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": "Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.",
+      "reproduce": "npm run validate:cross",
+      "publicUrl": null
+    },
+    {
+      "id": "testing.mutation",
+      "displayValue": "65.32%",
+      "status": "low",
+      "uncertainty": null,
+      "sourceReport": "reports/mutation-aggregate.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": "Below the 70% quality target; the 65% regression floor is enforced.",
+      "reproduce": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
+      "publicUrl": null
+    },
+    {
+      "id": "benchmark.energy.methods",
+      "displayValue": "13 methods profiled",
+      "status": "measured",
+      "uncertainty": "Method-specific drift; no universal pass envelope",
+      "sourceReport": "reports/energy-benchmark.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": "Compare each method against its documented order and structure-preservation behavior.",
+      "reproduce": "npm run benchmark:energy",
+      "publicUrl": null
+    },
+    {
+      "id": "gpu.vendor-matrix",
+      "displayValue": "1 / 3 vendors",
+      "status": "partial",
+      "uncertainty": null,
+      "sourceReport": "reports/gpu-adapter-matrix.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.",
+      "reproduce": "npm run benchmark:gpu-matrix",
+      "publicUrl": null
+    },
+    {
+      "id": "publication.release",
+      "displayValue": "partial",
+      "status": "partial",
+      "uncertainty": null,
+      "sourceReport": "reports/publication-status.json",
+      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "caveat": "npm registry does not resolve this exact package version. No matching public Zenodo DOI record resolves for Pendulum Lab.",
+      "reproduce": "npm run release:status",
+      "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reviewer.html"
+    }
+  ],
   "finalization": [
     {
       "id": "npm-publish",

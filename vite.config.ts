@@ -57,8 +57,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: 'app.html',
-        reviewer: 'reviewer.html',
-        indexRuntime: 'src/main.ts'
+        reviewer: 'reviewer.html'
       },
       output: {
         entryFileNames: 'assets/[name]-[hash].js',
@@ -73,9 +72,11 @@ export default defineConfig({
           const path = id.replace(/\\/g, '/');
           if (!path.includes('/src/')) return undefined;
           if (path.includes('/src/app/parity/') || path.endsWith('/src/app/FeatureParityLayer.ts')) return 'research-ui';
-          if (/\/src\/app\/(?:LyapunovTab|ValidationTab|SweepTab|CompareTab|BifurcationTab|Phase3DTab|DensityTab|ExpansionLabTab|ResearchMatrixTab|GoldenCenterTab|ZeroOneTab|ClvTab|BasinTab|RqaTab|FtleTab|ResearchPlusTab|TabController|resultBadges|DomBinder)\.ts$/.test(path)) {
-            return 'app-tabs';
-          }
+          // One chunk per analysis tab so the lazy per-tab mount in
+          // bootstrap.ts defers each tab's bytes until activation.
+          const tab = /\/src\/app\/(LyapunovTab|ValidationTab|SweepTab|CompareTab|BifurcationTab|Phase3DTab|DensityTab|ExpansionLabTab|ResearchMatrixTab|GoldenCenterTab|ZeroOneTab|ClvTab|BasinTab|RqaTab|FtleTab|ResearchPlusTab)\.ts$/.exec(path);
+          if (tab) return `tab-${tab[1]!.toLowerCase()}`;
+          if (/\/src\/app\/(?:TabController|resultBadges|DomBinder)\.ts$/.test(path)) return 'app-tabs';
           if (path.includes('/src/physics/')) return 'physics';
           if (path.includes('/src/chaos/')) return 'chaos';
           if (path.includes('/src/research/')) return 'research';

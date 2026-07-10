@@ -226,7 +226,7 @@ async function render(): Promise<void> {
       source: sources.mutation,
       parameters: json(data.mutation.thresholds ?? {}),
       validation: json(data.mutation.statusCounts ?? {}),
-      reproduce: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85',
+      reproduce: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85',
       caveat: 'Nightly CI artifact is the source of truth; refresh this root report after mutation scope changes.'
     },
     {

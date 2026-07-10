@@ -9,6 +9,7 @@ test('Trust Inspector opens from result badges and exposes reproducibility field
     (window as unknown as { __modernShell: { switchTo(name: string): void } }).__modernShell.switchTo('validate');
   });
   await page.waitForFunction(() => document.getElementById('tab-validate')?.classList.contains('active'));
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation));
   await expect(page.locator('#tab-validate')).toBeVisible();
   await page.evaluate(() => document.getElementById('runValidation')?.click());
   await page.waitForFunction(() => (document.getElementById('validateResults')?.childElementCount ?? 0) >= 5, undefined, { timeout: 15000 });

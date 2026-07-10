@@ -26,6 +26,7 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
 
   // Tab switching (modern shell).
   await openModernTab(page, 'validate', '#tab-validate');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation));
 
   // Validation (modern ValidationTab).
   await expect(page.locator('#runValidation')).toBeVisible();

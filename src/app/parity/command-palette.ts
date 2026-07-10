@@ -6,9 +6,16 @@ let commandPaletteReturnFocus: HTMLElement | null = null;
 
 export function installCommandPalettes(): void {
   if (!$('rgv7Palette')) {
-    const palette = html('div', { id: 'rgv7Palette', className: 'rgv7-palette v10-sr', role: 'dialog', ariaLabel: 'Legacy command palette anchor' });
+    // Legacy anchor: kept for id-compat tooling only. It is fully removed
+    // from the accessibility tree and focus order (hidden + inert) so it does
+    // not surface as a phantom dialog/input to assistive tech.
+    const palette = html('div', { id: 'rgv7Palette', className: 'rgv7-palette v10-sr' });
+    palette.setAttribute('hidden', '');
+    palette.setAttribute('aria-hidden', 'true');
+    palette.inert = true;
     const box = html('div', { className: 'rgv7-palette-box' });
-    const input = html('input', { id: 'rgv7CmdInput', ariaLabel: 'Search commands' });
+    const input = html('input', { id: 'rgv7CmdInput' });
+    input.tabIndex = -1;
     const list = html('div', { id: 'rgv7CmdList', className: 'rgv7-cmd-list' });
     input.addEventListener('input', () => renderCommandList(input.value));
     append(box, input, list);
@@ -52,8 +59,13 @@ export function installCommandPalettes(): void {
     document.body.append(box);
   }
   if (!$('cmdPalette')) {
-    const legacy = html('div', { id: 'cmdPalette', className: 'v10-sr', role: 'dialog', ariaLabel: 'legacy command palette anchor' });
-    legacy.append(html('input', { id: 'cmdInput', ariaLabel: 'legacy command input' }));
+    const legacy = html('div', { id: 'cmdPalette', className: 'v10-sr' });
+    legacy.setAttribute('hidden', '');
+    legacy.setAttribute('aria-hidden', 'true');
+    legacy.inert = true;
+    const legacyInput = html('input', { id: 'cmdInput' });
+    legacyInput.tabIndex = -1;
+    legacy.append(legacyInput);
     document.body.append(legacy);
   }
   if (!commandPaletteKeyboardInstalled) {

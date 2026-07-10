@@ -14,6 +14,18 @@ import { generateParameterStudy, rebuildComparisonMatrix, runStudyBatch, saveCur
 import { exportPaperFigureManifestJson, exportPaperFiguresHtml, exportPaperMethodsLatex, exportPaperPackJson, exportResearchBundleJson, exportResearchNotebook } from './figure-export';
 import { $ } from './shared';
 import { showCommandPalette } from './command-palette';
+import { trustSection, type TrustSection } from '../trustDrawer';
+
+/**
+ * Mount a trust/governance card into its Trust & Diagnostics drawer section,
+ * falling back to the legacy in-page anchor when the drawer markup is absent
+ * (older shells, tests that stub the DOM).
+ */
+function mountTrustCard(section: TrustSection, node: HTMLElement, fallback: () => void): void {
+  const host = trustSection(section);
+  if (host) host.append(node);
+  else fallback();
+}
 
 export { hideCommandPalette, installCommandPalettes, renderCommandList, showCommandPalette } from './command-palette';
 
@@ -217,7 +229,7 @@ export function installStablePanel(): void {
   const panel = html('section', { id: 'stableIntuitivePanel', className: 'si-panel' });
   const top = html('div', { className: 'si-top' });
   const titleBlock = html('div');
-  append(titleBlock, html('div', { className: 'si-title', text: 'Stable Control Layer' }), html('div', { className: 'si-desc', text: 'Runtime assist layer. Auto-actions are disabled in Research and Benchmark modes.' }));
+  append(titleBlock, html('div', { className: 'si-title', text: 'Simulation Assistance' }), html('div', { className: 'si-desc', text: 'Runtime assistance. Auto-actions are disabled in Research and Benchmark modes.' }));
   const status = html('div', { className: 'si-status' });
   append(
     status,
@@ -250,9 +262,11 @@ export function installStablePanel(): void {
   append(searchWrap, search, html('div', { className: 'si-small', text: 'Filter settings by label or id.' }));
   append(guide, html('div', { id: 'siAdvice', className: 'si-note', text: 'Status: initializing' }), searchWrap);
   append(panel, top, guide);
-  const anchor = document.querySelector('.diag-row') ?? document.querySelector('header');
-  if (anchor?.parentNode) anchor.parentNode.insertBefore(panel, anchor.nextSibling);
-  else document.body.prepend(panel);
+  mountTrustCard('performance', panel, () => {
+    const anchor = document.querySelector('.diag-row') ?? document.querySelector('header');
+    if (anchor?.parentNode) anchor.parentNode.insertBefore(panel, anchor.nextSibling);
+    else document.body.prepend(panel);
+  });
 }
 
 export function metric(id: string, label: string, value = '-'): HTMLDivElement {
@@ -268,7 +282,7 @@ export function installStableHelp(): void {
   append(
     box,
     button('siCloseHelp', 'Close', () => backdrop.classList.remove('show'), 'si-close'),
-    html('h2', { text: 'Stable Control Layer' }),
+    html('h2', { text: 'Simulation Assistance' }),
     paragraph('Stable Defaults keeps the current experiment readable without changing the scientific labels. Accuracy Mode tightens dt and tolerance. Performance Mode reduces rendering load first.'),
     html('h3', { text: 'Research mode policy' }),
     paragraph('Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.')
@@ -283,9 +297,13 @@ export function installStableHelp(): void {
 export function installResearchStatusCards(): void {
   const controls = document.querySelector('#tab-lab .controls');
   if (!controls) return;
+  // Every status/governance card lives in the Trust & Diagnostics drawer;
+  // the Lab column keeps only the simulation controls. Internal generation
+  // ids (v10/rgv7/rgv8/sfv9) stay for tooling, but user-facing labels don't
+  // carry version archaeology.
   if (!$('v10StatusCard')) {
     const cardNode = html('section', { id: 'v10StatusCard', className: 'v10-card' });
-    const title = html('div', { className: 'v10-title', text: 'V10 Research Control' });
+    const title = html('div', { className: 'v10-title', text: 'Research Control' });
     title.append(html('span', { id: 'v10ConfidenceBadge', className: 'v10-badge', text: 'pending' }));
     const modeRow = html('div', { className: 'row' });
     const modeSelect = html('select', { id: 'v10RunMode' });
@@ -295,13 +313,13 @@ export function installResearchStatusCards(): void {
     const actions = html('div', { className: 'btnrow' });
     append(
       actions,
-      button('v10RunValidation', 'Run V10 Validation', () => runLegacyValidationSurface(), 'primary'),
+      button('v10RunValidation', 'Run validation suite', () => runLegacyValidationSurface(), 'primary'),
       button('v10ExportManifest', 'Research Export', () => exportManifest('pendulum_manifest_v10_ts.json')),
       button('v10ExportSession', 'Session Export', () => downloadJson('pendulum_session_v10_ts.json', currentSnapshot())),
       button('v10ExportValidation', 'Validation JSON', () => exportValidationJson())
     );
     append(cardNode, title, modeRow, html('div', { id: 'v10MethodCard', className: 'v10-method', text: 'Method metadata pending.' }), html('div', { id: 'v10WarningBox', className: 'v10-warnings' }), actions);
-    controls.insertBefore(cardNode, controls.querySelector('.acc'));
+    mountTrustCard('validation', cardNode, () => controls.insertBefore(cardNode, controls.querySelector('.acc')));
   }
   if (!$('riScientificStatusPanel')) {
     const panel = html('section', { id: 'riScientificStatusPanel', className: 'ri-panel' });
@@ -310,12 +328,12 @@ export function installResearchStatusCards(): void {
     const actions = html('div', { className: 'btnrow' });
     append(
       actions,
-      button('riRunValidation', 'Run V4 validation', () => runLegacyValidationSurface(), 'primary'),
+      button('riRunValidation', 'Run governance validation', () => runLegacyValidationSurface(), 'primary'),
       button('riExportManifest', 'Export manifest', () => exportManifest('pendulum_manifest_ri_ts.json')),
       button('riExportCrash2', 'Crash dump', () => exportFaultReport('manual'))
     );
     append(panel, title, html('div', { id: 'riStatusGrid', className: 'ri-grid' }), actions);
-    controls.insertBefore(panel, controls.querySelector('.acc'));
+    mountTrustCard('validation', panel, () => controls.insertBefore(panel, controls.querySelector('.acc')));
   }
   if (!$('rgv7ControlCard')) {
     const panel = html('section', { id: 'rgv7ControlCard', className: 'rgv7-card ri-panel' });
@@ -327,29 +345,29 @@ export function installResearchStatusCards(): void {
     const actions = html('div', { className: 'btnrow' });
     append(actions, button('rgv7RunTestsShadow', 'Run validation', () => runLegacyValidationSurface(), 'primary'), button('rgv7ShowCommandsShadow', 'Commands', () => showCommandPalette()));
     append(panel, html('div', { className: 'ri-title', text: 'Research governance' }), modeRow, html('div', { id: 'rgv7ValidityLine', className: 'rgv7-note honesty-note', text: 'Initializing validity status.' }), html('div', { id: 'rgv7RuntimeGrid', className: 'stats' }), actions);
-    controls.insertBefore(panel, controls.querySelector('.acc'));
+    mountTrustCard('provenance', panel, () => controls.insertBefore(panel, controls.querySelector('.acc')));
   }
   if (!$('rgv8GovCard')) {
     const panel = html('section', { id: 'rgv8GovCard', className: 'rgv8-card' });
     const actions = html('div', { className: 'btnrow' });
     append(
       actions,
-      button('rgv8Validate', 'Run V8 Validation', () => runLegacyValidationSurface(), 'primary'),
-      button('rgv8Manifest', 'Export V8 Manifest', () => exportManifest('pendulum_manifest_v8_ts.json')),
+      button('rgv8Validate', 'Run validation', () => runLegacyValidationSurface(), 'primary'),
+      button('rgv8Manifest', 'Export manifest', () => exportManifest('pendulum_manifest_v8_ts.json')),
       button('rgv8Fault', 'Export Fault Report', () => exportFaultReport('manual')),
       button('rgv8Onboard', 'Onboarding', () => showOnboarding())
     );
-    append(panel, html('h3', { text: 'Research Governance V8' }), html('div', { id: 'rgv8RuntimePanel', className: 'stats' }), actions);
-    controls.insertBefore(panel, controls.querySelector('.acc'));
+    append(panel, html('h3', { text: 'Governance exports' }), html('div', { id: 'rgv8RuntimePanel', className: 'stats' }), actions);
+    mountTrustCard('provenance', panel, () => controls.insertBefore(panel, controls.querySelector('.acc')));
   }
   if (!$('sfv9Panel')) {
     const panel = html('section', { id: 'sfv9Panel', className: 'sfv9-card' });
     const actions = html('div', { className: 'btnrow' });
     append(actions, button('sfv9AuditRunShadow', 'Run Platform Audit', () => {
       runAPlusAudit(true);
-    }, 'primary'), button('sfv9ExportShadow', 'Export V9 Report', () => exportFeatureReport()));
-    append(panel, html('h3', { text: 'Single-file Architecture V9' }), html('div', { id: 'sfv9Summary', className: 'stats' }), actions, html('pre', { id: 'sfv9AuditLog', className: 'rg-log', text: 'Audit not run yet.' }));
-    controls.append(panel);
+    }, 'primary'), button('sfv9ExportShadow', 'Export audit report', () => exportFeatureReport()));
+    append(panel, html('h3', { text: 'Platform audit' }), html('div', { id: 'sfv9Summary', className: 'stats' }), actions, html('pre', { id: 'sfv9AuditLog', className: 'rg-log', text: 'Audit not run yet.' }));
+    mountTrustCard('provenance', panel, () => controls.append(panel));
   }
   installPlxCards(controls);
   installCanonicalDiag(controls);
@@ -365,17 +383,31 @@ export function installPlxCards(controls: Element): void {
     }
     select.addEventListener('change', () => setMode(select.value as RunMode));
     append(body, select, html('div', { id: 'plxModeNote', className: 'plx-note' }));
-    controls.append(card('Run Mode', body, 'plxModeCard', 'plx-card'));
+    const node = card('Run Mode', body, 'plxModeCard', 'plx-card');
+    mountTrustCard('provenance', node, () => controls.append(node));
   }
-  if (!$('plxPhysicsSummary')) controls.append(card('Current Physics Summary', html('div', { id: 'plxPhysicsSummary', className: 'plx-grid' }), 'plxPhysicsCard', 'plx-card'));
-  if (!$('plxBadges')) controls.append(card('Validation Badges', html('div', { id: 'plxBadges', className: 'plx-badge-row' }), 'plxBadgesCard', 'plx-card'));
+  if (!$('plxPhysicsSummary')) {
+    const node = card('Current Physics Summary', html('div', { id: 'plxPhysicsSummary', className: 'plx-grid' }), 'plxPhysicsCard', 'plx-card');
+    mountTrustCard('health', node, () => controls.append(node));
+  }
+  if (!$('plxBadges')) {
+    const node = card('Validation Badges', html('div', { id: 'plxBadges', className: 'plx-badge-row' }), 'plxBadgesCard', 'plx-card');
+    mountTrustCard('validation', node, () => controls.append(node));
+  }
   if (!$('plxRuntimeSummary')) {
     const body = html('div');
     append(body, html('div', { id: 'plxRuntimeSummary', className: 'plx-grid' }), html('div', { id: 'plxErrorLog', className: 'plx-log', text: 'no runtime errors' }));
-    controls.append(card('Runtime / Error Log', body, 'plxRuntimeCard', 'plx-card'));
+    const node = card('Runtime / Error Log', body, 'plxRuntimeCard', 'plx-card');
+    mountTrustCard('faults', node, () => controls.append(node));
   }
-  if (!$('plxAuditLog')) controls.append(card('Auto-Stabilization Audit', html('div', { id: 'plxAuditLog', className: 'plx-log', text: 'no automatic mutations recorded' }), 'plxAuditCard', 'plx-card'));
-  if (!$('plxMethodCaps')) controls.append(card('Method Capabilities', html('div', { id: 'plxMethodCaps', className: 'plx-grid' }), 'plxMethodCapsCard', 'plx-card'));
+  if (!$('plxAuditLog')) {
+    const node = card('Auto-Stabilization Audit', html('div', { id: 'plxAuditLog', className: 'plx-log', text: 'no automatic mutations recorded' }), 'plxAuditCard', 'plx-card');
+    mountTrustCard('faults', node, () => controls.append(node));
+  }
+  if (!$('plxMethodCaps')) {
+    const node = card('Method Capabilities', html('div', { id: 'plxMethodCaps', className: 'plx-grid' }), 'plxMethodCapsCard', 'plx-card');
+    mountTrustCard('health', node, () => controls.append(node));
+  }
 }
 
 export function installCanonicalDiag(controls: Element): void {
@@ -396,29 +428,35 @@ export function installCanonicalDiag(controls: Element): void {
     grid.children.item(1)?.querySelector('.sval')?.setAttribute('id', 'symplDefectStat');
     grid.children.item(2)?.querySelector('.sval')?.setAttribute('id', 'rkfStat');
   }
-  controls.append(diag);
+  mountTrustCard('health', diag, () => controls.append(diag));
 }
 
 export function installLabLeftPanels(): void {
   const left = document.querySelector('#tab-lab .left-col');
   if (!left) return;
   if (!$('riAnalysisControls')) {
-    const panel = html('section', { id: 'riAnalysisControls', className: 'ri-panel' });
-    append(panel, html('div', { className: 'ri-title', text: 'Analysis Configuration' }));
+    // Plot configuration stays with the plots it controls, but folded into a
+    // collapsed accordion so the default Lab view is just canvas + plots.
+    const panel = html('details', { id: 'riAnalysisControls', className: 'acc ri-panel' });
+    const summary = html('summary');
+    append(summary, html('span', { className: 'acc-icon', text: '⚙' }), html('span', { className: 'acc-label', text: 'Plot configuration' }), html('span', { className: 'acc-arrow', text: '›' }));
+    panel.append(summary);
+    const body = html('div', { className: 'acc-body' });
     const grid = html('div', { className: 'ri-grid' });
     append(grid, selectRow('riPoincVar', 'section var', ['theta1', 'theta2', 'omega1', 'omega2']), selectRow('riPoincDir', 'direction', ['positive', 'negative', 'both']), selectRow('riPoincAxes', 'axes', ['theta2-omega2', 'theta1-omega1']), selectRow('riFFTSignal', 'FFT signal', ['theta1', 'theta2', 'omega1']), selectRow('riFFTWindow', 'FFT window', ['hann', 'rect', 'blackman']), selectRow('riFFTScale', 'FFT scale', ['log', 'linear']));
-    append(panel, grid, html('div', { id: 'riPlotStamp', className: 'honesty-note', text: 'Plots use bounded buffers and exported settings.' }), button('riClearPoinc', 'Clear Poincare', () => $('clearPoincBtn')?.click()));
+    append(body, grid, html('div', { id: 'riPlotStamp', className: 'honesty-note', text: 'Plots use bounded buffers and exported settings.' }), button('riClearPoinc', 'Clear Poincare', () => $('clearPoincBtn')?.click()));
+    panel.append(body);
     left.append(panel);
   }
   if (!$('rgv7ValidationCard')) {
     const panel = html('section', { id: 'rgv7ValidationCard', className: 'ri-panel' });
     append(panel, html('div', { className: 'ri-title', text: 'Research Validation' }), html('div', { id: 'rgv7ValidationResults', className: 'rg-log', text: 'No governance validation run yet.' }));
-    left.append(panel);
+    mountTrustCard('validation', panel, () => left.append(panel));
   }
   if (!$('rgv8Honesty')) {
     const panel = html('section', { id: 'rgv8Honesty', className: 'rgv8-card' });
-    append(panel, html('h3', { text: 'Scientific Status' }), html('div', { className: 'honesty-note warn', text: 'Triple mode and theta/omega pseudo-symplectic methods are labelled experimental or approximate.' }));
-    left.append(panel);
+    append(panel, html('h3', { text: 'Model caveats' }), html('div', { className: 'honesty-note warn', text: 'Triple mode and theta/omega pseudo-symplectic methods are labelled experimental or approximate.' }));
+    mountTrustCard('health', panel, () => left.append(panel));
   }
 }
 
@@ -579,7 +617,7 @@ export function featureInventory(): HTMLElement {
   const list = html('div', { className: 'fig-grid' });
   [
     ['Simulation Lab', 'modern canvas simulation, side plots, scrubber, export'],
-    ['Research Governance', 'mode policy, validation, manifest and fault export'],
+    ['Research Policy', 'mode policy, validation, manifest and fault export'],
     ['Canonical QA', 'canonical midpoint residual and drift checks'],
     ['A+ Audit', 'N-link physics and architecture contract audit'],
     ['Stable Controls', 'stable, accuracy, performance, recovery controls'],
@@ -706,7 +744,13 @@ export function registerParityCommands(): void {
 
 export function installModeSelectAnchors(): void {
   if (!$('riModeSelect')) {
+    // Legacy id anchor only — hidden from the accessibility tree and focus
+    // order so it never surfaces as an unnamed control.
     const select = html('select', { id: 'riModeSelect', className: 'v10-sr' });
+    select.setAttribute('hidden', '');
+    select.setAttribute('aria-hidden', 'true');
+    select.inert = true;
+    select.tabIndex = -1;
     for (const mode of ['demo', 'research', 'performance', 'recovery'] as const) select.append(html('option', { value: mode, text: mode }));
     select.addEventListener('change', () => setMode(select.value as RunMode));
     document.body.append(select);

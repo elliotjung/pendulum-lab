@@ -51,6 +51,21 @@ describe('evidence summary', () => {
         rows: [{ vendor: 'nvidia', status: 'missing' }],
         reproduce: 'npm run benchmark:gpu-matrix',
         caveat: 'Physical evidence only.'
+      },
+      mutationAggregate: {
+        status: 'passed', mutationScore: 65.32, coveredMutationScore: 68.34, reportCount: 29,
+        statusCounts: { Survived: 2006, NoCoverage: 293 }
+      },
+      energyBenchmark: {
+        steps: 100000,
+        rows: [
+          { name: 'RK4', maxRelDrift: 5.4e-8 },
+          { name: 'GBS', maxRelDrift: 8.9e-13 }
+        ]
+      },
+      provenance: {
+        sourceCommit: 'abc123', packageVersion: '10.35.0', lockfileSha256: 'deadbeef',
+        dirtyWorktree: false, expiresAfterDays: 14, expiresAt: '2026-07-21T00:00:00.000Z'
       }
     });
 
@@ -58,6 +73,10 @@ describe('evidence summary', () => {
     expect(summary.validation.scipyAgreement.display).toBe('~4e-14');
     expect(summary.finalization.find((item) => item.id === 'npm-publish')?.status).toBe('blocked-external');
     expect(summary.finalization.find((item) => item.id === 'gpu-vendor-matrix')?.note).toContain('nvidia');
+    expect(summary.mutation.score).toBe(65.32);
+    expect(summary.energy.profiledMethods).toBe(2);
+    expect(summary.energy.bestMethod).toBe('GBS');
+    expect(summary.provenance.sourceCommit).toBe('abc123');
   });
 
   it('uses a compact approximate scientific notation for display values', () => {

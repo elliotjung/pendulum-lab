@@ -1,7 +1,7 @@
 import type { ImportValidationResult, RuntimeSnapshot } from '../types/domain';
 import { StateStore } from '../state/StateStore';
 
-const MAX_JSON_BYTES = 5_000_000;
+export const MAX_JSON_BYTES = 5_000_000;
 const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 function findDangerousKey(value: unknown, path = '$'): string | null {
@@ -32,22 +32,4 @@ export function parseStrictJsonImport(text: string): ImportValidationResult<Runt
     return { ok: true, problems: [], value: validation.value };
   }
   return { ok: false, problems: mergedProblems };
-}
-
-export function installJsonImportGuard(inputId = 'jsonFile'): void {
-  const input = document.getElementById(inputId);
-  if (!(input instanceof HTMLInputElement)) return;
-  input.addEventListener(
-    'change',
-    (event) => {
-      const file = input.files?.[0];
-      if (!file) return;
-      if (file.size > MAX_JSON_BYTES) {
-        event.stopImmediatePropagation();
-        if (typeof window.toast === 'function') window.toast('Import rejected: JSON file is too large', 2400);
-        input.value = '';
-      }
-    },
-    { capture: true }
-  );
 }

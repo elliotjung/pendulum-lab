@@ -1,19 +1,22 @@
-# Pendulum Lab Benchmark Report
+# Pendulum Lab Benchmark Report (profile mode)
 
-Generated: 2026-06-18T16:54:19.235Z
+Generated: 2026-07-10T02:32:35.373Z
 
-| Build | FPS | Physics ms/frame | Memory bytes | Worker latency ms | URL |
-|---|---:|---:|---:|---:|---|
-| original | 8.759379835968595 | 0.09999996423721313 | 11900000 | n/a | http://127.0.0.1:5173/ |
-| candidate | 8.847208705560057 | 0.19999998807907104 | 13400000 | n/a | http://127.0.0.1:5173/ |
+## Environment
 
-## Original vs candidate
+| Field | Value |
+|---|---|
+| commit | 0ab1623294657ee1cf8f6d38e1bb095bf9fd177b (dirty worktree) |
+| package version | 10.35.0 |
+| browser | Chromium 149.0.7827.55 |
+| os | win32 10.0.26200 |
+| cpu | Intel(R) Core(TM) Ultra 7 256V |
+| gpu | ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) |
+| devicePixelRatio | 1 |
+| node | v26.3.0 |
 
-Status: WARN (same URL sampled twice)
+Single-build profile (2 samples, medians below). No original-vs-candidate comparison was performed; set ORIGINAL_URL and CANDIDATE_URL to two different builds for compare mode.
 
-| Metric | Direction | Original | Candidate | Delta | Relative delta | Status |
-|---|---|---:|---:|---:|---:|---|
-| fps | higher-is-better | 8.759 | 8.847 | 0.08783 | 1.00% | pass |
-| physicsMsPerFrame | lower-is-better | 0.1000 | 0.2000 | 0.1000 | 100.00% | warn |
-| memoryBytes | lower-is-better | 11900000 | 13400000 | 1500000 | 12.61% | pass |
-| workerLatencyMs | lower-is-better | n/a | n/a | n/a | n/a | missing |
+| Build | FPS | Physics ms | Render ms | Worker ms | Long-task ms | Memory bytes | URL |
+|---|---:|---:|---:|---:|---:|---:|---|
+| candidate | 8.525 | 0.1500 | 0.1500 | 0.5000 | 186.0 | 13400000 | http://127.0.0.1:5173/ |

@@ -4,18 +4,31 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
+    # Small per-toolchain groups: one stuck major (e.g. a vitest breaking
+    # change) must not hold back security patches for the other tools.
     groups:
-      test-and-build-tooling:
+      vitest:
+        patterns:
+          - vitest
+          - '@vitest/*'
+      vite:
+        patterns:
+          - vite
+          - vite-plugin-singlefile
+      stryker:
+        patterns:
+          - '@stryker-mutator/*'
+      playwright:
         patterns:
           - '@playwright/*'
-          - '@stryker-mutator/*'
-          - '@vitest/*'
+          - '@axe-core/playwright'
+      typescript-tooling:
+        patterns:
           - typescript
-          - vite
-          - vitest
           - tsx
           - typedoc
+          - '@types/*'
   - package-ecosystem: github-actions
     directory: /
     schedule:

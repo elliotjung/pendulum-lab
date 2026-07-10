@@ -65,6 +65,14 @@
   --acc-hdr-h:34px;
 }
 
+@media (forced-colors: active) {
+  button, input, select, textarea, .tab, .trust-drawer, .trust-launcher {
+    border: 1px solid CanvasText;
+  }
+  :focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
+  canvas { forced-color-adjust: none; border: 1px solid CanvasText; }
+}
+
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{
   background:var(--bg-mesh) fixed;
@@ -1917,4 +1925,74 @@ body.audience-beginner .row{
   .matrix-state-grid{
     grid-template-columns:1fr;
   }
+}
+
+/* ============================================================
+   TRUST & DIAGNOSTICS DRAWER
+   One home for numerical-health / validation / provenance /
+   performance / fault surfaces (mounted by src/app/parity).
+   ============================================================ */
+.trust-toggle{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+  color:var(--cyan); padding:4px 10px; border-radius:6px;
+  background:rgba(24,212,248,.06); border:1px solid rgba(24,212,248,.24);
+  cursor:pointer; letter-spacing:.3px; transition:border-color .2s, background .2s;
+}
+.trust-toggle:hover{ border-color:rgba(24,212,248,.5); background:rgba(24,212,248,.11); }
+.trust-toggle[aria-expanded="true"]{ color:var(--fg-bright); border-color:rgba(24,212,248,.6); }
+
+.trust-drawer{
+  position:fixed; top:0; right:0; bottom:0; z-index:1200;
+  width:min(460px, 96vw);
+  display:flex; flex-direction:column;
+  background:linear-gradient(180deg, rgba(9,13,25,.985), rgba(6,9,18,.985));
+  border-left:1px solid rgba(24,212,248,.28);
+  box-shadow:-24px 0 80px rgba(0,0,0,.5);
+}
+.trust-drawer[hidden]{ display:none; }
+.trust-drawer-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 14px 8px;
+}
+.trust-drawer-title{
+  font:800 11px/1.2 var(--font-display); letter-spacing:2px;
+  text-transform:uppercase; color:var(--fg-bright);
+}
+.trust-drawer-close{
+  padding:5px 9px; border-radius:7px; cursor:pointer;
+  font:700 10px/1 var(--font-mono); color:var(--text);
+  background:rgba(255,255,255,.035); border:1px solid var(--glass-stroke);
+}
+.trust-drawer-close:hover{ border-color:var(--border-strong); color:var(--fg-bright); }
+.trust-drawer-tabs{
+  display:flex; gap:4px; flex-wrap:wrap; padding:0 14px 10px;
+  border-bottom:1px solid var(--divider);
+}
+.trust-drawer-tabs [role="tab"]{
+  padding:5px 9px; border-radius:999px; cursor:pointer;
+  font:600 9.5px/1 var(--font-mono); letter-spacing:.4px;
+  color:var(--muted); background:transparent; border:1px solid var(--glass-stroke);
+}
+.trust-drawer-tabs [role="tab"]:hover{ color:var(--text); border-color:var(--border-strong); }
+.trust-drawer-tabs [role="tab"][aria-selected="true"]{
+  color:var(--cyan); border-color:rgba(24,212,248,.45); background:rgba(24,212,248,.07);
+}
+.trust-drawer-body{ flex:1; min-height:0; overflow:auto; padding:12px 14px 20px; }
+.trust-drawer-body > section > *{ margin-top:0; }
+.trust-drawer .diag-row-drawer{ margin:0 0 10px; }
+/* Cards keep their native look, but drop page-level margins inside the drawer. */
+.trust-drawer .si-panel, .trust-drawer .ri-panel, .trust-drawer .rgv8-card,
+.trust-drawer .sfv9-card, .trust-drawer .v10-card, .trust-drawer .plx-card{
+  margin:0 0 10px;
+}
+/* Engine metrics box is a normal card here, not a floating overlay. */
+.trust-drawer #ueFloatingDiag{
+  position:static; width:auto; max-width:none; box-shadow:none;
+  background:var(--panel); border:1px solid var(--glass-stroke);
+  border-radius:8px; padding:8px; margin-bottom:10px;
+}
+@media(max-width:560px){
+  .trust-drawer{ width:100vw; border-left:none; }
+  .trust-toggle .trust-toggle-label{ display:none; }
 }

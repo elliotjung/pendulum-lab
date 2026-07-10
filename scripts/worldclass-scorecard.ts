@@ -18,6 +18,7 @@ interface LegacyRiskReport {
 
 interface MutationAggregateReport {
   status?: string;
+  gatePassed?: boolean;
   thresholds?: { break?: number; low?: number; high?: number };
   reportCount?: number;
   mutationScore?: number;
@@ -59,7 +60,7 @@ const legacy = await readJson<LegacyRiskReport>('reports/legacy-risk-report.json
 const packageJson = await readJson<{ scripts?: Record<string, string> }>('package.json', {});
 const scripts = packageJson.scripts ?? {};
 const vitest = await readJson<{ numTotalTests?: number; numPassedTests?: number; testResults?: unknown[] }>('reports/vitest-results.json', {});
-const benchmark = await readJson<{ comparison?: { deltas?: unknown[] } }>('reports/benchmark-report.json', {});
+const benchmark = await readJson<{ mode?: string; comparison?: { deltas?: unknown[] } | null }>('reports/benchmark-report.json', {});
 const gpuScaleValidation = await readJson<{ cpuReference?: { ensemble?: { f32ReductionOracle?: { passed?: boolean } } } }>('reports/gpu-scale-validation.json', {});
 const webgpuHardwareValidation = await readJson<{
   status?: string;
@@ -122,6 +123,7 @@ const weightedLegacyCounts = Object.entries(legacy.counts)
   .map(([, value]) => value);
 const legacyClean = legacy.weightedScore === 0 && weightedLegacyCounts.every((value) => value === 0);
 const benchmarkHasComparison = Array.isArray(benchmark.comparison?.deltas) && benchmark.comparison.deltas.length > 0;
+const benchmarkIsHonestProfile = benchmark.mode === 'profile' && benchmark.comparison === null;
 
 const has = {
   benchmark: await exists('reports/benchmark-report.md'),
@@ -129,7 +131,7 @@ const has = {
   memoryRegression: await exists('reports/memory-regression-report.md'),
   memoryBaseline: await exists('reports/memory-baseline.json'),
   mutationAggregateReport: await exists('reports/mutation-aggregate.json') || await exists('reports/mutation/mutation-aggregate.json'),
-  mutationAggregatePass: mutationAggregate.status === 'passed'
+  mutationAggregatePass: mutationAggregate.gatePassed === true
     && typeof mutationAggregate.mutationScore === 'number'
     && mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60),
   flagshipDoc: await exists('docs/flagship-result.md'),
@@ -260,7 +262,7 @@ const packagingReady = pagesReady && has.license && has.citation && has.typedocI
 const testTierReady = has.quickTier && has.slowTier && has.ciRunsQuickTier && has.ciRunsVerify && has.mainRunsSlowTier;
 const visualReady = has.visualRegressionE2e && has.visualSnapshots && has.visualTier;
 const memoryReady = has.benchmarkMemoryScript && has.memoryRegression && has.memoryBaseline;
-const benchmarkReady = has.benchmark && has.energy && benchmarkHasComparison && has.gpuBenchmarkLadderPass;
+const benchmarkReady = has.benchmark && has.energy && (benchmarkHasComparison || benchmarkIsHonestProfile) && has.gpuBenchmarkLadderPass;
 const flagshipReady = has.certifiedWorkbenchModule && has.flagshipDoc && certifiedWorkbenchSource.includes('melnikov-gap-map');
 const flagshipCertified = flagshipReady && has.flagshipCertifyCommand && has.flagshipCertification && has.flagshipFigure && has.flagshipExternalCommand && has.flagshipExternalCheck;
 const reviewerKitReady = flagshipCertified && has.reviewerKitDoc && has.reviewerKitScript && has.reviewerKitCommand && has.reviewerKitManifest && has.reviewerKitManifestMd;
@@ -404,7 +406,11 @@ const items: ScorecardItem[] = [
     area: 'Performance and benchmark reporting',
     status: benchmarkReady && has.mainRunsBenchmark && has.mainRunsMemoryRegression ? 'done' : 'partial',
     evidence: [
-      benchmarkHasComparison ? 'benchmark-report.md captures FPS, physics ms/frame, memory, worker latency, and original-vs-candidate deltas' : 'benchmark-report.md missing original-vs-candidate deltas',
+      benchmarkHasComparison
+        ? 'benchmark-report.md captures interleaved median/MAD FPS, physics, render, worker-latency, long-task, and memory deltas between two builds'
+        : benchmarkIsHonestProfile
+          ? 'benchmark-report.md is a single-build profile (no comparison claimed); compare mode gates PR-vs-baseline runs'
+          : 'benchmark-report.md missing original-vs-candidate deltas',
       'energy-benchmark.md compares long-run drift by integrator',
       has.gpuBenchmarkLadderPass ? 'gpu-benchmark-ladder records WebGPU adapter metadata, f32/f64 horizon drift, and CPU-oracle promotion metrics' : 'GPU benchmark ladder missing or not passing',
       has.bundleBudget ? 'bundle budget gate splits initial/chunk/standalone assets across raw/gzip/brotli sizes' : 'bundle budget gate missing',

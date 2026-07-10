@@ -1,12 +1,8 @@
-import type { Point2D } from '../viz/poincare';
 import { physicsAdapter } from '../physics';
-import { renderEnergyPlot, renderLyapunovConvergence, renderPoincareSection } from '../viz';
 import { LabSimulation, type BobPosition, type LabConfig } from './LabSimulation';
 import { LabRenderer } from './LabRenderer';
 import { PoincareAccumulator } from './PoincareAccumulator';
 import { LyapunovEstimator } from './LyapunovEstimator';
-import { renderPhasePortrait, renderSpectrum, type PhaseSample } from './labPlots';
-import { magnitudeSpectrum } from './fft';
 import { downloadDataUrl, downloadText, poincareCsv, runJson, trajectoryCsv } from './labExport';
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
@@ -16,8 +12,9 @@ import {
   type ManagedCanvas2D
 } from './canvasQuality';
 import { DiagnosticsScheduler } from './DiagnosticsScheduler';
-import { LabSidePlotWorkerClient } from './LabSidePlotWorkerClient';
-import { pairsToPoints, type LabSidePlotPayload } from './LabSidePlotProtocol';
+import { LabSidePlotCoordinator } from './LabSidePlotCoordinator';
+import { LabEnsembleController } from './LabEnsembleController';
+import { presentLabChrome } from './LabChromePresenter';
 import { RenderScheduler } from './RenderScheduler';
 import { SimulationClock, type SimulationTimingMode } from './SimulationClock';
 import { LabRecording } from './LabRecording';
@@ -32,26 +29,20 @@ import { compactViewport, LabQualityBudget, type QualityMode } from './LabQualit
  * `Render.all`) stands down, pauses the legacy stepping, and mirrors its state
  * into `window.App` so the legacy chrome (diagnostics, hash, export) stays
  * coherent. This is the Stage-2 takeover that precedes deleting the legacy lab.
+ *
+ * Collaborators own the non-loop responsibilities: `LabSidePlotCoordinator`
+ * (worker payloads + fallback drawing), `LabEnsembleController` (perturbed
+ * copies), and `presentLabChrome` (header/diagnostics DOM writes).
  */
 
-const CANVAS_IDS = ['main', 'energy', 'lyap', 'phase', 'poincare', 'fft'] as const;
-type CanvasId = (typeof CANVAS_IDS)[number];
-
-function ctxOf(id: CanvasId): ManagedCanvas2D | null {
-  const canvas = dom.el<HTMLCanvasElement>(id);
+function mainCtx(): ManagedCanvas2D | null {
+  const canvas = dom.el<HTMLCanvasElement>('main');
   if (!canvas) return null;
   try {
     return configureCanvas2D(canvas);
   } catch {
     return null;
   }
-}
-
-function phaseSamples(theta: Float32Array, omega: Float32Array): PhaseSample[] {
-  const n = Math.min(theta.length, omega.length);
-  const samples: PhaseSample[] = new Array(n);
-  for (let i = 0; i < n; i += 1) samples[i] = { theta: theta[i] ?? 0, omega: omega[i] ?? 0 };
-  return samples;
 }
 
 const SIDE_PLOT_COUNT = 5;
@@ -76,17 +67,27 @@ export class LabApp {
   private readonly simulationClock = new SimulationClock();
   private readonly renderScheduler = new RenderScheduler();
   private readonly diagnosticsScheduler = new DiagnosticsScheduler(SIDE_PLOT_COUNT);
-  private readonly sidePlotWorker = new LabSidePlotWorkerClient();
   private readonly controls = new LabControls();
   private readonly quality = new LabQualityBudget(() => {
     this.renderer = null;
   });
 
   // Ensemble of perturbed copies (chaos divergence visualization).
-  private ensemble: Float64Array[] = [];
-  private ensembleScratch: Float64Array[] = [];
-  private ensembleTipScratch: Point2D[] = [];
+  private readonly ensemble = new LabEnsembleController();
   private rhs: ((s: Float64Array, o: Float64Array) => void) | null = null;
+
+  // Side plots pull their payloads lazily so histories stay owned here.
+  private readonly sidePlots = new LabSidePlotCoordinator({
+    energy: () => ({
+      time: Float32Array.from(this.energy.time),
+      total: Float32Array.from(this.energy.total),
+      drift: Float32Array.from(this.energy.drift)
+    }),
+    lyapunov: () => ({ history: Float32Array.from(this.lyap.history()), value: this.lyap.value() }),
+    phase: () => this.phaseSeriesForAxis(),
+    poincarePairs: () => this.poincare.toFloat32Pairs(),
+    fft: () => ({ theta1Frames: Float32Array.from(this.theta1Frames), sampleRate: 1 / (this.sim.config.dt * this.spf) })
+  });
 
   // Trajectory recording for export + scrubber/replay.
   private readonly recording = new LabRecording(4000);
@@ -137,9 +138,9 @@ export class LabApp {
     this.simulationClock.reset();
     this.quality.resetTrailScale();
     this.diagnosticsScheduler.reset();
-    this.buildEnsemble(config, dim);
+    this.ensemble.build(config, dim, dom.num('ensN', 0), this.quality.profile().ensembleCap, dom.num('ensEps', -4));
 
-    const main = ctxOf('main');
+    const main = mainCtx();
     this.renderer = main ? new LabRenderer(main.ctx, { width: main.width, height: main.height }) : null;
     this.renderer?.clear();
     this.frameCount = 0;
@@ -200,7 +201,7 @@ export class LabApp {
         this.lyap.step(state);
         this.pushPhase(state, w1Index, w2Index);
       },
-      afterSteps: (stepsAdvanced) => this.stepEnsemble(stepsAdvanced)
+      afterSteps: (stepsAdvanced) => this.ensemble.step(stepsAdvanced, sim.config, this.rhs)
     });
     this.lastAdvancedSteps = frame.stepsAdvanced;
     const { state, energy, drift, bobs } = frame;
@@ -232,7 +233,7 @@ export class LabApp {
       if (renderer) {
         renderer.draw(bobs, {
           fade: this.readFade(),
-          ensembleTips: this.ensembleTips(),
+          ensembleTips: this.ensemble.tips(sim.config, renderer),
           trailColor: this.trailColor(),
           trailMode: dom.str('trailMode', 'rainbow'),
           trailLength: this.quality.effectiveTrailLength(),
@@ -249,7 +250,7 @@ export class LabApp {
         frameCount: this.frameCount,
         interval: this.sidePlotInterval(),
         visible: () => dom.tabActive('tab-lab'),
-        draw: (plotIndex) => this.drawSidePlotSlice(plotIndex)
+        draw: (plotIndex) => this.sidePlots.drawSlice(plotIndex)
       });
       this.updateChrome({ time: frame.time, energy, drift, state }, w1Index, w2Index);
       const scrubber = dom.el<HTMLInputElement>('scrubber');
@@ -276,7 +277,7 @@ export class LabApp {
   }
 
   private ensureRenderer(): LabRenderer | null {
-    const main = ctxOf('main');
+    const main = mainCtx();
     if (!main) return null;
     const size = this.renderer?.size();
     if (!this.renderer) {
@@ -294,69 +295,14 @@ export class LabApp {
       fps: this.renderScheduler.fps,
       renderMs: this.renderScheduler.renderMs,
       physicsMs: this.lastPhysicsMs,
-      sidePlotMs: this.sidePlotWorker.renderMs(),
+      sidePlotMs: this.sidePlots.renderMs(),
       stepsPerFrame: this.spf,
       requestedStepsPerFrame: this.requestedSpf
     });
   }
 
-  /** Build N perturbed copies of the initial state for the ensemble view. */
-  private buildEnsemble(config: LabConfig, dim: number): void {
-    const n = Math.max(0, Math.min(this.quality.profile().ensembleCap, Math.round(dom.num('ensN', 0))));
-    const eps = 10 ** dom.num('ensEps', -4);
-    this.ensemble = [];
-    this.ensembleScratch = [];
-    this.ensembleTipScratch = [];
-    for (let i = 0; i < n; i += 1) {
-      const st = new Float64Array(dim);
-      for (let j = 0; j < dim; j += 1) st[j] = config.initialState[j] ?? 0;
-      // Perturb the first angle by a small ± multiple of eps.
-      st[0] = (config.initialState[0] ?? 0) + eps * (i + 1) * (i % 2 === 0 ? 1 : -1);
-      this.ensemble.push(st);
-      this.ensembleScratch.push(new Float64Array(dim));
-    }
-  }
-
   private timingMode(): SimulationTimingMode {
     return dom.str('timeMode', 'deterministic') === 'wall-clock' ? 'wall-clock' : 'deterministic';
-  }
-
-  private stepEnsemble(steps: number): void {
-    if (this.ensemble.length === 0 || !this.rhs) return;
-    const { method, dt, tolerance } = this.sim.config;
-    const options = tolerance === undefined ? {} : { tolerance };
-    for (let m = 0; m < this.ensemble.length; m += 1) {
-      const state = this.ensemble[m]!;
-      const scratch = this.ensembleScratch[m]!;
-      for (let s = 0; s < steps; s += 1) {
-        physicsAdapter.step(method, state, dt, this.rhs, scratch, options);
-        state.set(scratch);
-      }
-    }
-  }
-
-  /** Pre-mapped pixel positions of each ensemble member's tip. */
-  private ensembleTips(): Point2D[] {
-    if (!this.renderer || this.ensemble.length === 0) return [];
-    const { l1, l2, l3 } = this.sim.config.parameters;
-    const triple = this.sim.config.system === 'triple';
-    this.ensembleTipScratch.length = this.ensemble.length;
-    for (let i = 0; i < this.ensemble.length; i += 1) {
-      const s = this.ensemble[i]!;
-      const x1 = l1 * Math.sin(s[0]!);
-      const y1 = l1 * Math.cos(s[0]!);
-      const x2 = x1 + l2 * Math.sin(s[1]!);
-      const y2 = y1 + l2 * Math.cos(s[1]!);
-      const out = this.ensembleTipScratch[i] ?? { x: 0, y: 0 };
-      this.ensembleTipScratch[i] = out;
-      if (triple) {
-        const ell3 = l3 ?? 1;
-        this.renderer!.toPixelsXYInto(x2 + ell3 * Math.sin(s[2]!), y2 + ell3 * Math.cos(s[2]!), out);
-      } else {
-        this.renderer!.toPixelsXYInto(x2, y2, out);
-      }
-    }
-    return this.ensembleTipScratch;
   }
 
   /**
@@ -373,7 +319,7 @@ export class LabApp {
   }
 
   private sidePlotInterval(): number {
-    return this.quality.sidePlotInterval(this.sidePlotWorker.renderMs());
+    return this.quality.sidePlotInterval(this.sidePlots.renderMs());
   }
 
   private renderScrubFrame(): void {
@@ -397,35 +343,25 @@ export class LabApp {
     return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
   }
 
-  /**
-   * Fill the header/diagnostics chrome directly from modern state. The legacy
-   * runtime used to do this from its frame loop; once `js/` is removed this is
-   * the only writer of these fields.
-   */
+  /** Refresh the header/diagnostics chrome from the latest frame snapshot. */
   private updateChrome(snapshot: { time: number; energy: number; drift: number; state: ArrayLike<number> }, w1Index: number, w2Index: number): void {
-    const set = (id: string, text: string): void => dom.setText(id, text);
-    const st = snapshot.state;
-    set('fpsBadge', `${this.renderScheduler.fps.toFixed(0)} fps`);
-    set('dPhys', this.lastPhysicsMs.toFixed(2));
-    set('dRender', this.renderScheduler.renderMs.toFixed(2));
-    set('dWorker', this.sidePlotWorker.renderMs().toFixed(2));
-    set('dQuality', this.quality.mode);
-    set('dQualityReason', this.quality.reason);
-    set('dDpr', this.quality.dprCap.toFixed(1));
-    set('dBackend', this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main');
-    set('tStat', `${snapshot.time.toFixed(2)} s`);
-    set('th1Stat', `${st[0]!.toFixed(3)} / ${st[w1Index]!.toFixed(2)}`);
-    set('th2Stat', `${st[1]!.toFixed(3)} / ${st[w2Index]!.toFixed(2)}`);
-    set('eStat', `${this.sim.initialEnergy.toFixed(3)} / ${snapshot.energy.toFixed(3)}`);
-    const driftEl = dom.el('driftStat');
-    if (driftEl) {
-      driftEl.textContent = snapshot.drift.toExponential(2);
-      driftEl.className = `sval ${snapshot.drift > 1e-2 ? 'bad' : snapshot.drift > 1e-4 ? 'warn' : 'good'}`;
-    }
-    set('lyapStat', `${this.lyap.value().toFixed(4)} /s`);
-    const poincarePolicy = this.poincare.policy();
-    set('dPoinc', `${this.poincare.size}/${poincarePolicy.capacity} ${poincarePolicy.direction}${poincarePolicy.refined ? ' refined' : ' linear'}`);
-    set('modeLabel', this.scrubIndex >= 0 ? 'replay' : this.running ? `${this.timingMode()} · ${this.lastAdvancedSteps} step(s)` : 'paused');
+    presentLabChrome({
+      ...snapshot,
+      initialEnergy: this.sim.initialEnergy,
+      w1Index,
+      w2Index,
+      fps: this.renderScheduler.fps,
+      physicsMs: this.lastPhysicsMs,
+      renderMs: this.renderScheduler.renderMs,
+      workerMs: this.sidePlots.renderMs(),
+      qualityMode: this.quality.mode,
+      qualityReason: this.quality.reason,
+      dprCap: this.quality.dprCap,
+      backend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
+      lambdaMax: this.lyap.value(),
+      poincare: { size: this.poincare.size, ...this.poincare.policy() },
+      modeLabel: this.scrubIndex >= 0 ? 'replay' : this.running ? `${this.timingMode()} · ${this.lastAdvancedSteps} step(s)` : 'paused'
+    });
   }
 
   /** Live diagnostics for tooling/tests. */
@@ -459,7 +395,7 @@ export class LabApp {
       fps: this.renderScheduler.fps,
       physicsMsPerFrame: this.lastPhysicsMs,
       renderMsPerFrame: this.renderScheduler.renderMs,
-      sidePlotMsPerFrame: this.sidePlotWorker.renderMs(),
+      sidePlotMsPerFrame: this.sidePlots.renderMs(),
       trailPoints: this.renderer?.trailPointCount() ?? 0,
       qualityMode: this.quality.mode,
       qualityReason: this.quality.reason,
@@ -469,95 +405,11 @@ export class LabApp {
       timingMode: this.timingMode(),
       requestedStepsPerFrame: this.requestedSpf,
       trailQualityScale: this.quality.trailQualityScale,
-      sidePlotBackend: this.sidePlotWorker.usesWorker() ? 'offscreen' : 'main',
+      sidePlotBackend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
       pendingUiTasks: this.diagnosticsScheduler.pendingCount(),
       canvasQualityEvents: canvasQualityDiagnostics()
     };
   }
-
-  private drawSidePlotSlice(phaseIndex: number): void {
-    const payload = this.sidePlotPayload(phaseIndex);
-    if (!payload) return;
-    if (this.ensureSidePlotWorker() && this.sidePlotWorker.render(payload)) return;
-    this.drawSidePlotOnMain(payload);
-  }
-
-  private ensureSidePlotWorker(): boolean {
-    if (!dom.bool('useWorker', true)) return false;
-    return this.sidePlotWorker.ensure({
-      energy: dom.el<HTMLCanvasElement>('energy') ?? undefined,
-      lyap: dom.el<HTMLCanvasElement>('lyap') ?? undefined,
-      phase: dom.el<HTMLCanvasElement>('phase') ?? undefined,
-      poincare: dom.el<HTMLCanvasElement>('poincare') ?? undefined,
-      fft: dom.el<HTMLCanvasElement>('fft') ?? undefined
-    });
-  }
-
-  private sidePlotPayload(phaseIndex: number): LabSidePlotPayload | null {
-    if (phaseIndex === 0) {
-      return {
-        plot: 'energy',
-        energy: {
-          time: Float32Array.from(this.energy.time),
-          total: Float32Array.from(this.energy.total),
-          drift: Float32Array.from(this.energy.drift)
-        }
-      };
-    }
-    if (phaseIndex === 1) {
-      return { plot: 'lyap', history: Float32Array.from(this.lyap.history()), value: this.lyap.value() };
-    }
-    if (phaseIndex === 2) {
-      return { plot: 'phase', ...this.phaseSeriesForAxis() };
-    }
-    if (phaseIndex === 3) {
-      return { plot: 'poincare', points: this.poincare.toFloat32Pairs() };
-    }
-    const sampleRate = 1 / (this.sim.config.dt * this.spf);
-    return { plot: 'fft', theta1Frames: Float32Array.from(this.theta1Frames), sampleRate };
-  }
-
-  private drawSidePlotOnMain(payload: LabSidePlotPayload): void {
-    if (payload.plot === 'energy') {
-      const energy = ctxOf('energy');
-      if (energy) renderEnergyPlot(energy.ctx, { x: 0, y: 0, width: energy.width, height: energy.height }, payload.energy);
-      return;
-    }
-    if (payload.plot === 'lyap') {
-      const lyap = ctxOf('lyap');
-      if (lyap) {
-        const history = payload.history.length > 1 ? Array.from(payload.history) : [0, payload.value];
-        renderLyapunovConvergence(lyap.ctx, { x: 0, y: 0, width: lyap.width, height: lyap.height }, history);
-      }
-      return;
-    }
-    if (payload.plot === 'phase') {
-      const phase = ctxOf('phase');
-      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, phaseSamples(payload.theta, payload.omega));
-      return;
-    }
-    if (payload.plot === 'poincare') {
-      const poincare = ctxOf('poincare');
-      if (poincare) {
-        renderPoincareSection(
-          poincare.ctx,
-          { x: 0, y: 0, width: poincare.width, height: poincare.height },
-          pairsToPoints(payload.points),
-          { xLabel: 'θ₂', yLabel: 'ω₂' }
-        );
-      }
-      return;
-    }
-    const fft = ctxOf('fft');
-    if (fft && payload.theta1Frames.length >= 16) {
-      const spectrum = magnitudeSpectrum(payload.theta1Frames, payload.sampleRate);
-      renderSpectrum(fft.ctx, { x: 0, y: 0, width: fft.width, height: fft.height }, spectrum.mags, {
-        log: true,
-        nyquist: payload.sampleRate / 2
-      });
-    }
-  }
-
 
   private loop = (): void => {
     if (!this.running) return;
@@ -612,7 +464,7 @@ export class LabApp {
     this.controls.wire({
       reset: () => this.reset(),
       applyQualityMode: () => this.quality.setMode(this.quality.readMode(), 'manual'),
-      trimEnsembleToQuality: () => this.trimEnsembleToQuality(),
+      trimEnsembleToQuality: () => this.ensemble.trimToCap(this.quality.profile().ensembleCap),
       clearTrail: () => this.renderer?.clear(),
       clearPoincare: () => this.poincare.clear(),
       toggleRunning: () => {
@@ -650,14 +502,6 @@ export class LabApp {
         setAngles: (angles) => this.setAngles(angles)
       }
     });
-  }
-
-  private trimEnsembleToQuality(): void {
-    const cap = this.quality.profile().ensembleCap;
-    if (this.ensemble.length <= cap) return;
-    this.ensemble.length = cap;
-    this.ensembleScratch.length = cap;
-    this.ensembleTipScratch.length = cap;
   }
 }
 

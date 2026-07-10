@@ -102,7 +102,11 @@ export function installFeatureParityLayer(): void {
   bindExtraTabClicks();
   bindRailActions();
   renderRuntimePanels();
-  window.setInterval(renderRuntimePanels, 2000);
+  // Refresh runtime panels only while the page is visible; a hidden tab
+  // shouldn't pay a 2s DOM-write heartbeat.
+  window.setInterval(() => {
+    if (!document.hidden) renderRuntimePanels();
+  }, 2000);
   const featureIntegrity = Object.freeze({ report: featureReport, show: showFeaturePanel });
   const aPlus = Object.freeze({ runAudit: runAPlusAudit });
   const researchWorkspace = Object.freeze({

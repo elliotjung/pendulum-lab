@@ -133,22 +133,13 @@
     <header>
       <h1>Pendulum Lab <span class="h1-sub">by Elliot Jung</span></h1>
       <div class="sub" aria-hidden="true"></div>
-      <span class="badge">V10 RESEARCH</span>
+      <span class="badge">RESEARCH</span>
       <span id="qualBadge">HQ</span>
       <span id="fpsBadge">— fps</span>
+      <button type="button" id="trustDrawerToggle" class="trust-toggle" aria-controls="trustDrawer" aria-expanded="false">
+        <span aria-hidden="true">◈</span> Trust &amp; Diagnostics
+      </button>
     </header>
-
-    <div class="diag-row">
-      <span>sim <span class="diag-val" id="dPhys">—</span> ms</span>
-      <span>render <span class="diag-val" id="dRender">—</span> ms</span>
-      <span>worker <span class="diag-val" id="dWorker">—</span> ms</span>
-      <span>state hash <span class="diag-val" id="dHash">—</span></span>
-      <span>poincaré <span class="diag-val" id="dPoinc">0</span></span>
-      <span>quality <span class="diag-val" id="dQuality">balanced</span></span>
-      <span>reason <span class="diag-val" id="dQualityReason">startup</span></span>
-      <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
-      <span>backend <span class="diag-val" id="dBackend">—</span></span>
-    </div>
 
     <div class="workflow-strip" aria-label="Primary workflows">
       <button type="button" data-workflow-tab="lab" data-workflow-focus="resetBtn">
@@ -189,8 +180,8 @@
           </div>
           <div class="canvas-label">Main view — <span id="modeLabel">running</span></div>
           <div class="scrub-row">
-            <button id="rewindBtn" class="pbtn">⏮</button>
-            <input type="range" id="scrubber" min="0" max="0" value="0" step="1">
+            <button id="rewindBtn" class="pbtn" aria-label="Rewind replay to the first recorded frame">⏮</button>
+            <input type="range" id="scrubber" min="0" max="0" value="0" step="1" aria-label="Replay position">
             <span class="val xs-1" id="scrubVal">live</span>
           </div>
           <div class="plots-row">
@@ -217,7 +208,7 @@
               <button id="clearPoincBtn">Clear Poincaré</button>
             </div>
             <div class="row xs-3">
-              <label class="xs-4">Speed</label>
+              <label class="xs-4" for="speed">Speed</label>
               <input id="speed" type="range" min="0.1" max="4" step="0.1" value="1.0">
               <span class="val" id="speedV">1.0×</span>
             </div>
@@ -241,45 +232,45 @@
             <div class="acc-body">
               <div class="acc-sub">System</div>
               <div class="row">
-                <label>Type</label>
+                <label for="sysType">Type</label>
                 <select id="sysType">
                   <option value="double">Double Pendulum</option>
                   <option value="triple">Triple Pendulum ★</option>
                 </select>
               </div>
               <div class="row">
-                <label>Seed</label>
+                <label for="seed">Seed</label>
                 <input class="xs-5" id="seed" type="number" value="1">
               </div>
               <div class="acc-sub">Initial Angles</div>
               <div class="row">
-                <label class="has-tip" data-tip="Initial angle of arm 1 in radians (−π to π)">θ₁ (rad)</label>
+                <label class="has-tip" data-tip="Initial angle of arm 1 in radians (−π to π)" for="th1">θ₁ (rad)</label>
                 <input id="th1" type="range" min="-3.14159" max="3.14159" step="0.001" value="2.0">
                 <span class="val" id="th1V">2.000</span>
               </div>
               <div class="row">
-                <label class="has-tip" data-tip="Initial angle of arm 2 in radians (−π to π)">θ₂ (rad)</label>
+                <label class="has-tip" data-tip="Initial angle of arm 2 in radians (−π to π)" for="th2">θ₂ (rad)</label>
                 <input id="th2" type="range" min="-3.14159" max="3.14159" step="0.001" value="2.5">
                 <span class="val" id="th2V">2.500</span>
               </div>
               <div class="row" data-tri>
-                <label>θ₃ (rad)</label>
+                <label for="th3">θ₃ (rad)</label>
                 <input id="th3" type="range" min="-3.14159" max="3.14159" step="0.001" value="1.0">
                 <span class="val" id="th3V">1.000</span>
               </div>
               <div class="acc-sub">Initial Velocities</div>
               <div class="row">
-                <label>ω₁ (rad/s)</label>
+                <label for="iw1">ω₁ (rad/s)</label>
                 <input id="iw1" type="range" min="-12" max="12" step="0.1" value="0">
                 <span class="val" id="iw1V">0.0</span>
               </div>
               <div class="row">
-                <label>ω₂ (rad/s)</label>
+                <label for="iw2">ω₂ (rad/s)</label>
                 <input id="iw2" type="range" min="-12" max="12" step="0.1" value="0">
                 <span class="val" id="iw2V">0.0</span>
               </div>
               <div class="row" data-tri>
-                <label>ω₃ (rad/s)</label>
+                <label for="iw3">ω₃ (rad/s)</label>
                 <input id="iw3" type="range" min="-12" max="12" step="0.1" value="0">
                 <span class="val" id="iw3V">0.0</span>
               </div>
@@ -295,20 +286,20 @@
             </summary>
             <div class="acc-body">
               <div class="acc-sub">Masses &amp; Lengths</div>
-              <div class="row"><label>m₁ (kg)</label><input id="m1" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m1V">1.00</span></div>
-              <div class="row"><label>m₂ (kg)</label><input id="m2" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m2V">1.00</span></div>
-              <div class="row" data-tri><label>m₃ (kg)</label><input id="m3" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m3V">1.00</span></div>
-              <div class="row"><label>ℓ₁ (m)</label><input id="l1" type="range" min="0.3" max="2" step="0.01" value="1.2"><span class="val" id="l1V">1.20</span></div>
-              <div class="row"><label>ℓ₂ (m)</label><input id="l2" type="range" min="0.3" max="2" step="0.01" value="1.0"><span class="val" id="l2V">1.00</span></div>
-              <div class="row" data-tri><label>ℓ₃ (m)</label><input id="l3" type="range" min="0.3" max="2" step="0.01" value="0.8"><span class="val" id="l3V">0.80</span></div>
+              <div class="row"><label for="m1">m₁ (kg)</label><input id="m1" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m1V">1.00</span></div>
+              <div class="row"><label for="m2">m₂ (kg)</label><input id="m2" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m2V">1.00</span></div>
+              <div class="row" data-tri><label for="m3">m₃ (kg)</label><input id="m3" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m3V">1.00</span></div>
+              <div class="row"><label for="l1">ℓ₁ (m)</label><input id="l1" type="range" min="0.3" max="2" step="0.01" value="1.2"><span class="val" id="l1V">1.20</span></div>
+              <div class="row"><label for="l2">ℓ₂ (m)</label><input id="l2" type="range" min="0.3" max="2" step="0.01" value="1.0"><span class="val" id="l2V">1.00</span></div>
+              <div class="row" data-tri><label for="l3">ℓ₃ (m)</label><input id="l3" type="range" min="0.3" max="2" step="0.01" value="0.8"><span class="val" id="l3V">0.80</span></div>
               <div class="acc-sub">Environment</div>
               <div class="row">
-                <label class="has-tip" data-tip="Gravitational acceleration. Try g=0 for microgravity!">g (m/s²)</label>
+                <label class="has-tip" data-tip="Gravitational acceleration. Try g=0 for microgravity!" for="g">g (m/s²)</label>
                 <input id="g" type="range" min="0" max="20" step="0.1" value="9.81">
                 <span class="val" id="gV">9.81</span>
               </div>
               <div class="row">
-                <label class="has-tip" data-tip="Linear damping γ. Any γ>0 makes the system dissipative — energy conservation diagnostics become interpretive.">γ damping</label>
+                <label class="has-tip" data-tip="Linear damping γ. Any γ&gt;0 makes the system dissipative — energy conservation diagnostics become interpretive." for="gamma">γ damping</label>
                 <input id="gamma" type="range" min="0" max="2" step="0.01" value="0">
                 <span class="val" id="gammaV">0.00</span>
               </div>
@@ -324,7 +315,7 @@
             </summary>
             <div class="acc-body">
               <div class="row">
-                <label>Trail color</label>
+                <label for="trailMode">Trail color</label>
                 <select id="trailMode">
                   <option value="rainbow">Rainbow</option>
                   <option value="heat">Heat</option>
@@ -335,12 +326,12 @@
                 </select>
               </div>
               <div class="row">
-                <label>Trail length <span class="cost-chip">paint</span></label>
+                <label for="trailLen">Trail length <span class="cost-chip">paint</span></label>
                 <input id="trailLen" type="range" min="100" max="3000" step="50" value="1200">
                 <span class="val" id="trailLenV">1200</span>
               </div>
               <div class="row">
-                <label>Phase axis</label>
+                <label for="phaseAxis">Phase axis</label>
                 <select id="phaseAxis">
                   <option value="1">θ₁ vs ω₁</option>
                   <option value="2">θ₂ vs ω₂</option>
@@ -362,7 +353,7 @@
             </summary>
             <div class="acc-body">
               <div class="row">
-                <label class="has-tip" data-tip="Symplectic integrators preserve energy over long simulations. Adaptive/high-order methods expose residual or error metadata.">Method</label>
+                <label class="has-tip" data-tip="Symplectic integrators preserve energy over long simulations. Adaptive/high-order methods expose residual or error metadata." for="method">Method</label>
                 <select id="method">
                   <option value="rk4" selected>RK4 (4th order)</option>
                   <option value="rkf45">RKF45 — embedded 5(4)</option>
@@ -380,22 +371,22 @@
                 </select>
               </div>
               <div class="row">
-                <label class="has-tip" data-tip="Timestep dt. Smaller dt = higher accuracy, higher CPU cost.">dt (s)</label>
+                <label class="has-tip" data-tip="Timestep dt. Smaller dt = higher accuracy, higher CPU cost." for="dt">dt (s)</label>
                 <input id="dt" type="range" min="0.0005" max="0.01" step="0.0005" value="0.003">
                 <span class="val" id="dtV">0.0030</span>
               </div>
               <div class="row">
-                <label>tol (adaptive/implicit)</label>
+                <label for="tol">tol (adaptive/implicit)</label>
                 <input id="tol" type="range" min="-9" max="-3" step="0.5" value="-6">
                 <span class="val" id="tolV">1.0e-6</span>
               </div>
               <div class="row">
-                <label>Steps/frame</label>
+                <label for="spf">Steps/frame</label>
                 <input id="spf" type="range" min="1" max="60" step="1" value="6">
                 <span class="val" id="spfV">6</span>
               </div>
               <div class="row">
-                <label>Quality mode</label>
+                <label for="qualityMode">Quality mode</label>
                 <select id="qualityMode">
                   <option value="performance">Performance</option>
                   <option value="balanced" selected>Balanced</option>
@@ -419,9 +410,9 @@
                 Ensemble members are perturbed copies of the main trajectory. 
                 They reveal chaos: nearby trajectories diverge exponentially.
               </p>
-              <div class="row"><label>N copies <span class="cost-chip">CPU</span></label><input id="ensN" type="range" min="0" max="80" step="1" value="12"><span class="val" id="ensNV">12</span></div>
+              <div class="row"><label for="ensN">N copies <span class="cost-chip">CPU</span></label><input id="ensN" type="range" min="0" max="80" step="1" value="12"><span class="val" id="ensNV">12</span></div>
               <div class="row">
-                <label class="has-tip" data-tip="Initial separation ε between ensemble members and the reference trajectory.">ε (rad)</label>
+                <label class="has-tip" data-tip="Initial separation ε between ensemble members and the reference trajectory." for="ensEps">ε (rad)</label>
                 <input id="ensEps" type="range" min="-7" max="-2" step="0.1" value="-4">
                 <span class="val" id="ensEpsV">1.0e-4</span>
               </div>
@@ -437,7 +428,7 @@
             </summary>
             <div class="acc-body">
               <div class="row"><label><input id="audioOn" type="checkbox"> Enable audio</label></div>
-              <div class="row"><label>Volume</label><input id="audioVol" type="range" min="0" max="0.4" step="0.01" value="0.08"><span class="val" id="audioVolV">0.08</span></div>
+              <div class="row"><label for="audioVol">Volume</label><input id="audioVol" type="range" min="0" max="0.4" step="0.01" value="0.08"><span class="val" id="audioVolV">0.08</span></div>
             </div>
           </details>
 
@@ -461,7 +452,7 @@
                 <button id="loadJsonBtn">⬆ Load</button>
                 <button id="recBtn" class="danger">● Rec</button>
               </div>
-              <input class="xs-8" type="file" id="jsonFile" accept=".json">
+              <input class="xs-8" type="file" id="jsonFile" accept=".json" aria-label="Load a saved run JSON file">
             </div>
           </details>
 
@@ -528,7 +519,7 @@
         <aside class="controls">
           <div class="ctrl-sticky">
             <div class="ctrl-sticky-title">Integrator Compare</div>
-            <div class="row"><label>dt</label><input id="cmpDt" type="range" min="0.001" max="0.02" step="0.001" value="0.005"><span class="val" id="cmpDtV">0.005</span></div>
+            <div class="row"><label for="cmpDt">dt</label><input id="cmpDt" type="range" min="0.001" max="0.02" step="0.001" value="0.005"><span class="val" id="cmpDtV">0.005</span></div>
             <div class="btnrow">
               <button id="cmpStart" class="primary">▶ Start</button>
               <button id="cmpStop">■ Stop</button>
@@ -578,9 +569,9 @@
                 Computes {λ₁,…,λₙ} via QR-decomposition of perturbed orthonormal basis evolved 
                 alongside the trajectory. For conservative systems, Σλᵢ ≈ 0.
               </p>
-              <div class="row"><label>Renorm Δt</label><input id="lyapDt" type="range" min="0.05" max="2" step="0.05" value="0.5"><span class="val" id="lyapDtV">0.50 s</span></div>
-              <div class="row"><label>Integrate T</label><input id="lyapT" type="range" min="20" max="500" step="20" value="120"><span class="val" id="lyapTV">120 s</span></div>
-              <div class="row"><label>ε perturb</label><input id="lyapEps" type="range" min="-10" max="-4" step="0.5" value="-7"><span class="val" id="lyapEpsV">1.0e-7</span></div>
+              <div class="row"><label for="lyapDt">Renorm Δt</label><input id="lyapDt" type="range" min="0.05" max="2" step="0.05" value="0.5"><span class="val" id="lyapDtV">0.50 s</span></div>
+              <div class="row"><label for="lyapT">Integrate T</label><input id="lyapT" type="range" min="20" max="500" step="20" value="120"><span class="val" id="lyapTV">120 s</span></div>
+              <div class="row"><label for="lyapEps">ε perturb</label><input id="lyapEps" type="range" min="-10" max="-4" step="0.5" value="-7"><span class="val" id="lyapEpsV">1.0e-7</span></div>
             </div>
           </details>
           <details class="acc" open>
@@ -629,8 +620,8 @@
                 Maps λ₁(θ₁, θ₂) across initial condition space. 
                 Poincaré sections reveal hidden periodic structure.
               </p>
-              <div class="row"><label>Resolution</label><input id="sweepRes" type="range" min="40" max="400" step="10" value="120"><span class="val" id="sweepResV">120</span></div>
-              <div class="row"><label>T (sim)</label><input id="sweepT" type="range" min="5" max="60" step="1" value="20"><span class="val" id="sweepTV">20 s</span></div>
+              <div class="row"><label for="sweepRes">Resolution</label><input id="sweepRes" type="range" min="40" max="400" step="10" value="120"><span class="val" id="sweepResV">120</span></div>
+              <div class="row"><label for="sweepT">T (sim)</label><input id="sweepT" type="range" min="5" max="60" step="1" value="20"><span class="val" id="sweepTV">20 s</span></div>
               <div class="row"><label><input id="sweepGpu" type="checkbox"> WebGPU acceleration (f32, CPU-cross-validated)</label></div>
             </div>
           </details>
@@ -659,17 +650,17 @@
           <details class="acc" open>
             <summary><span class="acc-icon">∿</span><span class="acc-label">Bifurcation Parameters</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <div class="row"><label>g min</label><input id="bifGMin" type="range" min="0.1" max="10" step="0.1" value="2"><span class="val" id="bifGMinV">2.0</span></div>
-              <div class="row"><label>g max</label><input id="bifGMax" type="range" min="5" max="20" step="0.5" value="12"><span class="val" id="bifGMaxV">12.0</span></div>
-              <div class="row"><label>Steps</label><input id="bifSteps" type="range" min="100" max="1000" step="50" value="400"><span class="val" id="bifStepsV">400</span></div>
-              <div class="row"><label>T (sim)</label><input id="bifT" type="range" min="20" max="200" step="10" value="60"><span class="val" id="bifTV">60 s</span></div>
+              <div class="row"><label for="bifGMin">g min</label><input id="bifGMin" type="range" min="0.1" max="10" step="0.1" value="2"><span class="val" id="bifGMinV">2.0</span></div>
+              <div class="row"><label for="bifGMax">g max</label><input id="bifGMax" type="range" min="5" max="20" step="0.5" value="12"><span class="val" id="bifGMaxV">12.0</span></div>
+              <div class="row"><label for="bifSteps">Steps</label><input id="bifSteps" type="range" min="100" max="1000" step="50" value="400"><span class="val" id="bifStepsV">400</span></div>
+              <div class="row"><label for="bifT">T (sim)</label><input id="bifT" type="range" min="20" max="200" step="10" value="60"><span class="val" id="bifTV">60 s</span></div>
             </div>
           </details>
           <details class="acc">
             <summary><span class="acc-icon">⤳</span><span class="acc-label">Driven Orbit: Floquet &amp; Pitchfork</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <div class="row"><label>Drive A</label><input id="bifDrA" type="range" min="0.3" max="1.5" step="0.005" value="1.005"><span class="val" id="bifDrAV">1.005</span></div>
-              <div class="row"><label>Damping γ</label><input id="bifDrGamma" type="range" min="0.1" max="1" step="0.05" value="0.5"><span class="val" id="bifDrGammaV">0.50</span></div>
+              <div class="row"><label for="bifDrA">Drive A</label><input id="bifDrA" type="range" min="0.3" max="1.5" step="0.005" value="1.005"><span class="val" id="bifDrAV">1.005</span></div>
+              <div class="row"><label for="bifDrGamma">Damping γ</label><input id="bifDrGamma" type="range" min="0.1" max="1" step="0.05" value="0.5"><span class="val" id="bifDrGammaV">0.50</span></div>
               <div class="btnrow xs-9">
                 <button id="bifFloquet">Floquet @ A</button>
                 <button id="bifPitchfork">Find pitchfork</button>
@@ -711,7 +702,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">◉</span><span class="acc-label">3D Settings</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <div class="row"><label>Trail points</label><input id="p3dN" type="range" min="500" max="20000" step="500" value="5000"><span class="val" id="p3dNV">5000</span></div>
+              <div class="row"><label for="p3dN">Trail points</label><input id="p3dN" type="range" min="500" max="20000" step="500" value="5000"><span class="val" id="p3dNV">5000</span></div>
               <div class="row"><label><input id="p3dDepthFade" type="checkbox" checked> Depth fade</label></div>
               <div class="row"><label><input id="p3dInertia" type="checkbox" checked> Camera inertia</label></div>
             </div>
@@ -738,7 +729,7 @@
           <details class="acc" open>
             <summary><span class="acc-icon">▓</span><span class="acc-label">Density Settings</span><span class="acc-arrow">›</span></summary>
             <div class="acc-body">
-              <div class="row"><label>Alpha</label><input id="gpuAlpha" type="range" min="0.005" max="0.15" step="0.005" value="0.04"><span class="val" id="gpuAlphaV">0.04</span></div>
+              <div class="row"><label for="gpuAlpha">Alpha</label><input id="gpuAlpha" type="range" min="0.005" max="0.15" step="0.005" value="0.04"><span class="val" id="gpuAlphaV">0.04</span></div>
             </div>
           </details>
         </aside>
@@ -805,7 +796,7 @@
                 Lyapunov/variational machinery, so K ≈ 1 (chaotic) / K ≈ 0 (regular) is a genuine
                 cross-validation, not the same computation reported twice.
               </p>
-              <div class="row"><label>Samples</label><input id="zeroOneSamples" type="range" min="1000" max="6000" step="500" value="3000"><span class="val" id="zeroOneSamplesV">3000</span></div>
+              <div class="row"><label for="zeroOneSamples">Samples</label><input id="zeroOneSamples" type="range" min="1000" max="6000" step="500" value="3000"><span class="val" id="zeroOneSamplesV">3000</span></div>
             </div>
           </details>
           <details class="acc" open>
@@ -888,7 +879,7 @@
                 dimension quantify the boundary — a measured fractal, not "it looks fractal".
                 Double pendulum only.
               </p>
-              <div class="row"><label>Resolution</label><input id="basinRes" type="range" min="40" max="160" step="20" value="100"><span class="val" id="basinResV">100</span></div>
+              <div class="row"><label for="basinRes">Resolution</label><input id="basinRes" type="range" min="40" max="160" step="20" value="100"><span class="val" id="basinResV">100</span></div>
               <div class="row"><label><input id="basinGpu" type="checkbox"> WebGPU acceleration (f32, CPU-cross-validated)</label></div>
             </div>
           </details>
@@ -932,8 +923,8 @@
                 Non-variational, so DET (structure vs noise) and DIV = 1/Lmax (a finite-size
                 λ proxy) cross-check the Lyapunov verdict. ε is fixed at a 10% recurrence rate.
               </p>
-              <div class="row"><label>Dimension m</label><input id="rqaDim" type="range" min="1" max="5" step="1" value="2"><span class="val" id="rqaDimV">2</span></div>
-              <div class="row"><label>Delay τ</label><input id="rqaDelay" type="range" min="1" max="20" step="1" value="5"><span class="val" id="rqaDelayV">5</span></div>
+              <div class="row"><label for="rqaDim">Dimension m</label><input id="rqaDim" type="range" min="1" max="5" step="1" value="2"><span class="val" id="rqaDimV">2</span></div>
+              <div class="row"><label for="rqaDelay">Delay τ</label><input id="rqaDelay" type="range" min="1" max="20" step="1" value="5"><span class="val" id="rqaDelayV">5</span></div>
             </div>
           </details>
           <details class="acc" open>
@@ -979,8 +970,8 @@
                 are Lagrangian Coherent Structures (transport barriers). Distinct from the Sweep,
                 which time-averages λ₁. Double pendulum only.
               </p>
-              <div class="row"><label>Resolution</label><input id="ftleRes" type="range" min="30" max="120" step="10" value="70"><span class="val" id="ftleResV">70</span></div>
-              <div class="row"><label>Horizon T</label><input id="ftleT" type="range" min="1" max="8" step="0.5" value="3"><span class="val" id="ftleTV">3.0 s</span></div>
+              <div class="row"><label for="ftleRes">Resolution</label><input id="ftleRes" type="range" min="30" max="120" step="10" value="70"><span class="val" id="ftleResV">70</span></div>
+              <div class="row"><label for="ftleT">Horizon T</label><input id="ftleT" type="range" min="1" max="8" step="0.5" value="3"><span class="val" id="ftleTV">3.0 s</span></div>
               <div class="row"><label><input id="ftleRidges" type="checkbox" checked> LCS ridge overlay</label></div>
               <div class="row"><label><input id="ftleGpu" type="checkbox"> WebGPU acceleration (FD flow-map, f32)</label></div>
             </div>
@@ -1052,6 +1043,42 @@
   </main>
 </div>
 
+<!-- TRUST & DIAGNOSTICS DRAWER — one home for numerical health, validation,
+     provenance/governance, performance, and fault surfaces. The runtime panels
+     (src/app/parity) mount into the sections below instead of stacking cards
+     on the Lab screen; the header button toggles it. -->
+<aside id="trustDrawer" class="trust-drawer" hidden role="region" aria-label="Trust and diagnostics" tabindex="-1">
+  <div class="trust-drawer-head">
+    <strong class="trust-drawer-title">Trust &amp; Diagnostics</strong>
+    <button type="button" id="trustDrawerClose" class="trust-drawer-close" aria-label="Close the diagnostics drawer">✕</button>
+  </div>
+  <div class="trust-drawer-tabs" role="tablist" aria-label="Diagnostics sections">
+    <button type="button" role="tab" id="trustTabHealth" aria-selected="true" aria-controls="trustPanelHealth" data-trust-tab="health">Numerical health</button>
+    <button type="button" role="tab" id="trustTabValidation" aria-selected="false" aria-controls="trustPanelValidation" data-trust-tab="validation" tabindex="-1">Validation</button>
+    <button type="button" role="tab" id="trustTabProvenance" aria-selected="false" aria-controls="trustPanelProvenance" data-trust-tab="provenance" tabindex="-1">Provenance</button>
+    <button type="button" role="tab" id="trustTabPerformance" aria-selected="false" aria-controls="trustPanelPerformance" data-trust-tab="performance" tabindex="-1">Performance</button>
+    <button type="button" role="tab" id="trustTabFaults" aria-selected="false" aria-controls="trustPanelFaults" data-trust-tab="faults" tabindex="-1">Fault log</button>
+  </div>
+  <div class="trust-drawer-body">
+    <section id="trustPanelHealth" role="tabpanel" aria-labelledby="trustTabHealth" data-trust-panel="health"></section>
+    <section id="trustPanelValidation" role="tabpanel" aria-labelledby="trustTabValidation" data-trust-panel="validation" hidden></section>
+    <section id="trustPanelProvenance" role="tabpanel" aria-labelledby="trustTabProvenance" data-trust-panel="provenance" hidden></section>
+    <section id="trustPanelPerformance" role="tabpanel" aria-labelledby="trustTabPerformance" data-trust-panel="performance" hidden>
+      <div class="diag-row diag-row-drawer">
+        <span>sim <span class="diag-val" id="dPhys">—</span> ms</span>
+        <span>render <span class="diag-val" id="dRender">—</span> ms</span>
+        <span>worker <span class="diag-val" id="dWorker">—</span> ms</span>
+        <span>state hash <span class="diag-val" id="dHash">—</span></span>
+        <span>poincaré <span class="diag-val" id="dPoinc">0</span></span>
+        <span>quality <span class="diag-val" id="dQuality">balanced</span></span>
+        <span>reason <span class="diag-val" id="dQualityReason">startup</span></span>
+        <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
+        <span>backend <span class="diag-val" id="dBackend">—</span></span>
+      </div>
+    </section>
+    <section id="trustPanelFaults" role="tabpanel" aria-labelledby="trustTabFaults" data-trust-panel="faults" hidden></section>
+  </div>
+</aside>
 
 <!-- The legacy js/ runtime has been removed; the app is fully TypeScript (src/).
      These stylesheets still style the static shell DOM above. -->

@@ -9,6 +9,7 @@ import { openModernTab } from './shell';
 test('modern Lyapunov tab computes and renders the full spectrum', async ({ page }) => {
   await page.goto('/');
   await openModernTab(page, 'lyap', '#tab-lyap');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { lyapunov?: unknown } }).__modernTabs?.lyapunov));
 
   // Start the computation and wait for results to populate.
   await page.evaluate(() => document.getElementById('lyapStart')?.click());

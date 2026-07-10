@@ -4,6 +4,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-verify-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -14,6 +21,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Supply-chain gate: the toolchain that generates research artifacts and
+      # signs releases must not carry known high/critical advisories.
+      - run: npm run audit:deps
       # Fast PR signal: quick unit tier before the full policy/type/test gate.
       - run: npm run test:quick
       # Scientific acceleration contract: GPU paths must agree with CPU or fall back.
@@ -34,3 +44,60 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run smoke
       - run: npx playwright test e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/ui-polish.spec.ts --project=chromium
+
+  node-compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run audit:deps
+      - run: npm run typecheck
+      - run: npm run test:quick
+
+  # Real A/B performance gate: build the PR merge-base and the PR head, serve
+  # them on separate ports, and sample both interleaved in one browser process.
+  # Sampling the same URL twice is rejected by the benchmark script itself.
+  benchmark-compare:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Build PR candidate
+        run: npm run build
+      - name: Build merge-base baseline in a worktree
+        run: |
+          BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD)
+          echo "Baseline commit: $BASE_SHA"
+          git worktree add /tmp/baseline "$BASE_SHA"
+          cd /tmp/baseline
+          npm ci
+          npm run build
+      - name: Serve both builds and run compare benchmark
+        run: |
+          (cd /tmp/baseline && npx vite preview --host 127.0.0.1 --port 4173 &)
+          npx vite preview --host 127.0.0.1 --port 4174 &
+          ORIGINAL_URL=http://127.0.0.1:4173/ CANDIDATE_URL=http://127.0.0.1:4174/ npm run benchmark
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-compare-report
+          path: |
+            reports/benchmark-report.json
+            reports/benchmark-report.md

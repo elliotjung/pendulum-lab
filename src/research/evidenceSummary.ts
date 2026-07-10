@@ -2,6 +2,14 @@ export interface EvidenceSummary {
   schemaVersion: 'pendulum-evidence-summary/v1';
   generatedAt: string;
   sourceReports: Record<string, string>;
+  provenance: {
+    sourceCommit: string;
+    packageVersion: string;
+    lockfileSha256: string;
+    dirtyWorktree: boolean;
+    expiresAfterDays: number;
+    expiresAt: string;
+  };
   tests: {
     total: number;
     passed: number;
@@ -20,6 +28,20 @@ export interface EvidenceSummary {
     periodDoubling: LiteratureAnchorSummary | null;
     melnikovThreshold: LiteratureAnchorSummary | null;
     literatureAllPass: boolean;
+  };
+  mutation: {
+    status: string;
+    score: number;
+    coveredScore: number;
+    reportCount: number;
+    survived: number;
+    noCoverage: number;
+  };
+  energy: {
+    profiledMethods: number;
+    stepsPerMethod: number;
+    bestMethod: string | null;
+    bestMaxRelativeDrift: number | null;
   };
   reviewerKit: {
     status: string;
@@ -46,6 +68,17 @@ export interface EvidenceSummary {
     pagesUrl: string | null;
     caveats: string[];
   };
+  claims: Array<{
+    id: string;
+    displayValue: string;
+    status: string;
+    uncertainty: string | null;
+    sourceReport: string;
+    sourceCommit: string;
+    caveat: string | null;
+    reproduce: string;
+    publicUrl: string | null;
+  }>;
   finalization: Array<{
     id: string;
     label: string;
@@ -73,6 +106,16 @@ export interface EvidenceSummaryInput {
   literatureAnchors: unknown;
   crossValidation: unknown;
   gpuAdapterMatrix: unknown;
+  mutationAggregate?: unknown;
+  energyBenchmark?: unknown;
+  provenance?: {
+    sourceCommit: string;
+    packageVersion: string;
+    lockfileSha256: string;
+    dirtyWorktree: boolean;
+    expiresAfterDays: number;
+    expiresAt: string;
+  };
 }
 
 type JsonObject = Record<string, unknown>;
@@ -157,6 +200,13 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
   const literature = object(input.literatureAnchors);
   const crossValidation = object(input.crossValidation);
   const gpuAdapterMatrix = object(input.gpuAdapterMatrix);
+  const mutation = object(input.mutationAggregate);
+  const mutationCounts = object(mutation.statusCounts);
+  const energy = object(input.energyBenchmark);
+  const energyRows = array(energy.rows).map(object);
+  const bestEnergyRow = energyRows
+    .filter((row) => Number.isFinite(numberValue(row.maxRelDrift, NaN)))
+    .sort((a, b) => numberValue(a.maxRelDrift, Infinity) - numberValue(b.maxRelDrift, Infinity))[0];
   const artifacts = array(reviewer.artifacts);
   const publicationNpm = object(publication.npm);
   const zenodo = object(publication.zenodo);
@@ -170,11 +220,19 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
   const npmPublished = booleanValue(publicationNpm.published);
   const zenodoPublished = booleanValue(zenodo.published);
   const gpuMissing = missingGpuVendors(gpuAdapterMatrix);
+  const sourceCommit = input.provenance?.sourceCommit ?? 'unknown';
+  const mutationScore = numberValue(mutation.mutationScore);
+  const mutationStatus = stringValue(mutation.status, 'unknown');
+  const profiledMethods = energyRows.length;
 
   return {
     schemaVersion: 'pendulum-evidence-summary/v1',
     generatedAt: input.generatedAt,
     sourceReports: input.sourceReports,
+    provenance: input.provenance ?? {
+      sourceCommit: 'unknown', packageVersion: 'unknown', lockfileSha256: 'unknown',
+      dirtyWorktree: false, expiresAfterDays: 14, expiresAt: new Date(Date.parse(input.generatedAt) + 14 * 86_400_000).toISOString()
+    },
     tests: {
       total,
       passed,
@@ -193,6 +251,22 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
       periodDoubling: findAnchor(literature, 'period-doubling-onset'),
       melnikovThreshold: findAnchor(literature, 'melnikov-threshold'),
       literatureAllPass: booleanValue(literature.allPass)
+    },
+    mutation: {
+      status: mutationStatus,
+      score: mutationScore,
+      coveredScore: numberValue(mutation.coveredMutationScore),
+      reportCount: numberValue(mutation.reportCount),
+      survived: numberValue(mutationCounts.Survived),
+      noCoverage: numberValue(mutationCounts.NoCoverage)
+    },
+    energy: {
+      profiledMethods,
+      stepsPerMethod: numberValue(energy.steps),
+      bestMethod: bestEnergyRow && typeof bestEnergyRow.name === 'string' ? bestEnergyRow.name : null,
+      bestMaxRelativeDrift: bestEnergyRow && typeof bestEnergyRow.maxRelDrift === 'number' && Number.isFinite(bestEnergyRow.maxRelDrift)
+        ? bestEnergyRow.maxRelDrift
+        : null
     },
     reviewerKit: {
       status: stringValue(reviewer.status, 'unknown'),
@@ -219,6 +293,41 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
       pagesUrl: typeof pages.url === 'string' ? pages.url : null,
       caveats: stringArray(publication.caveats)
     },
+    claims: [
+      {
+        id: 'tests.unit', displayValue: `${passed} / ${total} pass`, status: failed === 0 ? 'passed' : 'failed',
+        uncertainty: null, sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-results.json', sourceCommit,
+        caveat: null, reproduce: 'npm run verify', publicUrl: null
+      },
+      {
+        id: 'validation.scipy.regular', displayValue: approxScientific(regularAgreement), status: regularAgreement === null ? 'unknown' : 'passed',
+        uncertainty: 'Maximum observed divergence for regular reference cases', sourceReport: input.sourceReports.crossValidation ?? 'reports/cross-validation.json', sourceCommit,
+        caveat: 'Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.', reproduce: 'npm run validate:cross', publicUrl: null
+      },
+      {
+        id: 'testing.mutation', displayValue: `${mutationScore.toFixed(2)}%`, status: mutationStatus,
+        uncertainty: null, sourceReport: input.sourceReports.mutationAggregate ?? 'reports/mutation-aggregate.json', sourceCommit,
+        caveat: mutationStatus === 'low' ? 'Below the 70% quality target; the 65% regression floor is enforced.' : null,
+        reproduce: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85', publicUrl: null
+      },
+      {
+        id: 'benchmark.energy.methods', displayValue: `${profiledMethods} methods profiled`, status: profiledMethods > 0 ? 'measured' : 'missing',
+        uncertainty: 'Method-specific drift; no universal pass envelope', sourceReport: input.sourceReports.energyBenchmark ?? 'reports/energy-benchmark.json', sourceCommit,
+        caveat: 'Compare each method against its documented order and structure-preservation behavior.', reproduce: 'npm run benchmark:energy', publicUrl: null
+      },
+      {
+        id: 'gpu.vendor-matrix', displayValue: `${numberValue(gpuCoverage.passed)} / ${numberValue(gpuCoverage.required)} vendors`, status: stringValue(gpuAdapterMatrix.status, 'unknown'),
+        uncertainty: null, sourceReport: input.sourceReports.gpuAdapterMatrix ?? 'reports/gpu-adapter-matrix.json', sourceCommit,
+        caveat: typeof gpuAdapterMatrix.caveat === 'string' ? gpuAdapterMatrix.caveat : null,
+        reproduce: typeof gpuAdapterMatrix.reproduce === 'string' ? gpuAdapterMatrix.reproduce : 'npm run benchmark:gpu-matrix', publicUrl: null
+      },
+      {
+        id: 'publication.release', displayValue: stringValue(publication.status, 'unknown'), status: stringValue(publication.status, 'unknown'),
+        uncertainty: null, sourceReport: input.sourceReports.publicationStatus ?? 'reports/publication-status.json', sourceCommit,
+        caveat: stringArray(publication.caveats).join(' ') || null, reproduce: 'npm run release:status',
+        publicUrl: typeof pages.url === 'string' ? pages.url : null
+      }
+    ],
     finalization: [
       {
         id: 'npm-publish',

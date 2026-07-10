@@ -1,11 +1,13 @@
 # Mutation Aggregate
 
 Generated: 2026-07-03T16:45:41.502Z
-Status: passed
+Quality band: low
+Regression gate: passed
 Reports: 29
 Total score: 65.32%
 Covered score: 68.34%
-Threshold: break >= 60%
+Regression floor: 65%
+Next quality target: 70%
 
 ```json
 {

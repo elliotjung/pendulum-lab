@@ -1,4 +1,4 @@
-import { rotateProject, type Projected } from '../app/phase3d';
+import { rotateProject, type Projected } from './phase3dMath';
 
 /**
  * Orbit-style 3D camera over the existing pure rotate/project core

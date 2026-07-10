@@ -99,7 +99,9 @@ jobs:
           pattern: mutation-report-*
           path: reports/mutation-shards
           merge-multiple: false
-      - run: npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 60 --low 70 --high 85
+      # Ratchet floor prevents regression; the report remains explicitly "low"
+      # until the 70% quality target is reached, then the floor can advance.
+      - run: npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85
       - name: Require every shard to complete
         run: |
           if [ "${{ needs.mutation.result }}" != "success" ]; then

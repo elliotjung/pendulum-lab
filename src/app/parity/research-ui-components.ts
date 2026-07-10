@@ -35,7 +35,11 @@ export function researchSelect(id: string, options: Array<[string, string]>): HT
 
 export function researchFormRow(label: string, child: HTMLElement): HTMLDivElement {
   const rowNode = html('div', { className: 'research-form-row' });
-  append(rowNode, html('label', { text: label }), child);
+  const labelNode = html('label', { text: label });
+  // Give every form control a programmatic name, not just a visual caption.
+  if (child.id) labelNode.htmlFor = child.id;
+  else child.setAttribute('aria-label', label);
+  append(rowNode, labelNode, child);
   return rowNode;
 }
 

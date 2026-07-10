@@ -5,5 +5,6 @@
   "label": "candidate",
   "url": "http://127.0.0.1:5173/",
   "memoryBytes": 11200000,
-  "maxGrowthBytes": 50000000
+  "maxGrowthBytes": 50000000,
+  "maxGrowthFraction": 0.2
 }

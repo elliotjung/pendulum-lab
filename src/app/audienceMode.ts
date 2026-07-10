@@ -10,6 +10,7 @@ import { installAdoptedStyle } from '../ui/adoptedStyles';
 import { actionGuideText, currentNavLocale, navTipText, tabGuideText } from './navGuide';
 
 export type AudienceMode = 'beginner' | 'student' | 'research';
+export const AUDIENCE_MODE_CHANGED_EVENT = 'pendulum:audience-mode-changed';
 
 export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: string; summary: string; icon: IconName }> = {
   beginner: {
@@ -567,6 +568,11 @@ export function currentAudienceMode(): AudienceMode {
   return storedAudienceMode() ?? 'research';
 }
 
+/** Whether the URL or persistent preference explicitly selected an audience. */
+export function hasExplicitAudienceMode(): boolean {
+  return urlAudienceMode() !== null || storedAudienceMode() !== null;
+}
+
 export function applyAudienceMode(mode: AudienceMode, persist = true): void {
   installAudienceAnnotations();
   decorateNavigation();
@@ -580,6 +586,7 @@ export function applyAudienceMode(mode: AudienceMode, persist = true): void {
       /* persistence is best-effort */
     }
     hideAudienceChooser();
+    document.dispatchEvent(new CustomEvent(AUDIENCE_MODE_CHANGED_EVENT, { detail: { mode } }));
   }
   // If the active tab is no longer reachable in this mode, fall back to Lab.
   const hidden = mode === 'beginner' ? BEGINNER_HIDDEN_TABS : mode === 'student' ? STUDENT_HIDDEN_TABS : [];

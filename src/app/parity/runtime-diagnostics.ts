@@ -104,14 +104,14 @@ export function installValidationExtensions(): void {
   const validateControls = document.querySelector('#tab-validate .controls');
   if (validateControls && !$('rgv8Commercial')) {
     validateControls.append(detailsCard('Commercial Readiness', kvGrid('rgv8CommercialGrid', [
-      ['version', 'Research Governance V8'],
+      ['policy', 'Research evidence policy'],
       ['privacy', 'local-only'],
       ['export reproducibility', 'manifest + hash']
     ]), 'rgv8Commercial'));
   }
   const validateNoteAnchor = $('validateResults');
   if (validateNoteAnchor?.parentElement && !$('rgv8ValidateNote')) {
-    const note = html('div', { id: 'rgv8ValidateNote', className: 'honesty-note', text: 'V8 validation adds independent RHS, energy derivative, replay, damping downgrade, worker fallback, and Poincare settings checks.' });
+    const note = html('div', { id: 'rgv8ValidateNote', className: 'honesty-note', text: 'Validation includes independent RHS, energy derivative, replay, damping downgrade, worker fallback, and Poincare settings checks.' });
     validateNoteAnchor.parentElement.insertBefore(note, validateNoteAnchor);
   }
   if ($('stats') && !$('modeStat')) {
@@ -402,7 +402,8 @@ export function toggleFloatingDiag(): void {
 export function installFloatingDiag(): void {
   if ($('ueFloatingDiag')) return;
   const box = html('div', { id: 'ueFloatingDiag' });
-  if (typeof window !== 'undefined' && window.matchMedia?.('(max-width: 560px)').matches) box.classList.add('collapsed');
+  const drawerHost = document.querySelector<HTMLElement>('#trustDrawer [data-trust-panel="performance"]');
+  if (!drawerHost && typeof window !== 'undefined' && window.matchMedia?.('(max-width: 560px)').matches) box.classList.add('collapsed');
   const header = html('div');
   header.style.display = 'flex';
   header.style.justifyContent = 'space-between';
@@ -414,7 +415,10 @@ export function installFloatingDiag(): void {
   collapse.setAttribute('aria-expanded', box.classList.contains('collapsed') ? 'false' : 'true');
   append(header, html('b', { text: 'ENGINE' }), collapse);
   append(box, header, html('div', { id: 'ueFloatBody', className: 'ue-fbody' }));
-  document.body.append(box);
+  // Engine metrics live in the drawer's Performance section; the legacy
+  // floating bottom-right box remains only as a fallback without the drawer.
+  if (drawerHost) drawerHost.append(box);
+  else document.body.append(box);
 }
 
 export function renderRuntimePanels(): void {
