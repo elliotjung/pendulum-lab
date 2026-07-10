@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-evidence-summary/v1",
-  "generatedAt": "2026-07-10T07:45:40.372Z",
+  "generatedAt": "2026-07-10T07:48:37.522Z",
   "sourceReports": {
     "vitestResults": "reports/vitest-results.json",
     "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
@@ -12,12 +12,12 @@
     "energyBenchmark": "reports/energy-benchmark.json"
   },
   "provenance": {
-    "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+    "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
     "packageVersion": "10.35.0",
     "lockfileSha256": "23ef43233734131116f1d598ea7f31b6159c63ba16b4c5607b01291c7d9b7e3c",
-    "dirtyWorktree": true,
+    "dirtyWorktree": false,
     "expiresAfterDays": 14,
-    "expiresAt": "2026-07-24T07:45:40.372Z"
+    "expiresAt": "2026-07-24T07:48:37.522Z"
   },
   "tests": {
     "total": 982,
@@ -104,7 +104,7 @@
       "status": "passed",
       "uncertainty": null,
       "sourceReport": "reports/vitest-results.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": null,
       "reproduce": "npm run verify",
       "publicUrl": null
@@ -115,7 +115,7 @@
       "status": "passed",
       "uncertainty": "Maximum observed divergence for regular reference cases",
       "sourceReport": "reports/cross-validation.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": "Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.",
       "reproduce": "npm run validate:cross",
       "publicUrl": null
@@ -126,7 +126,7 @@
       "status": "low",
       "uncertainty": null,
       "sourceReport": "reports/mutation-aggregate.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": "Below the 70% quality target; the 65% regression floor is enforced.",
       "reproduce": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
       "publicUrl": null
@@ -137,7 +137,7 @@
       "status": "measured",
       "uncertainty": "Method-specific drift; no universal pass envelope",
       "sourceReport": "reports/energy-benchmark.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": "Compare each method against its documented order and structure-preservation behavior.",
       "reproduce": "npm run benchmark:energy",
       "publicUrl": null
@@ -148,7 +148,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/gpu-adapter-matrix.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.",
       "reproduce": "npm run benchmark:gpu-matrix",
       "publicUrl": null
@@ -159,7 +159,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/publication-status.json",
-      "sourceCommit": "0ab1623294657ee1cf8f6d38e1bb095bf9fd177b",
+      "sourceCommit": "3313a969c42155edb3143a19ffa2d0231b2c8758",
       "caveat": "npm registry does not resolve this exact package version. No matching public Zenodo DOI record resolves for Pendulum Lab.",
       "reproduce": "npm run release:status",
       "publicUrl": "https://elliot-jung-17.github.io/pendulum-lab/reviewer.html"
