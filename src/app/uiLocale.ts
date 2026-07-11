@@ -8,7 +8,13 @@
  * <select> in the rail foot, and asks the caller to re-decorate on change.
  */
 
-import { NAV_LOCALE_STORAGE_KEY, normalizeNavLocale, setNavLocale, type NavLocale } from './navGuide';
+import {
+  NAV_LOCALE_STORAGE_KEY,
+  normalizeNavLocale,
+  resolveInitialNavLocale,
+  setNavLocale,
+  type NavLocale
+} from './navGuide';
 
 const SELECT_ID = 'navLocale';
 
@@ -21,10 +27,22 @@ function storedNavLocale(): NavLocale | null {
   }
 }
 
-/** Load the persisted locale into navGuide state. Call before decorating. */
+/**
+ * Load the initial locale into navGuide state. Call before decorating.
+ * A `?lang=ko|en` URL parameter (the landing page's Korean mode adds it to
+ * every app link) overrides and persists; otherwise the stored choice wins.
+ */
 export function initNavLocale(): void {
-  const stored = storedNavLocale();
-  if (stored) setNavLocale(stored);
+  const search = typeof window === 'undefined' ? '' : window.location.search;
+  const resolved = resolveInitialNavLocale(search, storedNavLocale());
+  setNavLocale(resolved.locale);
+  if (resolved.fromUrl) {
+    try {
+      window.localStorage?.setItem(NAV_LOCALE_STORAGE_KEY, resolved.locale);
+    } catch {
+      /* persistence is best-effort */
+    }
+  }
 }
 
 /**

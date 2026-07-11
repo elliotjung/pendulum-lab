@@ -27,6 +27,18 @@ interface Measurement {
   marchCap: number;
 }
 
+interface DuffingRow {
+  delta: number;
+  Gc: number;
+  bracket: [number, number] | null;
+  Gpd: number | null;
+  uncertainty: number | null;
+  ratio: number | null;
+  K_below: number | null;
+  K_above: number | null;
+  marchCap: number;
+}
+
 interface Study {
   generatedAt: string;
   driveFrequency: number;
@@ -34,6 +46,8 @@ interface Study {
   measurements: Measurement[];
   dtSensitivity: { gamma: number; dtFine: number; ApdFine: number | null; ApdCoarse: number | null; absDelta: number | null };
   bifurcationDiagram: { gamma: number; rows: Array<{ A: number; thetas: number[] }> };
+  frequencyScan?: { method: string; scans: Array<{ omega: number; measurements: Measurement[] }> };
+  duffingGapMap?: { alpha: number; beta: number; omega: number; method: string; rows: DuffingRow[] };
   runtimeSeconds: number;
 }
 
@@ -265,6 +279,73 @@ async function main(): Promise<void> {
 
   const fig3 = svgBifurcation(study.bifurcationDiagram, anchor.Ac, anchor.Apd ?? Number.NaN);
 
+  // ---- Extension figures: frequency scan + Duffing double well -------------
+  const scanColors = ['#b8860b', '#1a3a6b', '#1f7a3d'];
+  const scanSeries: Series[] = [];
+  if (study.frequencyScan) {
+    const scans = [
+      ...study.frequencyScan.scans.map((scan) => ({ omega: scan.omega, rows: scan.measurements })),
+      { omega: study.driveFrequency, rows: ms }
+    ].sort((a, b) => a.omega - b.omega);
+    scans.forEach((scan, index) => {
+      const pdRows = scan.rows.filter((m) => m.lossType === 'period-doubling' && m.ratio !== null);
+      scanSeries.push({
+        label: `ω = ${scan.omega.toFixed(scan.omega === study.driveFrequency ? 4 : 2)}`,
+        color: scanColors[index % scanColors.length]!,
+        points: pdRows.map((m) => [m.gamma, m.ratio!]),
+        marker: 'circle'
+      });
+    });
+  }
+  const fig4 = study.frequencyScan
+    ? svgChart(scanSeries, {
+        xLabel: 'damping γ',
+        yLabel: 'A_PD / A_c',
+        xRange: [0.05, 0.85],
+        yRange: [0.85, Math.max(1.6, ...scanSeries.flatMap((s) => s.points.map(([, y]) => y))) * 1.04],
+        hLine: 1
+      })
+    : '';
+
+  const duffingRows = study.duffingGapMap?.rows.filter((row) => row.Gpd !== null) ?? [];
+  const fig5 = study.duffingGapMap
+    ? svgChart(
+        [
+          {
+            label: 'Γ_c(δ) Melnikov (analytic)',
+            color: '#c0392b',
+            points: duffingRows.map((row) => [row.delta, row.Gc]),
+            marker: 'none'
+          },
+          {
+            label: 'Γ_PD(δ) measured (bisection bracket)',
+            color: '#1f7a3d',
+            points: duffingRows.map((row) => [row.delta, row.Gpd!]),
+            marker: 'circle'
+          }
+        ],
+        {
+          xLabel: 'damping δ',
+          yLabel: 'drive amplitude Γ',
+          xRange: [0.12, 0.38],
+          yRange: [0, Math.max(0.35, ...duffingRows.map((row) => row.Gpd!)) * 1.2]
+        }
+      )
+    : '';
+
+  const duffingTable = duffingRows
+    .map(
+      (row) =>
+        `<tr><td>${row.delta.toFixed(2)}</td><td>${row.Gc.toFixed(5)}</td><td>${row.Gpd!.toFixed(5)}</td><td>${row.uncertainty!.toExponential(1)}</td><td>${row.ratio!.toFixed(4)}</td><td>${row.K_below !== null ? row.K_below.toFixed(2) : '—'}</td><td>${row.K_above !== null ? row.K_above.toFixed(2) : '—'}</td></tr>`
+    )
+    .join('\n');
+
+  const scanUnclassified = study.frequencyScan
+    ? study.frequencyScan.scans.flatMap((scan) =>
+        scan.measurements.filter((m) => m.lossType !== 'period-doubling').map((m) => `ω = ${scan.omega}, γ = ${m.gamma}`)
+      )
+    : [];
+
   const tableRows = ms
     .map((m) => {
       const apd = m.Apd !== null ? m.Apd.toFixed(5) : '—';
@@ -315,7 +396,7 @@ async function main(): Promise<void> {
 <div class="byline">${esc(new Date(study.generatedAt).toISOString().slice(0, 10))} · Pendulum Lab numerical laboratory (TypeScript engine, externally cross-validated)</div>
 
 <div class="abstract">
-<p><strong>Abstract.</strong> The damped driven pendulum θ̈ = −sin θ − γθ̇ + A cos(ωt) (ω = ${(study.driveFrequency).toFixed(4)}) carries two distinct, frequently conflated notions of a “chaos threshold”: the analytic Melnikov amplitude A<sub>c</sub>(γ), above which first-order perturbation theory predicts a transverse homoclinic tangle, and the period-doubling onset A<sub>PD</sub>(γ), where the primary period-1 attractor begins the Feigenbaum cascade that produces the sustained chaotic attractor. We measure A<sub>PD</sub> over γ ∈ [${ms[0]!.gamma}, ${ms[ms.length - 1]!.gamma}] with an attractor-strobed bisection refined by the Floquet multiplier of the Newton periodic orbit (onset interpolated at ρ = −1), and compare it with the closed-form A<sub>c</sub>. The ratio A<sub>PD</sub>/A<sub>c</sub> falls monotonically from ${gammaLo.ratio!.toFixed(2)} at γ = ${gammaLo.gamma} to ${gammaHi.ratio!.toFixed(3)} at γ = ${gammaHi.gamma}${crossing !== null ? `, and the widely quoted ordering A<sub>c</sub> &lt; A<sub>PD</sub> <em>reverses</em> near γ ≈ ${crossing.toFixed(2)}` : ''}: at low damping the tangle precedes the cascade by a wide and rapidly growing margin, while at strong damping the cascade begins <em>below</em> the first-order Melnikov prediction. At the literature point γ = 0.5 our measurement A<sub>PD</sub> = ${anchor.Apd?.toFixed(4)} agrees with the published 1.0663 (Baker &amp; Gollub) to four digits.</p>
+<p><strong>Abstract.</strong> The damped driven pendulum θ̈ = −sin θ − γθ̇ + A cos(ωt) (ω = ${(study.driveFrequency).toFixed(4)}) carries two distinct, frequently conflated notions of a “chaos threshold”: the analytic Melnikov amplitude A<sub>c</sub>(γ), above which first-order perturbation theory predicts a transverse homoclinic tangle, and the period-doubling onset A<sub>PD</sub>(γ), where the primary period-1 attractor begins the Feigenbaum cascade that produces the sustained chaotic attractor. We measure A<sub>PD</sub> over γ ∈ [${ms[0]!.gamma}, ${ms[ms.length - 1]!.gamma}] with an attractor-strobed bisection refined by the Floquet multiplier of the Newton periodic orbit (onset interpolated at ρ = −1), and compare it with the closed-form A<sub>c</sub>. The ratio A<sub>PD</sub>/A<sub>c</sub> falls monotonically from ${gammaLo.ratio!.toFixed(2)} at γ = ${gammaLo.gamma} to ${gammaHi.ratio!.toFixed(3)} at γ = ${gammaHi.gamma}${crossing !== null ? `, and the widely quoted ordering A<sub>c</sub> &lt; A<sub>PD</sub> <em>reverses</em> near γ ≈ ${crossing.toFixed(2)}` : ''}: at low damping the tangle precedes the cascade by a wide and rapidly growing margin, while at strong damping the cascade begins <em>below</em> the first-order Melnikov prediction. At the literature point γ = 0.5 our measurement A<sub>PD</sub> = ${anchor.Apd?.toFixed(4)} agrees with the published 1.0663 (Baker &amp; Gollub) to four digits.${study.frequencyScan && study.duffingGapMap ? ' A reduced-grid frequency scan (ω = 0.5, 0.85) and a Duffing double-well companion map show the same monotone gap closure — with the crossing damping itself moving with drive frequency — so the reversal is a robust property of the first-order threshold, not an artifact of the classic parameter point.' : ''}</p>
 </div>
 
 <h2>1. Introduction</h2>
@@ -351,8 +432,27 @@ ${tableRows}
 <p>Three regimes emerge. (i) <strong>Low damping (γ ≲ 0.2):</strong> A<sub>c</sub> → 0 linearly while the cascade onset of the primary resonance remains an order-one amplitude, so the ratio diverges (${gammaLo.ratio!.toFixed(2)} already at γ = ${gammaLo.gamma}). The window of “tangle but no strange attractor” — long chaotic transients and fractal basin boundaries below a still-periodic attractor — is widest here, and the phase space is visibly multistable (see §5). (ii) <strong>Moderate damping:</strong> the textbook ordering A<sub>c</sub> &lt; A<sub>PD</sub> holds, but the margin shrinks steadily (to ${((anchor.ratio! - 1) * 100).toFixed(0)}% at γ = 0.5). (iii) <strong>Strong damping${crossing !== null ? ` (γ ≳ ${crossing.toFixed(2)})` : ''}:</strong> the measured cascade begins <em>below</em> the first-order Melnikov prediction. This is not a contradiction — the Melnikov threshold is asymptotically exact only as γ, A → 0, and by γ ≈ 0.7 the perturbation parameter is O(1) — but it sharpens the usual caveat into a measured boundary: the first-order formula stops being even an ordering bound near γ ≈ ${crossing !== null ? crossing.toFixed(2) : '0.7'}.</p>
 <p>The 0–1 test values corroborate the structural picture: K ≈ 0 on the period-1 side everywhere, while above onset K depends on where 1.08·A<sub>PD</sub> falls relative to the cascade accumulation point and the periodic windows visible in Figure 3 — both outcomes occur in the table, as expected for a Feigenbaum scenario with embedded windows.</p>
 
-<h2>5. Limitations and reproducibility</h2>
-<p>The study fixes ω = 2/3 and follows a single attractor branch per γ (warm-started in A); coexisting attractors reached from other initial conditions may double elsewhere. At the lowest dampings the phase space is multistable enough that a finer warm-started march can hop basins before the doubling — at γ = 0.15 a basin-capture transition of the followed state was observed near A ≈ 0.49 (the orbit itself remains strongly stable there, ρ ≈ +0.29), below the verified doubling at ${(ms.find((m) => m.gamma === 0.15)?.Apd ?? 0.531).toFixed(3)}. The quoted A<sub>PD</sub> values are therefore specifically the ρ = −1 doublings of the primary oscillating branch, not necessarily the first event of any kind along a slow amplitude sweep. The Melnikov comparison concerns the first-order formula specifically — higher-order or numerical manifold computations would move A<sub>c</sub>. The full study regenerates with <code>npm run paper:study</code> (~${Math.round(study.runtimeSeconds / 60)} min) followed by <code>npm run flagship:certify</code>, <code>npm run flagship:external</code>, and <code>npm run paper:build</code>; the engine tests and independent symbolic/trajectory validations are in the same repository.</p>
+${study.frequencyScan && study.duffingGapMap ? `<h2>5. Beyond one frequency and one system</h2>
+<p>Two extensions probe whether the closing gap is an artifact of the classic parameter point. First, a reduced-grid <strong>frequency scan</strong> repeats the full Floquet-refined measurement at ω = 0.5 and ω = 0.85. The shape survives: the ratio falls monotonically with damping at every frequency, and the crossing damping γ* moves with ω — at ω = 0.85 the gap is still open at γ = 0.8 (ratio ${(study.frequencyScan.scans.find((s) => s.omega === 0.85)?.measurements.at(-1)?.ratio ?? NaN).toFixed(3)}), while at ω = 0.5 the measured points at γ = 0.65 and 0.8 already sit <em>below</em> 1 (${study.frequencyScan.scans.find((s) => s.omega === 0.5)?.measurements.filter((m) => m.ratio !== null).map((m) => m.ratio!.toFixed(3)).join(', ') ?? ''}). ${scanUnclassified.length > 0 ? `At ${esc(scanUnclassified.join('; '))} the primary branch loses period-1 stability without a verified ρ = −1 crossing, and those points are reported as unclassified rather than forced into the map.` : ''}</p>
+<figure>
+${fig4}
+<figcaption><strong>Figure 4.</strong> A<sub>PD</sub>/A<sub>c</sub> versus damping at three drive frequencies (Floquet-refined points only). The monotone closure persists at every ω, and the ratio-1 crossing shifts with frequency — the reversal is a property of the first-order threshold itself, not of ω = 2/3.</figcaption>
+</figure>
+<p>Second, the same question is posed to a different system: the symmetric <strong>Duffing double well</strong> ẍ = −δẋ + x − x³ + Γcos(t). The closed-form Melnikov threshold Γ_c(δ) (derived and quadrature-verified in the engine, reducing to the Guckenheimer–Holmes expression at α = −1, β = 1) is compared with the marched/bisected loss of period-1 stability of the confined single-well attractor. There is no Newton–Floquet refinement for the Duffing flow yet, so Γ_PD is quoted as a bisection bracket midpoint — honestly wider than the pendulum's interpolated onsets, though the brackets themselves are ~10⁻⁸ wide.</p>
+<figure>
+${fig5}
+<figcaption><strong>Figure 5.</strong> The Duffing double-well gap map: analytic Γ<sub>c</sub>(δ) (red) versus the measured period-doubling onset Γ<sub>PD</sub>(δ) (green). The ratio falls from ${duffingRows[0]?.ratio?.toFixed(2) ?? '—'} at δ = ${duffingRows[0]?.delta ?? '—'} to ${duffingRows.at(-1)?.ratio?.toFixed(3) ?? '—'} at δ = ${duffingRows.at(-1)?.delta ?? '—'} — the same monotone closure as the pendulum, in a system with a polynomial (non-pendulum) nonlinearity.</figcaption>
+</figure>
+<table>
+<thead><tr><th>δ</th><th>Γ_c (Melnikov)</th><th>Γ_PD (measured)</th><th>δΓ_PD</th><th>Γ_PD/Γ_c</th><th>K at 0.97·Γ</th><th>K at 1.08·Γ</th></tr></thead>
+<tbody>
+${duffingTable}
+</tbody>
+</table>
+<p>The 0–1 test corroborates every Duffing onset (K ≈ 0 below, K ≈ 1 above — the cascade accumulates quickly in the double well at these parameters). Together the two extensions upgrade the paper's claim from "the thresholds cross at one classic parameter point" to "first-order Melnikov ordering degrades with damping across drive frequencies and across systems".</p>
+
+<h2>6. Limitations and reproducibility</h2>` : `<h2>5. Limitations and reproducibility</h2>`}
+<p>The ${study.frequencyScan ? 'main grid fixes' : 'study fixes'} ω = 2/3${study.frequencyScan ? ' (the frequency scan of §5 samples ω = 0.5 and 0.85 on a reduced γ grid)' : ''} and follows a single attractor branch per γ (warm-started in A); coexisting attractors reached from other initial conditions may double elsewhere. At the lowest dampings the phase space is multistable enough that a finer warm-started march can hop basins before the doubling — at γ = 0.15 a basin-capture transition of the followed state was observed near A ≈ 0.49 (the orbit itself remains strongly stable there, ρ ≈ +0.29), below the verified doubling at ${(ms.find((m) => m.gamma === 0.15)?.Apd ?? 0.531).toFixed(3)}. The quoted A<sub>PD</sub> values are therefore specifically the ρ = −1 doublings of the primary oscillating branch, not necessarily the first event of any kind along a slow amplitude sweep. The Melnikov comparison concerns the first-order formula specifically — higher-order or numerical manifold computations would move A<sub>c</sub>. The full study regenerates with <code>npm run paper:study</code> (~${Math.round(study.runtimeSeconds / 60)} min) followed by <code>npm run flagship:certify</code>, <code>npm run flagship:external</code>, and <code>npm run paper:build</code>; the engine tests and independent symbolic/trajectory validations are in the same repository.</p>
 
 <section class="appendix">
 <h2>Appendix A. Certified onset localization</h2>

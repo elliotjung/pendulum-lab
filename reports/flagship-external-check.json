@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-flagship-external-check/v2",
-  "generatedAt": "2026-06-18T16:46:13.325564+00:00",
+  "generatedAt": "2026-07-10T14:01:12.288357+00:00",
   "sourceStudy": "reports\\paper-study.json",
   "method": "Python stdlib recomputation of A_c, crossing arithmetic, and selected A_PD values via RK4 strobe-map Newton/Floquet search.",
   "maxAcAbsError": 0.0,

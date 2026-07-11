@@ -25,6 +25,7 @@ jobs:
       - run: npm run verify
       - run: npm run build
       - run: npm run build:standalone
+      - run: npm run check:standalone-sync
       - run: npm run build:lib
       - run: npm run budget
       - run: npm run docs:api

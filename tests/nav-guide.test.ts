@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   NAV_ACTION_GUIDE, NAV_ACTION_GUIDE_KO, NAV_TAB_GUIDE, NAV_TAB_GUIDE_KO,
-  actionGuideText, currentNavLocale, navTipText, normalizeNavLocale, setNavLocale, tabGuideText
+  actionGuideText, currentNavLocale, navTipText, normalizeNavLocale, resolveInitialNavLocale, setNavLocale, tabGuideText
 } from '../src/app/navGuide';
 import { EXTRA_RAIL_TABS } from '../src/app/railNavigation';
 
@@ -75,5 +75,16 @@ describe('navigation guide', () => {
       setNavLocale('en');
     }
     expect(actionGuideText('palette')).toBe(NAV_ACTION_GUIDE.palette);
+  });
+
+  it('resolves the initial locale: URL lang parameter wins, then storage, then English', () => {
+    // The landing page's Korean mode appends lang=ko to every app link.
+    expect(resolveInitialNavLocale('?tab=lab&lang=ko', null)).toEqual({ locale: 'ko', fromUrl: true });
+    expect(resolveInitialNavLocale('?lang=en', 'ko')).toEqual({ locale: 'en', fromUrl: true });
+    // Unknown values fall through to the stored choice.
+    expect(resolveInitialNavLocale('?lang=fr', 'ko')).toEqual({ locale: 'ko', fromUrl: false });
+    expect(resolveInitialNavLocale('', 'ko')).toEqual({ locale: 'ko', fromUrl: false });
+    expect(resolveInitialNavLocale('', null)).toEqual({ locale: 'en', fromUrl: false });
+    expect(resolveInitialNavLocale('?tab=lab', 'garbage')).toEqual({ locale: 'en', fromUrl: false });
   });
 });

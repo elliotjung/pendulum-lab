@@ -47,7 +47,15 @@ export {
 } from './accelerationContract';
 export type { AccelerationComparison, AccelerationTolerance, ChaosAccelerationContract, ChaosAccelerationTarget } from './accelerationContract';
 
-export { melnikovScaled, melnikovCriticalAmplitude, melnikovFunction, melnikovFunctionNumeric, melnikovVerdict } from './melnikov';
+export {
+  melnikovScaled,
+  melnikovCriticalAmplitude,
+  melnikovFunction,
+  melnikovFunctionNumeric,
+  melnikovVerdict,
+  melnikovCriticalAmplitudeDuffing,
+  melnikovFunctionNumericDuffing
+} from './melnikov';
 export type { MelnikovScaled, MelnikovVerdict } from './melnikov';
 
 export { eigenvalues2x2, monodromyMatrix, floquetAnalysis, floquetSpectrum, drivenPeriodicOrbit } from './floquet';

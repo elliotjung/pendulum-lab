@@ -1,6 +1,6 @@
 # WebGPU Multi-Adapter Evidence Matrix
 
-Generated: 2026-06-18T17:08:48.187Z
+Generated: 2026-07-10T09:29:18.012Z
 
 Status: **partial** (1/3 required vendor classes passing)
 

@@ -1,6 +1,6 @@
 # GPU Benchmark Ladder
 
-Generated: 2026-06-18T16:45:48.879Z
+Generated: 2026-07-10T09:29:21.172Z
 
 Status: **pass**
 
@@ -15,15 +15,15 @@ Browser channel: `chrome`
 | architecture | xe-2lpg |
 | device |  |
 | description |  |
-| features | bgra8unorm-storage, chromium-experimental-multi-draw-indirect, chromium-experimental-timestamp-query-inside-passes, clip-distances, core-features-and-limits, depth-clip-control, depth32float-stencil8, dual-source-blending, float32-blendable, float32-filterable, indirect-first-instance, primitive-index, rg11b10ufloat-renderable, shader-f16, subgroups, texture-component-swizzle, texture-compression-bc, texture-compression-bc-sliced-3d, texture-formats-tier1, texture-formats-tier2, timestamp-query |
+| features | bgra8unorm-storage, chromium-experimental-multi-draw-indirect, chromium-experimental-timestamp-query-inside-passes, clip-distances, core-features-and-limits, depth-clip-control, depth32float-stencil8, dual-source-blending, float32-blendable, float32-filterable, indirect-first-instance, primitive-index, rg11b10ufloat-renderable, shader-f16, subgroup-size-control, subgroups, texture-component-swizzle, texture-compression-bc, texture-compression-bc-sliced-3d, texture-formats-tier1, texture-formats-tier2, timestamp-query |
 
 ## Ensemble f32/f64 Horizon Drift
 
 | steps | backend | n | GPU ms | CPU ms | reduction pass | reduction mean diff | f32/f64 mean drift | f32/f64 covariance drift |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|
-| 40 | webgpu | 25 | 154.70 | 5.00 | true | 1.527e-16 | 1.527e-16 | 7.320e-6 |
-| 80 | webgpu | 25 | 79.90 | 2.60 | true | 1.943e-16 | 1.943e-16 | 2.802e-6 |
-| 160 | webgpu | 25 | 50.10 | 3.90 | true | 6.765e-17 | 6.765e-17 | 4.896e-6 |
+| 40 | webgpu | 25 | 250.20 | 3.00 | true | 1.527e-16 | 1.527e-16 | 7.320e-6 |
+| 80 | webgpu | 25 | 32.70 | 4.00 | true | 1.943e-16 | 1.943e-16 | 2.802e-6 |
+| 160 | webgpu | 25 | 33.60 | 7.60 | true | 1.110e-16 | 1.110e-16 | 4.896e-6 |
 
 Max f32/f64 mean drift: `1.943e-16`
 
@@ -35,8 +35,8 @@ Caveat: Reduction comparisons use identical CPU f64 states to isolate GPU-side r
 
 | steps | backend | GPU ms | pass | spectrum max diff | sum diff | KY diff |
 |---:|---|---:|---:|---:|---:|---:|
-| 160 | webgpu | 274.40 | true | 1.618e-5 | 1.066e-7 | 0.000e+0 |
-| 320 | webgpu | 64.20 | true | 4.524e-6 | 4.072e-7 | 5.109e-7 |
+| 160 | webgpu | 215.50 | true | 1.618e-5 | 1.066e-7 | 0.000e+0 |
+| 320 | webgpu | 40.70 | true | 4.524e-6 | 4.072e-7 | 5.109e-7 |
 
 Max adjacent spectrum shift: `1.678e-1`
 
@@ -71,7 +71,7 @@ Caveat: Full-spectrum rows are promoted only after same-run CPU f64 oracle compa
 | links / dimension | 3 / 6 |
 | CLV exponent max abs diff | 2.576e-6 |
 | FTLE abs diff | 6.481e-7 |
-| GPU ms | 349.90 |
+| GPU ms | 851.70 |
 | method | piecewise-jacobian-rk2-stm-qr |
 
 The hardware ladder validates GPU-side reductions and promoted chaos diagnostics against CPU f64 oracles while recording horizon drift separately.

@@ -368,6 +368,16 @@ export interface DoublePendulumFitSpec {
   initialGuess: readonly number[];
   /** RK4 step used by the forward model. Default 2e-3. */
   dt?: number;
+  /**
+   * Also estimate the initial angles (θ₁, θ₂ at t = 0) as two trailing fit
+   * parameters, seeded from `initialState`. Use this when θ₀ comes from the
+   * same noisy measurement as the trajectory (e.g. video tracking): fixing θ₀
+   * at a noisy first sample injects a *systematic* state error that the
+   * optimiser can only absorb by biasing the physical parameters. Angular
+   * velocities stay fixed at `initialState[2..3]` (a release-from-rest
+   * protocol makes ω₀ = 0 credible without estimating it).
+   */
+  estimateInitialAngles?: boolean;
 }
 
 export interface DoublePendulumFitResult extends LeastSquaresResult {
@@ -375,6 +385,12 @@ export interface DoublePendulumFitResult extends LeastSquaresResult {
   estimated: Partial<Record<DoublePendulumParameterName, number>>;
   /** The full parameter set with the estimates substituted in. */
   parametersFull: PendulumParameters;
+  /**
+   * Initial angles used by the best-fit forward model: the estimated (θ₁, θ₂)
+   * when `estimateInitialAngles` is set, otherwise the fixed `initialState`
+   * values echoed back.
+   */
+  initialAngles: readonly [number, number];
 }
 
 function wrapPi(angle: number): number {
@@ -436,6 +452,7 @@ export function fitDoublePendulum(
     throw new Error('fitDoublePendulum: estimate and initialGuess length mismatch.');
   }
   const dt = spec.dt ?? 2e-3;
+  const withInitialAngles = spec.estimateInitialAngles === true;
 
   const buildParameters = (values: readonly number[]): PendulumParameters => {
     const p: PendulumParameters = { ...spec.base };
@@ -445,9 +462,15 @@ export function fitDoublePendulum(
     return p;
   };
 
+  const buildInitialState = (values: readonly number[]): readonly [number, number, number, number] => {
+    if (!withInitialAngles) return spec.initialState;
+    const base = spec.estimate.length;
+    return [values[base]!, values[base + 1]!, spec.initialState[2], spec.initialState[3]];
+  };
+
   const residual: ResidualFunction = (values) => {
     const parameters = buildParameters(values);
-    const simulated = simulateDoubleAngles(parameters, spec.gamma, spec.initialState, times, dt);
+    const simulated = simulateDoubleAngles(parameters, spec.gamma, buildInitialState(values), times, dt);
     const out: number[] = [];
     for (let i = 0; i < simulated.length; i += 1) {
       out.push(wrapPi(simulated[i]![0] - angles[i]![0]));
@@ -456,9 +479,15 @@ export function fitDoublePendulum(
     return out;
   };
 
-  // Default to physically meaningful positivity bounds unless the caller overrides.
-  const defaultLower = spec.estimate.map(() => 1e-6);
-  const fit = levenbergMarquardt(residual, spec.initialGuess, {
+  // Default to physically meaningful positivity bounds unless the caller
+  // overrides; estimated initial angles are unbounded (angles wrap).
+  const defaultLower = withInitialAngles
+    ? [...spec.estimate.map(() => 1e-6), -Infinity, -Infinity]
+    : spec.estimate.map(() => 1e-6);
+  const initialGuess = withInitialAngles
+    ? [...spec.initialGuess, spec.initialState[0], spec.initialState[1]]
+    : spec.initialGuess;
+  const fit = levenbergMarquardt(residual, initialGuess, {
     lowerBounds: options.lowerBounds ?? defaultLower,
     ...options
   });
@@ -468,5 +497,11 @@ export function fitDoublePendulum(
     estimated[name] = fit.parameters[index]!;
   });
 
-  return { ...fit, estimated, parametersFull: buildParameters(fit.parameters) };
+  const finalInitial = buildInitialState(fit.parameters);
+  return {
+    ...fit,
+    estimated,
+    parametersFull: buildParameters(fit.parameters),
+    initialAngles: [finalInitial[0], finalInitial[1]]
+  };
 }

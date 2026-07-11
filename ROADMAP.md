@@ -23,11 +23,20 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 - **Reviewer kit:** `npm run reviewer:kit` generates `reports/reviewer-kit-manifest.json` and `.md`, tying the paper, flagship certification, external arithmetic check, notebook, validation reports, GPU contract, memory baseline, and reproducibility manifest into one checklist.
 - **Remaining crown work:** attach a Zenodo DOI/release archive (`.zenodo.json`
   metadata is synced with CITATION.cff as of 2026-07-07; minting the DOI needs
-  the Zenodo↔GitHub account link, an external credential), enable the external
-  npm publish target (dry-run passes; blocked only on `NPM_TOKEN`), run the
-  hardware WebGPU lane on NVIDIA/AMD-equipped runners (external hardware), and
-  decide whether the mini-paper becomes a formal preprint or a longer
-  notebook-first artifact.
+  the Zenodo↔GitHub account link, an external credential) and enable the
+  external npm publish target (the OIDC trusted-publishing workflow
+  `publish-npm.yml` is ready; the remaining step is configuring the trusted
+  publisher on npmjs.com — see `docs/RELEASING.md`).
+  - **Done (2026-07-10):** the hardware WebGPU lane has real evidence — the
+    full ladder (reductions, full spectrum, CLV, variational FTLE, N-chain
+    STM/QR) passed on a physical Intel Xe-2LPG adapter and the four
+    `webgpu-hardware-reductions` e2e gates passed; the adapter matrix records
+    intel=pass while NVIDIA/AMD stay honestly `missing` pending external
+    runners.
+  - **Decided (2026-07-10):** the mini-paper becomes an **arXiv preprint**
+    (nlin.CD); the study now spans three drive frequencies and a Duffing
+    double-well companion map with an independent Python reproduction. The
+    submission path and remaining external steps live in `paper/README.md`.
 
 ## Numerical Research Upgrades
 
@@ -92,6 +101,15 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
     headroom since 2026-06-18).
 
 ## Architecture - Module Splits
+
+- **Next refactor priority #1 (recorded 2026-07-10):** the three largest
+  orchestrators are `src/app/parity/research-workbench.ts` (1,467 lines),
+  `src/app/parity/figure-export.ts` (781), and `src/app/parity/governance-ui.ts`
+  (725). All three are UI orchestration tracked by the `audit:modules` ratchet,
+  so they cannot grow silently — but they are the first candidates for the next
+  deliberate split (see the deferred-extraction rationale below: the split
+  should land together with unit coverage for the extracted renderers or an
+  e2e run, not as a blind mechanical move).
 
 - **Done:** `expandedModels.ts` is now a facade. Its former responsibilities are split into
   `expandedModels-types.ts`, `expandedModels-factory.ts`, `expandedModels-runners.ts`,

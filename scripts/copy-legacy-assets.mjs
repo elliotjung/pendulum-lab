@@ -1,8 +1,8 @@
 import { cp, mkdir, copyFile, access } from 'node:fs/promises';
 
-// The legacy `js/` runtime has been archived (see archive/js/); the modern build
-// is entirely TypeScript under src/. We still ship the hand-written CSS that
-// styles the static shell DOM.
+// The legacy `js/` runtime has been archived (git tag legacy-js-archive); the
+// modern build is entirely TypeScript under src/. We still ship the hand-written
+// CSS that styles the static shell DOM.
 await mkdir('dist/css', { recursive: true });
 await cp('css', 'dist/css', { recursive: true });
 

@@ -2,6 +2,65 @@
 
 ## Unreleased
 
+### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1003)
+
+- **Theory vs measured hardware** (`docs/hardware-validation.md`): a full
+  parameter-extraction lane — video-tracker CSV (pixels) → scale-free angle
+  import → Levenberg–Marquardt over {l1, l2, g} with **co-estimated initial
+  angles** (`estimateInitialAngles` on `fitDoublePendulum`; freezing θ₀ at a
+  noisy first sample measurably biases g). Ships a seeded synthetic camera
+  fixture (`npm run fixture:hardware`, honestly labelled — not real footage
+  yet), a report CLI (`npm run compare:hardware` →
+  `reports/hardware-comparison.*`), and a regression test recovering
+  l1/l2/g within 1% at the injected noise floor
+  (`tests/hardware-comparison.test.ts`).
+- **WASM ensemble lane** (`wasm/assembly/ensemble.ts` →
+  `src/runtime/wasmEnsemble.ts`): the double-pendulum RK4 ensemble hot loop as
+  an AssemblyScript f64 kernel with the same floating-point grouping and
+  singularity guard as `rhsDouble`/`rk4Step`. Measured **8.2× vs the
+  production JS loop** (interleaved medians, Node 22, N=4096;
+  `npm run benchmark:wasm`), round-off-level parity + energy + fallback
+  contract tests, committed-binary drift gate (`check:wasm-sync`), and
+  recorded adoption/SIMD boundaries in `docs/performance.md`.
+- **Duffing double-well Melnikov threshold** (`src/chaos/melnikov.ts`):
+  closed-form Γ_c (reduces to Guckenheimer–Holmes at α=−1, β=1) plus an
+  independent separatrix-quadrature check, both exported through
+  `chaos/index` and pinned in `tests/melnikov.test.ts`.
+- **Paper study §5 extensions** (`scripts/paper-study.ts`, rendered by
+  `build-paper.ts`): a Floquet-refined **frequency scan** (ω = 0.5, 0.85 —
+  the ratio-1 crossing moves with drive frequency; non-PD losses reported as
+  unclassified) and a **Duffing gap map** (bisection brackets ~1e-8 wide,
+  0–1-test corroborated). Certification and the independent Python check
+  re-ran green; the preprint decision (arXiv, nlin.CD) and remaining external
+  steps live in `paper/README.md`.
+- **Real WebGPU hardware evidence**: the full hardware ladder (reductions,
+  full spectrum, CLV, variational FTLE, N-chain STM/QR) and all four
+  `webgpu-hardware-reductions` e2e gates passed on a **physical Intel
+  Xe-2LPG adapter**; `reports/gpu-adapter-matrix.*` records intel=pass with
+  NVIDIA/AMD honestly `missing`.
+- **Property-based invariants** (`tests/property-invariants.test.ts`,
+  fast-check, pinned seed): mass-matrix SPD + closed-form determinant,
+  canonical (θ,ω)↔(q,p) round-trip, analytic Hamiltonian gradient vs central
+  differences, RK4 short-horizon energy drift from random states, implicit
+  midpoint time-reversibility + step-map symplecticity (JᵀΩJ = Ω) + no
+  secular energy drift, and StateStore→strict-JSON import round-trips.
+- **Gates**: committed standalone bundle and WASM kernel now have CI drift
+  gates (`check:standalone-sync`, `check:wasm-sync` in ci/main/release);
+  coverage gains a **global ratchet** (statements 58 / branches 44 /
+  functions 47 / lines 58) alongside the scoped physics/chaos/research
+  thresholds.
+- **Hygiene**: the migrated legacy `archive/` left the working tree
+  (preserved at the `legacy-js-archive` tag); the stale `.kilo` agent
+  worktree and its merged branch were pruned; large-orchestrator refactor
+  priority recorded in ROADMAP.
+- **Cross-repo**: `evidence-dispatch.yml` fires a `repository_dispatch` at
+  the landing repo whenever the committed evidence summary changes, pairing
+  with the landing repo's new auto-sync workflow; the two-repo topology is
+  now an explicit decision (`docs/adr/0001-repository-topology.md`).
+- **Korean deep links**: the app resolves a `?lang=ko|en` URL parameter into
+  the persisted menu-guide locale (`resolveInitialNavLocale`), so the landing
+  page's static Korean page opens the lab pre-localized.
+
 ### Guided onboarding, Korean menu guide, and hardened gates
 
 - **Onboarding tour** (`src/app/onboardingTour.ts`): after the workspace

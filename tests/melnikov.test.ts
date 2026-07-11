@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import {
   melnikovCriticalAmplitude,
+  melnikovCriticalAmplitudeDuffing,
   melnikovFunction,
   melnikovFunctionNumeric,
+  melnikovFunctionNumericDuffing,
   melnikovVerdict,
   zeroOneTest,
   sampleObservable
@@ -88,6 +90,44 @@ describe('critical amplitude structure', () => {
     expect(v.Omega).toBeCloseTo(2 / 3, 12);
     expect(v.amplitudeRatio).toBeCloseTo(1.15 / v.criticalAmplitude, 12);
     expect(v.predictsHomoclinicTangle).toBe(true);
+  });
+});
+
+describe('Duffing double-well Melnikov threshold', () => {
+  const duffing = { damping: 0.25, linearStiffness: -1, cubicStiffness: 1, driveAmplitude: 0.3, driveFrequency: 1 };
+
+  test('reduces to the Guckenheimer–Holmes closed form at α = −1, β = 1', () => {
+    const gc = melnikovCriticalAmplitudeDuffing(duffing);
+    const textbook = ((2 * Math.SQRT2) / 3) * (duffing.damping * Math.cosh((Math.PI * duffing.driveFrequency) / 2)) / (Math.PI * duffing.driveFrequency);
+    expect(gc).toBeCloseTo(textbook, 12);
+  });
+
+  test('closed-form threshold zeroes the quadrature Melnikov maximum (M at ωt₀ = π/2)', () => {
+    const cases = [
+      duffing,
+      { ...duffing, damping: 0.1, driveFrequency: 1.4 },
+      { damping: 0.3, linearStiffness: -2.5, cubicStiffness: 0.7, driveAmplitude: 0, driveFrequency: 0.9 }
+    ];
+    for (const p of cases) {
+      const gc = melnikovCriticalAmplitudeDuffing(p);
+      const tau0 = Math.PI / (2 * p.driveFrequency); // sin(ωt₀) = 1: the maximum of M
+      const atThreshold = melnikovFunctionNumericDuffing(tau0, { ...p, driveAmplitude: gc });
+      expect(Math.abs(atThreshold)).toBeLessThan(1e-8);
+      // Slightly above/below the threshold the maximum changes sign.
+      expect(melnikovFunctionNumericDuffing(tau0, { ...p, driveAmplitude: 1.02 * gc })).toBeGreaterThan(0);
+      expect(melnikovFunctionNumericDuffing(tau0, { ...p, driveAmplitude: 0.98 * gc })).toBeLessThan(0);
+    }
+  });
+
+  test('Γ_c is linear in the damping δ (first-order structure)', () => {
+    const g1 = melnikovCriticalAmplitudeDuffing({ ...duffing, damping: 0.1 });
+    const g4 = melnikovCriticalAmplitudeDuffing({ ...duffing, damping: 0.4 });
+    expect(g4 / g1).toBeCloseTo(4, 12);
+  });
+
+  test('rejects single-well parameters (no homoclinic orbit)', () => {
+    expect(() => melnikovCriticalAmplitudeDuffing({ ...duffing, linearStiffness: 1 })).toThrow(/double well/);
+    expect(() => melnikovFunctionNumericDuffing(0, { ...duffing, cubicStiffness: -1 })).toThrow(/double well/);
   });
 });
 

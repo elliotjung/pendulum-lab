@@ -1,6 +1,6 @@
 {
  "schemaVersion": "paper-study/v1",
- "generatedAt": "2026-06-18T16:54:05.478Z",
+ "generatedAt": "2026-07-10T13:58:47.172Z",
  "driveFrequency": 0.6666666666666666,
  "dt": 0.005,
  "method": {
@@ -12,6 +12,7 @@
  "measurements": [
   {
    "gamma": 0.1,
+   "omega": 0.6666666666666666,
    "Ac": 0.203754851014665,
    "attractorBracket": [
     0.48398940372463894,
@@ -28,6 +29,7 @@
   },
   {
    "gamma": 0.15,
+   "omega": 0.6666666666666666,
    "Ac": 0.3056322765219975,
    "attractorBracket": [
     0.5308122286919397,
@@ -44,6 +46,7 @@
   },
   {
    "gamma": 0.2,
+   "omega": 0.6666666666666666,
    "Ac": 0.40750970202933,
    "attractorBracket": [
     0.5900573342733474,
@@ -60,6 +63,7 @@
   },
   {
    "gamma": 0.25,
+   "omega": 0.6666666666666666,
    "Ac": 0.5093871275366626,
    "attractorBracket": [
     0.6583032706024594,
@@ -76,6 +80,7 @@
   },
   {
    "gamma": 0.3,
+   "omega": 0.6666666666666666,
    "Ac": 0.611264553043995,
    "attractorBracket": [
     0.7329503725147157,
@@ -92,6 +97,7 @@
   },
   {
    "gamma": 0.35,
+   "omega": 0.6666666666666666,
    "Ac": 0.7131419785513275,
    "attractorBracket": [
     0.812194892232339,
@@ -108,6 +114,7 @@
   },
   {
    "gamma": 0.4,
+   "omega": 0.6666666666666666,
    "Ac": 0.81501940405866,
    "attractorBracket": [
     0.8947305303442799,
@@ -124,6 +131,7 @@
   },
   {
    "gamma": 0.45,
+   "omega": 0.6666666666666666,
    "Ac": 0.9168968295659926,
    "attractorBracket": [
     0.9796559104100167,
@@ -140,6 +148,7 @@
   },
   {
    "gamma": 0.5,
+   "omega": 0.6666666666666666,
    "Ac": 1.0187742550733252,
    "attractorBracket": [
     1.0664123979137048,
@@ -156,6 +165,7 @@
   },
   {
    "gamma": 0.55,
+   "omega": 0.6666666666666666,
    "Ac": 1.1206516805806577,
    "attractorBracket": [
     1.154539355667747,
@@ -172,6 +182,7 @@
   },
   {
    "gamma": 0.6,
+   "omega": 0.6666666666666666,
    "Ac": 1.22252910608799,
    "attractorBracket": [
     1.2437562227933066,
@@ -188,6 +199,7 @@
   },
   {
    "gamma": 0.65,
+   "omega": 0.6666666666666666,
    "Ac": 1.3244065315953228,
    "attractorBracket": [
     1.3338739689110237,
@@ -204,6 +216,7 @@
   },
   {
    "gamma": 0.7,
+   "omega": 0.6666666666666666,
    "Ac": 1.426283957102655,
    "attractorBracket": [
     1.424779673241649,
@@ -220,6 +233,7 @@
   },
   {
    "gamma": 0.75,
+   "omega": 0.6666666666666666,
    "Ac": 1.5281613826099876,
    "attractorBracket": [
     1.5164613970243794,
@@ -236,6 +250,7 @@
   },
   {
    "gamma": 0.8,
+   "omega": 0.6666666666666666,
    "Ac": 1.63003880811732,
    "attractorBracket": [
     1.608648528347714,
@@ -16838,5 +16853,268 @@
    }
   ]
  },
- "runtimeSeconds": 470.712
+ "frequencyScan": {
+  "method": "Same warm-started march + bisection + attractor-seeded Floquet refinement as the main grid, at additional drive frequencies (reduced gamma grid).",
+  "scans": [
+   {
+    "omega": 0.5,
+    "measurements": [
+     {
+      "gamma": 0.2,
+      "omega": 0.5,
+      "Ac": 0.3373089347502565,
+      "attractorBracket": [
+       0.7747288719817574,
+       0.7747292837358282
+      ],
+      "Apd": null,
+      "lossType": "unclassified",
+      "rhoBelow": 0.26965690568745315,
+      "rhoAbove": null,
+      "ratio": null,
+      "K_below": -0.1694484596127191,
+      "K_above": 0.9985259304343866,
+      "marchCap": 1.35
+     },
+     {
+      "gamma": 0.35,
+      "omega": 0.5,
+      "Ac": 0.5902906358129488,
+      "attractorBracket": [
+       0.8106127245541646,
+       0.8106134451237884
+      ],
+      "Apd": null,
+      "lossType": "unclassified",
+      "rhoBelow": 0.020944195569467583,
+      "rhoAbove": null,
+      "ratio": null,
+      "K_below": -0.30400369818787176,
+      "K_above": 0.9971363738443157,
+      "marchCap": 1.35
+     },
+     {
+      "gamma": 0.5,
+      "omega": 0.5,
+      "Ac": 0.8432723368756412,
+      "attractorBracket": [
+       0.8689575558084057,
+       0.8689585851935826
+      ],
+      "Apd": null,
+      "lossType": "unclassified",
+      "rhoBelow": 0.0013189193082433492,
+      "rhoAbove": null,
+      "ratio": null,
+      "K_below": -0.32958989889342494,
+      "K_above": 0.9979163398402539,
+      "marchCap": 1.5178902063761541
+     },
+     {
+      "gamma": 0.65,
+      "omega": 0.5,
+      "Ac": 1.0962540379383336,
+      "attractorBracket": [
+       1.031254952085379,
+       1.0312562902861089
+      ],
+      "Apd": 1.0312437840757447,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.8169433987571937,
+      "rhoAbove": -1.1828779447904525,
+      "ratio": 0.9406978203839957,
+      "K_below": -0.3226027479587811,
+      "K_above": 0.9977459419542158,
+      "marchCap": 1.9732572682890006
+     },
+     {
+      "gamma": 0.8,
+      "omega": 0.5,
+      "Ac": 1.349235739001026,
+      "attractorBracket": [
+       1.2501380632878747,
+       1.2501397103041576
+      ],
+      "Apd": 1.2501074942207795,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.8749911960515394,
+      "rhoAbove": -1.126864686062004,
+      "ratio": 0.9265300777952703,
+      "K_below": 0.36197010483254444,
+      "K_above": 0.9963813496049649,
+      "marchCap": 2.428624330201847
+     }
+    ]
+   },
+   {
+    "omega": 0.85,
+    "measurements": [
+     {
+      "gamma": 0.2,
+      "omega": 0.85,
+      "Ac": 0.5174165108633327,
+      "attractorBracket": [
+       1.1803362038245226,
+       1.1803368354364743
+      ],
+      "Apd": 1.1802989296754833,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.9660641930775977,
+      "rhoAbove": -1.0357911491063825,
+      "ratio": 2.281138898536696,
+      "K_below": 0.021968191627458826,
+      "K_above": 0.9981759438466178,
+      "marchCap": 1.35
+     },
+     {
+      "gamma": 0.35,
+      "omega": 0.85,
+      "Ac": 0.9054788940108321,
+      "attractorBracket": [
+       1.3756205135105202,
+       1.3756216188314356
+      ],
+      "Apd": 1.3755421021999803,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.9649832408374681,
+      "rhoAbove": -1.038039851342444,
+      "ratio": 1.5191321534917244,
+      "K_below": -0.020569029660500178,
+      "K_above": -0.6486215070450845,
+      "marchCap": 1.629862009219498
+     },
+     {
+      "gamma": 0.5,
+      "omega": 0.85,
+      "Ac": 1.2935412771583317,
+      "attractorBracket": [
+       1.634055912579033,
+       1.6340574916089126
+      ],
+      "Apd": 1.6339594331172416,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.9644128311060096,
+      "rhoAbove": -1.03833674608843,
+      "ratio": 1.263167601969954,
+      "K_below": -0.01156602945450919,
+      "K_above": 0.5638408471104857,
+      "marchCap": 2.328374298884997
+     },
+     {
+      "gamma": 0.65,
+      "omega": 0.85,
+      "Ac": 1.6816036603058313,
+      "attractorBracket": [
+       1.934402554317042,
+       1.9344046070558851
+      ],
+      "Apd": 1.9342173425812292,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.9667629284150304,
+      "rhoAbove": -1.037092487982566,
+      "ratio": 1.1502218913043132,
+      "K_below": 0.01852536237481041,
+      "K_above": -0.6700879187134415,
+      "marchCap": 3.0268865885504965
+     },
+     {
+      "gamma": 0.8,
+      "omega": 0.85,
+      "Ac": 2.069666043453331,
+      "attractorBracket": [
+       2.268709707476069,
+       2.268712233923876
+      ],
+      "Apd": 2.2684013650068424,
+      "lossType": "period-doubling",
+      "rhoBelow": -0.9718831830646372,
+      "rhoAbove": -1.0325117435404618,
+      "ratio": 1.0960228932499239,
+      "K_below": -0.019759974631259523,
+      "K_above": 0.9979683237464241,
+      "marchCap": 3.7253988782159957
+     }
+    ]
+   }
+  ]
+ },
+ "duffingGapMap": {
+  "alpha": -1,
+  "beta": 1,
+  "omega": 1,
+  "method": "Closed-form double-well Melnikov Gamma_c (verified against separatrix quadrature in tests/melnikov.test.ts) vs the marched/bisected loss of period-1 stability of the confined single-well attractor; no Newton-Floquet refinement for the Duffing flow yet, so the onset is a bisection bracket (midpoint +/- half-width). 0-1 test corroboration on the x strobe series (700 samples, seed 12345).",
+  "rows": [
+   {
+    "delta": 0.15,
+    "Gc": 0.11295271622430567,
+    "bracket": [
+     0.25301408434244477,
+     0.25301411881287816
+    ],
+    "Gpd": 0.25301410157766147,
+    "uncertainty": 1.723521669827477e-8,
+    "ratio": 2.240000152587891,
+    "K_below": -0.007603714992893439,
+    "K_above": 0.9979079663344796,
+    "marchCap": 0.45
+   },
+   {
+    "delta": 0.2,
+    "Gc": 0.15060362163240756,
+    "bracket": [
+     0.25861203676896005,
+     0.2586120827295379
+    ],
+    "Gpd": 0.25861205974924895,
+    "uncertainty": 2.2980288921781167e-8,
+    "ratio": 1.7171702575683587,
+    "K_below": 0.026562613629450935,
+    "K_above": 0.997352739574785,
+    "marchCap": 0.45
+   },
+   {
+    "delta": 0.25,
+    "Gc": 0.18825452704050946,
+    "bracket": [
+     0.2649828392929977,
+     0.26498289674372005
+    ],
+    "Gpd": 0.2649828680183589,
+    "uncertainty": 2.872536117304314e-8,
+    "ratio": 1.40757766723633,
+    "K_below": 0.02171748497394588,
+    "K_above": 0.9981528782026271,
+    "marchCap": 0.4894617703053246
+   },
+   {
+    "delta": 0.3,
+    "Gc": 0.22590543244861133,
+    "bracket": [
+     0.2730687067416059,
+     0.27306877568247273
+    ],
+    "Gpd": 0.2730687412120393,
+    "uncertainty": 3.4470433424305114e-8,
+    "ratio": 1.2087745666503906,
+    "K_below": -0.015143826949821873,
+    "K_above": 0.9977711674873412,
+    "marchCap": 0.5873541243663895
+   },
+   {
+    "delta": 0.35,
+    "Gc": 0.26355633785671323,
+    "bracket": [
+     0.2823241100355112,
+     0.2823241904665226
+    ],
+    "Gpd": 0.28232415025101687,
+    "uncertainty": 4.021550567556709e-8,
+    "ratio": 1.0712098693847654,
+    "K_below": -0.015594208366065452,
+    "K_above": 0.997317614891462,
+    "marchCap": 0.6852464784274545
+   }
+  ]
+ },
+ "runtimeSeconds": 473.54
 }

@@ -3,6 +3,14 @@
 Use this checklist when publishing Pendulum Lab and the landing page together.
 The goal is to keep evidence, wording, and performance defaults synchronized.
 
+> **Repository topology:** two repos by decision — see
+> [ADR 0001](adr/0001-repository-topology.md). Evidence synchronization is
+> automated: pushing a changed `reports/evidence-summary.json` to the default
+> branch dispatches the landing repo's `evidence-sync` workflow, which pulls
+> the summary, realigns the demo-kernel manifest, re-runs the landing gate
+> (including the kernel-parity smoke test), and auto-commits. The manual step
+> 3 below remains as local convenience / fallback, not the mechanism.
+
 ## URLs And Rollback
 
 | Surface | Production URL | Preview URL | Rollback |

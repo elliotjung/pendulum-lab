@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-webgpu-hardware-validation/v2",
-  "generatedAt": "2026-06-18T16:45:41.770Z",
+  "generatedAt": "2026-07-10T09:27:17.238Z",
   "channel": "chrome",
   "url": "http://127.0.0.1:5173/",
   "status": "pass",
@@ -62,8 +62,8 @@
       },
       "metrics": {
         "spectrumMaxAbsDiff": 0.000004524102837577537,
-        "sumAbsDiff": 4.0721561900269876e-7,
-        "kaplanYorkeAbsDiff": 5.10891931870816e-7
+        "sumAbsDiff": 4.0721561889167646e-7,
+        "kaplanYorkeAbsDiff": 5.108919323149053e-7
       },
       "caveat": "Compares finite-time spectrum outputs for identical settings; does not certify a different integration horizon or seed."
     },
@@ -76,7 +76,7 @@
     "cpuSpectrum": [
       0.4622683084615795,
       -0.041767963959451516,
-      -0.07208007799866793,
+      -0.07208007799866786,
       -0.4007274449974604
     ],
     "caveat": "WebGPU f32 full-spectrum result promoted after same-run CPU f64 oracle comparison; CPU-derived uncertainty estimates are retained."
@@ -129,8 +129,8 @@
       "metrics": {
         "sameShape": true,
         "fieldMaxAbsDiff": 0.000024288018357410124,
-        "fieldMeanAbsDiff": 0.0000058587074793226,
-        "minAbsDiff": 7.348325183897941e-7,
+        "fieldMeanAbsDiff": 0.000005858707479156067,
+        "minAbsDiff": 7.348325179457049e-7,
         "maxAbsDiff": 0.000024288018357410124
       },
       "caveat": "Compares like-for-like FTLE fields. Variational STM and finite-difference flow-map fields must not be mixed without a method caveat."
@@ -156,19 +156,19 @@
           "aggregate": 0.02
         },
         "metrics": {
-          "exponentMaxAbsDiff": 0.000002575877267929627,
-          "meanAngleAbsDiff": 0.00004180401381836951,
-          "minAngleAbsDiff": 0.00004218023114077596
+          "exponentMaxAbsDiff": 0.0000025758772723705192,
+          "meanAngleAbsDiff": 0.000041804013828139475,
+          "minAngleAbsDiff": 0.000042180231148325475
         },
         "caveat": "Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller."
       },
-      "ftleAbsDiff": 6.480840992750814e-7,
+      "ftleAbsDiff": 6.480836862721162e-7,
       "ftleTolerance": 0.16
     },
     "links": 3,
     "dimension": 6,
     "ftle": 7.877861499786377,
-    "cpuFtle": 7.877862147870476,
+    "cpuFtle": 7.877862147870063,
     "method": "piecewise-jacobian-rk2-stm-qr",
     "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."
   }

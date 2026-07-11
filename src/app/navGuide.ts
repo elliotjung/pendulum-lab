@@ -109,6 +109,21 @@ export function normalizeNavLocale(value: unknown): NavLocale {
   return value === 'ko' ? 'ko' : 'en';
 }
 
+/**
+ * Resolve the locale to start with: an explicit `?lang=` URL parameter wins
+ * (the landing page's Korean mode deep-links the app with `lang=ko`), then
+ * the persisted choice, then English. `fromUrl` tells the caller to persist
+ * the parameter so the choice sticks on the next visit.
+ */
+export function resolveInitialNavLocale(
+  search: string,
+  stored: string | null
+): { locale: NavLocale; fromUrl: boolean } {
+  const param = new URLSearchParams(search).get('lang');
+  if (param === 'ko' || param === 'en') return { locale: param, fromUrl: true };
+  return { locale: stored === null ? 'en' : normalizeNavLocale(stored), fromUrl: false };
+}
+
 export function currentNavLocale(): NavLocale {
   return currentLocale;
 }

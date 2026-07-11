@@ -1,5 +1,19 @@
 # Releasing and Publishing
 
+## Where publication stands (2026-07-10)
+
+Everything automatable is in place and verified; exactly **two external-account
+actions** remain, neither of which any workflow can perform:
+
+| Lane | State | Remaining action (external) |
+| --- | --- | --- |
+| GitHub release + attestations | ✅ live (`v10.35.0` released; SBOM + provenance attested) | — |
+| npm | 🔶 `npm publish --dry-run` passes; OIDC trusted-publishing workflow ready | Configure the trusted publisher on npmjs.com (settings below), then dispatch **Publish npm package** with `dry-run=false` |
+| Zenodo DOI | 🔶 `.zenodo.json` synced with `CITATION.cff`; draft/publish/doi-sync scripts ready | Create/link the Zenodo account, mint a `ZENODO_TOKEN`, then run the Zenodo steps below |
+
+Re-audit any time with `npm run release:status`
+(`reports/publication-status.json`).
+
 ## Preflight
 
 ```bash

@@ -63,6 +63,37 @@ Headless browser FPS is noisy and should not be the only regression signal. Use:
   newest segment each frame.
 - `canvasQuality.ts` owns DPR caps and the recent quality-reason log.
 
+## WASM Ensemble Lane (headless hot loop)
+
+Large ensemble / basin sweeps spend their time in one hot loop: RK4 over
+`rhsDouble` for N independent trajectories. That loop now has a WASM lane:
+
+- **Kernel**: `wasm/assembly/ensemble.ts` (AssemblyScript), a 1:1 f64 port of
+  `rhsDouble` + `rk4Step` with the same floating-point grouping and the same
+  mass-matrix singularity guard. Compiled by `npm run build:wasm` to
+  `src/runtime/wasm/pendulum-kernel.wasm` (committed; CI recompiles and fails
+  on drift via `check:wasm-sync`).
+- **API**: `src/runtime/wasmEnsemble.ts` — `runDoublePendulumEnsembleWasm`,
+  same fallback contract as the GPU lane (JS loop, `backend: 'cpu'`) when the
+  kernel cannot load.
+- **Contract tests**: `tests/wasm-ensemble.test.ts` — round-off-level parity
+  vs the JS f64 oracle over short horizons, undamped energy conservation,
+  memory-block reuse, forced-fallback equivalence.
+- **Measured**: `npm run benchmark:wasm` (interleaved A/B, medians) —
+  **8.2× vs the production JS loop** on Node 22 / win32-x64 (N=4096, 400
+  steps: JS 1957 ms → WASM 240 ms, ≈6.8M trajectory-steps/s). Report:
+  `reports/wasm-benchmark.json`.
+- Bonus property: the kernel binary gives bit-identical results across JS
+  engines, which `Math.sin`/`Math.cos` in JS do not guarantee.
+
+**Adoption boundary (decision recorded)**: the lane is wired for headless
+paths (research CLI, paper studies, Node benchmarks). Running it inside the
+served app requires `'wasm-unsafe-eval'` in the CSP `script-src`; that posture
+change is deferred until an in-app workload needs it. **SIMD (decision
+recorded)**: the inner loop is trig-dominated (4 libm calls per rhs), so
+2-lane f64x2 SIMD without a vectorized sin/cos yields little; revisit with a
+SLEEF-style vector libm if ensemble scale ever outgrows the 8× scalar win.
+
 ## Hardware And Claim Boundaries
 
 Intel WebGPU evidence is recorded. NVIDIA/AMD claims remain bounded until

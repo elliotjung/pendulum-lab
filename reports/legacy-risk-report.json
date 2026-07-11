@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T06:31:25.848Z",
+  "generatedAt": "2026-07-11T04:31:53.303Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -77,6 +77,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\bootstrap.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\canvasQuality.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -125,6 +137,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\DiagnosticsScheduler.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\DomBinder.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -138,6 +162,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\domTakeover.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\educationCards.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -221,7 +257,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\hudEffects.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\index.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\kineticOverdrive.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -245,7 +305,43 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\LabChromePresenter.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\LabController.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabControls.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabEnsembleController.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -281,7 +377,67 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\LabQualityBudget.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabRecording.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\LabRenderer.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabSidePlotCoordinator.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabSidePlotProtocol.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabSidePlotWorkerClient.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -318,6 +474,42 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\LyapunovTab.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\navGuide.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\onboardingTour.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\command-palette.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -473,6 +665,126 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\parity\\research-batch-runner.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-comparison.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-design-controller.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-design-renderers.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-design-types.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-experiment-library-renderer.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-export-panels.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-renderers.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-run-log.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-session-storage.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\parity\\research-ui-components.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -486,6 +798,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\parity\\research-workbench.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\research-workspace-controller.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -593,6 +917,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\RenderScheduler.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\ResearchMatrixTab.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -653,6 +989,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\SimulationClock.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\sweepColor.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -701,7 +1049,43 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\trustDrawer.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\uiLocale.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\UiPolish.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\UiTaskQueue.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -726,6 +1110,42 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\ZeroOneTab.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\browser\\figureRaster.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\browser\\installJsonImportGuard.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\chaos\\accelerationContract.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -797,6 +1217,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\chaos\\chaosControl.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\chaos\\clv.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -833,6 +1265,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\chaos\\correlationDimension.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\chaos\\fixedPointClassify.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -846,6 +1290,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\chaos\\floquet.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\chaos\\floquetLinear.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -917,7 +1373,43 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\chaos\\mathieuStability.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\chaos\\melnikov.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\chaos\\multifractal.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\chaos\\naff.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1013,7 +1505,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\chaos\\topologicalEntropy.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\chaos\\torusAnalysis.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\chaos\\transferOperator.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1097,6 +1613,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\lib\\browser.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\lib\\core.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1121,7 +1649,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\lib\\node.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\lib\\research.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\lib\\worker.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1253,6 +1805,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\duffing.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\energy.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1289,7 +1853,103 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\expandedModels-factory.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\expandedModels-lyapunov.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\expandedModels-research.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\expandedModels-runners.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\expandedModels-types.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\expandedModels.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\fft.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\fput.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\implicitDiagnostics.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1337,7 +1997,55 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\kapitza.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\kramersEscape.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\latticeDispersion.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\linearSolve.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\magneticPendulum.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1385,7 +2093,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\quantumKickedRotor.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\rope.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\sineGordon.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1469,6 +2201,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\standardMap.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\stiff.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1482,6 +2226,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\physics\\stochastic.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\physics\\stochasticMetadata.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1541,6 +2297,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\vanDerPol.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\variational.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1577,6 +2345,30 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\research\\arnoldi.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\certifiedWorkbench.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\research\\cliBatchSpec.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1589,7 +2381,67 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\research\\complexEig.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\research\\convergenceOrder.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\dmd.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\eigenGeneral.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\evidenceSummary.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\experimentalDataImport.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1614,6 +2466,54 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\research\\figurePipeline.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\flagshipCertification.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\hamiltonianLearning.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\havok.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\lanczos.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1673,6 +2573,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\research\\qkrFloquet.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\research\\reproPackage.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1721,6 +2633,30 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\research\\reservoir.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\sindy.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\research\\sobolSensitivity.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1757,7 +2693,55 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\research\\svd.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\research\\unitaryFloquet.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\research\\zipBundle.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\reviewer\\main.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\reviewer\\reviewer.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1817,6 +2801,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\runtime\\gpuChaosPromotion.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\runtime\\gpuEnsemble.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -1830,6 +2826,54 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\runtime\\gpuFields.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\runtime\\gpuLyapunov.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\runtime\\gpuNChainVariational.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\runtime\\gpuNChainVariationalKernel.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\runtime\\gpuVariationalFtleKernel.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1901,7 +2945,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\runtime\\wasmEnsemble.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\runtime\\WorkerBridge.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\runtime\\workerFallbackNotice.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -2129,6 +3197,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\viz\\phase3dMath.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\viz\\poincare.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -2249,6 +3329,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\workers\\labSidePlots.worker.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\workers\\physics.worker.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -2322,6 +3414,30 @@
       "standalonePortableBlobWorker": 0
     },
     "css\\05-extracted-inline.css": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "css\\06-futuristic-hud.css": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "css\\07-kinetic-overdrive.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

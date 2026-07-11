@@ -20,6 +20,14 @@ export default defineConfig({
       // below the measured baseline so coverage can only go up. Raise them
       // deliberately when coverage improves.
       thresholds: {
+        // Global floor across ALL of src (UI orchestration included), so a
+        // large untested surface can never land silently. Measured baseline
+        // 2026-07-10: statements 59.18%, branches 45.54%, functions 48.82%,
+        // lines 59.20% over 273 files / 1003 tests.
+        statements: 58,
+        branches: 44,
+        functions: 47,
+        lines: 58,
         // Measured baseline (2026-07, vitest 4 ast-v8-to-istanbul remap —
         // branch counting differs from the vitest 1.x numbers): physics 55.8%
         // branches (defensive ?? fallbacks dominate), chaos 65.6%, research

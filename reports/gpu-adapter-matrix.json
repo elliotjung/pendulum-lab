@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-  "generatedAt": "2026-06-18T17:08:48.187Z",
+  "generatedAt": "2026-07-10T09:29:18.012Z",
   "status": "partial",
   "requiredVendors": [
     "intel",

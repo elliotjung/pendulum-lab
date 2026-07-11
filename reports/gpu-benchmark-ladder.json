@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-benchmark-ladder/v2",
-  "generatedAt": "2026-06-18T16:45:48.879Z",
+  "generatedAt": "2026-07-10T09:29:21.172Z",
   "channel": "chrome",
   "url": "http://127.0.0.1:5173/",
   "status": "pass",
@@ -24,6 +24,7 @@
       "primitive-index",
       "rg11b10ufloat-renderable",
       "shader-f16",
+      "subgroup-size-control",
       "subgroups",
       "texture-component-swizzle",
       "texture-compression-bc",
@@ -40,8 +41,8 @@
         "steps": 40,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 154.69999998807907,
-        "cpuElapsedMs": 5,
+        "gpuElapsedMs": 250.20000000298023,
+        "cpuElapsedMs": 3,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -81,8 +82,8 @@
         "steps": 80,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 79.89999997615814,
-        "cpuElapsedMs": 2.600000023841858,
+        "gpuElapsedMs": 32.69999999552965,
+        "cpuElapsedMs": 4,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -94,9 +95,9 @@
             "flipFraction": 0
           },
           "maxMeanAbsDiff": 1.942890293094024e-16,
-          "maxVarianceAbsDiff": 2.4954673172317143e-7,
-          "maxCovarianceAbsDiff": 2.4954673172317143e-7,
-          "rmsSpreadAbsDiff": 1.5887784421408924e-8,
+          "maxVarianceAbsDiff": 2.4954673349952827e-7,
+          "maxCovarianceAbsDiff": 2.4954673349952827e-7,
+          "rmsSpreadAbsDiff": 1.5887784865498134e-8,
           "flipFractionAbsDiff": 0,
           "caveat": "This validates ensemble reduction statistics only; trajectory integration and chaotic divergence still require their own CPU probe gates."
         },
@@ -111,9 +112,9 @@
             "flipFraction": 0
           },
           "maxMeanAbsDiff": 1.942890293094024e-16,
-          "maxVarianceAbsDiff": 0.0000028022110809544643,
-          "maxCovarianceAbsDiff": 0.0000028022110809544643,
-          "rmsSpreadAbsDiff": 1.8931093270779797e-7,
+          "maxVarianceAbsDiff": 0.0000028022110791781074,
+          "maxCovarianceAbsDiff": 0.0000028022110791781074,
+          "rmsSpreadAbsDiff": 1.8931093226370876e-7,
           "flipFractionAbsDiff": 0,
           "caveat": "This validates ensemble reduction statistics only; trajectory integration and chaotic divergence still require their own CPU probe gates."
         }
@@ -122,8 +123,8 @@
         "steps": 160,
         "backend": "webgpu",
         "n": 25,
-        "gpuElapsedMs": 50.10000002384186,
-        "cpuElapsedMs": 3.899999976158142,
+        "gpuElapsedMs": 33.600000001490116,
+        "cpuElapsedMs": 7.5999999940395355,
         "reductionComparison": {
           "passed": true,
           "nMatches": true,
@@ -134,7 +135,7 @@
             "rmsSpread": 0.003,
             "flipFraction": 0
           },
-          "maxMeanAbsDiff": 6.765421556309548e-17,
+          "maxMeanAbsDiff": 1.1102230246251565e-16,
           "maxVarianceAbsDiff": 2.414177719956001e-7,
           "maxCovarianceAbsDiff": 2.414177719956001e-7,
           "rmsSpreadAbsDiff": 3.873355325367811e-8,
@@ -151,7 +152,7 @@
             "rmsSpread": 0.02,
             "flipFraction": 0
           },
-          "maxMeanAbsDiff": 6.765421556309548e-17,
+          "maxMeanAbsDiff": 1.1102230246251565e-16,
           "maxVarianceAbsDiff": 0.0000039035271468534916,
           "maxCovarianceAbsDiff": 0.000004895737389709609,
           "rmsSpreadAbsDiff": 3.472380472047121e-8,
@@ -170,7 +171,7 @@
       {
         "steps": 160,
         "backend": "webgpu",
-        "elapsedMs": 274.4000000357628,
+        "elapsedMs": 215.5,
         "comparison": {
           "target": "lyapunov-spectrum",
           "passed": true,
@@ -204,7 +205,7 @@
       {
         "steps": 320,
         "backend": "webgpu",
-        "elapsedMs": 64.19999998807907,
+        "elapsedMs": 40.69999999552965,
         "comparison": {
           "target": "lyapunov-spectrum",
           "passed": true,
@@ -217,8 +218,8 @@
           },
           "metrics": {
             "spectrumMaxAbsDiff": 0.000004524102837577537,
-            "sumAbsDiff": 4.0721561900269876e-7,
-            "kaplanYorkeAbsDiff": 5.10891931870816e-7
+            "sumAbsDiff": 4.0721561889167646e-7,
+            "kaplanYorkeAbsDiff": 5.108919323149053e-7
           },
           "caveat": "Compares finite-time spectrum outputs for identical settings; does not certify a different integration horizon or seed."
         },
@@ -231,7 +232,7 @@
         "cpuSpectrum": [
           0.4622683084615795,
           -0.041767963959451516,
-          -0.07208007799866793,
+          -0.07208007799866786,
           -0.4007274449974604
         ]
       }
@@ -288,8 +289,8 @@
       "metrics": {
         "sameShape": true,
         "fieldMaxAbsDiff": 0.000024288018357410124,
-        "fieldMeanAbsDiff": 0.0000058587074793226,
-        "minAbsDiff": 7.348325183897941e-7,
+        "fieldMeanAbsDiff": 0.000005858707479156067,
+        "minAbsDiff": 7.348325179457049e-7,
         "maxAbsDiff": 0.000024288018357410124
       },
       "caveat": "Compares like-for-like FTLE fields. Variational STM and finite-difference flow-map fields must not be mixed without a method caveat."
@@ -315,20 +316,20 @@
           "aggregate": 0.02
         },
         "metrics": {
-          "exponentMaxAbsDiff": 0.000002575877267929627,
-          "meanAngleAbsDiff": 0.00004180401381836951,
-          "minAngleAbsDiff": 0.00004218023114077596
+          "exponentMaxAbsDiff": 0.0000025758772723705192,
+          "meanAngleAbsDiff": 0.000041804013828139475,
+          "minAngleAbsDiff": 0.000042180231148325475
         },
         "caveat": "Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller."
       },
-      "ftleAbsDiff": 6.480840992750814e-7,
+      "ftleAbsDiff": 6.480836862721162e-7,
       "ftleTolerance": 0.16
     },
     "links": 3,
     "dimension": 6,
     "ftle": 7.877861499786377,
-    "cpuFtle": 7.877862147870476,
-    "elapsedMs": 349.89999997615814,
+    "cpuFtle": 7.877862147870063,
+    "elapsedMs": 851.7000000029802,
     "method": "piecewise-jacobian-rk2-stm-qr",
     "caveat": "N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64."
   }

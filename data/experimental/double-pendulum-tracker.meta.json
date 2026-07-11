@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "hardware-fixture-meta/v1",
+  "provenance": {
+    "kind": "synthetic-camera-emulation",
+    "realFootage": false,
+    "generator": "scripts/generate-hardware-fixture.ts",
+    "seed": 20260710,
+    "note": "Replace the CSV with a real tracked export (same schema) and update this metadata to make the chapter fully experimental."
+  },
+  "camera": {
+    "fps": 60,
+    "durationSeconds": 6,
+    "pixelsPerMeter": 540,
+    "trackingNoisePx1Sigma": 0.7
+  },
+  "import": {
+    "pivot": {
+      "x": 960,
+      "y": 240
+    },
+    "yAxis": "down"
+  },
+  "protocol": "released from rest (omega1 = omega2 = 0 at t = 0)",
+  "truth": {
+    "m1": 0.23,
+    "m2": 0.125,
+    "l1": 0.32,
+    "l2": 0.24,
+    "g": 9.799,
+    "gamma": 0.035,
+    "initialState": [
+      0.42,
+      -0.61,
+      0,
+      0
+    ]
+  },
+  "fit": {
+    "estimate": [
+      "l1",
+      "l2",
+      "g"
+    ],
+    "initialGuess": [
+      0.3,
+      0.3,
+      9.5
+    ],
+    "fixed": {
+      "m1": 0.23,
+      "m2": 0.125,
+      "gamma": 0.035
+    }
+  }
+}

@@ -1,7 +1,8 @@
 # Architecture
 
 Pendulum Lab V10 is a **100% TypeScript** application. The original ~8,080-line legacy
-`js/` runtime has been fully removed (archived under `archive/`). The live Vite shell
+`js/` runtime has been fully removed (preserved in git history under the
+`legacy-js-archive` tag). The live Vite shell
 (`app.html`) loads `src/main.ts` plus the hand-written CSS that styles the static shell
 DOM; the project-root `index.html` is the generated self-contained build. A single
 dependency-injection container (`runtime/ServiceContainer`, exposed through
@@ -39,7 +40,7 @@ Node and reusable outside the browser.
 | Application/runtime | `runtime/ServiceContainer`, `runtime/PendulumRuntime`, `EventBus`, `CommandRegistry`, `StateStore`, `app/Shell`, `app/LabApp`, `app/*Tab` | domain layer, `types/` | DOM specifics leaking into domain |
 | Infrastructure | `runtime/*Bridge`, `render/performance`, `ui/`, `workers/` | application + domain | — |
 
-The legacy `js/` runtime has been removed (see `archive/`). The former
+The legacy `js/` runtime has been removed (see the `legacy-js-archive` git tag). The former
 `runtime/LegacyBridge` and `runtime/IndexPhysicsBridge` shims are gone; only
 small compatibility accessors remain for old scripts and tests that still read
 `window.App`, `window.Physics`, `window.PendulumLabIndex`, or
@@ -127,7 +128,8 @@ ever moved down (482 → 0):
 4. **Shell + cut.** `src/app/Shell` took over navigation, slider displays, presets, and
    keyboard shortcuts; audio was ported (`AudioSonifier`); `LabApp` took over the header
    chrome. The legacy `<script>` tags were removed from `index.html` and `js/00`–`js/11`
-   moved to `archive/`. The app is now served entirely from `src/` via Vite.
+   moved to `archive/` (since removed from the working tree; preserved at the
+   `legacy-js-archive` tag). The app is now served entirely from `src/` via Vite.
 
 The bridge shims were deleted after their useful responsibilities moved into
 `src/main.ts`, `runtime/globalApi.ts`, and the modern shell.

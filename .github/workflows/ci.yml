@@ -40,6 +40,11 @@ jobs:
       - run: npm run test:coverage
       - run: npm run build
       - run: npm run build:standalone
+      # The committed root index.html / *.worker.js are build:standalone
+      # outputs; fail if they drifted from what the current source builds.
+      - run: npm run check:standalone-sync
+      # Same drift contract for the committed WASM ensemble kernel.
+      - run: npm run check:wasm-sync
       - run: npm run budget
       - run: npx playwright install --with-deps chromium
       - run: npm run smoke

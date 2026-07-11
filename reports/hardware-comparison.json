@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "hardware-comparison/v1",
+  "generatedAt": "2026-07-10T09:25:20.818Z",
+  "dataset": {
+    "csv": "data/experimental/double-pendulum-tracker.csv",
+    "meta": "data/experimental/double-pendulum-tracker.meta.json",
+    "provenance": {
+      "kind": "synthetic-camera-emulation",
+      "realFootage": false,
+      "generator": "scripts/generate-hardware-fixture.ts",
+      "seed": 20260710,
+      "note": "Replace the CSV with a real tracked export (same schema) and update this metadata to make the chapter fully experimental."
+    },
+    "protocol": "released from rest (omega1 = omega2 = 0 at t = 0)"
+  },
+  "method": {
+    "import": "pixel coordinates -> scale-free relative angles (atan2 of pixel differences; pivot + y-down handled by the importer)",
+    "forwardModel": "rhsDouble integrated with fixed-step RK4 (dt = 2e-3); release-from-rest (omega0 = 0 by protocol)",
+    "optimizer": "Levenberg-Marquardt over l1, l2, g + co-estimated initial angles, with masses/damping fixed at independently measured values",
+    "uncertainty": "linearized covariance s^2 (J^T J)^-1 at the optimum; 2-sigma comparison against nominal values"
+  },
+  "fit": {
+    "converged": true,
+    "status": "cost-converged",
+    "iterations": 5,
+    "seconds": 0.145,
+    "rmseRadians": 0.005867918569734052,
+    "rmseDegrees": 0.3362069685722036,
+    "samples": 361,
+    "horizonSeconds": 6
+  },
+  "parameters": [
+    {
+      "parameter": "l1",
+      "estimated": 0.3197787968346555,
+      "standardError": 0.001053611931684198,
+      "nominal": 0.32,
+      "relativeErrorVsNominal": -0.0006912598917016219,
+      "withinTwoSigmaOfNominal": true
+    },
+    {
+      "parameter": "l2",
+      "estimated": 0.24047177144809873,
+      "standardError": 0.0006919722423004856,
+      "nominal": 0.24,
+      "relativeErrorVsNominal": 0.0019657143670780606,
+      "withinTwoSigmaOfNominal": true
+    },
+    {
+      "parameter": "g",
+      "estimated": 9.811225689165013,
+      "standardError": 0.024127461290304724,
+      "nominal": 9.799,
+      "relativeErrorVsNominal": 0.0012476466134313578,
+      "withinTwoSigmaOfNominal": true
+    }
+  ],
+  "correlation": [
+    [
+      1,
+      0.05383675032795458,
+      0.8420774759950869,
+      -0.7316114059572686,
+      -0.37108550759758524
+    ],
+    [
+      0.05383675032795469,
+      1,
+      0.15818263739978675,
+      0.16411467197331742,
+      0.17907198299348082
+    ],
+    [
+      0.8420774759950866,
+      0.1581826373997866,
+      1,
+      -0.501077747513991,
+      -0.30363136953744235
+    ],
+    [
+      -0.7316114059572686,
+      0.16411467197331742,
+      -0.5010777475139911,
+      0.9999999999999999,
+      0.1867311276642978
+    ],
+    [
+      -0.37108550759758485,
+      0.1790719829934808,
+      -0.30363136953744196,
+      0.18673112766429742,
+      1.0000000000000002
+    ]
+  ],
+  "parametersFull": {
+    "m1": 0.23,
+    "m2": 0.125,
+    "l1": 0.3197787968346555,
+    "l2": 0.24047177144809873,
+    "g": 9.811225689165013
+  },
+  "initialAnglesEstimated": [
+    0.42167933388761164,
+    -0.6101276753311768
+  ],
+  "initialAnglesFirstSample": [
+    0.42427231273777355,
+    -0.621509730393088
+  ],
+  "honesty": "Dataset is a synthetic camera emulation (seeded, reproducible); the pipeline is real-data-ready — see docs/hardware-validation.md for the capture protocol."
+}

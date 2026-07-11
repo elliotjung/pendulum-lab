@@ -1,4 +1,5 @@
 import type { DrivenParameters } from '../physics/driven';
+import type { DuffingParameters } from '../physics/duffing';
 
 /**
  * Melnikov analysis of the damped driven pendulum — the *analytic* chaos
@@ -110,4 +111,71 @@ export function melnikovVerdict(p: DrivenParameters): MelnikovVerdict {
     amplitudeRatio,
     predictsHomoclinicTangle: p.driveAmplitude > criticalAmplitude
   };
+}
+
+/*
+ * ---- Duffing double well ---------------------------------------------------
+ *
+ * Same first-order machinery for the second canonical system,
+ * x'' = −δ x' − α x − β x³ + Γ cos(ωt) with a symmetric double well
+ * (α < 0, β > 0; write a = −α > 0). The unperturbed homoclinic pair is
+ *
+ *     x₀(t) = ±√(2a/β) sech(√a t),   v₀(t) = ∓√(2a/β)·√a·sech(√a t)tanh(√a t),
+ *
+ * and the Melnikov integral evaluates in closed form with
+ * ∫ sech²u tanh²u du = 2/3 and ∫ sech u tanh u sin(Ωu) du = πΩ sech(πΩ/2):
+ *
+ *     M(t₀) = ±√(2a/β)·(πω/√a)·sech(πω/(2√a))·Γ sin(ωt₀) − (4δ a^{3/2})/(3β).
+ *
+ * Simple zeros — a transverse homoclinic tangle — exist iff
+ *
+ *     Γ > Γ_c = 4 δ a² cosh(πω/(2√a)) / (3πω √(2aβ)),
+ *
+ * which reduces to the textbook Γ_c = (2√2/3)·δ cosh(πω/2)/(πω) at a = β = 1
+ * (Guckenheimer & Holmes §4.5). The same scope caveat as the pendulum applies:
+ * first-order in (δ, Γ), a guide rather than an exact onset at moderate damping.
+ */
+
+/** Closed-form Duffing double-well critical drive Γ_c (requires α < 0, β > 0). */
+export function melnikovCriticalAmplitudeDuffing(p: Pick<DuffingParameters, 'damping' | 'linearStiffness' | 'cubicStiffness' | 'driveFrequency'>): number {
+  const a = -p.linearStiffness;
+  const beta = p.cubicStiffness;
+  if (!(a > 0) || !(beta > 0)) {
+    throw new Error(`melnikovCriticalAmplitudeDuffing: needs a double well (α < 0, β > 0); got α=${p.linearStiffness}, β=${beta}`);
+  }
+  const omega = p.driveFrequency;
+  return (4 * p.damping * a * a * Math.cosh((Math.PI * omega) / (2 * Math.sqrt(a)))) / (3 * Math.PI * omega * Math.sqrt(2 * a * beta));
+}
+
+/**
+ * The Duffing Melnikov function by direct Simpson quadrature along the
+ * analytic separatrix — the independent brute-force check of the closed form,
+ * mirroring `melnikovFunctionNumeric` for the pendulum.
+ */
+export function melnikovFunctionNumericDuffing(
+  tau0: number,
+  p: Pick<DuffingParameters, 'damping' | 'linearStiffness' | 'cubicStiffness' | 'driveAmplitude' | 'driveFrequency'>,
+  options: { halfWidth?: number; intervals?: number } = {}
+): number {
+  const a = -p.linearStiffness;
+  const beta = p.cubicStiffness;
+  if (!(a > 0) || !(beta > 0)) {
+    throw new Error('melnikovFunctionNumericDuffing: needs a double well (α < 0, β > 0).');
+  }
+  const sqrtA = Math.sqrt(a);
+  const amp = Math.sqrt((2 * a) / beta);
+  const L = options.halfWidth ?? 40 / sqrtA;
+  const n = 2 * Math.max(1, Math.round((options.intervals ?? 80000) / 2));
+  const h = (2 * L) / n;
+  const integrand = (t: number): number => {
+    const u = sqrtA * t;
+    const sech = 1 / Math.cosh(u);
+    const v = -amp * sqrtA * sech * Math.tanh(u); // v₀(t) on the +branch
+    return v * (p.driveAmplitude * Math.cos(p.driveFrequency * (t + tau0)) - p.damping * v);
+  };
+  let sum = integrand(-L) + integrand(L);
+  for (let i = 1; i < n; i += 1) {
+    sum += integrand(-L + i * h) * (i % 2 === 1 ? 4 : 2);
+  }
+  return (sum * h) / 3;
 }
