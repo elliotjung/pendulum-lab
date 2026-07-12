@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T14:32:07.318Z",
+  "generatedAt": "2026-07-12T14:40:17.178Z",
   "totals": {
     "done": 10,
     "partial": 2,
@@ -3588,7 +3588,7 @@
     "npmPublished": false,
     "zenodoPublished": false,
     "githubReleasePublished": true,
-    "pagesPublished": false,
+    "pagesPublished": true,
     "arnoldiSchurFloquet": true
   },
   "items": [
@@ -3748,14 +3748,13 @@
         "release workflow emits SLSA/in-toto build provenance and CycloneDX SBOM attestations with actions/attest@v4",
         "published SLSA provenance and CycloneDX attestations pass signer-workflow and tarball SHA-256 verification",
         "GitHub release resolves publicly",
-        "Pages reviewer dashboard not yet deployed",
+        "Pages reviewer dashboard resolves publicly",
         "npm package version is not published",
         "public Zenodo DOI is not minted"
       ],
       "remaining": [
         "Configure npm trusted publisher for publish-npm.yml/environment npm or supply an owner token for the first publish",
-        "Authenticate Zenodo, publish the deposition, then run npm run doi:sync",
-        "Deploy the current reviewer.html build through Pages"
+        "Authenticate Zenodo, publish the deposition, then run npm run doi:sync"
       ]
     },
     {

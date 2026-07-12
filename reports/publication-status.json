@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-07-11T04:26:04.526Z",
+  "generatedAt": "2026-07-12T14:40:01.972Z",
   "status": "partial",
   "npm": {
     "package": "pendulum-lab-v10",
@@ -22,13 +22,12 @@
     "url": "https://github.com/elliotjung/pendulum-lab/releases/tag/v10.35.0"
   },
   "pages": {
-    "published": false,
-    "status": 404,
-    "url": "https://elliot-jung-17.github.io/pendulum-lab/reviewer.html"
+    "published": true,
+    "status": 200,
+    "url": "https://elliotjung.github.io/pendulum-lab/reviewer.html"
   },
   "caveats": [
     "npm registry does not resolve this exact package version.",
-    "No matching public Zenodo DOI record resolves for Pendulum Lab.",
-    "Reviewer dashboard is not publicly reachable."
+    "No matching public Zenodo DOI record resolves for Pendulum Lab."
   ]
 }
