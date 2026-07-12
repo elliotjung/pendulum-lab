@@ -19,7 +19,7 @@ import type { Derivative } from '../physics/types';
 export class PoincareAccumulator {
   private readonly points: Point2D[] = [];
   private prev: Float64Array | null = null;
-  private readonly cap: number;
+  private cap: number;
   private readonly direction: 'rising' | 'falling' | 'both';
   private refineRhs: Derivative | null = null;
   private refineDt = 0;
@@ -43,6 +43,16 @@ export class PoincareAccumulator {
 
   get capacity(): number {
     return this.cap;
+  }
+
+  /**
+   * Retarget the retention cap (quality profiles expose this as a user-facing
+   * memory budget). Shrinking drops the oldest points immediately; growing
+   * keeps everything already recorded.
+   */
+  setCapacity(cap: number): void {
+    this.cap = Math.max(1, Math.floor(cap));
+    if (this.points.length > this.cap) this.points.splice(0, this.points.length - this.cap);
   }
 
   policy(): { capacity: number; direction: 'rising' | 'falling' | 'both'; refined: boolean } {

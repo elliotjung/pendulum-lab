@@ -2,7 +2,45 @@
 
 ## Unreleased
 
-### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1003)
+### Refined-luxe UI pass, rail-action reliability, and roadmap closeouts
+
+- **Refined Luxe presentation layer** (`css/08-refined-luxe.css`, loaded after
+  kinetic overdrive): the HUD chrome is disciplined into a quiet-luxury
+  material — hairline duotone frames replace the multi-hue gradient borders,
+  chamfered clip-path badges become precision pills, tracking is tightened
+  from shouting to engraved, and a champagne accent (`--lux-gold`) replaces
+  the orange/purple chrome. The rail menu is recut (neutral icon tiles at
+  rest, ice only when engaged, floating slab submenus with etched hints), the
+  workspace chooser and Mode housing are restyled to match inside
+  `audienceMode.ts`'s adopted sheet, and the boot sequence keeps its
+  choreography with finer materials. Same layer contract as css/03–07:
+  visual-only, no new continuous animations, no backdrop-filter on large
+  surfaces. Visual-regression baselines regenerated (chromium +
+  mobile-chrome); standalone root `index.html` rebuilt.
+- **Rail-action reliability fix** (`src/main.ts`): clicks on parity-bound rail
+  actions (the always-visible palette launcher, Floquet probe,
+  manifest/report exports) landing before the lazily-loaded research layer
+  installed — or in modes that never load it — were silently dropped. A
+  delegated listener now loads the layer on demand and replays the click once
+  the real binding exists; pinned by the previously-failing
+  `guided-ui` launcher spec.
+- **User-facing Poincaré memory cap** (roadmap closeout): quality profiles now
+  carry `poincareCap` (1500/4000/9000, compact-viewport clamped) alongside
+  `trailCap`, applied live through `PoincareAccumulator.setCapacity` on every
+  quality change and rebuild; policy/capacity remain visible in the runtime
+  snapshot (`tests/lab-runtime-budget.test.ts`).
+- **Energy drift curves stored by integrator** (roadmap closeout):
+  `npm run benchmark:energy` now records decimated |ΔE/E₀|(t) curves per
+  method into `reports/energy-benchmark.json` (`rows[].curve`).
+- **Mobile e2e honesty**: `rail-autoclose`/`rail-readability` now assert the
+  compact-rail product behavior (sheet closes on pick; hover flows are
+  fine-pointer-only) instead of desktop hover semantics on the Pixel-5
+  project; app `<head>` gains description/theme-color/favicon metadata; and
+  ROADMAP entries for already-shipped items (Poincaré section presets,
+  unitary-grid quantum Floquet scale-up, OffscreenCanvas/WebGPU evaluation,
+  figure-export presets, worker-offload status) are closed out honestly.
+
+### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1004)
 
 - **Theory vs measured hardware** (`docs/hardware-validation.md`): a full
   parameter-extraction lane — video-tracker CSV (pixels) → scale-free angle

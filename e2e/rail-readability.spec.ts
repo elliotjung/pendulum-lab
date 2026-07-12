@@ -6,6 +6,9 @@ test('desktop rail uses five top-level menus with click-open detail panels', asy
   // Triple the budget there (the behavior is correct, just slow) — the same
   // software-render allowance the tour walkthrough documents.
   test.slow(browserName === 'webkit', 'many rail cycles are slow on software-rendered WebKit');
+  // Hover open/close is a fine-pointer flow; the compact bottom-bar rail has
+  // its own dedicated spec below (sheet opens above the bar, closes on pick).
+  test.skip((page.viewportSize()?.width ?? 1280) <= 560, 'compact rail is covered by the mobile spec');
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 

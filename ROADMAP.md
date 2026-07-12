@@ -12,7 +12,7 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 - **Done (v10.22, Stage 4 complete):** the modern shell retired the remaining legacy runtime duties: slider displays, presets, keyboard shortcuts, header/diagnostics chrome, canvas sizing, fault handling, and dev/governance chrome now live under `src/`. The `?lab=legacy` escape hatch and `window.App` smoke dependency are removed with the archived `js/` runtime.
 - Historical note: the old `js/01-core-app.js` shrink plan is complete; ongoing architecture work now targets known-large TypeScript orchestrators rather than the removed legacy bundle.
 - Historical note: the legacy-risk audit once centered on `innerHTML` and dynamic script usage; the current audit target is to keep the score at 0 as new UI surfaces are added.
-- Move long-running sweep, bifurcation, FFT, and Lyapunov jobs to typed worker messages.
+- **Worker offload status (2026-07-12):** the Lab side plots (energy/λ/phase/Poincaré/FFT) render through `labSidePlots.worker` and the research workbench batch jobs run on the typed `chaos.worker` protocol (priority, checkpoints, resume). The Sweep and Bifurcation *tabs* intentionally stay time-budgeted main-thread chunk loops with an optional WebGPU path — they are cancellable and progress-reporting, and a worker port would duplicate the workbench protocol for little UX gain. Revisit only if a profiling regression shows those tabs starving the sim loop.
 
 ## Certified Chaotic Dynamics Workbench
 
@@ -44,9 +44,19 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   gradient of H(q,p), FD-verified in tests) and the full Newton implicit
   midpoint with per-iteration residual/condition-number diagnostics
   (`src/physics/implicitDiagnostics.ts`, `tests/implicit-diagnostics.test.ts`).
-- Store long-horizon energy drift curves by integrator.
+- **Done (2026-07-12):** long-horizon energy drift curves are stored by
+  integrator — `npm run benchmark:energy` now writes decimated |ΔE/E₀|(t)
+  curves per method into `reports/energy-benchmark.json` (`rows[].curve`)
+  alongside the max/final drift table.
 - Extend Lyapunov output from convergence curves and CPU full-spectrum/CLV reports to production GPU kernels once the implemented acceleration contracts pass on hardware candidates.
-- Add selectable Poincare section conditions and transient removal for bifurcation analysis.
+  - **Progress (2026-07-10):** the full acceleration ladder (reductions, full
+    spectrum, CLV, variational FTLE, N-chain STM/QR) passed the CPU-oracle
+    gates on physical Intel Xe hardware; NVIDIA/AMD vendor coverage remains
+    the open external step.
+- **Done:** selectable Poincaré section conditions and transient removal are
+  library API — `buildPoincareSection` presets (coordinate / theta / energy /
+  stroboscopic, with crossing direction) plus `transientCrossings` /
+  `maxPoints` in `src/chaos/poincare.ts`, feeding `bifurcationDiagram`.
 - **Done (v10.34):** Floquet multipliers are implemented for corrected nonlinear
   periodic orbits, `floquetLinearSpectrum` covers linear T-periodic Floquet/Hill
   systems including Mathieu stability tongues, and finite-dimensional quantum
@@ -67,7 +77,12 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   `src/physics/pendulumNetwork.ts`), and thermal-noise stochastic resonance /
   Kramers escape (`src/physics/stochasticResonance.ts`,
   `src/physics/kramersEscape.ts`) are likewise implemented and unit-tested.
-  Next: the unitary-grid scale-up for bigger quantum Floquet problems.
+- **Done (unitary-grid scale-up):** large quantum Floquet problems now run
+  matrix-free — `src/research/unitaryFloquet.ts` provides Krylov-projected and
+  Arnoldi–Schur quasi-energy extraction for unitary operators (with unitarity
+  defect / unit-circle-drift diagnostics), and `src/research/qkrFloquet.ts`
+  builds the kicked-rotor Floquet operator from the FFT split-step plan so
+  quasi-energy spectra scale past the dense-diagonalization regime.
 - **Deferred (needs resources this environment can't exercise, kept honest):**
   GPU-execution *validation* of the WebGPU ensemble/field kernels (the kernels +
   feature detection + CPU fallback are in `src/runtime/gpuEnsemble.ts` /
@@ -78,9 +93,25 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 ## Performance And UX
 
 - Decouple canvas rendering cadence from physics stepping cadence.
-- Add trajectory and Poincare memory caps to user-facing settings.
-- Add paper figure export presets and reproducible research bundle export.
-- Evaluate OffscreenCanvas and WebGPU ensemble simulation behind feature detection.
+  - **Progress:** side-plot cadence is already decoupled (quality-profile
+    `sideInterval` + `DiagnosticsScheduler` round-robin), and the physics
+    steps-per-frame budget adapts independently of the paint rate
+    (`LabQualityBudget.maybeAutoAdjust`). The remaining piece is a fixed-dt
+    accumulator for the *main* canvas so a slow paint cannot slow simulated
+    time.
+- **Done (2026-07-12):** trajectory *and* Poincaré memory caps are user-facing
+  through the quality profiles — `trailCap` (720/1200/3000) and the new
+  `poincareCap` (1500/4000/9000, compact-viewport clamped) both apply live via
+  the Lab quality selector, and the active caps are visible in the runtime
+  snapshot (`poincare.capacity`).
+- **Done:** paper figure export presets ship in the figure pipeline
+  (`src/app/parity/figure-export.ts` — themed deterministic SVG at print DPI)
+  and reproducible research bundles ship as ZIPs with provenance DAG +
+  SHA-256 manifests.
+- **Done:** OffscreenCanvas is evaluated and adopted where it pays — the five
+  Lab side plots render in `labSidePlots.worker` — and the WebGPU ensemble
+  path runs behind feature detection with a tested CPU fallback
+  (`src/runtime/gpuEnsemble.ts`).
 - **Done (v10.34):** quick/slow/full unit-test tiers are exposed and wired into
   PR/mainline CI; benchmark output now includes original-vs-candidate deltas,
   and `benchmark:memory` emits a memory-regression baseline/report from the

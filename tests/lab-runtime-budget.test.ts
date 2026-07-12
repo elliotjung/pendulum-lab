@@ -39,6 +39,31 @@ describe('PoincareAccumulator diagnostics', () => {
     expect(acc.size).toBe(1);
     expect(Array.from(acc.toFloat32Pairs())).toEqual([3, 4]);
   });
+
+  it('retargets the retention cap: shrinking drops oldest, growing keeps points', () => {
+    const acc = new PoincareAccumulator(10, 'both');
+    // Three alternating crossings of theta1 = 0 -> three section points.
+    acc.push(Float64Array.from([-0.1, 1, 1, 1]));
+    acc.push(Float64Array.from([0.1, 2, 1, 2]));
+    acc.push(Float64Array.from([-0.1, 3, -1, 3]));
+    acc.push(Float64Array.from([0.1, 4, 1, 4]));
+    expect(acc.size).toBe(3);
+
+    acc.setCapacity(2);
+    expect(acc.capacity).toBe(2);
+    expect(acc.size).toBe(2);
+    // Oldest point (from the first crossing) was dropped.
+    expect(acc.list()[0]?.x).not.toBe(1.5);
+
+    acc.setCapacity(50);
+    expect(acc.capacity).toBe(50);
+    expect(acc.size).toBe(2);
+
+    // Cap is clamped to at least one retained point.
+    acc.setCapacity(0);
+    expect(acc.capacity).toBe(1);
+    expect(acc.size).toBe(1);
+  });
 });
 
 describe('Canvas quality diagnostics', () => {

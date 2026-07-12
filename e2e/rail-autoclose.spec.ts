@@ -14,6 +14,13 @@ test('rail submenu closes when the pointer leaves after selecting a tab', async 
   const section = page.locator('.rail-section[data-rail-section="analysis"]');
   await expect(section).toHaveClass(/open/);
   await page.locator('#rail-panel-analysis .tab[data-tab="lyap"]').click();
+  if ((page.viewportSize()?.width ?? 1280) <= 560) {
+    // Compact rail: selecting an entry closes the sheet immediately so the
+    // simulator is visible again (Shell closes sections on tab click there).
+    await expect(section).not.toHaveClass(/open/);
+    await expect(page.locator('#tab-lyap')).toHaveClass(/active/);
+    return;
+  }
   await expect(section).toHaveClass(/open/); // selecting keeps it open while hovered
 
   // Move the pointer away from the rail entirely (over the main content).

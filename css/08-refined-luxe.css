@@ -1,0 +1,527 @@
+/* ============================================================================
+   Refined Luxe — quiet-luxury refinement pass
+   ----------------------------------------------------------------------------
+   Final presentation layer, loaded after the kinetic-overdrive layer. It keeps
+   the HUD identity but disciplines it: the multi-hue gradient frames collapse
+   into hairline strokes with a single cold top-light, chamfered clip-path
+   badges become clean pills, tracking is tightened from "shouting" to
+   "engraved", and a champagne accent replaces the orange/purple chrome so the
+   whole instrument reads as one material instead of an RGB rig.
+
+   Layer contract (same as 03/04/06/07):
+   - Visual only. No display/position/sizing changes to interactive structure;
+     every selector, hook and behavior stays exactly as before.
+   - No new continuous animations. Everything here is hover/one-shot and
+     wrapped in reduced-motion guards; body.hud-fx gating from css/06 is
+     untouched.
+   - No backdrop-filter on large or animated surfaces (WebKit CI liability).
+   ========================================================================== */
+
+:root{
+  /* Champagne accent — the "luxe" counterpoint to the ice cyan. */
+  --lux-gold:#e7c887;
+  --lux-gold-soft:rgba(231,200,135,.55);
+  --lux-gold-line:rgba(231,200,135,.28);
+  --lux-hairline:rgba(255,255,255,.085);
+  --lux-hairline-strong:rgba(255,255,255,.14);
+  --lux-ice:#9fdcff;
+  --lux-ink:rgba(6,9,18,.92);
+
+  /* Discipline the HUD frame gradients into a duotone whisper. */
+  --hud-frame:linear-gradient(168deg,
+      rgba(159,220,255,.38), rgba(255,255,255,.07) 34%,
+      rgba(255,255,255,.05) 62%, rgba(231,200,135,.26));
+  --hud-frame-soft:linear-gradient(168deg,
+      rgba(159,220,255,.2), rgba(255,255,255,.05) 36%,
+      rgba(255,255,255,.04) 66%, rgba(231,200,135,.14));
+  --hud-glow:0 0 30px -12px rgba(120,200,255,.4);
+  --hud-glow-strong:0 0 44px -14px rgba(120,200,255,.55);
+
+  /* Softer functional accents on the shared palette. */
+  --cyan:#4fd9ff;
+  --shadow-glow-cyan:0 0 40px -14px rgba(79,217,255,.4);
+  --focus:#ffd54a;
+
+  /* Windows-grade fallbacks so the display stacks stay premium off-macOS. */
+  --font-display:'Syne','Segoe UI Variable Display','SF Pro Display','Segoe UI',system-ui,sans-serif;
+  --font-sans:'DM Sans','Segoe UI Variable Text','SF Pro Text','Segoe UI',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono','Cascadia Code','SF Mono',ui-monospace,Consolas,monospace;
+}
+
+/* Calm the holographic grid: finer, quieter, further away. */
+html::after{
+  background:
+    linear-gradient(rgba(159,220,255,.033) 1px, transparent 1px) 0 0/52px 52px,
+    linear-gradient(90deg, rgba(159,220,255,.033) 1px, transparent 1px) 0 0/52px 52px;
+  opacity:.5;
+}
+
+/* ============================================================================
+   TYPOGRAPHY — engraved, not shouted
+   ========================================================================== */
+h1{
+  letter-spacing:.14em;
+  font-weight:750;
+  background:linear-gradient(96deg, #f7fbff 0%, #cfeeff 46%, #e9d9ae 100%);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+h1 .h1-sub{
+  letter-spacing:.04em;
+  border-color:var(--lux-hairline);
+  background:rgba(255,255,255,.03);
+  color:var(--subtle);
+}
+h1::before{
+  width:6px; height:6px;
+  box-shadow:0 0 10px var(--green), 0 0 2px var(--green);
+}
+
+.canvas-label{
+  letter-spacing:.16em;
+  font-size:9.5px;
+}
+.canvas-label::before{
+  content:"— ";
+  color:var(--lux-gold-soft);
+  font-size:9px;
+}
+
+.ctrl-sticky-title,
+.grp-title,
+.acc-sub,
+.dev-flyout-title{
+  letter-spacing:.17em;
+}
+
+/* ============================================================================
+   HEADER — one hairline, one light
+   ========================================================================== */
+header{ border-bottom:1px solid var(--lux-hairline); }
+header::after{
+  width:26%;
+  background:linear-gradient(90deg, rgba(159,220,255,.9), rgba(231,200,135,.55), transparent);
+  box-shadow:0 0 10px rgba(159,220,255,.4);
+}
+
+/* Badges: chamfers out, precision pills in. */
+.badge, #qualBadge, #fpsBadge{
+  clip-path:none;
+  border-radius:999px;
+  letter-spacing:.09em;
+  padding:4px 10px;
+  border:1px solid var(--lux-hairline-strong);
+  background:linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+}
+.badge{
+  color:var(--lux-gold);
+  border-color:var(--lux-gold-line);
+  background:linear-gradient(180deg, rgba(231,200,135,.10), rgba(231,200,135,.02));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 0 18px -10px rgba(231,200,135,.55);
+}
+#qualBadge{ color:var(--lux-ice); }
+
+.trust-toggle{
+  border-radius:999px;
+  border-color:var(--lux-hairline-strong);
+  letter-spacing:.05em;
+}
+.trust-toggle:hover{
+  border-color:rgba(159,220,255,.4);
+  box-shadow:0 0 18px -10px rgba(120,200,255,.6);
+}
+
+/* Telemetry chips: neutral glass, cyan reserved for the live dot. */
+.diag-row > span{
+  border-radius:7px;
+  border-color:var(--lux-hairline);
+  background:linear-gradient(180deg, rgba(14,19,34,.7), rgba(9,13,24,.58));
+  letter-spacing:.03em;
+}
+.diag-row > span:hover{
+  border-color:var(--lux-hairline-strong);
+  box-shadow:0 0 16px -9px rgba(120,200,255,.55);
+}
+
+/* ============================================================================
+   MAJOR SURFACES — one material: obsidian glass, hairline edge, top light
+   ========================================================================== */
+.main-wrap,
+.plot-cell,
+.controls,
+.presets,
+.scrub-row{
+  border:1px solid transparent;
+  background:
+    linear-gradient(172deg, rgba(13,18,34,.82), rgba(8,12,23,.88)) padding-box,
+    linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.045) 30%, rgba(255,255,255,.03) 72%, rgba(231,200,135,.10)) border-box;
+  box-shadow:
+    0 24px 60px -30px rgba(0,0,0,.85),
+    0 2px 8px -5px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.main-wrap{
+  background:
+    linear-gradient(172deg, rgba(9,13,25,.9), rgba(5,7,15,.94)) padding-box,
+    linear-gradient(180deg, rgba(159,220,255,.28), rgba(255,255,255,.05) 34%, rgba(255,255,255,.03) 70%, rgba(231,200,135,.16)) border-box;
+}
+.main-wrap:hover{
+  box-shadow:
+    0 28px 68px -30px rgba(0,0,0,.88),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    var(--hud-glow);
+}
+.plot-cell:hover{
+  transform:translateY(-1px);
+  box-shadow:
+    0 26px 56px -26px rgba(0,0,0,.85),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    var(--hud-glow);
+}
+.controls{
+  background:
+    linear-gradient(172deg, rgba(14,19,36,.72), rgba(9,13,25,.8)) padding-box,
+    linear-gradient(180deg, rgba(159,220,255,.22), rgba(255,255,255,.05) 32%, rgba(255,255,255,.03) 70%, rgba(231,200,135,.14)) border-box;
+  box-shadow:
+    0 26px 64px -30px rgba(0,0,0,.85),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 44px -30px rgba(120,200,255,.35);
+}
+/* Retint the traveling sheens to a colder, quieter light. */
+.controls::after,
+.main-wrap::after{
+  background:linear-gradient(90deg, transparent, rgba(200,235,255,.5), transparent);
+}
+
+/* Corner brackets: finer, champagne-kissed. */
+.hud-corner{
+  width:12px; height:12px;
+  border-width:1px;
+  border-color:rgba(190,225,250,.75);
+  opacity:.4;
+  filter:drop-shadow(0 0 3px rgba(159,220,255,.5));
+}
+.main-wrap:hover > .hud-corner,
+.plot-cell:hover > .hud-corner{
+  opacity:.85;
+  width:18px; height:18px;
+}
+
+/* ============================================================================
+   RAIL — the command spine, recut as a jeweler's fixture
+   ========================================================================== */
+.rail{
+  background:linear-gradient(180deg, rgba(8,11,21,.97), rgba(5,7,14,.985));
+  border-right:1px solid var(--lux-hairline);
+  box-shadow:6px 0 40px -18px rgba(0,0,0,.7);
+}
+.rail-logo{
+  border-radius:11px;
+  background:linear-gradient(140deg, #35c7ef 0%, #6f8dff 58%, #e7c887 125%);
+  box-shadow:0 6px 20px -8px rgba(53,199,239,.55), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.rail-logo:hover,
+.rail-logo:focus-visible{
+  box-shadow:0 8px 26px -8px rgba(53,199,239,.7),
+             0 0 0 1px rgba(159,220,255,.4), inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+/* Menu buttons: neutral at rest, glass on hover, ice only when engaged. */
+.rail-menu-button{
+  min-height:54px;
+  border-radius:12px;
+  gap:5px;
+}
+.rail-menu-icon{
+  width:30px; height:26px;
+  border-radius:9px;
+  color:var(--subtle);
+  border:1px solid var(--lux-hairline);
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09);
+  transition:box-shadow .2s var(--ease), border-color .2s var(--ease),
+             color .2s var(--ease), background .2s var(--ease);
+}
+.rail-menu-button:hover{
+  background:rgba(255,255,255,.045);
+  border-color:var(--lux-hairline);
+  box-shadow:none;
+}
+.rail-menu-button:hover .rail-menu-icon{
+  color:var(--fg-bright);
+  border-color:var(--lux-hairline-strong);
+  transform:none;
+}
+.rail-menu-button[aria-expanded="true"]{
+  color:var(--fg-bright);
+  background:linear-gradient(180deg, rgba(159,220,255,.09), rgba(159,220,255,.025));
+  border-color:rgba(159,220,255,.26);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.rail-menu-button[aria-expanded="true"] .rail-menu-icon{
+  color:var(--lux-ice);
+  border-color:rgba(159,220,255,.38);
+  background:linear-gradient(180deg, rgba(159,220,255,.13), rgba(159,220,255,.04));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 0 14px -6px rgba(120,200,255,.6);
+  transform:none;
+}
+.rail-menu-button[aria-expanded="true"]::before{
+  width:2px;
+  top:14px; bottom:14px;
+  background:linear-gradient(180deg, var(--lux-ice), rgba(231,200,135,.8));
+  box-shadow:0 0 8px rgba(159,220,255,.7);
+}
+.rail-menu-label{
+  font-size:9px;
+  font-weight:650;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* Submenus: floating panels cut from one slab. */
+.rail-submenu,
+.dev-flyout{
+  border:1px solid transparent;
+  border-radius:14px;
+  background:
+    linear-gradient(176deg, rgba(11,15,29,.985), rgba(7,10,20,.99)) padding-box,
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 38%, rgba(255,255,255,.04) 74%, rgba(231,200,135,.14)) border-box;
+  box-shadow:
+    0 30px 70px -28px rgba(0,0,0,.9),
+    0 4px 14px -8px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.rail-submenu{ padding:9px; }
+.rail-submenu-hint{
+  border:0;
+  border-radius:9px;
+  margin:0 0 5px;
+  padding:7px 9px;
+  background:rgba(255,255,255,.035);
+  box-shadow:inset 0 0 0 1px var(--lux-hairline);
+  color:var(--subtle);
+  font-size:10.5px;
+  line-height:1.45;
+}
+.rail-submenu .tab{
+  border-radius:10px;
+}
+.rail-submenu .tab:hover{
+  transform:translateX(2px);
+  background:rgba(255,255,255,.05);
+}
+.rail-submenu .tab[aria-selected="true"]{
+  color:var(--lux-ice);
+  background:linear-gradient(120deg, rgba(159,220,255,.12), rgba(159,220,255,.03) 70%, rgba(231,200,135,.05));
+  border-color:transparent;
+  box-shadow:inset 0 0 0 1px rgba(159,220,255,.24), 0 0 18px -10px rgba(120,200,255,.5);
+}
+.rail-submenu .tab[aria-selected="true"]::before{
+  background:linear-gradient(180deg, var(--lux-ice), rgba(231,200,135,.8));
+  box-shadow:0 0 8px rgba(159,220,255,.6);
+}
+.rail-submenu .tab-desc{ color:var(--muted); }
+
+/* Command-palette launcher: a quiet key, lit when summoned. */
+.rail-palette-launcher{
+  border-radius:12px;
+  border:1px solid var(--lux-hairline);
+  background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+}
+.rail-palette-launcher .tab-icon{ color:var(--subtle); }
+.rail-palette-launcher:hover,
+.rail-palette-launcher:focus-visible{
+  border-color:rgba(159,220,255,.34);
+  background:linear-gradient(180deg, rgba(159,220,255,.09), rgba(159,220,255,.02));
+  box-shadow:0 0 18px -9px rgba(120,200,255,.6), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.rail-palette-launcher:hover .tab-icon,
+.rail-palette-launcher:focus-visible .tab-icon{ color:var(--lux-ice); }
+.rail-kbd{
+  border-radius:5px;
+  border:1px solid var(--lux-hairline);
+  background:rgba(255,255,255,.03);
+}
+
+/* Mode selector: etched housing, no tinted wash. */
+.audience-select{
+  border:1px solid var(--lux-hairline);
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.audience-select label{ color:var(--muted); }
+.audience-select select{
+  border-color:var(--lux-hairline-strong);
+  background-color:rgba(7,10,19,.94);
+  border-radius:8px;
+}
+.audience-select select:hover{
+  border-color:rgba(159,220,255,.4);
+  box-shadow:0 0 12px -6px rgba(120,200,255,.55);
+}
+
+/* ============================================================================
+   WORKFLOW STRIP + PRESETS — segmented instruments, champagne on touch
+   ========================================================================== */
+.workflow-strip button{
+  border-radius:11px;
+  border-color:var(--lux-hairline);
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012));
+}
+.workflow-strip button:hover,
+.workflow-strip button:focus-visible{
+  border-color:var(--lux-gold-line);
+  background:linear-gradient(180deg, rgba(231,200,135,.07), rgba(255,255,255,.015));
+  box-shadow:0 10px 26px -16px rgba(0,0,0,.8), 0 0 20px -12px rgba(231,200,135,.5);
+}
+
+.presets > span{
+  color:var(--lux-gold-soft) !important;
+  letter-spacing:.18em;
+}
+.pbtn{
+  clip-path:none;
+  border-radius:999px;
+  padding-inline:12px;
+  letter-spacing:.02em;
+  border-color:var(--lux-hairline);
+  background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+}
+.pbtn:hover{
+  border-color:var(--lux-gold-line);
+  color:var(--fg-bright);
+  background:linear-gradient(180deg, rgba(231,200,135,.10), rgba(231,200,135,.02));
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px -8px rgba(0,0,0,.6), 0 0 16px -9px rgba(231,200,135,.55);
+}
+.pbtn:active{ transform:translateY(0) scale(.98); }
+
+/* ============================================================================
+   BUTTONS — machined keys
+   ========================================================================== */
+button{ letter-spacing:.02em; }
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 8px 20px -10px rgba(0,0,0,.7),
+             0 0 16px -10px rgba(120,200,255,.45);
+}
+button:active{ transform:translateY(0) scale(.985); }
+button.primary{
+  border:1px solid transparent;
+  background:
+    linear-gradient(150deg, rgba(79,217,255,.2), rgba(53,132,228,.14) 55%, rgba(79,217,255,.1)) padding-box,
+    linear-gradient(150deg, rgba(159,220,255,.8), rgba(96,140,255,.55) 60%, rgba(231,200,135,.5)) border-box;
+  color:var(--fg-bright);
+  text-shadow:0 0 10px rgba(120,200,255,.35);
+}
+button.primary:hover{
+  background:
+    linear-gradient(150deg, rgba(79,217,255,.3), rgba(53,132,228,.2) 55%, rgba(79,217,255,.16)) padding-box,
+    linear-gradient(150deg, rgba(190,232,255,.95), rgba(120,160,255,.7) 60%, rgba(231,200,135,.65)) border-box;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26), var(--hud-glow-strong);
+}
+.ui-ripple{
+  background:radial-gradient(circle, rgba(255,255,255,.3) 0%, rgba(159,220,255,.2) 40%, transparent 70%);
+}
+
+/* ============================================================================
+   CONTROL PANEL — instrument stack, etched sections
+   ========================================================================== */
+.ctrl-sticky{ border-bottom:1px solid var(--lux-hairline); }
+.ctrl-sticky-title{ color:var(--lux-ice); }
+.ctrl-sticky-title::after{
+  background:linear-gradient(90deg, rgba(159,220,255,.4), rgba(231,200,135,.3), transparent);
+}
+.acc{ border-bottom:1px solid rgba(255,255,255,.05); }
+.acc[open] > summary{
+  background:linear-gradient(90deg, rgba(159,220,255,.055), transparent 72%);
+  box-shadow:inset 2px 0 0 rgba(159,220,255,.45);
+}
+.acc-icon{
+  border-color:var(--lux-hairline);
+  color:var(--subtle);
+  border-radius:7px;
+}
+.acc[open] > summary .acc-icon{
+  color:var(--lux-ice);
+  background:linear-gradient(180deg, rgba(159,220,255,.12), rgba(159,220,255,.03));
+  border-color:rgba(159,220,255,.32);
+  box-shadow:0 0 12px -5px rgba(120,200,255,.55);
+}
+.stats .srow{ border-bottom:1px solid rgba(255,255,255,.045); }
+.chip{ border-radius:999px; letter-spacing:.04em; }
+
+/* ============================================================================
+   TOAST & COMMS
+   ========================================================================== */
+#toast{
+  border:1px solid transparent;
+  border-radius:11px;
+  background:
+    linear-gradient(180deg, rgba(12,17,32,.985), rgba(8,12,23,.985)) padding-box,
+    linear-gradient(150deg, rgba(159,220,255,.6), rgba(231,200,135,.4)) border-box;
+  letter-spacing:.02em;
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.9), var(--hud-glow);
+}
+#nanOverlay{ border-radius:11px; }
+#sweepProgress, #bifProgress{
+  box-shadow:0 0 12px rgba(120,200,255,.4) !important;
+}
+
+/* ============================================================================
+   BOOT SEQUENCE — same choreography, finer materials
+   ========================================================================== */
+.hud-boot-title{
+  letter-spacing:.42em;
+  font-weight:750;
+  text-shadow:0 0 20px rgba(120,200,255,.45);
+}
+.hud-boot-title b{ color:var(--lux-ice); }
+.hud-boot-ring3{
+  border-top-color:var(--lux-gold);
+  border-left-color:rgba(231,200,135,.25);
+  filter:drop-shadow(0 0 5px rgba(231,200,135,.5));
+}
+.hud-boot-status{ letter-spacing:.3em; }
+
+/* Kinetic-overdrive strip inherits the same duotone (colors only; the layer's
+   own gating and media guards keep governing when anything animates). */
+body.kinetic-overdrive{
+  --ko-cyan:#4fd9ff;
+  --ko-amber:#e7c887;
+  --ko-rose:#9fb4ff;
+  --ko-green:#5ce8a9;
+}
+.kinetic-channel{
+  border-radius:11px;
+  background:
+    linear-gradient(166deg, rgba(11,16,30,.86), rgba(9,12,24,.74)) padding-box,
+    linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.05) 40%, rgba(231,200,135,.12)) border-box;
+}
+
+/* Scrollbars: slim, neutral, invisible until needed. */
+*::-webkit-scrollbar{ width:9px; height:9px; }
+*::-webkit-scrollbar-thumb{
+  background:rgba(150,170,205,.22);
+  border-radius:999px;
+  border:2px solid transparent;
+  background-clip:padding-box;
+}
+*::-webkit-scrollbar-thumb:hover{ background-color:rgba(159,220,255,.4); background-clip:padding-box; }
+*::-webkit-scrollbar-track{ background:transparent; }
+
+/* ============================================================================
+   RESPONSIVE + MOTION GUARDS
+   ========================================================================== */
+@media(max-width:780px){
+  h1{ letter-spacing:.08em; }
+}
+@media (prefers-reduced-motion: reduce){
+  button:hover{ transform:none; }
+  .pbtn:hover{ transform:none; }
+  .plot-cell:hover{ transform:none; }
+  .rail-submenu .tab:hover{ transform:none; }
+  .rail-menu-icon{ transition:none; }
+}

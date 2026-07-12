@@ -70,6 +70,8 @@ export class LabApp {
   private readonly controls = new LabControls();
   private readonly quality = new LabQualityBudget(() => {
     this.renderer = null;
+    // Quality profiles carry the user-facing Poincaré memory budget.
+    this.poincare.setCapacity(this.quality.effectivePoincareCap());
   });
 
   // Ensemble of perturbed copies (chaos divergence visualization).
@@ -118,6 +120,9 @@ export class LabApp {
     this.spf = this.requestedSpf;
     this.phaseAxis = dom.str('phaseAxis', '1');
     this.quality.setMode(this.quality.readMode(), 'silent');
+    // setMode only notifies on a mode delta; a rebuild must re-apply the
+    // profile's Poincaré budget even when the mode itself did not change.
+    this.poincare.setCapacity(this.quality.effectivePoincareCap());
 
     this.sim = new LabSimulation(config);
     const dim = config.system === 'triple' ? 6 : 4;

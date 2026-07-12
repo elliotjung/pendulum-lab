@@ -146,6 +146,19 @@ function armResearchOnDemand(): void {
     const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
     if (tab && RESEARCH_SURFACE_TABS.has(tab) && researchBoot === null) void ensureResearch(tab);
   });
+  // Rail action buttons (the always-visible palette launcher, Floquet probe,
+  // manifest/report exports) are bound by the lazily-loaded parity layer. A
+  // click landing before that chunk installs — or in a mode that never loads
+  // it — would be silently dropped: load the layer on demand and replay the
+  // click once the real binding exists (parity binding marks the button).
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const btn = target?.closest<HTMLElement>('.dev-tool-btn[data-rail-action]');
+    if (!btn || btn.dataset.parityBound === 'true') return;
+    void ensureResearch().then(() => {
+      if (btn.dataset.parityBound === 'true') btn.click();
+    });
+  });
 }
 
 /**

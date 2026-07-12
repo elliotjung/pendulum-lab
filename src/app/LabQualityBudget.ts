@@ -10,6 +10,7 @@ export type QualityMode = 'performance' | 'balanced' | 'cinematic';
 interface QualityProfile {
   dprCap: number;
   trailCap: number;
+  poincareCap: number;
   sideInterval: number;
   ensembleCap: number;
   glow: boolean;
@@ -27,10 +28,20 @@ interface QualityMetrics {
 }
 
 const QUALITY_PROFILES: Record<QualityMode, QualityProfile> = {
-  performance: { dprCap: 1, trailCap: 720, sideInterval: 3, ensembleCap: 24, glow: false, className: 'quality-performance' },
-  balanced: { dprCap: 1.5, trailCap: 1200, sideInterval: 2, ensembleCap: 60, glow: true, className: 'quality-balanced' },
-  cinematic: { dprCap: 2, trailCap: 3000, sideInterval: 1, ensembleCap: 200, glow: true, className: 'quality-cinematic' }
+  performance: { dprCap: 1, trailCap: 720, poincareCap: 1500, sideInterval: 3, ensembleCap: 24, glow: false, className: 'quality-performance' },
+  balanced: { dprCap: 1.5, trailCap: 1200, poincareCap: 4000, sideInterval: 2, ensembleCap: 60, glow: true, className: 'quality-balanced' },
+  cinematic: { dprCap: 2, trailCap: 3000, poincareCap: 9000, sideInterval: 1, ensembleCap: 200, glow: true, className: 'quality-cinematic' }
 };
+
+/**
+ * Poincaré-point retention budget for a quality mode. Compact viewports keep a
+ * tighter cap: section scatter beyond ~2000 points reads as solid fill at
+ * phone canvas sizes while still costing memory and redraw time.
+ */
+export function poincareCapForMode(mode: QualityMode, compact: boolean): number {
+  const cap = QUALITY_PROFILES[mode].poincareCap;
+  return compact ? Math.min(cap, 2000) : cap;
+}
 
 export function compactViewport(): boolean {
   return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
@@ -151,6 +162,11 @@ export class LabQualityBudget {
     if (this.currentMode === 'performance') this.setMode('balanced', 'auto');
     else if (this.currentMode === 'balanced') this.setMode('cinematic', 'auto');
     return stepsPerFrame;
+  }
+
+  /** User-facing Poincaré memory cap for the active profile. */
+  effectivePoincareCap(): number {
+    return poincareCapForMode(this.currentMode, compactViewport());
   }
 
   effectiveTrailLength(): number {

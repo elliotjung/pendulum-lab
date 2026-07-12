@@ -15,6 +15,12 @@ const INITIAL_STATE = [1.2, -0.6, 0, 0];
 const DT = 0.002;
 const STEPS = 100_000; // T = 200 s
 
+/** Decimated |ΔE/E₀|(t) samples so releases keep the whole drift history. */
+interface DriftCurve {
+  time: number[];
+  relDrift: number[];
+}
+
 interface DriftRow {
   id: IntegratorId;
   name: string;
@@ -23,7 +29,11 @@ interface DriftRow {
   finalRelDrift: number;
   wallMs: number;
   blewUp: boolean;
+  curve: DriftCurve;
 }
+
+/** Steps between stored curve samples (200 points over the 100k-step run). */
+const CURVE_STRIDE = 500;
 
 function benchmark(id: IntegratorId): DriftRow {
   const meta = integratorRegistry[id];
@@ -36,6 +46,7 @@ function benchmark(id: IntegratorId): DriftRow {
   const previousError = { value: 0 };
   let maxRelDrift = 0;
   let blewUp = false;
+  const curve: DriftCurve = { time: [], relDrift: [] };
 
   const t0 = performance.now();
   for (let i = 0; i < STEPS; i += 1) {
@@ -48,10 +59,18 @@ function benchmark(id: IntegratorId): DriftRow {
     if (i % 50 === 0) {
       const drift = Math.abs((energyDouble(state, PARAMETERS).total - e0) / e0);
       if (drift > maxRelDrift) maxRelDrift = drift;
+      if (i % CURVE_STRIDE === 0) {
+        curve.time.push((i + 1) * DT);
+        curve.relDrift.push(drift);
+      }
     }
   }
   const wallMs = performance.now() - t0;
   const finalRelDrift = blewUp ? Infinity : Math.abs((energyDouble(state, PARAMETERS).total - e0) / e0);
+  if (!blewUp) {
+    curve.time.push(STEPS * DT);
+    curve.relDrift.push(finalRelDrift);
+  }
 
   return {
     id,
@@ -60,7 +79,8 @@ function benchmark(id: IntegratorId): DriftRow {
     maxRelDrift: blewUp ? Infinity : maxRelDrift,
     finalRelDrift,
     wallMs,
-    blewUp
+    blewUp,
+    curve
   };
 }
 
@@ -80,6 +100,9 @@ function markdown(rows: DriftRow[]): string {
     'Relative energy drift |ΔE / E₀|. Lower is better for conservation; note that',
     'TR-BDF2 is L-stable and intentionally dissipative, so its drift reflects',
     'numerical damping rather than instability.',
+    '',
+    `Per-integrator drift curves (|ΔE/E₀| sampled every ${CURVE_STRIDE} steps) are stored`,
+    'in `reports/energy-benchmark.json` under `rows[].curve`.',
     '',
     '| Integrator | Order | Max rel. drift | Final rel. drift | Wall ms |',
     '|---|---|---:|---:|---:|'
