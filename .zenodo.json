@@ -23,7 +23,7 @@
   "access_right": "open",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Elliot-Jung-17/pendulum-lab",
+      "identifier": "https://github.com/elliotjung/pendulum-lab",
       "relation": "isSupplementTo",
       "scheme": "url"
     }

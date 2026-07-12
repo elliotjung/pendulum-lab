@@ -35,7 +35,7 @@ tgz, generates a CycloneDX SBOM, and records SLSA/in-toto attestations through
 `actions/attest@v4`. Verify a downloaded package with:
 
 ```bash
-gh attestation verify pendulum-lab-v10-<version>.tgz --repo Elliot-Jung-17/pendulum-lab
+gh attestation verify pendulum-lab-v10-<version>.tgz --repo elliotjung/pendulum-lab
 npm run release:verify-attestations -- --artifact pendulum-lab-v10-<version>.tgz --source-ref refs/tags/v<version>
 ```
 
@@ -46,7 +46,7 @@ npm run release:verify-attestations -- --artifact pendulum-lab-v10-<version>.tgz
 
 Configure npm's trusted publisher for:
 
-- owner: `Elliot-Jung-17`
+- owner: `elliotjung`
 - repository: `pendulum-lab`
 - workflow filename: `publish-npm.yml`
 - environment: `npm`

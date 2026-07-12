@@ -19,13 +19,13 @@ with Floquet, literature, 0-1-test, and reproducibility evidence. See
 review package with `npm run reviewer:kit`.
 
 The public reviewer surface is `reviewer.html` (deployed at
-`https://elliot-jung-17.github.io/pendulum-lab/reviewer.html`). It reads the
+`https://elliotjung.github.io/pendulum-lab/reviewer.html`). It reads the
 committed report JSON and exposes each claim's source, parameters, validation,
 reproduce command, and caveat without hiding missing external evidence.
 
 The project landing page lives at
-[Elliot-Jung-17/pendulum-landing](https://github.com/Elliot-Jung-17/pendulum-landing)
-(deployed at `https://elliot-jung-17.github.io/pendulum-landing/`) — a
+[elliotjung/pendulum-landing](https://github.com/elliotjung/pendulum-landing)
+(deployed at `https://elliotjung.github.io/pendulum-landing/`) — a
 cinematic overview of the engine, workspaces, frontier modules, and the
 validation ledger, with launch links back to this app.
 

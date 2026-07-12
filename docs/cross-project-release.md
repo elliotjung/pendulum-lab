@@ -15,8 +15,8 @@ The goal is to keep evidence, wording, and performance defaults synchronized.
 
 | Surface | Production URL | Preview URL | Rollback |
 | --- | --- | --- | --- |
-| Simulation app | `https://elliot-jung-17.github.io/pendulum-lab/` | GitHub Actions Pages preview or local `npm run preview` | revert the Pages deployment or redeploy the previous tag |
-| Landing page | `https://elliot-jung-17.github.io/pendulum-landing/` | landing CI artifact / local static server | redeploy the previous landing commit |
+| Simulation app | `https://elliotjung.github.io/pendulum-lab/` | GitHub Actions Pages preview or local `npm run preview` | revert the Pages deployment or redeploy the previous tag |
+| Landing page | `https://elliotjung.github.io/pendulum-landing/` | landing CI artifact / local static server | redeploy the previous landing commit |
 
 ## Release Order
 

@@ -248,7 +248,7 @@ async function render(): Promise<void> {
   const nav = element('nav', 'reviewer-nav');
   const appLink = element('a', undefined, 'Workbench'); appLink.href = './';
   const paperLink = element('a', undefined, 'Paper'); paperLink.href = './paper/';
-  const repoLink = element('a', undefined, 'Repository'); repoLink.href = 'https://github.com/Elliot-Jung-17/pendulum-lab';
+  const repoLink = element('a', undefined, 'Repository'); repoLink.href = 'https://github.com/elliotjung/pendulum-lab';
   nav.append(appLink, paperLink, repoLink);
   header.append(brand, nav);
 

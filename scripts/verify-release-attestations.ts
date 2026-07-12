@@ -16,8 +16,8 @@ interface VerificationResult {
   };
 }
 
-const repository = 'Elliot-Jung-17/pendulum-lab';
-const signerWorkflow = 'Elliot-Jung-17/pendulum-lab/.github/workflows/release.yml';
+const repository = 'elliotjung/pendulum-lab';
+const signerWorkflow = 'elliotjung/pendulum-lab/.github/workflows/release.yml';
 const args = process.argv.slice(2);
 
 function option(name: string): string | undefined {

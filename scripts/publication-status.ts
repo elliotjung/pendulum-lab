@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as { name: string; version: string };
-const repository = 'Elliot-Jung-17/pendulum-lab';
-const pagesUrl = 'https://elliot-jung-17.github.io/pendulum-lab/reviewer.html';
+const repository = 'elliotjung/pendulum-lab';
+const pagesUrl = 'https://elliotjung.github.io/pendulum-lab/reviewer.html';
 
 async function jsonRequest(url: string): Promise<{ ok: boolean; status: number; body: unknown }> {
   try {

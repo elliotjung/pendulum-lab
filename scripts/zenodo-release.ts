@@ -75,7 +75,7 @@ if (!token) {
     uploaded.push(path);
   }
 
-  const description = `${String(metadata.description ?? '')}\n\nVersion ${packageInfo.version}. Reviewer dashboard: https://elliot-jung-17.github.io/pendulum-lab/reviewer.html`;
+  const description = `${String(metadata.description ?? '')}\n\nVersion ${packageInfo.version}. Reviewer dashboard: https://elliotjung.github.io/pendulum-lab/reviewer.html`;
   const update = await request(`/api/deposit/depositions/${deposition.id}`, {
     method: 'PUT',
     body: JSON.stringify({ metadata: { ...metadata, description, version: packageInfo.version, publication_date: new Date().toISOString().slice(0, 10) } })

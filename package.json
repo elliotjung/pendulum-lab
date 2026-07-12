@@ -23,11 +23,11 @@
   "author": "Elliot Jung",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Elliot-Jung-17/pendulum-lab.git"
+    "url": "git+https://github.com/elliotjung/pendulum-lab.git"
   },
-  "homepage": "https://github.com/Elliot-Jung-17/pendulum-lab#readme",
+  "homepage": "https://github.com/elliotjung/pendulum-lab#readme",
   "bugs": {
-    "url": "https://github.com/Elliot-Jung-17/pendulum-lab/issues"
+    "url": "https://github.com/elliotjung/pendulum-lab/issues"
   },
   "engines": {
     "node": ">=22 <27"
