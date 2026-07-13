@@ -4,6 +4,22 @@
 
 ## 10.36.0 - 2026-07-13
 
+### Enforced formatting gate and one-time Prettier re-baseline
+
+- **Prettier is now an enforced gate, not just a config**: `npm run verify`
+  ends with `format:check` (after `docs:sync`, so generated rewrites are
+  covered), and the PR/mainline workflows run it explicitly. All TypeScript
+  and JSON sources were reformatted once with the committed
+  `.prettierrc.json`; the `audit:modules` ratchets were re-pinned to the exact
+  post-format line counts (formatting-only growth — every file still fails
+  the gate on any further growth, and the split priorities in `ROADMAP.md`
+  are unchanged). Markdown prose is deliberately exempt because the
+  `docs:sync` generators own its synced numbers.
+- **Testing strategy documented**: `docs/testing-strategy.md` now describes
+  the ordered verify gate, test tiers, oracle ladder,
+  browser/visual/mutation/coverage gates, and what is deliberately out of
+  headless scope (fixes the previously broken `CONTRIBUTING.md` link).
+
 ### Public readiness, coordinated releases, classroom UX, and research surfaces
 
 - **Scoped publishing and coordinated releases**: Renamed the unpublished package coordinate to `@elliotjung/pendulum-lab`,

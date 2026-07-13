@@ -92,13 +92,16 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 
 ## Performance And UX
 
-- Decouple canvas rendering cadence from physics stepping cadence.
-  - **Progress:** side-plot cadence is already decoupled (quality-profile
-    `sideInterval` + `DiagnosticsScheduler` round-robin), and the physics
-    steps-per-frame budget adapts independently of the paint rate
-    (`LabQualityBudget.maybeAutoAdjust`). The remaining piece is a fixed-dt
-    accumulator for the *main* canvas so a slow paint cannot slow simulated
-    time.
+- **Done (v10.36):** canvas rendering cadence is decoupled from physics
+  stepping cadence.
+  - Side-plot cadence was decoupled first (quality-profile `sideInterval` +
+    `DiagnosticsScheduler` round-robin), and the physics steps-per-frame budget
+    adapts independently of the paint rate (`LabQualityBudget.maybeAutoAdjust`).
+  - The final piece landed with `src/app/SimulationClock.ts`: the main canvas
+    advances on a fixed-dt wall-clock accumulator (with a catch-up clamp), so a
+    slow paint no longer slows simulated time, and a `deterministic`
+    fixed-steps-per-frame mode stays selectable for reproducible captures
+    (`LabApp.timingMode`).
 - **Done (2026-07-12):** trajectory *and* Poincaré memory caps are user-facing
   through the quality profiles — `trailCap` (720/1200/3000) and the new
   `poincareCap` (1500/4000/9000, compact-viewport clamped) both apply live via
@@ -133,10 +136,12 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 
 ## Architecture - Module Splits
 
-- **Next refactor priority #1 (recorded 2026-07-10):** the three largest
-  orchestrators are `src/app/parity/research-workbench.ts` (1,467 lines),
-  `src/app/parity/figure-export.ts` (781), and `src/app/parity/governance-ui.ts`
-  (725). All three are UI orchestration tracked by the `audit:modules` ratchet,
+- **Next refactor priority #1 (re-measured 2026-07-13 after the one-time
+  Prettier re-baseline):** the three largest orchestrators are
+  `src/app/parity/research-workbench.ts` (1,930 lines),
+  `src/app/parity/governance-ui.ts` (979), and
+  `src/app/parity/figure-export.ts` (941). All three are UI orchestration
+  tracked by the `audit:modules` ratchet,
   so they cannot grow silently — but they are the first candidates for the next
   deliberate split (see the deferred-extraction rationale below: the split
   should land together with unit coverage for the extracted renderers or an
@@ -167,7 +172,8 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
     headlessly here. A pure extraction without a unit safety net risks a silent UI
     regression, so per the project's verify-first rule it waits until either unit
     coverage exists for those renderers or the extraction is done alongside an e2e
-    run. The file stays within its 2200-line ratchet in the meantime.
+    run. The file stays within its exact-pinned `audit:modules` ratchet
+    (1,930 lines after the 2026-07-13 Prettier re-baseline) in the meantime.
 
 ## Portfolio Packaging
 

@@ -18,7 +18,10 @@ deployed the same commit to Pages.
 4. The workflow sends `pendulum-release` to `elliotjung/pendulum-landing` with
    the tag, release commit, evidence source commit, and orchestrator run id.
 5. Landing's `cross-repo-release.yml` fetches evidence by the immutable simulator
-   commit SHA, rebuilds Korean content, and runs `check`, Playwright smoke/axe,
+   commit SHA, realigns the demo-kernel manifest and changelog highlights,
+   rewrites the static copy counts (meta descriptions, OG alt text, no-JS
+   fallbacks, Korean dictionary), regenerates the OG card image from the same
+   evidence, rebuilds Korean content, and runs `check`, Playwright smoke/axe,
    and LHCI. It commits synchronized generated data, creates the matching tag,
    and deploys an immutable Pages artifact.
 6. The simulator workflow polls that exact landing workflow. Only a successful
@@ -45,7 +48,9 @@ workflow input, issue, artifact, or report.
 ## Release command and rollback
 
 After the default branch is green and versions in `package.json`, `jsr.json`,
-`CITATION.cff`, and `.zenodo.json` agree:
+and `CITATION.cff` agree (the release workflow enforces exactly those three
+against the tag; `.zenodo.json` carries no version — the Zenodo script injects
+it at publication):
 
 ```bash
 git tag -a v10.36.0 -m "Pendulum Lab v10.36.0"

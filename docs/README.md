@@ -28,6 +28,8 @@ package; the docs are grouped by those jobs.
 
 ## Validation And Reproducibility
 
+- [`testing-strategy.md`](testing-strategy.md) - the ordered verify gate, test
+  tiers, oracle ladder, and which gate catches which regression class.
 - [`flagship-result.md`](flagship-result.md) - Melnikov threshold vs
   period-doubling onset result.
 - [`reproducibility.md`](reproducibility.md) - external SciPy/SymPy checks,

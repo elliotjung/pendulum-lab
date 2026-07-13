@@ -16,6 +16,7 @@ npm run audit:modules
 npm run test:json
 npm run test:check
 npm run docs:sync
+npm run format:check
 ```
 
 `npm run verify` runs that sequence. Changes to the browser app should also run
