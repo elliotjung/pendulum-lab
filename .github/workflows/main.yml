@@ -38,7 +38,7 @@ jobs:
       - run: npm run check:wasm-sync
       - run: npm run build:lib
       - run: npm run budget
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: bundle-budget
@@ -72,7 +72,7 @@ jobs:
       # benchmark-compare); mainline keeps the longitudinal memory gate below.
       - run: npm run benchmark
       - run: npm run benchmark:wasm-nchain
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: css-and-wasm-diagnostics

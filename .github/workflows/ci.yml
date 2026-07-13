@@ -101,7 +101,7 @@ jobs:
           (cd /tmp/baseline && npx vite preview --host 127.0.0.1 --port 4173 &)
           npx vite preview --host 127.0.0.1 --port 4174 &
           ORIGINAL_URL=http://127.0.0.1:4173/ CANDIDATE_URL=http://127.0.0.1:4174/ npm run benchmark
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: benchmark-compare-report
