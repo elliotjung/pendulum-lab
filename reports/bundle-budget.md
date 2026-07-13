@@ -13,9 +13,9 @@ Status: **PASS**
 | initial CSS raw | 124.1 | 140.0 | 88.6% | PASS |
 | initial CSS gzip | 24.3 | 32.0 | 75.9% | PASS |
 | initial CSS brotli | 20.4 | 26.0 | 78.4% | PASS |
-| standalone HTML raw | 999.8 | 1300.0 | 76.9% | PASS |
-| standalone HTML gzip | 296.6 | 430.0 | 69.0% | PASS |
-| standalone HTML brotli | 238.1 | 360.0 | 66.1% | PASS |
+| standalone HTML raw | 1000.2 | 1300.0 | 76.9% | PASS |
+| standalone HTML gzip | 296.7 | 430.0 | 69.0% | PASS |
+| standalone HTML brotli | 238.0 | 360.0 | 66.1% | PASS |
 
 ## Non-initial JavaScript total
 

@@ -76,27 +76,27 @@
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1023840,
+      "bytes": 1024210,
       "budget": 1331200,
       "ok": true,
-      "ratio": 0.7691105769230769,
-      "remainingBytes": 307360
+      "ratio": 0.7693885216346154,
+      "remainingBytes": 306990
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 303726,
+      "bytes": 303847,
       "budget": 440320,
       "ok": true,
-      "ratio": 0.6897847020348837,
-      "remainingBytes": 136594
+      "ratio": 0.6900595021802326,
+      "remainingBytes": 136473
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 243808,
+      "bytes": 243724,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.6613715277777777,
-      "remainingBytes": 124832
+      "ratio": 0.6611436631944444,
+      "remainingBytes": 124916
     }
   ],
   "nonInitialJsTotal": {
