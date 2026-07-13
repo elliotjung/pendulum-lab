@@ -324,7 +324,8 @@ function compareMetric(
   metric: MetricName,
   threshold: number,
   direction: 'higher-is-better' | 'lower-is-better',
-  gated: boolean
+  gated: boolean,
+  minNoiseFloor = 0
 ): BenchmarkDelta {
   const a = original.median;
   const b = candidate.median;
@@ -343,7 +344,11 @@ function compareMetric(
   }
   const delta = b - a;
   const rel = a === 0 ? null : delta / Math.abs(a);
-  const noiseFloor = (original.mad ?? 0) + (candidate.mad ?? 0);
+  // MAD collapses to zero when every sample of a quantized timer lands on the
+  // same 0.1 ms tick, which would let a sub-resolution delta count as a real
+  // regression. The floor keeps the gate honest: a delta below what the
+  // instrument can resolve is not evidence.
+  const noiseFloor = Math.max((original.mad ?? 0) + (candidate.mad ?? 0), minNoiseFloor);
   const beyondNoise = Math.abs(delta) > noiseFloor;
   let failed: boolean;
   if (metric === 'memoryBytes') {
@@ -371,8 +376,39 @@ function compare(
   originalAgg: Record<MetricName, MetricAggregate>,
   candidateAgg: Record<MetricName, MetricAggregate>
 ): BenchmarkComparison {
+  // Chromium coarsens performance.now() to 0.1 ms on non-isolated pages, and
+  // the app diagnostics measure single frames, so ms metrics quantize to that
+  // tick. Per-step cost divides the same quantized timer by the step count —
+  // use the SLOWER build's step count so the floor covers both grids (the
+  // fixed-dt accumulator legitimately advances different step counts per
+  // build). Long tasks only exist above the 50 ms observer threshold, so one
+  // marginal task appearing or vanishing swings the sum by ~50 ms.
+  const TIMER_QUANTUM_MS = 0.1;
+  const LONG_TASK_QUANTUM_MS = 50;
+  const minSteps = Math.max(
+    1,
+    Math.min(
+      originalAgg.stepsAdvanced.median ?? Number.POSITIVE_INFINITY,
+      candidateAgg.stepsAdvanced.median ?? Number.POSITIVE_INFINITY
+    )
+  );
+  const minNoiseFloors: Partial<Record<MetricName, number>> = {
+    physicsMsPerFrame: TIMER_QUANTUM_MS,
+    physicsMsPerStep: Number.isFinite(minSteps) ? TIMER_QUANTUM_MS / minSteps : TIMER_QUANTUM_MS,
+    renderMsPerFrame: TIMER_QUANTUM_MS,
+    workerLatencyMs: TIMER_QUANTUM_MS,
+    longTaskMs: LONG_TASK_QUANTUM_MS
+  };
   const deltas = METRICS.map(({ metric, direction, threshold, gated }) =>
-    compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction, gated)
+    compareMetric(
+      originalAgg[metric],
+      candidateAgg[metric],
+      metric,
+      threshold,
+      direction,
+      gated,
+      minNoiseFloors[metric] ?? 0
+    )
   );
   return {
     originalUrl: originalUrl!,
@@ -432,7 +468,7 @@ function compareMarkdown(env: BenchmarkEnvironment, rows: SampleMetrics[], compa
     `Generated: ${new Date().toISOString()}`,
     '',
     ...environmentSection(env),
-    `Interleaved sampling: ${comparison.samplesPerBuild} samples per build in one browser process; medians reported, noise floor = MAD(original)+MAD(candidate).`,
+    `Interleaved sampling: ${comparison.samplesPerBuild} samples per build in one browser process; medians reported, noise floor = max(MAD(original)+MAD(candidate), measurement resolution: 0.1 ms timer quantum, /steps for per-step cost, 50 ms per long task).`,
     '',
     '## Median per build',
     '',
