@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T02:27:41.418Z",
+  "generatedAt": "2026-07-13T03:09:02.033Z",
   "totals": {
     "done": 10,
     "partial": 2,
@@ -3999,7 +3999,7 @@
       "area": "Testing and browser coverage",
       "status": "done",
       "evidence": [
-        "1079/1079 unit tests across 173 files",
+        "1090/1090 unit tests across 175 files",
         "unit tests cover integrators, energy drift, determinism, JSON import validation, edge cases, chaos, visualization, repro packages",
         "quick, slow, and full test tiers are wired into PR/mainline workflows",
         "coverage scope guard catches new source files missing from the v8 coverage map",

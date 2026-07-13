@@ -8,6 +8,7 @@ import {
   exportPaperMethodsLatex,
   exportPaperMethodsMarkdown,
   exportPaperPackJson,
+  exportCapturedFiguresSvgZip,
   exportProvenanceJson,
   exportResearchBundleJson,
   exportResearchBundleZip,
@@ -71,9 +72,10 @@ export function buildResearchExportPanels(): ResearchExportPanels {
       button('rwFigExportSvg', 'Study Figure SVG', () => exportStudyFigureSvg()),
       button('rwFigExportPng', 'Study Figure PNG', () => { void exportStudyFigurePng(); }),
       button('rwFigExportCsv', 'Figure Source CSV', () => exportStudyFigureCsv()),
-      button('rwFigExportCanvases', 'Canvases PNG @ scale', () => exportScaledCanvases())
+      button('rwFigExportCanvases', 'Canvases PNG @ scale', () => exportScaledCanvases()),
+      button('rwFigExportCanvasSvg', 'Canvas SVG Pack', () => exportCapturedFiguresSvgZip())
     ),
-    html('div', { id: 'rwFigureSummary', className: 'research-summary', text: 'Vector SVG figures regenerate from saved study data - no physics re-run. PNG exports honour the selected scale.' })
+    html('div', { id: 'rwFigureSummary', className: 'research-summary', text: 'Study SVG regenerates true vectors from saved data. Canvas SVG packs preserve live pixels, captions, dimensions, and hashes in explicitly raster-embedded SVG containers.' })
   );
 
   return { paperCard, figureCard };

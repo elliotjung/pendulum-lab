@@ -65,7 +65,7 @@
   unitary-grid quantum Floquet scale-up, OffscreenCanvas/WebGPU evaluation,
   figure-export presets, worker-offload status) are closed out honestly.
 
-### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1079)
+### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1090)
 
 - **Theory vs measured hardware** (`docs/hardware-validation.md`): a full
   parameter-extraction lane — video-tracker CSV (pixels) → scale-free angle

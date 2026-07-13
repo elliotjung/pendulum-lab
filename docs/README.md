@@ -40,6 +40,8 @@ package; the docs are grouped by those jobs.
   isolated one-time NVIDIA/AMD guest-runner procedure.
 - [`reference-manifest.md`](reference-manifest.md) - report and artifact
   manifest conventions.
+- [`visual-baseline-promotion.md`](visual-baseline-promotion.md) - Ubuntu
+  snapshot generation, review, complete-set validation, and mainline promotion.
 
 ## Research Workbench
 

@@ -50,3 +50,5 @@ export type {
 } from '../runtime/gpuFields';
 export { Float64RingBuffer, sharedMemoryCapability } from '../runtime/sharedRingBuffer';
 export type { Float64RingBufferDescriptor, Float64RingBufferOptions } from '../runtime/sharedRingBuffer';
+export { buildNChainJacobianTapeWasm, wasmNChainAvailable, wasmSimdSupported } from '../runtime/wasmNChain';
+export type { WasmNChainTapeResult, WasmNChainTapeSettings } from '../runtime/wasmNChain';

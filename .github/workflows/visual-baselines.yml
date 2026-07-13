@@ -31,6 +31,10 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Regenerate chromium + mobile-chrome baselines
         run: npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium --project=mobile-chrome
+      - name: Validate the complete Linux baseline set
+        run: npm run test:visual:linux:contract
+      - name: Prove regenerated baselines without update mode
+        run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
       - uses: actions/upload-artifact@v4
         with:
           name: visual-baselines-linux

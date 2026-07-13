@@ -62,3 +62,13 @@ const bundle = research.buildZip;
 New application code should avoid browser globals. Browser-only debug surfaces
 (`window.PendulumLabDebug`, deprecated aliases) are not part of the stable
 library contract.
+
+## Figure artifact contract
+
+Research figure exports are application artifacts, not public library entry
+points. Saved parameter-study rows regenerate deterministic, true-vector SVG.
+Live analysis canvases can be exported as PNG and as provenance-labelled SVG
+containers; the latter declare `data-rendering="raster-embedded"` because a
+canvas does not retain the original drawing primitives. Figure manifests list
+both filenames plus the source canvas id, dimensions, content hash, and
+rendering mode so downstream paper tooling cannot confuse the two paths.

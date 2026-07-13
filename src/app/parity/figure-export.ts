@@ -2,10 +2,9 @@
  * Publication outputs: figures, captions, paper packs, notebook, bundles, provenance, ZIP.
  * Extracted from the former monolithic FeatureParityLayer.ts.
  */
-import type { RuntimeSnapshot } from '../../types/domain';
 import { createSubmissionManifest, downloadBytes, downloadJson } from '../../export/manifest';
 import { integratorRegistry } from '../../physics/integrators';
-import { csvCell, dataUrlByteEstimate, hashText } from '../../research/researchExportUtils';
+import { csvCell } from '../../research/researchExportUtils';
 import { buildZip, checksumEntriesSha256, dataUrlToBytes, textToBytes, type ZipEntryInput } from '../../research/zipBundle';
 import { collectEnvironment, ProvenanceBuilder, type ProvenanceGraph } from '../../research/provenance';
 import { buildNotebookV2 } from '../../research/notebookBuilder';
@@ -18,9 +17,32 @@ import {
   type FigureTheme
 } from '../../research/figurePipeline';
 import { clear, currentSnapshot, downloadText, html, selectValue, setText, state, toast } from './shared';
-import { RESEARCH_STORAGE_SCHEMA_VERSION, isPlainObject, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
+import { RESEARCH_STORAGE_SCHEMA_VERSION, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
 import { buildComparisonRows, designStudy, designStudyCsvText, logResearchRun, metricValue, parameterStudyResultsCsvText, renderResearchTable, renderResearchWorkbench, studyCompletionSummary, studyPlanHash, studyPointValue } from './research-workbench';
 import { $ } from './shared';
+import {
+  FIGURE_CAPTIONS,
+  blankDataUrl,
+  buildPaperFigureManifest as createPaperFigureManifest,
+  collectPaperFigures,
+  effectiveFigureCaption,
+  renderCapturedFigureSvg,
+  saveFigureCaptionOverride,
+  type PaperFigureManifest
+} from './paper-figure-capture';
+
+export {
+  FIGURE_CAPTIONS,
+  FIGURE_CAPTION_OVERRIDE_KEY,
+  blankCanvasCache,
+  blankDataUrl,
+  collectPaperFigures,
+  effectiveFigureCaption,
+  loadFigureCaptionOverrides,
+  renderCapturedFigureSvg,
+  saveFigureCaptionOverride
+} from './paper-figure-capture';
+export type { PaperFigure, PaperFigureManifest } from './paper-figure-capture';
 
 
 export function buildMethodsText(snapshot = currentSnapshot()): string {
@@ -42,140 +64,6 @@ export function buildMethodsText(snapshot = currentSnapshot()): string {
     'Limitations:',
     limitations
   ].join('\n');
-}
-
-export interface PaperFigure {
-  id: string;
-  caption: string;
-  width: number;
-  height: number;
-  dataHash: string;
-  byteEstimate: number;
-  /** PNG data URL captured from the live canvas. */
-  dataUrl: string;
-}
-
-export interface PaperFigureManifest {
-  schemaVersion: 'pendulum-paper-figures/v2';
-  generatedAt: string;
-  runtime: RuntimeSnapshot;
-  figureCount: number;
-  totalBytes: number;
-  figures: Array<{
-    id: string;
-    file: string;
-    caption: string;
-    width: number;
-    height: number;
-    dataHash: string;
-    byteEstimate: number;
-    sourceCanvas: string;
-  }>;
-}
-
-/**
- * Captions for every analysis canvas the app can draw. Canvases render only
- * while their tab is (or was) active, so blank canvases are filtered out at
- * capture time rather than listed with empty images.
- */
-export const FIGURE_CAPTIONS: Record<string, string> = {
-  main: 'Pendulum trajectory with long-exposure trail (live simulation canvas).',
-  energy: 'Total energy E(t); drift quantifies integrator fidelity.',
-  lyap: 'Running maximal-Lyapunov estimate λ₁(t) from the live divergence proxy.',
-  phase: 'Phase portrait (θ₁, ω₁).',
-  poincare: 'Poincaré section at the θ₁ = 0 (θ̇₁ > 0) crossing.',
-  fft: 'Frequency spectrum of θ₁ (FFT magnitude).',
-  cmpCanvas: 'Integrator comparison: four methods overlaid on the same system.',
-  cmpEnergy: 'Energy drift per integrator over the comparison run.',
-  cmpDiverge: 'Pairwise trajectory divergence between integrators.',
-  cmpBench: 'Throughput benchmark (steps/ms) across eight integrators.',
-  lyapSpecCanvas: 'Full Lyapunov spectrum with per-exponent uncertainty.',
-  sweepCanvas: 'Chaos map: maximal Lyapunov exponent over the (θ₁, θ₂) grid.',
-  bifCanvas: 'Bifurcation diagram: Poincaré θ₂ values swept over gravity g.',
-  p3dCanvas: '3D phase-space projection (θ₁, θ₂, ω₂), orthographic.',
-  gpuCanvas: 'Phase-density accumulation over (θ₁, ω₁), additive blending.',
-  zeroOneCanvas: '0–1 test translation path (p_c, q_c): bounded ⇒ regular, Brownian ⇒ chaotic.',
-  clvCanvas: 'Covariant Lyapunov vector hyperbolicity angles along the trajectory.',
-  basinCanvas: 'Flip-basin classification over initial conditions; fractal boundary.',
-  rqaCanvas: 'Recurrence plot of the embedded cos θ₁ observable.',
-  ftleCanvas: 'Finite-time Lyapunov exponent field; ridges are Lagrangian coherent structures.'
-};
-
-/** Data URL of an untouched canvas of the same size — used to skip blank canvases. */
-export const blankCanvasCache = new Map<string, string>();
-
-export function blankDataUrl(width: number, height: number): string {
-  const key = `${width}x${height}`;
-  const cached = blankCanvasCache.get(key);
-  if (cached) return cached;
-  const probe = document.createElement('canvas');
-  probe.width = width;
-  probe.height = height;
-  const url = probe.toDataURL('image/png');
-  blankCanvasCache.set(key, url);
-  return url;
-}
-
-export const FIGURE_CAPTION_OVERRIDE_KEY = 'pendulum-lab/figure-captions/v1';
-
-export function loadFigureCaptionOverrides(): Record<string, string> {
-  try {
-    const raw = window.localStorage?.getItem(FIGURE_CAPTION_OVERRIDE_KEY);
-    const parsed = raw ? JSON.parse(raw) as unknown : null;
-    if (isPlainObject(parsed)) {
-      const overrides: Record<string, string> = {};
-      for (const [key, value] of Object.entries(parsed)) {
-        if (typeof value === 'string' && key in FIGURE_CAPTIONS) overrides[key] = value.slice(0, 400);
-      }
-      return overrides;
-    }
-  } catch {
-    /* corrupted overrides are ignored; defaults apply */
-  }
-  return {};
-}
-
-export function saveFigureCaptionOverride(id: string, caption: string): void {
-  const overrides = loadFigureCaptionOverrides();
-  if (caption.trim() && caption.trim() !== FIGURE_CAPTIONS[id]) overrides[id] = caption.trim();
-  else delete overrides[id];
-  try {
-    window.localStorage?.setItem(FIGURE_CAPTION_OVERRIDE_KEY, JSON.stringify(overrides));
-  } catch {
-    /* quota exhausted: caption stays default */
-  }
-}
-
-export function effectiveFigureCaption(id: string): string {
-  return loadFigureCaptionOverrides()[id] ?? FIGURE_CAPTIONS[id] ?? id;
-}
-
-/** Capture every drawn analysis canvas as a captioned PNG figure. */
-export function collectPaperFigures(): PaperFigure[] {
-  const overrides = loadFigureCaptionOverrides();
-  const figures: PaperFigure[] = [];
-  for (const [id, defaultCaption] of Object.entries(FIGURE_CAPTIONS)) {
-    const caption = overrides[id] ?? defaultCaption;
-    const canvas = document.getElementById(id);
-    if (!(canvas instanceof HTMLCanvasElement) || canvas.width === 0 || canvas.height === 0) continue;
-    let dataUrl = '';
-    try {
-      dataUrl = canvas.toDataURL('image/png');
-    } catch {
-      continue;
-    }
-    if (dataUrl === blankDataUrl(canvas.width, canvas.height)) continue;
-    figures.push({
-      id,
-      caption,
-      width: canvas.width,
-      height: canvas.height,
-      dataHash: hashText(dataUrl),
-      byteEstimate: dataUrlByteEstimate(dataUrl),
-      dataUrl
-    });
-  }
-  return figures;
 }
 
 // --- Figure Studio -----------------------------------------------------------
@@ -302,24 +190,37 @@ export function exportScaledCanvases(): void {
   if (exported > 0) logResearchRun('export', 'Scaled canvas figures', `${exported} canvases at ${scale}x`);
 }
 
+/**
+ * Export every drawn analysis canvas as an SVG artifact in one ZIP download.
+ * Live canvases do not retain drawing primitives, so these SVGs are explicitly
+ * marked `raster-embedded`; saved parameter studies use the true-vector path.
+ */
+export function exportCapturedFiguresSvgZip(): void {
+  const figures = collectPaperFigures();
+  if (figures.length === 0) {
+    toast('No drawn figures yet - visit the analysis tabs first');
+    return;
+  }
+  const manifest = buildPaperFigureManifest(figures);
+  const entries: ZipEntryInput[] = figures.map((figure, index) => ({
+    path: `figure-${String(index + 1).padStart(2, '0')}-${figure.id}.svg`,
+    data: textToBytes(renderCapturedFigureSvg(figure))
+  }));
+  entries.push({ path: 'figure-manifest.json', data: textToBytes(JSON.stringify(manifest, null, 2)) });
+  const zip = buildZip(entries);
+  downloadBytes('pendulum_canvas_svg_pack.zip', zip, 'application/zip');
+  logResearchRun(
+    'export',
+    'Canvas SVG pack',
+    `${figures.length} raster-embedded SVG figures with dimensions, captions, and source hashes`,
+    'pendulum_canvas_svg_pack.zip'
+  );
+  setText('rwFigureSummary', `${figures.length} canvas SVG artifact(s) exported. Saved-data study SVG remains the true-vector path.`);
+  toast(`Canvas SVG pack exported (${figures.length} figures)`);
+}
+
 export function buildPaperFigureManifest(figures = collectPaperFigures(), snapshot = currentSnapshot()): PaperFigureManifest {
-  return {
-    schemaVersion: 'pendulum-paper-figures/v2',
-    generatedAt: new Date().toISOString(),
-    runtime: snapshot,
-    figureCount: figures.length,
-    totalBytes: figures.reduce((sum, figure) => sum + figure.byteEstimate, 0),
-    figures: figures.map((figure, index) => ({
-      id: figure.id,
-      file: `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}.png`,
-      caption: figure.caption,
-      width: figure.width,
-      height: figure.height,
-      dataHash: figure.dataHash,
-      byteEstimate: figure.byteEstimate,
-      sourceCanvas: `#${figure.id}`
-    }))
-  };
+  return createPaperFigureManifest(figures, snapshot);
 }
 
 export function escapeHtml(text: string): string {
@@ -762,10 +663,12 @@ export async function buildResearchBundleZipEntries(): Promise<{ entries: ZipEnt
     entries.push({ path: 'data/design-study-results.csv', data: textToBytes(designStudyCsvText(designStudy)) });
   }
   figures.forEach((figure, index) => {
+    const stem = `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}`;
     entries.push({
-      path: `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}.png`,
+      path: `${stem}.png`,
       data: dataUrlToBytes(figure.dataUrl)
     });
+    entries.push({ path: `${stem}.svg`, data: textToBytes(renderCapturedFigureSvg(figure)) });
   });
   // checksums.json is appended last so it can cover every other member.
   entries.push({

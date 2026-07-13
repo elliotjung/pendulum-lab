@@ -91,6 +91,10 @@ but its extraction boundary is now explicit:
   design-study render loop, adaptive batch UI state, and export-panel wiring.
   Those should leave `research-workbench.ts` one at a time with focused unit or
   e2e coverage so persisted study/run-log behavior does not drift.
+- Canvas capture, figure captions, portable PNG/SVG paths, and the figure
+  manifest model live in the unit-tested `paper-figure-capture.ts`; artifact
+  orchestration remains in `figure-export.ts`. Command registration likewise
+  lives in `governance-commands.ts`, separate from governance DOM rendering.
 
 ## Module Size Ratchet
 
@@ -98,7 +102,8 @@ but its extraction boundary is now explicit:
 large modules while they are being split. The current ratchet targets are:
 `app/parity/research-workbench.ts`, `app/parity/figure-export.ts`,
 `app/parity/governance-ui.ts`, `app/ExpansionLabTab.ts`,
-`workers/chaosProtocol.ts`, and `app/parity/runtime-diagnostics.ts`.
+`workers/chaosProtocol.ts`, `app/parity/runtime-diagnostics.ts`,
+`app/parity/shared.ts`, and `app/parity/storage-sync.ts`.
 `physics/expandedModels.ts` has already left this list after being split into
 types, factory, suite-runner, Lyapunov, and research-matrix modules. A module
 should leave the known-large list only after its responsibilities have been

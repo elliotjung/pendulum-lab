@@ -5,9 +5,9 @@ const SOURCE_ROOT = 'src';
 const DEFAULT_MAX_LINES = 650;
 
 const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> = {
-  'src/app/parity/research-workbench.ts': { maxLines: 2200, owner: 'split into experiment library, batch runner, design study, comparison matrix' },
-  'src/app/parity/figure-export.ts': { maxLines: 850, owner: 'split exporters by artifact type' },
-  'src/app/parity/governance-ui.ts': { maxLines: 800, owner: 'split command palette, manifest, mode controls' },
+  'src/app/parity/research-workbench.ts': { maxLines: 1600, owner: 'split into experiment library, batch runner, design study, comparison matrix' },
+  'src/app/parity/figure-export.ts': { maxLines: 750, owner: 'split exporters by artifact type' },
+  'src/app/parity/governance-ui.ts': { maxLines: 760, owner: 'split command palette, manifest, mode controls' },
   'src/app/ExpansionLabTab.ts': { maxLines: 780, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
   'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' },

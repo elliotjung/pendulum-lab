@@ -1,10 +1,11 @@
 /**
- * Interleaved oracle/candidate benchmark for a future N-chain WASM SIMD tape.
+ * Interleaved oracle/candidate benchmark for the ABI-2 N-chain WASM SIMD tape.
  * Direct baseline run: npx tsx scripts/wasm-nchain-benchmark.ts
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { buildNChainJacobianTape } from '../src/runtime/gpuNChainVariational';
+import { buildNChainJacobianTapeWasm, wasmNChainAvailable } from '../src/runtime/wasmNChain';
 import type { ChainParameters } from '../src/physics/nPendulum';
 
 export interface NChainTapeWorkload {
@@ -152,13 +153,21 @@ export async function runNChainTapeBenchmark(candidate?: NChainTapeCandidate): P
 }
 
 async function main(): Promise<void> {
-  const report = await runNChainTapeBenchmark();
+  const available = await wasmNChainAvailable();
+  const candidate: NChainTapeCandidate | undefined = available
+    ? async (parameters, state, damping, settings) => {
+        const result = await buildNChainJacobianTapeWasm(parameters, state, damping, settings);
+        if (result.backend !== 'wasm-simd') throw new Error(`WASM N-chain candidate unexpectedly fell back: ${result.caveat}`);
+        return { backend: result.backend, tape: result.tape };
+      }
+    : undefined;
+  const report = await runNChainTapeBenchmark(candidate);
   await mkdir('reports', { recursive: true });
   await writeFile('reports/wasm-nchain-baseline.json', `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   for (const entry of report.cases) {
     console.log(`N=${entry.workload.links}: CPU median ${entry.cpuMedianMs.toFixed(2)} ms, ${(entry.cpuTapeValuesPerSecond / 1e6).toFixed(2)}M tape values/s`);
   }
-  console.log('reports/wasm-nchain-baseline.json written; candidateBackend=not-built');
+  console.log(`reports/wasm-nchain-baseline.json written; candidateBackend=${available ? 'wasm-simd' : 'not-built'}`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

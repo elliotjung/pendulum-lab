@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-07-13T02:25:50.395Z",
+  "generatedAt": "2026-07-13T03:08:56.416Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
     "Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry_run=false.",
@@ -65,7 +65,7 @@
       "path": "reports/portfolio-korean-pdf-validation.json",
       "required": true,
       "available": true,
-      "hash": "1d1d94ba85a2ed",
+      "hash": "0c447794a85f5b",
       "note": "Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed."
     },
     {

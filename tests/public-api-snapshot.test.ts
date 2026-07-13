@@ -451,6 +451,7 @@ describe('public grouped API surface', () => {
     expect(namespaceKeys(experimental)).toEqual([
       'Float64RingBuffer',
       'buildNChainJacobianTape',
+      'buildNChainJacobianTapeWasm',
       'compareEnsembleStatistics',
       'ensembleGrid',
       'ensembleStatistics',
@@ -465,6 +466,8 @@ describe('public grouped API surface', () => {
       'runDoublePendulumEnsemble',
       'sharedMemoryCapability',
       'sweepLambdaField',
+      'wasmNChainAvailable',
+      'wasmSimdSupported',
       'webgpuDoublePendulumClvCandidate',
       'webgpuDoublePendulumLyapunovSpectrumCandidate',
       'webgpuDoublePendulumVariationalFtleFieldCandidate',

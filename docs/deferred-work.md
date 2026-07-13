@@ -17,10 +17,12 @@ fully covered by the headless test suite.
 - **Beyond the validated planar N<=8 hybrid path.** Production WebGPU kernels
   now cover the 4D full-spectrum/CLV/variational-FTLE diagnostics and a planar
   N-chain tiled STM/QR/CLV/FTLE path. The N-chain path intentionally leaves the
-  nonlinear reference trajectory and Jacobian tape in CPU f64. Moving those
-  two stages to GPU, extending beyond 16 state dimensions, or adding spherical
-  chains requires a new CPU-oracle promotion campaign rather than a silent
-  widening of the current claim.
+  nonlinear reference trajectory and Jacobian tape in CPU f64. An ABI-2,
+  N<=8 AssemblyScript f64 SIMD candidate now computes those two stages for
+  headless A/B benchmarks, but is explicitly unpromoted pending the ADR 0002
+  cross-engine and repeatable-speedup gates. Moving either stage to GPU,
+  extending beyond 16 state dimensions, or adding spherical chains requires a
+  new CPU-oracle promotion campaign rather than a silent widening of the claim.
 - **Vendor breadth.** Intel evidence is recorded. Physical NVIDIA and AMD
   runners are still required for a complete three-vendor matrix.
 - **SharedArrayBuffer plot integration.** A tested shared/local ring-buffer

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-evidence-summary/v1",
-  "generatedAt": "2026-07-13T02:44:53.011Z",
+  "generatedAt": "2026-07-13T03:06:19.569Z",
   "sourceReports": {
     "vitestResults": "reports/vitest-results.json",
     "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
@@ -12,22 +12,22 @@
     "energyBenchmark": "reports/energy-benchmark.json"
   },
   "provenance": {
-    "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+    "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
     "packageVersion": "10.36.0",
     "lockfileSha256": "452998de5d178ded8092c385cb2659492dd1b228f874ec7d589d23898ef50e47",
-    "dirtyWorktree": false,
+    "dirtyWorktree": true,
     "expiresAfterDays": 14,
-    "expiresAt": "2026-07-27T02:44:53.011Z"
+    "expiresAt": "2026-07-27T03:06:19.569Z"
   },
   "tests": {
-    "total": 1079,
-    "passed": 1079,
+    "total": 1090,
+    "passed": 1090,
     "failed": 0,
-    "suites": 532,
-    "files": 173,
+    "suites": 536,
+    "files": 175,
     "success": true,
-    "generatedAt": "2026-07-13T02:27:10.266Z",
-    "passLabel": "1079 / 1079 pass"
+    "generatedAt": "2026-07-13T03:06:00.764Z",
+    "passLabel": "1090 / 1090 pass"
   },
   "validation": {
     "scipyAgreement": {
@@ -100,11 +100,11 @@
   "claims": [
     {
       "id": "tests.unit",
-      "displayValue": "1079 / 1079 pass",
+      "displayValue": "1090 / 1090 pass",
       "status": "passed",
       "uncertainty": null,
       "sourceReport": "reports/vitest-results.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": null,
       "reproduce": "npm run verify",
       "publicUrl": null
@@ -115,7 +115,7 @@
       "status": "passed",
       "uncertainty": "Maximum observed divergence for regular reference cases",
       "sourceReport": "reports/cross-validation.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": "Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.",
       "reproduce": "npm run validate:cross",
       "publicUrl": null
@@ -126,7 +126,7 @@
       "status": "low",
       "uncertainty": null,
       "sourceReport": "reports/mutation-aggregate.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": "Below the 70% quality target; the 65% regression floor is enforced.",
       "reproduce": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
       "publicUrl": null
@@ -137,7 +137,7 @@
       "status": "measured",
       "uncertainty": "Method-specific drift; no universal pass envelope",
       "sourceReport": "reports/energy-benchmark.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": "Compare each method against its documented order and structure-preservation behavior.",
       "reproduce": "npm run benchmark:energy",
       "publicUrl": null
@@ -148,7 +148,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/gpu-adapter-matrix.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.",
       "reproduce": "npm run benchmark:gpu-matrix",
       "publicUrl": null
@@ -159,7 +159,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/publication-status.json",
-      "sourceCommit": "95385f8354c129b6452113fa184276e1a8c1aa6b",
+      "sourceCommit": "2ecc89a4ed301e19505cea811c4376eac3999b46",
       "caveat": "npm registry does not resolve this exact package version. No matching public Zenodo DOI record resolves for Pendulum Lab.",
       "reproduce": "npm run release:status",
       "publicUrl": "https://elliotjung.github.io/pendulum-lab/reviewer.html"

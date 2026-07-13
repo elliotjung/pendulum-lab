@@ -1,6 +1,6 @@
 {
   "schemaVersion": "wasm-nchain-benchmark/v1",
-  "generatedAt": "2026-07-13T01:50:47.197Z",
+  "generatedAt": "2026-07-13T03:06:32.513Z",
   "node": "v26.3.0",
   "platform": "win32-x64",
   "interleaved": true,
@@ -15,15 +15,26 @@
       },
       "tapeValues": 96,
       "cpuTimesMs": [
-        0.16809999999998126,
-        0.18739999999996826,
-        0.15899999999999181,
-        0.3749000000000251,
-        0.3383999999999787
+        0.4095999999999549,
+        0.35480000000001155,
+        0.5271999999999935,
+        0.33490000000000464,
+        0.42830000000003565
       ],
-      "cpuMedianMs": 0.18739999999996826,
-      "cpuTapeValuesPerSecond": 512273.21238002274,
-      "candidateBackend": "not-built"
+      "cpuMedianMs": 0.4095999999999549,
+      "cpuTapeValuesPerSecond": 234375.00000002582,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.07519999999999527,
+        0.06799999999998363,
+        0.09339999999997417,
+        0.06739999999996371,
+        0.07510000000002037
+      ],
+      "candidateMedianMs": 0.07510000000002037,
+      "candidateTapeValuesPerSecond": 1278295.605858508,
+      "speedup": 5.454061251662367,
+      "maxAbsError": 0
     },
     {
       "workload": {
@@ -35,15 +46,26 @@
       },
       "tapeValues": 384,
       "cpuTimesMs": [
-        0.6918000000000006,
-        0.4449000000000183,
-        0.21769999999997935,
-        0.26799999999997226,
-        0.2330000000000041
+        0.47989999999998645,
+        0.38170000000002346,
+        0.2858999999999696,
+        0.5883000000000038,
+        0.08659999999997581
       ],
-      "cpuMedianMs": 0.26799999999997226,
-      "cpuTapeValuesPerSecond": 1432835.8208956707,
-      "candidateBackend": "not-built"
+      "cpuMedianMs": 0.38170000000002346,
+      "cpuTapeValuesPerSecond": 1006025.674613509,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.13580000000001746,
+        0.25020000000000664,
+        0.2499000000000251,
+        0.09829999999999472,
+        0.07919999999995753
+      ],
+      "candidateMedianMs": 0.13580000000001746,
+      "candidateTapeValuesPerSecond": 2827687.776141021,
+      "speedup": 2.810751104565349,
+      "maxAbsError": 7.401546042729024e-11
     },
     {
       "workload": {
@@ -55,16 +77,27 @@
       },
       "tapeValues": 1536,
       "cpuTimesMs": [
-        0.5656000000000176,
-        0.6574999999999704,
-        0.6200000000000045,
-        0.7016999999999598,
-        0.39119999999996935
+        0.5605999999999653,
+        1.11099999999999,
+        1.2881999999999607,
+        0.7344999999999686,
+        0.9142999999999688
       ],
-      "cpuMedianMs": 0.6200000000000045,
-      "cpuTapeValuesPerSecond": 2477419.3548386917,
-      "candidateBackend": "not-built"
+      "cpuMedianMs": 0.9142999999999688,
+      "cpuTapeValuesPerSecond": 1679973.750410207,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.6437000000000239,
+        0.2909000000000219,
+        0.2448999999999728,
+        0.23560000000003356,
+        0.42089999999996053
+      ],
+      "candidateMedianMs": 0.2909000000000219,
+      "candidateTapeValuesPerSecond": 5280165.005156013,
+      "speedup": 3.1430044688893086,
+      "maxAbsError": 1.0732155927839493e-9
     }
   ],
-  "decision": "No WASM SIMD candidate is built. These are CPU f64 oracle baselines, not acceleration results."
+  "decision": "Candidate timings are diagnostic; promotion also requires ADR 0002 numerical and cross-engine gates."
 }
