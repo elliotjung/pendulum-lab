@@ -40,7 +40,7 @@ jobs:
               -o "dist/reports/benchmarks/$file" \
               "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/benchmark-history/$file" || rm -f "dist/reports/benchmarks/$file"
           done
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
