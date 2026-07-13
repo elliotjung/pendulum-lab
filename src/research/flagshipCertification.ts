@@ -210,7 +210,11 @@ export function buildFlagshipFigureSvg(certification: Pick<FlagshipCertification
   ].join('\n');
 }
 
-export function certifyFlagshipGapMap(report: FlagshipPaperStudyReport, sourceStudy = 'reports/paper-study.json', generatedAt = new Date().toISOString()): FlagshipCertification {
+export function certifyFlagshipGapMap(
+  report: FlagshipPaperStudyReport,
+  sourceStudy: string = 'reports/paper-study.json',
+  generatedAt: string = new Date().toISOString()
+): FlagshipCertification {
   const rows = flagshipCertifiedRows(report);
   const crossing = rows.length >= 2 ? estimateFlagshipCrossing(rows) : null;
   const refinedGrid = refinedFlagshipGrid(rows);

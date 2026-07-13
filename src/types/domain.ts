@@ -8,6 +8,8 @@ export type IntegratorId =
   | 'leapfrog'
   | 'symplectic'
   | 'yoshida4'
+  | 'yoshida6'
+  | 'yoshida8'
   | 'hmidpoint'
   | 'gauss2'
   | 'rkf45'

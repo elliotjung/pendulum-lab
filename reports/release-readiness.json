@@ -1,9 +1,9 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-06-18T17:57:50.258Z",
+  "generatedAt": "2026-07-13T02:25:50.395Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
-    "Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.",
+    "Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry_run=false.",
     "Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync."
   ],
   "artifacts": [
@@ -12,7 +12,7 @@
       "path": ".zenodo.json",
       "required": true,
       "available": true,
-      "hash": "119b13b40087a7",
+      "hash": "1c2bbff862b232",
       "note": "Zenodo metadata and authenticated deposition command are present."
     },
     {
@@ -20,7 +20,7 @@
       "path": ".github/workflows/pages.yml",
       "required": true,
       "available": true,
-      "hash": "00d30bffaf9b9e",
+      "hash": "044e5788a10745",
       "note": "GitHub Pages deploy workflow is present."
     },
     {
@@ -35,7 +35,7 @@
       "path": ".github/workflows/publish-npm.yml",
       "required": true,
       "available": true,
-      "hash": "1e71d58db24850",
+      "hash": "1901d89e6fc4aa",
       "note": "Manual npm workflow uses OIDC trusted publishing and automatic provenance."
     },
     {
@@ -43,7 +43,7 @@
       "path": ".github/workflows/release.yml",
       "required": true,
       "available": true,
-      "hash": "17855e5822f731",
+      "hash": "1c855cbefe303a",
       "note": "Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation."
     },
     {
@@ -52,6 +52,21 @@
       "required": true,
       "available": true,
       "note": "Flagship paper PDF exists."
+    },
+    {
+      "id": "portfolio-korean-pdf",
+      "path": "reports/portfolio-korean.pdf",
+      "required": true,
+      "available": true,
+      "note": "Korean portfolio PDF is generated from docs/portfolio-korean.md with Playwright Chromium."
+    },
+    {
+      "id": "portfolio-korean-pdf-validation",
+      "path": "reports/portfolio-korean-pdf-validation.json",
+      "required": true,
+      "available": true,
+      "hash": "1d1d94ba85a2ed",
+      "note": "Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed."
     },
     {
       "id": "reviewer-manifest",
@@ -66,7 +81,7 @@
       "path": "reports/webgpu-hardware-validation.md",
       "required": false,
       "available": true,
-      "hash": "06df9b5b93825f",
+      "hash": "12aff87c0b7e5f",
       "note": "Real WebGPU adapter validation report exists when run on a hardware target."
     },
     {
@@ -74,7 +89,7 @@
       "path": "reports/gpu-benchmark-ladder.md",
       "required": true,
       "available": true,
-      "hash": "008886fa948d93",
+      "hash": "1351660b532741",
       "note": "Hardware GPU benchmark ladder records adapter metadata, f32/f64 drift, and CPU-oracle promotion metrics."
     },
     {
@@ -82,7 +97,7 @@
       "path": "reports/gpu-benchmark-ladder.json",
       "required": true,
       "available": true,
-      "hash": "1df632f7f683b7",
+      "hash": "18dde59b5c13d7",
       "note": "Machine-readable GPU benchmark ladder for release artifacts."
     },
     {
@@ -90,7 +105,7 @@
       "path": "reports/gpu-adapter-matrix.json",
       "required": true,
       "available": true,
-      "hash": "0022f57d23c7e7",
+      "hash": "193a76d0db2fb0",
       "note": "Physical Intel/NVIDIA/AMD evidence matrix; missing hardware remains explicit."
     },
     {
@@ -98,7 +113,7 @@
       "path": "reports/publication-status.json",
       "required": true,
       "available": true,
-      "hash": "0d540c722f54b0",
+      "hash": "044365f6e594da",
       "note": "Public registry, DOI, release, and Pages resolution audit."
     },
     {
@@ -122,8 +137,16 @@
       "path": "reports/npm-pack-dry-run.json",
       "required": true,
       "available": true,
-      "hash": "17034960483fba",
+      "hash": "096d9d5d023991",
       "note": "Exact npm tarball integrity, size, and included-file inventory from a successful dry run."
+    },
+    {
+      "id": "mutation-aggregate",
+      "path": "reports/mutation-aggregate.json",
+      "required": true,
+      "available": true,
+      "hash": "13cb164881df12",
+      "note": "Nightly sharded mutation aggregate score from Stryker reports."
     },
     {
       "id": "one-page-pdf",
@@ -138,6 +161,28 @@
       "required": true,
       "available": true,
       "note": "Thirty-second GIF walkthrough generated locally."
+    },
+    {
+      "id": "narrated-demo",
+      "path": "reports/demo-narrated-ko.mp4",
+      "required": true,
+      "available": true,
+      "note": "67-second Korean narrated walkthrough, attached to the GitHub Release."
+    },
+    {
+      "id": "narrated-demo-captions",
+      "path": "reports/demo-narrated-ko.vtt",
+      "required": true,
+      "available": true,
+      "note": "Timed Korean WebVTT captions generated from the narration segments."
+    },
+    {
+      "id": "narrated-demo-transcript",
+      "path": "reports/demo-narrated-ko.md",
+      "required": true,
+      "available": true,
+      "hash": "10a191a2ec9f04",
+      "note": "Accessible Korean narration transcript."
     },
     {
       "id": "walkthrough-storyboard",

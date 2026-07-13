@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 10.36.0 - 2026-07-13
+
+### Public readiness, coordinated releases, classroom UX, and research surfaces
+
+- **Scoped publishing and coordinated releases**: Renamed the unpublished package coordinate to `@elliotjung/pendulum-lab`,
+  added npm/JSR OIDC publication lanes, and made one simulator tag gate the
+  landing evidence sync, smoke/Lighthouse pass, package publication, release
+  assets, and final GitHub Release publication.
+- **Portable, evidence-rich release assets**: Replaced committed root standalone blobs with a compact SHA-256 manifest;
+  the double-click HTML and workers are now generated and attached as release
+  assets. Added Korean/English portfolio PDFs and a captioned narrated demo.
+- **Broader verification gates**: Added ESLint, Prettier, TypeScript 5.9 isolated declarations, Node 24/26
+  compatibility checks, required pinned Julia validation, CSS coverage,
+  mutation-survivor triage, coverage badges, and benchmark history.
+- **Performance, classroom UX, and accessibility**: Added fixed-step wall-clock simulation timing, opt-in OffscreenCanvas and
+  WebGL trail renderers, SharedArrayBuffer fallback infrastructure, PWA assets,
+  light/print themes, Korean structural labels, share permalinks, shortcut
+  help, storage cleanup, and visible energy-drift curves.
+- **New physics and measurement surfaces**: Added Kuramoto/Huygens and chimera analysis, magnetic-basin and quantum
+  Floquet UI surfaces, Yoshida-6/8, friction and Pyragas DDE models, periodic
+  orbit helpers, webcam marker capture, and DeviceMotion capture.
+- **Public governance and adoption material**: Added governance/security/community templates, a guest GPU runner protocol,
+  curriculum/submission mappings, technical articles, and fail-closed external
+  owner checklists for npm, JSR, Zenodo, arXiv, Cloudflare, devices, and NVDA.
+
 ### Refined-luxe UI pass, rail-action reliability, and roadmap closeouts
 
 - **Refined Luxe presentation layer** (`css/08-refined-luxe.css`, loaded after
@@ -40,7 +65,7 @@
   unitary-grid quantum Floquet scale-up, OffscreenCanvas/WebGPU evaluation,
   figure-export presets, worker-offload status) are closed out honestly.
 
-### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1004)
+### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1079)
 
 - **Theory vs measured hardware** (`docs/hardware-validation.md`): a full
   parameter-extraction lane — video-tracker CSV (pixels) → scale-free angle

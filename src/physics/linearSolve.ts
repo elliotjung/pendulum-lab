@@ -175,7 +175,12 @@ export interface CholeskyFactorResult {
  * so callers solving many right-hand sides against one matrix (e.g. the
  * column-by-column mass-matrix Jacobian assembly) factor exactly once.
  */
-export function choleskyFactor(a: Float64Array, n: number, factor: Float64Array, pivotFloor = MASS_MATRIX_SINGULARITY_THRESHOLD): CholeskyFactorResult {
+export function choleskyFactor(
+  a: Float64Array,
+  n: number,
+  factor: Float64Array,
+  pivotFloor: number = MASS_MATRIX_SINGULARITY_THRESHOLD
+): CholeskyFactorResult {
   let minDiag = Infinity;
   let maxDiag = 0;
   for (let j = 0; j < n; j += 1) {

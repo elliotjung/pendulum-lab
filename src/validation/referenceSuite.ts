@@ -25,6 +25,8 @@ export const EXPECTED_ORDER: Readonly<Record<IntegratorId, number>> = {
   leapfrog: 2,
   symplectic: 1,
   yoshida4: 4,
+  yoshida6: 6,
+  yoshida8: 8,
   hmidpoint: 2,
   gauss2: 4,
   rkf45: 5,
@@ -48,6 +50,8 @@ export const ENERGY_ENVELOPE: Readonly<Record<IntegratorId, number>> = {
   leapfrog: 5,
   symplectic: 5,
   yoshida4: 5,
+  yoshida6: 5,
+  yoshida8: 5,
   hmidpoint: 1e-1,
   gauss2: 1e-2,
   rkf45: 1e-2,
@@ -68,6 +72,11 @@ export const AGREEMENT_ENVELOPE: Readonly<Record<IntegratorId, number>> = {
   // Yoshida's composition has large (one negative) substep coefficients, so its
   // error constant is larger than a classical RK method of the same order 4.
   yoshida4: 1e-1,
+  // Raising the formal splitting order does not remove the double pendulum's
+  // velocity-coupling defect; the larger negative-stage coefficients expose
+  // that modelling error even though the oscillator reaches order 6/8.
+  yoshida6: 2e-1,
+  yoshida8: 5e-1,
   hmidpoint: 0.2,
   gauss2: 1e-2,
   rkf45: 1e-3,

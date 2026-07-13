@@ -1,0 +1,9 @@
+dist/
+dist-lib/
+standalone/
+docs/api/
+reports/
+node_modules/
+index.html
+*.worker.js
+paper/paper.pdf

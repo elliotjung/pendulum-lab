@@ -203,7 +203,7 @@ export function floquetSpectrum(
   period: number,
   options: FtleOptions = {},
   jacobian?: Jacobian,
-  stateDim = x0.length
+  stateDim: number = x0.length
 ): FloquetSpectrumResult {
   const M = monodromyMatrix(x0, rhs, period, options, jacobian, stateDim);
   const { multipliers, iterations, residual } = qrEigenvalues(M, stateDim);

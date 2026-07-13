@@ -1,7 +1,7 @@
 /**
  * @packageDocumentation
  *
- * `pendulum-lab-core` — the headless, dependency-free research core of
+ * `@elliotjung/pendulum-lab` — the headless, dependency-free research core of
  * Pendulum Lab, organised into four audience-oriented groups:
  *
  * - {@link core} — physics: systems (double/triple/N-chain, rope, double
@@ -16,7 +16,7 @@
  * UI layers build on exactly these exports.
  *
  * The flat re-exports below the namespace exports preserve the pre-10.31
- * import surface (`import { rhsChain } from 'pendulum-lab-core'`) so existing
+ * import surface (`import { rhsChain } from '@elliotjung/pendulum-lab'`) so existing
  * scripts keep working; new code should prefer the grouped namespaces.
  *
  * Stability contract:
@@ -78,6 +78,22 @@ export type { DuffingParameters, DuffingDoubleWell } from './physics/duffing';
 export { rhsVanDerPol, energyVanDerPol, vanDerPolPeriodEstimate } from './physics/vanDerPol';
 export type { VanDerPolParameters } from './physics/vanDerPol';
 export {
+  rhsKuramoto,
+  rhsHuygensPhasePair,
+  kuramotoOrderParameter,
+  kuramotoLocalOrderParameters,
+  nonlocalRingAdjacency,
+  kuramotoCriticalCoupling,
+  kuramotoCriticalCouplingLorentzian,
+  kuramotoCriticalCouplingGaussian,
+  huygensLockedPhaseDifference
+} from './physics/kuramoto';
+export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from './physics/kuramoto';
+export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from './physics/friction';
+export type { RegularizedCoulombFriction, StribeckFrictionParameters } from './physics/friction';
+export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from './physics/pyragasDde';
+export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from './physics/pyragasDde';
+export {
   rhsKapitza,
   energyKapitza,
   kapitzaEffectivePotential,
@@ -91,9 +107,10 @@ export {
   magneticPendulumEnergy,
   nearestMagnetIndex,
   magneticPendulumSettle,
+  magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from './physics/magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions } from './physics/magneticPendulum';
+export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from './physics/magneticPendulum';
 export {
   kramersRateOverdamped,
   kramersMeanFirstPassage,
@@ -252,6 +269,7 @@ export * from './research/experimentDesign';
 export * from './research/surrogate';
 export * from './research/parameterEstimation';
 export * from './research/experimentalDataImport';
+export * from './research/videoTracking';
 export * from './research/sindy';
 export * from './research/complexEig';
 export * from './research/eigenGeneral';
@@ -260,6 +278,7 @@ export * from './research/svd';
 export * from './research/dmd';
 export * from './research/havok';
 export * from './research/qkrFloquet';
+export * from './research/qkrViewModel';
 export * from './research/reservoir';
 export * from './research/hamiltonianLearning';
 export * from './research/lanczos';

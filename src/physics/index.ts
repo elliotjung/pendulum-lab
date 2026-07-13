@@ -2,7 +2,7 @@ import type { PendulumParameters, SystemType } from '../types/domain';
 import { energyDouble, energyTriple } from './energy';
 import { rhsDouble } from './double';
 import { rhsTriple } from './triple';
-import { integratorRegistry, step } from './integrators';
+import { step } from './integrators';
 import type { Derivative, PhysicsAdapter, StateVector, StepOptions } from './types';
 
 function rhsTripleFallback(state: StateVector, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector {
@@ -104,9 +104,10 @@ export {
   magneticPendulumEnergy,
   nearestMagnetIndex,
   magneticPendulumSettle,
+  magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from './magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions } from './magneticPendulum';
+export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from './magneticPendulum';
 export {
   kramersRateOverdamped,
   kramersMeanFirstPassage,
@@ -182,6 +183,22 @@ export {
   validatePendulumNetworkParameters
 } from './pendulumNetwork';
 export type { PendulumNetworkParameters, NetworkEdge } from './pendulumNetwork';
+export {
+  rhsKuramoto,
+  rhsHuygensPhasePair,
+  kuramotoOrderParameter,
+  kuramotoLocalOrderParameters,
+  nonlocalRingAdjacency,
+  kuramotoCriticalCoupling,
+  kuramotoCriticalCouplingLorentzian,
+  kuramotoCriticalCouplingGaussian,
+  huygensLockedPhaseDifference
+} from './kuramoto';
+export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from './kuramoto';
+export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from './friction';
+export type { RegularizedCoulombFriction, StribeckFrictionParameters } from './friction';
+export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from './pyragasDde';
+export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from './pyragasDde';
 export { stochasticResonanceResponse, stochasticResonanceCurve } from './stochasticResonance';
 export type { BistableSrParameters, SrResponse } from './stochasticResonance';
 export { RopePendulum } from './rope';
@@ -198,6 +215,8 @@ export {
   symplecticEulerStep,
   leapfrogStep,
   yoshida4Step,
+  yoshida6Step,
+  yoshida8Step,
   rkf45Step,
   dop853Step,
   gaussLegendre4Step,

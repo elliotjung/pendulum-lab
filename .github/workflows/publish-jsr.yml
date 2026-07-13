@@ -1,0 +1,42 @@
+name: Publish JSR package
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate without publishing
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Keep package and JSR versions aligned
+        shell: bash
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          jsr_version="$(node -p "require('./jsr.json').version")"
+          test "$package_version" = "$jsr_version" || {
+            echo "package.json=$package_version but jsr.json=$jsr_version" >&2
+            exit 1
+          }
+      - run: npm run verify
+      - name: JSR publish dry run
+        if: ${{ inputs.dry_run }}
+        run: npm run jsr:check
+      - name: Publish to JSR with OIDC provenance
+        if: ${{ !inputs.dry_run }}
+        run: npm run jsr:publish
+        # Create @elliotjung/pendulum-lab on jsr.io and link this GitHub repo
+        # once. JSR then accepts this workflow's OIDC token without a secret.

@@ -121,7 +121,7 @@ export function jacobianChain(
   parameters: ChainParameters,
   gamma: number,
   jac: Float64Array,
-  workspace = createChainJacobianWorkspace(chainLength(parameters))
+  workspace: ChainJacobianWorkspace = createChainJacobianWorkspace(chainLength(parameters))
 ): Float64Array {
   const n = chainLength(parameters);
   if (workspace.n !== n) throw new Error(`jacobianChain: workspace length ${workspace.n} does not match chain length ${n}`);
@@ -268,7 +268,7 @@ export function jacobianSphericalChain(
   state: ArrayLike<number>,
   params: SphericalChainParams,
   jac: Float64Array,
-  workspace = createSphericalChainJacobianWorkspace(sphericalChainLength(params))
+  workspace: SphericalChainJacobianWorkspace = createSphericalChainJacobianWorkspace(sphericalChainLength(params))
 ): Float64Array {
   const n = sphericalChainLength(params);
   if (workspace.n !== n) throw new Error(`jacobianSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);

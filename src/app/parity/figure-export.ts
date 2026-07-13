@@ -560,7 +560,7 @@ export function exportResearchBundleJson(): void {
   logResearchRun('export', 'Research bundle export', 'Portable bundle with paper pack, methods, LaTeX, notebook, data, and figure payloads.', 'pendulum_research_bundle.json');
 }
 
-export const RESEARCH_APP_VERSION = 'pendulum-lab-v10.29';
+export const RESEARCH_APP_VERSION = '@elliotjung/pendulum-lab@10.36.0';
 
 export function comparisonMatrixCsvText(rows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows()): string {
   const header = ['id', 'label', 'source', 'timestamp', 'method', 'system', 'dt', 'damping', 'drift', 'lambda_max', 'fps', 'score', 'hash'];
@@ -826,4 +826,3 @@ export function exportResearchBundleZip(): void {
     }
   })();
 }
-

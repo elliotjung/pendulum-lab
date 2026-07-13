@@ -57,3 +57,16 @@ test('full DB archive exports as validated JSON', async ({ page }) => {
   expect(archive.stores.experiments.length).toBeGreaterThanOrEqual(1);
   expect(archive.stores.experiments[0].id).toBeTruthy();
 });
+
+test('age-based cleanup previews eligible records before any deletion', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.removeItem('pendulum-lab/research-workbench/v1');
+    void window.indexedDB?.deleteDatabase('pendulum-lab-research');
+  });
+  await openWorkbench(page);
+  await expect(page.locator('#rwDbCleanupAge')).toHaveValue('90');
+  await page.locator('#rwDbCleanupAge').selectOption('30');
+  await page.locator('#rwDbCleanupPreview').click();
+  await expect(page.locator('#rwDbCleanupSummary')).toContainText('No research records are older than 30 days');
+  await expect(page.locator('#rwDbCleanupRun')).toHaveText('Delete Old Records');
+});

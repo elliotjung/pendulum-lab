@@ -7,10 +7,17 @@
  */
 
 import { installAdoptedStyle } from '../ui/adoptedStyles';
-import { actionGuideText, currentNavLocale, navTipText, tabGuideText } from './navGuide';
+import {
+  NAV_ACTION_LABEL_KO,
+  NAV_TAB_LABEL_KO,
+  actionGuideText,
+  currentNavLocale,
+  navTipText,
+  tabGuideText
+} from './navGuide';
+import { AUDIENCE_MODE_CHANGED_EVENT, normalizeAudienceMode, visibleRailSections, type AudienceMode } from './audienceModePolicy';
 
-export type AudienceMode = 'beginner' | 'student' | 'research';
-export const AUDIENCE_MODE_CHANGED_EVENT = 'pendulum:audience-mode-changed';
+export { AUDIENCE_MODE_CHANGED_EVENT, normalizeAudienceMode, visibleRailSections, type AudienceMode } from './audienceModePolicy';
 
 export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: string; summary: string; icon: IconName }> = {
   beginner: {
@@ -32,26 +39,6 @@ export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: 
     icon: 'lab'
   }
 };
-
-/** Rail sections (data-rail-section values) visible in each mode. */
-export function visibleRailSections(mode: AudienceMode): readonly string[] {
-  switch (mode) {
-    case 'beginner':
-      return ['sim'];
-    case 'student':
-      return ['sim', 'analysis', 'check'];
-    case 'research':
-      return ['sim', 'analysis', 'chaos', 'check', 'govern'];
-    default: {
-      const exhaustive: never = mode;
-      throw new Error(`unknown audience mode: ${String(exhaustive)}`);
-    }
-  }
-}
-
-export function normalizeAudienceMode(value: unknown): AudienceMode {
-  return value === 'beginner' || value === 'student' || value === 'research' ? value : 'research';
-}
 
 const STORAGE_KEY = 'pendulum-lab/ui/audience-mode';
 const STYLE_ID = 'audience-mode-style';
@@ -99,12 +86,12 @@ const STUDENT_HIDDEN_SURFACES = [
   '#plxModeCard'
 ];
 
-const SECTION_PRESENTATION: Record<string, { label: string; icon: IconName; hint: string; hintKo: string }> = {
-  sim: { label: 'Explore', icon: 'explore', hint: 'Run the pendulum, try presets, and compare the core motion.', hintKo: '진자를 돌리고, 프리셋을 써 보고, 기본 운동을 비교하세요.' },
-  analysis: { label: 'Analyze', icon: 'analyze', hint: 'Read energy, spectra, maps, and phase-space behavior.', hintKo: '에너지·스펙트럼·지도·위상공간 거동을 읽어 보세요.' },
-  chaos: { label: 'Chaos', icon: 'chaos', hint: 'Use advanced chaos diagnostics for research-mode studies.', hintKo: '연구 모드용 고급 카오스 진단 도구를 사용하세요.' },
-  check: { label: 'Validate', icon: 'validate', hint: 'Check accuracy, validation status, and numerical health.', hintKo: '정확도·검증 상태·수치적 건전성을 확인하세요.' },
-  govern: { label: 'Export', icon: 'export', hint: 'Save figures, manifests, reports, notebooks, and research bundles.', hintKo: '그림·매니페스트·리포트·노트북·연구 번들을 저장하세요.' }
+const SECTION_PRESENTATION: Record<string, { label: string; labelKo: string; icon: IconName; hint: string; hintKo: string }> = {
+  sim: { label: 'Explore', labelKo: '탐색', icon: 'explore', hint: 'Run the pendulum, try presets, and compare the core motion.', hintKo: '진자를 돌리고, 프리셋을 써 보고, 기본 운동을 비교하세요.' },
+  analysis: { label: 'Analyze', labelKo: '분석', icon: 'analyze', hint: 'Read energy, spectra, maps, and phase-space behavior.', hintKo: '에너지·스펙트럼·지도·위상공간 거동을 읽어 보세요.' },
+  chaos: { label: 'Chaos', labelKo: '카오스', icon: 'chaos', hint: 'Use advanced chaos diagnostics for research-mode studies.', hintKo: '연구 모드용 고급 카오스 진단 도구를 사용하세요.' },
+  check: { label: 'Validate', labelKo: '검증', icon: 'validate', hint: 'Check accuracy, validation status, and numerical health.', hintKo: '정확도·검증 상태·수치적 건전성을 확인하세요.' },
+  govern: { label: 'Export', labelKo: '내보내기', icon: 'export', hint: 'Save figures, manifests, reports, notebooks, and research bundles.', hintKo: '그림·매니페스트·리포트·노트북·연구 번들을 저장하세요.' }
 };
 
 const TAB_ICONS: Record<string, IconName> = {
@@ -353,12 +340,12 @@ function setLabel(container: Element | null, text: string): void {
  * Idempotent — decorateNavigation reruns on every mode change, so the original
  * full name is stashed in data-nav-name the first time through.
  */
-function describeMenuEntry(button: HTMLElement, description: string | undefined): void {
+function describeMenuEntry(button: HTMLElement, description: string | undefined, localizedName?: string): void {
   if (!description) return;
   const base = button.dataset.navName
     ?? (button.title || button.querySelector('.tab-label')?.textContent || '');
   button.dataset.navName = base;
-  const tip = navTipText(base, description);
+  const tip = navTipText(localizedName ?? base, description);
   button.title = tip;
   button.setAttribute('aria-label', tip);
   let desc = button.querySelector('.tab-desc');
@@ -381,9 +368,11 @@ function decorateNavigation(): void {
     const button = section.querySelector<HTMLElement>('.rail-menu-button');
     const submenu = section.querySelector<HTMLElement>('.rail-submenu');
     setIcon(button?.querySelector('.rail-menu-icon') ?? null, config.icon);
-    setLabel(button?.querySelector('.rail-menu-label') ?? null, config.label);
-    button?.setAttribute('aria-label', `${config.label}: ${hintText}`);
+    const sectionLabel = korean ? config.labelKo : config.label;
+    setLabel(button?.querySelector('.rail-menu-label') ?? null, sectionLabel);
+    button?.setAttribute('aria-label', `${sectionLabel}: ${hintText}`);
     button?.setAttribute('title', hintText);
+    if (button) button.dataset.testid = `nav-section-${sectionName}`;
     if (submenu) {
       let hint = submenu.querySelector('.rail-submenu-hint');
       if (!hint) {
@@ -399,13 +388,25 @@ function decorateNavigation(): void {
     const tabName = tab.dataset.tab;
     const icon = tabName ? TAB_ICONS[tabName] : undefined;
     if (icon) setIcon(tab.querySelector('.tab-icon'), icon);
-    describeMenuEntry(tab, tabName ? tabGuideText(tabName) : undefined);
+    const label = tab.querySelector<HTMLElement>('.tab-label');
+    if (label) {
+      label.dataset.navLabel ??= label.textContent ?? '';
+      label.textContent = korean && tabName ? NAV_TAB_LABEL_KO[tabName] ?? label.dataset.navLabel : label.dataset.navLabel;
+    }
+    if (tabName) tab.dataset.testid = `nav-tab-${tabName}`;
+    describeMenuEntry(tab, tabName ? tabGuideText(tabName) : undefined, korean && tabName ? NAV_TAB_LABEL_KO[tabName] : undefined);
   });
   document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((button) => {
     const action = button.dataset.railAction;
     const icon = action ? ACTION_ICONS[action] : undefined;
     if (icon) setIcon(button.querySelector('.tab-icon'), icon);
-    describeMenuEntry(button, action ? actionGuideText(action) : undefined);
+    const label = button.querySelector<HTMLElement>('.tab-label');
+    if (label) {
+      label.dataset.navLabel ??= label.textContent ?? '';
+      label.textContent = korean && action ? NAV_ACTION_LABEL_KO[action] ?? label.dataset.navLabel : label.dataset.navLabel;
+    }
+    if (action) button.dataset.testid = `nav-action-${action}`;
+    describeMenuEntry(button, action ? actionGuideText(action) : undefined, korean && action ? NAV_ACTION_LABEL_KO[action] : undefined);
   });
 }
 

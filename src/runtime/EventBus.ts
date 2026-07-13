@@ -35,4 +35,4 @@ export interface PendulumEvents {
   'security:import-rejected': { problems: string[] };
 }
 
-export const eventBus = new EventBus<PendulumEvents>();
+export const eventBus: EventBus<PendulumEvents> = new EventBus<PendulumEvents>();

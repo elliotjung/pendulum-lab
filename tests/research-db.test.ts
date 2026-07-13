@@ -42,6 +42,34 @@ describe('ResearchDb (IndexedDB store)', () => {
     expect(await db.count('runLog')).toBe(0);
   });
 
+  it('previews and deletes old content records while preserving recent work and settings', async () => {
+    const db = freshDb();
+    const old = '2025-01-01T00:00:00.000Z';
+    const recent = '2026-07-01T00:00:00.000Z';
+    const archive = {
+      schemaVersion: RESEARCH_DB_SCHEMA_VERSION,
+      exportedAt: recent,
+      stores: Object.fromEntries(RESEARCH_DB_STORES.map((name) => [name, []]))
+    } as unknown as ResearchDbArchive;
+    archive.stores.experiments = [
+      { id: 'old-exp', updatedAt: old, payload: { name: 'old' } },
+      { id: 'recent-exp', updatedAt: recent, payload: { name: 'recent' } }
+    ];
+    archive.stores.figures = [{ id: 'old-figure', updatedAt: old, payload: { data: 'large' } }];
+    archive.stores.settings = [{ id: 'old-setting', updatedAt: old, payload: { keep: true } }];
+    await db.importArchive(archive, 'replace');
+
+    const preview = await db.countOlderThan('2026-01-01T00:00:00.000Z');
+    expect(preview.total).toBe(2);
+    expect(preview.byStore.experiments).toBe(1);
+    expect(preview.byStore.figures).toBe(1);
+    const deleted = await db.deleteOlderThan('2026-01-01T00:00:00.000Z');
+    expect(deleted.total).toBe(2);
+    expect(await db.get('experiments', 'old-exp')).toBeUndefined();
+    expect(await db.get('experiments', 'recent-exp')).toBeTruthy();
+    expect(await db.get('settings', 'old-setting')).toBeTruthy();
+  });
+
   it('exports and re-imports a full archive (replace and merge)', async () => {
     const db = freshDb();
     await db.put('experiments', 'exp-1', { name: 'one' });

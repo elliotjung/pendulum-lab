@@ -24,9 +24,34 @@ import {
   installAudienceMode
 } from './app/audienceMode';
 import { TAB_ACTIVATED_EVENT } from './app/Shell';
-import { initNavLocale, installLocaleSelect } from './app/uiLocale';
+import { applyStructuralLocale, initNavLocale, installLocaleSelect } from './app/uiLocale';
 import { installOnboardingTour } from './app/onboardingTour';
+import { installExperimentShare } from './app/experimentShare';
+import { installShortcutHelp } from './app/shortcutHelp';
 import { APP_VERSION } from './runtime/version';
+import { captureReferralAttribution } from './runtime/referralAttribution';
+
+function showToast(message: string, timeout = 2200): void {
+  if (typeof window.toast === 'function') {
+    window.toast(message, timeout);
+    return;
+  }
+  const box = document.getElementById('toast');
+  if (!box) return;
+  box.textContent = message;
+  box.classList.add('show');
+  window.setTimeout(() => box.classList.remove('show'), timeout);
+}
+
+function installPwa(): void {
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
+  if (location.protocol === 'file:') return;
+  const scope = new URL('./', location.href).pathname;
+  void navigator.serviceWorker.register(new URL('./sw.js', location.href), { scope }).catch((error: unknown) => {
+    console.warn('Pendulum Lab service worker registration failed; online mode remains available.', error);
+  });
+}
 
 function installIndexCommands(): void {
   commandRegistry.upsert({
@@ -46,7 +71,7 @@ function installIndexCommands(): void {
     description: 'Run modular validation checks independent of the legacy validation panel.',
     run: () => {
       const result = runAllValidationChecks();
-      window.toast?.(`TypeScript validation ${result.ok ? 'passed' : 'failed'}`, 2200);
+      showToast(`TypeScript validation ${result.ok ? 'passed' : 'failed'}`);
       downloadJson('pendulum_validation_report_v10_ts.json', result);
     }
   });
@@ -56,7 +81,7 @@ function installIndexCommands(): void {
     description: 'Run a module-worker step with main-thread fallback.',
     run: async () => {
       const result = await workerBridge.step({ state: [1, 0], dt: 0.001, steps: 10, method: 'rk4' });
-      window.toast?.(`Worker smoke ${result.fallback ? 'fallback' : 'module'} ${result.elapsedMs.toFixed(2)} ms`, 2200);
+      if (!result.fallback) showToast(`Worker smoke module ${result.elapsedMs.toFixed(2)} ms`);
     }
   });
 }
@@ -97,6 +122,7 @@ function bootCoreRuntime(): void {
 
 /** Boot stage 2 — safety rails: import validation, perf probe, a11y. */
 function bootSafety(): void {
+  installPwa();
   installJsonImportGuard();
   installPerformanceProbe();
   installAccessibilityEnhancements();
@@ -131,6 +157,11 @@ let researchBoot: Promise<void> | null = null;
 function ensureResearch(tabAfterInstall?: string): Promise<void> {
   researchBoot ??= bootResearch();
   return researchBoot.then(() => {
+    // The research layer registers extra rail entries lazily; redecorate them
+    // after mounting so Korean labels and stable data-testid selectors cover
+    // dynamic navigation just like the static shell.
+    applyAudienceMode(currentAudienceMode(), false);
+    applyStructuralLocale();
     if (tabAfterInstall) {
       (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabAfterInstall);
     }
@@ -171,6 +202,9 @@ function bootShell(): void {
   initNavLocale(); // restore the guide language before the menus are decorated
   installAudienceMode();
   installLocaleSelect(() => applyAudienceMode(currentAudienceMode(), false));
+  applyStructuralLocale();
+  installExperimentShare();
+  installShortcutHelp();
   installEducationCards();
   installOnboardingTour();
   installUiPolish();
@@ -179,6 +213,11 @@ function bootShell(): void {
 }
 
 async function boot(): Promise<void> {
+  try {
+    captureReferralAttribution(window.location.href, window.sessionStorage);
+  } catch {
+    // Storage can be unavailable in hardened/file:// contexts; startup continues.
+  }
   bootCoreRuntime();
   bootSafety();
   await bootSimulation();

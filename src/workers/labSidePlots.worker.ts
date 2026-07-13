@@ -33,7 +33,7 @@ function scheduleDrain(): void {
   if (typeof queueMicrotask === 'function') {
     queueMicrotask(drainLatestJobs);
   } else {
-    Promise.resolve().then(drainLatestJobs);
+    void Promise.resolve().then(drainLatestJobs);
   }
 }
 

@@ -57,7 +57,7 @@ const legacy = await readJson<LegacyRiskReport>('reports/legacy-risk-report.json
   delta: 0
 });
 
-const packageJson = await readJson<{ scripts?: Record<string, string> }>('package.json', {});
+const packageJson = await readJson<{ name?: string; version?: string; scripts?: Record<string, string> }>('package.json', {});
 const scripts = packageJson.scripts ?? {};
 const vitest = await readJson<{ numTotalTests?: number; numPassedTests?: number; testResults?: unknown[] }>('reports/vitest-results.json', {});
 const benchmark = await readJson<{ mode?: string; comparison?: { deltas?: unknown[] } | null }>('reports/benchmark-report.json', {});
@@ -90,8 +90,18 @@ const publicationStatus = await readJson<{
 }>('reports/publication-status.json', {});
 const attestationVerification = await readJson<{
   status?: string;
+  repository?: string;
+  artifact?: string;
+  signerWorkflow?: string;
   predicates?: Array<{ status?: string; predicateType?: string }>;
 }>('reports/attestation-verification.json', {});
+const expectedAttestationArtifact = packageJson.name && packageJson.version
+  ? `${packageJson.name.replace(/^@/, '').replace('/', '-')}-${packageJson.version}.tgz`
+  : '';
+const attestationMatchesCurrentCoordinate =
+  attestationVerification.repository?.toLowerCase() === 'elliotjung/pendulum-lab'
+  && attestationVerification.signerWorkflow?.toLowerCase() === 'elliotjung/pendulum-lab/.github/workflows/release.yml'
+  && attestationVerification.artifact === expectedAttestationArtifact;
 const verifiedAttestationPredicates = new Set(
   attestationVerification.predicates
     ?.filter((item) => item.status === 'verified')
@@ -199,7 +209,7 @@ const has = {
   license: await exists('LICENSE'),
   citation: await exists('CITATION.cff'),
   typedocIndex: await exists('docs/api/index.html'),
-  index: await exists('index.html'),
+  index: await exists('app.html') && await exists('standalone-manifest.json'),
   coverageScopeBaseline: await exists('config/coverage-scope-baseline.json'),
   bundleBudget: await exists('scripts/bundle-budget.ts'),
   longRunE2e: await exists('e2e/long-run-performance.spec.ts'),
@@ -245,7 +255,8 @@ const has = {
   nChainGpuPromotion: gpuNChainSource.includes('promotedNChainVariational') && gpuNChainSource.includes('WGSL_NCHAIN_VARIATIONAL_KERNEL'),
   npmOidcPublishing: npmWorkflow.includes('id-token: write') && npmWorkflow.includes('npm@11.5.1') && npmWorkflow.includes('npm publish --access public'),
   slsaAttestation: releaseWorkflow.includes('actions/attest@v4') && releaseWorkflow.includes('attestations: write') && releaseWorkflow.includes('sbom-path:'),
-  attestationsVerified: attestationVerification.status === 'verified'
+  attestationsVerified: attestationMatchesCurrentCoordinate
+    && attestationVerification.status === 'verified'
     && verifiedAttestationPredicates.has('https://slsa.dev/provenance/v1')
     && verifiedAttestationPredicates.has('https://cyclonedx.org/bom'),
   publicationStatusReport: await exists('reports/publication-status.json'),
@@ -288,7 +299,7 @@ const items: ScorecardItem[] = [
   {
     area: 'Index simulator UI/UX',
     status: has.index && trustWorkspaceReady ? 'done' : has.index ? 'partial' : 'gap',
-    evidence: ['index.html is the single user-facing simulator with lab, comparison, Lyapunov, sweep, bifurcation, phase-space, density, and validation tabs'],
+    evidence: ['app.html is the source shell; Pages emits dist/index.html and releases emit a SHA-256-pinned standalone/index.html without committing generated root blobs'],
     remaining: trustWorkspaceReady
       ? []
       : ['Research workspace profile list, Trust Inspector wiring, or panel density persistence is incomplete']
@@ -330,10 +341,11 @@ const items: ScorecardItem[] = [
       'RKF45, Dormand-Prince 5(4), DOP853-adjacent GBS extrapolation, Gauss-Legendre 4/6, TR-BDF2, canonical midpoint, N-pendulum, driven, spring systems are present in src',
       'Floquet multipliers, natural + pseudo-arclength continuation, period-doubling branch switching, and the Melnikov analytic threshold are implemented and tested',
       'external cross-validation vs an independent SciPy DOP853 reference covers the double AND triple pendulum; literature anchors pin the elliptic period, normal modes, and the period-doubling onset',
+      'pinned Julia 1.10.11 + OrdinaryDiffEq Vern9 is a required CI reference gate; MATLAB remains optional because it needs a licensed runner',
       gpuScaleReady ? 'GPU/scale validation contract report exists, CI runs it, and real WebGPU hardware validation has passed against the CPU oracle' : 'GPU/scale validation contract or CI wiring is incomplete',
       sparseFloquetReady ? 'matrix-free Arnoldi-Schur Floquet wrapper exists for sparse/large unitary operators' : 'sparse/large Floquet Arnoldi-Schur wrapper missing'
     ],
-    remaining: sparseFloquetReady ? ['Optional MATLAB/Julia second references remain release-hardening work'] : ['Sparse/large-unitary Floquet eigensolver still missing']
+    remaining: sparseFloquetReady ? [] : ['Sparse/large-unitary Floquet eigensolver still missing']
   },
   {
     area: 'Chaos analysis',

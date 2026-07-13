@@ -16,7 +16,7 @@ const publish = process.argv.includes('--publish');
 const sandbox = process.argv.includes('--sandbox') || process.env.ZENODO_SANDBOX === '1';
 const token = sandbox ? (process.env.ZENODO_SANDBOX_TOKEN ?? process.env.ZENODO_TOKEN) : process.env.ZENODO_TOKEN;
 const base = sandbox ? 'https://sandbox.zenodo.org' : 'https://zenodo.org';
-const packageInfo = JSON.parse(await readFile('package.json', 'utf8')) as { version: string };
+const packageInfo = JSON.parse(await readFile('package.json', 'utf8')) as { name: string; version: string };
 const metadata = JSON.parse(await readFile('.zenodo.json', 'utf8')) as Record<string, unknown>;
 const reportPath = 'reports/zenodo-deposition.json';
 
@@ -56,7 +56,7 @@ if (!token) {
   if (!deposition.id || !deposition.links?.bucket) throw new Error('Zenodo did not return a deposition id and upload bucket');
 
   const packageCandidates = [
-    `pendulum-lab-v10-${packageInfo.version}.tgz`,
+    `${packageInfo.name.replace(/^@/, '').replaceAll('/', '-')}-${packageInfo.version}.tgz`,
     'paper/paper.pdf',
     'reports/reviewer-kit-manifest.json',
     'reports/gpu-adapter-matrix.json',

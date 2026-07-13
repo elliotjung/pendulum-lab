@@ -6,7 +6,6 @@ import {
   GOLDEN_EXPANSION_PRESET_IDS,
   createExpansionSystem,
   expansionModelDefinition,
-  finiteParam,
   numberAt
 } from './expandedModels-factory';
 import { expansionLyapunovProfile } from './expandedModels-lyapunov';
@@ -19,7 +18,6 @@ import {
   type ExpansionLyapunovProfiler,
   type ExpansionMethodResult,
   type ExpansionParameterMap,
-  type ExpansionPoint,
   type ExpansionPreset,
   type ExpansionSuiteConfig,
   type ExpansionSuiteResult,

@@ -1,0 +1,25 @@
+{
+  "name": "Pendulum Lab",
+  "short_name": "Pendulum Lab",
+  "description": "Offline-capable nonlinear dynamics laboratory with validated numerical evidence.",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#05060f",
+  "theme_color": "#05060f",
+  "categories": ["education", "science", "productivity"],
+  "icons": [
+    {
+      "src": "./icons/pendulum-lab-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/pendulum-lab-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

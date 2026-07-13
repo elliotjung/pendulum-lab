@@ -210,5 +210,17 @@ export class ResearchPlusTab extends TabController {
     this.dom.takeOver('rpSdeRun')?.addEventListener('click', () => void this.runSde());
     this.dom.takeOver('rpFitRun')?.addEventListener('click', () => void this.runFit());
     this.dom.takeOver('rpPceRun')?.addEventListener('click', () => void this.runPce());
+    const panel = this.dom.el('tab-research');
+    if (panel) {
+      panel.dataset.researchPlusReady = 'true';
+      void Promise.all([import('./ResearchPlusResearchUi'), import('./ResearchPlusSensorUi')])
+        .then(([researchUi, sensorUi]) => {
+          researchUi.installResearchPlusResearchUi(panel);
+          sensorUi.installResearchPlusSensorUi(panel);
+        })
+        .catch((error: unknown) => {
+          this.dom.setText('rpOut', `Extended Research+ UI failed to load: ${error instanceof Error ? error.message : String(error)}`);
+        });
+    }
   }
 }

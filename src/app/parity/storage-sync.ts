@@ -35,6 +35,13 @@ import { DesignStudyState, applySnapshotControls, designStudy, logResearchRun, p
 import { loadFigureCaptionOverrides, saveFigureCaptionOverride } from './figure-export';
 import { MAX_RESEARCH_SESSIONS, sanitizeResearchProject, sanitizeResearchSession, sanitizeResearchSessions } from './research-session-storage';
 import { $ } from './shared';
+import {
+  cleanupResearchDbByAge as runResearchDbCleanup,
+  previewResearchDbCleanup as runResearchDbCleanupPreview,
+  type ResearchStorageCleanupController
+} from './storage-cleanup';
+
+export { researchCleanupCutoff } from './storage-cleanup';
 
 
 export const RESEARCH_STORAGE_KEY = 'pendulum-lab/research-workbench/v1';
@@ -495,6 +502,27 @@ export function renderResearchStoragePanel(): void {
     }
   })();
 }
+
+function storageCleanupController(): ResearchStorageCleanupController {
+  const db = researchDbInstance();
+  return {
+    countOlderThan: (cutoff) => db.countOlderThan(cutoff),
+    deleteOlderThan: (cutoff) => db.deleteOlderThan(cutoff),
+    afterDelete: (cutoff, total, days) => {
+      const cutoffMs = Date.parse(cutoff);
+      state.research.experiments = state.research.experiments.filter((item) => !Number.isFinite(Date.parse(item.updatedAt)) || Date.parse(item.updatedAt) >= cutoffMs);
+      state.research.runLog = state.research.runLog.filter((item) => !Number.isFinite(Date.parse(item.timestamp)) || Date.parse(item.timestamp) >= cutoffMs);
+      if (!state.research.experiments.some((item) => item.id === state.research.selectedExperimentId)) state.research.selectedExperimentId = state.research.experiments[0]?.id ?? '';
+      persistResearchState();
+      logResearchRun('workspace', 'IndexedDB age cleanup', `Deleted ${total} records older than ${days} days.`);
+    },
+    refresh: renderResearchStoragePanel,
+    toast
+  };
+}
+
+export function previewResearchDbCleanup(): void { runResearchDbCleanupPreview(storageCleanupController()); }
+export function cleanupResearchDbByAge(): void { runResearchDbCleanup(storageCleanupController()); }
 
 export function exportResearchDbArchive(): void {
   void (async () => {

@@ -184,7 +184,7 @@ export function rhsSphericalChain(
   state: ArrayLike<number>,
   params: SphericalChainParams,
   out: Float64Array,
-  workspace = createSphericalChainWorkspace(sphericalChainLength(params))
+  workspace: SphericalChainWorkspace = createSphericalChainWorkspace(sphericalChainLength(params))
 ): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
@@ -248,7 +248,7 @@ export function rhsSphericalChain(
  * Jacobian columns (a for θ, b for φ). Exposed for validation: away from the
  * pole chart-regularisation M must be symmetric positive definite.
  */
-export function sphericalChainMassMatrix(state: ArrayLike<number>, params: SphericalChainParams, out = new Float64Array((2 * sphericalChainLength(params)) ** 2)): Float64Array {
+export function sphericalChainMassMatrix(state: ArrayLike<number>, params: SphericalChainParams, out: Float64Array = new Float64Array((2 * sphericalChainLength(params)) ** 2)): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
   const s = new Float64Array(n);

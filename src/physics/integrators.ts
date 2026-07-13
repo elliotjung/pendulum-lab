@@ -1,8 +1,10 @@
 import type { IntegratorId } from '../types/domain';
-import type { Derivative, IntegratorMeta, StateVector, StepOptions } from './types';
+import type { Derivative, StateVector, StepOptions } from './types';
 import { dormandPrince54Step, bulirschStoerStep } from './adaptive';
 import { trBdf2Step } from './stiff';
 import { implicitMidpointNewton } from './implicitDiagnostics';
+
+export { integratorRegistry } from './integratorRegistry';
 
 function ensureScratch(n: number): Float64Array[] {
   return Array.from({ length: 5 }, () => new Float64Array(n));
@@ -37,155 +39,6 @@ function evalAcceleration(
 function isSplittable(n: number): boolean {
   return n > 0 && n % 2 === 0;
 }
-
-export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> = Object.freeze({
-  euler: {
-    id: 'euler',
-    name: 'Explicit Euler',
-    order: 1,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Fast smoke-test method only; large energy drift is expected.'],
-    recommendedDt: [0.0005, 0.002]
-  },
-  rk2: {
-    id: 'rk2',
-    name: 'Midpoint RK2',
-    order: 2,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Useful for qualitative comparison, not a publication baseline.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  rk4: {
-    id: 'rk4',
-    name: 'Runge-Kutta 4',
-    order: 4,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Good general baseline; energy conservation is diagnostic only.'],
-    recommendedDt: [0.0005, 0.006]
-  },
-  verlet: {
-    id: 'verlet',
-    name: 'Velocity Verlet Alias',
-    order: 2,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Legacy compatibility alias for the leapfrog KDK path.',
-      'Kept for imported sessions that used the single-file compatibility method id.'
-    ],
-    recommendedDt: [0.0005, 0.004]
-  },
-  leapfrog: {
-    id: 'leapfrog',
-    name: 'Leapfrog Approximation',
-    order: 2,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Only symplectic for separable canonical Hamiltonians; theta/omega coordinates are not sufficient for a blanket claim.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  symplectic: {
-    id: 'symplectic',
-    name: 'Semi-Implicit Euler',
-    order: 1,
-    symplectic: 'pseudo-coordinate',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Treat as a qualitative phase-space view unless canonical coordinates are explicitly used.'],
-    recommendedDt: [0.0005, 0.002]
-  },
-  yoshida4: {
-    id: 'yoshida4',
-    name: 'Yoshida 4 Composition',
-    order: 4,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Composition method inherits symplectic claims only from a valid separable canonical sub-step.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  hmidpoint: {
-    id: 'hmidpoint',
-    name: 'Implicit Midpoint',
-    order: 'implicit',
-    symplectic: 'canonical-only',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Canonical symplectic claims require theta/p coordinates, gamma = 0, and residual reporting.',
-      'Uses Newton iteration when an analytic Jacobian is supplied; otherwise falls back to Picard fixed-point iteration.'
-    ],
-    recommendedDt: [0.0005, 0.008]
-  },
-  gauss2: {
-    id: 'gauss2',
-    name: 'Gauss-Legendre 4 (2-stage)',
-    order: 'implicit',
-    symplectic: 'canonical-only',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Two-stage collocation: classical order 4, symplectic and A-stable for canonical systems.',
-      'Stage equations are solved by fixed-point iteration; the final residual is exported via previousError.'
-    ],
-    recommendedDt: [0.0005, 0.012]
-  },
-  rkf45: {
-    id: 'rkf45',
-    name: 'RKF45 Adaptive',
-    order: 'adaptive',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Adaptive step statistics must be exported for replay and comparison.'],
-    recommendedDt: [0.0002, 0.01]
-  },
-  dopri5: {
-    id: 'dopri5',
-    name: 'Dormand-Prince 5(4)',
-    order: 5,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'The fifth-order solution advances; the embedded fourth-order pair provides the error estimate (the method underlying MATLAB ode45).'
-    ],
-    recommendedDt: [0.0002, 0.012]
-  },
-  dop853: {
-    id: 'dop853',
-    name: 'DOP853 8(5,3)',
-    order: 8,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'Explicit Dormand-Prince 8th-order tableau with embedded 5th/3rd error monitors.',
-      'Use as a high-accuracy fixed macro-step reference; SciPy DOP853 remains the independent external oracle.'
-    ],
-    recommendedDt: [0.0005, 0.03]
-  },
-  gbs: {
-    id: 'gbs',
-    name: 'Gragg-Bulirsch-Stoer',
-    order: 'adaptive',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'Modified-midpoint extrapolation; effective order grows with the number of stages.',
-      'Extrapolation weights are computed from substep ratios, not transcribed, so high accuracy is reached without a large hand-written tableau.'
-    ],
-    recommendedDt: [0.001, 0.05]
-  },
-  bdf2: {
-    id: 'bdf2',
-    name: 'TR-BDF2 (stiff, L-stable)',
-    order: 'implicit',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'One-step, self-starting, L-stable second-order method for stiff systems.',
-      'Each stage uses Newton iteration with a finite-difference Jacobian; the final residual is exported via previousError.'
-    ],
-    recommendedDt: [0.001, 0.05]
-  }
-});
 
 export function eulerStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
   const n = state.length;
@@ -366,6 +219,45 @@ export function yoshida4Step(state: StateVector, dt: number, rhs: Derivative, ou
   leapfrogStep(b, YOSHIDA_W0 * dt, rhs, a);
   leapfrogStep(a, YOSHIDA_W1 * dt, rhs, out);
   return out;
+}
+
+type SymmetricStepper = (state: StateVector, dt: number, rhs: Derivative, out: StateVector) => StateVector;
+
+/**
+ * Raise a symmetric method of even order p to order p+2 using Yoshida's
+ * triple jump S(z1 h) S(z0 h) S(z1 h), where
+ * z1=1/(2-2^(1/(p+1))) and z0=-2^(1/(p+1)) z1.
+ */
+function yoshidaTripleJump(
+  base: SymmetricStepper,
+  baseOrder: number,
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector
+): StateVector {
+  const n = state.length;
+  const root = 2 ** (1 / (baseOrder + 1));
+  const z1 = 1 / (2 - root);
+  const z0 = -root * z1;
+  const a = new Float64Array(n);
+  const b = new Float64Array(n);
+  base(state, z1 * dt, rhs, a);
+  base(a, z0 * dt, rhs, b);
+  base(b, z1 * dt, rhs, out);
+  return out;
+}
+
+/** Sixth-order symmetric Yoshida composition of the leapfrog split. */
+export function yoshida6Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
+  if (!isSplittable(state.length)) return rk4Step(state, dt, rhs, out);
+  return yoshidaTripleJump(yoshida4Step, 4, state, dt, rhs, out);
+}
+
+/** Eighth-order symmetric Yoshida composition (27 leapfrog substeps). */
+export function yoshida8Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
+  if (!isSplittable(state.length)) return rk4Step(state, dt, rhs, out);
+  return yoshidaTripleJump(yoshida6Step, 6, state, dt, rhs, out);
 }
 
 // Runge-Kutta-Fehlberg 4(5) Butcher tableau.
@@ -611,6 +503,10 @@ export function step(method: IntegratorId, state: StateVector, dt: number, rhs: 
       return leapfrogStep(state, dt, rhs, out);
     case 'yoshida4':
       return yoshida4Step(state, dt, rhs, out);
+    case 'yoshida6':
+      return yoshida6Step(state, dt, rhs, out);
+    case 'yoshida8':
+      return yoshida8Step(state, dt, rhs, out);
     case 'rkf45':
       return rkf45Step(state, dt, rhs, out, options);
     case 'dopri5': {

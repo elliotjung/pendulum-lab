@@ -21,9 +21,9 @@ import {
   type MultiStrategy,
   type StudyVariable
 } from '../../research/experimentDesign';
-import { ParameterStudyPlan, ParameterStudyPoint, ResearchBatchStatus, ResearchExperiment, ResearchMetrics, ResearchRunLogEntry, ResearchRunType, append, button, card, clear, currentParameters, currentSnapshot, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, researchUid, selectValue, setControl, setText, state, toast } from './shared';
-import { MAX_RESEARCH_EXPERIMENTS, RESEARCH_STUDY_STRATEGIES, clampNumber, clearResearchDb, exportResearchDbArchive, exportWorkspaceJson, finiteNumber, importResearchDbArchive, importWorkspaceJson, persistResearchState, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
-import { orbitBaseFromControls, renderPerfBudgetPanel, runBranchTrace, runEnsembleBenchmark, runLegacyValidationSurface, runNumericalProbe, runOrbitFinder } from './runtime-diagnostics';
+import { ParameterStudyPlan, ParameterStudyPoint, ResearchBatchStatus, ResearchExperiment, ResearchMetrics, ResearchRunLogEntry, ResearchRunType, append, button, card, clear, currentSnapshot, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, researchUid, selectValue, setControl, setText, state, toast } from './shared';
+import { MAX_RESEARCH_EXPERIMENTS, RESEARCH_STUDY_STRATEGIES, clampNumber, cleanupResearchDbByAge, clearResearchDb, exportResearchDbArchive, exportWorkspaceJson, finiteNumber, importResearchDbArchive, importWorkspaceJson, persistResearchState, previewResearchDbCleanup, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
+import { renderPerfBudgetPanel, runBranchTrace, runEnsembleBenchmark, runLegacyValidationSurface, runNumericalProbe, runOrbitFinder } from './runtime-diagnostics';
 import { exportPaperPackJson } from './figure-export';
 import { setMode } from './governance-ui';
 import { $ } from './shared';
@@ -55,8 +55,7 @@ export type { DesignStudyPointState, DesignStudyState } from './research-design-
 export { DESIGN_ORIGIN_COLORS, designPointCanvasPosition, designSummaryText, designTableRows, drawDesignHeatmap, drawDesignPreview } from './research-design-renderers';
 export { currentLibraryFilter, experimentBadges } from './research-experiment-library-renderer';
 export { activeResearchSession, ensureWorkspaceList, upsertResearchSession, upsertWorkspaceProfile, workspaceOptions } from './research-workspace-controller';
-// eslint-disable-next-line import/no-cycle
-import { doubleSpecFromCurrent, runBifurcationDetectPanel, runCodimTwoPanel, runFixedPointPanel, runFtleRidgePanel, runMelnikovPanel, runRecurrenceNetworkPanel, runShadowingPanel, runSobolPanel, runWadaConvergencePanel, superpackChaosClient, superpackClient, superpackSection } from './superpack-panels';
+import { runBifurcationDetectPanel, runCodimTwoPanel, runFixedPointPanel, runFtleRidgePanel, runMelnikovPanel, runRecurrenceNetworkPanel, runShadowingPanel, runSobolPanel, runWadaConvergencePanel } from './superpack-panels';
 
 const RESEARCH_WORKBENCH_CHANGED_EVENT = 'pendulum-lab:research-workbench-changed';
 let researchWorkbenchEventBridgeInstalled = false;
@@ -347,6 +346,11 @@ export function installResearchTab(): void {
   );
 
   const storageCard = researchCard('Long-Term Storage (IndexedDB)', 'researchStorageCard');
+  const cleanupAge = researchSelect('rwDbCleanupAge', [
+    ['30', '30 days'], ['90', '90 days'], ['180', '180 days'], ['365', '1 year']
+  ]);
+  cleanupAge.value = '90';
+  cleanupAge.addEventListener('change', () => previewResearchDbCleanup());
   append(
     storageCard,
     researchActions(
@@ -359,6 +363,12 @@ export function installResearchTab(): void {
       button('rwWorkspaceExport', 'Save Workspace', () => exportWorkspaceJson(), 'primary'),
       button('rwWorkspaceImport', 'Restore Workspace', () => importWorkspaceJson())
     ),
+    researchFormRow('Clean records older than', cleanupAge),
+    researchActions(
+      button('rwDbCleanupPreview', 'Preview Cleanup', () => previewResearchDbCleanup()),
+      button('rwDbCleanupRun', 'Delete Old Records', () => cleanupResearchDbByAge())
+    ),
+    html('div', { id: 'rwDbCleanupSummary', className: 'research-summary', text: 'Choose an age and preview before deleting. Settings and recent records are always kept.' }),
     html('div', { id: 'rwStorageSummary', className: 'research-summary', text: 'IndexedDB status not loaded yet.' })
   );
 
@@ -737,7 +747,7 @@ export function generateParameterStudy(): void {
     max: hi,
     count: values.length,
     values,
-    experiments: values.map((value, index) => {
+    experiments: values.map((value) => {
       const snapshot = snapshotWithStudyPatch(base, variable, value);
       return {
         id: researchUid('point'),

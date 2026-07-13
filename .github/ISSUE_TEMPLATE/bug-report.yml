@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a reproducible simulator, library, or evidence failure
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not report security vulnerabilities here; use SECURITY.md.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Include expected and observed behavior.
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Version or commit
+      placeholder: v10.35.0 or a full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact reproduction command
+      description: Paste the smallest command that reproduces the problem.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Inputs and steps
+      description: Include system parameters, initial state, integrator, dt, seed, and UI steps where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Report JSON
+      description: Drag the generated report JSON here, or explain why no JSON was produced. Remove private information first.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser or Node version, GPU/adapter, and standalone vs hosted mode.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched for an existing issue.
+          required: true
+        - label: This is not a private security report.
+          required: true

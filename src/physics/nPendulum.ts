@@ -79,7 +79,7 @@ export function rhsChain(
   parameters: ChainParameters,
   gamma: number,
   out: StateVector,
-  workspace = createChainWorkspace(chainLength(parameters))
+  workspace: ChainWorkspace = createChainWorkspace(chainLength(parameters))
 ): StateVector {
   const n = chainLength(parameters);
   const { masses, lengths, g } = parameters;
@@ -124,7 +124,7 @@ export function rhsChain(
  * M_jk = S_{max(j,k)} · l_j · l_k · cos(θ_j − θ_k). Exposed for validation:
  * a correct M is symmetric and positive definite for every configuration.
  */
-export function chainMassMatrix(state: ArrayLike<number>, parameters: ChainParameters, out = new Float64Array(chainLength(parameters) ** 2)): Float64Array {
+export function chainMassMatrix(state: ArrayLike<number>, parameters: ChainParameters, out: Float64Array = new Float64Array(chainLength(parameters) ** 2)): Float64Array {
   const n = chainLength(parameters);
   const { lengths } = parameters;
   const s = new Float64Array(n);

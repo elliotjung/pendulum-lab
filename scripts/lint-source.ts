@@ -60,10 +60,8 @@ async function main(): Promise<void> {
   }
 
   const rootEntries = await readdir('.');
-  const rootWorkers = rootEntries.filter((name) => /^chaos\.worker-.*\.js$/i.test(name));
-  if (rootWorkers.length > 1) {
-    findings.push({ file: '.', message: `Root contains ${rootWorkers.length} hashed chaos worker bundles; stale copies should be cleaned by the standalone build.` });
-  }
+  const rootWorkers = rootEntries.filter((name) => /\.worker.*\.js$/i.test(name));
+  if (rootWorkers.length > 0) findings.push({ file: '.', message: 'Generated worker bundles belong under standalone/, never the repository root.' });
 
   const files = [
     ...ROOT_TEXT_FILES.filter((file) => rootEntries.includes(file)),

@@ -112,4 +112,6 @@ jobs:
         if: always()
         with:
           name: mutation-aggregate
-          path: reports/mutation-aggregate.*
+          path: |
+            reports/mutation-aggregate.*
+            reports/mutation-survivor-triage.*

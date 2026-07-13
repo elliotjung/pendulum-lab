@@ -1,7 +1,7 @@
 /**
  * @packageDocumentation
  *
- * `core` — the physics foundation of pendulum-lab-core: shared domain types,
+ * `core` — the physics foundation of @elliotjung/pendulum-lab: shared domain types,
  * integrators, and every dynamical system (planar double/triple chains, the
  * general N-chain, rope/elastic, double string, spherical pendulum, and the 3D
  * spherical N-chain) together with their energy/diagnostic helpers.
@@ -78,6 +78,22 @@ export {
   validatePendulumNetworkParameters
 } from '../physics/pendulumNetwork';
 export type { PendulumNetworkParameters, NetworkEdge } from '../physics/pendulumNetwork';
+export {
+  rhsKuramoto,
+  rhsHuygensPhasePair,
+  kuramotoOrderParameter,
+  kuramotoLocalOrderParameters,
+  nonlocalRingAdjacency,
+  kuramotoCriticalCoupling,
+  kuramotoCriticalCouplingLorentzian,
+  kuramotoCriticalCouplingGaussian,
+  huygensLockedPhaseDifference
+} from '../physics/kuramoto';
+export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from '../physics/kuramoto';
+export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from '../physics/friction';
+export type { RegularizedCoulombFriction, StribeckFrictionParameters } from '../physics/friction';
+export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from '../physics/pyragasDde';
+export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from '../physics/pyragasDde';
 // Stochastic resonance (noise-enhanced weak-signal detection).
 export { stochasticResonanceResponse, stochasticResonanceCurve } from '../physics/stochasticResonance';
 export type { BistableSrParameters, SrResponse } from '../physics/stochasticResonance';
@@ -100,9 +116,10 @@ export {
   magneticPendulumEnergy,
   nearestMagnetIndex,
   magneticPendulumSettle,
+  magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from '../physics/magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions } from '../physics/magneticPendulum';
+export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from '../physics/magneticPendulum';
 // Noise-activated (Kramers) escape + reliability MTTF analog.
 export {
   kramersRateOverdamped,

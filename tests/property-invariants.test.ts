@@ -33,6 +33,8 @@ import {
 import { energyDouble } from '../src/physics/energy';
 import { rhsDouble } from '../src/physics/double';
 import { integratorRegistry, rk4Step } from '../src/physics/integrators';
+import { rotateSphericalChainState } from '../src/physics/conservedQuantities';
+import { sphericalChainEnergy, type SphericalChainParams } from '../src/physics/sphericalChain';
 import type { PendulumParameters } from '../src/types/domain';
 import type { IntegratorId } from '../src/types/domain';
 import { StateStore } from '../src/state/StateStore';
@@ -158,6 +160,92 @@ describe('property: energy conservation', () => {
   });
 });
 
+describe('property: physical dissipation and rotational symmetry', () => {
+  const dampedParametersArb = fc.record({
+    m1: fc.double({ min: 0.5, max: 2, noNaN: true }),
+    m2: fc.double({ min: 0.5, max: 2, noNaN: true }),
+    l1: fc.double({ min: 0.6, max: 2, noNaN: true }),
+    l2: fc.double({ min: 0.6, max: 2, noNaN: true }),
+    g: fc.double({ min: 5, max: 15, noNaN: true })
+  });
+  const moderateStateArb = fc.tuple(
+    fc.double({ min: -2.5, max: 2.5, noNaN: true }),
+    fc.double({ min: -2.5, max: 2.5, noNaN: true }),
+    fc.double({ min: -1.5, max: 1.5, noNaN: true }),
+    fc.double({ min: -1.5, max: 1.5, noNaN: true })
+  );
+
+  test('viscously damped RK4 trajectories have non-increasing mechanical energy', () => {
+    fc.assert(
+      fc.property(
+        dampedParametersArb,
+        moderateStateArb,
+        fc.double({ min: 0.02, max: 0.5, noNaN: true }),
+        fc.double({ min: 1e-5, max: 4e-4, noNaN: true }),
+        (p, initial, damping, dt) => {
+          const state = Float64Array.from(initial);
+          const out = new Float64Array(4);
+          const rhs = (s: Float64Array, o: Float64Array): void => {
+            rhsDouble(s, p, damping, o);
+          };
+          const scale = energyScale(p);
+          let previous = energyDouble(state, p).total;
+          for (let i = 0; i < 250; i += 1) {
+            rk4Step(state, dt, rhs, out);
+            state.set(out);
+            const current = energyDouble(state, p).total;
+            // RK4 round-off can move the last few ulps even though dE/dt <= 0.
+            expect(current).toBeLessThanOrEqual(previous + 2e-11 * scale);
+            previous = current;
+          }
+        }
+      ),
+      { seed: SEED, numRuns: 80, endOnFailure: true }
+    );
+  });
+
+  test('spherical-chain energy is invariant under arbitrary rotations about the gravity axis', () => {
+    const sphericalStateArb = fc.tuple(
+      fc.double({ min: 0.2, max: Math.PI - 0.2, noNaN: true }),
+      fc.double({ min: -Math.PI, max: Math.PI, noNaN: true }),
+      fc.double({ min: 0.2, max: Math.PI - 0.2, noNaN: true }),
+      fc.double({ min: -Math.PI, max: Math.PI, noNaN: true }),
+      fc.double({ min: -1.5, max: 1.5, noNaN: true }),
+      fc.double({ min: -1.5, max: 1.5, noNaN: true }),
+      fc.double({ min: -1.5, max: 1.5, noNaN: true }),
+      fc.double({ min: -1.5, max: 1.5, noNaN: true })
+    );
+    const sphericalParametersArb: fc.Arbitrary<SphericalChainParams> = fc.record({
+      masses: fc.tuple(
+        fc.double({ min: 0.4, max: 3, noNaN: true }),
+        fc.double({ min: 0.4, max: 3, noNaN: true })
+      ),
+      lengths: fc.tuple(
+        fc.double({ min: 0.4, max: 2.5, noNaN: true }),
+        fc.double({ min: 0.4, max: 2.5, noNaN: true })
+      ),
+      g: fc.double({ min: 1, max: 20, noNaN: true }),
+      damping: fc.constant(0)
+    });
+
+    fc.assert(
+      fc.property(
+        sphericalParametersArb,
+        sphericalStateArb,
+        fc.double({ min: -Math.PI, max: Math.PI, noNaN: true }),
+        (params, state, angle) => {
+          const before = sphericalChainEnergy(state, params).total;
+          const rotated = rotateSphericalChainState(state, 2, [0, 1, 0], angle);
+          const after = sphericalChainEnergy(rotated, params).total;
+          const scale = Math.max(1, Math.abs(before), Math.abs(after));
+          expect(Math.abs(after - before)).toBeLessThanOrEqual(2e-10 * scale);
+        }
+      ),
+      { seed: SEED, numRuns: 200, endOnFailure: true }
+    );
+  });
+});
+
 describe('property: symplectic structure of the implicit midpoint step', () => {
   test('one step forward then one step backward returns to the start', () => {
     fc.assert(
@@ -256,6 +344,47 @@ describe('property: session import/export round-trip', () => {
         }
       ),
       { seed: SEED, numRuns: 150 }
+    );
+  });
+
+  test('structurally mutated JSON sessions never crash the strict sanitizer', () => {
+    const validSession = {
+      schemaVersion: 'pendulum-session/v10-ts',
+      systemType: 'double',
+      method: 'rk4',
+      mode: 'research',
+      dt: 0.003,
+      tolerance: 1e-7,
+      stepsPerFrame: 6,
+      damping: 0,
+      parameters: { m1: 1, m2: 1, l1: 1.2, l2: 1, g: 9.81 },
+      state: [0.1, 0.2, 0, 0],
+      simTime: 0,
+      seed: 123,
+      hash: 'property-fuzz'
+    };
+    const mutationArb = fc.record({
+      topLevel: fc.dictionary(fc.string({ maxLength: 24 }), fc.jsonValue(), { maxKeys: 12 }),
+      parameters: fc.jsonValue(),
+      state: fc.jsonValue()
+    });
+
+    fc.assert(
+      fc.property(mutationArb, ({ topLevel, parameters, state }) => {
+        const candidate = { ...validSession, ...topLevel, parameters, state };
+        const encoded = JSON.stringify(candidate);
+        expect(() => parseStrictJsonImport(encoded)).not.toThrow();
+      }),
+      { seed: SEED, numRuns: 1000, endOnFailure: true }
+    );
+  });
+
+  test('arbitrary JSON text never escapes as an uncaught parser exception', () => {
+    fc.assert(
+      fc.property(fc.string({ maxLength: 2000 }), (text) => {
+        expect(() => parseStrictJsonImport(text)).not.toThrow();
+      }),
+      { seed: SEED, numRuns: 1000, endOnFailure: true }
     );
   });
 });

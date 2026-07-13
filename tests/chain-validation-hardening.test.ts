@@ -17,7 +17,6 @@ import { chainMassMatrix, energyChain, rhsChain, type ChainParameters } from '..
 import {
   rhsSphericalChain,
   createSphericalChainWorkspace,
-  sphericalChainEnergy,
   sphericalChainMassMatrix,
   SphericalChain,
   type SphericalChainParams

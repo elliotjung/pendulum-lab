@@ -2,6 +2,7 @@ import type { ImportValidationResult, IntegratorId, PendulumParameters, RunMode,
 import { integratorRegistry } from '../physics/integrators';
 import { eventBus } from '../runtime/EventBus';
 import { legacyApp } from '../runtime/legacyCompat';
+import type { PendulumLegacyApp } from '../types/globals';
 
 const schemaVersion = 'pendulum-session/v10-ts';
 const systemTypes = new Set<SystemType>(['double', 'triple']);
@@ -82,7 +83,7 @@ export class StateStore {
     return structuredClone(this.snapshotValue);
   }
 
-  syncFromLegacy(app = legacyApp()): RuntimeSnapshot {
+  syncFromLegacy(app: PendulumLegacyApp | undefined = legacyApp()): RuntimeSnapshot {
     if (!app) return this.snapshot();
     const state = Array.from(app.state ?? []).slice(0, app.stateLen ?? app.state?.length ?? 0);
     this.snapshotValue = {
@@ -104,7 +105,7 @@ export class StateStore {
     return this.snapshot();
   }
 
-  applyPatch(patch: Partial<RuntimeSnapshot>, app = legacyApp()): RuntimeSnapshot {
+  applyPatch(patch: Partial<RuntimeSnapshot>, app: PendulumLegacyApp | undefined = legacyApp()): RuntimeSnapshot {
     const candidate = { ...this.snapshotValue, ...patch, hash: this.snapshotValue.hash };
     const validation = StateStore.validate(candidate);
     if (!validation.ok || !validation.value) {
@@ -175,4 +176,4 @@ export class StateStore {
   }
 }
 
-export const stateStore = new StateStore();
+export const stateStore: StateStore = new StateStore();

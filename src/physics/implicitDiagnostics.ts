@@ -1,4 +1,4 @@
-import type { Derivative, Jacobian, StateVector } from './types';
+import type { Derivative, Jacobian } from './types';
 import { IMPLICIT_SOLVE_TOLERANCE } from './constants';
 import { solveLinearInPlace } from './linearSolve';
 

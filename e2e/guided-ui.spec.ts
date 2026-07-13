@@ -168,6 +168,9 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
   await card.getByRole('button', { name: 'Next' }).click();
   await expect(card).toContainText('Everything lives here');
   await card.getByRole('button', { name: 'Next' }).click();
+  await expect(card).toContainText('Mission: find A_PD');
+  await expect(card).toContainText('1.0663');
+  await card.getByRole('button', { name: 'Next' }).click();
   await expect(card).toContainText('Grow at your pace');
   await card.getByRole('button', { name: 'Start exploring' }).click();
   await expect(page.locator('#onboardingTour')).toHaveCount(0);

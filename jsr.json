@@ -1,0 +1,52 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@elliotjung/pendulum-lab",
+  "version": "10.36.0",
+  "exports": {
+    ".": "./src/lib.ts",
+    "./core": "./src/lib/core.ts",
+    "./analysis": "./src/lib/analysis.ts",
+    "./research": "./src/lib/research.ts",
+    "./experimental": "./src/lib/experimental.ts",
+    "./browser": "./src/lib/browser.ts",
+    "./worker": "./src/lib/worker.ts",
+    "./node": "./src/lib/node.ts"
+  },
+  "include": [
+    "src/**/*.ts",
+    "README.md",
+    "LICENSE",
+    "CITATION.cff",
+    "docs/api-overview.md"
+  ],
+  "exclude": [
+    ".github",
+    "app.html",
+    "config",
+    "css",
+    "data",
+    "e2e",
+    "julia",
+    "paper",
+    "public",
+    "reports",
+    "scripts",
+    "standalone-manifest.json",
+    "tests",
+    "wasm",
+    "Dockerfile",
+    "eslint.config.js",
+    "playwright.config.ts",
+    "stryker.config.json",
+    "stryker.shard.config.json",
+    "typedoc.json",
+    "vite.config.lib.ts",
+    "vite.config.standalone.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.quick.config.ts",
+    "vitest.slow.config.ts",
+    "vitest.tiers.ts",
+    "wrangler.jsonc"
+  ]
+}

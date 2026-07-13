@@ -9,8 +9,8 @@ strict CSP without inline script execution:
 default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self' ws:; object-src 'none'; base-uri 'self'
 ```
 
-The project-root `index.html` is the generated standalone, double-clickable
-artifact. It intentionally inlines JavaScript and permits `blob:` workers so it
+The release-only `standalone/index.html` is the generated, double-clickable
+artifact (Git tracks only its SHA-256 manifest). It intentionally inlines JavaScript and permits `blob:` workers so it
 can run from `file://`; this portable artifact is documented separately from the
 served-app CSP and should not be used as evidence of the hosted security policy.
 

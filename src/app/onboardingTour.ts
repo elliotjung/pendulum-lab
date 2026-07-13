@@ -19,9 +19,17 @@ export const TOUR_STORAGE_KEY = 'pendulum-lab/ui/tour-done';
 export interface TourStep {
   /** CSS selector of the element the spotlight rings. */
   target: string;
+  kind?: 'tour' | 'mission';
   en: { title: string; body: string };
   ko: { title: string; body: string };
 }
+
+export const ONBOARDING_PD_MISSION = Object.freeze({
+  id: 'measure-period-doubling-onset',
+  literatureValue: 1.0663,
+  tolerance: 0.01,
+  tab: 'bifurc'
+});
 
 export const TOUR_STEPS: readonly TourStep[] = [
   {
@@ -38,6 +46,12 @@ export const TOUR_STEPS: readonly TourStep[] = [
     target: '.rail-menu',
     en: { title: 'Everything lives here', body: 'Each menu opens a workspace: explore, analyze, validate, export. Every entry explains itself in one line.' },
     ko: { title: '모든 기능은 여기에', body: '각 메뉴가 작업 공간을 엽니다: 탐색·분석·검증·내보내기. 모든 항목에 한 줄 설명이 붙어 있어요.' }
+  },
+  {
+    target: '[data-workflow-tab="lyap"]',
+    kind: 'mission',
+    en: { title: 'Mission: find A_PD', body: 'Open Analyze → Bifurcation, sweep drive amplitude, and measure the first period doubling. Can you recover the literature value A_PD ≈ 1.0663 within ±0.01?' },
+    ko: { title: '미션: A_PD 찾기', body: '분석 → 분기에서 구동 진폭을 훑고 첫 주기배가 지점을 측정하세요. 문헌값 A_PD ≈ 1.0663을 ±0.01 안에서 재현할 수 있을까요?' }
   },
   {
     target: '.audience-select',
@@ -157,7 +171,10 @@ function placeStep(dom: TourDom, index: number): boolean {
   });
   const copy = currentNavLocale() === 'ko' ? step.ko : step.en;
   const locale = currentNavLocale();
-  dom.tag.textContent = `${locale === 'ko' ? '둘러보기' : 'Quick tour'} ${index + 1}/${TOUR_STEPS.length}`;
+  const tagName = step.kind === 'mission'
+    ? (locale === 'ko' ? '측정 미션' : 'Measurement mission')
+    : (locale === 'ko' ? '둘러보기' : 'Quick tour');
+  dom.tag.textContent = `${tagName} ${index + 1}/${TOUR_STEPS.length}`;
   dom.title.textContent = copy.title;
   dom.body.textContent = copy.body;
   dom.next.textContent = index === TOUR_STEPS.length - 1

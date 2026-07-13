@@ -173,3 +173,15 @@ export type { FloquetLinearConvergenceDiagnostic, FloquetLinearDiagnostics, Floq
 
 export { mathieuCoefficient, mathieuFloquet, mathieuStabilityDiagram, mathieuTongueTips } from './mathieuStability';
 export type { MathieuOptions, MathieuStabilityCell, MathieuStabilityDiagramSpec, MathieuStabilityDiagram } from './mathieuStability';
+
+export { chimeraDiagnostics, chimeraSpaceTimeProfile } from './chimera';
+export type { ChimeraClassification, ChimeraDiagnosticsOptions, ChimeraDiagnostics } from './chimera';
+
+export { PERIODIC_ORBIT_DATABASE_SCHEMA, cyclicOrbitDistance, buildPeriodicOrbitDatabase, cycleExpansionObservable } from './periodicOrbitDatabase';
+export type {
+  PeriodicOrbitRecord,
+  PeriodicOrbitDatabase,
+  PeriodicOrbitDatabaseOptions,
+  CycleExpansionOptions,
+  CycleExpansionObservableResult
+} from './periodicOrbitDatabase';

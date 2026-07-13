@@ -38,16 +38,48 @@ jobs:
       - run: npm run check:wasm-sync
       - run: npm run build:lib
       - run: npm run budget
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-budget
+          path: reports/bundle-budget.*
+          if-no-files-found: error
       - run: npm run docs:api
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: npm run notebook:validate
       - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Audit CSS selector coverage
+        shell: bash
+        run: |
+          npm run preview -- --port 4173 > /tmp/pendulum-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl --fail --silent http://127.0.0.1:4173/app.html >/dev/null && break
+            [ "$attempt" -lt 30 ] || { cat /tmp/pendulum-preview.log; exit 1; }
+            sleep 1
+          done
+          npm run audit:css-coverage
+      - name: Install PDF visual-verification renderer
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      # Exercise the actual double-click/file:// path, including the explicit
+      # worker-fallback notice shown when module workers are unavailable.
+      - run: npm run smoke:standalone
       # Single-build profile (median of 5 samples + environment metadata).
       # Honest A/B comparison against the merge-base runs on PRs (ci.yml
       # benchmark-compare); mainline keeps the longitudinal memory gate below.
       - run: npm run benchmark
+      - run: npm run benchmark:wasm-nchain
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: css-and-wasm-diagnostics
+          path: |
+            reports/css-coverage.*
+            reports/wasm-nchain-baseline.json
+          if-no-files-found: error
       # Memory regression is a HARD gate: min(50 MB absolute, 20% relative)
       # growth over the committed baseline (reports/memory-baseline.json).
       - run: npm run benchmark:memory
@@ -63,9 +95,13 @@ jobs:
       # Mainline browser suite: smoke, accessibility, research workspace,
       # Trust Inspector, and long-run performance coverage.
       - run: npm run test:e2e:mainline
+      - run: npx playwright test e2e/main-canvas-worker.spec.ts --project=chromium
       # Cross-engine smoke keeps Firefox/WebKit/mobile startup covered without
       # multiplying every long-running research UI spec across all engines.
       - run: npx playwright test e2e/smoke.spec.ts --project=firefox --project=webkit --project=mobile-chrome
+      # iPhone-shaped WebKit coverage pins both startup and the project's
+      # reviewer-facing Trust Inspector popover on a narrow touch viewport.
+      - run: npx playwright test e2e/smoke.spec.ts e2e/trust-inspector.spec.ts --project=mobile-webkit
 
   cross-validate:
     runs-on: ubuntu-latest
@@ -86,7 +122,6 @@ jobs:
 
   julia-reference:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -95,10 +130,12 @@ jobs:
           cache: npm
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.10'
+          version: '1.10.11'
       - run: npm ci
-      - run: julia -e 'using Pkg; Pkg.add(["OrdinaryDiffEq","JSON"])'
+      - run: julia --project=julia -e 'using Pkg; Pkg.instantiate()'
       - run: npm run validate:julia
+        env:
+          JULIA_REQUIRED: '1'
 
   os-smoke:
     strategy:

@@ -46,10 +46,42 @@ if (reports.length === 0) {
 
 const statusCounts = new Map();
 const files = [];
+const survivors = [];
 let total = 0;
 let killedLike = 0;
 let coveredTotal = 0;
 let coveredKilledLike = 0;
+
+function normalized(pathname) {
+  return pathname.replaceAll('\\', '/');
+}
+
+function suggestedCategory(mutant) {
+  const coveredBy = Array.isArray(mutant.coveredBy) ? mutant.coveredBy : [];
+  if (coveredBy.length === 0) {
+    return {
+      category: 'coverage-gap-candidate',
+      basis: 'No covering test id is recorded for this survivor; inspect the shard coverage map before confirming.'
+    };
+  }
+  const mutator = String(mutant.mutatorName ?? 'Unknown');
+  if (/BooleanLiteral|ConditionalExpression|EqualityOperator|LogicalOperator|UpdateOperator/i.test(mutator)) {
+    return {
+      category: 'weak-assertion-candidate',
+      basis: `The ${mutator} mutation was executed but survived; inspect assertions before confirming.`
+    };
+  }
+  if (/StringLiteral|ObjectLiteral|ArrayDeclaration|BlockStatement/i.test(mutator)) {
+    return {
+      category: 'equivalent-candidate',
+      basis: `The ${mutator} replacement may be observationally equivalent on the supported domain; prove equivalence before excluding it.`
+    };
+  }
+  return {
+    category: 'unclassified-candidate',
+    basis: 'No reliable automatic category applies; manual review is required.'
+  };
+}
 
 for (const reportPath of reports) {
   const report = JSON.parse(readFileSync(reportPath, 'utf8'));
@@ -66,10 +98,55 @@ for (const reportPath of reports) {
         coveredTotal += 1;
         if (killed) coveredKilledLike += 1;
       }
+      if (status === 'Survived') {
+        const suggestion = suggestedCategory(mutant);
+        survivors.push({
+          reportPath: normalized(reportPath),
+          filePath: normalized(filePath),
+          id: String(mutant.id ?? ''),
+          mutatorName: String(mutant.mutatorName ?? 'Unknown'),
+          line: Number(mutant.location?.start?.line ?? 0),
+          column: Number(mutant.location?.start?.column ?? 0),
+          endLine: Number(mutant.location?.end?.line ?? mutant.location?.start?.line ?? 0),
+          endColumn: Number(mutant.location?.end?.column ?? mutant.location?.start?.column ?? 0),
+          replacement: String(mutant.replacement ?? ''),
+          description: String(mutant.description ?? ''),
+          coveredBy: Array.isArray(mutant.coveredBy) ? mutant.coveredBy.map(String).sort() : [],
+          reviewClassification: 'unclassified',
+          suggestedCategory: suggestion.category,
+          suggestionBasis: suggestion.basis
+        });
+      }
     }
-    files.push({ reportPath, filePath, counts: Object.fromEntries([...localCounts].sort()) });
+    files.push({ reportPath: normalized(reportPath), filePath: normalized(filePath), counts: Object.fromEntries([...localCounts].sort()) });
   }
 }
+
+survivors.sort((a, b) =>
+  a.filePath.localeCompare(b.filePath) ||
+  a.line - b.line ||
+  a.column - b.column ||
+  a.mutatorName.localeCompare(b.mutatorName) ||
+  a.id.localeCompare(b.id)
+);
+
+const survivorGroups = new Map();
+for (const survivor of survivors) {
+  const key = `${survivor.filePath}\u0000${survivor.mutatorName}\u0000${survivor.suggestedCategory}`;
+  const group = survivorGroups.get(key) ?? {
+    filePath: survivor.filePath,
+    mutatorName: survivor.mutatorName,
+    suggestedCategory: survivor.suggestedCategory,
+    count: 0,
+    lines: []
+  };
+  group.count += 1;
+  if (survivor.line > 0 && !group.lines.includes(survivor.line)) group.lines.push(survivor.line);
+  survivorGroups.set(key, group);
+}
+const triageGroups = [...survivorGroups.values()]
+  .map((group) => ({ ...group, lines: group.lines.sort((a, b) => a - b) }))
+  .sort((a, b) => b.count - a.count || a.filePath.localeCompare(b.filePath) || a.mutatorName.localeCompare(b.mutatorName));
 
 const mutationScore = total > 0 ? (100 * killedLike) / total : 0;
 const coveredScore = coveredTotal > 0 ? (100 * coveredKilledLike) / coveredTotal : 0;
@@ -112,5 +189,54 @@ writeFileSync(path.join(outDir, 'mutation-aggregate.md'), [
   ''
 ].join('\n'));
 
-console.log('Mutation aggregate: ' + summary.mutationScore + '% total (' + status + ' band), ' + summary.coveredMutationScore + '% covered across ' + reports.length + ' shard reports.');
+const triage = {
+  schemaVersion: 'pendulum-mutation-survivor-triage/v1',
+  generatedAt,
+  survivorCount: survivors.length,
+  reviewPolicy: {
+    defaultClassification: 'unclassified',
+    note: 'suggestedCategory values are triage candidates, never automatic final classifications; a human must confirm equivalent mutant, coverage gap, or weak assertion.'
+  },
+  groups: triageGroups,
+  survivors
+};
+writeFileSync(path.join(outDir, 'mutation-survivor-triage.json'), JSON.stringify(triage, null, 2) + '\n');
+
+function csvCell(value) {
+  const text = Array.isArray(value) ? value.join(';') : String(value ?? '');
+  return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+const csvColumns = [
+  'filePath', 'line', 'column', 'endLine', 'endColumn', 'mutatorName', 'id',
+  'reviewClassification', 'suggestedCategory', 'suggestionBasis', 'replacement',
+  'description', 'coveredBy', 'reportPath'
+];
+const csv = [
+  csvColumns.join(','),
+  ...survivors.map((survivor) => csvColumns.map((column) => csvCell(survivor[column])).join(','))
+].join('\n') + '\n';
+writeFileSync(path.join(outDir, 'mutation-survivor-triage.csv'), csv);
+
+const markdownGroups = triageGroups.slice(0, 100).map((group) => {
+  const file = group.filePath.replaceAll('|', '\\|');
+  const mutator = group.mutatorName.replaceAll('|', '\\|');
+  const lines = group.lines.slice(0, 12).join(', ') + (group.lines.length > 12 ? ', ...' : '');
+  return `| \`${file}\` | ${mutator} | ${group.suggestedCategory} | ${group.count} | ${lines || '-'} |`;
+});
+writeFileSync(path.join(outDir, 'mutation-survivor-triage.md'), [
+  '# Mutation Survivor Triage',
+  '',
+  `Survivors awaiting review: ${survivors.length}.`,
+  '',
+  '> Every row remains `unclassified`. Suggested categories are candidates for review, not automatic claims of equivalence, missing coverage, or weak assertions.',
+  '',
+  '| File | Mutator | Suggested candidate | Count | Lines |',
+  '| --- | --- | --- | ---: | --- |',
+  ...markdownGroups,
+  '',
+  triageGroups.length > markdownGroups.length ? `The table shows the largest ${markdownGroups.length} groups; use the JSON or CSV for all survivors.` : 'The JSON and CSV contain one row per survivor.',
+  ''
+].join('\n'));
+
+console.log('Mutation aggregate: ' + summary.mutationScore + '% total (' + status + ' band), ' + summary.coveredMutationScore + '% covered across ' + reports.length + ' shard reports; ' + survivors.length + ' survivors written to triage JSON/CSV/MD.');
 if (!gatePassed) process.exit(1);

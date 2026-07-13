@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { TOUR_STEPS, TOUR_STORAGE_KEY } from '../src/app/onboardingTour';
+import { ONBOARDING_PD_MISSION, TOUR_STEPS, TOUR_STORAGE_KEY } from '../src/app/onboardingTour';
 
 describe('onboarding tour steps', () => {
-  it('walks the four core surfaces in teaching order', () => {
-    expect(TOUR_STEPS.map((step) => step.target)).toEqual(['#main', '.presets', '.rail-menu', '.audience-select']);
+  it('walks the core surfaces and a measurement mission in teaching order', () => {
+    expect(TOUR_STEPS.map((step) => step.target)).toEqual(['#main', '.presets', '.rail-menu', '[data-workflow-tab="lyap"]', '.audience-select']);
+    expect(TOUR_STEPS.find((step) => step.kind === 'mission')?.en.body).toContain(String(ONBOARDING_PD_MISSION.literatureValue));
   });
 
   it('provides complete bilingual copy for every step', () => {
@@ -13,7 +14,7 @@ describe('onboarding tour steps', () => {
         expect(copy.title.length, `${step.target} ${locale} title`).toBeGreaterThanOrEqual(4);
         expect(copy.title.length, `${step.target} ${locale} title`).toBeLessThanOrEqual(28);
         expect(copy.body.length, `${step.target} ${locale} body`).toBeGreaterThanOrEqual(30);
-        expect(copy.body.length, `${step.target} ${locale} body`).toBeLessThanOrEqual(140);
+        expect(copy.body.length, `${step.target} ${locale} body`).toBeLessThanOrEqual(190);
       }
     }
   });

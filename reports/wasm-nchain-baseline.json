@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "wasm-nchain-benchmark/v1",
+  "generatedAt": "2026-07-13T01:50:47.197Z",
+  "node": "v26.3.0",
+  "platform": "win32-x64",
+  "interleaved": true,
+  "cases": [
+    {
+      "workload": {
+        "links": 2,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 96,
+      "cpuTimesMs": [
+        0.16809999999998126,
+        0.18739999999996826,
+        0.15899999999999181,
+        0.3749000000000251,
+        0.3383999999999787
+      ],
+      "cpuMedianMs": 0.18739999999996826,
+      "cpuTapeValuesPerSecond": 512273.21238002274,
+      "candidateBackend": "not-built"
+    },
+    {
+      "workload": {
+        "links": 4,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 384,
+      "cpuTimesMs": [
+        0.6918000000000006,
+        0.4449000000000183,
+        0.21769999999997935,
+        0.26799999999997226,
+        0.2330000000000041
+      ],
+      "cpuMedianMs": 0.26799999999997226,
+      "cpuTapeValuesPerSecond": 1432835.8208956707,
+      "candidateBackend": "not-built"
+    },
+    {
+      "workload": {
+        "links": 8,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 1536,
+      "cpuTimesMs": [
+        0.5656000000000176,
+        0.6574999999999704,
+        0.6200000000000045,
+        0.7016999999999598,
+        0.39119999999996935
+      ],
+      "cpuMedianMs": 0.6200000000000045,
+      "cpuTapeValuesPerSecond": 2477419.3548386917,
+      "candidateBackend": "not-built"
+    }
+  ],
+  "decision": "No WASM SIMD candidate is built. These are CPU f64 oracle baselines, not acceleration results."
+}

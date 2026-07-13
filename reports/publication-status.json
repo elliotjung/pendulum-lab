@@ -1,13 +1,13 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-07-12T14:40:01.972Z",
+  "generatedAt": "2026-07-13T01:43:30.677Z",
   "status": "partial",
   "npm": {
-    "package": "pendulum-lab-v10",
-    "version": "10.35.0",
+    "package": "@elliotjung/pendulum-lab",
+    "version": "10.36.0",
     "published": false,
     "registryStatus": 404,
-    "url": "https://www.npmjs.com/package/pendulum-lab-v10/v/10.35.0"
+    "url": "https://www.npmjs.com/package/@elliotjung/pendulum-lab/v/10.36.0"
   },
   "zenodo": {
     "published": false,

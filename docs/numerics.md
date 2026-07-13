@@ -6,13 +6,14 @@
 
 `euler` and `rk2` are available for comparison and tests. They should not be used for research claims except as intentionally low-order references.
 
-`leapfrog`, `symplectic`, and `yoshida4` are now genuinely implemented (previously they silently fell back to RK4 inside `step()`). They split the state vector into a position half and a velocity half:
+`leapfrog`, `symplectic`, and `yoshida4`/`yoshida6`/`yoshida8` are genuinely implemented. They split the state vector into a position half and a velocity half:
 
 - `symplectic` is semi-implicit (symplectic) Euler, order 1.
 - `leapfrog` is velocity-Verlet kick-drift-kick, order 2.
 - `yoshida4` is a fourth-order Yoshida triple composition of the leapfrog step.
+- `yoshida6` and `yoshida8` recursively apply the symmetric Yoshida triple jump to the order-4 and order-6 methods. Their measured orders on a separable harmonic oscillator are 6 and 8.
 
-They remain labeled as separable or pseudo-coordinate approximations. A symplectic claim is only defensible when the method is applied to canonical coordinates and the Hamiltonian splitting assumptions are satisfied; for the velocity-coupled pendulum acceleration the structure preservation is approximate. Empirical convergence orders are asserted in `tests/numerics.test.ts`.
+They remain labeled as separable or pseudo-coordinate approximations. A symplectic claim is only defensible when the method is applied to canonical coordinates and the Hamiltonian splitting assumptions are satisfied; for the velocity-coupled pendulum acceleration the structure preservation is approximate. The higher compositions do not erase that modelling defect, and their larger negative substeps can increase the error constant on the double pendulum even while reaching formal order 6/8 on a separable anchor. Empirical convergence orders and the full reference envelopes are asserted in `tests/numerics.test.ts` and `tests/reference-validation.test.ts`.
 
 `gauss2` is now the genuine 2-stage Gauss-Legendre collocation method (classical order 4, symplectic and A-stable for canonical systems), solved by fixed-point iteration with the final residual exported via `previousError`. A 3-stage order-6 variant (`gaussLegendre6Step`) is also available.
 
@@ -38,6 +39,10 @@ The adaptive framework in `src/physics/adaptive.ts` adds a Dormand-Prince 5(4) e
 ## Generalized Systems
 
 `src/physics/nPendulum.ts` generalizes the chain pendulum to N links (`rhsChain`, `energyChain`). It reproduces `rhsDouble` and `rhsTriple` to machine epsilon (tested), so it is the canonical path for four or more links. `src/physics/driven.ts` (driven / damped-driven pendulum, made autonomous through a drive-phase coordinate) and `src/physics/spring.ts` (elastic pendulum) add dissipative and multi-mode systems; their energy functions are diagnostics, and for driven/damped systems energy is deliberately not a conservation target.
+
+`src/physics/kuramoto.ts` provides the phase-reduced Kuramoto/Sakaguchi network, a two-clock Huygens reduction, global/local complex order parameters, non-local ring adjacency, and the continuum threshold `K_c = 2/(pi g(omega_bar))` with Lorentzian/Gaussian closed forms. `src/chaos/chimera.ts` classifies coexistence only as a finite-size **chimera candidate**; size, radius, horizon, and initial-condition refinement remain required.
+
+`src/physics/friction.ts` provides smooth Coulomb and Stribeck force/torque laws. The `tanh(v/v_epsilon)` regularization is suitable for explicit integration and always dissipates power, but it is not a complementarity solver for exact static stiction. `src/physics/pyragasDde.ts` is a fixed-grid RK4 method-of-steps solver for delayed angle feedback. Its explicit contract requires `delay >= dt`; it linearly interpolates the accepted history tape and reports this limitation in every result.
 
 ## Event Detection
 

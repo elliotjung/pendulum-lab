@@ -4,7 +4,8 @@ Pendulum Lab V10 is a **100% TypeScript** application. The original ~8,080-line 
 `js/` runtime has been fully removed (preserved in git history under the
 `legacy-js-archive` tag). The live Vite shell
 (`app.html`) loads `src/main.ts` plus the hand-written CSS that styles the static shell
-DOM; the project-root `index.html` is the generated self-contained build. A single
+DOM; the ignored `standalone/` directory holds the generated self-contained release
+build, whose hashes are committed in `standalone-manifest.json`. A single
 dependency-injection container (`runtime/ServiceContainer`, exposed through
 `window.PendulumLabDebug.runtime`) is the canonical source of truth for runtime services.
 
@@ -66,7 +67,7 @@ deprecated debug alias. Public scripting uses `window.PendulumLab`.
 - `src/export/`: typed submission manifest and report export helpers.
 - `src/render/`: runtime metric probes for FPS, physics time, memory, and worker latency.
 - `src/workers/`: separate module worker with main-thread fallback through `WorkerBridge`.
-- `app.html`: the live Vite shell (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell. The project-root `index.html` is the self-contained portable build produced by `npm run build:standalone`.
+- `app.html`: the live Vite shell (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell. `npm run build:standalone` emits the self-contained portable release file into ignored `standalone/`; release automation publishes it as a GitHub Release asset.
 
 ## Research Workbench Boundary
 

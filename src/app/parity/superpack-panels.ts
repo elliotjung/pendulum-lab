@@ -24,7 +24,6 @@ import { drivenPeriodicOrbit } from '../../chaos/floquet';
 import { continueDrivenPeriodicOrbit } from '../../chaos/continuation';
 import { $, append, clear, currentParameters, currentSnapshot, html, numberFrom } from './shared';
 import { orbitBaseFromControls } from './runtime-diagnostics';
-// eslint-disable-next-line import/no-cycle
 import { logResearchRun, studySpecFromSnapshot } from './research-workbench';
 
 // --- Analysis superpack ------------------------------------------------------

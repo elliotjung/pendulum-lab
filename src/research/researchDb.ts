@@ -22,6 +22,11 @@ export const RESEARCH_DB_STORES = [
 
 export type ResearchDbStoreName = (typeof RESEARCH_DB_STORES)[number];
 
+/** User-created, potentially large stores eligible for age-based cleanup. */
+export const RESEARCH_DB_CONTENT_STORES: readonly ResearchDbStoreName[] = [
+  'experiments', 'runLog', 'parameterStudies', 'studyResults', 'figures', 'bundles'
+];
+
 export interface ResearchDbRecord {
   id: string;
   updatedAt: string;
@@ -38,6 +43,12 @@ export interface ResearchDbQuota {
   usageBytes: number;
   quotaBytes: number;
   usageFraction: number;
+}
+
+export interface ResearchDbCleanupSummary {
+  cutoff: string;
+  total: number;
+  byStore: Partial<Record<ResearchDbStoreName, number>>;
 }
 
 function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
@@ -162,6 +173,45 @@ export class ResearchDb {
     const out = {} as Record<ResearchDbStoreName, number>;
     for (const name of RESEARCH_DB_STORES) out[name] = await this.count(name);
     return out;
+  }
+
+  /** Count records older than an ISO cutoff without mutating the archive. */
+  async countOlderThan(
+    cutoff: string,
+    stores: readonly ResearchDbStoreName[] = RESEARCH_DB_CONTENT_STORES
+  ): Promise<ResearchDbCleanupSummary> {
+    const cutoffMs = Date.parse(cutoff);
+    if (!Number.isFinite(cutoffMs)) throw new Error('invalid cleanup cutoff');
+    const byStore: Partial<Record<ResearchDbStoreName, number>> = {};
+    let total = 0;
+    for (const name of stores) {
+      const records = await this.getAll(name);
+      const count = records.filter((record) => {
+        const updated = Date.parse(record.updatedAt);
+        return Number.isFinite(updated) && updated < cutoffMs;
+      }).length;
+      byStore[name] = count;
+      total += count;
+    }
+    return { cutoff: new Date(cutoffMs).toISOString(), total, byStore };
+  }
+
+  /** Delete only records older than the cutoff; settings are excluded by default. */
+  async deleteOlderThan(
+    cutoff: string,
+    stores: readonly ResearchDbStoreName[] = RESEARCH_DB_CONTENT_STORES
+  ): Promise<ResearchDbCleanupSummary> {
+    const preview = await this.countOlderThan(cutoff, stores);
+    if (preview.total === 0) return preview;
+    for (const name of stores) {
+      const records = await this.getAll(name);
+      const cutoffMs = Date.parse(preview.cutoff);
+      for (const record of records) {
+        const updated = Date.parse(record.updatedAt);
+        if (Number.isFinite(updated) && updated < cutoffMs) await this.delete(name, record.id);
+      }
+    }
+    return preview;
   }
 
   /** Export every store as a portable JSON archive. */

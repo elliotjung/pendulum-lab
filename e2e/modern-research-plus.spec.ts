@@ -9,6 +9,7 @@ import { openModernTab } from './shell';
 test('Research+ tab runs the SDE ensemble, parameter fit, and PCE surrogate', async ({ page }) => {
   await page.goto('/');
   await openModernTab(page, 'research', '#tab-research');
+  await expect(page.locator('#tab-research')).toHaveAttribute('data-research-plus-ready', 'true');
 
   // 1) Stochastic ensemble — variance reported and the canvas drawn.
   await page.evaluate(() => document.getElementById('rpSdeRun')?.click());

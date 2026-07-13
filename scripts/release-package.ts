@@ -1,5 +1,6 @@
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { hashText } from '../src/research/researchExportUtils';
+import { generateKoreanPortfolioPdf } from './portfolio-korean-pdf';
 
 interface ReleaseArtifact {
   id: string;
@@ -268,6 +269,7 @@ await mkdir('reports', { recursive: true });
 await writeFile('reports/release-one-page.pdf', buildOnePagePdf(summaryLines));
 await writeFile('reports/walkthrough-30s.gif', buildWalkthroughGif());
 await writeFile('reports/walkthrough-storyboard.svg', storyboardSvg(), 'utf8');
+await generateKoreanPortfolioPdf();
 
 const artifactSpecs = [
   ['zenodo-metadata', '.zenodo.json', true, 'Zenodo metadata and authenticated deposition command are present.'],
@@ -276,6 +278,8 @@ const artifactSpecs = [
   ['npm-workflow', '.github/workflows/publish-npm.yml', true, 'Manual npm workflow uses OIDC trusted publishing and automatic provenance.'],
   ['attestation-workflow', '.github/workflows/release.yml', true, 'Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation.'],
   ['paper-pdf', 'paper/paper.pdf', true, 'Flagship paper PDF exists.'],
+  ['portfolio-korean-pdf', 'reports/portfolio-korean.pdf', true, 'Korean portfolio PDF is generated from docs/portfolio-korean.md with Playwright Chromium.'],
+  ['portfolio-korean-pdf-validation', 'reports/portfolio-korean-pdf-validation.json', true, 'Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed.'],
   ['reviewer-manifest', 'reports/reviewer-kit-manifest.json', true, 'Reviewer kit manifest exists.'],
   ['webgpu-hardware-validation', 'reports/webgpu-hardware-validation.md', false, 'Real WebGPU adapter validation report exists when run on a hardware target.'],
   ['gpu-benchmark-ladder', 'reports/gpu-benchmark-ladder.md', true, 'Hardware GPU benchmark ladder records adapter metadata, f32/f64 drift, and CPU-oracle promotion metrics.'],
@@ -288,6 +292,9 @@ const artifactSpecs = [
   ['mutation-aggregate', 'reports/mutation-aggregate.json', true, 'Nightly sharded mutation aggregate score from Stryker reports.'],
   ['one-page-pdf', 'reports/release-one-page.pdf', true, 'One-page reviewer PDF generated locally.'],
   ['walkthrough-gif', 'reports/walkthrough-30s.gif', true, 'Thirty-second GIF walkthrough generated locally.'],
+  ['narrated-demo', 'reports/demo-narrated-ko.mp4', true, '67-second Korean narrated walkthrough, attached to the GitHub Release.'],
+  ['narrated-demo-captions', 'reports/demo-narrated-ko.vtt', true, 'Timed Korean WebVTT captions generated from the narration segments.'],
+  ['narrated-demo-transcript', 'reports/demo-narrated-ko.md', true, 'Accessible Korean narration transcript.'],
   ['walkthrough-storyboard', 'reports/walkthrough-storyboard.svg', false, 'Editable storyboard companion for the GIF.']
 ] as const;
 
@@ -300,7 +307,7 @@ for (const [id, path, required, note] of artifactSpecs) {
 const missingRequired = artifacts.filter((artifact) => artifact.required && !artifact.available).map((artifact) => artifact.id);
 const externalPublishSteps: string[] = [];
 if (!publication.pages?.published) externalPublishSteps.push('Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.');
-if (!publication.npm?.published) externalPublishSteps.push('Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry-run=false.');
+if (!publication.npm?.published) externalPublishSteps.push('Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry_run=false.');
 if (!publication.zenodo?.published) externalPublishSteps.push('Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.');
 const verifiedPredicateTypes = new Set(attestation.predicates?.filter((item) => item.status === 'verified').map((item) => item.predicateType));
 if (attestation.status !== 'verified'

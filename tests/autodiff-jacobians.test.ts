@@ -8,7 +8,6 @@ import {
   dCos,
   dMul,
   dSin,
-  dSub,
   dVar
 } from '../src/physics/autodiff';
 import {
@@ -18,7 +17,7 @@ import {
   jacobianDriven,
   jacobianSphericalChain
 } from '../src/physics/jacobians';
-import { jacobianDouble, rhsDouble } from '../src/physics/double';
+import { jacobianDouble } from '../src/physics/double';
 import { createChainWorkspace, rhsChain, type ChainParameters } from '../src/physics/nPendulum';
 import {
   createSphericalChainWorkspace,

@@ -4,13 +4,11 @@ import { sphericalEnergy, sphericalPosition, sphericalRhs, type SphericalParams,
 import type { IntegratorId } from '../types/domain';
 import type { StateVector } from './types';
 import {
-  EXPANSION_MODEL_IDS,
   type ExpansionModelDefinition,
   type ExpansionModelId,
   type ExpansionParameterMap,
   type ExpansionPoint,
   type ExpansionPreset,
-  type ExpansionSuiteConfig,
   type ExpansionSystem
 } from './expandedModels-types';
 

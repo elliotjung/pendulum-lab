@@ -109,7 +109,7 @@ export class RopePendulum {
   }
 
   energy(): number {
-    const { x, y } = this.position();
+    const { y } = this.position();
     const { vx, vy } = this.velocity();
     return 0.5 * (vx * vx + vy * vy) + this.params.g * y;
   }

@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a physics, research, API, or teaching capability
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and users
+      description: What problem does this solve, and for whom?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan
+      description: Identify analytic, independent, literature, or property-based evidence.
+    validations:
+      required: true
+  - type: dropdown
+    id: stability
+    attributes:
+      label: Proposed API stability
+      options: [No public API, Experimental, Stable]
+    validations:
+      required: true

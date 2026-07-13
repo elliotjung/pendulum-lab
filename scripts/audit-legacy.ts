@@ -16,7 +16,7 @@ type Counts = {
 
 const rootDirs = ['js', 'src', 'css'];
 const rootFiles = ['app.html'];
-const standaloneFiles = ['index.html'];
+const standaloneFiles: string[] = [];
 const weights: Counts = {
   innerHTML: 2,
   onclick: 2,
@@ -26,7 +26,8 @@ const weights: Counts = {
   globalRuntimeExports: 5,
   servedHtmlUnsafeInlineScript: 20,
   servedHtmlUnsafeInlineStyle: 4,
-  // The project-root index.html is the generated offline artifact. It must
+  // The release-only standalone/index.html is generated after this source
+  // audit. It must
   // inline JS and allow blob workers to support file:// double-click usage, so
   // it is reported but not scored against the hosted-app policy.
   standalonePortableInlineScript: 0,

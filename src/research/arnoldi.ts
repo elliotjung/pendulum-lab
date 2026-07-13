@@ -73,7 +73,6 @@ export interface ArnoldiResult {
 
 type Cx = { re: number; im: number };
 const cx = (re = 0, im = 0): Cx => ({ re, im });
-const cAdd = (a: Cx, b: Cx): Cx => ({ re: a.re + b.re, im: a.im + b.im });
 const cSub = (a: Cx, b: Cx): Cx => ({ re: a.re - b.re, im: a.im - b.im });
 const cMul = (a: Cx, b: Cx): Cx => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
 const cAbs = (a: Cx): number => Math.hypot(a.re, a.im);

@@ -13,6 +13,7 @@ export class LabEnsembleController {
   private members: Float64Array[] = [];
   private scratch: Float64Array[] = [];
   private tipScratch: Point2D[] = [];
+  private meterTipScratch: Point2D[] = [];
 
   /** Build N perturbed copies of the initial state for the ensemble view. */
   build(config: LabConfig, dim: number, requested: number, cap: number, epsExponent: number): void {
@@ -21,6 +22,7 @@ export class LabEnsembleController {
     this.members = [];
     this.scratch = [];
     this.tipScratch = [];
+    this.meterTipScratch = [];
     for (let i = 0; i < n; i += 1) {
       const st = new Float64Array(dim);
       for (let j = 0; j < dim; j += 1) st[j] = config.initialState[j] ?? 0;
@@ -49,25 +51,40 @@ export class LabEnsembleController {
   /** Pre-mapped pixel positions of each ensemble member's tip. */
   tips(config: LabConfig, renderer: LabRenderer | null): Point2D[] {
     if (!renderer || this.members.length === 0) return [];
+    const meters = this.tipPositionsMeters(config);
+    this.tipScratch.length = meters.length;
+    for (let i = 0; i < meters.length; i += 1) {
+      const out = this.tipScratch[i] ?? { x: 0, y: 0 };
+      this.tipScratch[i] = out;
+      renderer.toPixelsInto(meters[i]!, out);
+    }
+    return this.tipScratch;
+  }
+
+  /** Cartesian metre-space tips for a renderer living in another thread. */
+  tipPositionsMeters(config: LabConfig): Point2D[] {
+    if (this.members.length === 0) return [];
     const { l1, l2, l3 } = config.parameters;
     const triple = config.system === 'triple';
-    this.tipScratch.length = this.members.length;
+    this.meterTipScratch.length = this.members.length;
     for (let i = 0; i < this.members.length; i += 1) {
       const s = this.members[i]!;
       const x1 = l1 * Math.sin(s[0]!);
       const y1 = l1 * Math.cos(s[0]!);
       const x2 = x1 + l2 * Math.sin(s[1]!);
       const y2 = y1 + l2 * Math.cos(s[1]!);
-      const out = this.tipScratch[i] ?? { x: 0, y: 0 };
-      this.tipScratch[i] = out;
+      const out = this.meterTipScratch[i] ?? { x: 0, y: 0 };
+      this.meterTipScratch[i] = out;
       if (triple) {
         const ell3 = l3 ?? 1;
-        renderer.toPixelsXYInto(x2 + ell3 * Math.sin(s[2]!), y2 + ell3 * Math.cos(s[2]!), out);
+        out.x = x2 + ell3 * Math.sin(s[2]!);
+        out.y = y2 + ell3 * Math.cos(s[2]!);
       } else {
-        renderer.toPixelsXYInto(x2, y2, out);
+        out.x = x2;
+        out.y = y2;
       }
     }
-    return this.tipScratch;
+    return this.meterTipScratch;
   }
 
   /** Drop members beyond the quality budget's ensemble cap. */
@@ -76,5 +93,6 @@ export class LabEnsembleController {
     this.members.length = cap;
     this.scratch.length = cap;
     this.tipScratch.length = cap;
+    this.meterTipScratch.length = cap;
   }
 }

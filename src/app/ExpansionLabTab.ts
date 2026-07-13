@@ -20,8 +20,7 @@ import {
   type ExpansionPoint,
   type ExpansionPreset,
   type ExpansionSuiteConfig,
-  type ExpansionSuiteResult,
-  type GoldenExperimentResult
+  type ExpansionSuiteResult
 } from '../physics/expandedModels';
 import { TabController } from './TabController';
 import { runExpansionWorkerJob } from './expansionWorkerClient';

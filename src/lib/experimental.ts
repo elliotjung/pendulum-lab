@@ -48,3 +48,5 @@ export type {
   SweepFieldOptions,
   SweepFieldResult
 } from '../runtime/gpuFields';
+export { Float64RingBuffer, sharedMemoryCapability } from '../runtime/sharedRingBuffer';
+export type { Float64RingBufferDescriptor, Float64RingBufferOptions } from '../runtime/sharedRingBuffer';

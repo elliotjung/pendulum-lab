@@ -1,6 +1,6 @@
 import type { Derivative, Jacobian, StateVector } from '../physics/types';
 import { rk4Step } from '../physics/integrators';
-import { makeVariationalRhs, mulberry32, seedTangentFrame } from './variational';
+import { makeVariationalRhs, seedTangentFrame } from './variational';
 
 /**
  * Covariant Lyapunov vectors (CLVs) via the Ginelli algorithm

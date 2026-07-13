@@ -7,7 +7,7 @@
  *    worker, the CLI and the unit tests use (no parallel implementation), plus
  *    the periodic-orbit / branch-switching pipeline and measured convergence
  *    orders;
- *  - real figures captured from the live app (the standalone root index.html is
+ *  - real figures captured from the live app (the generated standalone/index.html is
  *    driven headlessly with Playwright: each analysis tab is run to completion
  *    and its canvas captured as PNG).
  *

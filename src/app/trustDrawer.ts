@@ -6,8 +6,7 @@
  * tab strip so the Lab screen itself stays focused on the simulation.
  */
 
-const SECTION_NAMES = ['health', 'validation', 'provenance', 'performance', 'faults'] as const;
-export type TrustSection = (typeof SECTION_NAMES)[number];
+export type TrustSection = 'health' | 'validation' | 'provenance' | 'performance' | 'faults';
 
 function drawer(): HTMLElement | null {
   return document.getElementById('trustDrawer');

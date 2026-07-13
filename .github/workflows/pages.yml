@@ -27,9 +27,19 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run test:coverage
       # The build uses relative asset paths (vite base './'), so it serves
       # correctly from the repository sub-path GitHub Pages uses.
       - run: npm run build
+      - name: Include the longitudinal benchmark dashboard when available
+        shell: bash
+        run: |
+          mkdir -p dist/reports/benchmarks
+          for file in index.html history.json; do
+            curl --fail --silent --show-error --retry 3 \
+              -o "dist/reports/benchmarks/$file" \
+              "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/benchmark-history/$file" || rm -f "dist/reports/benchmarks/$file"
+          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

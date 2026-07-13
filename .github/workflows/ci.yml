@@ -40,8 +40,7 @@ jobs:
       - run: npm run test:coverage
       - run: npm run build
       - run: npm run build:standalone
-      # The committed root index.html / *.worker.js are build:standalone
-      # outputs; fail if they drifted from what the current source builds.
+      # The compact committed manifest pins the release-only standalone bytes.
       - run: npm run check:standalone-sync
       # Same drift contract for the committed WASM ensemble kernel.
       - run: npm run check:wasm-sync

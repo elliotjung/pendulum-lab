@@ -12,6 +12,8 @@ import { rhsDouble } from '../physics/double';
 import { energyDouble } from '../physics/energy';
 import { rk4Step } from '../physics/integrators';
 import { clearChildren } from './domTakeover';
+import energyBenchmarkReport from '../../reports/energy-benchmark.json';
+import { normalizeEnergyBenchmark, renderEnergyBenchmarkCanvas, renderEnergyBenchmarkLegend } from './energyBenchmarkView';
 
 /**
  * Modern port of the Validation tab. It takes over the tab's buttons (cloning to
@@ -51,6 +53,17 @@ function runStressCheck(): ValidationCaseResult {
 }
 
 export class ValidationTab extends TabController {
+  private renderEnergyBenchmark(): void {
+    const canvas = this.dom.el<HTMLCanvasElement>('energyBenchmarkCanvas');
+    const legend = this.dom.el('energyBenchmarkLegend');
+    if (!canvas || !legend) return;
+    const model = normalizeEnergyBenchmark(energyBenchmarkReport);
+    renderEnergyBenchmarkCanvas(canvas, model);
+    renderEnergyBenchmarkLegend(legend, model);
+    const date = model.generatedAt ? new Date(model.generatedAt).toLocaleDateString() : 'unknown date';
+    this.dom.setText('energyBenchmarkStatus', `${model.series.length} committed benchmark:energy curves · ${model.steps.toLocaleString()} steps at dt=${model.dt} · generated ${date}.`);
+  }
+
   private render(cases: ValidationCaseResult[], elapsedMs: number): void {
     const container = this.dom.el('validateResults');
     if (container) {
@@ -111,6 +124,7 @@ export class ValidationTab extends TabController {
   }
 
   protected bind(): void {
+    this.renderEnergyBenchmark();
     this.dom.takeOver('runValidation')?.addEventListener('click', () => this.timed(() => runAllValidationChecks().value ?? []));
     this.dom.takeOver('runDeterminism')?.addEventListener('click', () => this.timed(() => [runReplayDeterminismCheck()]));
     this.dom.takeOver('runConvergence')?.addEventListener('click', () => this.timed(() => this.convergenceCases()));

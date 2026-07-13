@@ -10,7 +10,9 @@ const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> =
   'src/app/parity/governance-ui.ts': { maxLines: 800, owner: 'split command palette, manifest, mode controls' },
   'src/app/ExpansionLabTab.ts': { maxLines: 780, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
-  'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' }
+  'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' },
+  'src/app/parity/shared.ts': { maxLines: 650, owner: 'split shared DOM, formatting, and state helpers by concern' },
+  'src/app/parity/storage-sync.ts': { maxLines: 650, owner: 'split schema migration, persistence, and cross-tab synchronization' }
 };
 
 interface Finding {
