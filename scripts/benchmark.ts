@@ -22,7 +22,7 @@ import type { BenchmarkMetrics } from '../src/types/domain';
  *   BENCHMARK_SAMPLES                   samples per build (default 5, min 3 in compare mode)
  *   BENCHMARK_FAIL_ON_REGRESSION        default '1'; set '0' to demote to warnings
  *   BENCHMARK_MAX_FPS_DROP_FRACTION     default 0.25
- *   BENCHMARK_MAX_PHYSICS_SLOWDOWN_FRACTION  default 0.25
+ *   BENCHMARK_MAX_PHYSICS_SLOWDOWN_FRACTION  default 0.25 (per simulation step)
  *   BENCHMARK_MAX_MEMORY_GROWTH_BYTES   default 50 MB (absolute)
  *   BENCHMARK_MAX_MEMORY_GROWTH_FRACTION default 0.20 (relative)
  */
@@ -37,18 +37,24 @@ const maxPhysicsSlowdownFraction = numberFromEnv('BENCHMARK_MAX_PHYSICS_SLOWDOWN
 const maxMemoryGrowthBytes = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_BYTES', 50_000_000);
 const maxMemoryGrowthFraction = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_FRACTION', 0.2);
 
-type MetricName = 'fps' | 'physicsMsPerFrame' | 'renderMsPerFrame' | 'memoryBytes' | 'workerLatencyMs' | 'longTaskMs';
+type MetricName = 'fps' | 'physicsMsPerFrame' | 'physicsMsPerStep' | 'stepsAdvanced' | 'renderMsPerFrame' | 'memoryBytes' | 'workerLatencyMs' | 'longTaskMs';
 
-const METRICS: Array<{ metric: MetricName; direction: 'higher-is-better' | 'lower-is-better'; threshold: number }> = [
-  { metric: 'fps', direction: 'higher-is-better', threshold: maxFpsDropFraction },
-  { metric: 'physicsMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'renderMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'memoryBytes', direction: 'lower-is-better', threshold: maxMemoryGrowthFraction },
-  { metric: 'workerLatencyMs', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'longTaskMs', direction: 'lower-is-better', threshold: 0.5 }
+const METRICS: Array<{ metric: MetricName; direction: 'higher-is-better' | 'lower-is-better'; threshold: number; gated: boolean }> = [
+  { metric: 'fps', direction: 'higher-is-better', threshold: maxFpsDropFraction, gated: true },
+  // A fixed-dt accumulator deliberately performs more steps after a slow paint.
+  // Keep frame cost and step count visible, but gate the normalized step cost.
+  { metric: 'physicsMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: false },
+  { metric: 'physicsMsPerStep', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'stepsAdvanced', direction: 'higher-is-better', threshold: maxFpsDropFraction, gated: false },
+  { metric: 'renderMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'memoryBytes', direction: 'lower-is-better', threshold: maxMemoryGrowthFraction, gated: true },
+  { metric: 'workerLatencyMs', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'longTaskMs', direction: 'lower-is-better', threshold: 0.5, gated: true }
 ];
 
 interface SampleMetrics extends BenchmarkMetrics {
+  physicsMsPerStep: number | null;
+  stepsAdvanced: number | null;
   renderMsPerFrame: number | null;
   longTaskMs: number | null;
   sampleIndex: number;
@@ -70,7 +76,7 @@ interface BenchmarkDelta {
   noiseFloor: number | null;
   threshold: number;
   direction: 'higher-is-better' | 'lower-is-better';
-  status: 'pass' | 'warn' | 'missing';
+  status: 'pass' | 'warn' | 'missing' | 'info';
 }
 
 interface BenchmarkComparison {
@@ -179,18 +185,26 @@ async function collectSample(browser: Browser, url: string, label: string, sampl
     return await page.evaluate(
       ({ sampleLabel, index }) => {
         const w = window as Window & {
-          __modernLab?: { diagnostics(): { fps: number; physicsMsPerFrame: number; renderMsPerFrame: number; sidePlotMsPerFrame: number } };
+          __modernLab?: { diagnostics(): { fps: number; physicsMsPerFrame: number; renderMsPerFrame: number; sidePlotMsPerFrame: number; stepsAdvanced?: number; stepsPerFrame?: number } };
           __benchLongTasks?: number[];
         };
         const diag = w.__modernLab ? w.__modernLab.diagnostics() : null;
         const memory = (performance as Performance & { memory?: { usedJSHeapSize?: number } }).memory;
         const longTasks = Array.isArray(w.__benchLongTasks) ? w.__benchLongTasks : null;
+        const physicsMs = typeof diag?.physicsMsPerFrame === 'number' ? diag.physicsMsPerFrame : null;
+        const stepsAdvanced = typeof diag?.stepsAdvanced === 'number'
+          ? diag.stepsAdvanced
+          : typeof diag?.stepsPerFrame === 'number'
+            ? diag.stepsPerFrame
+            : null;
         return {
           label: sampleLabel,
           url: location.href,
           sampleIndex: index,
           fps: typeof diag?.fps === 'number' ? diag.fps : null,
-          physicsMsPerFrame: typeof diag?.physicsMsPerFrame === 'number' ? diag.physicsMsPerFrame : null,
+          physicsMsPerFrame: physicsMs,
+          physicsMsPerStep: physicsMs !== null && stepsAdvanced !== null && stepsAdvanced > 0 ? physicsMs / stepsAdvanced : null,
+          stepsAdvanced,
           renderMsPerFrame: typeof diag?.renderMsPerFrame === 'number' ? diag.renderMsPerFrame : null,
           workerLatencyMs: typeof diag?.sidePlotMsPerFrame === 'number' ? diag.sidePlotMsPerFrame : null,
           memoryBytes: typeof memory?.usedJSHeapSize === 'number' ? memory.usedJSHeapSize : null,
@@ -264,6 +278,8 @@ function medianRow(label: string, url: string, agg: Record<MetricName, MetricAgg
     sampleIndex: -1,
     fps: agg.fps.median,
     physicsMsPerFrame: agg.physicsMsPerFrame.median,
+    physicsMsPerStep: agg.physicsMsPerStep.median,
+    stepsAdvanced: agg.stepsAdvanced.median,
     renderMsPerFrame: agg.renderMsPerFrame.median,
     workerLatencyMs: agg.workerLatencyMs.median,
     memoryBytes: agg.memoryBytes.median,
@@ -276,7 +292,8 @@ function compareMetric(
   candidate: MetricAggregate,
   metric: MetricName,
   threshold: number,
-  direction: 'higher-is-better' | 'lower-is-better'
+  direction: 'higher-is-better' | 'lower-is-better',
+  gated: boolean
 ): BenchmarkDelta {
   const a = original.median;
   const b = candidate.median;
@@ -305,12 +322,12 @@ function compareMetric(
     noiseFloor,
     threshold,
     direction,
-    status: failed && beyondNoise ? 'warn' : 'pass'
+    status: gated ? (failed && beyondNoise ? 'warn' : 'pass') : 'info'
   };
 }
 
 function compare(originalAgg: Record<MetricName, MetricAggregate>, candidateAgg: Record<MetricName, MetricAggregate>): BenchmarkComparison {
-  const deltas = METRICS.map(({ metric, direction, threshold }) => compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction));
+  const deltas = METRICS.map(({ metric, direction, threshold, gated }) => compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction, gated));
   return {
     originalUrl: originalUrl!,
     candidateUrl: candidateUrl!,
@@ -351,12 +368,12 @@ function environmentSection(env: BenchmarkEnvironment): string[] {
 
 function rowsTable(rows: SampleMetrics[]): string[] {
   const lines = [
-    '| Build | FPS | Physics ms | Render ms | Worker ms | Long-task ms | Memory bytes | URL |',
-    '|---|---:|---:|---:|---:|---:|---:|---|'
+    '| Build | FPS | Physics ms/frame | Physics ms/step | Steps/frame | Render ms | Worker ms | Long-task ms | Memory bytes | URL |',
+    '|---|---:|---:|---:|---:|---:|---:|---:|---:|---|'
   ];
   for (const row of rows) {
     lines.push(
-      `| ${row.label} | ${formatNumber(row.fps)} | ${formatNumber(row.physicsMsPerFrame)} | ${formatNumber(row.renderMsPerFrame)} | ${formatNumber(row.workerLatencyMs)} | ${formatNumber(row.longTaskMs)} | ${formatNumber(row.memoryBytes)} | ${row.url} |`
+      `| ${row.label} | ${formatNumber(row.fps)} | ${formatNumber(row.physicsMsPerFrame)} | ${formatNumber(row.physicsMsPerStep)} | ${formatNumber(row.stepsAdvanced)} | ${formatNumber(row.renderMsPerFrame)} | ${formatNumber(row.workerLatencyMs)} | ${formatNumber(row.longTaskMs)} | ${formatNumber(row.memoryBytes)} | ${row.url} |`
     );
   }
   return lines;

@@ -34,9 +34,15 @@ row reports the latest reason in `reason`, and
 
 Headless browser FPS is noisy and should not be the only regression signal. Use:
 
+The A/B CI report records both physics milliseconds per paint frame and the
+number of fixed-dt steps advanced. Its regression gate divides those values to
+compare `physicsMsPerStep`; this avoids treating the accumulator's intentional
+catch-up work after a slow paint as an integrator regression.
+
 | Metric | Source | Regression signal |
 | --- | --- | --- |
-| `physicsMsPerFrame` | `window.__modernLab.diagnostics()` | integrator/config changes that slow the hot loop |
+| `physicsMsPerFrame` | `window.__modernLab.diagnostics()` | interactive frame budget; interpret alongside `stepsAdvanced` |
+| `physicsMsPerStep` | A/B benchmark derivation | integrator/config changes that slow one fixed-dt step |
 | `renderMsPerFrame` | same | canvas/CSS/trail regressions |
 | `sidePlotMsPerFrame` | same | FFT/Poincare/phase redraw pressure |
 | `pendingUiTasks` | same | side-plot queue backlog or idle-task starvation |

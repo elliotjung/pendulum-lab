@@ -15,7 +15,7 @@ interface HistoryPoint {
   commit: string;
   generatedAt: string;
   fps: number;
-  physicsMs: number;
+  physicsMsPerStep: number;
   renderMs: number;
   memoryMiB: number;
   longTaskMs: number;
@@ -32,7 +32,7 @@ const point: HistoryPoint = {
   commit: report.environment?.commitSha ?? process.env.GITHUB_SHA ?? 'unknown',
   generatedAt: report.generatedAt,
   fps: metric('fps'),
-  physicsMs: metric('physicsMsPerFrame'),
+  physicsMsPerStep: metric('physicsMsPerStep'),
   renderMs: metric('renderMsPerFrame'),
   memoryMiB: metric('memoryBytes') / (1024 * 1024),
   longTaskMs: metric('longTaskMs'),
@@ -59,7 +59,7 @@ console.log(`benchmark history updated (${history.length} commits, latest ${poin
 function dashboard(points: readonly HistoryPoint[]): string {
   const metricRows = [
     ['FPS (higher is better)', 'fps', '#38e88c'],
-    ['Physics ms/frame', 'physicsMs', '#18d4f8'],
+    ['Physics ms/step', 'physicsMsPerStep', '#18d4f8'],
     ['Render ms/frame', 'renderMs', '#9d78ff'],
     ['Memory MiB', 'memoryMiB', '#e7c887'],
     ['Long-task ms', 'longTaskMs', '#f56464']
