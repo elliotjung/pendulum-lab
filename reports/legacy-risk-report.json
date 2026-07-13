@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T05:05:17.639Z",
+  "generatedAt": "2026-07-13T14:09:00.645Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -3786,6 +3786,18 @@
       "standalonePortableBlobWorker": 0
     },
     "css\\09-accessibility-themes.css": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "css\\10-porcelain-daylight.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
