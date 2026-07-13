@@ -1,6 +1,6 @@
 # World-Class Readiness Scorecard
 
-Generated: 2026-07-13T03:09:02.033Z
+Generated: 2026-07-13T05:05:19.108Z
 
 Summary: done 10, partial 2, gap 0
 

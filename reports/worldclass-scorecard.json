@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-13T03:09:02.033Z",
+  "generatedAt": "2026-07-13T05:05:19.108Z",
   "totals": {
     "done": 10,
     "partial": 2,
     "gap": 0
   },
   "legacyRisk": {
-    "generatedAt": "2026-07-13T01:50:44.543Z",
+    "generatedAt": "2026-07-13T05:05:17.639Z",
     "pass": true,
     "counts": {
       "innerHTML": 0,
@@ -600,6 +600,18 @@
         "standalonePortableInlineScript": 0,
         "standalonePortableBlobWorker": 0
       },
+      "src\\app\\parity\\governance-commands.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0,
+        "servedHtmlUnsafeInlineScript": 0,
+        "servedHtmlUnsafeInlineStyle": 0,
+        "standalonePortableInlineScript": 0,
+        "standalonePortableBlobWorker": 0
+      },
       "src\\app\\parity\\governance-ui.ts": {
         "innerHTML": 0,
         "onclick": 0,
@@ -721,6 +733,18 @@
         "standalonePortableBlobWorker": 0
       },
       "src\\app\\parity\\lab3d.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0,
+        "servedHtmlUnsafeInlineScript": 0,
+        "servedHtmlUnsafeInlineStyle": 0,
+        "standalonePortableInlineScript": 0,
+        "standalonePortableBlobWorker": 0
+      },
+      "src\\app\\parity\\paper-figure-capture.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
@@ -3229,6 +3253,18 @@
         "standalonePortableBlobWorker": 0
       },
       "src\\runtime\\wasmEnsemble.ts": {
+        "innerHTML": 0,
+        "onclick": 0,
+        "inlineWorkerBlob": 0,
+        "evalLike": 0,
+        "dynamicScript": 0,
+        "globalRuntimeExports": 0,
+        "servedHtmlUnsafeInlineScript": 0,
+        "servedHtmlUnsafeInlineStyle": 0,
+        "standalonePortableInlineScript": 0,
+        "standalonePortableBlobWorker": 0
+      },
+      "src\\runtime\\wasmNChain.ts": {
         "innerHTML": 0,
         "onclick": 0,
         "inlineWorkerBlob": 0,
