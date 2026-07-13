@@ -45,7 +45,7 @@ jobs:
           path: reports/bundle-budget.*
           if-no-files-found: error
       - run: npm run docs:api
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: npm run notebook:validate
@@ -127,7 +127,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - run: npm ci
