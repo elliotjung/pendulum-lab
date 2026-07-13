@@ -121,7 +121,7 @@ export interface EvidenceSummaryInput {
 type JsonObject = Record<string, unknown>;
 
 function object(value: unknown): JsonObject {
-  return value && typeof value === 'object' && !Array.isArray(value) ? value as JsonObject : {};
+  return value && typeof value === 'object' && !Array.isArray(value) ? (value as JsonObject) : {};
 }
 
 function array(value: unknown): unknown[] {
@@ -151,12 +151,15 @@ export function approxScientific(value: number | null, significant = 1): string 
 }
 
 function findAnchor(literatureAnchors: JsonObject, id: string): LiteratureAnchorSummary | null {
-  const anchor = array(literatureAnchors.anchors).map(object).find((item) => item.id === id);
+  const anchor = array(literatureAnchors.anchors)
+    .map(object)
+    .find((item) => item.id === id);
   if (!anchor) return null;
   const computed = numberValue(anchor.computed, NaN);
   const published = numberValue(anchor.published, NaN);
   if (!Number.isFinite(computed) || !Number.isFinite(published)) return null;
-  const toleranceValue = typeof anchor.tolerance === 'number' && Number.isFinite(anchor.tolerance) ? anchor.tolerance : null;
+  const toleranceValue =
+    typeof anchor.tolerance === 'number' && Number.isFinite(anchor.tolerance) ? anchor.tolerance : null;
   const absError = Math.abs(computed - published);
   return {
     computed,
@@ -179,9 +182,7 @@ function regularScipyAgreement(crossValidation: JsonObject): number | null {
 }
 
 function availableArtifacts(artifacts: unknown[], priority: string): number {
-  return artifacts
-    .map(object)
-    .filter((artifact) => artifact.priority === priority && artifact.available === true)
+  return artifacts.map(object).filter((artifact) => artifact.priority === priority && artifact.available === true)
     .length;
 }
 
@@ -230,8 +231,12 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
     generatedAt: input.generatedAt,
     sourceReports: input.sourceReports,
     provenance: input.provenance ?? {
-      sourceCommit: 'unknown', packageVersion: 'unknown', lockfileSha256: 'unknown',
-      dirtyWorktree: false, expiresAfterDays: 14, expiresAt: new Date(Date.parse(input.generatedAt) + 14 * 86_400_000).toISOString()
+      sourceCommit: 'unknown',
+      packageVersion: 'unknown',
+      lockfileSha256: 'unknown',
+      dirtyWorktree: false,
+      expiresAfterDays: 14,
+      expiresAt: new Date(Date.parse(input.generatedAt) + 14 * 86_400_000).toISOString()
     },
     tests: {
       total,
@@ -264,9 +269,10 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
       profiledMethods,
       stepsPerMethod: numberValue(energy.steps),
       bestMethod: bestEnergyRow && typeof bestEnergyRow.name === 'string' ? bestEnergyRow.name : null,
-      bestMaxRelativeDrift: bestEnergyRow && typeof bestEnergyRow.maxRelDrift === 'number' && Number.isFinite(bestEnergyRow.maxRelDrift)
-        ? bestEnergyRow.maxRelDrift
-        : null
+      bestMaxRelativeDrift:
+        bestEnergyRow && typeof bestEnergyRow.maxRelDrift === 'number' && Number.isFinite(bestEnergyRow.maxRelDrift)
+          ? bestEnergyRow.maxRelDrift
+          : null
     },
     reviewerKit: {
       status: stringValue(reviewer.status, 'unknown'),
@@ -295,36 +301,71 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
     },
     claims: [
       {
-        id: 'tests.unit', displayValue: `${passed} / ${total} pass`, status: failed === 0 ? 'passed' : 'failed',
-        uncertainty: null, sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-results.json', sourceCommit,
-        caveat: null, reproduce: 'npm run verify', publicUrl: null
+        id: 'tests.unit',
+        displayValue: `${passed} / ${total} pass`,
+        status: failed === 0 ? 'passed' : 'failed',
+        uncertainty: null,
+        sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-results.json',
+        sourceCommit,
+        caveat: null,
+        reproduce: 'npm run verify',
+        publicUrl: null
       },
       {
-        id: 'validation.scipy.regular', displayValue: approxScientific(regularAgreement), status: regularAgreement === null ? 'unknown' : 'passed',
-        uncertainty: 'Maximum observed divergence for regular reference cases', sourceReport: input.sourceReports.crossValidation ?? 'reports/cross-validation.json', sourceCommit,
-        caveat: 'Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.', reproduce: 'npm run validate:cross', publicUrl: null
+        id: 'validation.scipy.regular',
+        displayValue: approxScientific(regularAgreement),
+        status: regularAgreement === null ? 'unknown' : 'passed',
+        uncertainty: 'Maximum observed divergence for regular reference cases',
+        sourceReport: input.sourceReports.crossValidation ?? 'reports/cross-validation.json',
+        sourceCommit,
+        caveat: 'Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.',
+        reproduce: 'npm run validate:cross',
+        publicUrl: null
       },
       {
-        id: 'testing.mutation', displayValue: `${mutationScore.toFixed(2)}%`, status: mutationStatus,
-        uncertainty: null, sourceReport: input.sourceReports.mutationAggregate ?? 'reports/mutation-aggregate.json', sourceCommit,
+        id: 'testing.mutation',
+        displayValue: `${mutationScore.toFixed(2)}%`,
+        status: mutationStatus,
+        uncertainty: null,
+        sourceReport: input.sourceReports.mutationAggregate ?? 'reports/mutation-aggregate.json',
+        sourceCommit,
         caveat: mutationStatus === 'low' ? 'Below the 70% quality target; the 65% regression floor is enforced.' : null,
-        reproduce: 'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85', publicUrl: null
+        reproduce:
+          'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85',
+        publicUrl: null
       },
       {
-        id: 'benchmark.energy.methods', displayValue: `${profiledMethods} methods profiled`, status: profiledMethods > 0 ? 'measured' : 'missing',
-        uncertainty: 'Method-specific drift; no universal pass envelope', sourceReport: input.sourceReports.energyBenchmark ?? 'reports/energy-benchmark.json', sourceCommit,
-        caveat: 'Compare each method against its documented order and structure-preservation behavior.', reproduce: 'npm run benchmark:energy', publicUrl: null
+        id: 'benchmark.energy.methods',
+        displayValue: `${profiledMethods} methods profiled`,
+        status: profiledMethods > 0 ? 'measured' : 'missing',
+        uncertainty: 'Method-specific drift; no universal pass envelope',
+        sourceReport: input.sourceReports.energyBenchmark ?? 'reports/energy-benchmark.json',
+        sourceCommit,
+        caveat: 'Compare each method against its documented order and structure-preservation behavior.',
+        reproduce: 'npm run benchmark:energy',
+        publicUrl: null
       },
       {
-        id: 'gpu.vendor-matrix', displayValue: `${numberValue(gpuCoverage.passed)} / ${numberValue(gpuCoverage.required)} vendors`, status: stringValue(gpuAdapterMatrix.status, 'unknown'),
-        uncertainty: null, sourceReport: input.sourceReports.gpuAdapterMatrix ?? 'reports/gpu-adapter-matrix.json', sourceCommit,
+        id: 'gpu.vendor-matrix',
+        displayValue: `${numberValue(gpuCoverage.passed)} / ${numberValue(gpuCoverage.required)} vendors`,
+        status: stringValue(gpuAdapterMatrix.status, 'unknown'),
+        uncertainty: null,
+        sourceReport: input.sourceReports.gpuAdapterMatrix ?? 'reports/gpu-adapter-matrix.json',
+        sourceCommit,
         caveat: typeof gpuAdapterMatrix.caveat === 'string' ? gpuAdapterMatrix.caveat : null,
-        reproduce: typeof gpuAdapterMatrix.reproduce === 'string' ? gpuAdapterMatrix.reproduce : 'npm run benchmark:gpu-matrix', publicUrl: null
+        reproduce:
+          typeof gpuAdapterMatrix.reproduce === 'string' ? gpuAdapterMatrix.reproduce : 'npm run benchmark:gpu-matrix',
+        publicUrl: null
       },
       {
-        id: 'publication.release', displayValue: stringValue(publication.status, 'unknown'), status: stringValue(publication.status, 'unknown'),
-        uncertainty: null, sourceReport: input.sourceReports.publicationStatus ?? 'reports/publication-status.json', sourceCommit,
-        caveat: stringArray(publication.caveats).join(' ') || null, reproduce: 'npm run release:status',
+        id: 'publication.release',
+        displayValue: stringValue(publication.status, 'unknown'),
+        status: stringValue(publication.status, 'unknown'),
+        uncertainty: null,
+        sourceReport: input.sourceReports.publicationStatus ?? 'reports/publication-status.json',
+        sourceCommit,
+        caveat: stringArray(publication.caveats).join(' ') || null,
+        reproduce: 'npm run release:status',
         publicUrl: typeof pages.url === 'string' ? pages.url : null
       }
     ],
@@ -348,18 +389,20 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         label: 'NVIDIA/AMD self-hosted GPU evidence',
         status: gpuMissing.length === 0 ? 'complete' : 'blocked-external',
         command: 'npm run benchmark:gpu-matrix',
-        note: gpuMissing.length === 0
-          ? 'All required physical vendor rows are present.'
-          : `Missing physical runner evidence for ${gpuMissing.join(', ')}.`
+        note:
+          gpuMissing.length === 0
+            ? 'All required physical vendor rows are present.'
+            : `Missing physical runner evidence for ${gpuMissing.join(', ')}.`
       },
       {
         id: 'release-attestation',
         label: 'release attestation verification',
         status: typeof githubRelease.url === 'string' ? 'complete' : 'blocked-external',
         command: 'npm run release:verify-attestations',
-        note: typeof githubRelease.url === 'string'
-          ? 'GitHub release exists; attestation verification remains the release gate.'
-          : 'Requires a published GitHub release.'
+        note:
+          typeof githubRelease.url === 'string'
+            ? 'GitHub release exists; attestation verification remains the release gate.'
+            : 'Requires a published GitHub release.'
       }
     ]
   };

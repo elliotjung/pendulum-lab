@@ -19,7 +19,11 @@ const META = 'data/experimental/double-pendulum-tracker.meta.json';
 interface Meta {
   import: { pivot: { x: number; y: number }; yAxis: 'down' | 'up' };
   truth: { m1: number; m2: number; l1: number; l2: number; g: number; gamma: number };
-  fit: { estimate: ReadonlyArray<'l1' | 'l2' | 'g'>; initialGuess: number[]; fixed: { m1: number; m2: number; gamma: number } };
+  fit: {
+    estimate: ReadonlyArray<'l1' | 'l2' | 'g'>;
+    initialGuess: number[];
+    fixed: { m1: number; m2: number; gamma: number };
+  };
 }
 
 describe('hardware comparison pipeline (tracked fixture)', () => {
@@ -50,12 +54,7 @@ describe('hardware comparison pipeline (tracked fixture)', () => {
   });
 
   it('echoes fixed initial angles when co-estimation is off (API contract)', () => {
-    const initialState: [number, number, number, number] = [
-      observation.angles[0]![0],
-      observation.angles[0]![1],
-      0,
-      0
-    ];
+    const initialState: [number, number, number, number] = [observation.angles[0]![0], observation.angles[0]![1], 0, 0];
     const fit = fitDoublePendulum(
       { times: observation.times.slice(0, 60), angles: observation.angles.slice(0, 60) },
       {

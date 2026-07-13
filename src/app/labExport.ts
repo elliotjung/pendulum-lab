@@ -44,7 +44,13 @@ export interface RunExport {
 }
 
 /** Reproducible run JSON for the modern Lab. */
-export function runJson(config: LabConfig, finalState: readonly number[], simTime: number, energy: number, drift: number): RunExport {
+export function runJson(
+  config: LabConfig,
+  finalState: readonly number[],
+  simTime: number,
+  energy: number,
+  drift: number
+): RunExport {
   return {
     schemaVersion: 2,
     generator: 'pendulum-lab-modern-lab',

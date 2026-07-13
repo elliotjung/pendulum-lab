@@ -64,4 +64,3 @@ describe('flagship certification', () => {
     expect(refinedFlagshipGrid(certification.rows, 0.05).length).toBeGreaterThan(1);
   });
 });
-

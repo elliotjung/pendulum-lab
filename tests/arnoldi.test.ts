@@ -50,7 +50,10 @@ function spectraDistance(a: readonly Complex[], b: readonly Complex[]): number {
 }
 
 function topByModulus(values: readonly Complex[], k: number): Complex[] {
-  return values.slice().sort((p, q) => complexAbs(q) - complexAbs(p)).slice(0, k);
+  return values
+    .slice()
+    .sort((p, q) => complexAbs(q) - complexAbs(p))
+    .slice(0, k);
 }
 
 describe('restarted Arnoldi — non-symmetric spectra', () => {
@@ -77,7 +80,9 @@ describe('restarted Arnoldi — non-symmetric spectra', () => {
 
   it('recovers a dominant complex-conjugate pair', () => {
     const n = 40;
-    const a: number[][] = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? -0.5 : 0)));
+    const a: number[][] = Array.from({ length: n }, (_, i) =>
+      Array.from({ length: n }, (_, j) => (i === j ? -0.5 : 0))
+    );
     // A dominant rotation–scaling 2×2 block in the top-left: eigenvalues 2 ± 3i (|λ| = √13).
     a[0]![0] = 2;
     a[0]![1] = 3;

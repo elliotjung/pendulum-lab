@@ -53,7 +53,8 @@ export const CERTIFIED_WORKBENCH_FLAGSHIP: FlagshipResult = {
   title: 'Melnikov threshold vs period-doubling onset: a quantitative gap map',
   thesis:
     'For the damped driven pendulum at omega=2/3, the analytic Melnikov homoclinic-tangle threshold and the measured period-doubling onset are distinct objects; their ratio closes and reverses near gamma ~= 0.69.',
-  primaryMetric: 'A_PD(gamma) / A_c(gamma), with A_PD located by Floquet multiplier rho=-1 and A_c from the closed-form Melnikov integral.',
+  primaryMetric:
+    'A_PD(gamma) / A_c(gamma), with A_PD located by Floquet multiplier rho=-1 and A_c from the closed-form Melnikov integral.',
   flagshipCommand: 'npm run paper:study',
   paperCommand: 'npm run paper:build',
   trustContract: [
@@ -202,7 +203,8 @@ export const REVIEWER_KIT_ARTIFACTS: readonly ReviewerKitArtifact[] = [
     path: 'reports/attestation-verification.json',
     command: 'npm run release:verify-attestations',
     priority: 'recommended',
-    description: 'Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow.'
+    description:
+      'Verified SLSA provenance and CycloneDX attestations bound to the release tarball SHA-256 and signer workflow.'
   },
   {
     id: 'npm-pack-dry-run',
@@ -267,7 +269,8 @@ export const GPU_SCALE_VALIDATION_CONTRACTS: readonly GpuScaleValidationContract
     id: 'ensemble-rk4',
     cpuReference: 'src/runtime/gpuEnsemble.ts CPU f64 RK4 path',
     acceleratedPath: 'WGSL RK4 ensemble kernel in src/runtime/gpuEnsemble.ts',
-    acceptanceRule: 'GPU integration may feed research outputs only through validated statistics; CPU force path remains the trajectory oracle.',
+    acceptanceRule:
+      'GPU integration may feed research outputs only through validated statistics; CPU force path remains the trajectory oracle.',
     ciEvidence: ['tests/gpu-ensemble.test.ts', 'tests/ensemble-statistics.test.ts'],
     caveat: 'Node CI has no real adapter; hardware WebGPU runs must still report backend=webgpu and caveat=f32.'
   },
@@ -275,15 +278,18 @@ export const GPU_SCALE_VALIDATION_CONTRACTS: readonly GpuScaleValidationContract
     id: 'ensemble-reduction-oracle',
     cpuReference: 'ensembleStatistics CPU f64 mean/covariance/rms/flip reduction',
     acceleratedPath: 'webgpuEnsembleStatistics GPU reduction or f32 candidate reduction',
-    acceptanceRule: 'compareEnsembleStatistics(candidate, cpuOracle) must pass declared tolerances before a reduction can be used as a publication result.',
+    acceptanceRule:
+      'compareEnsembleStatistics(candidate, cpuOracle) must pass declared tolerances before a reduction can be used as a publication result.',
     ciEvidence: ['tests/ensemble-statistics.test.ts', 'scripts/gpu-scale-validation.ts'],
-    caveat: 'The local CI candidate is f32-rounded CPU output; the self-hosted hardware workflow runs the on-device reduction when a WebGPU adapter is present.'
+    caveat:
+      'The local CI candidate is f32-rounded CPU output; the self-hosted hardware workflow runs the on-device reduction when a WebGPU adapter is present.'
   },
   {
     id: 'field-scans',
     cpuReference: 'f64 probe-cell recomputation in src/runtime/gpuFields.ts',
     acceleratedPath: 'WGSL flip-basin / sweep / FTLE field kernels',
-    acceptanceRule: 'GPU output is accepted only when deterministic CPU probe validation passes; otherwise the f64 CPU grid is returned.',
+    acceptanceRule:
+      'GPU output is accepted only when deterministic CPU probe validation passes; otherwise the f64 CPU grid is returned.',
     ciEvidence: ['tests/gpu-fields-validation.test.ts', 'tests/gpu-fields.test.ts'],
     caveat: 'Fractal basin boundaries allow isolated probe disagreements; the gate is on disagreement fraction.'
   },
@@ -291,9 +297,17 @@ export const GPU_SCALE_VALIDATION_CONTRACTS: readonly GpuScaleValidationContract
     id: 'chaos-acceleration-contract',
     cpuReference: 'existing CPU CLV/full-spectrum/variational FTLE implementations',
     acceleratedPath: '4D kernels plus src/runtime/gpuNChainVariational.ts tiled STM/QR/CLV/FTLE pipeline',
-    acceptanceRule: 'GPU candidates must pass compareClvAcceleration / compareFtleFieldAcceleration / compareLyapunovSpectrumAcceleration against the CPU oracle before promotion.',
-    ciEvidence: ['tests/clv.test.ts', 'tests/ftle.test.ts', 'tests/lyapunov-spectrum-job.test.ts', 'tests/acceleration-contract.test.ts', 'e2e/webgpu-hardware-reductions.spec.ts'],
-    caveat: 'The 4D kernels and planar N-chain N<=8 hybrid pipeline are hardware-gated against CPU f64 oracles. N-chain nonlinear trajectory and Jacobian-tape construction remain CPU f64.'
+    acceptanceRule:
+      'GPU candidates must pass compareClvAcceleration / compareFtleFieldAcceleration / compareLyapunovSpectrumAcceleration against the CPU oracle before promotion.',
+    ciEvidence: [
+      'tests/clv.test.ts',
+      'tests/ftle.test.ts',
+      'tests/lyapunov-spectrum-job.test.ts',
+      'tests/acceleration-contract.test.ts',
+      'e2e/webgpu-hardware-reductions.spec.ts'
+    ],
+    caveat:
+      'The 4D kernels and planar N-chain N<=8 hybrid pipeline are hardware-gated against CPU f64 oracles. N-chain nonlinear trajectory and Jacobian-tape construction remain CPU f64.'
   }
 ] as const;
 

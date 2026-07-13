@@ -32,7 +32,10 @@ describe('labExport', () => {
   });
 
   it('builds a Poincaré CSV', () => {
-    const csv = poincareCsv([{ x: 1.5, y: 4.0 }, { x: -0.3, y: 2.2 }]);
+    const csv = poincareCsv([
+      { x: 1.5, y: 4.0 },
+      { x: -0.3, y: 2.2 }
+    ]);
     const lines = csv.split('\n');
     expect(lines[0]).toBe('theta2,omega2');
     expect(lines).toHaveLength(3);

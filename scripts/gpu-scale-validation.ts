@@ -1,6 +1,16 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { compareClvAcceleration, compareFtleFieldAcceleration, compareLyapunovSpectrumAcceleration } from '../src/chaos/accelerationContract';
-import { compareEnsembleStatistics, ensembleGrid, ensembleStatistics, runDoublePendulumEnsemble, webgpuEnsembleStatistics } from '../src/runtime/gpuEnsemble';
+import {
+  compareClvAcceleration,
+  compareFtleFieldAcceleration,
+  compareLyapunovSpectrumAcceleration
+} from '../src/chaos/accelerationContract';
+import {
+  compareEnsembleStatistics,
+  ensembleGrid,
+  ensembleStatistics,
+  runDoublePendulumEnsemble,
+  webgpuEnsembleStatistics
+} from '../src/runtime/gpuEnsemble';
 import { flipBasinField, sweepLambdaField } from '../src/runtime/gpuFields';
 import { GPU_SCALE_VALIDATION_CONTRACTS } from '../src/research/certifiedWorkbench';
 import { hashText } from '../src/research/researchExportUtils';
@@ -13,13 +23,15 @@ const stats = ensembleStatistics(ensemble.states);
 const f32CandidateStats = ensembleStatistics(new Float64Array(new Float32Array(ensemble.states)));
 const reductionOracle = compareEnsembleStatistics(f32CandidateStats, stats);
 const hardwareReduction = await webgpuEnsembleStatistics(ensemble.states);
-const hardwareReductionOracle = hardwareReduction ? compareEnsembleStatistics(hardwareReduction, stats, {
-  mean: 2e-5,
-  variance: 2e-4,
-  covariance: 2e-4,
-  rmsSpread: 2e-4,
-  flipFraction: 0
-}) : null;
+const hardwareReductionOracle = hardwareReduction
+  ? compareEnsembleStatistics(hardwareReduction, stats, {
+      mean: 2e-5,
+      variance: 2e-4,
+      covariance: 2e-4,
+      rmsSpread: 2e-4,
+      flipFraction: 0
+    })
+  : null;
 const basin = await flipBasinField(params, { n: 12, maxTime: 4, forceCpu: true });
 const sweep = await sweepLambdaField(params, { n: 4, range: [0.1, 0.4], steps: 600, forceCpu: true });
 const lyapunovAccelerationProbe = compareLyapunovSpectrumAcceleration(
@@ -49,7 +61,10 @@ async function readJson<T>(path: string): Promise<T | null> {
 interface WebGpuHardwareEvidence {
   status?: string;
   generatedAt?: string;
-  ensemble?: { backend?: string; comparison?: { passed?: boolean; maxMeanAbsDiff?: number; maxCovarianceAbsDiff?: number } };
+  ensemble?: {
+    backend?: string;
+    comparison?: { passed?: boolean; maxMeanAbsDiff?: number; maxCovarianceAbsDiff?: number };
+  };
   lyapunovSpectrum?: {
     backend?: string;
     comparison?: { passed?: boolean; metrics?: Record<string, number | boolean> } | null;
@@ -83,8 +98,14 @@ interface GpuBenchmarkLadderEvidence {
     allPromotionComparisonsPassed?: boolean;
     maxAdjacentSpectrumShift?: number;
   };
-  clv?: { backend?: string; comparison?: { passed?: boolean; metrics?: Record<string, number | boolean> } | null } | null;
-  variationalFtleField?: { backend?: string; comparison?: { passed?: boolean; metrics?: Record<string, number | boolean> } | null } | null;
+  clv?: {
+    backend?: string;
+    comparison?: { passed?: boolean; metrics?: Record<string, number | boolean> } | null;
+  } | null;
+  variationalFtleField?: {
+    backend?: string;
+    comparison?: { passed?: boolean; metrics?: Record<string, number | boolean> } | null;
+  } | null;
   nChainVariational?: {
     backend?: string;
     links?: number;
@@ -108,9 +129,12 @@ const summary = {
   schemaVersion: 'pendulum-gpu-scale-validation/v3',
   generatedAt: new Date().toISOString(),
   hardwareWebGpuAvailable: hasNavigatorGpu,
-  verdict: hardwareEvidence?.status === 'pass'
-    ? 'hardware-webgpu-oracle-gates-passed'
-    : hasNavigatorGpu ? 'hardware-webgpu-path-available' : 'cpu-reference-mock-and-contract-gates-ready',
+  verdict:
+    hardwareEvidence?.status === 'pass'
+      ? 'hardware-webgpu-oracle-gates-passed'
+      : hasNavigatorGpu
+        ? 'hardware-webgpu-path-available'
+        : 'cpu-reference-mock-and-contract-gates-ready',
   hardwareEvidence,
   gpuBenchmarkLadder,
   gpuAdapterMatrix,
@@ -139,7 +163,11 @@ const summary = {
       width: sweep.width,
       height: sweep.height,
       validation: sweep.validation,
-      lambdaHash: hashText(Array.from(sweep.values).map((v) => v.toPrecision(8)).join(',')).slice(0, 16)
+      lambdaHash: hashText(
+        Array.from(sweep.values)
+          .map((v) => v.toPrecision(8))
+          .join(',')
+      ).slice(0, 16)
     }
   },
   promotionGates: {
@@ -164,7 +192,9 @@ const lines = [
   '|---|---|---|---|---|'
 ];
 for (const contract of GPU_SCALE_VALIDATION_CONTRACTS) {
-  lines.push(`| ${contract.id} | ${contract.cpuReference} | ${contract.acceleratedPath} | ${contract.acceptanceRule} | ${contract.caveat} |`);
+  lines.push(
+    `| ${contract.id} | ${contract.cpuReference} | ${contract.acceleratedPath} | ${contract.acceptanceRule} | ${contract.caveat} |`
+  );
 }
 lines.push(
   '',

@@ -34,16 +34,20 @@ export function chainLength(parameters: ChainParameters): number {
 
 export function validateChainParameters(parameters: ChainParameters): void {
   if (parameters.masses.length !== parameters.lengths.length) {
-    throw new Error(`ChainParameters: masses (${parameters.masses.length}) and lengths (${parameters.lengths.length}) must have the same length`);
+    throw new Error(
+      `ChainParameters: masses (${parameters.masses.length}) and lengths (${parameters.lengths.length}) must have the same length`
+    );
   }
   if (parameters.masses.length === 0) throw new Error('ChainParameters: at least one link is required');
   for (let i = 0; i < parameters.masses.length; i += 1) {
     const mass = parameters.masses[i] ?? NaN;
     const length = parameters.lengths[i] ?? NaN;
     if (!Number.isFinite(mass) || mass <= 0) throw new Error(`ChainParameters: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(length) || length <= 0) throw new Error(`ChainParameters: length[${i}] must be positive and finite`);
+    if (!Number.isFinite(length) || length <= 0)
+      throw new Error(`ChainParameters: length[${i}] must be positive and finite`);
   }
-  if (!Number.isFinite(parameters.g) || parameters.g <= 0) throw new Error('ChainParameters: g must be positive and finite');
+  if (!Number.isFinite(parameters.g) || parameters.g <= 0)
+    throw new Error('ChainParameters: g must be positive and finite');
 }
 
 export function createChainWorkspace(n: number): ChainWorkspace {
@@ -79,7 +83,7 @@ export function rhsChain(
   parameters: ChainParameters,
   gamma: number,
   out: StateVector,
-  workspace = createChainWorkspace(chainLength(parameters))
+  workspace: ChainWorkspace = createChainWorkspace(chainLength(parameters))
 ): StateVector {
   const n = chainLength(parameters);
   const { masses, lengths, g } = parameters;
@@ -124,7 +128,11 @@ export function rhsChain(
  * M_jk = S_{max(j,k)} · l_j · l_k · cos(θ_j − θ_k). Exposed for validation:
  * a correct M is symmetric and positive definite for every configuration.
  */
-export function chainMassMatrix(state: ArrayLike<number>, parameters: ChainParameters, out = new Float64Array(chainLength(parameters) ** 2)): Float64Array {
+export function chainMassMatrix(
+  state: ArrayLike<number>,
+  parameters: ChainParameters,
+  out: Float64Array = new Float64Array(chainLength(parameters) ** 2)
+): Float64Array {
   const n = chainLength(parameters);
   const { lengths } = parameters;
   const s = new Float64Array(n);

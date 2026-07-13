@@ -173,9 +173,11 @@ export function generateDesign(
   const replicates = Math.max(1, Math.min(8, Math.round(options.replicates ?? 1)));
   const n = Math.max(1, Math.min(budget.maxPoints, Math.round(count)));
   const unitPoints =
-    strategy === 'sobol' ? sobolSequence(variables.length, n)
-    : strategy === 'latin-hypercube' ? latinHypercube(variables.length, n, options.seedText ?? 'pendulum-lhs')
-    : factorialGrid(variables.length, n);
+    strategy === 'sobol'
+      ? sobolSequence(variables.length, n)
+      : strategy === 'latin-hypercube'
+        ? latinHypercube(variables.length, n, options.seedText ?? 'pendulum-lhs')
+        : factorialGrid(variables.length, n);
   const points: DesignPoint[] = [];
   for (const unit of unitPoints) {
     for (let r = 0; r < replicates; r += 1) {
@@ -202,18 +204,29 @@ function distance(a: Record<string, number>, b: Record<string, number>, variable
   return Math.sqrt(sum);
 }
 
-function midpoint(a: Record<string, number>, b: Record<string, number>, variables: StudyVariable[]): Record<string, number> {
+function midpoint(
+  a: Record<string, number>,
+  b: Record<string, number>,
+  variables: StudyVariable[]
+): Record<string, number> {
   const values: Record<string, number> = {};
   for (const variable of variables) {
-    values[variable.key] = (((a[variable.key] ?? 0) + (b[variable.key] ?? 0)) / 2);
+    values[variable.key] = ((a[variable.key] ?? 0) + (b[variable.key] ?? 0)) / 2;
   }
   return values;
 }
 
-function dedupe(candidates: DesignPoint[], existing: EvaluatedPoint[], variables: StudyVariable[], minSeparation = 1e-3): DesignPoint[] {
+function dedupe(
+  candidates: DesignPoint[],
+  existing: EvaluatedPoint[],
+  variables: StudyVariable[],
+  minSeparation = 1e-3
+): DesignPoint[] {
   const kept: DesignPoint[] = [];
   for (const candidate of candidates) {
-    const tooCloseExisting = existing.some((point) => distance(point.values, candidate.values, variables) < minSeparation);
+    const tooCloseExisting = existing.some(
+      (point) => distance(point.values, candidate.values, variables) < minSeparation
+    );
     const tooCloseKept = kept.some((point) => distance(point.values, candidate.values, variables) < minSeparation);
     if (!tooCloseExisting && !tooCloseKept) kept.push(candidate);
   }
@@ -225,11 +238,7 @@ function dedupe(candidates: DesignPoint[], existing: EvaluatedPoint[], variables
  * pairs and propose midpoints across the steepest pairs (chaos onsets, crisis
  * boundaries). Returns up to `maxNew` proposals inside the variable box.
  */
-export function adaptiveRefinement(
-  evaluated: EvaluatedPoint[],
-  variables: StudyVariable[],
-  maxNew = 8
-): DesignPoint[] {
+export function adaptiveRefinement(evaluated: EvaluatedPoint[], variables: StudyVariable[], maxNew = 8): DesignPoint[] {
   if (evaluated.length < 2 || variables.length === 0) return [];
   const pairs: { i: number; j: number; gradient: number }[] = [];
   for (let i = 0; i < evaluated.length; i += 1) {
@@ -252,11 +261,7 @@ export function adaptiveRefinement(
  * Boundary refinement: bisect every neighbour pair whose λ values change sign
  * (the chaotic/regular boundary λ = 0 is the headline object in a study).
  */
-export function boundaryRefinement(
-  evaluated: EvaluatedPoint[],
-  variables: StudyVariable[],
-  maxNew = 8
-): DesignPoint[] {
+export function boundaryRefinement(evaluated: EvaluatedPoint[], variables: StudyVariable[], maxNew = 8): DesignPoint[] {
   if (evaluated.length < 2 || variables.length === 0) return [];
   const crossings: { i: number; j: number; d: number }[] = [];
   for (let i = 0; i < evaluated.length; i += 1) {
@@ -281,12 +286,10 @@ export function boundaryRefinement(
  * Uncertainty-driven resampling: replicate the points whose λ standard error is
  * largest relative to the study's median error (noisy estimates get more data).
  */
-export function uncertaintyResampling(
-  evaluated: EvaluatedPoint[],
-  maxNew = 4,
-  relativeThreshold = 2
-): DesignPoint[] {
-  const errors = evaluated.map((point) => point.lambdaStdError).filter((stdError) => Number.isFinite(stdError) && stdError > 0);
+export function uncertaintyResampling(evaluated: EvaluatedPoint[], maxNew = 4, relativeThreshold = 2): DesignPoint[] {
+  const errors = evaluated
+    .map((point) => point.lambdaStdError)
+    .filter((stdError) => Number.isFinite(stdError) && stdError > 0);
   if (errors.length === 0) return [];
   const sorted = [...errors].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)] ?? 0;
@@ -306,9 +309,12 @@ export interface BudgetState {
 
 /** Whether the study may continue under its budget, with the limiting reason. */
 export function budgetAllows(budget: DesignBudget, state: BudgetState): { allowed: boolean; reason: string } {
-  if (state.pointsRun >= budget.maxPoints) return { allowed: false, reason: `point budget exhausted (${budget.maxPoints})` };
-  if (state.elapsedMs >= budget.maxTimeMs) return { allowed: false, reason: `time budget exhausted (${Math.round(budget.maxTimeMs / 1000)}s)` };
-  if (state.failures >= budget.maxFailures) return { allowed: false, reason: `failure budget exhausted (${budget.maxFailures})` };
+  if (state.pointsRun >= budget.maxPoints)
+    return { allowed: false, reason: `point budget exhausted (${budget.maxPoints})` };
+  if (state.elapsedMs >= budget.maxTimeMs)
+    return { allowed: false, reason: `time budget exhausted (${Math.round(budget.maxTimeMs / 1000)}s)` };
+  if (state.failures >= budget.maxFailures)
+    return { allowed: false, reason: `failure budget exhausted (${budget.maxFailures})` };
   return { allowed: true, reason: 'within budget' };
 }
 

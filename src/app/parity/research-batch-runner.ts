@@ -20,7 +20,7 @@ export type StudyBatchTarget = { point: ParameterStudyPoint; index: number };
 export function studyBatchTargets(plan: ParameterStudyPlan, options: StudyBatchMode = {}): StudyBatchTarget[] {
   return plan.experiments
     .map((point, index) => ({ point, index }))
-    .filter(({ point }) => options.failedOnly ? Boolean(point.error) : !point.results);
+    .filter(({ point }) => (options.failedOnly ? Boolean(point.error) : !point.results));
 }
 
 /** Map a study-point snapshot onto the declarative chaos-job system spec. */
@@ -29,8 +29,12 @@ export function studySpecFromSnapshot(snapshot: RuntimeSnapshot): { spec: System
   if (snapshot.systemType === 'triple') {
     const spec: SystemSpec = {
       kind: 'triple',
-      m1: p.m1, m2: p.m2, m3: p.m3 ?? 1,
-      l1: p.l1, l2: p.l2, l3: p.l3 ?? 0.8,
+      m1: p.m1,
+      m2: p.m2,
+      m3: p.m3 ?? 1,
+      l1: p.l1,
+      l2: p.l2,
+      l3: p.l3 ?? 0.8,
       g: p.g
     };
     return { spec, state0: snapshot.state.slice(0, 6) };

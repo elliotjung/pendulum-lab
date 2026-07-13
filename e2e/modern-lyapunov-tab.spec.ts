@@ -9,14 +9,20 @@ import { openModernTab } from './shell';
 test('modern Lyapunov tab computes and renders the full spectrum', async ({ page }) => {
   await page.goto('/');
   await openModernTab(page, 'lyap', '#tab-lyap');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { lyapunov?: unknown } }).__modernTabs?.lyapunov));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { lyapunov?: unknown } }).__modernTabs?.lyapunov)
+  );
 
   // Start the computation and wait for results to populate.
   await page.evaluate(() => document.getElementById('lyapStart')?.click());
-  await page.waitForFunction(() => {
-    const l1 = document.getElementById('L1')?.textContent ?? '—';
-    return l1 !== '—' && l1.length > 0;
-  }, undefined, { timeout: 20000 });
+  await page.waitForFunction(
+    () => {
+      const l1 = document.getElementById('L1')?.textContent ?? '—';
+      return l1 !== '—' && l1.length > 0;
+    },
+    undefined,
+    { timeout: 20000 }
+  );
 
   // L1 now reads "<lambda> ± <stdError>"; parseFloat takes the leading value.
   const l1 = await page.evaluate(() => Number.parseFloat(document.getElementById('L1')?.textContent ?? ''));

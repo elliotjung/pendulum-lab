@@ -25,10 +25,7 @@
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { parseObservedDoublePendulumCsv } from '../src/research/experimentalDataImport';
-import {
-  fitDoublePendulum,
-  type DoublePendulumParameterName
-} from '../src/research/parameterEstimation';
+import { fitDoublePendulum, type DoublePendulumParameterName } from '../src/research/parameterEstimation';
 import type { PendulumParameters } from '../src/types/domain';
 
 interface FixtureMeta {
@@ -123,7 +120,8 @@ async function main(): Promise<void> {
       protocol: meta.protocol ?? 'unspecified'
     },
     method: {
-      import: 'pixel coordinates -> scale-free relative angles (atan2 of pixel differences; pivot + y-down handled by the importer)',
+      import:
+        'pixel coordinates -> scale-free relative angles (atan2 of pixel differences; pivot + y-down handled by the importer)',
       forwardModel: 'rhsDouble integrated with fixed-step RK4 (dt = 2e-3); release-from-rest (omega0 = 0 by protocol)',
       optimizer:
         'Levenberg-Marquardt over ' +
@@ -165,8 +163,9 @@ async function main(): Promise<void> {
     '',
     '| parameter | estimated | 1-sigma | nominal | rel. error | within 2-sigma |',
     '|---|---:|---:|---:|---:|---|',
-    ...rows.map((row) =>
-      `| ${row.parameter} | ${row.estimated.toFixed(5)} | ${Number.isFinite(row.standardError) ? row.standardError.toExponential(2) : 'n/a'} | ${row.nominal === null ? 'n/a' : row.nominal.toFixed(5)} | ${row.relativeErrorVsNominal === null ? 'n/a' : (100 * row.relativeErrorVsNominal).toFixed(3) + '%'} | ${row.withinTwoSigmaOfNominal === null ? 'n/a' : row.withinTwoSigmaOfNominal ? 'yes' : 'NO'} |`
+    ...rows.map(
+      (row) =>
+        `| ${row.parameter} | ${row.estimated.toFixed(5)} | ${Number.isFinite(row.standardError) ? row.standardError.toExponential(2) : 'n/a'} | ${row.nominal === null ? 'n/a' : row.nominal.toFixed(5)} | ${row.relativeErrorVsNominal === null ? 'n/a' : (100 * row.relativeErrorVsNominal).toFixed(3) + '%'} | ${row.withinTwoSigmaOfNominal === null ? 'n/a' : row.withinTwoSigmaOfNominal ? 'yes' : 'NO'} |`
     ),
     '',
     '## Reproduce',

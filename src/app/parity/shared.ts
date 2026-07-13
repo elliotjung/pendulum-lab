@@ -9,7 +9,6 @@ import { integratorRegistry } from '../../physics/integrators';
 import { type ParameterStudyStrategy } from '../../research/researchSampling';
 import { installAdoptedStyle } from '../../ui/adoptedStyles';
 
-
 export type Tone = 'good' | 'warn' | 'bad' | 'info' | '';
 
 export interface ModernLabHandle {
@@ -42,7 +41,8 @@ export interface AuditResult {
   manifest: unknown;
 }
 
-export type ResearchRunType = 'experiment' | 'validation' | 'parameter-study' | 'comparison' | 'export' | 'probe' | 'workspace';
+export type ResearchRunType =
+  'experiment' | 'validation' | 'parameter-study' | 'comparison' | 'export' | 'probe' | 'workspace';
 
 export interface ResearchMetrics {
   drift: number | null;
@@ -222,19 +222,24 @@ export function defaultResearchWorkspaceProfile(now = new Date().toISOString()):
   return {
     id: 'workspace-certified-chaotic-dynamics',
     name: 'Certified Chaotic Dynamics Workbench',
-    objective: 'Build a reviewer-ready flagship result around the Melnikov gap map, with every quoted number carrying provenance, uncertainty, validation, and caveats.',
+    objective:
+      'Build a reviewer-ready flagship result around the Melnikov gap map, with every quoted number carrying provenance, uncertainty, validation, and caveats.',
     flagshipId: 'melnikov-gap-map',
     createdAt: now,
     updatedAt: now
   };
 }
 
-export function defaultResearchSessionProfile(projectId = 'project-certified-chaotic-dynamics', now = new Date().toISOString()): ResearchSessionProfile {
+export function defaultResearchSessionProfile(
+  projectId = 'project-certified-chaotic-dynamics',
+  now = new Date().toISOString()
+): ResearchSessionProfile {
   return {
     id: 'session-melnikov-gap-map',
     projectId,
     name: 'Melnikov Gap Map Certification',
-    objective: 'Accumulate runs, artifacts, and caveats for the flagship Melnikov threshold vs period-doubling gap map.',
+    objective:
+      'Accumulate runs, artifacts, and caveats for the flagship Melnikov threshold vs period-doubling gap map.',
     createdAt: now,
     updatedAt: now,
     pinnedRunIds: [],
@@ -262,7 +267,6 @@ export function defaultResearchLayoutPreferences(): ResearchLayoutPreferences {
     panelCollapsed: false
   };
 }
-
 
 export const LEGACY_VALIDATION_IDS = [
   'energy-drift-gamma0',
@@ -301,7 +305,10 @@ export const COMPAT_ANCHOR_IDS = [
 
 const initialResearchWorkspace = defaultResearchWorkspaceProfile();
 const initialResearchProject = defaultResearchProjectProfile(initialResearchWorkspace.createdAt);
-const initialResearchSession = defaultResearchSessionProfile(initialResearchProject.id, initialResearchWorkspace.createdAt);
+const initialResearchSession = defaultResearchSessionProfile(
+  initialResearchProject.id,
+  initialResearchWorkspace.createdAt
+);
 
 export const state = {
   mode: 'demo' as RunMode,
@@ -326,8 +333,6 @@ export const state = {
     comparisonRows: [] as ResearchComparisonRow[]
   } as ResearchWorkbenchState
 };
-
-
 
 export function $(id: string): HTMLElement | null {
   return document.getElementById(id);
@@ -354,7 +359,10 @@ export function html<K extends keyof HTMLElementTagNameMap>(
   if (options.role) node.setAttribute('role', options.role);
   if (options.ariaLabel) node.setAttribute('aria-label', options.ariaLabel);
   if (options.type && node instanceof HTMLButtonElement) node.type = options.type as HTMLButtonElement['type'];
-  if (options.value !== undefined && (node instanceof HTMLInputElement || node instanceof HTMLSelectElement || node instanceof HTMLOptionElement)) {
+  if (
+    options.value !== undefined &&
+    (node instanceof HTMLInputElement || node instanceof HTMLSelectElement || node instanceof HTMLOptionElement)
+  ) {
     node.value = options.value;
   }
   return node;
@@ -408,7 +416,12 @@ export function detailsCard(title: string, body: Node, id?: string): HTMLDetails
   const details = id === undefined ? html('details', { className: 'acc' }) : html('details', { id, className: 'acc' });
   details.open = true;
   const summary = html('summary');
-  append(summary, html('span', { className: 'acc-icon', text: '>' }), html('span', { className: 'acc-label', text: title }), html('span', { className: 'acc-arrow', text: '>' }));
+  append(
+    summary,
+    html('span', { className: 'acc-icon', text: '>' }),
+    html('span', { className: 'acc-label', text: title }),
+    html('span', { className: 'acc-arrow', text: '>' })
+  );
   append(details, summary, html('div', { className: 'acc-body' }));
   details.querySelector('.acc-body')?.append(body);
   return details;
@@ -468,7 +481,9 @@ export function currentMethod(): IntegratorId {
 
 export function currentMode(): RunMode {
   const raw = state.mode;
-  return raw === 'research' || raw === 'benchmark' || raw === 'education' || raw === 'performance' || raw === 'recovery' ? raw : 'demo';
+  return raw === 'research' || raw === 'benchmark' || raw === 'education' || raw === 'performance' || raw === 'recovery'
+    ? raw
+    : 'demo';
 }
 
 /**
@@ -481,9 +496,17 @@ export function currentSnapshot(): RuntimeSnapshot {
   const synced = stateStore.syncFromLegacy();
   const diag = modernLab()?.diagnostics?.();
   const system = currentSystem();
-  const baseState = system === 'triple'
-    ? [numberFrom('th1', 2), numberFrom('th2', 2.5), numberFrom('th3', 1), numberFrom('iw1', 0), numberFrom('iw2', 0), numberFrom('iw3', 0)]
-    : [numberFrom('th1', 2), numberFrom('th2', 2.5), numberFrom('iw1', 0), numberFrom('iw2', 0)];
+  const baseState =
+    system === 'triple'
+      ? [
+          numberFrom('th1', 2),
+          numberFrom('th2', 2.5),
+          numberFrom('th3', 1),
+          numberFrom('iw1', 0),
+          numberFrom('iw2', 0),
+          numberFrom('iw3', 0)
+        ]
+      : [numberFrom('th1', 2), numberFrom('th2', 2.5), numberFrom('iw1', 0), numberFrom('iw2', 0)];
   const snapshot: RuntimeSnapshot = {
     ...synced,
     systemType: system,
@@ -494,7 +517,9 @@ export function currentSnapshot(): RuntimeSnapshot {
     stepsPerFrame: Math.max(1, Math.round(numberFrom('spf', synced.stepsPerFrame || 6))),
     damping: numberFrom('gamma', synced.damping || 0),
     parameters: currentParameters(),
-    state: window.App?.state ? Array.from(window.App.state).slice(0, window.App.stateLen || window.App.state.length) : baseState,
+    state: window.App?.state
+      ? Array.from(window.App.state).slice(0, window.App.stateLen || window.App.state.length)
+      : baseState,
     simTime: diag?.time ?? synced.simTime,
     hash: window.App?._stateHash ?? synced.hash
   };
@@ -550,7 +575,9 @@ export function installStyle(id: string, css: string): void {
 }
 
 export function installStyles(): void {
-  installStyle('rg-style', `
+  installStyle(
+    'rg-style',
+    `
 .rg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .rg-card{background:rgba(12,16,28,.78);border:1px solid var(--glass-stroke);border-radius:8px;padding:12px;box-shadow:var(--shadow-xs)}
 .rg-card.rg-wide{grid-column:1/-1}.rg-title{font:800 9.5px/1.2 var(--font-display);letter-spacing:1.6px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
@@ -587,8 +614,12 @@ export function installStyles(): void {
 #ueFloatingDiag{position:fixed;right:12px;bottom:12px;z-index:900;width:min(300px,90vw);background:rgba(6,8,12,.88);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:10px;box-shadow:0 18px 80px rgba(0,0,0,.45)}#ueFloatingDiag.collapsed{width:auto}#ueFloatingDiag.collapsed .ue-fbody{display:none}
 @media(max-width:780px){.rg-grid,.ue-grid,.ri-grid{grid-template-columns:1fr}.fig-badge{display:none}}
 @media(max-width:560px){#ueFloatingDiag{right:10px;bottom:78px;z-index:80;max-width:calc(100vw - 20px);max-height:34vh;overflow:auto}#ueFloatingDiag.collapsed{max-height:38px}.rail{z-index:960}.rail-submenu{z-index:980}}
-`);
-  installStyle('riV4Style', '.ri-chip{display:inline-flex;border:1px solid var(--border-strong);border-radius:999px;padding:2px 7px;font:9px var(--font-mono);color:var(--text)}.ri-chip.info{color:var(--cyan)}.ri-chip.good{color:var(--green)}.ri-chip.warn{color:var(--orange)}.ri-chip.bad{color:var(--red)}');
+`
+  );
+  installStyle(
+    'riV4Style',
+    '.ri-chip{display:inline-flex;border:1px solid var(--border-strong);border-radius:999px;padding:2px 7px;font:9px var(--font-mono);color:var(--text)}.ri-chip.info{color:var(--cyan)}.ri-chip.good{color:var(--green)}.ri-chip.warn{color:var(--orange)}.ri-chip.bad{color:var(--red)}'
+  );
   installStyle('rgv8-style', '');
   installStyle('sfv9-style', '');
   installStyle('finalPreservationStyle', '');

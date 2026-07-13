@@ -1,38 +1,74 @@
-# Cross-Project Release Checklist
+# Cross-Project Single-Trigger Release
 
-Use this checklist when publishing Pendulum Lab and the landing page together.
-The goal is to keep evidence, wording, and performance defaults synchronized.
+A single annotated `v*` tag in `elliotjung/pendulum-lab` is the release trigger
+for both repositories. The simulator release is kept as a draft until the
+landing repository has synchronized the exact release evidence, passed its
+static/browser/accessibility/Lighthouse gates, created the matching tag, and
+deployed the same commit to Pages.
 
-> **Repository topology:** two repos by decision — see
-> [ADR 0001](adr/0001-repository-topology.md). Evidence synchronization is
-> automated: pushing a changed `reports/evidence-summary.json` to the default
-> branch dispatches the landing repo's `evidence-sync` workflow, which pulls
-> the summary, realigns the demo-kernel manifest, re-runs the landing gate
-> (including the kernel-parity smoke test), and auto-commits. The manual step
-> 3 below remains as local convenience / fallback, not the mechanism.
+## Automated chain
 
-## URLs And Rollback
+1. The simulator tag starts `.github/workflows/release.yml`.
+2. CI runs `verify`, builds the hosted and standalone apps, checks committed
+   standalone/WASM synchronization, runs the real `file://` smoke, builds the
+   library/docs/reviewer package, and enforces the bundle budget.
+3. CI packs and attests the npm tarball and SBOM. A draft GitHub Release receives
+   those files plus a directly downloadable standalone HTML, a full standalone
+   ZIP, and the English/Korean one-page PDFs.
+4. The workflow sends `pendulum-release` to `elliotjung/pendulum-landing` with
+   the tag, release commit, evidence source commit, and orchestrator run id.
+5. Landing's `cross-repo-release.yml` fetches evidence by the immutable simulator
+   commit SHA, realigns the demo-kernel manifest and changelog highlights,
+   rewrites the static copy counts (meta descriptions, OG alt text, no-JS
+   fallbacks, Korean dictionary), regenerates the OG card image from the same
+   evidence, rebuilds Korean content, and runs `check`, Playwright smoke/axe,
+   and LHCI. It commits synchronized generated data, creates the matching tag,
+   and deploys an immutable Pages artifact.
+6. The simulator workflow polls that exact landing workflow. Only a successful
+   conclusion publishes the draft GitHub Release. npm and JSR tag workflows use
+   the same tag; Zenodo publishes in the release job when its token is present.
 
-| Surface | Production URL | Preview URL | Rollback |
-| --- | --- | --- | --- |
-| Simulation app | `https://elliotjung.github.io/pendulum-lab/` | GitHub Actions Pages preview or local `npm run preview` | revert the Pages deployment or redeploy the previous tag |
-| Landing page | `https://elliotjung.github.io/pendulum-landing/` | landing CI artifact / local static server | redeploy the previous landing commit |
+This is fail-closed: a missing cross-repository credential, a mismatched evidence
+SHA, a failed landing gate, or a tag collision leaves the simulator release as a
+draft and never reports the pair as coordinated.
 
-## Release Order
+## One-time repository settings
 
-1. Run simulation checks: `npm run verify`.
-2. Build standalone app: `npm run build:standalone`.
-3. Sync evidence into the landing repo: `npm run evidence:summary`.
-4. In the landing repo, run `npm run check` and `npm run smoke`.
-5. Review landing claims against `assets/evidence-summary.json`.
-6. Tag/release the simulation repo, then deploy the landing page.
+| Repository | Setting | Required access |
+| --- | --- | --- |
+| `pendulum-lab` | `LANDING_DISPATCH_TOKEN` Actions secret | Fine-grained token or GitHub App token with landing **Actions: read** and **Contents: read/write** (repository dispatch) |
+| `pendulum-lab` | npm trusted publisher | Package `@elliotjung/pendulum-lab`, workflow `publish-npm.yml`, environment `npm` |
+| `pendulum-lab` | JSR linked repository | Package `@elliotjung/pendulum-lab` linked to this GitHub repository for OIDC |
+| `pendulum-lab` | `ZENODO_TOKEN` Actions secret | Optional until DOI publication; deposition create/upload/publish |
+| `pendulum-landing` | Pages source | GitHub Actions; environment protection must permit `deploy-pages` |
 
-## Shared Policy
+Rotate the cross-repository token after use outside Actions. Never place it in a
+workflow input, issue, artifact, or report.
 
-| Topic | Shared rule |
-| --- | --- |
-| Quality modes | Use the same names: Performance, Balanced, Cinematic. |
-| Slow devices | Landing should fall back to static/low-power hero; app should start no higher than Balanced and let auto-quality downgrade. |
-| Evidence | Landing claims must come from `assets/evidence-summary.json` or link to the simulation reports. |
-| Security | Prefer self-hosted assets, pinned dependencies, CSP with zero external runtime resources, Dependabot, and license manifests. |
-| Hardware claims | Do not claim NVIDIA/AMD WebGPU coverage until physical-runner artifacts exist. |
+## Release command and rollback
+
+After the default branch is green and versions in `package.json`, `jsr.json`,
+and `CITATION.cff` agree (the release workflow enforces exactly those three
+against the tag; `.zenodo.json` carries no version — the Zenodo script injects
+it at publication):
+
+```bash
+git tag -a v10.36.0 -m "Pendulum Lab v10.36.0"
+git push origin v10.36.0
+```
+
+If the chain fails, inspect the simulator release run and the dispatched landing
+run. Fix forward and move to a new version tag; do not retarget a published tag.
+While the release is still a draft, it can be deleted and the local/remote tag
+removed only if no package, DOI, or public release has been published. Pages can
+be rolled back by redeploying the previous landing tag's artifact.
+
+## Shared claims policy
+
+- Quality mode names remain Performance, Balanced, and Cinematic.
+- Landing evidence must originate in `reports/evidence-summary.json` and retain
+  its source commit and expiry; copied marketing numbers are not authoritative.
+- NVIDIA/AMD claims require physical-runner artifacts. Missing adapters stay
+  visibly missing.
+- Hosted security claims apply to the hosted CSP/header path, not to the relaxed
+  double-click standalone artifact.

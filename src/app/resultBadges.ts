@@ -49,7 +49,12 @@ export interface TrustInspection {
   note?: string;
 }
 
-export interface NormalizedTrustInspection extends Required<Pick<TrustInspection, 'title' | 'source' | 'uncertainty' | 'externalValidation' | 'reproduce' | 'caveat' | 'artifact' | 'hash' | 'note'>> {
+export interface NormalizedTrustInspection extends Required<
+  Pick<
+    TrustInspection,
+    'title' | 'source' | 'uncertainty' | 'externalValidation' | 'reproduce' | 'caveat' | 'artifact' | 'hash' | 'note'
+  >
+> {
   level: ResultBadgeLevel;
   badgeLabel: string;
   badgeDescription: string;
@@ -70,7 +75,8 @@ export const RESULT_BADGES: Record<ResultBadgeLevel, ResultBadge> = {
   validated: {
     level: 'validated',
     label: 'VALIDATED',
-    description: 'Checked against an independent reference (analytic limit, cross-integrator, symbolic derivation, or dt-halving).'
+    description:
+      'Checked against an independent reference (analytic limit, cross-integrator, symbolic derivation, or dt-halving).'
   },
   'publication-ready': {
     level: 'publication-ready',
@@ -88,7 +94,10 @@ export const RESULT_BADGES: Record<ResultBadgeLevel, ResultBadge> = {
  * Classify a finite-time chaos estimate: it stays `finite-time-estimate`
  * unless a validity problem demotes it to `caveat`.
  */
-export function classifyEstimate(options: { uncertainty?: number | null; validityProblem?: string | null }): ResultBadgeLevel {
+export function classifyEstimate(options: {
+  uncertainty?: number | null;
+  validityProblem?: string | null;
+}): ResultBadgeLevel {
   if (options.validityProblem) return 'caveat';
   return 'finite-time-estimate';
 }
@@ -142,7 +151,11 @@ function stringifyField(value: TrustFieldValue): string {
   return typeof value === 'number' ? (Number.isFinite(value) ? String(value) : 'non-finite') : String(value);
 }
 
-export function normalizeTrustInspection(level: ResultBadgeLevel, note?: string, inspection: TrustInspection = {}): NormalizedTrustInspection {
+export function normalizeTrustInspection(
+  level: ResultBadgeLevel,
+  note?: string,
+  inspection: TrustInspection = {}
+): NormalizedTrustInspection {
   const meta = RESULT_BADGES[level];
   const parameters: Record<string, string> = {};
   for (const [key, value] of Object.entries(inspection.parameters ?? {})) {
@@ -156,8 +169,16 @@ export function normalizeTrustInspection(level: ResultBadgeLevel, note?: string,
     title: inspection.title ?? meta.label,
     source: inspection.source ?? 'Pendulum Lab UI',
     parameters,
-    uncertainty: inspection.uncertainty ?? (level === 'finite-time-estimate' ? 'Finite-horizon estimate; quote with its displayed settings and uncertainty.' : 'No additional uncertainty field supplied.'),
-    externalValidation: inspection.externalValidation ?? (level === 'validated' || level === 'publication-ready' ? meta.description : 'No independent validation attached to this badge.'),
+    uncertainty:
+      inspection.uncertainty ??
+      (level === 'finite-time-estimate'
+        ? 'Finite-horizon estimate; quote with its displayed settings and uncertainty.'
+        : 'No additional uncertainty field supplied.'),
+    externalValidation:
+      inspection.externalValidation ??
+      (level === 'validated' || level === 'publication-ready'
+        ? meta.description
+        : 'No independent validation attached to this badge.'),
     reproduce: inspection.reproduce ?? 'Use the active tab/export or the nearest README command for this result.',
     caveat: inspection.caveat ?? (level === 'caveat' ? meta.description : 'No extra caveat supplied.'),
     artifact: inspection.artifact ?? '',
@@ -283,7 +304,12 @@ export function badgeElement(level: ResultBadgeLevel, note?: string, inspection?
  * Attach (or update) the badge in front of a status element. Idempotent per
  * element: re-attaching replaces the previous badge.
  */
-export function attachBadge(statusElementId: string, level: ResultBadgeLevel, note?: string, inspection?: TrustInspection): void {
+export function attachBadge(
+  statusElementId: string,
+  level: ResultBadgeLevel,
+  note?: string,
+  inspection?: TrustInspection
+): void {
   if (typeof document === 'undefined') return;
   const target = document.getElementById(statusElementId);
   if (!target) return;

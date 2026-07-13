@@ -44,7 +44,7 @@ export function commutativityDefect(
   const lie = (i: number, k: number, j: number): number => {
     let s = 0;
     for (let l = 0; l < dim; l += 1) {
-      s += (B[l * noiseDimension + j] ?? 0) * (dB[((i * noiseDimension + k) * dim) + l] ?? 0);
+      s += (B[l * noiseDimension + j] ?? 0) * (dB[(i * noiseDimension + k) * dim + l] ?? 0);
     }
     return s;
   };

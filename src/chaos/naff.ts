@@ -94,7 +94,13 @@ function goldenMaximize(fn: (x: number) => number, a0: number, b0: number, itera
  * its `terms` strongest fundamental frequencies, strongest first. For a real
  * signal pass `im` all zeros (the ± frequency pair will both appear).
  */
-export function naffDecompose(re: readonly number[], im: readonly number[], dt: number, terms: number, options: NaffOptions = {}): NaffComponent[] {
+export function naffDecompose(
+  re: readonly number[],
+  im: readonly number[],
+  dt: number,
+  terms: number,
+  options: NaffOptions = {}
+): NaffComponent[] {
   const n = re.length;
   if (n < 4) throw new Error('naffDecompose: need at least 4 samples.');
   if (im.length !== n) throw new Error('naffDecompose: re and im must have equal length.');
@@ -148,7 +154,12 @@ export function naffDecompose(re: readonly number[], im: readonly number[], dt: 
       const p = projection(fChiRe, fChiIm, dt, omega);
       return p.re * p.re + p.im * p.im;
     };
-    const omega = goldenMaximize(objective, omegaCoarse - 1.5 * binWidth, omegaCoarse + 1.5 * binWidth, refineIterations);
+    const omega = goldenMaximize(
+      objective,
+      omegaCoarse - 1.5 * binWidth,
+      omegaCoarse + 1.5 * binWidth,
+      refineIterations
+    );
 
     // Amplitude a = φ(ω)/W.
     const proj = projection(fChiRe, fChiIm, dt, omega);
@@ -172,6 +183,11 @@ export function naffDecompose(re: readonly number[], im: readonly number[], dt: 
 }
 
 /** The single dominant fundamental frequency of a complex signal. */
-export function naffFundamentalFrequency(re: readonly number[], im: readonly number[], dt: number, options?: NaffOptions): number {
+export function naffFundamentalFrequency(
+  re: readonly number[],
+  im: readonly number[],
+  dt: number,
+  options?: NaffOptions
+): number {
   return naffDecompose(re, im, dt, 1, options)[0]!.frequency;
 }

@@ -1,6 +1,6 @@
 import type { Derivative, Jacobian, StateVector } from '../physics/types';
 import { rk4Step } from '../physics/integrators';
-import { makeVariationalRhs, mulberry32, seedTangentFrame } from './variational';
+import { makeVariationalRhs, seedTangentFrame } from './variational';
 
 /**
  * Covariant Lyapunov vectors (CLVs) via the Ginelli algorithm
@@ -128,7 +128,13 @@ function normalizeColumns(M: Float64Array, k: number): void {
 }
 
 /** Minimum angle (radians) between any expanding CLV and any contracting CLV at one time. */
-function minExpandingContractingAngle(vectors: Float64Array, n: number, k: number, exponents: readonly number[], tol: number): number {
+function minExpandingContractingAngle(
+  vectors: Float64Array,
+  n: number,
+  k: number,
+  exponents: readonly number[],
+  tol: number
+): number {
   let minAngle = Math.PI / 2;
   let found = false;
   for (let i = 0; i < k; i += 1) {
@@ -244,7 +250,9 @@ export function covariantLyapunovVectors(
     .map((v) => minExpandingContractingAngle(v, n, k, exponents, zeroTol))
     .filter((a) => Number.isFinite(a));
   const meanHyperbolicityAngle =
-    hyperbolicityAngles.length > 0 ? hyperbolicityAngles.reduce((a, b) => a + b, 0) / hyperbolicityAngles.length : Number.NaN;
+    hyperbolicityAngles.length > 0
+      ? hyperbolicityAngles.reduce((a, b) => a + b, 0) / hyperbolicityAngles.length
+      : Number.NaN;
   const minHyperbolicityAngle = hyperbolicityAngles.length > 0 ? Math.min(...hyperbolicityAngles) : Number.NaN;
 
   return {

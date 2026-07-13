@@ -69,7 +69,10 @@ describe('expansion variational/QR Lyapunov spectrum', () => {
   test('driven and chain use the exact analytic Jacobian, agreeing with central differences', () => {
     // Driven pendulum (closed-form Jacobian) — agreement to high precision.
     const drivenExact = expansionLyapunovProfile({ model: 'driven', horizon: 16, dt: 0.005 });
-    const drivenFd = expansionLyapunovProfile({ model: 'driven', horizon: 16, dt: 0.005 }, { forceNumericalJacobian: true });
+    const drivenFd = expansionLyapunovProfile(
+      { model: 'driven', horizon: 16, dt: 0.005 },
+      { forceNumericalJacobian: true }
+    );
     expect(drivenExact.settings.jacobian).toBe('exact');
     expect(drivenFd.settings.jacobian).toBe('central-difference');
     drivenExact.spectrum.forEach((value, i) => {
@@ -78,7 +81,10 @@ describe('expansion variational/QR Lyapunov spectrum', () => {
 
     // Planar chain (autodiff Jacobian) — chaotic, so allow a looser but tight band.
     const chainExact = expansionLyapunovProfile({ model: 'chain', horizon: 14, dt: 0.003 });
-    const chainFd = expansionLyapunovProfile({ model: 'chain', horizon: 14, dt: 0.003 }, { forceNumericalJacobian: true });
+    const chainFd = expansionLyapunovProfile(
+      { model: 'chain', horizon: 14, dt: 0.003 },
+      { forceNumericalJacobian: true }
+    );
     expect(chainExact.settings.jacobian).toBe('exact');
     expect(Math.abs(chainExact.leadingExponent - chainFd.leadingExponent)).toBeLessThan(0.05);
     expect(Math.abs(chainExact.sum - chainFd.sum)).toBeLessThan(0.05);

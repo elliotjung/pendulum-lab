@@ -3,11 +3,11 @@ name: Publish npm package
 on:
   workflow_dispatch:
     inputs:
-      dry-run:
+      dry_run:
         description: Run npm publish without uploading
         type: boolean
         default: true
-      expected-version:
+      expected_version:
         description: Exact package version expected at publish time
         type: string
         required: true
@@ -26,19 +26,19 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-          package-manager-cache: false
       - name: Pin OIDC-capable npm
         run: npm install --global npm@11.5.1
       - name: Verify release coordinate
         shell: bash
         run: |
           actual="$(node -p "require('./package.json').version")"
-          test "$actual" = "${{ inputs.expected-version }}" || {
-            echo "Expected ${{ inputs.expected-version }}, found $actual" >&2
+          expected="${{ inputs.expected_version }}"
+          test "$actual" = "$expected" || {
+            echo "Expected $expected, found $actual" >&2
             exit 1
           }
-          npm view "pendulum-lab-v10@$actual" version >/dev/null 2>&1 && {
-            echo "pendulum-lab-v10@$actual is already published" >&2
+          npm view "@elliotjung/pendulum-lab@$actual" version >/dev/null 2>&1 && {
+            echo "@elliotjung/pendulum-lab@$actual is already published" >&2
             exit 1
           }
           true
@@ -46,10 +46,10 @@ jobs:
       - run: npm run verify
       - run: npm run build:lib
       - name: Publish dry-run
-        if: ${{ inputs.dry-run }}
+        if: ${{ inputs.dry_run }}
         run: npm publish --access public --dry-run
       - name: Publish with npm Trusted Publishing
-        if: ${{ !inputs.dry-run }}
+        if: ${{ !inputs.dry_run }}
         run: npm publish --access public
         # npm >=11.5.1 detects the GitHub OIDC token. Configure the package's
         # trusted publisher for this exact workflow filename and `npm`

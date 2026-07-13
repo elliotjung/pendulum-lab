@@ -21,7 +21,9 @@ test('multi-variable design generates, runs with adaptive refinement, and export
   await expect(page.locator('#rwDesignSummary')).toContainText('theta1, damping');
 
   await page.locator('#rwRunDesign').click();
-  await expect(page.locator('#rwDesignSummary')).toContainText(/Status: (complete|budget-stopped)/, { timeout: 100_000 });
+  await expect(page.locator('#rwDesignSummary')).toContainText(/Status: (complete|budget-stopped)/, {
+    timeout: 100_000
+  });
   await expect(page.locator('#rwDesignResults table')).toBeVisible();
   // Lambda column filled for at least the first row.
   await expect(page.locator('#rwDesignResults td').nth(2)).not.toHaveText('-');

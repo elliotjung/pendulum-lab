@@ -1,0 +1,54 @@
+name: Benchmark history
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark-history
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run benchmark
+      - name: Update the durable benchmark-history branch
+        shell: bash
+        run: |
+          history_dir="$RUNNER_TEMP/benchmark-history"
+          if git ls-remote --exit-code --heads origin benchmark-history >/dev/null 2>&1; then
+            git worktree add "$history_dir" origin/benchmark-history
+          else
+            git worktree add --detach "$history_dir"
+            git -C "$history_dir" switch --orphan benchmark-history
+            git -C "$history_dir" rm -rf --ignore-unmatch .
+          fi
+          npx tsx scripts/update-benchmark-history.ts --out-dir "$history_dir"
+          git -C "$history_dir" config user.name "github-actions[bot]"
+          git -C "$history_dir" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$history_dir" add history.json index.html
+          if git -C "$history_dir" diff --cached --quiet; then
+            echo "benchmark commit already recorded"
+          else
+            git -C "$history_dir" commit -m "benchmark: record ${GITHUB_SHA::12}"
+            git -C "$history_dir" push origin HEAD:benchmark-history
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-history-update
+          path: reports/benchmark-report.*

@@ -2,7 +2,12 @@ import type { EnergyBreakdown, PendulumParameters } from '../types/domain';
 import type { StateVector } from './types';
 import { MASS_MATRIX_SINGULARITY_THRESHOLD as DET_THRESHOLD } from './constants';
 
-export function rhsDouble(state: ArrayLike<number>, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector {
+export function rhsDouble(
+  state: ArrayLike<number>,
+  parameters: PendulumParameters,
+  gamma: number,
+  out: StateVector
+): StateVector {
   const t1 = Number(state[0] ?? 0);
   const t2 = Number(state[1] ?? 0);
   const w1 = Number(state[2] ?? 0);
@@ -65,8 +70,14 @@ export function jacobianDouble(
   const det = m11 * m22 - m12 * m12;
 
   // Row 0,1: d(theta_i)/dx = e_{omega_i}.
-  jac[0] = 0; jac[1] = 0; jac[2] = 1; jac[3] = 0;
-  jac[4] = 0; jac[5] = 0; jac[6] = 0; jac[7] = 1;
+  jac[0] = 0;
+  jac[1] = 0;
+  jac[2] = 1;
+  jac[3] = 0;
+  jac[4] = 0;
+  jac[5] = 0;
+  jac[6] = 0;
+  jac[7] = 1;
 
   if (Math.abs(det) < DET_THRESHOLD) {
     for (let i = 8; i < 16; i += 1) jac[i] = 0;
@@ -85,19 +96,9 @@ export function jacobianDouble(
   // det = m11 m22 - m12^2: ddet = -2 m12 dm12.
   const ddet = [-2 * m12 * dm12[0]!, -2 * m12 * dm12[1]!, 0, 0];
   // f1 = -B sinD w2^2 - (m1+m2) g l1 sin t1 - gamma w1.
-  const df1 = [
-    -B * cosD * w2 * w2 - (m1 + m2) * g * l1 * Math.cos(t1),
-    B * cosD * w2 * w2,
-    -gamma,
-    -2 * B * sinD * w2
-  ];
+  const df1 = [-B * cosD * w2 * w2 - (m1 + m2) * g * l1 * Math.cos(t1), B * cosD * w2 * w2, -gamma, -2 * B * sinD * w2];
   // f2 = B sinD w1^2 - m2 g l2 sin t2 - gamma w2.
-  const df2 = [
-    B * cosD * w1 * w1,
-    -B * cosD * w1 * w1 - m2 * g * l2 * Math.cos(t2),
-    2 * B * sinD * w1,
-    -gamma
-  ];
+  const df2 = [B * cosD * w1 * w1, -B * cosD * w1 * w1 - m2 * g * l2 * Math.cos(t2), 2 * B * sinD * w1, -gamma];
 
   for (let j = 0; j < 4; j += 1) {
     const dN2 = m22 * df1[j]! - (dm12[j]! * f2 + m12 * df2[j]!);

@@ -36,7 +36,7 @@ export function kramersRateOverdamped(spec: OverdampedRateSpec): number {
   const { wellFrequency, barrierFrequency, barrierHeight, diffusion } = spec;
   if (!(diffusion > 0)) throw new Error('kramersRateOverdamped: diffusion D must be positive');
   if (!(barrierHeight > 0)) throw new Error('kramersRateOverdamped: barrierHeight must be positive');
-  return (wellFrequency * barrierFrequency) / (2 * Math.PI) * Math.exp(-barrierHeight / diffusion);
+  return ((wellFrequency * barrierFrequency) / (2 * Math.PI)) * Math.exp(-barrierHeight / diffusion);
 }
 
 /** Mean first-passage (escape) time, the reciprocal of the Kramers rate. */
@@ -49,7 +49,10 @@ export function kramersMeanFirstPassage(spec: OverdampedRateSpec): number {
  * reading ω₀ = √(-2α), ω_b = √(-α), ΔU = α²/(4β) from {@link duffingDoubleWell}.
  * Connects the deterministic Duffing potential to its noise-activated hopping.
  */
-export function duffingKramersRate(parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>, diffusion: number): number {
+export function duffingKramersRate(
+  parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>,
+  diffusion: number
+): number {
   const well = duffingDoubleWell(parameters);
   return kramersRateOverdamped({
     wellFrequency: well.wellFrequency,

@@ -90,10 +90,15 @@ function tautToCartesian(state: ArrayLike<number>, params: DoubleStringParams): 
   return { x1, y1, x2, y2, vx1, vy1, vx2, vy2 };
 }
 
-export function doubleStringEnergy(snapshot: Pick<DoubleStringSnapshot, 'x1' | 'y1' | 'x2' | 'y2' | 'vx1' | 'vy1' | 'vx2' | 'vy2'>, params: DoubleStringParams): number {
-  return 0.5 * params.m1 * (snapshot.vx1 * snapshot.vx1 + snapshot.vy1 * snapshot.vy1) +
+export function doubleStringEnergy(
+  snapshot: Pick<DoubleStringSnapshot, 'x1' | 'y1' | 'x2' | 'y2' | 'vx1' | 'vy1' | 'vx2' | 'vy2'>,
+  params: DoubleStringParams
+): number {
+  return (
+    0.5 * params.m1 * (snapshot.vx1 * snapshot.vx1 + snapshot.vy1 * snapshot.vy1) +
     0.5 * params.m2 * (snapshot.vx2 * snapshot.vx2 + snapshot.vy2 * snapshot.vy2) +
-    params.g * (params.m1 * snapshot.y1 + params.m2 * snapshot.y2);
+    params.g * (params.m1 * snapshot.y1 + params.m2 * snapshot.y2)
+  );
 }
 
 /** Total energy of a taut-phase [θ₁, θ₂, ω₁, ω₂] state (pivot at the origin, y up). */
@@ -146,9 +151,10 @@ export function doubleStringTautFraction(
     captureEvents,
     energyLost,
     horizon,
-    caveat: tautFraction > 0.999
-      ? 'Strings stayed taut: rigid-equivalent (smooth) analyses are valid over this horizon.'
-      : `Strings went slack for ${((1 - tautFraction) * 100).toFixed(1)}% of the run; smooth-flow diagnostics only describe the taut phase.`
+    caveat:
+      tautFraction > 0.999
+        ? 'Strings stayed taut: rigid-equivalent (smooth) analyses are valid over this horizon.'
+        : `Strings went slack for ${((1 - tautFraction) * 100).toFixed(1)}% of the run; smooth-flow diagnostics only describe the taut phase.`
   };
 }
 
@@ -156,12 +162,20 @@ export function doubleStringTautFraction(
 // hot path (every taut substep), so the derivative buffer is module-reused.
 const tensionDerivScratch = new Float64Array(4);
 
-export function doubleStringTensions(state: ArrayLike<number>, params: DoubleStringParams): { tension1: number; tension2: number } {
+export function doubleStringTensions(
+  state: ArrayLike<number>,
+  params: DoubleStringParams
+): { tension1: number; tension2: number } {
   const t1 = Number(state[0] ?? 0);
   const t2 = Number(state[1] ?? 0);
   const w1 = Number(state[2] ?? 0);
   const w2 = Number(state[3] ?? 0);
-  const deriv = rhsDouble(state, { m1: params.m1, m2: params.m2, l1: params.l1, l2: params.l2, g: params.g }, params.damping, tensionDerivScratch);
+  const deriv = rhsDouble(
+    state,
+    { m1: params.m1, m2: params.m2, l1: params.l1, l2: params.l2, g: params.g },
+    params.damping,
+    tensionDerivScratch
+  );
   const a1 = Number(deriv[2] ?? 0);
   const a2 = Number(deriv[3] ?? 0);
   const ax1 = params.l1 * (a1 * Math.cos(t1) - w1 * w1 * Math.sin(t1));
@@ -187,7 +201,14 @@ export class DoubleStringPendulum {
   private time = 0;
   readonly events: DoubleStringEvent[] = [];
 
-  constructor(readonly params: DoubleStringParams, theta1: number, theta2: number, omega1 = 0, omega2 = 0, readonly maxSubstep = 0.002) {
+  constructor(
+    readonly params: DoubleStringParams,
+    theta1: number,
+    theta2: number,
+    omega1 = 0,
+    omega2 = 0,
+    readonly maxSubstep = 0.002
+  ) {
     validateParams(params);
     this.state = new Float64Array([theta1, theta2, omega1, omega2]);
     this.scratch = [0, 1, 2, 3, 4].map(() => new Float64Array(4));
@@ -217,7 +238,13 @@ export class DoubleStringPendulum {
 
   /** Pure taut-phase RK4 advance of `from` by h, written into `out`. */
   private advanceTautInto(from: ArrayLike<number>, h: number, out: Float64Array): void {
-    const [k1, k2, k3, k4, tmp] = this.scratch as [Float64Array, Float64Array, Float64Array, Float64Array, Float64Array];
+    const [k1, k2, k3, k4, tmp] = this.scratch as [
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array
+    ];
     const rhs = (state: Float64Array, o: Float64Array): void => {
       rhsDouble(state, this.rigidParams, this.params.damping, o);
     };
@@ -252,11 +279,13 @@ export class DoubleStringPendulum {
       return;
     }
     const probe = new Float64Array(4);
-    const tensionAt = (which: 1 | 2) => (tau: number): number => {
-      this.advanceTautInto(start, tau, probe);
-      const tensions = doubleStringTensions(probe, this.params);
-      return which === 1 ? tensions.tension1 : tensions.tension2;
-    };
+    const tensionAt =
+      (which: 1 | 2) =>
+      (tau: number): number => {
+        this.advanceTautInto(start, tau, probe);
+        const tensions = doubleStringTensions(probe, this.params);
+        return which === 1 ? tensions.tension1 : tensions.tension2;
+      };
     let link: 1 | 2 = refinable1 ? 1 : 2;
     let crossing: RefinedCrossing = refinable1
       ? locateTransition(tensionAt(1), h, before.tension1, after.tension1)
@@ -301,7 +330,8 @@ export class DoubleStringPendulum {
 
   /** Pure single-string RK4 advance of (θ₁, ω₁) by h. */
   private advanceInnerSingle(theta: number, omega: number, h: number): { theta: number; omega: number } {
-    const accel = (t: number, w: number): number => -(this.params.g / this.params.l1) * Math.sin(t) - this.params.damping * w;
+    const accel = (t: number, w: number): number =>
+      -(this.params.g / this.params.l1) * Math.sin(t) - this.params.damping * w;
     const k1t = omega;
     const k1w = accel(theta, omega);
     const k2t = omega + 0.5 * h * k1w;
@@ -330,11 +360,15 @@ export class DoubleStringPendulum {
     this.state[0] = next.theta;
     this.state[2] = next.omega;
     this.syncInnerCart();
-    if (this.params.g * Math.cos(this.state[0] ?? 0) + this.params.l1 * (this.state[2] ?? 0) ** 2 < 0) this.releaseFull(this.time + h);
+    if (this.params.g * Math.cos(this.state[0] ?? 0) + this.params.l1 * (this.state[2] ?? 0) ** 2 < 0)
+      this.releaseFull(this.time + h);
   }
 
   /** Pure constant-acceleration projectile advance by h (matches stepProjectile*). */
-  private advanceProjectile(p: { x: number; y: number; vx: number; vy: number }, h: number): { x: number; y: number; vx: number; vy: number } {
+  private advanceProjectile(
+    p: { x: number; y: number; vx: number; vy: number },
+    h: number
+  ): { x: number; y: number; vx: number; vy: number } {
     const ax = -this.params.damping * p.vx;
     const ay = -this.params.g - this.params.damping * p.vy;
     return {
@@ -400,10 +434,23 @@ export class DoubleStringPendulum {
     this.cart.vy2 -= radial * uy;
     this.state[0] = Math.atan2(this.cart.x1, -this.cart.y1);
     this.state[1] = Math.atan2(this.cart.x2 - this.cart.x1, -(this.cart.y2 - this.cart.y1));
-    this.state[2] = dot(this.cart.vx1, this.cart.vy1, Math.cos(this.state[0] ?? 0), Math.sin(this.state[0] ?? 0)) / this.params.l1;
-    this.state[3] = dot(this.cart.vx2 - this.cart.vx1, this.cart.vy2 - this.cart.vy1, Math.cos(this.state[1] ?? 0), Math.sin(this.state[1] ?? 0)) / this.params.l2;
+    this.state[2] =
+      dot(this.cart.vx1, this.cart.vy1, Math.cos(this.state[0] ?? 0), Math.sin(this.state[0] ?? 0)) / this.params.l1;
+    this.state[3] =
+      dot(
+        this.cart.vx2 - this.cart.vx1,
+        this.cart.vy2 - this.cart.vy1,
+        Math.cos(this.state[1] ?? 0),
+        Math.sin(this.state[1] ?? 0)
+      ) / this.params.l2;
     this.phase = 'taut';
-    this.events.push({ type: 'capture', link: 'outer', time: atTime, energyLoss: Math.max(0, before - this.energy()), residual });
+    this.events.push({
+      type: 'capture',
+      link: 'outer',
+      time: atTime,
+      energyLoss: Math.max(0, before - this.energy()),
+      residual
+    });
     this.checkSlack(atTime);
   }
 
@@ -493,9 +540,16 @@ export class DoubleStringPendulum {
     this.cart.vx1 -= radialNow * ux;
     this.cart.vy1 -= radialNow * uy;
     this.state[0] = Math.atan2(this.cart.x1, -this.cart.y1);
-    this.state[2] = dot(this.cart.vx1, this.cart.vy1, Math.cos(this.state[0] ?? 0), Math.sin(this.state[0] ?? 0)) / this.params.l1;
+    this.state[2] =
+      dot(this.cart.vx1, this.cart.vy1, Math.cos(this.state[0] ?? 0), Math.sin(this.state[0] ?? 0)) / this.params.l1;
     this.phase = 'outer-slack';
-    this.events.push({ type: 'capture', link: 'inner', time: atTime, energyLoss: Math.max(0, before - this.energy()), residual });
+    this.events.push({
+      type: 'capture',
+      link: 'inner',
+      time: atTime,
+      energyLoss: Math.max(0, before - this.energy()),
+      residual
+    });
     // The outer link may already be at full extension at the same instant:
     // mirror the legacy immediate chained capture before continuing.
     const dx = this.cart.x2 - this.cart.x1;
@@ -521,13 +575,19 @@ export class DoubleStringPendulum {
     const theta1 = Math.atan2(this.cart.x1, -this.cart.y1);
     const theta2 = Math.atan2(this.cart.x2 - this.cart.x1, -(this.cart.y2 - this.cart.y1));
     const omega1 = dot(this.cart.vx1, this.cart.vy1, Math.cos(theta1), Math.sin(theta1)) / this.params.l1;
-    const omega2 = dot(this.cart.vx2 - this.cart.vx1, this.cart.vy2 - this.cart.vy1, Math.cos(theta2), Math.sin(theta2)) / this.params.l2;
-    const tensions = this.phase === 'taut'
-      ? doubleStringTensions(this.state, this.params)
-      : {
-          tension1: this.phase === 'outer-slack' ? this.params.m1 * Math.max(0, this.params.g * Math.cos(theta1) + this.params.l1 * omega1 * omega1) : 0,
-          tension2: 0
-        };
+    const omega2 =
+      dot(this.cart.vx2 - this.cart.vx1, this.cart.vy2 - this.cart.vy1, Math.cos(theta2), Math.sin(theta2)) /
+      this.params.l2;
+    const tensions =
+      this.phase === 'taut'
+        ? doubleStringTensions(this.state, this.params)
+        : {
+            tension1:
+              this.phase === 'outer-slack'
+                ? this.params.m1 * Math.max(0, this.params.g * Math.cos(theta1) + this.params.l1 * omega1 * omega1)
+                : 0,
+            tension2: 0
+          };
     return {
       phase: this.phase,
       time: this.time,
@@ -541,9 +601,10 @@ export class DoubleStringPendulum {
       energy: this.energy(),
       constraintError1: Math.abs(Math.hypot(this.cart.x1, this.cart.y1) - this.params.l1),
       constraintError2: Math.abs(Math.hypot(this.cart.x2 - this.cart.x1, this.cart.y2 - this.cart.y1) - this.params.l2),
-      caveat: this.phase === 'taut'
-        ? 'Both strings taut: dynamics match the rigid double pendulum with non-negative tension gates.'
-        : 'Hybrid string mode: slack flight and inelastic recapture are finite-time numerical events; use small dt near capture.'
+      caveat:
+        this.phase === 'taut'
+          ? 'Both strings taut: dynamics match the rigid double pendulum with non-negative tension gates.'
+          : 'Hybrid string mode: slack flight and inelastic recapture are finite-time numerical events; use small dt near capture.'
     };
   }
 }

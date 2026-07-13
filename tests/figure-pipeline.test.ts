@@ -42,12 +42,17 @@ describe('publication figure pipeline', () => {
     expect(a).toBe(b);
     expect(figureFingerprint(a)).toBe(figureFingerprint(b));
     // Any visual change must move the fingerprint.
-    const moved = renderStudyFigureSvg({ ...spec, points: [...spec.points.slice(0, 2), { x: 2.5, y: 1.5, err: 0.08 }] });
+    const moved = renderStudyFigureSvg({
+      ...spec,
+      points: [...spec.points.slice(0, 2), { x: 2.5, y: 1.5, err: 0.08 }]
+    });
     expect(figureFingerprint(moved)).not.toBe(figureFingerprint(a));
   });
 
   it('applies all four themes with distinct palettes', () => {
-    const rendered = (['light', 'dark', 'print', 'colorblind'] as const).map((theme) => renderStudyFigureSvg({ ...spec, theme }));
+    const rendered = (['light', 'dark', 'print', 'colorblind'] as const).map((theme) =>
+      renderStudyFigureSvg({ ...spec, theme })
+    );
     expect(new Set(rendered.map(figureFingerprint)).size).toBe(4);
     expect(rendered[1]).toContain(FIGURE_THEMES.dark.background);
     expect(rendered[3]).toContain(FIGURE_THEMES.colorblind.accent); // Okabe–Ito blue

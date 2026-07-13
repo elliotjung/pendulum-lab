@@ -49,8 +49,14 @@ function probeIndices(n: number): Array<[number, number]> {
   const hi = n - 1;
   const mid = Math.floor(n / 2);
   return [
-    [lo, lo], [hi, lo], [lo, hi], [hi, hi],
-    [mid, lo], [lo, mid], [hi, mid], [mid, hi],
+    [lo, lo],
+    [hi, lo],
+    [lo, hi],
+    [hi, hi],
+    [mid, lo],
+    [lo, mid],
+    [hi, mid],
+    [mid, hi],
     [mid, mid]
   ];
 }
@@ -145,7 +151,13 @@ export interface FlipBasinFieldResult extends GpuFieldMeta {
 }
 
 /** CPU flip label of a single cell (the validation/reference primitive). */
-function flipLabelCpu(params: PendulumParameters, theta1: number, theta2: number, dt: number, maxSteps: number): number {
+function flipLabelCpu(
+  params: PendulumParameters,
+  theta1: number,
+  theta2: number,
+  dt: number,
+  maxSteps: number
+): number {
   const state = new Float64Array([theta1, theta2, 0, 0]);
   const next = new Float64Array(4);
   const rhs = (s: Float64Array, o: Float64Array): void => {
@@ -168,7 +180,10 @@ function flipLabelCpu(params: PendulumParameters, theta1: number, theta2: number
  * available. Semantics match `doublePendulumFlipBasin` exactly; the CPU
  * fallback simply calls it.
  */
-export async function flipBasinField(params: PendulumParameters, options: FlipBasinFieldOptions = {}): Promise<FlipBasinFieldResult> {
+export async function flipBasinField(
+  params: PendulumParameters,
+  options: FlipBasinFieldOptions = {}
+): Promise<FlipBasinFieldResult> {
   const n = options.n ?? 60;
   const [lo, hi] = options.range ?? [-3, 3];
   const dt = options.dt ?? 0.01;
@@ -176,10 +191,24 @@ export async function flipBasinField(params: PendulumParameters, options: FlipBa
   const maxSteps = Math.round(maxTime / dt);
   const started = now();
 
-  const cpuFull = (): Int32Array => new Int32Array(doublePendulumFlipBasin(params, { n, range: [lo, hi], dt, maxTime }).labels);
+  const cpuFull = (): Int32Array =>
+    new Int32Array(doublePendulumFlipBasin(params, { n, range: [lo, hi], dt, maxTime }).labels);
 
   if (!options.forceCpu) {
-    const uniform = new Float32Array([params.m1, params.m2, params.l1, params.l2, params.g, 0, dt, maxSteps, lo, hi - lo, n, 0]);
+    const uniform = new Float32Array([
+      params.m1,
+      params.m2,
+      params.l1,
+      params.l2,
+      params.g,
+      0,
+      dt,
+      maxSteps,
+      lo,
+      hi - lo,
+      n,
+      0
+    ]);
     const io = new Float32Array(n * n * 2);
     const gpuOut = await runComputeKernel(WGSL_BASIN, uniform, io, n * n);
     if (gpuOut) {
@@ -197,7 +226,12 @@ export async function flipBasinField(params: PendulumParameters, options: FlipBa
       }
       const fraction = disagreements / probes.length;
       const tolerance = 0.34;
-      const validation: GpuFieldValidation = { cells: probes.length, maxAbsDiff: fraction, tolerance, passed: fraction <= tolerance };
+      const validation: GpuFieldValidation = {
+        cells: probes.length,
+        maxAbsDiff: fraction,
+        tolerance,
+        passed: fraction <= tolerance
+      };
       if (validation.passed) {
         return {
           labels,
@@ -347,7 +381,10 @@ function sweepLambdaCpu(
  * (finite separation d0 vs tangent-space flow) — agreement is expected to a
  * few times the per-cell finite-time noise, not to machine precision.
  */
-export async function sweepLambdaField(params: PendulumParameters, options: SweepFieldOptions = {}): Promise<SweepFieldResult> {
+export async function sweepLambdaField(
+  params: PendulumParameters,
+  options: SweepFieldOptions = {}
+): Promise<SweepFieldResult> {
   const n = options.n ?? 60;
   const [lo, hi] = options.range ?? [-Math.PI, Math.PI];
   const steps = options.steps ?? 1000;
@@ -371,8 +408,22 @@ export async function sweepLambdaField(params: PendulumParameters, options: Swee
 
   if (!options.forceCpu) {
     const uniform = new Float32Array([
-      params.m1, params.m2, params.l1, params.l2, params.g, 0, dt, steps,
-      lo, hi - lo, n, d0, renormEvery, transientSteps, 0, 0
+      params.m1,
+      params.m2,
+      params.l1,
+      params.l2,
+      params.g,
+      0,
+      dt,
+      steps,
+      lo,
+      hi - lo,
+      n,
+      d0,
+      renormEvery,
+      transientSteps,
+      0,
+      0
     ]);
     const io = new Float32Array(n * n);
     const gpuOut = await runComputeKernel(WGSL_SWEEP, uniform, io, n * n);
@@ -387,7 +438,12 @@ export async function sweepLambdaField(params: PendulumParameters, options: Swee
       // f32 trajectories decorrelate at the Lyapunov rate, but the *averaged*
       // stretching estimate stays close; tolerance reflects finite-time noise.
       const tolerance = 0.25;
-      const validation: GpuFieldValidation = { cells: probes.length, maxAbsDiff: maxDiff, tolerance, passed: maxDiff <= tolerance };
+      const validation: GpuFieldValidation = {
+        cells: probes.length,
+        maxAbsDiff: maxDiff,
+        tolerance,
+        passed: maxDiff <= tolerance
+      };
       if (validation.passed) {
         return {
           values,
@@ -453,7 +509,13 @@ export interface FtleFdFieldResult extends GpuFieldMeta {
  * neighbouring cells and σ_T = ln(σ_max(G)) / T via the closed-form largest
  * eigenvalue of the 2×2 Gram matrix GᵀG.
  */
-function ftleFromFinalStates(finalStates: Float64Array, n: number, h1: number, h2: number, totalTime: number): Float64Array {
+function ftleFromFinalStates(
+  finalStates: Float64Array,
+  n: number,
+  h1: number,
+  h2: number,
+  totalTime: number
+): Float64Array {
   const values = new Float64Array(n * n);
   const stateAt = (ix: number, iy: number, c: number): number => {
     const cx = Math.max(0, Math.min(n - 1, ix));
@@ -496,7 +558,10 @@ function ftleFromFinalStates(finalStates: Float64Array, n: number, h1: number, h
  * state-transition-matrix method: ridge structure agrees, exact cell values
  * differ at finite resolution (documented in the caveat).
  */
-export async function ftleFieldFiniteDifference(params: PendulumParameters, options: FtleFdFieldOptions = {}): Promise<FtleFdFieldResult> {
+export async function ftleFieldFiniteDifference(
+  params: PendulumParameters,
+  options: FtleFdFieldOptions = {}
+): Promise<FtleFdFieldResult> {
   const n = options.n ?? 60;
   const [lo, hi] = options.range ?? [-3, 3];
   const totalTime = options.totalTime ?? 3;
@@ -514,7 +579,12 @@ export async function ftleFieldFiniteDifference(params: PendulumParameters, opti
     }
   }
 
-  const finish = (finalStates: Float64Array, backend: 'webgpu' | 'cpu', caveat: string, validation: GpuFieldValidation | null): FtleFdFieldResult => {
+  const finish = (
+    finalStates: Float64Array,
+    backend: 'webgpu' | 'cpu',
+    caveat: string,
+    validation: GpuFieldValidation | null
+  ): FtleFdFieldResult => {
     const values = ftleFromFinalStates(finalStates, n, h, h, totalTime);
     let min = Infinity;
     let max = -Infinity;
@@ -533,7 +603,13 @@ export async function ftleFieldFiniteDifference(params: PendulumParameters, opti
     const probes = probeIndices(n).filter(([ix, iy]) => ix > 0 && iy > 0 && ix < n - 1 && iy < n - 1);
     let maxDiff = 0;
     for (const [ix, iy] of probes) {
-      const stencil = [[ix, iy], [ix + 1, iy], [ix - 1, iy], [ix, iy + 1], [ix, iy - 1]] as const;
+      const stencil = [
+        [ix, iy],
+        [ix + 1, iy],
+        [ix - 1, iy],
+        [ix, iy + 1],
+        [ix, iy - 1]
+      ] as const;
       const stencilStates = new Float64Array(stencil.length * 4);
       stencil.forEach(([sx, sy], s) => {
         stencilStates[s * 4] = lo + h * sx;
@@ -557,7 +633,12 @@ export async function ftleFieldFiniteDifference(params: PendulumParameters, opti
       maxDiff = Math.max(maxDiff, Math.abs(cpuValue - (gpuField[iy * n + ix] ?? Number.NaN)));
     }
     const tolerance = 0.3;
-    const validation: GpuFieldValidation = { cells: probes.length, maxAbsDiff: maxDiff, tolerance, passed: maxDiff <= tolerance };
+    const validation: GpuFieldValidation = {
+      cells: probes.length,
+      maxAbsDiff: maxDiff,
+      tolerance,
+      passed: maxDiff <= tolerance
+    };
     if (validation.passed) {
       return finish(
         ensemble.states,

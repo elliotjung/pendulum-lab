@@ -47,16 +47,16 @@ export function upsertResearchSession(session: ResearchSessionProfile): void {
   const next = state.research.sessions.filter((entry) => entry.id !== session.id);
   state.research.sessions = [session, ...next].slice(0, 48);
   state.research.project.activeSessionId = session.id;
-  state.research.project.sessionIds = Array.from(new Set([session.id, ...state.research.project.sessionIds])).slice(0, 48);
+  state.research.project.sessionIds = Array.from(new Set([session.id, ...state.research.project.sessionIds])).slice(
+    0,
+    48
+  );
   state.research.project.updatedAt = session.updatedAt;
 }
 
 export function workspaceOptions(): Array<[string, string]> {
   ensureWorkspaceList();
-  return state.research.workspaces.map((workspace) => [
-    workspace.id,
-    workspace.name || workspace.id
-  ]);
+  return state.research.workspaces.map((workspace) => [workspace.id, workspace.name || workspace.id]);
 }
 
 export function upsertWorkspaceProfile(profile: ResearchWorkspaceProfile): void {
@@ -147,9 +147,12 @@ export function recordRunInActiveSession(entry: ResearchRunLogEntry): void {
     artifactManifest: session.artifactManifest
   };
   if (entry.artifact) {
-    const kind: ResearchArtifactManifestEntry['kind'] = entry.type === 'export'
-      ? 'export'
-      : entry.artifact.endsWith('.png') || entry.artifact.endsWith('.svg') ? 'figure' : 'report';
+    const kind: ResearchArtifactManifestEntry['kind'] =
+      entry.type === 'export'
+        ? 'export'
+        : entry.artifact.endsWith('.png') || entry.artifact.endsWith('.svg')
+          ? 'figure'
+          : 'report';
     next.artifactManifest = [
       {
         id: researchUid('artifact'),

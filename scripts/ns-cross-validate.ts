@@ -62,7 +62,16 @@ function buildRow(sample: ScipySample, collocationByA: Map<number, number>): Row
   // Collocation ρ vs the linear onset prediction ⇒ O(amplitude²) looser.
   const collocationVsLinearDiff = sample.rhoLinear !== null ? Math.abs(engineCollocation - sample.rhoLinear) : NaN;
   const pass = windingDiff < 3e-3 && Math.abs(engineCollocation - sample.rhoWinding) < 5e-3;
-  return { a, scipyWinding: sample.rhoWinding, scipyLinear: sample.rhoLinear, engineCollocation, engineWinding, windingDiff, collocationVsLinearDiff, pass };
+  return {
+    a,
+    scipyWinding: sample.rhoWinding,
+    scipyLinear: sample.rhoLinear,
+    engineCollocation,
+    engineWinding,
+    windingDiff,
+    collocationVsLinearDiff,
+    pass
+  };
 }
 
 function markdown(rows: RowReport[]): string {
@@ -84,7 +93,7 @@ function markdown(rows: RowReport[]): string {
   lines.push(
     '',
     'The winding ρ is the same nonlinear quantity computed in two languages, so it must agree to ~1e-3;',
-    'the collocation ρ is compared to SciPy\'s winding ρ on the same circle; SciPy\'s linear ρ = arg(λ)/2π',
+    "the collocation ρ is compared to SciPy's winding ρ on the same circle; SciPy's linear ρ = arg(λ)/2π",
     'is the onset prediction and differs by O(amplitude²) away from a = 2.',
     ''
   );
@@ -121,10 +130,16 @@ async function main(): Promise<void> {
   const rows = reference.samples.map((s) => buildRow(s, collocationByA));
 
   await mkdir('reports', { recursive: true });
-  await writeFile('reports/ns-cross-validation.json', JSON.stringify({ generatedAt: new Date().toISOString(), rows }, null, 2), 'utf8');
+  await writeFile(
+    'reports/ns-cross-validation.json',
+    JSON.stringify({ generatedAt: new Date().toISOString(), rows }, null, 2),
+    'utf8'
+  );
   await writeFile('reports/ns-cross-validation.md', markdown(rows), 'utf8');
   for (const r of rows) {
-    console.log(`${r.pass ? 'PASS' : 'FAIL'} a=${r.a.toFixed(3)}: engine winding ${r.engineWinding.toFixed(6)} vs scipy ${r.scipyWinding.toFixed(6)} (Δ ${fmt(r.windingDiff)}); collocation ${r.engineCollocation.toFixed(6)}`);
+    console.log(
+      `${r.pass ? 'PASS' : 'FAIL'} a=${r.a.toFixed(3)}: engine winding ${r.engineWinding.toFixed(6)} vs scipy ${r.scipyWinding.toFixed(6)} (Δ ${fmt(r.windingDiff)}); collocation ${r.engineCollocation.toFixed(6)}`
+    );
   }
   if (rows.some((r) => !r.pass)) process.exitCode = 1;
 }

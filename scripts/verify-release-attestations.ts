@@ -34,11 +34,17 @@ const gh = process.platform === 'win32' ? 'gh.exe' : 'gh';
 
 async function verify(predicateType: string): Promise<VerificationResult['verificationResult']> {
   const commandArgs = [
-    'attestation', 'verify', artifact,
-    '--repo', repository,
-    '--signer-workflow', signerWorkflow,
-    '--predicate-type', predicateType,
-    '--format', 'json'
+    'attestation',
+    'verify',
+    artifact,
+    '--repo',
+    repository,
+    '--signer-workflow',
+    signerWorkflow,
+    '--predicate-type',
+    predicateType,
+    '--format',
+    'json'
   ];
   if (sourceRef) commandArgs.push('--source-ref', sourceRef);
   let output = '';
@@ -52,7 +58,8 @@ async function verify(predicateType: string): Promise<VerificationResult['verifi
       if (attempt < 5) await new Promise((resolve) => setTimeout(resolve, attempt * 2_000));
     }
   }
-  if (!output) throw lastError instanceof Error ? lastError : new Error(`Unable to fetch ${predicateType} attestation.`);
+  if (!output)
+    throw lastError instanceof Error ? lastError : new Error(`Unable to fetch ${predicateType} attestation.`);
   const entries = JSON.parse(output) as VerificationResult[];
   const result = entries[0]?.verificationResult;
   if (!result) throw new Error(`No verified ${predicateType} attestation was returned.`);
@@ -64,10 +71,7 @@ async function verify(predicateType: string): Promise<VerificationResult['verifi
 }
 
 const predicates = [];
-for (const predicateType of [
-  'https://slsa.dev/provenance/v1',
-  'https://cyclonedx.org/bom'
-] as const) {
+for (const predicateType of ['https://slsa.dev/provenance/v1', 'https://cyclonedx.org/bom'] as const) {
   const result = await verify(predicateType);
   const certificate = result?.signature?.certificate ?? {};
   const timestamp = result?.verifiedTimestamps?.[0] ?? {};

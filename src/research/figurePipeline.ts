@@ -21,10 +21,38 @@ export interface FigureThemeSpec {
 
 /** Colourblind palette uses Okabe–Ito hues. */
 export const FIGURE_THEMES: Record<FigureTheme, FigureThemeSpec> = {
-  light: { background: '#ffffff', foreground: '#1a1a2e', grid: '#d9dee8', accent: '#2563eb', error: '#94a3b8', zeroLine: '#9ca3af' },
-  dark: { background: '#0b1020', foreground: '#e6ecf8', grid: '#26314d', accent: '#4cc9f0', error: '#5b6b8c', zeroLine: '#5b6b8c' },
-  print: { background: '#ffffff', foreground: '#000000', grid: '#cccccc', accent: '#000000', error: '#666666', zeroLine: '#888888' },
-  colorblind: { background: '#ffffff', foreground: '#000000', grid: '#dddddd', accent: '#0072B2', error: '#E69F00', zeroLine: '#999999' }
+  light: {
+    background: '#ffffff',
+    foreground: '#1a1a2e',
+    grid: '#d9dee8',
+    accent: '#2563eb',
+    error: '#94a3b8',
+    zeroLine: '#9ca3af'
+  },
+  dark: {
+    background: '#0b1020',
+    foreground: '#e6ecf8',
+    grid: '#26314d',
+    accent: '#4cc9f0',
+    error: '#5b6b8c',
+    zeroLine: '#5b6b8c'
+  },
+  print: {
+    background: '#ffffff',
+    foreground: '#000000',
+    grid: '#cccccc',
+    accent: '#000000',
+    error: '#666666',
+    zeroLine: '#888888'
+  },
+  colorblind: {
+    background: '#ffffff',
+    foreground: '#000000',
+    grid: '#dddddd',
+    accent: '#0072B2',
+    error: '#E69F00',
+    zeroLine: '#999999'
+  }
 };
 
 export interface StudyFigurePoint {
@@ -82,30 +110,43 @@ export function renderStudyFigureSvg(spec: StudyFigureSpec): string {
   for (let i = 0; i <= ticks; i += 1) {
     const gx = xMin + ((xMax - xMin) * i) / ticks;
     const gy = yMin + ((yMax - yMin) * i) / ticks;
-    gridLines.push(`<line x1="${fmt(sx(gx))}" y1="${fmt(margin.top)}" x2="${fmt(sx(gx))}" y2="${fmt(margin.top + plotH)}" stroke="${theme.grid}" stroke-width="1"/>`);
-    gridLines.push(`<line x1="${fmt(margin.left)}" y1="${fmt(sy(gy))}" x2="${fmt(margin.left + plotW)}" y2="${fmt(sy(gy))}" stroke="${theme.grid}" stroke-width="1"/>`);
-    gridLines.push(`<text x="${fmt(sx(gx))}" y="${fmt(margin.top + plotH + 18)}" text-anchor="middle" font-size="11" fill="${theme.foreground}">${fmt(gx)}</text>`);
-    gridLines.push(`<text x="${fmt(margin.left - 8)}" y="${fmt(sy(gy) + 4)}" text-anchor="end" font-size="11" fill="${theme.foreground}">${fmt(gy)}</text>`);
+    gridLines.push(
+      `<line x1="${fmt(sx(gx))}" y1="${fmt(margin.top)}" x2="${fmt(sx(gx))}" y2="${fmt(margin.top + plotH)}" stroke="${theme.grid}" stroke-width="1"/>`
+    );
+    gridLines.push(
+      `<line x1="${fmt(margin.left)}" y1="${fmt(sy(gy))}" x2="${fmt(margin.left + plotW)}" y2="${fmt(sy(gy))}" stroke="${theme.grid}" stroke-width="1"/>`
+    );
+    gridLines.push(
+      `<text x="${fmt(sx(gx))}" y="${fmt(margin.top + plotH + 18)}" text-anchor="middle" font-size="11" fill="${theme.foreground}">${fmt(gx)}</text>`
+    );
+    gridLines.push(
+      `<text x="${fmt(margin.left - 8)}" y="${fmt(sy(gy) + 4)}" text-anchor="end" font-size="11" fill="${theme.foreground}">${fmt(gy)}</text>`
+    );
   }
 
   const sorted = [...points].sort((a, b) => a.x - b.x);
-  const path = sorted.map((point, index) => `${index === 0 ? 'M' : 'L'}${fmt(sx(point.x))},${fmt(sy(point.y))}`).join(' ');
-  const markers = sorted.map((point) => {
-    const cx = fmt(sx(point.x));
-    const items = [`<circle cx="${cx}" cy="${fmt(sy(point.y))}" r="3.2" fill="${theme.accent}"/>`];
-    if (point.err > 0) {
-      items.unshift(
-        `<line x1="${cx}" y1="${fmt(sy(point.y - point.err))}" x2="${cx}" y2="${fmt(sy(point.y + point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`,
-        `<line x1="${fmt(sx(point.x) - 3.5)}" y1="${fmt(sy(point.y - point.err))}" x2="${fmt(sx(point.x) + 3.5)}" y2="${fmt(sy(point.y - point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`,
-        `<line x1="${fmt(sx(point.x) - 3.5)}" y1="${fmt(sy(point.y + point.err))}" x2="${fmt(sx(point.x) + 3.5)}" y2="${fmt(sy(point.y + point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`
-      );
-    }
-    return items.join('');
-  }).join('');
+  const path = sorted
+    .map((point, index) => `${index === 0 ? 'M' : 'L'}${fmt(sx(point.x))},${fmt(sy(point.y))}`)
+    .join(' ');
+  const markers = sorted
+    .map((point) => {
+      const cx = fmt(sx(point.x));
+      const items = [`<circle cx="${cx}" cy="${fmt(sy(point.y))}" r="3.2" fill="${theme.accent}"/>`];
+      if (point.err > 0) {
+        items.unshift(
+          `<line x1="${cx}" y1="${fmt(sy(point.y - point.err))}" x2="${cx}" y2="${fmt(sy(point.y + point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`,
+          `<line x1="${fmt(sx(point.x) - 3.5)}" y1="${fmt(sy(point.y - point.err))}" x2="${fmt(sx(point.x) + 3.5)}" y2="${fmt(sy(point.y - point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`,
+          `<line x1="${fmt(sx(point.x) - 3.5)}" y1="${fmt(sy(point.y + point.err))}" x2="${fmt(sx(point.x) + 3.5)}" y2="${fmt(sy(point.y + point.err))}" stroke="${theme.error}" stroke-width="1.4"/>`
+        );
+      }
+      return items.join('');
+    })
+    .join('');
 
-  const zero = spec.zeroLine && yMin < 0 && yMax > 0
-    ? `<line x1="${fmt(margin.left)}" y1="${fmt(sy(0))}" x2="${fmt(margin.left + plotW)}" y2="${fmt(sy(0))}" stroke="${theme.zeroLine}" stroke-width="1.2" stroke-dasharray="6 4"/>`
-    : '';
+  const zero =
+    spec.zeroLine && yMin < 0 && yMax > 0
+      ? `<line x1="${fmt(margin.left)}" y1="${fmt(sy(0))}" x2="${fmt(margin.left + plotW)}" y2="${fmt(sy(0))}" stroke="${theme.zeroLine}" stroke-width="1.2" stroke-dasharray="6 4"/>`
+      : '';
 
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(spec.title)}">`,
@@ -120,7 +161,9 @@ export function renderStudyFigureSvg(spec: StudyFigureSpec): string {
     `<text x="16" y="${fmt(margin.top + plotH / 2)}" text-anchor="middle" font-size="12" fill="${theme.foreground}" transform="rotate(-90 16 ${fmt(margin.top + plotH / 2)})">${escapeXml(spec.yLabel)}</text>`,
     `<text x="${fmt(margin.left)}" y="${fmt(height - 8)}" font-size="10" fill="${theme.foreground}" opacity="0.75">${escapeXml(spec.caption.slice(0, 160))}</text>`,
     '</svg>'
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 export function svgToDataUrl(svg: string): string {
@@ -160,12 +203,18 @@ export interface StudyFigureSource {
 }
 
 /** Regenerate the headline λ(parameter) figure from saved study data (no physics re-run). */
-export function studyFigureFromSavedStudy(source: StudyFigureSource, theme: FigureTheme, caption?: string): StudyFigureSpec {
+export function studyFigureFromSavedStudy(
+  source: StudyFigureSource,
+  theme: FigureTheme,
+  caption?: string
+): StudyFigureSpec {
   return {
     title: `Maximal Lyapunov exponent vs ${source.variable}`,
     xLabel: source.variable,
     yLabel: 'lambda_max (Benettin) ± block SE',
-    caption: caption ?? `λ(${source.variable}) from saved study (${source.strategy}, ${source.rows.length} points, plan ${source.planHash}). Error bars: batched-means SE.`,
+    caption:
+      caption ??
+      `λ(${source.variable}) from saved study (${source.strategy}, ${source.rows.length} points, plan ${source.planHash}). Error bars: batched-means SE.`,
     points: source.rows.map((row) => ({ x: row.value, y: row.lambdaMax, err: row.lambdaErr })),
     theme,
     zeroLine: true

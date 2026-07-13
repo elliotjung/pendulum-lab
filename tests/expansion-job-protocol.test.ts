@@ -17,7 +17,11 @@ describe('expansion job protocol dispatcher', () => {
   });
 
   test('suite job returns a suite result carrying the variational/QR Lyapunov spectrum', () => {
-    const out = runExpansionJob({ kind: 'suite', config: { model: 'driven', methods: ['rk4'], horizon: 3 }, includeLyapunov: true });
+    const out = runExpansionJob({
+      kind: 'suite',
+      config: { model: 'driven', methods: ['rk4'], horizon: 3 },
+      includeLyapunov: true
+    });
     expect(out.kind).toBe('suite');
     if (out.kind === 'suite') {
       expect(out.result.model).toBe('driven');

@@ -8,13 +8,41 @@ import { createSubmissionManifest, downloadJson } from '../../export/manifest';
 import { runAllValidationChecks } from '../../validation/validationSuite';
 import { integratorRegistry } from '../../physics/integrators';
 import { createRailTabButton, EXTRA_RAIL_TABS } from '../railNavigation';
-import { AuditResult, LEGACY_VALIDATION_IDS, append, button, card, clear, currentSnapshot, detailsCard, html, kvGrid, modernLab, record, setActiveTab, setControl, state, toast } from './shared';
-import { captureCheckpoint, exportFaultReport, exportValidationJson, renderRuntimePanels, runAPlusAudit, runCanonicalQa, runContractChecks, runFloquetProbe, runLegacyValidationSurface, toggleFloatingDiag, useCanonicalMethod } from './runtime-diagnostics';
-import { generateParameterStudy, rebuildComparisonMatrix, runStudyBatch, saveCurrentExperiment } from './research-workbench';
-import { exportPaperFigureManifestJson, exportPaperFiguresHtml, exportPaperMethodsLatex, exportPaperPackJson, exportResearchBundleJson, exportResearchNotebook } from './figure-export';
+import {
+  AuditResult,
+  LEGACY_VALIDATION_IDS,
+  append,
+  button,
+  card,
+  clear,
+  currentSnapshot,
+  detailsCard,
+  html,
+  kvGrid,
+  modernLab,
+  record,
+  setActiveTab,
+  setControl,
+  state,
+  toast
+} from './shared';
+import {
+  captureCheckpoint,
+  exportFaultReport,
+  exportValidationJson,
+  renderRuntimePanels,
+  runAPlusAudit,
+  runCanonicalQa,
+  runContractChecks,
+  runFloquetProbe,
+  runLegacyValidationSurface,
+  toggleFloatingDiag,
+  useCanonicalMethod
+} from './runtime-diagnostics';
 import { $ } from './shared';
 import { showCommandPalette } from './command-palette';
 import { trustSection, type TrustSection } from '../trustDrawer';
+import { registerGovernanceCommands } from './governance-commands';
 
 /**
  * Mount a trust/governance card into its Trust & Diagnostics drawer section,
@@ -90,7 +118,9 @@ export function installArchitectureTab(): void {
     button('ueRunContract', 'Run Contract Checks', () => runContractChecks(), 'primary'),
     button('ueCaptureCheckpoint', 'Capture Checkpoint', () => captureCheckpoint()),
     button('ueExportManifest', 'Export Engine Manifest', () => exportManifest('pendulum_engine_manifest_v10_ts.json')),
-    button('ueExportReplay', 'Export Checkpoints', () => downloadJson('pendulum_checkpoints_v10_ts.json', state.checkpoints)),
+    button('ueExportReplay', 'Export Checkpoints', () =>
+      downloadJson('pendulum_checkpoints_v10_ts.json', state.checkpoints)
+    ),
     button('ueToggleDiag', 'Toggle Floating Diagnostics', () => toggleFloatingDiag())
   );
   const grid = html('div', { className: 'ue-grid' });
@@ -134,13 +164,21 @@ export function installCanonicalTab(): void {
   const actions = html('div', { className: 'btnrow' });
   append(
     actions,
-    button('runCanonValidation', 'Run Canonical QA', () => {
-      runCanonicalQa(true);
-    }, 'primary'),
+    button(
+      'runCanonValidation',
+      'Run Canonical QA',
+      () => {
+        runCanonicalQa(true);
+      },
+      'primary'
+    ),
     button('useCanonMethod', 'Use Conditional Canonical Method', () => useCanonicalMethod()),
     button('exportManifestV3', 'Export Manifest V3', () => exportManifest('pendulum_manifest_v3_ts.json'))
   );
-  const note = html('div', { className: 'honesty-note warn', text: 'True symplectic claims are restricted to canonical coordinates, gamma = 0, and solver residual reporting. Damped systems are dissipative.' });
+  const note = html('div', {
+    className: 'honesty-note warn',
+    text: 'True symplectic claims are restricted to canonical coordinates, gamma = 0, and solver residual reporting. Damped systems are dissipative.'
+  });
   append(controls, detailsCard('Canonical Controls', actions), detailsCard('Contracts', note));
   append(layout, left, controls);
   panel.append(layout);
@@ -165,12 +203,20 @@ export function installAPlusTab(): void {
   const actions = html('div', { className: 'btnrow' });
   append(
     actions,
-    button('runAPlusAudit', 'Run Audit', () => {
-      runAPlusAudit(true);
-    }, 'primary'),
+    button(
+      'runAPlusAudit',
+      'Run Audit',
+      () => {
+        runAPlusAudit(true);
+      },
+      'primary'
+    ),
     button('exportAPlusReport', 'Export Audit JSON', () => exportAPlusReport())
   );
-  const note = html('div', { className: 'honesty-note', text: 'The generalized N-link engine is descriptor-driven and tested against the double and triple pendulum special cases.' });
+  const note = html('div', {
+    className: 'honesty-note',
+    text: 'The generalized N-link engine is descriptor-driven and tested against the double and triple pendulum special cases.'
+  });
   append(controls, detailsCard('Audit Controls', actions), detailsCard('Research Note', note));
   append(layout, left, controls);
   panel.append(layout);
@@ -186,7 +232,9 @@ export function installDocsTab(): void {
   append(
     doc,
     html('h2', { text: 'Pendulum Lab V10 Method Notes' }),
-    paragraph('This tab restores the single-file documentation surface while keeping the modular TypeScript runtime as the source of truth.'),
+    paragraph(
+      'This tab restores the single-file documentation surface while keeping the modular TypeScript runtime as the source of truth.'
+    ),
     methodTable(),
     html('h3', { text: 'Preserved improvements' }),
     bulletList([
@@ -214,11 +262,23 @@ export function bulletList(items: string[]): HTMLUListElement {
 export function methodTable(): HTMLTableElement {
   const table = html('table', { className: 'rg-table' });
   const head = html('tr');
-  append(head, html('th', { text: 'Method' }), html('th', { text: 'Order' }), html('th', { text: 'Symplectic claim' }), html('th', { text: 'Notes' }));
+  append(
+    head,
+    html('th', { text: 'Method' }),
+    html('th', { text: 'Order' }),
+    html('th', { text: 'Symplectic claim' }),
+    html('th', { text: 'Notes' })
+  );
   table.append(head);
   for (const meta of Object.values(integratorRegistry)) {
     const tr = html('tr');
-    append(tr, html('td', { text: meta.name }), html('td', { text: String(meta.order) }), html('td', { text: meta.symplectic }), html('td', { text: meta.stabilityNotes.join(' ') }));
+    append(
+      tr,
+      html('td', { text: meta.name }),
+      html('td', { text: String(meta.order) }),
+      html('td', { text: meta.symplectic }),
+      html('td', { text: meta.stabilityNotes.join(' ') })
+    );
     table.append(tr);
   }
   return table;
@@ -229,7 +289,14 @@ export function installStablePanel(): void {
   const panel = html('section', { id: 'stableIntuitivePanel', className: 'si-panel' });
   const top = html('div', { className: 'si-top' });
   const titleBlock = html('div');
-  append(titleBlock, html('div', { className: 'si-title', text: 'Simulation Assistance' }), html('div', { className: 'si-desc', text: 'Runtime assistance. Auto-actions are disabled in Research and Benchmark modes.' }));
+  append(
+    titleBlock,
+    html('div', { className: 'si-title', text: 'Simulation Assistance' }),
+    html('div', {
+      className: 'si-desc',
+      text: 'Runtime assistance. Auto-actions are disabled in Research and Benchmark modes.'
+    })
+  );
   const status = html('div', { className: 'si-status' });
   append(
     status,
@@ -277,15 +344,24 @@ export function metric(id: string, label: string, value = '-'): HTMLDivElement {
 
 export function installStableHelp(): void {
   if ($('siHelpBackdrop')) return;
-  const backdrop = html('div', { id: 'siHelpBackdrop', className: 'si-help-backdrop', role: 'dialog', ariaLabel: 'Stable control help' });
+  const backdrop = html('div', {
+    id: 'siHelpBackdrop',
+    className: 'si-help-backdrop',
+    role: 'dialog',
+    ariaLabel: 'Stable control help'
+  });
   const box = html('div', { className: 'si-help' });
   append(
     box,
     button('siCloseHelp', 'Close', () => backdrop.classList.remove('show'), 'si-close'),
     html('h2', { text: 'Simulation Assistance' }),
-    paragraph('Stable Defaults keeps the current experiment readable without changing the scientific labels. Accuracy Mode tightens dt and tolerance. Performance Mode reduces rendering load first.'),
+    paragraph(
+      'Stable Defaults keeps the current experiment readable without changing the scientific labels. Accuracy Mode tightens dt and tolerance. Performance Mode reduces rendering load first.'
+    ),
     html('h3', { text: 'Research mode policy' }),
-    paragraph('Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.')
+    paragraph(
+      'Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.'
+    )
   );
   backdrop.addEventListener('click', (event) => {
     if (event.target === backdrop) backdrop.classList.remove('show');
@@ -307,7 +383,8 @@ export function installResearchStatusCards(): void {
     title.append(html('span', { id: 'v10ConfidenceBadge', className: 'v10-badge', text: 'pending' }));
     const modeRow = html('div', { className: 'row' });
     const modeSelect = html('select', { id: 'v10RunMode' });
-    for (const mode of ['demo', 'education', 'research', 'benchmark'] as const) modeSelect.append(html('option', { value: mode, text: mode }));
+    for (const mode of ['demo', 'education', 'research', 'benchmark'] as const)
+      modeSelect.append(html('option', { value: mode, text: mode }));
     modeSelect.addEventListener('change', () => setMode(modeSelect.value as RunMode));
     append(modeRow, html('label', { text: 'Mode' }), modeSelect);
     const actions = html('div', { className: 'btnrow' });
@@ -315,10 +392,19 @@ export function installResearchStatusCards(): void {
       actions,
       button('v10RunValidation', 'Run validation suite', () => runLegacyValidationSurface(), 'primary'),
       button('v10ExportManifest', 'Research Export', () => exportManifest('pendulum_manifest_v10_ts.json')),
-      button('v10ExportSession', 'Session Export', () => downloadJson('pendulum_session_v10_ts.json', currentSnapshot())),
+      button('v10ExportSession', 'Session Export', () =>
+        downloadJson('pendulum_session_v10_ts.json', currentSnapshot())
+      ),
       button('v10ExportValidation', 'Validation JSON', () => exportValidationJson())
     );
-    append(cardNode, title, modeRow, html('div', { id: 'v10MethodCard', className: 'v10-method', text: 'Method metadata pending.' }), html('div', { id: 'v10WarningBox', className: 'v10-warnings' }), actions);
+    append(
+      cardNode,
+      title,
+      modeRow,
+      html('div', { id: 'v10MethodCard', className: 'v10-method', text: 'Method metadata pending.' }),
+      html('div', { id: 'v10WarningBox', className: 'v10-warnings' }),
+      actions
+    );
     mountTrustCard('validation', cardNode, () => controls.insertBefore(cardNode, controls.querySelector('.acc')));
   }
   if (!$('riScientificStatusPanel')) {
@@ -339,12 +425,28 @@ export function installResearchStatusCards(): void {
     const panel = html('section', { id: 'rgv7ControlCard', className: 'rgv7-card ri-panel' });
     const modeRow = html('div', { className: 'row' });
     const modeSelect = html('select', { id: 'rgv7ModeSelect' });
-    for (const mode of ['research', 'education', 'demo'] as const) modeSelect.append(html('option', { value: mode, text: `${mode} mode` }));
+    for (const mode of ['research', 'education', 'demo'] as const)
+      modeSelect.append(html('option', { value: mode, text: `${mode} mode` }));
     modeSelect.addEventListener('change', () => setMode(modeSelect.value as RunMode));
     append(modeRow, html('label', { text: 'Mode' }), modeSelect);
     const actions = html('div', { className: 'btnrow' });
-    append(actions, button('rgv7RunTestsShadow', 'Run validation', () => runLegacyValidationSurface(), 'primary'), button('rgv7ShowCommandsShadow', 'Commands', () => showCommandPalette()));
-    append(panel, html('div', { className: 'ri-title', text: 'Research governance' }), modeRow, html('div', { id: 'rgv7ValidityLine', className: 'rgv7-note honesty-note', text: 'Initializing validity status.' }), html('div', { id: 'rgv7RuntimeGrid', className: 'stats' }), actions);
+    append(
+      actions,
+      button('rgv7RunTestsShadow', 'Run validation', () => runLegacyValidationSurface(), 'primary'),
+      button('rgv7ShowCommandsShadow', 'Commands', () => showCommandPalette())
+    );
+    append(
+      panel,
+      html('div', { className: 'ri-title', text: 'Research governance' }),
+      modeRow,
+      html('div', {
+        id: 'rgv7ValidityLine',
+        className: 'rgv7-note honesty-note',
+        text: 'Initializing validity status.'
+      }),
+      html('div', { id: 'rgv7RuntimeGrid', className: 'stats' }),
+      actions
+    );
     mountTrustCard('provenance', panel, () => controls.insertBefore(panel, controls.querySelector('.acc')));
   }
   if (!$('rgv8GovCard')) {
@@ -357,16 +459,36 @@ export function installResearchStatusCards(): void {
       button('rgv8Fault', 'Export Fault Report', () => exportFaultReport('manual')),
       button('rgv8Onboard', 'Onboarding', () => showOnboarding())
     );
-    append(panel, html('h3', { text: 'Governance exports' }), html('div', { id: 'rgv8RuntimePanel', className: 'stats' }), actions);
+    append(
+      panel,
+      html('h3', { text: 'Governance exports' }),
+      html('div', { id: 'rgv8RuntimePanel', className: 'stats' }),
+      actions
+    );
     mountTrustCard('provenance', panel, () => controls.insertBefore(panel, controls.querySelector('.acc')));
   }
   if (!$('sfv9Panel')) {
     const panel = html('section', { id: 'sfv9Panel', className: 'sfv9-card' });
     const actions = html('div', { className: 'btnrow' });
-    append(actions, button('sfv9AuditRunShadow', 'Run Platform Audit', () => {
-      runAPlusAudit(true);
-    }, 'primary'), button('sfv9ExportShadow', 'Export audit report', () => exportFeatureReport()));
-    append(panel, html('h3', { text: 'Platform audit' }), html('div', { id: 'sfv9Summary', className: 'stats' }), actions, html('pre', { id: 'sfv9AuditLog', className: 'rg-log', text: 'Audit not run yet.' }));
+    append(
+      actions,
+      button(
+        'sfv9AuditRunShadow',
+        'Run Platform Audit',
+        () => {
+          runAPlusAudit(true);
+        },
+        'primary'
+      ),
+      button('sfv9ExportShadow', 'Export audit report', () => exportFeatureReport())
+    );
+    append(
+      panel,
+      html('h3', { text: 'Platform audit' }),
+      html('div', { id: 'sfv9Summary', className: 'stats' }),
+      actions,
+      html('pre', { id: 'sfv9AuditLog', className: 'rg-log', text: 'Audit not run yet.' })
+    );
     mountTrustCard('provenance', panel, () => controls.append(panel));
   }
   installPlxCards(controls);
@@ -387,25 +509,49 @@ export function installPlxCards(controls: Element): void {
     mountTrustCard('provenance', node, () => controls.append(node));
   }
   if (!$('plxPhysicsSummary')) {
-    const node = card('Current Physics Summary', html('div', { id: 'plxPhysicsSummary', className: 'plx-grid' }), 'plxPhysicsCard', 'plx-card');
+    const node = card(
+      'Current Physics Summary',
+      html('div', { id: 'plxPhysicsSummary', className: 'plx-grid' }),
+      'plxPhysicsCard',
+      'plx-card'
+    );
     mountTrustCard('health', node, () => controls.append(node));
   }
   if (!$('plxBadges')) {
-    const node = card('Validation Badges', html('div', { id: 'plxBadges', className: 'plx-badge-row' }), 'plxBadgesCard', 'plx-card');
+    const node = card(
+      'Validation Badges',
+      html('div', { id: 'plxBadges', className: 'plx-badge-row' }),
+      'plxBadgesCard',
+      'plx-card'
+    );
     mountTrustCard('validation', node, () => controls.append(node));
   }
   if (!$('plxRuntimeSummary')) {
     const body = html('div');
-    append(body, html('div', { id: 'plxRuntimeSummary', className: 'plx-grid' }), html('div', { id: 'plxErrorLog', className: 'plx-log', text: 'no runtime errors' }));
+    append(
+      body,
+      html('div', { id: 'plxRuntimeSummary', className: 'plx-grid' }),
+      html('div', { id: 'plxErrorLog', className: 'plx-log', text: 'no runtime errors' })
+    );
     const node = card('Runtime / Error Log', body, 'plxRuntimeCard', 'plx-card');
     mountTrustCard('faults', node, () => controls.append(node));
   }
   if (!$('plxAuditLog')) {
-    const node = card('Auto-Stabilization Audit', html('div', { id: 'plxAuditLog', className: 'plx-log', text: 'no automatic mutations recorded' }), 'plxAuditCard', 'plx-card');
+    const node = card(
+      'Auto-Stabilization Audit',
+      html('div', { id: 'plxAuditLog', className: 'plx-log', text: 'no automatic mutations recorded' }),
+      'plxAuditCard',
+      'plx-card'
+    );
     mountTrustCard('faults', node, () => controls.append(node));
   }
   if (!$('plxMethodCaps')) {
-    const node = card('Method Capabilities', html('div', { id: 'plxMethodCaps', className: 'plx-grid' }), 'plxMethodCapsCard', 'plx-card');
+    const node = card(
+      'Method Capabilities',
+      html('div', { id: 'plxMethodCaps', className: 'plx-grid' }),
+      'plxMethodCapsCard',
+      'plx-card'
+    );
     mountTrustCard('health', node, () => controls.append(node));
   }
 }
@@ -439,23 +585,56 @@ export function installLabLeftPanels(): void {
     // collapsed accordion so the default Lab view is just canvas + plots.
     const panel = html('details', { id: 'riAnalysisControls', className: 'acc ri-panel' });
     const summary = html('summary');
-    append(summary, html('span', { className: 'acc-icon', text: '⚙' }), html('span', { className: 'acc-label', text: 'Plot configuration' }), html('span', { className: 'acc-arrow', text: '›' }));
+    append(
+      summary,
+      html('span', { className: 'acc-icon', text: '⚙' }),
+      html('span', { className: 'acc-label', text: 'Plot configuration' }),
+      html('span', { className: 'acc-arrow', text: '›' })
+    );
     panel.append(summary);
     const body = html('div', { className: 'acc-body' });
     const grid = html('div', { className: 'ri-grid' });
-    append(grid, selectRow('riPoincVar', 'section var', ['theta1', 'theta2', 'omega1', 'omega2']), selectRow('riPoincDir', 'direction', ['positive', 'negative', 'both']), selectRow('riPoincAxes', 'axes', ['theta2-omega2', 'theta1-omega1']), selectRow('riFFTSignal', 'FFT signal', ['theta1', 'theta2', 'omega1']), selectRow('riFFTWindow', 'FFT window', ['hann', 'rect', 'blackman']), selectRow('riFFTScale', 'FFT scale', ['log', 'linear']));
-    append(body, grid, html('div', { id: 'riPlotStamp', className: 'honesty-note', text: 'Plots use bounded buffers and exported settings.' }), button('riClearPoinc', 'Clear Poincare', () => $('clearPoincBtn')?.click()));
+    append(
+      grid,
+      selectRow('riPoincVar', 'section var', ['theta1', 'theta2', 'omega1', 'omega2']),
+      selectRow('riPoincDir', 'direction', ['positive', 'negative', 'both']),
+      selectRow('riPoincAxes', 'axes', ['theta2-omega2', 'theta1-omega1']),
+      selectRow('riFFTSignal', 'FFT signal', ['theta1', 'theta2', 'omega1']),
+      selectRow('riFFTWindow', 'FFT window', ['hann', 'rect', 'blackman']),
+      selectRow('riFFTScale', 'FFT scale', ['log', 'linear'])
+    );
+    append(
+      body,
+      grid,
+      html('div', {
+        id: 'riPlotStamp',
+        className: 'honesty-note',
+        text: 'Plots use bounded buffers and exported settings.'
+      }),
+      button('riClearPoinc', 'Clear Poincare', () => $('clearPoincBtn')?.click())
+    );
     panel.append(body);
     left.append(panel);
   }
   if (!$('rgv7ValidationCard')) {
     const panel = html('section', { id: 'rgv7ValidationCard', className: 'ri-panel' });
-    append(panel, html('div', { className: 'ri-title', text: 'Research Validation' }), html('div', { id: 'rgv7ValidationResults', className: 'rg-log', text: 'No governance validation run yet.' }));
+    append(
+      panel,
+      html('div', { className: 'ri-title', text: 'Research Validation' }),
+      html('div', { id: 'rgv7ValidationResults', className: 'rg-log', text: 'No governance validation run yet.' })
+    );
     mountTrustCard('validation', panel, () => left.append(panel));
   }
   if (!$('rgv8Honesty')) {
     const panel = html('section', { id: 'rgv8Honesty', className: 'rgv8-card' });
-    append(panel, html('h3', { text: 'Model caveats' }), html('div', { className: 'honesty-note warn', text: 'Triple mode and theta/omega pseudo-symplectic methods are labelled experimental or approximate.' }));
+    append(
+      panel,
+      html('h3', { text: 'Model caveats' }),
+      html('div', {
+        className: 'honesty-note warn',
+        text: 'Triple mode and theta/omega pseudo-symplectic methods are labelled experimental or approximate.'
+      })
+    );
     mountTrustCard('health', panel, () => left.append(panel));
   }
 }
@@ -470,12 +649,19 @@ export function selectRow(id: string, label: string, values: string[]): HTMLDivE
 
 export function installOnboarding(): void {
   if ($('rgv8Overlay')) return;
-  const overlay = html('div', { id: 'rgv8Overlay', className: 'rgv8-overlay', role: 'dialog', ariaLabel: 'Pendulum Lab onboarding' });
+  const overlay = html('div', {
+    id: 'rgv8Overlay',
+    className: 'rgv8-overlay',
+    role: 'dialog',
+    ariaLabel: 'Pendulum Lab onboarding'
+  });
   const box = html('div', { className: 'rgv8-modal' });
   append(
     box,
     html('h2', { text: 'Pendulum Lab V10' }),
-    paragraph('Use the mode selector, validation controls, and manifest exports for reproducible runs. The modular runtime keeps physics, validation, and import checks separated.'),
+    paragraph(
+      'Use the mode selector, validation controls, and manifest exports for reproducible runs. The modular runtime keeps physics, validation, and import checks separated.'
+    ),
     button('rgv8CloseOnboard', 'Close', () => overlay.classList.remove('show'), 'primary'),
     button('rgv8ResearchMode', 'Research Mode', () => {
       setMode('research');
@@ -525,11 +711,27 @@ export function featureReport(options: { runValidation?: boolean } = {}): AuditR
     'rwComparisonMatrix',
     'rwPaperSummary'
   ];
-  const tests: AuditResult['tests'] = requiredDom.map((id) => ({ id: `dom-${id}`, status: $(id) ? 'PASS' as const : 'FAIL' as const, detail: $(id) ? 'present' : 'missing' }));
-  tests.push({ id: 'commands-registered', status: commandRegistry.list().length >= 7 ? 'PASS' : 'WARN', detail: `${commandRegistry.list().length} commands` });
-  tests.push({ id: 'integrator-catalog', status: Object.keys(integratorRegistry).length >= 10 ? 'PASS' : 'FAIL', detail: Object.keys(integratorRegistry).join(', ') });
+  const tests: AuditResult['tests'] = requiredDom.map((id) => ({
+    id: `dom-${id}`,
+    status: $(id) ? ('PASS' as const) : ('FAIL' as const),
+    detail: $(id) ? 'present' : 'missing'
+  }));
+  tests.push({
+    id: 'commands-registered',
+    status: commandRegistry.list().length >= 7 ? 'PASS' : 'WARN',
+    detail: `${commandRegistry.list().length} commands`
+  });
+  tests.push({
+    id: 'integrator-catalog',
+    status: Object.keys(integratorRegistry).length >= 10 ? 'PASS' : 'FAIL',
+    detail: Object.keys(integratorRegistry).join(', ')
+  });
   if (options.runValidation) {
-    tests.push({ id: 'modular-validation', status: runAllValidationChecks().ok ? 'PASS' : 'FAIL', detail: 'TypeScript validation suite executable' });
+    tests.push({
+      id: 'modular-validation',
+      status: runAllValidationChecks().ok ? 'PASS' : 'FAIL',
+      detail: 'TypeScript validation suite executable'
+    });
   } else {
     tests.push({ id: 'modular-validation', status: 'PASS', detail: 'available on demand' });
   }
@@ -583,27 +785,56 @@ export function renderFeatureBadge(): void {
     html('span', { text: `DOM/API checks ${report.passed}/${report.tests.length}` })
   );
   const actions = html('div', { className: 'fig-actions' });
-  append(actions, button('figOpen', 'Details', () => showFeaturePanel()), button('figExport', 'Audit JSON', () => exportFeatureReport()), button('figHide', 'Hide', () => {
-    const node = $('figBadge');
-    if (node) node.style.display = 'none';
-  }));
+  append(
+    actions,
+    button('figOpen', 'Details', () => showFeaturePanel()),
+    button('figExport', 'Audit JSON', () => exportFeatureReport()),
+    button('figHide', 'Hide', () => {
+      const node = $('figBadge');
+      if (node) node.style.display = 'none';
+    })
+  );
   badge.append(actions);
 }
 
 export function showFeaturePanel(): void {
   $('figPanel')?.remove();
   const report = featureReport();
-  const panel = html('div', { id: 'figPanel', className: 'fig-panel', role: 'dialog', ariaLabel: 'Feature integrity audit' });
-  append(panel, button('figClose', 'Close', () => panel.remove(), 'primary'), html('h2', { text: 'Feature Integrity Audit' }));
+  const panel = html('div', {
+    id: 'figPanel',
+    className: 'fig-panel',
+    role: 'dialog',
+    ariaLabel: 'Feature integrity audit'
+  });
+  append(
+    panel,
+    button('figClose', 'Close', () => panel.remove(), 'primary'),
+    html('h2', { text: 'Feature Integrity Audit' })
+  );
   const grid = html('div', { className: 'fig-grid' });
   append(
     grid,
     figCard('Overall', report.failed ? 'Possible missing items' : 'PASS - original stable UI surfaces restored'),
     figCard('Runtime capabilities', capabilityText()),
-    figCard('Tabs', Array.from(document.querySelectorAll<HTMLElement>('.tab[data-tab]')).map((t) => t.dataset.tab ?? '').filter(Boolean).join(', ')),
+    figCard(
+      'Tabs',
+      Array.from(document.querySelectorAll<HTMLElement>('.tab[data-tab]'))
+        .map((t) => t.dataset.tab ?? '')
+        .filter(Boolean)
+        .join(', ')
+    ),
     figCard('Static compare', 'Original dynamic tabs and governance controls restored as modular TypeScript.')
   );
-  panel.append(grid, html('h3', { text: 'Feature inventory' }), featureInventory(), html('h3', { text: 'Audit results' }), html('div', { className: 'fig-list', text: report.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n') }));
+  panel.append(
+    grid,
+    html('h3', { text: 'Feature inventory' }),
+    featureInventory(),
+    html('h3', { text: 'Audit results' }),
+    html('div', {
+      className: 'fig-list',
+      text: report.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n')
+    })
+  );
   document.body.append(panel);
 }
 
@@ -717,29 +948,7 @@ export function setMode(mode: RunMode): void {
 }
 
 export function registerParityCommands(): void {
-  commandRegistry.upsert({ id: 'parity.openArchitecture', label: 'Open architecture diagnostics', description: 'Open the restored architecture tab.', run: () => setActiveTab('architecture') });
-  commandRegistry.upsert({ id: 'parity.openResearch', label: 'Open research contract', description: 'Open the restored research tab.', run: () => setActiveTab('research') });
-  commandRegistry.upsert({ id: 'parity.runCanonicalQa', label: 'Run canonical QA', description: 'Run canonical residual and drift checks.', run: () => {
-    runCanonicalQa(true);
-  } });
-  commandRegistry.upsert({ id: 'parity.runAudit', label: 'Run A+ audit', description: 'Run restored scientific audit checks.', run: () => {
-    runAPlusAudit(true);
-  } });
-  commandRegistry.upsert({ id: 'parity.runFloquetProbe', label: 'Run Floquet probe', description: 'Run a period-1 driven-pendulum Floquet stability check.', run: () => {
-    runFloquetProbe(true);
-  } });
-  commandRegistry.upsert({ id: 'parity.featureIntegrity', label: 'Feature integrity details', description: 'Open restored feature integrity panel.', run: () => showFeaturePanel() });
-  commandRegistry.upsert({ id: 'parity.exportManifest', label: 'Export parity manifest', description: 'Export the modular manifest from restored tools.', run: () => exportManifest('pendulum_parity_manifest_v10_ts.json') });
-  commandRegistry.upsert({ id: 'research.saveExperiment', label: 'Save research experiment', description: 'Save the current runtime snapshot as a research experiment.', run: () => saveCurrentExperiment() });
-  commandRegistry.upsert({ id: 'research.generateParameterStudy', label: 'Generate parameter study', description: 'Create a reproducible parameter-study plan from the current state.', run: () => generateParameterStudy() });
-  commandRegistry.upsert({ id: 'research.runStudyBatch', label: 'Run study batch', description: 'Batch-execute every study point on the chaos worker (Lyapunov, RQA, FTLE).', run: () => { void runStudyBatch(); } });
-  commandRegistry.upsert({ id: 'research.rebuildComparison', label: 'Rebuild comparison matrix', description: 'Rebuild the result comparison matrix from saved experiments and run logs.', run: () => rebuildComparisonMatrix() });
-  commandRegistry.upsert({ id: 'research.exportPaperPack', label: 'Export paper pack', description: 'Export methods text, manifest, run log, study plan, and comparison matrix.', run: () => exportPaperPackJson() });
-  commandRegistry.upsert({ id: 'research.exportFigures', label: 'Export figure pack', description: 'Capture every drawn analysis canvas as a captioned PNG figure gallery (HTML + embedded manifest).', run: () => exportPaperFiguresHtml() });
-  commandRegistry.upsert({ id: 'research.exportFigureManifest', label: 'Export figure manifest', description: 'Export hashes, source canvas ids, sizes, and runtime context for captured paper figures.', run: () => exportPaperFigureManifestJson() });
-  commandRegistry.upsert({ id: 'research.exportLatex', label: 'Export LaTeX methods', description: 'Export a LaTeX methods appendix with comparison matrix and study summary.', run: () => exportPaperMethodsLatex() });
-  commandRegistry.upsert({ id: 'research.exportNotebook', label: 'Export research notebook', description: 'Export a Jupyter notebook with paper pack and parameter-study loaders.', run: () => exportResearchNotebook() });
-  commandRegistry.upsert({ id: 'research.exportBundle', label: 'Export research bundle', description: 'Export a portable JSON bundle containing methods, notebook, manifest, data, and figure payloads.', run: () => exportResearchBundleJson() });
+  registerGovernanceCommands({ exportManifest, showFeaturePanel });
 }
 
 export function installModeSelectAnchors(): void {
@@ -751,7 +960,8 @@ export function installModeSelectAnchors(): void {
     select.setAttribute('aria-hidden', 'true');
     select.inert = true;
     select.tabIndex = -1;
-    for (const mode of ['demo', 'research', 'performance', 'recovery'] as const) select.append(html('option', { value: mode, text: mode }));
+    for (const mode of ['demo', 'research', 'performance', 'recovery'] as const)
+      select.append(html('option', { value: mode, text: mode }));
     select.addEventListener('change', () => setMode(select.value as RunMode));
     document.body.append(select);
   }

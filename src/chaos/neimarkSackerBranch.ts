@@ -27,10 +27,7 @@ import type { StateVector } from '../physics/types';
  * @param stepsPerPeriod  RK4 steps per drive period. 256 is typically sufficient;
  *                        increase if the map becomes non-smooth.
  */
-export function createDrivenStroboscopicMap(
-  baseParams: DrivenParameters,
-  stepsPerPeriod = 256
-): PlanarMapSystem {
+export function createDrivenStroboscopicMap(baseParams: DrivenParameters, stepsPerPeriod = 256): PlanarMapSystem {
   const period = (2 * Math.PI) / baseParams.driveFrequency;
   const dt = period / stepsPerPeriod;
 

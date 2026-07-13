@@ -15,12 +15,43 @@ import { drivenPeriodicOrbit } from '../../chaos/floquet';
 import { continueDrivenPeriodicOrbit } from '../../chaos/continuation';
 import { evaluatePerformanceBudget } from '../../render/progressive';
 import { ensembleGrid, runDoublePendulumEnsemble } from '../../runtime/gpuEnsemble';
-import { AuditResult, CanonicalQa, LEGACY_VALIDATION_IDS, ModernLabHandle, append, button, clear, currentMethod, currentMode, currentParameters, currentSnapshot, currentSystem, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, record, row, setControl, setText, state, toast } from './shared';
+import {
+  AuditResult,
+  CanonicalQa,
+  LEGACY_VALIDATION_IDS,
+  ModernLabHandle,
+  append,
+  button,
+  clear,
+  currentMethod,
+  currentMode,
+  currentParameters,
+  currentSnapshot,
+  currentSystem,
+  detailsCard,
+  downloadText,
+  html,
+  kvGrid,
+  modernLab,
+  numberFrom,
+  record,
+  row,
+  setControl,
+  setText,
+  state,
+  toast
+} from './shared';
 import { RESEARCH_STORAGE_KEY, researchDbInstance } from './storage-sync';
-import { logResearchRun, renderResearchTable, renderResearchWorkbench, studyJobClient, studyJobClientPoolSize, studyPoolSize } from './research-workbench';
+import {
+  logResearchRun,
+  renderResearchTable,
+  renderResearchWorkbench,
+  studyJobClient,
+  studyJobClientPoolSize,
+  studyPoolSize
+} from './research-workbench';
 import { capabilityText, featureDomOk, recoverSimulation } from './governance-ui';
 import { $ } from './shared';
-
 
 export interface ChromiumMemory {
   usedJSHeapSize?: number;
@@ -76,10 +107,16 @@ export async function runEnsembleBenchmark(): Promise<void> {
       { steps: 2000, dt: 0.005 }
     );
     const stepsTotal = result.n * result.steps;
-    setText('rwEnsembleResult',
-      `Backend: ${result.backend.toUpperCase()} — ${result.n} trajectories × ${result.steps} steps in ${result.elapsedMs.toFixed(0)} ms `
-      + `(${(stepsTotal / Math.max(1, result.elapsedMs)).toFixed(0)} steps/ms). ${result.caveat}`);
-    logResearchRun('probe', 'Ensemble benchmark', `${result.backend}, ${(stepsTotal / Math.max(1, result.elapsedMs)).toFixed(0)} steps/ms`);
+    setText(
+      'rwEnsembleResult',
+      `Backend: ${result.backend.toUpperCase()} — ${result.n} trajectories × ${result.steps} steps in ${result.elapsedMs.toFixed(0)} ms ` +
+        `(${(stepsTotal / Math.max(1, result.elapsedMs)).toFixed(0)} steps/ms). ${result.caveat}`
+    );
+    logResearchRun(
+      'probe',
+      'Ensemble benchmark',
+      `${result.backend}, ${(stepsTotal / Math.max(1, result.elapsedMs)).toFixed(0)} steps/ms`
+    );
   } catch (error) {
     setText('rwEnsembleResult', `Ensemble benchmark failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -90,44 +127,106 @@ export function installValidationExtensions(): void {
   if (validateLeft && !$('patchValidationBox')) {
     const box = html('section', { id: 'patchValidationBox', className: 'ri-panel' });
     const actions = html('div', { className: 'btnrow' });
-    append(actions, button('runPatchValidation', 'Run added tests', () => runLegacyValidationSurface(), 'primary'), button('exportPatchLog', 'Export patch log', () => exportPatchLog()));
-    append(box, html('div', { className: 'ri-title', text: 'Preservation patch validation' }), actions, html('div', { id: 'patchValidationResults', className: 'patch-changelog rg-log', text: 'No added tests run yet.' }));
+    append(
+      actions,
+      button('runPatchValidation', 'Run added tests', () => runLegacyValidationSurface(), 'primary'),
+      button('exportPatchLog', 'Export patch log', () => exportPatchLog())
+    );
+    append(
+      box,
+      html('div', { className: 'ri-title', text: 'Preservation patch validation' }),
+      actions,
+      html('div', {
+        id: 'patchValidationResults',
+        className: 'patch-changelog rg-log',
+        text: 'No added tests run yet.'
+      })
+    );
     validateLeft.append(box);
   }
   if (validateLeft && !$('plxDriftTests')) {
     const box = html('section', { id: 'plxDriftTests' });
     const actions = html('div', { className: 'btnrow' });
-    append(actions, button('plxDrift10', 'Energy Drift 10s', () => runDriftSmoke(10)), button('plxDrift60', 'Energy Drift 60s', () => runDriftSmoke(60)), button('plxDriftExt', 'Energy Drift Extended', () => runDriftSmoke(120)));
-    append(box, actions, html('div', { id: 'plxDriftResults', className: 'plx-log', text: 'No long-run drift test has been run.' }));
+    append(
+      actions,
+      button('plxDrift10', 'Energy Drift 10s', () => runDriftSmoke(10)),
+      button('plxDrift60', 'Energy Drift 60s', () => runDriftSmoke(60)),
+      button('plxDriftExt', 'Energy Drift Extended', () => runDriftSmoke(120))
+    );
+    append(
+      box,
+      actions,
+      html('div', { id: 'plxDriftResults', className: 'plx-log', text: 'No long-run drift test has been run.' })
+    );
     validateLeft.append(box);
   }
   const validateControls = document.querySelector('#tab-validate .controls');
   if (validateControls && !$('rgv8Commercial')) {
-    validateControls.append(detailsCard('Commercial Readiness', kvGrid('rgv8CommercialGrid', [
-      ['policy', 'Research evidence policy'],
-      ['privacy', 'local-only'],
-      ['export reproducibility', 'manifest + hash']
-    ]), 'rgv8Commercial'));
+    validateControls.append(
+      detailsCard(
+        'Commercial Readiness',
+        kvGrid('rgv8CommercialGrid', [
+          ['policy', 'Research evidence policy'],
+          ['privacy', 'local-only'],
+          ['export reproducibility', 'manifest + hash']
+        ]),
+        'rgv8Commercial'
+      )
+    );
   }
   const validateNoteAnchor = $('validateResults');
   if (validateNoteAnchor?.parentElement && !$('rgv8ValidateNote')) {
-    const note = html('div', { id: 'rgv8ValidateNote', className: 'honesty-note', text: 'Validation includes independent RHS, energy derivative, replay, damping downgrade, worker fallback, and Poincare settings checks.' });
+    const note = html('div', {
+      id: 'rgv8ValidateNote',
+      className: 'honesty-note',
+      text: 'Validation includes independent RHS, energy derivative, replay, damping downgrade, worker fallback, and Poincare settings checks.'
+    });
     validateNoteAnchor.parentElement.insertBefore(note, validateNoteAnchor);
   }
   if ($('stats') && !$('modeStat')) {
-    $('stats')?.append(row('mode', '-', 'info'), row('conservation', '-', 'info'), row('method class', '-', 'info'), row('method note', '-', 'info'), row('RKF45 dt / err', '-', 'info'), row('Lyapunov reliability', '-', 'info'));
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 6)?.querySelector('.sval')?.setAttribute('id', 'modeStat');
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 5)?.querySelector('.sval')?.setAttribute('id', 'conservationStat');
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 4)?.querySelector('.sval')?.setAttribute('id', 'methodClassStat');
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 3)?.querySelector('.sval')?.setAttribute('id', 'methodNoteStat');
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 2)?.querySelector('.sval')?.setAttribute('id', 'rkfDetailStat');
-    $('stats')?.children.item(($('stats')?.children.length ?? 0) - 1)?.querySelector('.sval')?.setAttribute('id', 'lyapReliabilityStat');
+    $('stats')?.append(
+      row('mode', '-', 'info'),
+      row('conservation', '-', 'info'),
+      row('method class', '-', 'info'),
+      row('method note', '-', 'info'),
+      row('RKF45 dt / err', '-', 'info'),
+      row('Lyapunov reliability', '-', 'info')
+    );
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 6)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'modeStat');
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 5)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'conservationStat');
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 4)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'methodClassStat');
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 3)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'methodNoteStat');
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 2)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'rkfDetailStat');
+    $('stats')
+      ?.children.item(($('stats')?.children.length ?? 0) - 1)
+      ?.querySelector('.sval')
+      ?.setAttribute('id', 'lyapReliabilityStat');
   }
 }
 
 export function installErrorPanel(): void {
   if ($('riErrorPanel')) return;
-  const panel = html('div', { id: 'riErrorPanel', className: 'rgv8-overlay', role: 'dialog', ariaLabel: 'Runtime fault report' });
+  const panel = html('div', {
+    id: 'riErrorPanel',
+    className: 'rgv8-overlay',
+    role: 'dialog',
+    ariaLabel: 'Runtime fault report'
+  });
   const box = html('div', { className: 'rgv8-modal' });
   append(
     box,
@@ -148,7 +247,12 @@ export function installErrorPanel(): void {
 
 export function exportValidationJson(): void {
   const results = state.lastValidation ?? runAllValidationChecks().value ?? [];
-  downloadJson('pendulum_validation_legacy_ids_v10_ts.json', { schemaVersion: 'pendulum-validation/v10-ts-legacy-parity', generatedAt: new Date().toISOString(), legacyIds: LEGACY_VALIDATION_IDS, results });
+  downloadJson('pendulum_validation_legacy_ids_v10_ts.json', {
+    schemaVersion: 'pendulum-validation/v10-ts-legacy-parity',
+    generatedAt: new Date().toISOString(),
+    legacyIds: LEGACY_VALIDATION_IDS,
+    results
+  });
 }
 
 export function exportFaultReport(reason: string): void {
@@ -165,7 +269,11 @@ export function exportFaultReport(reason: string): void {
 }
 
 export function exportPatchLog(): void {
-  downloadText('pendulum_patch_log_v10_ts.md', ['# Pendulum Lab Patch Log', '', ...state.auditLog.map((line) => `- ${line}`)].join('\n'), 'text/markdown;charset=utf-8');
+  downloadText(
+    'pendulum_patch_log_v10_ts.md',
+    ['# Pendulum Lab Patch Log', '', ...state.auditLog.map((line) => `- ${line}`)].join('\n'),
+    'text/markdown;charset=utf-8'
+  );
 }
 
 export function runLegacyValidationSurface(): void {
@@ -176,19 +284,31 @@ export function runLegacyValidationSurface(): void {
     '',
     ...LEGACY_VALIDATION_IDS.map((id) => `${id}: covered by modular validation or explicit runtime policy`),
     '',
-    ...(state.lastValidation ?? []).map((caseResult) => `${caseResult.status} ${caseResult.id}: ${caseResult.measured} (${caseResult.threshold})`)
+    ...(state.lastValidation ?? []).map(
+      (caseResult) => `${caseResult.status} ${caseResult.id}: ${caseResult.measured} (${caseResult.threshold})`
+    )
   ];
-  for (const id of ['patchValidationResults', 'rgv7ValidationResults', 'riValidationResults']) setText(id, lines.join('\n'));
+  for (const id of ['patchValidationResults', 'rgv7ValidationResults', 'riValidationResults'])
+    setText(id, lines.join('\n'));
   renderValidationResults();
   renderRuntimePanels();
   toast(`Validation ${result.ok ? 'passed' : 'needs review'}`);
   record(`validation ${result.ok ? 'PASS' : 'FAIL'}`);
-  logResearchRun('validation', 'Validation suite', `${result.ok ? 'PASS' : 'FAIL'} with ${state.lastValidation?.length ?? 0} case results`, 'pendulum_validation_legacy_ids_v10_ts.json', result.ok ? 'PASS' : 'FAIL');
+  logResearchRun(
+    'validation',
+    'Validation suite',
+    `${result.ok ? 'PASS' : 'FAIL'} with ${state.lastValidation?.length ?? 0} case results`,
+    'pendulum_validation_legacy_ids_v10_ts.json',
+    result.ok ? 'PASS' : 'FAIL'
+  );
 }
 
 export function runDriftSmoke(seconds: number): void {
   const result = runAllValidationChecks().value?.find((item) => item.id === 'energy-drift-rk4-double');
-  setText('plxDriftResults', `Energy drift smoke (${seconds}s profile): ${result?.status ?? 'PASS'} ${result?.measured ?? 'covered by modular validation'}`);
+  setText(
+    'plxDriftResults',
+    `Energy drift smoke (${seconds}s profile): ${result?.status ?? 'PASS'} ${result?.measured ?? 'covered by modular validation'}`
+  );
   record(`drift smoke ${seconds}s`);
 }
 
@@ -196,21 +316,44 @@ export function runNumericalProbe(): void {
   const p = currentParameters();
   const chainState = new Float64Array([0.4, 0.25, 0.02, 0, 0, 0]);
   const out = new Float64Array(6);
-  rhsChain(chainState, { masses: [p.m1, p.m2, p.m3 ?? 1], lengths: [p.l1, p.l2, p.l3 ?? 0.8], g: p.g }, numberFrom('gamma', 0), out);
-  const energy = energyChain(chainState, { masses: [p.m1, p.m2, p.m3 ?? 1], lengths: [p.l1, p.l2, p.l3 ?? 0.8], g: p.g });
+  rhsChain(
+    chainState,
+    { masses: [p.m1, p.m2, p.m3 ?? 1], lengths: [p.l1, p.l2, p.l3 ?? 0.8], g: p.g },
+    numberFrom('gamma', 0),
+    out
+  );
+  const energy = energyChain(chainState, {
+    masses: [p.m1, p.m2, p.m3 ?? 1],
+    lengths: [p.l1, p.l2, p.l3 ?? 0.8],
+    g: p.g
+  });
   const finite = Array.from(out).every(Number.isFinite) && Number.isFinite(energy.total);
   const box = $('rgNumerics');
   clear(box);
-  box?.append(kvGrid('rgNumericsGrid', [
-    ['N-link RHS finite', finite ? 'yes' : 'no', finite ? 'good' : 'bad'],
-    ['sample energy', energy.total.toExponential(3)],
-    ['condition policy', 'partial pivot solve']
-  ]));
+  box?.append(
+    kvGrid('rgNumericsGrid', [
+      ['N-link RHS finite', finite ? 'yes' : 'no', finite ? 'good' : 'bad'],
+      ['sample energy', energy.total.toExponential(3)],
+      ['condition policy', 'partial pivot solve']
+    ])
+  );
   record(`numerical probe ${finite ? 'PASS' : 'FAIL'}`);
-  logResearchRun('probe', 'Numerical conditioning probe', finite ? 'finite N-link RHS and energy sample' : 'non-finite numerical probe', '', finite ? 'PASS' : 'FAIL');
+  logResearchRun(
+    'probe',
+    'Numerical conditioning probe',
+    finite ? 'finite N-link RHS and energy sample' : 'non-finite numerical probe',
+    '',
+    finite ? 'PASS' : 'FAIL'
+  );
 }
 
-export function orbitBaseFromControls(): { g: number; length: number; damping: number; driveAmplitude: number; driveFrequency: number } {
+export function orbitBaseFromControls(): {
+  g: number;
+  length: number;
+  damping: number;
+  driveAmplitude: number;
+  driveFrequency: number;
+} {
   return {
     g: 1,
     length: 1,
@@ -225,11 +368,20 @@ export function runOrbitFinder(): void {
   const base = orbitBaseFromControls();
   try {
     const result = drivenPeriodicOrbit(base, [0, 0], { dt: 0.005, tolerance: 1e-10 });
-    const mus = result.multipliers.map((mu) => `${mu.re.toFixed(4)}${mu.im >= 0 ? '+' : ''}${mu.im.toFixed(4)}i`).join(', ');
-    setText('rwOrbitSummary', result.converged
-      ? `${result.stable ? 'STABLE' : 'UNSTABLE'} period-1 orbit at (θ, ω) = (${result.orbit[0].toFixed(6)}, ${result.orbit[1].toFixed(6)}), period ${result.period.toFixed(4)}. Multipliers: ${mus}; max |μ| = ${result.maxModulus.toFixed(4)}; residual ${result.residual.toExponential(2)} in ${result.iterations} Newton steps.`
-      : `Newton did not converge (residual ${result.residual.toExponential(2)}). Try a different amplitude/damping.`);
-    logResearchRun('probe', 'Periodic orbit finder', `A=${base.driveAmplitude}, γ=${base.damping}: ${result.converged ? (result.stable ? 'stable' : 'unstable') : 'no convergence'}, max|μ|=${result.maxModulus.toFixed(4)}`);
+    const mus = result.multipliers
+      .map((mu) => `${mu.re.toFixed(4)}${mu.im >= 0 ? '+' : ''}${mu.im.toFixed(4)}i`)
+      .join(', ');
+    setText(
+      'rwOrbitSummary',
+      result.converged
+        ? `${result.stable ? 'STABLE' : 'UNSTABLE'} period-1 orbit at (θ, ω) = (${result.orbit[0].toFixed(6)}, ${result.orbit[1].toFixed(6)}), period ${result.period.toFixed(4)}. Multipliers: ${mus}; max |μ| = ${result.maxModulus.toFixed(4)}; residual ${result.residual.toExponential(2)} in ${result.iterations} Newton steps.`
+        : `Newton did not converge (residual ${result.residual.toExponential(2)}). Try a different amplitude/damping.`
+    );
+    logResearchRun(
+      'probe',
+      'Periodic orbit finder',
+      `A=${base.driveAmplitude}, γ=${base.damping}: ${result.converged ? (result.stable ? 'stable' : 'unstable') : 'no convergence'}, max|μ|=${result.maxModulus.toFixed(4)}`
+    );
   } catch (error) {
     setText('rwOrbitSummary', `Orbit finder failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -259,10 +411,19 @@ export function runBranchTrace(): void {
           point.stable ? 'stable' : 'unstable'
         ]);
       renderResearchTable('rwOrbitBranch', ['A', 'orbit (θ, ω)', 'max |μ|', 'stability'], rows, 'No branch points.');
-      setText('rwOrbitSummary', result.bifurcation
-        ? `Branch traced (${result.branch.length} points). FIRST BIFURCATION at A ≈ ${result.bifurcation.parameter.toFixed(4)} — type: ${result.bifurcation.type}.`
-        : `Branch traced (${result.branch.length} points). No stability loss found in [${from}, ${to}].`);
-      logResearchRun('probe', 'Branch trace', result.bifurcation ? `bifurcation ${result.bifurcation.type} at A≈${result.bifurcation.parameter.toFixed(4)}` : `no bifurcation in [${from}, ${to}]`);
+      setText(
+        'rwOrbitSummary',
+        result.bifurcation
+          ? `Branch traced (${result.branch.length} points). FIRST BIFURCATION at A ≈ ${result.bifurcation.parameter.toFixed(4)} — type: ${result.bifurcation.type}.`
+          : `Branch traced (${result.branch.length} points). No stability loss found in [${from}, ${to}].`
+      );
+      logResearchRun(
+        'probe',
+        'Branch trace',
+        result.bifurcation
+          ? `bifurcation ${result.bifurcation.type} at A≈${result.bifurcation.parameter.toFixed(4)}`
+          : `no bifurcation in [${from}, ${to}]`
+      );
     } catch (error) {
       setText('rwOrbitSummary', `Branch trace failed: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -287,7 +448,12 @@ export function runFloquetProbe(showToast: boolean): void {
 export function runCanonicalQa(showToast: boolean): CanonicalQa {
   const p = currentParameters();
   const parameters = { m1: p.m1, m2: p.m2, l1: p.l1, l2: p.l2, g: p.g };
-  const initial = new Float64Array([numberFrom('th1', 0.4), numberFrom('th2', 0.25), numberFrom('iw1', 0.02), numberFrom('iw2', -0.01)]);
+  const initial = new Float64Array([
+    numberFrom('th1', 0.4),
+    numberFrom('th2', 0.25),
+    numberFrom('iw1', 0.02),
+    numberFrom('iw2', -0.01)
+  ]);
   const e0 = energyDouble(initial, parameters).total;
   let current = new Float64Array(initial);
   let residual = 0;
@@ -313,7 +479,13 @@ export function runCanonicalQa(showToast: boolean): CanonicalQa {
   renderCanonical();
   if (showToast) toast(`Canonical QA ${qa.pass ? 'PASS' : 'CHECK'}`);
   record(`canonical QA ${qa.pass ? 'PASS' : 'CHECK'}`);
-  logResearchRun('probe', 'Canonical QA', `residual=${qa.residual.toExponential(3)} drift=${qa.drift.toExponential(3)}`, '', qa.pass ? 'PASS' : 'CHECK');
+  logResearchRun(
+    'probe',
+    'Canonical QA',
+    `residual=${qa.residual.toExponential(3)} drift=${qa.drift.toExponential(3)}`,
+    '',
+    qa.pass ? 'PASS' : 'CHECK'
+  );
   return qa;
 }
 
@@ -330,14 +502,39 @@ export function runAPlusAudit(showToast: boolean): AuditResult {
   const p = currentParameters();
   const chainState = new Float64Array([0.2, 0.15, 0.1, 0, 0, 0]);
   const chainOut = new Float64Array(6);
-  rhsChain(chainState, { masses: [p.m1, p.m2, p.m3 ?? 1], lengths: [p.l1, p.l2, p.l3 ?? 0.8], g: p.g }, numberFrom('gamma', 0), chainOut);
+  rhsChain(
+    chainState,
+    { masses: [p.m1, p.m2, p.m3 ?? 1], lengths: [p.l1, p.l2, p.l3 ?? 0.8], g: p.g },
+    numberFrom('gamma', 0),
+    chainOut
+  );
   const chainFinite = Array.from(chainOut).every(Number.isFinite);
   const tests = [
-    { id: 'modular-validation', status: validation.ok ? 'PASS' as const : 'FAIL' as const, detail: validation.problems.join(', ') || 'all modular checks pass' },
-    { id: 'generalized-n-link', status: chainFinite ? 'PASS' as const : 'FAIL' as const, detail: chainFinite ? 'finite N-link RHS' : 'non-finite N-link RHS' },
-    { id: 'integrator-registry', status: Object.keys(integratorRegistry).length >= 10 ? 'PASS' as const : 'FAIL' as const, detail: `${Object.keys(integratorRegistry).length} integrators` },
-    { id: 'command-registry', status: commandRegistry.list().length >= 7 ? 'PASS' as const : 'WARN' as const, detail: `${commandRegistry.list().length} commands` },
-    { id: 'feature-dom', status: featureDomOk() ? 'PASS' as const : 'FAIL' as const, detail: 'restored feature DOM surfaces' }
+    {
+      id: 'modular-validation',
+      status: validation.ok ? ('PASS' as const) : ('FAIL' as const),
+      detail: validation.problems.join(', ') || 'all modular checks pass'
+    },
+    {
+      id: 'generalized-n-link',
+      status: chainFinite ? ('PASS' as const) : ('FAIL' as const),
+      detail: chainFinite ? 'finite N-link RHS' : 'non-finite N-link RHS'
+    },
+    {
+      id: 'integrator-registry',
+      status: Object.keys(integratorRegistry).length >= 10 ? ('PASS' as const) : ('FAIL' as const),
+      detail: `${Object.keys(integratorRegistry).length} integrators`
+    },
+    {
+      id: 'command-registry',
+      status: commandRegistry.list().length >= 7 ? ('PASS' as const) : ('WARN' as const),
+      detail: `${commandRegistry.list().length} commands`
+    },
+    {
+      id: 'feature-dom',
+      status: featureDomOk() ? ('PASS' as const) : ('FAIL' as const),
+      detail: 'restored feature DOM surfaces'
+    }
   ];
   const result: AuditResult = {
     generatedAt: new Date().toISOString(),
@@ -351,7 +548,13 @@ export function runAPlusAudit(showToast: boolean): AuditResult {
   renderRuntimePanels();
   if (showToast) toast(`Audit ${result.failed ? 'needs review' : 'PASS'}`);
   record(`A+ audit ${result.failed ? 'CHECK' : 'PASS'}`);
-  logResearchRun('validation', 'A+ audit', `${result.passed} passed, ${result.failed} failed`, 'pendulum_aplus_audit_v10_ts.json', result.failed ? 'FAIL' : 'PASS');
+  logResearchRun(
+    'validation',
+    'A+ audit',
+    `${result.passed} passed, ${result.failed} failed`,
+    'pendulum_aplus_audit_v10_ts.json',
+    result.failed ? 'FAIL' : 'PASS'
+  );
   return result;
 }
 
@@ -403,7 +606,8 @@ export function installFloatingDiag(): void {
   if ($('ueFloatingDiag')) return;
   const box = html('div', { id: 'ueFloatingDiag' });
   const drawerHost = document.querySelector<HTMLElement>('#trustDrawer [data-trust-panel="performance"]');
-  if (!drawerHost && typeof window !== 'undefined' && window.matchMedia?.('(max-width: 560px)').matches) box.classList.add('collapsed');
+  if (!drawerHost && typeof window !== 'undefined' && window.matchMedia?.('(max-width: 560px)').matches)
+    box.classList.add('collapsed');
   const header = html('div');
   header.style.display = 'flex';
   header.style.justifyContent = 'space-between';
@@ -430,7 +634,10 @@ export function renderRuntimePanels(): void {
   setMetric('siPhys', diag?.physicsMsPerFrame ? `${diag.physicsMsPerFrame.toFixed(2)} ms` : '-');
   setMetric('siDrift', Number.isFinite(drift) ? drift.toExponential(2) : '-');
   setMetric('siRecoveries', String(state.recoveries));
-  setText('siAdvice', `${currentMode() === 'research' || currentMode() === 'benchmark' ? 'Status: strict mode, auto-actions disabled.' : 'Status: runtime assist ready.'}`);
+  setText(
+    'siAdvice',
+    `${currentMode() === 'research' || currentMode() === 'benchmark' ? 'Status: strict mode, auto-actions disabled.' : 'Status: runtime assist ready.'}`
+  );
   setText('v10MethodCard', `${method.name} | order ${method.order} | symplectic: ${method.symplectic}`);
   setText('v10ConfidenceBadge', claimLevel(snapshot));
   setText('v10WarningBox', warnings(snapshot, method).join('\n'));
@@ -503,7 +710,9 @@ export function renderPlx(snapshot: RuntimeSnapshot, method: (typeof integratorR
   ]);
   const badges = $('plxBadges');
   clear(badges);
-  ['strict-json', 'module-worker', 'typed-physics', 'legacy-parity'].forEach((text) => badges?.append(html('span', { className: 'plx-badge good', text })));
+  ['strict-json', 'module-worker', 'typed-physics', 'legacy-parity'].forEach((text) =>
+    badges?.append(html('span', { className: 'plx-badge good', text }))
+  );
   setText('plxModeNote', `Current mode: ${currentMode()}`);
   setText('plxAuditLog', state.auditLog.join('\n') || 'no automatic mutations recorded');
   setText('plxErrorLog', state.lastFault);
@@ -568,14 +777,32 @@ export function renderArchitecture(): void {
 
 export function renderResearch(): void {
   const snapshot = currentSnapshot();
-  const methodEntries = Object.values(integratorRegistry).map((meta) => `${meta.id}: order ${meta.order}, ${meta.symplectic}`);
+  const methodEntries = Object.values(integratorRegistry).map(
+    (meta) => `${meta.id}: order ${meta.order}, ${meta.symplectic}`
+  );
   setText('rgIntegrators', methodEntries.join('\n'));
-  setText('rgRenderGraph', 'main canvas -> energy -> lyapunov -> phase -> poincare -> FFT; inactive tabs skip expensive redraws.');
-  setText('rgPerf', `fps=${modernLab()?.diagnostics?.()?.fps.toFixed(1) ?? '-'} phys=${modernLab()?.diagnostics?.()?.physicsMsPerFrame.toFixed(2) ?? '-'} ms`);
-  setText('rgState', JSON.stringify({ system: snapshot.systemType, method: snapshot.method, hash: snapshot.hash, mode: snapshot.mode }, null, 2));
+  setText(
+    'rgRenderGraph',
+    'main canvas -> energy -> lyapunov -> phase -> poincare -> FFT; inactive tabs skip expensive redraws.'
+  );
+  setText(
+    'rgPerf',
+    `fps=${modernLab()?.diagnostics?.()?.fps.toFixed(1) ?? '-'} phys=${modernLab()?.diagnostics?.()?.physicsMsPerFrame.toFixed(2) ?? '-'} ms`
+  );
+  setText(
+    'rgState',
+    JSON.stringify(
+      { system: snapshot.systemType, method: snapshot.method, hash: snapshot.hash, mode: snapshot.mode },
+      null,
+      2
+    )
+  );
   setText('rgOpt', 'Bounded buffers, reduced side-plot cadence, module worker fallback, strict import parsing.');
   setText('rgTests', LEGACY_VALIDATION_IDS.map((id) => `${id}: preserved/covered`).join('\n'));
-  setText('rgContract', 'Research and benchmark modes expose warnings, manifests, validation status, and no silent physics mutation.');
+  setText(
+    'rgContract',
+    'Research and benchmark modes expose warnings, manifests, validation status, and no silent physics mutation.'
+  );
   renderResearchWorkbench();
   renderStats('rgQueue', [
     ['event bus', window.PendulumRuntime?.has('events') ? 'registered' : 'fallback'],
@@ -587,13 +814,23 @@ export function renderResearch(): void {
 export function renderCanonical(): void {
   const qa = state.lastCanonicalQa;
   const method = integratorRegistry[currentMethod()];
-  setText('canonReport', qa ? `QA ${qa.pass ? 'PASS' : 'CHECK'} residual=${qa.residual.toExponential(3)} drift=${qa.drift.toExponential(3)}` : 'Canonical QA not run yet.');
+  setText(
+    'canonReport',
+    qa
+      ? `QA ${qa.pass ? 'PASS' : 'CHECK'} residual=${qa.residual.toExponential(3)} drift=${qa.drift.toExponential(3)}`
+      : 'Canonical QA not run yet.'
+  );
   renderStats('canonSubsystems', [
     ['canonical adapter', 'available'],
     ['theta/omega UI', 'retained'],
     ['damping policy', 'non-symplectic when gamma > 0']
   ]);
-  setText('canonIntegrators', Object.values(integratorRegistry).map((meta) => `${meta.id}: ${meta.symplectic}`).join('\n'));
+  setText(
+    'canonIntegrators',
+    Object.values(integratorRegistry)
+      .map((meta) => `${meta.id}: ${meta.symplectic}`)
+      .join('\n')
+  );
   renderStats('canonAdaptive', [
     ['selected method', method.id],
     ['adaptive', method.order === 'adaptive' ? 'yes' : 'no'],
@@ -622,31 +859,51 @@ export function renderAPlus(): void {
     ['coverage', 'double/triple equivalence tests'],
     ['current N', currentSystem() === 'triple' ? '3' : '2']
   ]);
-  setText('aplusArch', 'Architecture contract: typed services, command registry, strict import guard, modular physics, manifest export, feature parity layer.');
-  setText('aplusValidation', audit ? audit.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n') : 'Run audit to populate results.');
+  setText(
+    'aplusArch',
+    'Architecture contract: typed services, command registry, strict import guard, modular physics, manifest export, feature parity layer.'
+  );
+  setText(
+    'aplusValidation',
+    audit
+      ? audit.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n')
+      : 'Run audit to populate results.'
+  );
 }
 
 export function renderValidationResults(): void {
   const validation = state.lastValidation;
-  const text = validation ? validation.map((item) => `${item.status} ${item.id}: ${item.measured}`).join('\n') : 'No validation run yet.';
+  const text = validation
+    ? validation.map((item) => `${item.status} ${item.id}: ${item.measured}`).join('\n')
+    : 'No validation run yet.';
   setText('patchValidationResults', text);
   setText('rgv7ValidationResults', text);
   if (!$('riValidationResults')) {
     const hidden = html('div', { id: 'riValidationResults', className: 'v10-sr', text });
     document.body.append(hidden);
   } else setText('riValidationResults', text);
-  setText('sfv9AuditLog', state.lastAudit ? state.lastAudit.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n') : 'Audit not run yet.');
+  setText(
+    'sfv9AuditLog',
+    state.lastAudit
+      ? state.lastAudit.tests.map((test) => `${test.status} ${test.id}: ${test.detail}`).join('\n')
+      : 'Audit not run yet.'
+  );
 }
 
-export function renderFloatingDiag(snapshot: RuntimeSnapshot, diag: ReturnType<NonNullable<ModernLabHandle['diagnostics']>> | undefined): void {
+export function renderFloatingDiag(
+  snapshot: RuntimeSnapshot,
+  diag: ReturnType<NonNullable<ModernLabHandle['diagnostics']>> | undefined
+): void {
   const box = $('ueFloatBody');
   clear(box);
-  box?.append(kvGrid('ueFloatStats', [
-    ['method', snapshot.method],
-    ['time', (diag?.time ?? snapshot.simTime).toFixed(2)],
-    ['fps', diag?.fps ? diag.fps.toFixed(0) : '-'],
-    ['drift', diag?.drift ? diag.drift.toExponential(2) : '-']
-  ]));
+  box?.append(
+    kvGrid('ueFloatStats', [
+      ['method', snapshot.method],
+      ['time', (diag?.time ?? snapshot.simTime).toFixed(2)],
+      ['fps', diag?.fps ? diag.fps.toFixed(0) : '-'],
+      ['drift', diag?.drift ? diag.drift.toExponential(2) : '-']
+    ])
+  );
 }
 
 export function claimLevel(snapshot: RuntimeSnapshot): string {
@@ -660,7 +917,8 @@ export function warnings(snapshot: RuntimeSnapshot, method: (typeof integratorRe
   const output: string[] = [];
   if (snapshot.damping > 0) output.push('gamma > 0: energy drift includes physical dissipation.');
   if (snapshot.systemType === 'triple') output.push('Triple mode remains experimental for research claims.');
-  if (method.symplectic !== 'canonical-only' && method.symplectic !== 'no') output.push('Selected method is labelled approximate/pseudo-symplectic.');
+  if (method.symplectic !== 'canonical-only' && method.symplectic !== 'no')
+    output.push('Selected method is labelled approximate/pseudo-symplectic.');
   if (!output.length) output.push('No active scientific honesty warnings.');
   return output;
 }

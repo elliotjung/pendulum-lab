@@ -1,16 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import {
-  DualArena,
-  dAdd,
-  dAddScaled,
-  dClampAbsMin,
-  dConst,
-  dCos,
-  dMul,
-  dSin,
-  dSub,
-  dVar
-} from '../src/physics/autodiff';
+import { DualArena, dAdd, dAddScaled, dClampAbsMin, dConst, dCos, dMul, dSin, dVar } from '../src/physics/autodiff';
 import {
   createChainJacobianWorkspace,
   createSphericalChainJacobianWorkspace,
@@ -18,7 +7,7 @@ import {
   jacobianDriven,
   jacobianSphericalChain
 } from '../src/physics/jacobians';
-import { jacobianDouble, rhsDouble } from '../src/physics/double';
+import { jacobianDouble } from '../src/physics/double';
 import { createChainWorkspace, rhsChain, type ChainParameters } from '../src/physics/nPendulum';
 import {
   createSphericalChainWorkspace,
@@ -95,7 +84,12 @@ describe('jacobianChain', () => {
     for (let trial = 0; trial < 25; trial += 1) {
       const state = Float64Array.from({ length: 4 }, () => rng() * 6 - 3);
       const fromChain = jacobianChain(state, params, 0.07, new Float64Array(16), workspace);
-      const fromDouble = jacobianDouble(state, { m1: 1.3, m2: 0.6, l1: 0.9, l2: 1.2, g: 9.81 }, 0.07, new Float64Array(16));
+      const fromDouble = jacobianDouble(
+        state,
+        { m1: 1.3, m2: 0.6, l1: 0.9, l2: 1.2, g: 9.81 },
+        0.07,
+        new Float64Array(16)
+      );
       expect(maxAbsDiff(fromChain, fromDouble)).toBeLessThan(1e-10);
     }
   });
@@ -201,11 +195,16 @@ describe('buildJacobian spec wiring', () => {
       const rhs = buildRhs(spec);
       const jacobian = buildJacobian(spec);
       expect(jacobian).toBeDefined();
-      const dim = spec.kind === 'driven' ? 3
-        : spec.kind === 'triple' ? 6
-        : spec.kind === 'chain' ? 8
-        : spec.kind === 'spherical-chain' ? 8
-        : 4;
+      const dim =
+        spec.kind === 'driven'
+          ? 3
+          : spec.kind === 'triple'
+            ? 6
+            : spec.kind === 'chain'
+              ? 8
+              : spec.kind === 'spherical-chain'
+                ? 8
+                : 4;
       const rng = mulberry32(0x1234);
       const state = new Float64Array(dim);
       for (let i = 0; i < dim; i += 1) state[i] = 0.4 + rng() * 0.8;

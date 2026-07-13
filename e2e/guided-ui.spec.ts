@@ -64,12 +64,27 @@ test('rail search and mode controls do not overlap', async ({ page }) => {
       if (!el) return null;
       const r = el.getBoundingClientRect();
       const cs = getComputedStyle(el);
-      return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height, display: cs.display };
+      return {
+        left: r.left,
+        top: r.top,
+        right: r.right,
+        bottom: r.bottom,
+        width: r.width,
+        height: r.height,
+        display: cs.display
+      };
     };
-    const overlap = (a: ReturnType<typeof box>, b: ReturnType<typeof box>) => Boolean(
-      a && b && a.display !== 'none' && b.display !== 'none' &&
-      a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top
-    );
+    const overlap = (a: ReturnType<typeof box>, b: ReturnType<typeof box>) =>
+      Boolean(
+        a &&
+        b &&
+        a.display !== 'none' &&
+        b.display !== 'none' &&
+        a.left < b.right &&
+        a.right > b.left &&
+        a.top < b.bottom &&
+        a.bottom > b.top
+      );
     const rail = box('.rail');
     const search = box('.rail-palette-launcher');
     const mode = box('#audienceMode');
@@ -114,7 +129,10 @@ test('the guide locale switch rewrites descriptions, hints, and tooltips in Kore
   await page.locator('#navLocale').selectOption('ko');
   await expect(labDesc).toContainText('실시간 시뮬레이션');
   await expect(page.locator('#rail-panel-sim .rail-submenu-hint')).toContainText('진자를 돌리고');
-  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"]')).toHaveAttribute('title', /Simulation Lab — 실시간/);
+  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"]')).toHaveAttribute(
+    'title',
+    /Simulation Lab — 실시간/
+  );
 
   // Persists across reloads, and English restores cleanly.
   await page.reload();
@@ -131,7 +149,10 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
   // simulation rAF and flakes on the final click — the same software-rendering
   // limitation that scopes visual-regression.spec.ts to chromium. The tour's
   // data/logic is unit-tested cross-cutting in tests/onboarding-tour.test.ts.
-  test.skip(browserName === 'webkit' || browserName === 'firefox', 'tour walkthrough is chromium-only (software-render rAF stability)');
+  test.skip(
+    browserName === 'webkit' || browserName === 'firefox',
+    'tour walkthrough is chromium-only (software-render rAF stability)'
+  );
   // The tour (like the every-launch chooser) only greets real sessions, so
   // mask navigator.webdriver and clear the tour flag. Init scripts rerun on
   // every navigation, so the flag reset is guarded by a window.name sentinel —
@@ -167,6 +188,9 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
   await expect(card).toContainText('One-click starts');
   await card.getByRole('button', { name: 'Next' }).click();
   await expect(card).toContainText('Everything lives here');
+  await card.getByRole('button', { name: 'Next' }).click();
+  await expect(card).toContainText('Mission: find A_PD');
+  await expect(card).toContainText('1.0663');
   await card.getByRole('button', { name: 'Next' }).click();
   await expect(card).toContainText('Grow at your pace');
   await card.getByRole('button', { name: 'Start exploring' }).click();

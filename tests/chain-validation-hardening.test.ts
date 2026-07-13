@@ -17,7 +17,6 @@ import { chainMassMatrix, energyChain, rhsChain, type ChainParameters } from '..
 import {
   rhsSphericalChain,
   createSphericalChainWorkspace,
-  sphericalChainEnergy,
   sphericalChainMassMatrix,
   SphericalChain,
   type SphericalChainParams
@@ -291,7 +290,7 @@ describe('external reference: small-angle normal mode (N = 4)', () => {
     const dt = 0.001;
     const crossings: number[] = [];
     let prev = state[0]!;
-    const maxSteps = Math.round((30 / omegaTheory) / dt);
+    const maxSteps = Math.round(30 / omegaTheory / dt);
     for (let i = 1; i <= maxSteps && crossings.length < 9; i += 1) {
       rk4Step(rhs, state, dt);
       const current = state[0]!;

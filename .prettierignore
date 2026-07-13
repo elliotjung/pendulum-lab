@@ -1,0 +1,13 @@
+dist/
+dist-lib/
+standalone/
+docs/api/
+reports/
+node_modules/
+index.html
+*.worker.js
+paper/paper.pdf
+# Markdown is owned by the docs:sync generators (test counts, evidence
+# numbers are written by scripts/sync-test-counts.ts); a formatter would
+# fight those regex-marker rewrites, so prose is exempt from Prettier.
+*.md

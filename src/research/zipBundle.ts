@@ -98,7 +98,10 @@ export function bytesToText(bytes: Uint8Array): string {
 
 function dosDateTime(date: Date): { time: number; dosDate: number } {
   const time = ((date.getHours() & 0x1f) << 11) | ((date.getMinutes() & 0x3f) << 5) | ((date.getSeconds() >> 1) & 0x1f);
-  const dosDate = (((Math.max(1980, date.getFullYear()) - 1980) & 0x7f) << 9) | (((date.getMonth() + 1) & 0xf) << 5) | (date.getDate() & 0x1f);
+  const dosDate =
+    (((Math.max(1980, date.getFullYear()) - 1980) & 0x7f) << 9) |
+    (((date.getMonth() + 1) & 0xf) << 5) |
+    (date.getDate() & 0x1f);
   return { time, dosDate };
 }
 
@@ -271,9 +274,8 @@ export interface BundleChecksumSha256 extends BundleChecksum {
 export async function sha256Hex(bytes: Uint8Array): Promise<string> {
   const cryptoApi = globalThis.crypto;
   if (!cryptoApi?.subtle) throw new Error('WebCrypto subtle API unavailable: cannot compute SHA-256');
-  const buffer = bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength
-    ? bytes.buffer
-    : bytes.slice().buffer;
+  const buffer =
+    bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength ? bytes.buffer : bytes.slice().buffer;
   const digest = await cryptoApi.subtle.digest('SHA-256', buffer as ArrayBuffer);
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
 }

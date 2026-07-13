@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "wasm-nchain-benchmark/v1",
+  "generatedAt": "2026-07-13T03:06:32.513Z",
+  "node": "v26.3.0",
+  "platform": "win32-x64",
+  "interleaved": true,
+  "cases": [
+    {
+      "workload": {
+        "links": 2,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 96,
+      "cpuTimesMs": [
+        0.4095999999999549,
+        0.35480000000001155,
+        0.5271999999999935,
+        0.33490000000000464,
+        0.42830000000003565
+      ],
+      "cpuMedianMs": 0.4095999999999549,
+      "cpuTapeValuesPerSecond": 234375.00000002582,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.07519999999999527,
+        0.06799999999998363,
+        0.09339999999997417,
+        0.06739999999996371,
+        0.07510000000002037
+      ],
+      "candidateMedianMs": 0.07510000000002037,
+      "candidateTapeValuesPerSecond": 1278295.605858508,
+      "speedup": 5.454061251662367,
+      "maxAbsError": 0
+    },
+    {
+      "workload": {
+        "links": 4,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 384,
+      "cpuTimesMs": [
+        0.47989999999998645,
+        0.38170000000002346,
+        0.2858999999999696,
+        0.5883000000000038,
+        0.08659999999997581
+      ],
+      "cpuMedianMs": 0.38170000000002346,
+      "cpuTapeValuesPerSecond": 1006025.674613509,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.13580000000001746,
+        0.25020000000000664,
+        0.2499000000000251,
+        0.09829999999999472,
+        0.07919999999995753
+      ],
+      "candidateMedianMs": 0.13580000000001746,
+      "candidateTapeValuesPerSecond": 2827687.776141021,
+      "speedup": 2.810751104565349,
+      "maxAbsError": 7.401546042729024e-11
+    },
+    {
+      "workload": {
+        "links": 8,
+        "damping": 0.01,
+        "dt": 0.002,
+        "steps": 6,
+        "rounds": 5
+      },
+      "tapeValues": 1536,
+      "cpuTimesMs": [
+        0.5605999999999653,
+        1.11099999999999,
+        1.2881999999999607,
+        0.7344999999999686,
+        0.9142999999999688
+      ],
+      "cpuMedianMs": 0.9142999999999688,
+      "cpuTapeValuesPerSecond": 1679973.750410207,
+      "candidateBackend": "wasm-simd",
+      "candidateTimesMs": [
+        0.6437000000000239,
+        0.2909000000000219,
+        0.2448999999999728,
+        0.23560000000003356,
+        0.42089999999996053
+      ],
+      "candidateMedianMs": 0.2909000000000219,
+      "candidateTapeValuesPerSecond": 5280165.005156013,
+      "speedup": 3.1430044688893086,
+      "maxAbsError": 1.0732155927839493e-9
+    }
+  ],
+  "decision": "Candidate timings are diagnostic; promotion also requires ADR 0002 numerical and cross-engine gates."
+}

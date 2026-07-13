@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "label": "coverage",
+  "message": "58.4%",
+  "color": "#cf222e",
+  "metrics": {
+    "lines": {
+      "total": 22521,
+      "covered": 13163,
+      "skipped": 0,
+      "pct": 58.44
+    },
+    "statements": {
+      "total": 26820,
+      "covered": 15651,
+      "skipped": 0,
+      "pct": 58.35
+    },
+    "functions": {
+      "total": 3979,
+      "covered": 1956,
+      "skipped": 0,
+      "pct": 49.15
+    },
+    "branches": {
+      "total": 14799,
+      "covered": 6755,
+      "skipped": 0,
+      "pct": 45.64
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  }
+}

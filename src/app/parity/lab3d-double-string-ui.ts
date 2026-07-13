@@ -9,11 +9,24 @@ import { DoubleStringPendulum } from '../../physics/doubleString';
 import type { SystemSpec } from '../../physics/systemSpec';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
+import {
+  researchActions,
+  researchCard,
+  researchFormRow,
+  researchInput,
+  researchSelect
+} from './research-ui-components';
 import { DOUBLE_STRING_PRESETS } from './lab3d-utils';
 import { lab3d, lab3dEnsureLoop, registerLab3dFrameHook } from './lab3d-render-loop';
 
-export function lab3dDoubleStringParams(): { m1: number; m2: number; l1: number; l2: number; g: number; damping: number } {
+export function lab3dDoubleStringParams(): {
+  m1: number;
+  m2: number;
+  l1: number;
+  l2: number;
+  g: number;
+  damping: number;
+} {
   return {
     m1: clampNumber(numberFrom('ds3M1', 1), 1, 0.1, 5),
     m2: clampNumber(numberFrom('ds3M2', 0.8), 0.8, 0.1, 5),
@@ -61,7 +74,15 @@ export function applyDoubleStringPreset(key: string): void {
 /** Declarative spec of the current double-string setup (taut-branch analyses). */
 export function doubleStringSpec(): Extract<SystemSpec, { kind: 'double-string' }> {
   const params = lab3dDoubleStringParams();
-  return { kind: 'double-string', m1: params.m1, m2: params.m2, l1: params.l1, l2: params.l2, g: params.g, damping: params.damping };
+  return {
+    kind: 'double-string',
+    m1: params.m1,
+    m2: params.m2,
+    l1: params.l1,
+    l2: params.l2,
+    g: params.g,
+    damping: params.damping
+  };
 }
 
 export function renderDoubleStringSim(): void {
@@ -73,7 +94,7 @@ export function renderDoubleStringSim(): void {
   const reach = lab3d.doubleString.params.l1 + lab3d.doubleString.params.l2;
   const scale = (Math.min(canvas.width, canvas.height) * 0.42) / reach;
   const cx = canvas.width / 2;
-  const cy = canvas.height * 0.30;
+  const cy = canvas.height * 0.3;
   ctx.fillStyle = '#0b1020';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = 'rgba(110,130,170,0.28)';
@@ -138,18 +159,24 @@ export function renderDoubleStringReadout(): void {
   if (!lab3d.doubleString) return;
   const snapshot = lab3d.doubleString.snapshot();
   const captures = lab3d.doubleString.events.filter((event) => event.type === 'capture').length;
-  setText('ds3Readout', [
-    `phase=${snapshot.phase.toUpperCase()}`,
-    `T1=${snapshot.tension1.toFixed(3)} N, T2=${snapshot.tension2.toFixed(3)} N`,
-    `theta=(${snapshot.theta1.toFixed(3)}, ${snapshot.theta2.toFixed(3)}), omega=(${snapshot.omega1.toFixed(3)}, ${snapshot.omega2.toFixed(3)})`,
-    `E=${snapshot.energy.toFixed(4)} J`,
-    `constraint err=(${snapshot.constraintError1.toExponential(2)}, ${snapshot.constraintError2.toExponential(2)})`,
-    `events=${lab3d.doubleString.events.length} (${captures} captures)`,
-    snapshot.caveat
-  ].join(' | '));
+  setText(
+    'ds3Readout',
+    [
+      `phase=${snapshot.phase.toUpperCase()}`,
+      `T1=${snapshot.tension1.toFixed(3)} N, T2=${snapshot.tension2.toFixed(3)} N`,
+      `theta=(${snapshot.theta1.toFixed(3)}, ${snapshot.theta2.toFixed(3)}), omega=(${snapshot.omega1.toFixed(3)}, ${snapshot.omega2.toFixed(3)})`,
+      `E=${snapshot.energy.toFixed(4)} J`,
+      `constraint err=(${snapshot.constraintError1.toExponential(2)}, ${snapshot.constraintError2.toExponential(2)})`,
+      `events=${lab3d.doubleString.events.length} (${captures} captures)`,
+      snapshot.caveat
+    ].join(' | ')
+  );
   const warningNode = $('ds3Warning');
   if (warningNode) {
-    const warning = snapshot.phase === 'taut' ? '' : 'A string segment is slack; this is a hybrid finite-time event state, not a rigid rod run.';
+    const warning =
+      snapshot.phase === 'taut'
+        ? ''
+        : 'A string segment is slack; this is a hybrid finite-time event state, not a rigid rod run.';
     warningNode.textContent = warning;
     warningNode.style.color = warning ? '#f4a261' : '';
   }
@@ -183,7 +210,10 @@ export function buildDoubleStringCard(handlers: DoubleStringCardHandlers): HTMLE
   doubleStringCanvas.height = 360;
   doubleStringCanvas.style.width = '100%';
   doubleStringCanvas.style.maxWidth = '480px';
-  const dsPreset = researchSelect('ds3Preset', Object.entries(DOUBLE_STRING_PRESETS).map(([key, preset]) => [key, preset.label]));
+  const dsPreset = researchSelect(
+    'ds3Preset',
+    Object.entries(DOUBLE_STRING_PRESETS).map(([key, preset]) => [key, preset.label])
+  );
   dsPreset.addEventListener('change', () => applyDoubleStringPreset(dsPreset.value));
   append(
     doubleStringCard,
@@ -199,11 +229,16 @@ export function buildDoubleStringCard(handlers: DoubleStringCardHandlers): HTMLE
     researchFormRow('Gravity', researchInput('ds3Gravity', 'number', '9.81', 'm/s^2')),
     researchFormRow('Damping', researchInput('ds3Damping', 'number', '0', '1/s')),
     researchActions(
-      button('ds3Run', 'Run', () => {
-        if (!lab3d.doubleString) resetDoubleStringSim();
-        lab3d.doubleStringRunning = true;
-        lab3dEnsureLoop();
-      }, 'primary'),
+      button(
+        'ds3Run',
+        'Run',
+        () => {
+          if (!lab3d.doubleString) resetDoubleStringSim();
+          lab3d.doubleStringRunning = true;
+          lab3dEnsureLoop();
+        },
+        'primary'
+      ),
       button('ds3Pause', 'Pause', () => {
         lab3d.doubleStringRunning = false;
       }),
@@ -219,9 +254,17 @@ export function buildDoubleStringCard(handlers: DoubleStringCardHandlers): HTMLE
     ),
     researchFormRow('Export T', researchInput('ds3ExportT', 'number', '20', 's of trajectory for CSV export')),
     doubleStringCanvas,
-    html('div', { id: 'ds3Analysis', className: 'research-summary', text: 'Analyze first runs the hybrid taut-fraction validity probe; when the strings stay taut it runs the worker λ/RQA/FTLE job on the (then-exact) taut-branch vector field.' }),
+    html('div', {
+      id: 'ds3Analysis',
+      className: 'research-summary',
+      text: 'Analyze first runs the hybrid taut-fraction validity probe; when the strings stay taut it runs the worker λ/RQA/FTLE job on the (then-exact) taut-branch vector field.'
+    }),
     html('div', { id: 'ds3Warning', className: 'research-summary', text: '' }),
-    html('div', { id: 'ds3Readout', className: 'research-summary', text: 'Reset to initialise. Taut motion uses the double-pendulum equations with explicit string tension gates; slack links enter hybrid free-flight/capture mode.' })
+    html('div', {
+      id: 'ds3Readout',
+      className: 'research-summary',
+      text: 'Reset to initialise. Taut motion uses the double-pendulum equations with explicit string tension gates; slack links enter hybrid free-flight/capture mode.'
+    })
   );
   return doubleStringCard;
 }

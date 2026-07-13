@@ -22,10 +22,27 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify immutable release coordinate
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          jsr_version="$(node -p "require('./jsr.json').version")"
+          citation_version="$(node -e "const fs=require('fs'); const m=fs.readFileSync('CITATION.cff','utf8').match(/^version:\s*['\"]?([^'\"\r\n]+)/m); process.stdout.write(m?.[1]??'')")"
+          tag_version="${GITHUB_REF_NAME#v}"
+          test "$tag_version" = "$package_version" && test "$package_version" = "$jsr_version" && test "$package_version" = "$citation_version" || {
+            echo "tag=$tag_version package=$package_version jsr=$jsr_version citation=$citation_version" >&2
+            exit 1
+          }
       - run: npm run verify
       - run: npm run build
       - run: npm run build:standalone
       - run: npm run check:standalone-sync
+      - run: npm run check:wasm-sync
+      - run: npx playwright install --with-deps chromium
+      - name: Install PDF visual-verification renderer
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+      - run: npm run smoke:standalone
       - run: npm run build:lib
       - run: npm run budget
       - run: npm run docs:api
@@ -37,7 +54,18 @@ jobs:
           npm pack --json > reports/npm-pack.json
           package_file="$(node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('reports/npm-pack.json')); process.stdout.write(p[0].filename)")"
           echo "PACKAGE_FILE=$package_file" >> "$GITHUB_ENV"
-          sha256sum "$package_file" > reports/release-checksums.txt
+          sha256sum "$package_file" reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt > reports/release-checksums.txt
+      - name: Package the double-click standalone app
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          portable_html="pendulum-lab-standalone-${GITHUB_REF_NAME}.html"
+          portable_zip="pendulum-lab-standalone-${GITHUB_REF_NAME}.zip"
+          cp standalone/index.html "$portable_html"
+          (cd standalone && zip -9 -j "../$portable_zip" index.html *.worker.js)
+          sha256sum "$portable_html" "$portable_zip" >> reports/release-checksums.txt
+          echo "PORTABLE_HTML=$portable_html" >> "$GITHUB_ENV"
+          echo "PORTABLE_ZIP=$portable_zip" >> "$GITHUB_ENV"
       - name: Generate CycloneDX SBOM
         run: npm sbom --package-lock-only --sbom-format cyclonedx > reports/sbom.cdx.json
       - name: Attest package build provenance
@@ -60,7 +88,23 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${GITHUB_REF_NAME}" "${PACKAGE_FILE}" reports/release-checksums.txt reports/sbom.cdx.json reports/attestation-verification.json --clobber
+        shell: bash
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            is_draft="$(gh release view "${GITHUB_REF_NAME}" --json isDraft --jq .isDraft)"
+            test "$is_draft" = "true" || {
+              echo "Refusing to overwrite assets on the published release ${GITHUB_REF_NAME}." >&2
+              exit 1
+            }
+          else
+            gh release create "${GITHUB_REF_NAME}" --verify-tag --draft --generate-notes --title "Pendulum Lab ${GITHUB_REF_NAME}"
+          fi
+          gh release upload "${GITHUB_REF_NAME}" \
+            "${PACKAGE_FILE}" "${PORTABLE_HTML}" "${PORTABLE_ZIP}" \
+            reports/release-checksums.txt reports/sbom.cdx.json reports/attestation-verification.json \
+            reports/release-one-page.pdf reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json \
+            reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt reports/demo-narrated-ko.md \
+            --clobber
       - uses: actions/upload-artifact@v4
         with:
           name: pendulum-lab-release
@@ -72,28 +116,146 @@ jobs:
             reports/worldclass-scorecard.md
             reports/release-readiness.*
             reports/release-one-page.pdf
+            reports/portfolio-korean.pdf
+            reports/portfolio-korean-pdf-validation.json
             reports/walkthrough-30s.gif
             reports/walkthrough-storyboard.svg
+            reports/demo-narrated-ko.mp4
+            reports/demo-narrated-ko.vtt
+            reports/demo-narrated-ko.md
             reports/npm-pack.json
             reports/release-checksums.txt
             reports/sbom.cdx.json
             reports/attestation-verification.json
+            reports/bundle-budget.*
             *.tgz
-      - name: Notify landing release gate
+      - name: Dispatch and wait for the landing release gate
         if: startsWith(github.ref, 'refs/tags/')
         env:
           LANDING_DISPATCH_TOKEN: ${{ secrets.LANDING_DISPATCH_TOKEN }}
         shell: bash
         run: |
           if [ -z "$LANDING_DISPATCH_TOKEN" ]; then
-            echo "LANDING_DISPATCH_TOKEN is not configured; landing coordination was skipped."
-            exit 0
+            echo "LANDING_DISPATCH_TOKEN is required for the single-trigger cross-repository release." >&2
+            exit 1
           fi
+          dispatch_epoch="$(date -u +%s)"
           evidence_source_commit="$(node -e "const r=require('./reports/evidence-summary.json'); process.stdout.write(r.provenance.sourceCommit)")"
+          evidence_sha256="$(sha256sum reports/evidence-summary.json | cut -d' ' -f1)"
+          evidence_base64="$(base64 -w0 reports/evidence-summary.json)"
+          EVIDENCE_BASE64="$evidence_base64" EVIDENCE_SHA256="$evidence_sha256" \
+            EVIDENCE_SOURCE_COMMIT="$evidence_source_commit" node -e "const fs=require('fs'); fs.writeFileSync('/tmp/landing-dispatch.json', JSON.stringify({event_type:'pendulum-release',client_payload:{source_commit:process.env.EVIDENCE_SOURCE_COMMIT,release_commit:process.env.GITHUB_SHA,tag:process.env.GITHUB_REF_NAME,orchestrator_run_id:process.env.GITHUB_RUN_ID,evidence_sha256:process.env.EVIDENCE_SHA256,evidence_base64:process.env.EVIDENCE_BASE64}}))"
           curl --fail-with-body --retry 3 \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $LANDING_DISPATCH_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/elliotjung/pendulum-landing/dispatches \
-            -d "{\"event_type\":\"pendulum-release\",\"client_payload\":{\"source_commit\":\"$evidence_source_commit\",\"release_commit\":\"$GITHUB_SHA\",\"tag\":\"$GITHUB_REF_NAME\"}}"
+            --data-binary @/tmp/landing-dispatch.json
+
+          run_id=""
+          expected_title="Cross-repo release ${GITHUB_REF_NAME} from ${GITHUB_RUN_ID}"
+          for attempt in $(seq 1 30); do
+            runs="$(curl --fail --silent --show-error --retry 3 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $LANDING_DISPATCH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              'https://api.github.com/repos/elliotjung/pendulum-landing/actions/workflows/cross-repo-release.yml/runs?event=repository_dispatch&per_page=10')"
+            run_id="$(RUNS="$runs" DISPATCH_EPOCH="$dispatch_epoch" EXPECTED_TITLE="$expected_title" node -e "const r=JSON.parse(process.env.RUNS); const min=Number(process.env.DISPATCH_EPOCH)*1000; const hit=r.workflow_runs.find(x=>Date.parse(x.created_at)>=min&&x.display_title===process.env.EXPECTED_TITLE); process.stdout.write(hit?String(hit.id):'')")"
+            [ -n "$run_id" ] && break
+            sleep 10
+          done
+          [ -n "$run_id" ] || { echo "landing release run did not start" >&2; exit 1; }
+
+          for attempt in $(seq 1 180); do
+            run="$(curl --fail --silent --show-error --retry 3 \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $LANDING_DISPATCH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/elliotjung/pendulum-landing/actions/runs/$run_id")"
+            status="$(RUN="$run" node -e "process.stdout.write(JSON.parse(process.env.RUN).status)")"
+            conclusion="$(RUN="$run" node -e "process.stdout.write(JSON.parse(process.env.RUN).conclusion||'')")"
+            if [ "$status" = "completed" ]; then
+              [ "$conclusion" = "success" ] || { echo "landing release run $run_id concluded $conclusion" >&2; exit 1; }
+              echo "landing release run $run_id succeeded"
+              break
+            fi
+            [ "$attempt" -lt 180 ] || { echo "landing release run $run_id timed out" >&2; exit 1; }
+            sleep 10
+          done
+      - name: Publish Zenodo record and synchronize DOI when configured
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$ZENODO_TOKEN" ]; then
+            echo "ZENODO_TOKEN is not configured; DOI publication remains an owner action."
+            exit 0
+          fi
+          npm run zenodo:publish
+          npm run doi:sync
+
+  npm-publish:
+    needs: release-artifacts
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Pin OIDC-capable npm
+        run: npm install --global npm@11.5.1
+      - run: npm ci
+      - name: Verify and publish the scoped npm coordinate
+        shell: bash
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          test "${GITHUB_REF_NAME#v}" = "$version"
+          npm view "@elliotjung/pendulum-lab@$version" version >/dev/null 2>&1 && {
+            echo "@elliotjung/pendulum-lab@$version is already published" >&2
+            exit 1
+          }
+          npm run build:lib
+          npm publish --access public
+
+  jsr-publish:
+    needs: release-artifacts
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Verify and publish the JSR coordinate
+        shell: bash
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          jsr_version="$(node -p "require('./jsr.json').version")"
+          test "${GITHUB_REF_NAME#v}" = "$package_version" && test "$package_version" = "$jsr_version"
+          npm run verify
+          npm run jsr:publish
+
+  publish-github-release:
+    needs: [release-artifacts, npm-publish, jsr-publish]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish only after simulator, landing, npm, JSR, and optional DOI gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --draft=false --latest

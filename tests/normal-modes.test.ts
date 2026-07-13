@@ -29,7 +29,11 @@ function eig2x2(a: number, b: number, c: number, d: number): [number, number] {
 }
 
 describe('linearised normal modes match the closed-form double-pendulum frequencies', () => {
-  for (const [l, g] of [[1, 9.81], [0.5, 9.81], [1.25, 9.81]] as const) {
+  for (const [l, g] of [
+    [1, 9.81],
+    [0.5, 9.81],
+    [1.25, 9.81]
+  ] as const) {
     test(`equal m=1, l=${l}, g=${g}`, () => {
       const params: PendulumParameters = { m1: 1, m2: 1, l1: l, l2: l, g };
       const jac = new Float64Array(16);

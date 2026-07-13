@@ -166,7 +166,12 @@ export function ogyAnalyze(spec: OgySpec): OgyAnalysis {
  * manifold: δp = -λ_u (f_u·(x - x*)) / (f_u·∂F/∂p). Returns 0 outside the
  * linear control region (‖x - x*‖ > `region`) so control only acts near the UPO.
  */
-export function ogyControlSignal(spec: OgySpec, analysis: OgyAnalysis, x: readonly number[], region = Infinity): number {
+export function ogyControlSignal(
+  spec: OgySpec,
+  analysis: OgyAnalysis,
+  x: readonly number[],
+  region: number = Infinity
+): number {
   const dx0 = (x[0] ?? 0) - (spec.fixedPoint[0] ?? 0);
   const dx1 = (x[1] ?? 0) - (spec.fixedPoint[1] ?? 0);
   if (Math.hypot(dx0, dx1) > region) return 0;
@@ -203,7 +208,12 @@ export interface OgySimResult {
  * captured and how tightly it settles. With control disabled (maxDelta=0) the
  * same start escapes — the contrast that demonstrates the effect.
  */
-export function simulateOgyControl(map: ParametrizedMapFn, spec: OgySpec, sim: OgySimSpec, x0: readonly number[]): OgySimResult {
+export function simulateOgyControl(
+  map: ParametrizedMapFn,
+  spec: OgySpec,
+  sim: OgySimSpec,
+  x0: readonly number[]
+): OgySimResult {
   const analysis = ogyAnalyze(spec);
   let x = x0.slice();
   const next = new Array<number>(x.length).fill(0);

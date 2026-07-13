@@ -94,13 +94,21 @@ function excessKurtosis(x: readonly number[]): number {
  * last is the forcing). Returns the linear operator + forcing model, the spectrum
  * of A, the fit residual and the forcing/leading intermittency (excess kurtosis).
  */
-export function havokAnalysis(series: readonly number[], dt: number, options: { delays: number; rank: number }): HavokResult {
+export function havokAnalysis(
+  series: readonly number[],
+  dt: number,
+  options: { delays: number; rank: number }
+): HavokResult {
   if (!(dt > 0)) throw new Error('havokAnalysis: dt must be positive.');
-  if (!Number.isInteger(options.rank) || options.rank < 2) throw new Error('havokAnalysis: rank must be an integer ≥ 2.');
+  if (!Number.isInteger(options.rank) || options.rank < 2)
+    throw new Error('havokAnalysis: rank must be an integer ≥ 2.');
   const hankel = hankelMatrix(series, options.delays);
   const svd = thinSvd(hankel.data, hankel.rows, hankel.cols, { maxRank: options.rank });
   const r = svd.rank;
-  if (r < 2) throw new Error('havokAnalysis: the Hankel matrix has numerical rank < 2; the series is too low-dimensional for this rank.');
+  if (r < 2)
+    throw new Error(
+      'havokAnalysis: the Hankel matrix has numerical rank < 2; the series is too low-dimensional for this rank.'
+    );
   const m = hankel.cols;
 
   // Eigen-time-delay coordinates V (m × r): svd.v is cols×rank row-major.
@@ -131,7 +139,8 @@ export function havokAnalysis(series: readonly number[], dt: number, options: { 
   }
   const factor = new Float64Array(r * r);
   const fres = choleskyFactor(gram, r, factor);
-  if (!fres.ok) throw new Error('havokAnalysis: the delay-coordinate Gram is singular; reduce rank or supply a longer series.');
+  if (!fres.ok)
+    throw new Error('havokAnalysis: the delay-coordinate Gram is singular; reduce rank or supply a longer series.');
 
   const linearOperator = new Array<number>(core * core).fill(0);
   const forcingCoupling = new Array<number>(core).fill(0);

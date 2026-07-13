@@ -37,10 +37,8 @@ import {
   melnikovVerdict,
   melnikovCriticalAmplitude,
   continueNeimarkSackerTorus,
-  createDrivenStroboscopicMap,
   continueExpansionNSBranch,
   sineCircleMap,
-  rotationNumber,
   scanModeLocking,
   planarMapRotationNumber,
   torusLyapunovSpectrum,
@@ -48,10 +46,7 @@ import {
   type PlanarMapSystem
 } from '../src/chaos';
 import { runCliBatch, validateCliBatchSpec } from '../src/research/cliBatchSpec';
-import {
-  fitDoublePendulum,
-  type DoublePendulumParameterName
-} from '../src/research/parameterEstimation';
+import { fitDoublePendulum, type DoublePendulumParameterName } from '../src/research/parameterEstimation';
 import { runLangevinEnsemble } from '../src/physics/stochastic';
 import { rhsDouble } from '../src/physics/double';
 import { rhsChain, energyChain, createChainWorkspace } from '../src/physics/nPendulum';
@@ -180,12 +175,18 @@ function run(args: CliArgs): unknown {
   switch (command) {
     case 'lyapunov':
       return job(flags, {
-        id: 'cli', kind: 'lyapunov', spec, state0,
+        id: 'cli',
+        kind: 'lyapunov',
+        spec,
+        state0,
         settings: { dt: flagNum(flags, 'dt', 0.01), steps: flagNum(flags, 'steps', 20000) }
       });
     case 'spectrum':
       return job(flags, {
-        id: 'cli', kind: 'lyapunovSpectrum', spec, state0,
+        id: 'cli',
+        kind: 'lyapunovSpectrum',
+        spec,
+        state0,
         settings: { dt: flagNum(flags, 'dt', 0.01), steps: flagNum(flags, 'steps', 20000) }
       });
     case 'zeroone':
@@ -194,14 +195,19 @@ function run(args: CliArgs): unknown {
       return job(flags, { id: 'cli', kind: 'rqa', spec, state0 });
     case 'ftle':
       return job(flags, {
-        id: 'cli', kind: 'ftle', spec,
+        id: 'cli',
+        kind: 'ftle',
+        spec,
         settings: { n: flagNum(flags, 'n', 32), totalTime: flagNum(flags, 'horizon', 5) }
       });
     case 'basin':
       return job(flags, { id: 'cli', kind: 'basin', spec, settings: { n: flagNum(flags, 'n', 100) } });
     case 'studypoint':
       return job(flags, {
-        id: 'cli', kind: 'studyPoint', spec, state0,
+        id: 'cli',
+        kind: 'studyPoint',
+        spec,
+        state0,
         settings: { ftleHorizon: flagNum(flags, 'horizon', 5) }
       });
     case 'wada': {
@@ -217,7 +223,13 @@ function run(args: CliArgs): unknown {
         n,
         results: radii.map((radius) => {
           const r = wadaCandidate(grid, radius);
-          return { radius, wadaFraction: r.wadaFraction, boundaryCells: r.boundaryCells, numColors: r.numColors, wadaCandidate: r.wadaCandidate };
+          return {
+            radius,
+            wadaFraction: r.wadaFraction,
+            boundaryCells: r.boundaryCells,
+            numColors: r.numColors,
+            wadaCandidate: r.wadaCandidate
+          };
         })
       };
     }
@@ -226,7 +238,10 @@ function run(args: CliArgs): unknown {
       // stable/unstable verdict, grid hashes, caveat, reproducibility hash.
       const raw = flags.get('resolutions');
       const resolutions = raw
-        ? raw.split(',').map((part) => Number.parseInt(part.trim(), 10)).filter(Number.isFinite)
+        ? raw
+            .split(',')
+            .map((part) => Number.parseInt(part.trim(), 10))
+            .filter(Number.isFinite)
         : [40, 60, 90];
       return wadaResolutionConvergence(
         { m1: spec.m1, m2: spec.m2, l1: spec.l1, l2: spec.l2, g: spec.g },
@@ -350,7 +365,8 @@ function run(args: CliArgs): unknown {
       const noise = flagNum(flags, 'noise', 0);
 
       const names = (flags.get('estimate') ?? 'g').split(',').map((s) => s.trim()) as DoublePendulumParameterName[];
-      for (const n of names) if (!ESTIMABLE.has(n)) throw new Error(`unknown parameter "${n}" (estimable: m1,m2,l1,l2,g)`);
+      for (const n of names)
+        if (!ESTIMABLE.has(n)) throw new Error(`unknown parameter "${n}" (estimable: m1,m2,l1,l2,g)`);
       const guessRaw = flags.get('guess');
       const initialGuess = guessRaw
         ? guessRaw.split(',').map((s) => Number.parseFloat(s.trim()))
@@ -360,13 +376,24 @@ function run(args: CliArgs): unknown {
       const times = Array.from({ length: samples }, (_, i) => (horizon * i) / (samples - 1));
       const clean = syntheticDoubleAngles(truth, gamma, initialState, times, dt);
       // Deterministic pseudo-noise (no RNG dependency) so the command is reproducible.
-      const angles = noise > 0
-        ? clean.map(([a, b], i): [number, number] => [a + noise * Math.sin(12.9898 * i), b + noise * Math.cos(78.233 * i)])
-        : clean;
+      const angles =
+        noise > 0
+          ? clean.map(([a, b], i): [number, number] => [
+              a + noise * Math.sin(12.9898 * i),
+              b + noise * Math.cos(78.233 * i)
+            ])
+          : clean;
 
       const fit = fitDoublePendulum(
         { times, angles },
-        { initialState: [initialState[0]!, initialState[1]!, initialState[2]!, initialState[3]!], base: truth, gamma, estimate: names, initialGuess, dt }
+        {
+          initialState: [initialState[0]!, initialState[1]!, initialState[2]!, initialState[3]!],
+          base: truth,
+          gamma,
+          estimate: names,
+          initialGuess,
+          dt
+        }
       );
       return {
         truth,
@@ -429,7 +456,12 @@ function run(args: CliArgs): unknown {
         midpoint: result.midpoint,
         pitchforkResidual: result.pitchforkResidual,
         separation: result.separation,
-        branches: result.branches.map((b) => ({ orbit: b.orbit, stable: b.stable, maxModulus: b.maxModulus, residual: b.residual }))
+        branches: result.branches.map((b) => ({
+          orbit: b.orbit,
+          stable: b.stable,
+          maxModulus: b.maxModulus,
+          residual: b.residual
+        }))
       };
     }
     case 'sde': {
@@ -457,7 +489,18 @@ function run(args: CliArgs): unknown {
         scheme,
         recordEvery: Math.max(1, Math.round(steps / 10))
       });
-      return { params, gamma, sigma, scheme, realizations, dt, steps, times: result.times, mean: result.mean, variance: result.variance };
+      return {
+        params,
+        gamma,
+        sigma,
+        scheme,
+        realizations,
+        dt,
+        steps,
+        times: result.times,
+        mean: result.mean,
+        variance: result.variance
+      };
     }
     case 'transcritical': {
       // Transcritical (+1) branch switch on the normal form r(x, λ) = λx − x²:
@@ -465,7 +508,12 @@ function run(args: CliArgs): unknown {
       // x = λ branch tangent and rejected if it falls back onto x = 0.
       const step = flagNum(flags, 'step', 0.2);
       const result = switchTranscriticalBranch(
-        { dimension: 1, residual: (state, parameter, out) => { out[0] = parameter * state[0]! - state[0]! * state[0]!; } },
+        {
+          dimension: 1,
+          residual: (state, parameter, out) => {
+            out[0] = parameter * state[0]! - state[0]! * state[0]!;
+          }
+        },
         { state: [0], parameter: 0 },
         { parameterStep: step, branchTangent: [1], referenceBranch: () => [0] }
       );
@@ -518,7 +566,15 @@ function run(args: CliArgs): unknown {
         start: flagNum(flags, 'from', 0),
         end: flagNum(flags, 'to', 1),
         steps: Math.max(1, Math.round(flagNum(flags, 'steps', 200))),
-        rationals: [[0, 1], [1, 4], [1, 3], [1, 2], [2, 3], [3, 4], [1, 1]],
+        rationals: [
+          [0, 1],
+          [1, 4],
+          [1, 3],
+          [1, 2],
+          [2, 3],
+          [3, 4],
+          [1, 1]
+        ],
         tolerance: flagNum(flags, 'tol', 1e-4),
         rotationOptions: { iterations: Math.round(flagNum(flags, 'iters', 60000)), transient: 2000 }
       });
@@ -540,7 +596,10 @@ function run(args: CliArgs): unknown {
         iterations: Math.round(flagNum(flags, 'iters', 40000)),
         transient: Math.round(flagNum(flags, 'transient', 5000))
       });
-      const rho = planarMapRotationNumber(delayedLogisticSystem(), a, [center, center], [center + 0.1, center], { iterations: 100000, transient: 5000 });
+      const rho = planarMapRotationNumber(delayedLogisticSystem(), a, [center, center], [center + 0.1, center], {
+        iterations: 100000,
+        transient: 5000
+      });
       return { a, rotationNumber: rho, ...result };
     }
     case 'nsconv': {
@@ -567,7 +626,9 @@ function run(args: CliArgs): unknown {
       const totalTime = flagNum(flags, 'time', 2000);
       const samples = Math.max(3, Math.round(flagNum(flags, 'samples', 8)));
       const methods = (flags.get('methods') ?? 'rk4,gauss2,hmidpoint').split(',') as IntegratorId[];
-      const profiles = methods.map((method) => energyDriftProfile({ method, rhs, energy, initialState, dt, totalTime, samples }));
+      const profiles = methods.map((method) =>
+        energyDriftProfile({ method, rhs, energy, initialState, dt, totalTime, samples })
+      );
       return { chainParams, dt, totalTime, initialState, profiles };
     }
     case 'nsbranch': {
@@ -614,8 +675,39 @@ function run(args: CliArgs): unknown {
     default:
       return {
         usage: 'npx tsx scripts/research-cli.ts <command> [--flags]',
-        commands: ['lyapunov', 'spectrum', 'zeroone', 'rqa', 'ftle', 'basin', 'wada', 'wadaconv', 'codim2', 'studypoint', 'orbit', 'continue', 'switch', 'pitchfork', 'transcritical', 'melnikov', 'estimate', 'sde', 'nstorus', 'nsbranch', 'arnold', 'toruslyap', 'nsconv', 'drift', 'batch'],
-        sharedFlags: ['--m1 --m2 --l1 --l2 --g', '--state th1,th2,w1,w2', '--out file.json', '--full (keep raster arrays)'],
+        commands: [
+          'lyapunov',
+          'spectrum',
+          'zeroone',
+          'rqa',
+          'ftle',
+          'basin',
+          'wada',
+          'wadaconv',
+          'codim2',
+          'studypoint',
+          'orbit',
+          'continue',
+          'switch',
+          'pitchfork',
+          'transcritical',
+          'melnikov',
+          'estimate',
+          'sde',
+          'nstorus',
+          'nsbranch',
+          'arnold',
+          'toruslyap',
+          'nsconv',
+          'drift',
+          'batch'
+        ],
+        sharedFlags: [
+          '--m1 --m2 --l1 --l2 --g',
+          '--state th1,th2,w1,w2',
+          '--out file.json',
+          '--full (keep raster arrays)'
+        ],
         examples: [
           'npx tsx scripts/research-cli.ts lyapunov --state 2,2.5,0,0',
           'npx tsx scripts/research-cli.ts wadaconv --resolutions 40,60,90 --maxTime 15',

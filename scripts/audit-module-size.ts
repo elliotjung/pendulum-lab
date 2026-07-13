@@ -4,13 +4,33 @@ import { join } from 'node:path';
 const SOURCE_ROOT = 'src';
 const DEFAULT_MAX_LINES = 650;
 
+// Ratchet values are exact line counts re-pinned after the 2026-07-13 one-time
+// Prettier re-baseline (formatting-only line growth). Any further growth still
+// fails the gate; the split priorities recorded per entry are unchanged.
 const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> = {
-  'src/app/parity/research-workbench.ts': { maxLines: 2200, owner: 'split into experiment library, batch runner, design study, comparison matrix' },
-  'src/app/parity/figure-export.ts': { maxLines: 850, owner: 'split exporters by artifact type' },
-  'src/app/parity/governance-ui.ts': { maxLines: 800, owner: 'split command palette, manifest, mode controls' },
-  'src/app/ExpansionLabTab.ts': { maxLines: 780, owner: 'split controller, rendering, persistence' },
+  'src/app/parity/research-workbench.ts': {
+    maxLines: 1930,
+    owner: 'split into experiment library, batch runner, design study, comparison matrix'
+  },
+  'src/app/parity/figure-export.ts': { maxLines: 941, owner: 'split exporters by artifact type' },
+  'src/app/parity/governance-ui.ts': { maxLines: 979, owner: 'split command palette, manifest, mode controls' },
+  'src/app/ExpansionLabTab.ts': { maxLines: 872, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
-  'src/app/parity/runtime-diagnostics.ts': { maxLines: 700, owner: 'split probes, benchmarks, validation surface' }
+  'src/app/parity/runtime-diagnostics.ts': { maxLines: 925, owner: 'split probes, benchmarks, validation surface' },
+  'src/app/parity/shared.ts': { maxLines: 651, owner: 'split shared DOM, formatting, and state helpers by concern' },
+  'src/app/parity/storage-sync.ts': {
+    maxLines: 766,
+    owner: 'split schema migration, persistence, and cross-tab synchronization'
+  },
+  'src/app/audienceMode.ts': {
+    maxLines: 763,
+    owner: 'split mode chooser housing, navigation decoration, and adopted-sheet CSS by concern'
+  },
+  'src/app/ResearchMatrixTab.ts': { maxLines: 652, owner: 'split matrix state from golden-run rendering' },
+  'src/physics/expandedModels-research.ts': { maxLines: 720, owner: 'split research runners from preset tables' },
+  'src/physics/stochastic.ts': { maxLines: 671, owner: 'split SDE steppers from noise-process helpers' },
+  'src/runtime/gpuChaosPromotion.ts': { maxLines: 698, owner: 'split promotion contracts by diagnostic' },
+  'src/runtime/gpuFields.ts': { maxLines: 666, owner: 'split field kernels from dispatch plumbing' }
 };
 
 interface Finding {
@@ -64,7 +84,12 @@ for (const file of files) {
 
 const obsoleteKnown = Object.keys(KNOWN_LARGE_MODULES).filter((file) => !files.includes(file));
 for (const file of obsoleteKnown) {
-  findings.push({ file, lines: 0, limit: 0, message: 'known-large-module entry is obsolete; remove it from the audit config' });
+  findings.push({
+    file,
+    lines: 0,
+    limit: 0,
+    message: 'known-large-module entry is obsolete; remove it from the audit config'
+  });
 }
 
 if (findings.length > 0) {

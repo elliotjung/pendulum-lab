@@ -20,7 +20,14 @@ const C0 = (1 - GAMMA) ** 2 / (GAMMA * (2 - GAMMA)); // weight on y_n
 const CF = (1 - GAMMA) / (2 - GAMMA); // weight on h * f(y_{n+1})
 
 /** Forward-difference Jacobian of `rhs` at `y`, written row-major into `jac`. */
-function numericalJacobian(rhs: Derivative, y: StateVector, fy: StateVector, jac: Float64Array, scratch: StateVector, fPert: StateVector): void {
+function numericalJacobian(
+  rhs: Derivative,
+  y: StateVector,
+  fy: StateVector,
+  jac: Float64Array,
+  scratch: StateVector,
+  fPert: StateVector
+): void {
   const n = y.length;
   for (let j = 0; j < n; j += 1) {
     const yj = Number(y[j] ?? 0);
@@ -76,7 +83,13 @@ function newtonStage(
   return resNorm;
 }
 
-export function trBdf2Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function trBdf2Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   const n = state.length;
   const tolerance = options.tolerance ?? IMPLICIT_SOLVE_TOLERANCE;
   const scratch = {
@@ -91,7 +104,7 @@ export function trBdf2Step(state: StateVector, dt: number, rhs: Derivative, out:
   const fn = new Float64Array(n);
   rhs(state, fn);
   const trapBase = new Float64Array(n);
-  for (let i = 0; i < n; i += 1) trapBase[i] = Number(state[i] ?? 0) + (GAMMA * dt / 2) * Number(fn[i] ?? 0);
+  for (let i = 0; i < n; i += 1) trapBase[i] = Number(state[i] ?? 0) + ((GAMMA * dt) / 2) * Number(fn[i] ?? 0);
   const Y1 = new Float64Array(state);
   const res1 = newtonStage(rhs, trapBase, GAMMA / 2, dt, Y1, tolerance, scratch, options.jacobian);
 

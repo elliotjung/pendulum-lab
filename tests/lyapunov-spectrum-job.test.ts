@@ -21,7 +21,8 @@ describe('lyapunovSpectrum chaos job', () => {
 
     expect(res.spectrum).toHaveLength(4);
     // Descending order.
-    for (let i = 1; i < res.spectrum.length; i += 1) expect(res.spectrum[i - 1]!).toBeGreaterThanOrEqual(res.spectrum[i]!);
+    for (let i = 1; i < res.spectrum.length; i += 1)
+      expect(res.spectrum[i - 1]!).toBeGreaterThanOrEqual(res.spectrum[i]!);
     // Largest exponent is positive (chaotic preset).
     expect(res.spectrum[0]!).toBeGreaterThan(0.1);
     // Hamiltonian system: the spectrum sums to ≈0 (finite-time, so a loose bound).

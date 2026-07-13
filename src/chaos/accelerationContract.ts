@@ -33,22 +33,27 @@ export const CHAOS_ACCELERATION_CONTRACTS: readonly ChaosAccelerationContract[] 
     target: 'lyapunov-spectrum',
     cpuOracle: 'lyapunovSpectrum(state0, rhs, count, settings, jacobian) in f64 variational flow',
     acceleratedCandidate: 'GPU/parallel tangent-frame propagation returning the same LyapunovSpectrumResult schema',
-    acceptanceRule: 'compareLyapunovSpectrumAcceleration(candidate, cpu) must pass on regular, chaotic, and near-zero-spectrum fixtures.',
-    caveat: 'Finite-time spectra are noisy; the comparison validates the same settings and seed, not an asymptotic theorem.'
+    acceptanceRule:
+      'compareLyapunovSpectrumAcceleration(candidate, cpu) must pass on regular, chaotic, and near-zero-spectrum fixtures.',
+    caveat:
+      'Finite-time spectra are noisy; the comparison validates the same settings and seed, not an asymptotic theorem.'
   },
   {
     target: 'clv',
     cpuOracle: 'covariantLyapunovVectors(...) Ginelli backward pass in f64',
     acceleratedCandidate: 'GPU/parallel QR-window and backward triangular solves returning the same ClvResult schema',
-    acceptanceRule: 'compareClvAcceleration(candidate, cpu) must pass exponent and hyperbolicity-angle gates before UI badges can claim GPU science.',
+    acceptanceRule:
+      'compareClvAcceleration(candidate, cpu) must pass exponent and hyperbolicity-angle gates before UI badges can claim GPU science.',
     caveat: 'CLV vector signs are arbitrary, so the contract compares exponents and sign-invariant angles.'
   },
   {
     target: 'ftle-field',
     cpuOracle: 'doublePendulumFtleField / finiteTimeLyapunov variational STM path in f64',
     acceleratedCandidate: 'GPU flow-map / STM field path returning the same FtleField schema',
-    acceptanceRule: 'compareFtleFieldAcceleration(candidate, cpu) must pass cellwise and aggregate gates, with CPU fallback on failure.',
-    caveat: 'Finite-difference GPU FTLE and variational STM FTLE are different methods; publication claims must name which oracle was used.'
+    acceptanceRule:
+      'compareFtleFieldAcceleration(candidate, cpu) must pass cellwise and aggregate gates, with CPU fallback on failure.',
+    caveat:
+      'Finite-difference GPU FTLE and variational STM FTLE are different methods; publication claims must name which oracle was used.'
   }
 ] as const;
 
@@ -94,7 +99,8 @@ export function compareLyapunovSpectrumAcceleration(
     passed,
     tolerances: tol,
     metrics: { spectrumMaxAbsDiff, sumAbsDiff, kaplanYorkeAbsDiff: kyAbsDiff },
-    caveat: 'Compares finite-time spectrum outputs for identical settings; does not certify a different integration horizon or seed.'
+    caveat:
+      'Compares finite-time spectrum outputs for identical settings; does not certify a different integration horizon or seed.'
   };
 }
 
@@ -113,7 +119,8 @@ export function compareClvAcceleration(
     passed,
     tolerances: tol,
     metrics: { exponentMaxAbsDiff, meanAngleAbsDiff, minAngleAbsDiff },
-    caveat: 'Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller.'
+    caveat:
+      'Compares sign-invariant CLV summary quantities; individual vector signs and ordering must be handled by the caller.'
   };
 }
 
@@ -123,7 +130,10 @@ export function compareFtleFieldAcceleration(
   tolerances: AccelerationTolerance = {}
 ): AccelerationComparison {
   const tol = resolved(tolerances);
-  const sameShape = candidate.width === reference.width && candidate.height === reference.height && candidate.values.length === reference.values.length;
+  const sameShape =
+    candidate.width === reference.width &&
+    candidate.height === reference.height &&
+    candidate.values.length === reference.values.length;
   const fieldMeanAbsDiff = meanAbsDiff(candidate.values, reference.values);
   let fieldMaxAbsDiff = sameShape ? 0 : Infinity;
   if (sameShape) {
@@ -133,12 +143,18 @@ export function compareFtleFieldAcceleration(
   }
   const minAbsDiff = Math.abs(candidate.min - reference.min);
   const maxAbsDiffValue = Math.abs(candidate.max - reference.max);
-  const passed = sameShape && fieldMaxAbsDiff <= tol.field && fieldMeanAbsDiff <= tol.aggregate && minAbsDiff <= tol.field && maxAbsDiffValue <= tol.field;
+  const passed =
+    sameShape &&
+    fieldMaxAbsDiff <= tol.field &&
+    fieldMeanAbsDiff <= tol.aggregate &&
+    minAbsDiff <= tol.field &&
+    maxAbsDiffValue <= tol.field;
   return {
     target: 'ftle-field',
     passed,
     tolerances: tol,
     metrics: { sameShape, fieldMaxAbsDiff, fieldMeanAbsDiff, minAbsDiff, maxAbsDiff: maxAbsDiffValue },
-    caveat: 'Compares like-for-like FTLE fields. Variational STM and finite-difference flow-map fields must not be mixed without a method caveat.'
+    caveat:
+      'Compares like-for-like FTLE fields. Variational STM and finite-difference flow-map fields must not be mixed without a method caveat.'
   };
 }

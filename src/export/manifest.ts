@@ -36,10 +36,14 @@ export function createSubmissionManifest(runtime: RuntimeSnapshot): SubmissionMa
     reproducibility: {
       dt: runtime.dt,
       tolerance: runtime.tolerance,
-      seedPolicy: 'Seeded stochastic/chaos jobs must include their seed in the per-result settings; unseeded browser interaction exports are not bitwise replay claims.',
-      transientPolicy: 'Long-horizon chaotic diagnostics must report transient discard in the per-result settings before publication use.',
-      horizonPolicy: 'Finite-time horizons must be interpreted as finite-time estimates; extend/refine horizon before quoting asymptotic claims.',
-      precisionCaveat: 'Browser JavaScript uses float64 for CPU paths; WebGPU paths may use f32 and must carry their own validation/caveat metadata.'
+      seedPolicy:
+        'Seeded stochastic/chaos jobs must include their seed in the per-result settings; unseeded browser interaction exports are not bitwise replay claims.',
+      transientPolicy:
+        'Long-horizon chaotic diagnostics must report transient discard in the per-result settings before publication use.',
+      horizonPolicy:
+        'Finite-time horizons must be interpreted as finite-time estimates; extend/refine horizon before quoting asymptotic claims.',
+      precisionCaveat:
+        'Browser JavaScript uses float64 for CPU paths; WebGPU paths may use f32 and must carry their own validation/caveat metadata.'
     },
     limitations: [
       'Browser floating point and scheduling can affect exact reproducibility.',

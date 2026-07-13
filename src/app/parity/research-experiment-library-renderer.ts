@@ -1,7 +1,13 @@
 /**
  * Experiment-library rendering helpers for the research workbench.
  */
-import { diffObjects, filterExperiments, qualityBadges, timelineGroups, type QualityBadge } from '../../research/libraryUx';
+import {
+  diffObjects,
+  filterExperiments,
+  qualityBadges,
+  timelineGroups,
+  type QualityBadge
+} from '../../research/libraryUx';
 import { $, clear, html, setText, state, type ResearchExperiment } from './shared';
 import { renderResearchTable } from './research-renderers';
 
@@ -40,7 +46,11 @@ export function experimentSummaryText(total: number, filtered: number, selected?
 }
 
 export function experimentBadgeText(experiment?: ResearchExperiment): string {
-  return experiment ? experimentBadges(experiment).map((badge) => `[${badge}]`).join(' ') : '';
+  return experiment
+    ? experimentBadges(experiment)
+        .map((badge) => `[${badge}]`)
+        .join(' ')
+    : '';
 }
 
 export function selectedExperimentFromState(): ResearchExperiment | undefined {
@@ -55,7 +65,8 @@ export function renderResearchExperiments(): void {
   if (select instanceof HTMLSelectElement) {
     const previous = state.research.selectedExperimentId || select.value;
     clear(select);
-    for (const experiment of filtered) select.append(html('option', { value: experiment.id, text: experimentOptionLabel(experiment) }));
+    for (const experiment of filtered)
+      select.append(html('option', { value: experiment.id, text: experimentOptionLabel(experiment) }));
     if (filtered.some((experiment) => experiment.id === previous)) select.value = previous;
     state.research.selectedExperimentId = select.value || filtered[0]?.id || state.research.experiments[0]?.id || '';
   }
@@ -63,8 +74,10 @@ export function renderResearchExperiments(): void {
   if (diffSelect instanceof HTMLSelectElement) {
     const previousDiff = diffSelect.value;
     clear(diffSelect);
-    for (const experiment of state.research.experiments) diffSelect.append(html('option', { value: experiment.id, text: experiment.name }));
-    if (state.research.experiments.some((experiment) => experiment.id === previousDiff)) diffSelect.value = previousDiff;
+    for (const experiment of state.research.experiments)
+      diffSelect.append(html('option', { value: experiment.id, text: experiment.name }));
+    if (state.research.experiments.some((experiment) => experiment.id === previousDiff))
+      diffSelect.value = previousDiff;
   }
   const selected = selectedExperimentFromState();
   setText('rwExperimentSummary', experimentSummaryText(state.research.experiments.length, filtered.length, selected));

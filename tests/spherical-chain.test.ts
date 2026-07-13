@@ -51,7 +51,12 @@ describe('spherical N-chain (3D double/triple pendulum)', () => {
       const out3d = rhsSphericalChain(state3d, DOUBLE_3D, new Float64Array(8));
 
       const planar = rhsChain([t1, t2, w1, w2], chainParams, 0, new Float64Array(4));
-      const closedForm = rhsDouble([t1, t2, w1, w2], { m1: 1.1, m2: 0.9, l1: 1.2, l2: 1.0, g: 9.81 }, 0, new Float64Array(4));
+      const closedForm = rhsDouble(
+        [t1, t2, w1, w2],
+        { m1: 1.1, m2: 0.9, l1: 1.2, l2: 1.0, g: 9.81 },
+        0,
+        new Float64Array(4)
+      );
 
       // θ accelerations match both the generic planar chain and the
       // hand-derived closed-form double pendulum.
@@ -160,7 +165,9 @@ describe('spherical N-chain (3D double/triple pendulum)', () => {
   });
 
   it('rejects mismatched masses/lengths instead of silently changing N', () => {
-    expect(() => rhsSphericalChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81, damping: 0 }, new Float64Array(4))).toThrow(/same length/);
+    expect(() =>
+      rhsSphericalChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81, damping: 0 }, new Float64Array(4))
+    ).toThrow(/same length/);
   });
 
   it('workspace-backed RHS matches the allocation path', () => {
@@ -185,7 +192,10 @@ describe('spherical N-chain (3D double/triple pendulum)', () => {
   });
 
   it('can run with a non-RK4 integrator for reference studies', () => {
-    const chain = new SphericalChain(DOUBLE_3D, [1.2, 0.1, 1.5, 0.5, 0.1, 0.4, -0.2, 0.3], { dt: 0.001, method: 'dopri5' });
+    const chain = new SphericalChain(DOUBLE_3D, [1.2, 0.1, 1.5, 0.5, 0.1, 0.4, -0.2, 0.3], {
+      dt: 0.001,
+      method: 'dopri5'
+    });
     chain.step(0.05);
     const diag = chain.diagnostics();
     expect(diag.method).toBe('dopri5');

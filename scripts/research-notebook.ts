@@ -7,7 +7,7 @@
  *    worker, the CLI and the unit tests use (no parallel implementation), plus
  *    the periodic-orbit / branch-switching pipeline and measured convergence
  *    orders;
- *  - real figures captured from the live app (the standalone root index.html is
+ *  - real figures captured from the live app (the generated standalone/index.html is
  *    driven headlessly with Playwright: each analysis tab is run to completion
  *    and its canvas captured as PNG).
  *
@@ -78,13 +78,16 @@ function numbers() {
  * ------------------------------------------------------------------------- */
 
 async function setSlider(page: Page, id: string, value: number): Promise<void> {
-  await page.evaluate(([sliderId, v]) => {
-    const el = document.getElementById(sliderId as string) as HTMLInputElement | null;
-    if (!el) return;
-    el.value = String(v);
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-  }, [id, value] as const);
+  await page.evaluate(
+    ([sliderId, v]) => {
+      const el = document.getElementById(sliderId as string) as HTMLInputElement | null;
+      if (!el) return;
+      el.value = String(v);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    },
+    [id, value] as const
+  );
 }
 
 async function capture(page: Page, id: string, title: string, caption: string): Promise<Figure | null> {
@@ -105,7 +108,10 @@ async function capture(page: Page, id: string, title: string, caption: string): 
 }
 
 async function runTab(page: Page, tab: string, startId: string, statusId: string, timeoutMs: number): Promise<void> {
-  await page.evaluate((name) => (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo(name), tab);
+  await page.evaluate(
+    (name) => (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo(name),
+    tab
+  );
   await page.locator(`#${startId}`).click();
   await page.waitForFunction(
     (sid) => (document.getElementById(sid as string)?.textContent ?? '').includes('done'),
@@ -126,56 +132,143 @@ async function captureFigures(): Promise<Figure[]> {
 
     console.log('  capturing lab canvases…');
     figures.push(
-      await capture(page, 'main', 'Double-pendulum trajectory', `Long-exposure trail of the chaotic double pendulum (θ₁ = ${STATE0[0]}, θ₂ = ${STATE0[1]}, m₁ = m₂ = 1, l₁ = 1.2, l₂ = 1, RK4).`),
+      await capture(
+        page,
+        'main',
+        'Double-pendulum trajectory',
+        `Long-exposure trail of the chaotic double pendulum (θ₁ = ${STATE0[0]}, θ₂ = ${STATE0[1]}, m₁ = m₂ = 1, l₁ = 1.2, l₂ = 1, RK4).`
+      ),
       await capture(page, 'phase', 'Phase portrait', 'Phase-plane projection (θ₁, ω₁) of the running trajectory.'),
-      await capture(page, 'poincare', 'Poincaré section', 'Section at θ₁ = 0, θ̇₁ > 0 — the scattered points are the chaos signature.'),
-      await capture(page, 'fft', 'Frequency spectrum', 'FFT magnitude of θ₁: broadband content rather than discrete lines.'),
-      await capture(page, 'energy', 'Energy trace', 'Total energy E(t); the bounded drift is the integrator-fidelity diagnostic.')
+      await capture(
+        page,
+        'poincare',
+        'Poincaré section',
+        'Section at θ₁ = 0, θ̇₁ > 0 — the scattered points are the chaos signature.'
+      ),
+      await capture(
+        page,
+        'fft',
+        'Frequency spectrum',
+        'FFT magnitude of θ₁: broadband content rather than discrete lines.'
+      ),
+      await capture(
+        page,
+        'energy',
+        'Energy trace',
+        'Total energy E(t); the bounded drift is the integrator-fidelity diagnostic.'
+      )
     );
 
     console.log('  Lyapunov spectrum tab…');
     await runTab(page, 'lyap', 'lyapStart', 'lyapStatus', 180_000);
-    figures.push(await capture(page, 'lyapSpecCanvas', 'Lyapunov spectrum', 'Full spectrum {λ₁…λ₄} with per-exponent uncertainty; the Hamiltonian constraints (Σλ ≈ 0, symplectic pairing) are checked automatically.'));
+    figures.push(
+      await capture(
+        page,
+        'lyapSpecCanvas',
+        'Lyapunov spectrum',
+        'Full spectrum {λ₁…λ₄} with per-exponent uncertainty; the Hamiltonian constraints (Σλ ≈ 0, symplectic pairing) are checked automatically.'
+      )
+    );
 
     console.log('  0–1 test tab…');
     await runTab(page, 'zeroone', 'zeroOneStart', 'zeroOneStatus', 180_000);
-    figures.push(await capture(page, 'zeroOneCanvas', '0–1 test translation path', 'Gottwald–Melbourne (p_c, q_c) path: Brownian-like wandering ⇒ K ≈ 1 (chaos); a bounded ring would indicate regularity.'));
+    figures.push(
+      await capture(
+        page,
+        'zeroOneCanvas',
+        '0–1 test translation path',
+        'Gottwald–Melbourne (p_c, q_c) path: Brownian-like wandering ⇒ K ≈ 1 (chaos); a bounded ring would indicate regularity.'
+      )
+    );
 
     console.log('  CLV tab…');
     await runTab(page, 'clv', 'clvStart', 'clvStatus', 240_000);
-    figures.push(await capture(page, 'clvCanvas', 'Covariant Lyapunov vectors', 'Hyperbolicity angles between expanding and contracting Oseledets directions along the trajectory (Ginelli algorithm).'));
+    figures.push(
+      await capture(
+        page,
+        'clvCanvas',
+        'Covariant Lyapunov vectors',
+        'Hyperbolicity angles between expanding and contracting Oseledets directions along the trajectory (Ginelli algorithm).'
+      )
+    );
 
     console.log('  RQA tab…');
     await runTab(page, 'rqa', 'rqaStart', 'rqaStatus', 180_000);
-    figures.push(await capture(page, 'rqaCanvas', 'Recurrence plot', 'Recurrence plot of the embedded cos θ₁ observable; short diagonals quantify divergence (DIV = 1/Lmax).'));
+    figures.push(
+      await capture(
+        page,
+        'rqaCanvas',
+        'Recurrence plot',
+        'Recurrence plot of the embedded cos θ₁ observable; short diagonals quantify divergence (DIV = 1/Lmax).'
+      )
+    );
 
     console.log('  FTLE tab…');
     await setSlider(page, 'ftleRes', 40);
     await runTab(page, 'ftle', 'ftleStart', 'ftleStatus', 300_000);
-    figures.push(await capture(page, 'ftleCanvas', 'FTLE field', 'Finite-time Lyapunov exponent over (θ₁, θ₂); ridges are Lagrangian coherent structures (transport barriers).'));
+    figures.push(
+      await capture(
+        page,
+        'ftleCanvas',
+        'FTLE field',
+        'Finite-time Lyapunov exponent over (θ₁, θ₂); ridges are Lagrangian coherent structures (transport barriers).'
+      )
+    );
 
     console.log('  flip-basin tab…');
     await setSlider(page, 'basinRes', 110);
     await runTab(page, 'basin', 'basinStart', 'basinStatus', 300_000);
-    figures.push(await capture(page, 'basinCanvas', 'Flip basins', 'Which rod flips first, over initial (θ₁, θ₂): the fractal boundary drives the basin entropy and Wada analysis.'));
+    figures.push(
+      await capture(
+        page,
+        'basinCanvas',
+        'Flip basins',
+        'Which rod flips first, over initial (θ₁, θ₂): the fractal boundary drives the basin entropy and Wada analysis.'
+      )
+    );
 
     console.log('  sweep tab…');
     await setSlider(page, 'sweepRes', 36);
     await setSlider(page, 'sweepT', 6);
     await runTab(page, 'sweep', 'sweepStart', 'sweepStatus', 600_000);
-    figures.push(await capture(page, 'sweepCanvas', 'Chaos map', 'Maximal Lyapunov exponent over the (θ₁, θ₂) grid: the global chaotic/regular landscape.'));
+    figures.push(
+      await capture(
+        page,
+        'sweepCanvas',
+        'Chaos map',
+        'Maximal Lyapunov exponent over the (θ₁, θ₂) grid: the global chaotic/regular landscape.'
+      )
+    );
 
     console.log('  bifurcation tab…');
     await setSlider(page, 'bifSteps', 70);
     await setSlider(page, 'bifT', 10);
     await runTab(page, 'bifurc', 'bifStart', 'bifStatus', 600_000);
-    figures.push(await capture(page, 'bifCanvas', 'Bifurcation diagram', 'Poincaré θ₂ values swept over gravity g: branch splittings en route to chaos.'));
+    figures.push(
+      await capture(
+        page,
+        'bifCanvas',
+        'Bifurcation diagram',
+        'Poincaré θ₂ values swept over gravity g: branch splittings en route to chaos.'
+      )
+    );
 
     console.log('  visual tabs…');
-    await page.evaluate(() => (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo('phase3d'));
+    await page.evaluate(() =>
+      (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo('phase3d')
+    );
     await page.waitForTimeout(2500);
-    figures.push(await capture(page, 'p3dCanvas', '3D phase projection', 'Orthographic point cloud of (θ₁, θ₂, ω₂) — the attractor-like geometry of the energy shell.'));
-    await page.evaluate(() => (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo('density'));
+    figures.push(
+      await capture(
+        page,
+        'p3dCanvas',
+        '3D phase projection',
+        'Orthographic point cloud of (θ₁, θ₂, ω₂) — the attractor-like geometry of the energy shell.'
+      )
+    );
+    await page.evaluate(() =>
+      (window as unknown as { __modernShell: { switchTo(n: string): void } }).__modernShell.switchTo('density')
+    );
     await page.waitForTimeout(2500);
     figures.push(await capture(page, 'gpuCanvas', 'Phase density', 'Additive-blend visit density over (θ₁, ω₁).'));
   } finally {
@@ -204,7 +297,9 @@ async function main(): Promise<void> {
   console.log('computing headline numbers…');
   const n = numbers();
 
-  let crossVal: { cases: Array<{ name: string; tEnd: number; maxDivergence: number; bound: number; pass: boolean }> } | null = null;
+  let crossVal: {
+    cases: Array<{ name: string; tEnd: number; maxDivergence: number; bound: number; pass: boolean }>;
+  } | null = null;
   try {
     crossVal = JSON.parse(await readFile('reports/cross-validation.json', 'utf8'));
   } catch {
@@ -216,17 +311,28 @@ async function main(): Promise<void> {
   console.log(`  ${figures.length} figures captured`);
 
   const spectrumRows = n.spectrum.spectrum
-    .map((l, i) => `<tr><td>λ${i + 1}</td><td>${fmt(l)}</td><td>± ${fmt(n.spectrum.blockStdError[i] ?? Number.NaN)}</td></tr>`)
+    .map(
+      (l, i) =>
+        `<tr><td>λ${i + 1}</td><td>${fmt(l)}</td><td>± ${fmt(n.spectrum.blockStdError[i] ?? Number.NaN)}</td></tr>`
+    )
     .join('');
   const orderRows = n.orders
     .map((o) => `<tr><td><code>${o.method}</code></td><td>${fmt(o.order, 2)}</td></tr>`)
     .join('');
   const crossRows = crossVal
-    ? crossVal.cases.map((c) => `<tr><td>${esc(c.name)}</td><td>${c.tEnd} s</td><td>${sci(c.maxDivergence)}</td><td>${sci(c.bound)}</td><td>${c.pass ? 'PASS' : 'FAIL'}</td></tr>`).join('')
+    ? crossVal.cases
+        .map(
+          (c) =>
+            `<tr><td>${esc(c.name)}</td><td>${c.tEnd} s</td><td>${sci(c.maxDivergence)}</td><td>${sci(c.bound)}</td><td>${c.pass ? 'PASS' : 'FAIL'}</td></tr>`
+        )
+        .join('')
     : '<tr><td colspan="5">not generated (run npm run validate:cross)</td></tr>';
 
   const figureHtml = figures
-    .map((f, i) => `<figure><img src="${f.dataUrl}" alt="${esc(f.title)}"><figcaption><strong>Figure ${i + 1} — ${esc(f.title)}.</strong> ${esc(f.caption)}</figcaption></figure>`)
+    .map(
+      (f, i) =>
+        `<figure><img src="${f.dataUrl}" alt="${esc(f.title)}"><figcaption><strong>Figure ${i + 1} — ${esc(f.title)}.</strong> ${esc(f.caption)}</figcaption></figure>`
+    )
     .join('\n');
 
   const muMin = (r: typeof n.p1Before) => Math.min(r.multipliers[0]!.re, r.multipliers[1]!.re);
@@ -309,10 +415,12 @@ ${figureHtml}
 
   await mkdir('reports', { recursive: true });
   await writeFile('reports/research-notebook.html', html, 'utf8');
-  console.log(`wrote reports/research-notebook.html (${(html.length / 1024).toFixed(0)} kB, ${figures.length} figures)`);
+  console.log(
+    `wrote reports/research-notebook.html (${(html.length / 1024).toFixed(0)} kB, ${figures.length} figures)`
+  );
 }
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.stack ?? error.message : String(error));
+  console.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
   process.exitCode = 1;
 });

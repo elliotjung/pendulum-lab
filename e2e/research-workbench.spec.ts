@@ -28,12 +28,15 @@ test('research workbench saves experiments and prepares study exports', async ({
 
 test('research storage recovers from invalid persisted entries', async ({ page }) => {
   await page.addInitScript(() => {
-    window.localStorage.setItem('pendulum-lab/research-workbench/v1', JSON.stringify({
-      experiments: [{ id: 'bad-exp', name: 'bad', snapshot: { state: [Number.NaN] } }],
-      runLog: [{ id: 'bad-log', type: 'unknown' }],
-      comparisonRows: [{ id: 'bad-row', method: 'nope' }],
-      selectedExperimentId: 'missing'
-    }));
+    window.localStorage.setItem(
+      'pendulum-lab/research-workbench/v1',
+      JSON.stringify({
+        experiments: [{ id: 'bad-exp', name: 'bad', snapshot: { state: [Number.NaN] } }],
+        runLog: [{ id: 'bad-log', type: 'unknown' }],
+        comparisonRows: [{ id: 'bad-row', method: 'nope' }],
+        selectedExperimentId: 'missing'
+      })
+    );
   });
   await page.goto('/');
   await openModernTab(page, 'research', '#researchWorkbench');

@@ -37,12 +37,16 @@ describe('JSON import validation', () => {
   });
 
   test('rejects prototype pollution keys before mutation', () => {
-    const result = parseStrictJsonImport('{"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81,"__proto__":{"polluted":true}},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"}');
+    const result = parseStrictJsonImport(
+      '{"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81,"__proto__":{"polluted":true}},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"}'
+    );
     expect(result.ok).toBe(false);
   });
 
   test('rejects escaped prototype pollution keys after parsing', () => {
-    const result = parseStrictJsonImport('{"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81,"\\u005f\\u005fproto\\u005f\\u005f":{"polluted":true}},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"}');
+    const result = parseStrictJsonImport(
+      '{"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81,"\\u005f\\u005fproto\\u005f\\u005f":{"polluted":true}},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"}'
+    );
     expect(result.ok).toBe(false);
     expect(result.problems.join(' ')).toContain('prototype-pollution');
   });

@@ -24,7 +24,12 @@ function matchesSet(recovered: Complex[], expected: Complex[], tol: number): boo
   return true;
 }
 
-function trajectory(drift: (s: StateVector, o: StateVector) => StateVector, x0: number[], dt: number, steps: number): number[][] {
+function trajectory(
+  drift: (s: StateVector, o: StateVector) => StateVector,
+  x0: number[],
+  dt: number,
+  steps: number
+): number[][] {
   const snaps: number[][] = [];
   let s = Float64Array.from(x0) as unknown as StateVector;
   const next = new Float64Array(x0.length) as unknown as StateVector;
@@ -39,7 +44,16 @@ function trajectory(drift: (s: StateVector, o: StateVector) => StateVector, x0: 
 describe('DMD — linear-system spectra are recovered exactly', () => {
   it('harmonic oscillator gives purely imaginary μ = ±ω i', () => {
     const w = 2;
-    const snaps = trajectory((s, o) => { o[0] = s[1]!; o[1] = -w * w * s[0]!; return o; }, [1, 0], 0.01, 300);
+    const snaps = trajectory(
+      (s, o) => {
+        o[0] = s[1]!;
+        o[1] = -w * w * s[0]!;
+        return o;
+      },
+      [1, 0],
+      0.01,
+      300
+    );
     const r = dynamicModeDecomposition(snaps, 0.01);
     expect(matchesSet(r.continuousEigenvalues, [c(0, w), c(0, -w)], 1e-6)).toBe(true);
     expect(Math.max(...r.growthRates.map(Math.abs))).toBeLessThan(1e-6);
@@ -50,7 +64,16 @@ describe('DMD — linear-system spectra are recovered exactly', () => {
     const w = 2;
     const zeta = 0.1;
     const wd = w * Math.sqrt(1 - zeta * zeta);
-    const snaps = trajectory((s, o) => { o[0] = s[1]!; o[1] = -2 * zeta * w * s[1]! - w * w * s[0]!; return o; }, [1, 0], 0.01, 300);
+    const snaps = trajectory(
+      (s, o) => {
+        o[0] = s[1]!;
+        o[1] = -2 * zeta * w * s[1]! - w * w * s[0]!;
+        return o;
+      },
+      [1, 0],
+      0.01,
+      300
+    );
     const r = dynamicModeDecomposition(snaps, 0.01);
     expect(matchesSet(r.continuousEigenvalues, [c(-zeta * w, wd), c(-zeta * w, -wd)], 1e-4)).toBe(true);
     expect(r.oneStepError).toBeLessThan(1e-10);
@@ -65,11 +88,11 @@ describe('DMD cross-validates the engine: double-pendulum normal modes from data
     // Small-amplitude (≈ linear) conservative motion about the downward equilibrium.
     const snaps = trajectory((s, o) => rhsDouble(s, params, 0, o), [0.01, 0, 0, 0], 0.005, 600);
     const r = dynamicModeDecomposition(snaps, 0.005);
-    const wPlus = Math.sqrt((2 + Math.SQRT2) * g / l);
-    const wMinus = Math.sqrt((2 - Math.SQRT2) * g / l);
-    expect(
-      matchesSet(r.continuousEigenvalues, [c(0, wPlus), c(0, -wPlus), c(0, wMinus), c(0, -wMinus)], 1e-2)
-    ).toBe(true);
+    const wPlus = Math.sqrt(((2 + Math.SQRT2) * g) / l);
+    const wMinus = Math.sqrt(((2 - Math.SQRT2) * g) / l);
+    expect(matchesSet(r.continuousEigenvalues, [c(0, wPlus), c(0, -wPlus), c(0, wMinus), c(0, -wMinus)], 1e-2)).toBe(
+      true
+    );
     // Conservative ⇒ growth rates ≈ 0.
     expect(Math.max(...r.growthRates.map(Math.abs))).toBeLessThan(1e-3);
   });
@@ -84,7 +107,16 @@ describe('EDMD — Koopman spectrum on a polynomial dictionary', () => {
     // eigenvalue extraction is limited to ~2e-5 by Faddeev–LeVerrier
     // conditioning at n=6 (the documented scope of complexEig).
     const L = [-0.1, 1, -1, -0.1];
-    const snaps = trajectory((s, o) => { o[0] = L[0]! * s[0]! + L[1]! * s[1]!; o[1] = L[2]! * s[0]! + L[3]! * s[1]!; return o; }, [1.5, 0.5], 0.02, 500);
+    const snaps = trajectory(
+      (s, o) => {
+        o[0] = L[0]! * s[0]! + L[1]! * s[1]!;
+        o[1] = L[2]! * s[0]! + L[3]! * s[1]!;
+        return o;
+      },
+      [1.5, 0.5],
+      0.02,
+      500
+    );
     const r = extendedDmd(snaps, 0.02, { polynomialDegree: 2 });
     expect(r.terms.map((t) => t.name)).toEqual(['1', 'x0', 'x1', 'x0^2', 'x0 x1', 'x1^2']);
     expect(
@@ -108,7 +140,16 @@ describe('SVD-truncated DMD — dominant modes from rank-deficient data', () => 
       const obs = new Array<number>(5).fill(0);
       for (let i = 0; i < 5; i += 1) obs[i] = C[i * 2]! * z[0]! + C[i * 2 + 1]! * z[1]!;
       snaps.push(obs);
-      rk4Step(z, dt, (a, o) => { o[0] = L[0]! * a[0]! + L[1]! * a[1]!; o[1] = L[2]! * a[0]! + L[3]! * a[1]!; return o; }, nz);
+      rk4Step(
+        z,
+        dt,
+        (a, o) => {
+          o[0] = L[0]! * a[0]! + L[1]! * a[1]!;
+          o[1] = L[2]! * a[0]! + L[3]! * a[1]!;
+          return o;
+        },
+        nz
+      );
       z = Float64Array.from(nz) as unknown as StateVector;
     }
 
@@ -125,13 +166,26 @@ describe('SVD-truncated DMD — dominant modes from rank-deficient data', () => 
 
   it('agrees with the plain operator on full-rank data when rank = n', () => {
     const w = 2;
-    const snaps = trajectory((s, o) => { o[0] = s[1]!; o[1] = -w * w * s[0]!; return o; }, [1, 0], 0.01, 200);
+    const snaps = trajectory(
+      (s, o) => {
+        o[0] = s[1]!;
+        o[1] = -w * w * s[0]!;
+        return o;
+      },
+      [1, 0],
+      0.01,
+      200
+    );
     const trunc = dynamicModeDecomposition(snaps, 0.01, { rank: 2 });
     expect(matchesSet(trunc.continuousEigenvalues, [c(0, w), c(0, -w)], 1e-6)).toBe(true);
   });
 
   it('rejects a non-positive or non-integer rank', () => {
-    const snaps = [[1, 0], [0.9, 0.1], [0.8, 0.2]];
+    const snaps = [
+      [1, 0],
+      [0.9, 0.1],
+      [0.8, 0.2]
+    ];
     expect(() => dynamicModeDecomposition(snaps, 0.1, { rank: 0 })).toThrow(/positive integer/);
     expect(() => dynamicModeDecomposition(snaps, 0.1, { rank: 1.5 })).toThrow(/positive integer/);
   });
@@ -145,7 +199,12 @@ describe('DMD input validation', () => {
 
   it('reports a rank-deficient snapshot covariance instead of fabricating an operator', () => {
     // All snapshots collinear ⇒ X₁X₁ᵀ is singular.
-    const snaps = [[1, 1], [2, 2], [3, 3], [4, 4]];
+    const snaps = [
+      [1, 1],
+      [2, 2],
+      [3, 3],
+      [4, 4]
+    ];
     expect(() => dynamicModeDecomposition(snaps, 0.1)).toThrow(/positive-definite/);
   });
 });

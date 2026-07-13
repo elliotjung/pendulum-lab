@@ -82,7 +82,12 @@ const matMul = (a: readonly (readonly number[])[], b: readonly (readonly number[
 };
 
 /** Φ + scale·D (n×n), returning a new matrix. */
-const axpyMatrix = (phi: readonly (readonly number[])[], d: readonly (readonly number[])[], scale: number, n: number): number[][] =>
+const axpyMatrix = (
+  phi: readonly (readonly number[])[],
+  d: readonly (readonly number[])[],
+  scale: number,
+  n: number
+): number[][] =>
   Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (phi[i]![j] ?? 0) + scale * (d[i]![j] ?? 0)));
 
 /** Determinant of a real matrix via LU with partial pivoting (independent of the eigenvalues). */
@@ -129,8 +134,14 @@ function spectralRadiusOf(matrix: readonly (readonly number[])[]): number {
  * equation Φ̇ = A(t)Φ from Φ(0) = I with classical RK4 over `steps` substeps.
  * `coefficientAt(t)` returns the `dimension`×`dimension` coefficient matrix.
  */
-export function monodromyLinear(coefficientAt: CoefficientAt, period: number, dimension: number, steps = 4000): number[][] {
-  if (!Number.isInteger(dimension) || dimension < 1) throw new Error('monodromyLinear: dimension must be a positive integer.');
+export function monodromyLinear(
+  coefficientAt: CoefficientAt,
+  period: number,
+  dimension: number,
+  steps = 4000
+): number[][] {
+  if (!Number.isInteger(dimension) || dimension < 1)
+    throw new Error('monodromyLinear: dimension must be a positive integer.');
   if (!(period > 0)) throw new Error('monodromyLinear: period must be positive.');
   if (!Number.isInteger(steps) || steps < 1) throw new Error('monodromyLinear: steps must be a positive integer.');
   const n = dimension;
@@ -145,7 +156,9 @@ export function monodromyLinear(coefficientAt: CoefficientAt, period: number, di
     const next = Array.from({ length: n }, (_, i) =>
       Array.from(
         { length: n },
-        (_, j) => (phi[i]![j] ?? 0) + (dt / 6) * ((k1[i]![j] ?? 0) + 2 * (k2[i]![j] ?? 0) + 2 * (k3[i]![j] ?? 0) + (k4[i]![j] ?? 0))
+        (_, j) =>
+          (phi[i]![j] ?? 0) +
+          (dt / 6) * ((k1[i]![j] ?? 0) + 2 * (k2[i]![j] ?? 0) + 2 * (k3[i]![j] ?? 0) + (k4[i]![j] ?? 0))
       )
     );
     phi = next;

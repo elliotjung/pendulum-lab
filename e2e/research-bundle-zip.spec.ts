@@ -62,7 +62,9 @@ test('ZIP research bundle downloads with expected layout, binary PNGs, and valid
 
   // checksums.json covers every other member with matching crc32, content hash,
   // and a cryptographic SHA-256 (verified independently with Node's crypto).
-  const checksums = JSON.parse(bytesToText(entries.find((entry) => entry.path === 'manifest/checksums.json')!.data)) as {
+  const checksums = JSON.parse(
+    bytesToText(entries.find((entry) => entry.path === 'manifest/checksums.json')!.data)
+  ) as {
     schemaVersion: string;
     files: { path: string; bytes: number; crc32: string; hash: string; sha256: string }[];
   };
@@ -91,5 +93,7 @@ test('ZIP research bundle downloads with expected layout, binary PNGs, and valid
   expect(kinds).toContain('study');
   expect(kinds).toContain('paper-pack');
   expect(kinds).toContain('bundle');
-  expect(provenance.nodes.every((node: { hash: string; schemaVersion: string }) => node.hash && node.schemaVersion)).toBe(true);
+  expect(
+    provenance.nodes.every((node: { hash: string; schemaVersion: string }) => node.hash && node.schemaVersion)
+  ).toBe(true);
 });

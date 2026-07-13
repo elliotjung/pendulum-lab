@@ -1,47 +1,48 @@
-/**
- * Drift guard for the committed self-contained bundle. The project root
- * `index.html` and its `*.worker.js` siblings are build:standalone outputs
- * that are tracked in git so the double-click file:// demo works from a bare
- * checkout. That makes "edit src/, forget to rebuild, ship a stale demo" a
- * silent failure mode.
- *
- * This check runs AFTER `npm run build:standalone` (which rewrites the root
- * artifacts in place) and fails if git now sees any of them as modified,
- * missing, or newly created — i.e. if the committed bundle no longer matches
- * what the current source builds. The standalone build is deterministic, so a
- * clean diff is exactly "bundle is in sync".
- *
- * Wired into CI (ci.yml / main.yml) right after the build:standalone step;
- * run locally with `npm run build:standalone && npm run check:standalone-sync`.
- */
-import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 
-const artifactPatterns = ['index.html', '*.worker.js'];
-
-let porcelain = '';
-try {
-  porcelain = execFileSync(
-    'git',
-    ['status', '--porcelain', '--untracked-files=all', '--', ...artifactPatterns],
-    { encoding: 'utf8' }
-  );
-} catch (error) {
-  console.error(`standalone-sync check FAILED: git status did not run: ${String(error)}`);
-  process.exit(1);
+interface StandaloneArtifact {
+  path: string;
+  bytes: number;
+  sha256: string;
 }
 
-const drifted = porcelain
-  .split(/\r?\n/)
-  .map((line) => line.trim())
-  .filter(Boolean);
-
-if (drifted.length > 0) {
-  console.error(
-    'standalone-sync check FAILED: the committed standalone bundle does not match a fresh build of the current source.\n' +
-      drifted.map((line) => `  ${line}`).join('\n') +
-      '\nRun `npm run build:standalone` and commit the regenerated root index.html / *.worker.js together with your source change.'
-  );
-  process.exit(1);
+interface StandaloneManifest {
+  schemaVersion: 'pendulum-standalone-manifest/v1';
+  artifacts: StandaloneArtifact[];
 }
 
-console.log('standalone-sync check ok: committed root bundle matches the current source build');
+async function generatedManifest(): Promise<StandaloneManifest> {
+  const names = (await readdir('standalone'))
+    .filter((name) => name === 'index.html' || /\.worker.*\.js$/i.test(name))
+    .sort();
+  const artifacts: StandaloneArtifact[] = [];
+  for (const name of names) {
+    const bytes = await readFile(`standalone/${name}`);
+    artifacts.push({
+      path: `standalone/${name}`,
+      bytes: bytes.byteLength,
+      sha256: createHash('sha256').update(bytes).digest('hex')
+    });
+  }
+  if (!artifacts.some((artifact) => artifact.path === 'standalone/index.html')) {
+    throw new Error('standalone/index.html is missing; run npm run build:standalone first');
+  }
+  return { schemaVersion: 'pendulum-standalone-manifest/v1', artifacts };
+}
+
+const next = await generatedManifest();
+if (process.argv.includes('--write')) {
+  await writeFile('standalone-manifest.json', `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+  console.log(`standalone-manifest.json written (${next.artifacts.length} artifacts)`);
+} else {
+  const committed = JSON.parse(await readFile('standalone-manifest.json', 'utf8')) as StandaloneManifest;
+  if (JSON.stringify(committed) !== JSON.stringify(next)) {
+    console.error(
+      'standalone-sync check FAILED: generated hashes differ from standalone-manifest.json.\n' +
+        'Run `npm run build:standalone && npm run standalone:manifest`, review the release artifact, and commit the compact manifest.'
+    );
+    process.exit(1);
+  }
+  console.log(`standalone-sync check ok (${next.artifacts.length} generated artifacts match committed SHA-256 hashes)`);
+}

@@ -17,24 +17,24 @@ fully covered by the headless test suite.
 - **Beyond the validated planar N<=8 hybrid path.** Production WebGPU kernels
   now cover the 4D full-spectrum/CLV/variational-FTLE diagnostics and a planar
   N-chain tiled STM/QR/CLV/FTLE path. The N-chain path intentionally leaves the
-  nonlinear reference trajectory and Jacobian tape in CPU f64. Moving those
-  two stages to GPU, extending beyond 16 state dimensions, or adding spherical
-  chains requires a new CPU-oracle promotion campaign rather than a silent
-  widening of the current claim.
+  nonlinear reference trajectory and Jacobian tape in CPU f64. An ABI-2,
+  N<=8 AssemblyScript f64 SIMD candidate now computes those two stages for
+  headless A/B benchmarks, but is explicitly unpromoted pending the ADR 0002
+  cross-engine and repeatable-speedup gates. Moving either stage to GPU,
+  extending beyond 16 state dimensions, or adding spherical chains requires a
+  new CPU-oracle promotion campaign rather than a silent widening of the claim.
 - **Vendor breadth.** Intel evidence is recorded. Physical NVIDIA and AMD
   runners are still required for a complete three-vendor matrix.
-- **SharedArrayBuffer plot transport.** The current side-plot path uses
-  transferable typed-array snapshots. A shared ring buffer is deferred until the
-  app and landing deployments both ship COOP/COEP, because enabling it in source
-  without those headers would create a false local-only claim.
+- **SharedArrayBuffer plot integration.** A tested shared/local ring-buffer
+  primitive and COOP/COEP Cloudflare configuration now exist. The side-plot
+  path deliberately keeps transferable snapshots until the external mirror is
+  configured and cross-origin isolation is verified end to end.
 
 ## Needs an external toolchain or license
 
-- **MATLAB / Julia pinning + promotion to required cross-validation gates.** The
-  Julia cross-check (`npm run validate:julia`) exists as an opt-in reference. Making
-  MATLAB/Julia comparisons *required* CI gates needs a pinned, reproducible toolchain
-  (Julia project manifest, MATLAB license/runner) wired into the workflow — an
-  infrastructure/licensing decision, not a code change verifiable here.
+- **MATLAB reference.** Julia 1.10.11, `julia/Project.toml`, and the committed
+  Manifest are now a required Vern9 CI gate. MATLAB remains optional because a
+  licensed runner is an external infrastructure decision.
 
 ## Needs browser baselines or an e2e display
 

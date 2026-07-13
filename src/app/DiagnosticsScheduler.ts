@@ -17,12 +17,7 @@ export class DiagnosticsScheduler {
     return interval > 0 && frameCount % interval === 0;
   }
 
-  schedule(options: {
-    frameCount: number;
-    interval: number;
-    visible(): boolean;
-    draw(plotIndex: number): void;
-  }): void {
+  schedule(options: { frameCount: number; interval: number; visible(): boolean; draw(plotIndex: number): void }): void {
     if (!this.shouldRun(options.frameCount, options.interval) || !options.visible()) return;
     this.queue.schedule({
       key: 'lab-side-plot',

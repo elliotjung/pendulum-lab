@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { compareEnsembleStatistics, ensembleStatistics, ensembleGrid, runDoublePendulumEnsemble, webgpuEnsembleStatistics } from '../src/runtime/gpuEnsemble';
+import {
+  compareEnsembleStatistics,
+  ensembleStatistics,
+  ensembleGrid,
+  runDoublePendulumEnsemble,
+  webgpuEnsembleStatistics
+} from '../src/runtime/gpuEnsemble';
 
 /**
  * Ensemble reduction (the layer a basin / uncertainty-cloud study consumes).
@@ -16,7 +22,8 @@ describe('ensembleStatistics', () => {
     expect(Array.from(s.variance)).toEqual([1, 4, 9, 16]);
     // covariance[a][b] = dev[a]·dev[b] with dev = (1,2,3,4).
     const dev = [1, 2, 3, 4];
-    for (let a = 0; a < 4; a += 1) for (let b = 0; b < 4; b += 1) expect(s.covariance[a * 4 + b]).toBeCloseTo(dev[a]! * dev[b]!, 12);
+    for (let a = 0; a < 4; a += 1)
+      for (let b = 0; b < 4; b += 1) expect(s.covariance[a * 4 + b]).toBeCloseTo(dev[a]! * dev[b]!, 12);
     expect(s.rmsSpread).toBeCloseTo(Math.sqrt(1 + 4 + 9 + 16), 12);
     expect(s.flipFraction).toBe(0);
   });
@@ -36,7 +43,10 @@ describe('ensembleStatistics', () => {
     const mean = [0, 0, 0, 0];
     for (let i = 0; i < n; i += 1) for (let a = 0; a < 4; a += 1) mean[a]! += states[i * 4 + a]! / n;
     const cov = new Array<number>(16).fill(0);
-    for (let i = 0; i < n; i += 1) for (let a = 0; a < 4; a += 1) for (let b = 0; b < 4; b += 1) cov[a * 4 + b]! += ((states[i * 4 + a]! - mean[a]!) * (states[i * 4 + b]! - mean[b]!)) / n;
+    for (let i = 0; i < n; i += 1)
+      for (let a = 0; a < 4; a += 1)
+        for (let b = 0; b < 4; b += 1)
+          cov[a * 4 + b]! += ((states[i * 4 + a]! - mean[a]!) * (states[i * 4 + b]! - mean[b]!)) / n;
 
     for (let a = 0; a < 4; a += 1) {
       expect(s.mean[a]).toBeCloseTo(mean[a]!, 10);
@@ -60,7 +70,10 @@ describe('ensembleStatistics', () => {
   });
 
   test('reduces a real CPU-fallback ensemble to finite, consistent statistics', async () => {
-    const result = await runDoublePendulumEnsemble({ m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, ensembleGrid(6, [-2, 2]), { steps: 300, dt: 0.01 });
+    const result = await runDoublePendulumEnsemble({ m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, ensembleGrid(6, [-2, 2]), {
+      steps: 300,
+      dt: 0.01
+    });
     const s = ensembleStatistics(result.states);
     expect(s.n).toBe(36);
     expect(Array.from(s.mean).every(Number.isFinite)).toBe(true);
@@ -71,7 +84,11 @@ describe('ensembleStatistics', () => {
   });
 
   test('compares an f32-style reduction candidate against the CPU oracle', async () => {
-    const result = await runDoublePendulumEnsemble({ m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, ensembleGrid(5, [-1.2, 1.2]), { steps: 120, dt: 0.01, forceCpu: true });
+    const result = await runDoublePendulumEnsemble(
+      { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
+      ensembleGrid(5, [-1.2, 1.2]),
+      { steps: 120, dt: 0.01, forceCpu: true }
+    );
     const reference = ensembleStatistics(result.states);
     const roundedStates = new Float64Array(new Float32Array(result.states));
     const candidate = ensembleStatistics(roundedStates);

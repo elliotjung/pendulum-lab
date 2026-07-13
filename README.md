@@ -1,5 +1,9 @@
 # Pendulum Lab - Certified Chaotic Dynamics Workbench
 
+![self-hosted line coverage](https://elliotjung.github.io/pendulum-lab/reports/coverage-badge.svg)
+
+[Mainline performance history](https://elliotjung.github.io/pendulum-lab/reports/benchmarks/)
+
 A framework-free, zero-runtime-dependency TypeScript platform for nonlinear
 pendulum dynamics: 8 physical systems (double/triple/N-chain, driven, spring,
 rope/string, double-string, **3D spherical N-chain**), 13 primary measured-order
@@ -33,18 +37,30 @@ The Research tab is now a persisted workspace: save/switch workspace profiles,
 toggle compact density, export/import the full session, and keep GPU/scale claims
 behind `npm run validate:gpu-scale` CPU-reference gates.
 
-**Run it:** double-click the project-root `index.html` (self-contained,
-no server) — or:
+**Run it:** download the standalone HTML from the latest GitHub Release and
+double-click it (no server), or generate the same artifact locally with
+`npm run build:standalone` and open `standalone/index.html` — or:
 
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 1004 unit tests
+npm test           # 1090 unit tests
 npm run evidence:summary # sync README/landing evidence numbers from reports
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
 npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
 ```
+
+Public ESM/type-first consumers use the version-neutral scoped name:
+
+```bash
+npm install @elliotjung/pendulum-lab
+# or, from JSR
+npx jsr add @elliotjung/pendulum-lab
+```
+
+Stable subpaths are `core`, `analysis`, `research`, `browser`, `worker`, and
+`node`; `experimental` is explicitly allowed to change in minor releases.
 
 For the two-repo publish path, use
 [`docs/cross-project-release.md`](docs/cross-project-release.md): sim verify →
@@ -129,9 +145,9 @@ Final publication checklist:
 | Script | Purpose |
 |---|---|
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
-| `npm run build:standalone` | Self-contained `index.html` (opens via `file://`) |
+| `npm run build:standalone` | Self-contained `standalone/index.html` (opens via `file://`; Git tracks only its SHA-256 manifest) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1004 tests across 155 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1090 tests across 175 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

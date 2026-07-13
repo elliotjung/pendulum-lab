@@ -40,9 +40,8 @@ export class SimulationClock {
   }): SimulationFrameResult {
     const started = now();
     const mode = options.mode ?? 'deterministic';
-    const stepsAdvanced = mode === 'wall-clock'
-      ? this.wallClockSteps(options)
-      : Math.max(0, Math.round(options.stepsPerFrame));
+    const stepsAdvanced =
+      mode === 'wall-clock' ? this.wallClockSteps(options) : Math.max(0, Math.round(options.stepsPerFrame));
     for (let step = 0; step < stepsAdvanced; step += 1) {
       options.sim.step(1);
       options.onStep(options.sim.stateView());
@@ -75,9 +74,10 @@ export class SimulationClock {
     const speed = Math.max(0, options.speedMultiplier ?? 1);
     const maxSteps = Math.max(1, Math.round(options.maxWallClockSteps ?? 180));
     const fallbackElapsedSec = Math.max(0, options.stepsPerFrame) * dt;
-    const elapsedSec = this.lastWallClockMs === null
-      ? fallbackElapsedSec
-      : Math.max(0, Math.min(0.25, (timestampMs - this.lastWallClockMs) / 1000));
+    const elapsedSec =
+      this.lastWallClockMs === null
+        ? fallbackElapsedSec
+        : Math.max(0, Math.min(0.25, (timestampMs - this.lastWallClockMs) / 1000));
     this.lastWallClockMs = timestampMs;
     const available = this.wallClockRemainderSec + elapsedSec * speed;
     const rawSteps = Math.floor(available / dt);

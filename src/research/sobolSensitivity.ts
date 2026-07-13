@@ -73,8 +73,12 @@ export async function sobolIndices(
   // One 2d-dimensional Sobol stream split into A (first d columns) and B
   // (last d columns) keeps the two matrices jointly low-discrepancy.
   const joint = sobolSequence(2 * d, N);
-  const A = joint.map((row) => variables.map((variable, i) => variable.min + (variable.max - variable.min) * (row[i] ?? 0.5)));
-  const B = joint.map((row) => variables.map((variable, i) => variable.min + (variable.max - variable.min) * (row[d + i] ?? 0.5)));
+  const A = joint.map((row) =>
+    variables.map((variable, i) => variable.min + (variable.max - variable.min) * (row[i] ?? 0.5))
+  );
+  const B = joint.map((row) =>
+    variables.map((variable, i) => variable.min + (variable.max - variable.min) * (row[d + i] ?? 0.5))
+  );
 
   const total = N * (d + 2);
   let done = 0;

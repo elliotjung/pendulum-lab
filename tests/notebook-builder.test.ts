@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { buildNotebookV2, NOTEBOOK_SCHEMA_VERSION, pythonTripleQuoted, validateNotebook, type NotebookInput } from '../src/research/notebookBuilder';
+import {
+  buildNotebookV2,
+  NOTEBOOK_SCHEMA_VERSION,
+  pythonTripleQuoted,
+  validateNotebook,
+  type NotebookInput
+} from '../src/research/notebookBuilder';
 
 const baseInput: NotebookInput = {
   stateHash: 'hash-1',
   generatedAt: '2026-06-10T00:00:00Z',
   methodsMarkdown: '# Methods\n\nSystem: double pendulum.',
-  paperPackJson: JSON.stringify({ schemaVersion: 'pendulum-paper-pack/v2', currentSnapshot: { hash: 'hash-1' }, runLog: [] }),
+  paperPackJson: JSON.stringify({
+    schemaVersion: 'pendulum-paper-pack/v2',
+    currentSnapshot: { hash: 'hash-1' },
+    runLog: []
+  }),
   figureManifestJson: JSON.stringify({ figureCount: 0, totalBytes: 0, figures: [] }),
   studyCsv: 'point_id,value,lambda_max,lambda_block_std_error\np0,1.5,0.8,0.02',
   comparisonCsv: 'id,label\nrow1,baseline',
@@ -67,6 +77,8 @@ describe('notebook builder v2', () => {
 
   it('stamps the v2 schema version', () => {
     const notebook = buildNotebookV2(baseInput);
-    expect((notebook.metadata as { pendulumLab: { schemaVersion: string } }).pendulumLab.schemaVersion).toBe(NOTEBOOK_SCHEMA_VERSION);
+    expect((notebook.metadata as { pendulumLab: { schemaVersion: string } }).pendulumLab.schemaVersion).toBe(
+      NOTEBOOK_SCHEMA_VERSION
+    );
   });
 });

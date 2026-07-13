@@ -65,8 +65,20 @@ describe('CLV job', () => {
 
 describe('RQA job', () => {
   test('returns RQA measures and a square recurrence plot; chaotic ⇒ higher divergence', () => {
-    const regular = runChaosJob({ id: 'r1', kind: 'rqa', spec: chaotic, state0: [0.2, 0.1, 0, 0], settings: { samples: 300 } });
-    const chao = runChaosJob({ id: 'r2', kind: 'rqa', spec: chaotic, state0: [2.5, 2.5, 0, 0], settings: { samples: 300 } });
+    const regular = runChaosJob({
+      id: 'r1',
+      kind: 'rqa',
+      spec: chaotic,
+      state0: [0.2, 0.1, 0, 0],
+      settings: { samples: 300 }
+    });
+    const chao = runChaosJob({
+      id: 'r2',
+      kind: 'rqa',
+      spec: chaotic,
+      state0: [2.5, 2.5, 0, 0],
+      settings: { samples: 300 }
+    });
     expect(regular.ok).toBe(true);
     if (!regular.ok || regular.kind !== 'rqa') throw new Error('wrong response');
     if (!chao.ok || chao.kind !== 'rqa') throw new Error('wrong response');

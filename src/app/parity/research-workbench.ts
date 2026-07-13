@@ -21,9 +21,56 @@ import {
   type MultiStrategy,
   type StudyVariable
 } from '../../research/experimentDesign';
-import { ParameterStudyPlan, ParameterStudyPoint, ResearchBatchStatus, ResearchExperiment, ResearchMetrics, ResearchRunLogEntry, ResearchRunType, append, button, card, clear, currentParameters, currentSnapshot, detailsCard, downloadText, html, kvGrid, modernLab, numberFrom, researchUid, selectValue, setControl, setText, state, toast } from './shared';
-import { MAX_RESEARCH_EXPERIMENTS, RESEARCH_STUDY_STRATEGIES, clampNumber, clearResearchDb, exportResearchDbArchive, exportWorkspaceJson, finiteNumber, importResearchDbArchive, importWorkspaceJson, persistResearchState, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
-import { orbitBaseFromControls, renderPerfBudgetPanel, runBranchTrace, runEnsembleBenchmark, runLegacyValidationSurface, runNumericalProbe, runOrbitFinder } from './runtime-diagnostics';
+import {
+  ParameterStudyPlan,
+  ParameterStudyPoint,
+  ResearchBatchStatus,
+  ResearchExperiment,
+  ResearchMetrics,
+  ResearchRunLogEntry,
+  ResearchRunType,
+  append,
+  button,
+  card,
+  clear,
+  currentSnapshot,
+  detailsCard,
+  downloadText,
+  html,
+  kvGrid,
+  modernLab,
+  numberFrom,
+  researchUid,
+  selectValue,
+  setControl,
+  setText,
+  state,
+  toast
+} from './shared';
+import {
+  MAX_RESEARCH_EXPERIMENTS,
+  RESEARCH_STUDY_STRATEGIES,
+  clampNumber,
+  cleanupResearchDbByAge,
+  clearResearchDb,
+  exportResearchDbArchive,
+  exportWorkspaceJson,
+  finiteNumber,
+  importResearchDbArchive,
+  importWorkspaceJson,
+  persistResearchState,
+  previewResearchDbCleanup,
+  renderResearchStoragePanel,
+  researchDbInstance
+} from './storage-sync';
+import {
+  renderPerfBudgetPanel,
+  runBranchTrace,
+  runEnsembleBenchmark,
+  runLegacyValidationSurface,
+  runNumericalProbe,
+  runOrbitFinder
+} from './runtime-diagnostics';
 import { exportPaperPackJson } from './figure-export';
 import { setMode } from './governance-ui';
 import { $ } from './shared';
@@ -34,9 +81,20 @@ import { studyBatch, studyBatchTargets, studySpecFromSnapshot } from './research
 import { DESIGN_VARIABLE_KEYS, createDesignBudget, parseDesignVariableLines } from './research-design-controller';
 import type { DesignStudyState } from './research-design-types';
 import { renderDesignStudyState } from './research-design-renderers';
-import { renderExperimentDiff, renderExperimentTimeline, renderResearchExperiments as renderResearchExperimentsPanel } from './research-experiment-library-renderer';
+import {
+  renderExperimentDiff,
+  renderExperimentTimeline,
+  renderResearchExperiments as renderResearchExperimentsPanel
+} from './research-experiment-library-renderer';
 import { buildResearchExportPanels } from './research-export-panels';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect, researchTextArea } from './research-ui-components';
+import {
+  researchActions,
+  researchCard,
+  researchFormRow,
+  researchInput,
+  researchSelect,
+  researchTextArea
+} from './research-ui-components';
 import {
   activeResearchSession,
   createWorkspaceProfileState,
@@ -46,17 +104,52 @@ import {
   selectWorkspaceProfile,
   workspaceOptions
 } from './research-workspace-controller';
-export { researchActions, researchCard, researchFormRow, researchInput, researchSelect, researchTextArea } from './research-ui-components';
-export { buildComparisonRows, comparisonRowFromExperiment, comparisonRowFromRun, renderComparisonMatrix, renderPaperSummary } from './research-comparison';
+export {
+  researchActions,
+  researchCard,
+  researchFormRow,
+  researchInput,
+  researchSelect,
+  researchTextArea
+} from './research-ui-components';
+export {
+  buildComparisonRows,
+  comparisonRowFromExperiment,
+  comparisonRowFromRun,
+  renderComparisonMatrix,
+  renderPaperSummary
+} from './research-comparison';
 export { renderResearchTable } from './research-renderers';
 export { renderResearchRunLog } from './research-run-log';
 export { studySpecFromSnapshot } from './research-batch-runner';
 export type { DesignStudyPointState, DesignStudyState } from './research-design-types';
-export { DESIGN_ORIGIN_COLORS, designPointCanvasPosition, designSummaryText, designTableRows, drawDesignHeatmap, drawDesignPreview } from './research-design-renderers';
+export {
+  DESIGN_ORIGIN_COLORS,
+  designPointCanvasPosition,
+  designSummaryText,
+  designTableRows,
+  drawDesignHeatmap,
+  drawDesignPreview
+} from './research-design-renderers';
 export { currentLibraryFilter, experimentBadges } from './research-experiment-library-renderer';
-export { activeResearchSession, ensureWorkspaceList, upsertResearchSession, upsertWorkspaceProfile, workspaceOptions } from './research-workspace-controller';
-// eslint-disable-next-line import/no-cycle
-import { doubleSpecFromCurrent, runBifurcationDetectPanel, runCodimTwoPanel, runFixedPointPanel, runFtleRidgePanel, runMelnikovPanel, runRecurrenceNetworkPanel, runShadowingPanel, runSobolPanel, runWadaConvergencePanel, superpackChaosClient, superpackClient, superpackSection } from './superpack-panels';
+export {
+  activeResearchSession,
+  ensureWorkspaceList,
+  upsertResearchSession,
+  upsertWorkspaceProfile,
+  workspaceOptions
+} from './research-workspace-controller';
+import {
+  runBifurcationDetectPanel,
+  runCodimTwoPanel,
+  runFixedPointPanel,
+  runFtleRidgePanel,
+  runMelnikovPanel,
+  runRecurrenceNetworkPanel,
+  runShadowingPanel,
+  runSobolPanel,
+  runWadaConvergencePanel
+} from './superpack-panels';
 
 const RESEARCH_WORKBENCH_CHANGED_EVENT = 'pendulum-lab:research-workbench-changed';
 let researchWorkbenchEventBridgeInstalled = false;
@@ -109,7 +202,10 @@ export function installResearchTab(): void {
   const projectName = researchInput('rwProjectName', 'text', state.research.project.name, 'project name');
   const sessionName = researchInput('rwSessionName', 'text', activeResearchSession().name, 'session name');
   const workspaceName = researchInput('rwWorkspaceName', 'text', state.research.workspace.name, 'workspace name');
-  const workspaceObjective = researchTextArea('rwWorkspaceObjective', 'research objective, flagship claim, reviewer goal');
+  const workspaceObjective = researchTextArea(
+    'rwWorkspaceObjective',
+    'research objective, flagship claim, reviewer goal'
+  );
   workspaceObjective.value = state.research.workspace.objective;
   append(
     workspaceCard,
@@ -118,10 +214,13 @@ export function installResearchTab(): void {
     researchFormRow('Workspace', workspaceSelect),
     researchFormRow('Name', workspaceName),
     workspaceObjective,
-    researchFormRow('Density', researchSelect('rwWorkspaceDensity', [
-      ['comfortable', 'comfortable'],
-      ['compact', 'compact']
-    ])),
+    researchFormRow(
+      'Density',
+      researchSelect('rwWorkspaceDensity', [
+        ['comfortable', 'comfortable'],
+        ['compact', 'compact']
+      ])
+    ),
     researchActions(
       button('rwSaveWorkspaceProfile', 'Save Profile', () => saveWorkspaceProfile(), 'primary'),
       button('rwNewWorkspaceProfile', 'New Workspace', () => createWorkspaceProfile()),
@@ -231,21 +330,39 @@ export function installResearchTab(): void {
       button('rwExportStudyCsv', 'Export Results CSV', () => exportParameterStudyResultsCsv())
     ),
     researchActions(
-      button('rwRunStudyBatch', 'Run Batch (λ/RQA/FTLE)', () => { void runStudyBatch(); }, 'primary'),
-      button('rwResumeStudyBatch', 'Resume Batch', () => { void runStudyBatch({ resume: true }); }),
-      button('rwRetryStudyFailures', 'Retry Failed', () => { void runStudyBatch({ failedOnly: true }); }),
+      button(
+        'rwRunStudyBatch',
+        'Run Batch (λ/RQA/FTLE)',
+        () => {
+          void runStudyBatch();
+        },
+        'primary'
+      ),
+      button('rwResumeStudyBatch', 'Resume Batch', () => {
+        void runStudyBatch({ resume: true });
+      }),
+      button('rwRetryStudyFailures', 'Retry Failed', () => {
+        void runStudyBatch({ failedOnly: true });
+      }),
       button('rwCancelStudyBatch', 'Cancel Batch', () => cancelStudyBatch()),
       button('rwClearStudyCheckpoint', 'Clear Checkpoint', () => clearStudyBatchCheckpoint())
     ),
     html('div', { id: 'rwStudySummary', className: 'research-summary', text: 'No parameter study generated.' }),
     html('div', { id: 'rwStudyCheckpoint', className: 'research-summary', text: 'No batch checkpoint yet.' }),
-    html('div', { id: 'rwStudyInsights', className: 'research-summary', text: 'Study insights will appear after batch diagnostics run.' }),
+    html('div', {
+      id: 'rwStudyInsights',
+      className: 'research-summary',
+      text: 'Study insights will appear after batch diagnostics run.'
+    }),
     html('div', { id: 'rwStudyResults', className: 'research-table-wrap' })
   );
 
   const designCard = researchCard('Experiment Design (Multi-Variable)', 'researchDesignCard');
   designCard.classList.add('research-wide');
-  const designVars = researchTextArea('rwDesignVars', 'one variable per line: key,min,max  (keys: theta1 theta2 omega1 omega2 damping dt mass-ratio length-ratio)');
+  const designVars = researchTextArea(
+    'rwDesignVars',
+    'one variable per line: key,min,max  (keys: theta1 theta2 omega1 omega2 damping dt mass-ratio length-ratio)'
+  );
   designVars.value = 'theta1,1.2,2.8\ndamping,0,0.4';
   const designStrategy = researchSelect('rwDesignStrategy', [
     ['sobol', 'multi-variable Sobol'],
@@ -273,12 +390,23 @@ export function installResearchTab(): void {
     researchFormRow('Max failures', researchInput('rwDesignMaxFailures', 'number', '6', 'budget: failed points')),
     researchActions(
       button('rwGenerateDesign', 'Generate Design', () => generateDesignStudy(), 'primary'),
-      button('rwRunDesign', 'Run + Adaptive Refine', () => { void runDesignBatch(); }, 'primary'),
+      button(
+        'rwRunDesign',
+        'Run + Adaptive Refine',
+        () => {
+          void runDesignBatch();
+        },
+        'primary'
+      ),
       button('rwCancelDesign', 'Cancel', () => cancelDesignBatch()),
       button('rwExportDesignCsv', 'Export CSV', () => exportDesignStudyCsv()),
       button('rwExportDesignJson', 'Export JSON', () => exportDesignStudyJson())
     ),
-    html('div', { id: 'rwDesignSummary', className: 'research-summary', text: 'No design generated. Define variables and generate a multi-dimensional design.' }),
+    html('div', {
+      id: 'rwDesignSummary',
+      className: 'research-summary',
+      text: 'No design generated. Define variables and generate a multi-dimensional design.'
+    }),
     designPreview,
     designHeatmap,
     html('div', { id: 'rwDesignResults', className: 'research-table-wrap' })
@@ -294,17 +422,38 @@ export function installResearchTab(): void {
   append(
     superpackCard,
     researchActions(
-      button('rwSpWada', 'Wada Convergence', () => { void runWadaConvergencePanel(); }, 'primary'),
-      button('rwSpNetwork', 'Recurrence Network', () => { void runRecurrenceNetworkPanel(); }),
-      button('rwSpRidges', 'FTLE Ridges', () => { void runFtleRidgePanel(); }),
-      button('rwSpBifurcations', 'Detect Bifurcations', () => { void runBifurcationDetectPanel(); }),
+      button(
+        'rwSpWada',
+        'Wada Convergence',
+        () => {
+          void runWadaConvergencePanel();
+        },
+        'primary'
+      ),
+      button('rwSpNetwork', 'Recurrence Network', () => {
+        void runRecurrenceNetworkPanel();
+      }),
+      button('rwSpRidges', 'FTLE Ridges', () => {
+        void runFtleRidgePanel();
+      }),
+      button('rwSpBifurcations', 'Detect Bifurcations', () => {
+        void runBifurcationDetectPanel();
+      }),
       button('rwSpFixedPoint', 'Fixed Point + NS Scan', () => runFixedPointPanel()),
-      button('rwSpCodim2', 'Codim-2 Map', () => { void runCodimTwoPanel(); }),
-      button('rwSpSobol', 'Sobol Sensitivity', () => { void runSobolPanel(); }),
+      button('rwSpCodim2', 'Codim-2 Map', () => {
+        void runCodimTwoPanel();
+      }),
+      button('rwSpSobol', 'Sobol Sensitivity', () => {
+        void runSobolPanel();
+      }),
       button('rwSpShadowing', 'Shadowing Score', () => runShadowingPanel()),
       button('rwSpMelnikov', 'Melnikov Threshold', () => runMelnikovPanel())
     ),
-    html('div', { id: 'rwSuperpackResults', className: 'research-summary', text: 'Run an analysis to populate results. Every metric reports method, dt, transient handling, uncertainty, caveat, and a reproducibility hash.' }),
+    html('div', {
+      id: 'rwSuperpackResults',
+      className: 'research-summary',
+      text: 'Run an analysis to populate results. Every metric reports method, dt, transient handling, uncertainty, caveat, and a reproducibility hash.'
+    }),
     superpackCanvas
   );
 
@@ -324,12 +473,19 @@ export function installResearchTab(): void {
     researchFormRow('Amplitude', researchInput('rwOrbitAmplitude', 'number', '0.3', 'drive amplitude A')),
     researchFormRow('Frequency', researchInput('rwOrbitFrequency', 'number', '0.6667', 'drive frequency ω')),
     researchFormRow('Damping', researchInput('rwOrbitDamping', 'number', '0.5', 'damping γ')),
-    researchFormRow('Sweep to', researchInput('rwOrbitSweepTo', 'number', '1.2', 'final amplitude for the branch trace')),
+    researchFormRow(
+      'Sweep to',
+      researchInput('rwOrbitSweepTo', 'number', '1.2', 'final amplitude for the branch trace')
+    ),
     researchActions(
       button('rwFindOrbit', 'Find Orbit', () => runOrbitFinder(), 'primary'),
       button('rwTraceBranch', 'Trace Branch', () => runBranchTrace())
     ),
-    html('div', { id: 'rwOrbitSummary', className: 'research-summary', text: 'Find the period-1 orbit of the damped driven pendulum (Newton on the stroboscopic map) and its Floquet stability.' }),
+    html('div', {
+      id: 'rwOrbitSummary',
+      className: 'research-summary',
+      text: 'Find the period-1 orbit of the damped driven pendulum (Newton on the stroboscopic map) and its Floquet stability.'
+    }),
     html('div', { id: 'rwOrbitBranch', className: 'research-table-wrap' })
   );
 
@@ -339,14 +495,31 @@ export function installResearchTab(): void {
   append(
     perfCard,
     researchActions(
-      button('rwPerfRefresh', 'Refresh Budget', () => { void renderPerfBudgetPanel(); }, 'primary'),
-      button('rwEnsembleBench', 'Ensemble Benchmark (WebGPU/CPU)', () => { void runEnsembleBenchmark(); })
+      button(
+        'rwPerfRefresh',
+        'Refresh Budget',
+        () => {
+          void renderPerfBudgetPanel();
+        },
+        'primary'
+      ),
+      button('rwEnsembleBench', 'Ensemble Benchmark (WebGPU/CPU)', () => {
+        void runEnsembleBenchmark();
+      })
     ),
     html('div', { id: 'rwPerfBudget', className: 'research-table-wrap' }),
     html('div', { id: 'rwEnsembleResult', className: 'research-summary', text: '' })
   );
 
   const storageCard = researchCard('Long-Term Storage (IndexedDB)', 'researchStorageCard');
+  const cleanupAge = researchSelect('rwDbCleanupAge', [
+    ['30', '30 days'],
+    ['90', '90 days'],
+    ['180', '180 days'],
+    ['365', '1 year']
+  ]);
+  cleanupAge.value = '90';
+  cleanupAge.addEventListener('change', () => previewResearchDbCleanup());
   append(
     storageCard,
     researchActions(
@@ -359,10 +532,34 @@ export function installResearchTab(): void {
       button('rwWorkspaceExport', 'Save Workspace', () => exportWorkspaceJson(), 'primary'),
       button('rwWorkspaceImport', 'Restore Workspace', () => importWorkspaceJson())
     ),
+    researchFormRow('Clean records older than', cleanupAge),
+    researchActions(
+      button('rwDbCleanupPreview', 'Preview Cleanup', () => previewResearchDbCleanup()),
+      button('rwDbCleanupRun', 'Delete Old Records', () => cleanupResearchDbByAge())
+    ),
+    html('div', {
+      id: 'rwDbCleanupSummary',
+      className: 'research-summary',
+      text: 'Choose an age and preview before deleting. Settings and recent records are always kept.'
+    }),
     html('div', { id: 'rwStorageSummary', className: 'research-summary', text: 'IndexedDB status not loaded yet.' })
   );
 
-  append(workbench, workspaceCard, experimentCard, logCard, studyCard, designCard, superpackCard, comparisonCard, orbitCard, paperCard, figureCard, perfCard, storageCard);
+  append(
+    workbench,
+    workspaceCard,
+    experimentCard,
+    logCard,
+    studyCard,
+    designCard,
+    superpackCard,
+    comparisonCard,
+    orbitCard,
+    paperCard,
+    figureCard,
+    perfCard,
+    storageCard
+  );
 
   const grid = html('div', { className: 'rg-grid' });
   append(
@@ -386,7 +583,9 @@ export function installResearchTab(): void {
     button('rgSaveExperiment', 'Save Experiment', () => saveCurrentExperiment()),
     button('rgGenerateStudy', 'Generate Study', () => generateParameterStudy()),
     button('rgExportPaperPack', 'Paper Pack', () => exportPaperPackJson()),
-    button('rgExportSnapshot', 'Export V2 Snapshot', () => downloadJson('pendulum_snapshot_v2_ts.json', currentSnapshot()))
+    button('rgExportSnapshot', 'Export V2 Snapshot', () =>
+      downloadJson('pendulum_snapshot_v2_ts.json', currentSnapshot())
+    )
   );
   append(
     controls,
@@ -397,7 +596,6 @@ export function installResearchTab(): void {
   append(layout, left, controls);
   panel.append(layout);
 }
-
 
 export function cloneSnapshot(snapshot: RuntimeSnapshot): RuntimeSnapshot {
   return JSON.parse(JSON.stringify(snapshot)) as RuntimeSnapshot;
@@ -430,7 +628,11 @@ export function collectResearchMetrics(validationStatus = 'not-run'): ResearchMe
 }
 
 export function metricValue(value: number | null, digits = 3): string {
-  return value === null || !Number.isFinite(value) ? '-' : Math.abs(value) >= 1000 || Math.abs(value) < 0.01 ? value.toExponential(2) : value.toFixed(digits);
+  return value === null || !Number.isFinite(value)
+    ? '-'
+    : Math.abs(value) >= 1000 || Math.abs(value) < 0.01
+      ? value.toExponential(2)
+      : value.toFixed(digits);
 }
 
 export function selectedResearchExperiment(): ResearchExperiment | undefined {
@@ -455,12 +657,14 @@ export function switchWorkspaceProfile(): void {
 export function createWorkspaceProfile(): void {
   const nameInput = $('rwWorkspaceName');
   const objectiveInput = $('rwWorkspaceObjective');
-  const baseName = nameInput instanceof HTMLInputElement && nameInput.value.trim()
-    ? nameInput.value.trim()
-    : 'Certified Chaotic Dynamics Workbench';
-  const objective = objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value.trim()
-    ? objectiveInput.value.trim()
-    : CERTIFIED_WORKBENCH_FLAGSHIP.thesis;
+  const baseName =
+    nameInput instanceof HTMLInputElement && nameInput.value.trim()
+      ? nameInput.value.trim()
+      : 'Certified Chaotic Dynamics Workbench';
+  const objective =
+    objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value.trim()
+      ? objectiveInput.value.trim()
+      : CERTIFIED_WORKBENCH_FLAGSHIP.thesis;
   createWorkspaceProfileState(baseName, objective);
   persistResearchState();
   renderWorkspaceProfile();
@@ -474,18 +678,27 @@ export function saveWorkspaceProfile(): void {
   const nameInput = $('rwWorkspaceName');
   const objectiveInput = $('rwWorkspaceObjective');
   const densitySelect = $('rwWorkspaceDensity');
-  const name = nameInput instanceof HTMLInputElement && nameInput.value.trim()
-    ? nameInput.value.trim()
-    : CERTIFIED_WORKBENCH_FLAGSHIP.title;
-  const objective = objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value.trim()
-    ? objectiveInput.value.trim()
-    : CERTIFIED_WORKBENCH_FLAGSHIP.thesis;
+  const name =
+    nameInput instanceof HTMLInputElement && nameInput.value.trim()
+      ? nameInput.value.trim()
+      : CERTIFIED_WORKBENCH_FLAGSHIP.title;
+  const objective =
+    objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value.trim()
+      ? objectiveInput.value.trim()
+      : CERTIFIED_WORKBENCH_FLAGSHIP.thesis;
   saveWorkspaceProfileState({
-    projectName: projectInput instanceof HTMLInputElement && projectInput.value.trim() ? projectInput.value.trim() : state.research.project.name,
-    sessionName: sessionInput instanceof HTMLInputElement && sessionInput.value.trim() ? sessionInput.value.trim() : activeResearchSession().name,
+    projectName:
+      projectInput instanceof HTMLInputElement && projectInput.value.trim()
+        ? projectInput.value.trim()
+        : state.research.project.name,
+    sessionName:
+      sessionInput instanceof HTMLInputElement && sessionInput.value.trim()
+        ? sessionInput.value.trim()
+        : activeResearchSession().name,
     workspaceName: name,
     objective,
-    density: densitySelect instanceof HTMLSelectElement && densitySelect.value === 'compact' ? 'compact' : 'comfortable',
+    density:
+      densitySelect instanceof HTMLSelectElement && densitySelect.value === 'compact' ? 'compact' : 'comfortable',
     panelCollapsed: document.body.classList.contains('panel-collapsed')
   });
   persistResearchState();
@@ -512,10 +725,13 @@ export function renderWorkspaceProfile(): void {
     workspaceSelect.value = workspace.id;
   }
   const session = activeResearchSession();
-  if (projectInput instanceof HTMLInputElement && projectInput.value !== state.research.project.name) projectInput.value = state.research.project.name;
-  if (sessionInput instanceof HTMLInputElement && sessionInput.value !== session.name) sessionInput.value = session.name;
+  if (projectInput instanceof HTMLInputElement && projectInput.value !== state.research.project.name)
+    projectInput.value = state.research.project.name;
+  if (sessionInput instanceof HTMLInputElement && sessionInput.value !== session.name)
+    sessionInput.value = session.name;
   if (nameInput instanceof HTMLInputElement && nameInput.value !== workspace.name) nameInput.value = workspace.name;
-  if (objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value !== workspace.objective) objectiveInput.value = workspace.objective;
+  if (objectiveInput instanceof HTMLTextAreaElement && objectiveInput.value !== workspace.objective)
+    objectiveInput.value = workspace.objective;
   if (densitySelect instanceof HTMLSelectElement) densitySelect.value = state.research.layout.density;
   const readyPieces = [
     `${state.research.experiments.length} experiment(s)`,
@@ -539,9 +755,18 @@ export function saveCurrentExperiment(): void {
   const nameInput = $('rwExperimentName');
   const notesInput = $('rwExperimentNotes');
   const tagsInput = $('rwExperimentTags');
-  const name = nameInput instanceof HTMLInputElement && nameInput.value.trim() ? nameInput.value.trim() : defaultExperimentName(snapshot);
+  const name =
+    nameInput instanceof HTMLInputElement && nameInput.value.trim()
+      ? nameInput.value.trim()
+      : defaultExperimentName(snapshot);
   const notes = notesInput instanceof HTMLTextAreaElement ? notesInput.value.trim() : '';
-  const tags = tagsInput instanceof HTMLInputElement ? tagsInput.value.split(',').map((tag) => tag.trim()).filter(Boolean) : [];
+  const tags =
+    tagsInput instanceof HTMLInputElement
+      ? tagsInput.value
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      : [];
   const experiment: ResearchExperiment = {
     id: researchUid('exp'),
     name,
@@ -621,10 +846,21 @@ export function exportExperimentLibrary(): void {
     generatedAt: new Date().toISOString(),
     experiments: state.research.experiments
   });
-  logResearchRun('export', 'Experiment library export', `${state.research.experiments.length} experiments`, 'pendulum_research_experiment_library.json');
+  logResearchRun(
+    'export',
+    'Experiment library export',
+    `${state.research.experiments.length} experiments`,
+    'pendulum_research_experiment_library.json'
+  );
 }
 
-export function logResearchRun(type: ResearchRunType, label: string, summary: string, artifact = '', validationStatus = 'not-run'): ResearchRunLogEntry {
+export function logResearchRun(
+  type: ResearchRunType,
+  label: string,
+  summary: string,
+  artifact = '',
+  validationStatus = 'not-run'
+): ResearchRunLogEntry {
   const snapshot = currentSnapshot();
   const entry: ResearchRunLogEntry = {
     id: researchUid('run'),
@@ -668,12 +904,19 @@ export function exportResearchRunLog(): void {
     generatedAt: new Date().toISOString(),
     entries: state.research.runLog
   });
-  logResearchRun('export', 'Run log export', `${state.research.runLog.length} entries`, 'pendulum_research_run_log.json');
+  logResearchRun(
+    'export',
+    'Run log export',
+    `${state.research.runLog.length} entries`,
+    'pendulum_research_run_log.json'
+  );
 }
 
 export function studyStrategy(): ParameterStudyPlan['strategy'] {
   const raw = selectValue('rwStudyStrategy', 'grid');
-  return RESEARCH_STUDY_STRATEGIES.has(raw as ParameterStudyPlan['strategy']) ? raw as ParameterStudyPlan['strategy'] : 'grid';
+  return RESEARCH_STUDY_STRATEGIES.has(raw as ParameterStudyPlan['strategy'])
+    ? (raw as ParameterStudyPlan['strategy'])
+    : 'grid';
 }
 
 export function snapshotWithStudyPatch(base: RuntimeSnapshot, variable: string, value: number): RuntimeSnapshot {
@@ -714,7 +957,8 @@ export function snapshotWithStudyPatch(base: RuntimeSnapshot, variable: string, 
 
 export function studyEstimate(snapshot: RuntimeSnapshot): string {
   const stiffness = snapshot.dt < 0.001 ? 'high cost' : snapshot.dt < 0.004 ? 'medium cost' : 'low cost';
-  const caveat = snapshot.systemType === 'triple' ? 'triple sensitivity' : snapshot.damping > 0 ? 'dissipative' : 'conservative';
+  const caveat =
+    snapshot.systemType === 'triple' ? 'triple sensitivity' : snapshot.damping > 0 ? 'dissipative' : 'conservative';
   return `${stiffness}, ${caveat}`;
 }
 
@@ -737,7 +981,7 @@ export function generateParameterStudy(): void {
     max: hi,
     count: values.length,
     values,
-    experiments: values.map((value, index) => {
+    experiments: values.map((value) => {
       const snapshot = snapshotWithStudyPatch(base, variable, value);
       return {
         id: researchUid('point'),
@@ -792,7 +1036,12 @@ export function studyPoolSize(): number {
   return Math.round(clampNumber(numberFrom('rwStudyPool', 2), 2, 1, 4));
 }
 
-export function writeStudyBatchCheckpoint(plan: ParameterStudyPlan, status: ResearchBatchStatus, message: string, nextIndex = studyBatch.current): void {
+export function writeStudyBatchCheckpoint(
+  plan: ParameterStudyPlan,
+  status: ResearchBatchStatus,
+  message: string,
+  nextIndex = studyBatch.current
+): void {
   const existing = state.research.batchCheckpoint?.planId === plan.id ? state.research.batchCheckpoint : null;
   const summary = studyCompletionSummary(plan);
   const now = new Date().toISOString();
@@ -854,7 +1103,16 @@ export async function runStudyBatch(options: { failedOnly?: boolean; resume?: bo
   studyBatch.failed = 0;
   studyBatch.timeoutMs = studyBatchTimeoutMs();
   studyBatch.poolSize = studyPoolSize();
-  writeStudyBatchCheckpoint(plan, 'running', options.failedOnly ? 'Retrying failed study points.' : options.resume ? 'Resuming pending study points.' : 'Running pending study points.', 0);
+  writeStudyBatchCheckpoint(
+    plan,
+    'running',
+    options.failedOnly
+      ? 'Retrying failed study points.'
+      : options.resume
+        ? 'Resuming pending study points.'
+        : 'Running pending study points.',
+    0
+  );
   persistResearchState();
   renderParameterStudy();
   // Protocol V2: each point is a jobId-tracked studyPoint job on the worker
@@ -928,7 +1186,12 @@ export async function runStudyBatch(options: { failedOnly?: boolean; resume?: bo
       processed += 1;
       studyBatch.current = processed;
       persistResearchState();
-      writeStudyBatchCheckpoint(plan, 'running', `Processed ${studyBatch.current}/${studyBatch.total} target point(s).`, processed);
+      writeStudyBatchCheckpoint(
+        plan,
+        'running',
+        `Processed ${studyBatch.current}/${studyBatch.total} target point(s).`,
+        processed
+      );
       persistResearchState();
       renderParameterStudy();
     }
@@ -941,7 +1204,11 @@ export async function runStudyBatch(options: { failedOnly?: boolean; resume?: bo
   writeStudyBatchCheckpoint(
     plan,
     studyBatch.cancelled ? 'cancelled' : failed > 0 ? 'failed' : 'complete',
-    studyBatch.cancelled ? `Cancelled at ${done}/${plan.experiments.length}.` : failed > 0 ? `${failed} point(s) failed; resume or retry failed points.` : 'All study points completed.',
+    studyBatch.cancelled
+      ? `Cancelled at ${done}/${plan.experiments.length}.`
+      : failed > 0
+        ? `${failed} point(s) failed; resume or retry failed points.`
+        : 'All study points completed.',
     studyBatch.cancelled ? studyBatch.current : plan.experiments.length
   );
   persistResearchState();
@@ -950,7 +1217,11 @@ export async function runStudyBatch(options: { failedOnly?: boolean; resume?: bo
     studyBatch.cancelled ? 'Batch cancelled' : options.failedOnly ? 'Batch retry complete' : 'Batch complete',
     `${done}/${plan.experiments.length} points filled; ${failed} failed; timeout ${Math.round(studyBatch.timeoutMs / 1000)}s`
   );
-  toast(studyBatch.cancelled ? `Batch cancelled at ${done}/${plan.experiments.length}` : `Batch complete: ${done}/${plan.experiments.length} filled, ${failed} failed`);
+  toast(
+    studyBatch.cancelled
+      ? `Batch cancelled at ${done}/${plan.experiments.length}`
+      : `Batch complete: ${done}/${plan.experiments.length} filled, ${failed} failed`
+  );
 }
 
 export function cancelStudyBatch(): void {
@@ -974,7 +1245,12 @@ export function exportParameterStudy(): void {
     checkpoint: state.research.batchCheckpoint,
     plan
   });
-  logResearchRun('export', 'Parameter study export', state.research.parameterStudy ? `${state.research.parameterStudy.count} points` : 'no plan', 'pendulum_parameter_study_plan.json');
+  logResearchRun(
+    'export',
+    'Parameter study export',
+    state.research.parameterStudy ? `${state.research.parameterStudy.count} points` : 'no plan',
+    'pendulum_parameter_study_plan.json'
+  );
 }
 
 export function studyPointValue(plan: ParameterStudyPlan, point: ParameterStudyPoint, index: number): number | string {
@@ -984,19 +1260,26 @@ export function studyPointValue(plan: ParameterStudyPlan, point: ParameterStudyP
 }
 
 export function studyPlanHash(plan: ParameterStudyPlan): string {
-  return hashText(JSON.stringify({
-    id: plan.id,
-    generatedAt: plan.generatedAt,
-    variable: plan.variable,
-    strategy: plan.strategy,
-    min: plan.min,
-    max: plan.max,
-    values: plan.values,
-    snapshots: plan.experiments.map((point) => point.snapshot.hash)
-  }));
+  return hashText(
+    JSON.stringify({
+      id: plan.id,
+      generatedAt: plan.generatedAt,
+      variable: plan.variable,
+      strategy: plan.strategy,
+      min: plan.min,
+      max: plan.max,
+      values: plan.values,
+      snapshots: plan.experiments.map((point) => point.snapshot.hash)
+    })
+  );
 }
 
-export function studyCompletionSummary(plan: ParameterStudyPlan): { complete: number; failed: number; pending: number; planHash: string } {
+export function studyCompletionSummary(plan: ParameterStudyPlan): {
+  complete: number;
+  failed: number;
+  pending: number;
+  planHash: string;
+} {
   const complete = plan.experiments.filter((point) => point.results).length;
   const failed = plan.experiments.filter((point) => point.error && !point.results).length;
   return {
@@ -1014,25 +1297,32 @@ export function exportParameterStudyResultsCsv(): void {
     return;
   }
   downloadText('pendulum_parameter_study_results.csv', parameterStudyResultsCsvText(plan), 'text/csv;charset=utf-8');
-  logResearchRun('export', 'Parameter study CSV export', `${plan.experiments.length} rows`, 'pendulum_parameter_study_results.csv');
+  logResearchRun(
+    'export',
+    'Parameter study CSV export',
+    `${plan.experiments.length} rows`,
+    'pendulum_parameter_study_results.csv'
+  );
 }
 
 export function parameterStudyResultsCsvText(plan: ParameterStudyPlan): string {
-  const rows = [[
-    'point_id',
-    'label',
-    'variable',
-    'value',
-    'lambda_max',
-    'lambda_block_std_error',
-    'rqa_determinism',
-    'rqa_divergence',
-    'ftle',
-    'duration_ms',
-    'attempts',
-    'error',
-    'snapshot_hash'
-  ]];
+  const rows = [
+    [
+      'point_id',
+      'label',
+      'variable',
+      'value',
+      'lambda_max',
+      'lambda_block_std_error',
+      'rqa_determinism',
+      'rqa_divergence',
+      'ftle',
+      'duration_ms',
+      'attempts',
+      'error',
+      'snapshot_hash'
+    ]
+  ];
   plan.experiments.forEach((point, index) => {
     rows.push([
       point.id,
@@ -1095,8 +1385,15 @@ export function loadDesignStudy(): void {
     const raw = window.localStorage?.getItem(DESIGN_STORAGE_KEY);
     if (!raw) return;
     const parsed = JSON.parse(raw) as DesignStudyState;
-    if (parsed?.schemaVersion !== 'pendulum-design-study/v1' || !Array.isArray(parsed.variables) || !Array.isArray(parsed.points)) return;
-    const variables = parsed.variables.filter((variable) => DESIGN_VARIABLE_KEYS.has(variable?.key) && finiteNumber(variable.min) && finiteNumber(variable.max));
+    if (
+      parsed?.schemaVersion !== 'pendulum-design-study/v1' ||
+      !Array.isArray(parsed.variables) ||
+      !Array.isArray(parsed.points)
+    )
+      return;
+    const variables = parsed.variables.filter(
+      (variable) => DESIGN_VARIABLE_KEYS.has(variable?.key) && finiteNumber(variable.min) && finiteNumber(variable.max)
+    );
     if (variables.length === 0) return;
     designStudy = { ...parsed, variables, status: parsed.status === 'running' ? 'idle' : parsed.status };
   } catch {
@@ -1157,7 +1454,11 @@ export function generateDesignStudy(): void {
   };
   persistDesignStudy();
   renderDesignStudy();
-  logResearchRun('parameter-study', 'Design generated', `${strategy} ${points.length} points x ${variables.length} vars`);
+  logResearchRun(
+    'parameter-study',
+    'Design generated',
+    `${strategy} ${points.length} points x ${variables.length} vars`
+  );
   toast(`Design generated (${points.length} points)`);
 }
 
@@ -1230,7 +1531,13 @@ export async function runDesignBatch(): Promise<void> {
         const snapshot = designSnapshotForValues(point.values);
         const { spec, state0 } = studySpecFromSnapshot(snapshot);
         const handle = client.submit(
-          { id: `${point.id}-a${point.attempts}`, kind: 'studyPoint', spec, state0, settings: { lyapunov: { dt: Math.min(0.01, snapshot.dt || 0.01) } } },
+          {
+            id: `${point.id}-a${point.attempts}`,
+            kind: 'studyPoint',
+            spec,
+            state0,
+            settings: { lyapunov: { dt: Math.min(0.01, snapshot.dt || 0.01) } }
+          },
           { timeoutMs, checkpointEvery: 1 }
         );
         inFlight.add(handle);
@@ -1325,7 +1632,19 @@ export function renderDesignStudy(): void {
 
 export function designStudyCsvText(design: DesignStudyState): string {
   const variableKeys = design.variables.map((variable) => variable.key);
-  const header = ['point_id', 'origin', 'replicate', ...variableKeys, 'lambda_max', 'lambda_block_std_error', 'rqa_determinism', 'rqa_divergence', 'ftle', 'attempts', 'error'];
+  const header = [
+    'point_id',
+    'origin',
+    'replicate',
+    ...variableKeys,
+    'lambda_max',
+    'lambda_block_std_error',
+    'rqa_determinism',
+    'rqa_divergence',
+    'ftle',
+    'attempts',
+    'error'
+  ];
   const rows = design.points.map((point) => [
     point.id,
     point.origin,
@@ -1359,7 +1678,12 @@ export function exportDesignStudyCsv(): void {
     return;
   }
   downloadText('pendulum_design_study_results.csv', designStudyCsvText(designStudy), 'text/csv;charset=utf-8');
-  logResearchRun('export', 'Design study CSV export', `${designStudy.points.length} rows`, 'pendulum_design_study_results.csv');
+  logResearchRun(
+    'export',
+    'Design study CSV export',
+    `${designStudy.points.length} rows`,
+    'pendulum_design_study_results.csv'
+  );
 }
 
 export function exportDesignStudyJson(): void {
@@ -1367,12 +1691,34 @@ export function exportDesignStudyJson(): void {
     toast('Generate a design first');
     return;
   }
-  downloadJson('pendulum_design_study.json', { ...designStudy, designHash: hashText(JSON.stringify(designStudy.points.map((point) => [point.id, point.values]))) });
-  logResearchRun('export', 'Design study JSON export', `${designStudy.points.length} points`, 'pendulum_design_study.json');
+  downloadJson('pendulum_design_study.json', {
+    ...designStudy,
+    designHash: hashText(JSON.stringify(designStudy.points.map((point) => [point.id, point.values])))
+  });
+  logResearchRun(
+    'export',
+    'Design study JSON export',
+    `${designStudy.points.length} points`,
+    'pendulum_design_study.json'
+  );
 }
 
 // --- Analysis superpack (extracted to superpack-panels.ts) -------------------
-export { doubleSpecFromCurrent, runBifurcationDetectPanel, runCodimTwoPanel, runFixedPointPanel, runFtleRidgePanel, runMelnikovPanel, runRecurrenceNetworkPanel, runShadowingPanel, runSobolPanel, runWadaConvergencePanel, superpackChaosClient, superpackClient, superpackSection } from './superpack-panels';
+export {
+  doubleSpecFromCurrent,
+  runBifurcationDetectPanel,
+  runCodimTwoPanel,
+  runFixedPointPanel,
+  runFtleRidgePanel,
+  runMelnikovPanel,
+  runRecurrenceNetworkPanel,
+  runShadowingPanel,
+  runSobolPanel,
+  runWadaConvergencePanel,
+  superpackChaosClient,
+  superpackClient,
+  superpackSection
+} from './superpack-panels';
 
 export function rebuildComparisonMatrix(): void {
   state.research.comparisonRows = buildComparisonRows();
@@ -1387,7 +1733,12 @@ export function exportComparisonMatrix(): void {
     generatedAt: new Date().toISOString(),
     rows: state.research.comparisonRows
   });
-  logResearchRun('export', 'Comparison matrix export', `${state.research.comparisonRows.length} rows`, 'pendulum_result_comparison_matrix.json');
+  logResearchRun(
+    'export',
+    'Comparison matrix export',
+    `${state.research.comparisonRows.length} rows`,
+    'pendulum_result_comparison_matrix.json'
+  );
 }
 
 export function renderResearchWorkbench(): void {
@@ -1495,29 +1846,41 @@ export function renderParameterStudy(): void {
     : filled > 0
       ? ` ${filled}/${plan?.count ?? 0} points have batch results.`
       : '';
-  setText('rwStudySummary', plan
-    ? `${plan.count} points for ${plan.variable} using ${plan.strategy}. Range ${plan.min} to ${plan.max}. First: ${plan.experiments[0]?.estimate ?? '-'}.${progress}`
-    : 'No parameter study generated.');
+  setText(
+    'rwStudySummary',
+    plan
+      ? `${plan.count} points for ${plan.variable} using ${plan.strategy}. Range ${plan.min} to ${plan.max}. First: ${plan.experiments[0]?.estimate ?? '-'}.${progress}`
+      : 'No parameter study generated.'
+  );
   setText('rwStudyCheckpoint', buildStudyCheckpointSummary(plan));
   setText('rwStudyInsights', buildParameterStudyInsights(plan));
   const resultRows = (plan?.experiments ?? [])
     .filter((point) => point.results || point.error)
-    .map((point) => point.results
-      ? [
-          point.label,
-          `${point.results.lambdaMax.toFixed(4)} ± ${point.results.lambdaBlockStdError.toFixed(4)}`,
-          point.results.rqaDeterminism.toFixed(3),
-          point.results.rqaDivergence.toFixed(4),
-          point.results.ftle.toFixed(4)
-        ]
-      : [point.label, `error: ${point.error ?? 'unknown'}`, '-', '-', '-']);
-  renderResearchTable('rwStudyResults', ['point', 'lambda max ± SE', 'RQA DET', 'RQA DIV', 'FTLE'], resultRows, 'Run the batch to fill per-point diagnostics.');
+    .map((point) =>
+      point.results
+        ? [
+            point.label,
+            `${point.results.lambdaMax.toFixed(4)} ± ${point.results.lambdaBlockStdError.toFixed(4)}`,
+            point.results.rqaDeterminism.toFixed(3),
+            point.results.rqaDivergence.toFixed(4),
+            point.results.ftle.toFixed(4)
+          ]
+        : [point.label, `error: ${point.error ?? 'unknown'}`, '-', '-', '-']
+    );
+  renderResearchTable(
+    'rwStudyResults',
+    ['point', 'lambda max ± SE', 'RQA DET', 'RQA DIV', 'FTLE'],
+    resultRows,
+    'Run the batch to fill per-point diagnostics.'
+  );
 }
 
 export function buildStudyCheckpointSummary(plan: ParameterStudyPlan | null): string {
   const checkpoint = state.research.batchCheckpoint;
   if (!plan || !checkpoint || checkpoint.planId !== plan.id) return 'No batch checkpoint yet.';
-  const age = Number.isNaN(Date.parse(checkpoint.updatedAt)) ? checkpoint.updatedAt : new Date(checkpoint.updatedAt).toLocaleTimeString();
+  const age = Number.isNaN(Date.parse(checkpoint.updatedAt))
+    ? checkpoint.updatedAt
+    : new Date(checkpoint.updatedAt).toLocaleTimeString();
   return `Checkpoint ${checkpoint.status}: ${checkpoint.completed}/${checkpoint.total} complete, ${checkpoint.failed} failed, ${checkpoint.pending} pending; next target ${checkpoint.nextIndex}; timeout ${Math.round(checkpoint.timeoutMs / 1000)}s; updated ${age}. ${checkpoint.message}`;
 }
 
@@ -1533,7 +1896,10 @@ export function buildParameterStudyInsights(plan: ParameterStudyPlan | null): st
   const lambdas = completed.map((entry) => entry.point.results!.lambdaMax);
   const minLambda = Math.min(...lambdas);
   const maxLambda = Math.max(...lambdas);
-  const peak = completed.reduce((best, entry) => entry.point.results!.lambdaMax > best.point.results!.lambdaMax ? entry : best, completed[0]!);
+  const peak = completed.reduce(
+    (best, entry) => (entry.point.results!.lambdaMax > best.point.results!.lambdaMax ? entry : best),
+    completed[0]!
+  );
   const sorted = completed.slice().sort((a, b) => a.value - b.value);
   let maxSlope = 0;
   let slopeLabel = '-';

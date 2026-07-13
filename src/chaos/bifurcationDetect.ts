@@ -8,11 +8,7 @@ import type { BifurcationColumn } from './poincare';
  */
 
 export type BifurcationEventType =
-  | 'period-doubling'
-  | 'period-halving'
-  | 'chaos-onset'
-  | 'chaos-exit'
-  | 'attractor-change';
+  'period-doubling' | 'period-halving' | 'chaos-onset' | 'chaos-exit' | 'attractor-change';
 
 export interface BifurcationEvent {
   type: BifurcationEventType;
@@ -87,6 +83,7 @@ export function detectBifurcations(
     params,
     chaoticColumns,
     method: `distinct section values per parameter (tolerance ${tolerance}); chaos when count >= ${chaosThreshold}`,
-    caveat: 'Counting distinct stroboscopic values is resolution- and transient-limited; events between sampled parameters are bracketed, not located. Refine the parameter grid around reported events.'
+    caveat:
+      'Counting distinct stroboscopic values is resolution- and transient-limited; events between sampled parameters are bracketed, not located. Refine the parameter grid around reported events.'
   };
 }

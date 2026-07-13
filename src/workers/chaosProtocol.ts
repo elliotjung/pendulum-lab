@@ -395,13 +395,24 @@ function runBifurcation(req: BifurcationRequest): BifurcationResponse {
     transientCrossings: req.settings.transientCrossings,
     maxPointsPerParam: req.settings.maxPointsPerParam
   });
-  return { id: req.id, kind: 'bifurcation', ok: true, columns: columns.map((c) => ({ param: c.param, values: c.values })) };
+  return {
+    id: req.id,
+    kind: 'bifurcation',
+    ok: true,
+    columns: columns.map((c) => ({ param: c.param, values: c.values }))
+  };
 }
 
 function runLyapunovSpectrum(req: LyapunovSpectrumRequest): LyapunovSpectrumResponse {
   const rhs = buildRhs(req.spec);
   const count = req.count ?? req.state0.length;
-  const result = lyapunovSpectrum(new Float64Array(req.state0), rhs, count, req.settings ?? {}, buildJacobian(req.spec));
+  const result = lyapunovSpectrum(
+    new Float64Array(req.state0),
+    rhs,
+    count,
+    req.settings ?? {},
+    buildJacobian(req.spec)
+  );
   return {
     id: req.id,
     kind: 'lyapunovSpectrum',
@@ -635,7 +646,12 @@ function runStudyPoint(req: StudyPointRequest): StudyPointResponse {
 
 function runWadaConvergence(req: WadaConvergenceRequest): WadaConvergenceResponse {
   const params = { m1: req.spec.m1, m2: req.spec.m2, l1: req.spec.l1, l2: req.spec.l2, g: req.spec.g };
-  return { id: req.id, kind: 'wadaConvergence', ok: true, result: wadaResolutionConvergence(params, req.settings ?? {}) };
+  return {
+    id: req.id,
+    kind: 'wadaConvergence',
+    ok: true,
+    result: wadaResolutionConvergence(params, req.settings ?? {})
+  };
 }
 
 function runCodimTwo(req: CodimTwoRequest): CodimTwoResponse {

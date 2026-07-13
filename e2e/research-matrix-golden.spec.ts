@@ -6,7 +6,9 @@ test('research matrix compares experiments and renders diagnostic maps', async (
     localStorage.setItem('pendulum-lab/ui/audience-mode', 'research');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { matrix?: unknown } }).__modernTabs?.matrix));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { matrix?: unknown } }).__modernTabs?.matrix)
+  );
 
   await openModernTab(page, 'matrix', '#tab-matrix');
   await page.locator('#matrixPreset').selectOption('cartpole-open-loop');
@@ -20,7 +22,13 @@ test('research matrix compares experiments and renders diagnostic maps', async (
   await expect(page.locator('#matrixMetrics')).toContainText('dt / t0');
 
   const nonBlank = await page.evaluate(() => {
-    const ids = ['matrixSweepCanvas', 'matrixPoincareCanvas', 'matrixLyapCanvas', 'matrixBasinCanvas', 'matrixEnergyCanvas'];
+    const ids = [
+      'matrixSweepCanvas',
+      'matrixPoincareCanvas',
+      'matrixLyapCanvas',
+      'matrixBasinCanvas',
+      'matrixEnergyCanvas'
+    ];
     return ids.every((id) => {
       const canvas = document.getElementById(id) as HTMLCanvasElement | null;
       const ctx = canvas?.getContext('2d');
@@ -40,7 +48,9 @@ test('golden center runs integrator threshold checks in its own tab', async ({ p
     localStorage.setItem('pendulum-lab/ui/audience-mode', 'research');
   });
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { golden?: unknown } }).__modernTabs?.golden));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { golden?: unknown } }).__modernTabs?.golden)
+  );
 
   await openModernTab(page, 'golden', '#tab-golden');
   await page.evaluate(() => {

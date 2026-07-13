@@ -65,18 +65,38 @@ const reproductions: Array<() => Reproduction> = [
   },
   () => {
     // Item 2: NS invariant-circle rotation number → 1/6 at onset.
-    const cont = continueNeimarkSackerTorus(delayedLogistic, { start: 2.05, end: 2.01, step: 0.01, initialAmplitude: 0.24, collocation: 31, tolerance: 1e-10, maxIterations: 40 });
+    const cont = continueNeimarkSackerTorus(delayedLogistic, {
+      start: 2.05,
+      end: 2.01,
+      step: 0.01,
+      initialAmplitude: 0.24,
+      collocation: 31,
+      tolerance: 1e-10,
+      maxIterations: 40
+    });
     const last = cont.points[cont.points.length - 1]!;
     return {
       id: 'ns-torus-rotation-number',
       description: 'Neimark-Sacker invariant circle: rotation number ρ at a = 2.01 (→ 1/6 at onset).',
       command: 'npm run research -- nstorus',
-      value: { a: last.parameter, rotationNumber: last.rotationNumber, invarianceResidual: last.invarianceResidual, converged: last.converged }
+      value: {
+        a: last.parameter,
+        rotationNumber: last.rotationNumber,
+        invarianceResidual: last.invarianceResidual,
+        converged: last.converged
+      }
     };
   },
   () => {
     // Item 5: the 1/2 Arnold tongue of the sine circle map (K = 1).
-    const scan = scanModeLocking((omega) => sineCircleMap(omega, 1), { start: 0.4, end: 0.6, steps: 80, rationals: [[1, 2]], tolerance: 1e-5, rotationOptions: { iterations: 80000, transient: 2000 } });
+    const scan = scanModeLocking((omega) => sineCircleMap(omega, 1), {
+      start: 0.4,
+      end: 0.6,
+      steps: 80,
+      rationals: [[1, 2]],
+      tolerance: 1e-5,
+      rotationOptions: { iterations: 80000, transient: 2000 }
+    });
     const half = scan.tongues.find((t) => t.p === 1 && t.q === 2)!;
     return {
       id: 'arnold-tongue-half',
@@ -89,7 +109,10 @@ const reproductions: Array<() => Reproduction> = [
     // Item 6: Lyapunov spectrum on the torus — neutral largest exponent.
     const a = 2.02;
     const center = (a - 1) / a;
-    const res = torusLyapunovSpectrum(delayedLogistic, a, [center + 0.12, center], { iterations: 40000, transient: 5000 });
+    const res = torusLyapunovSpectrum(delayedLogistic, a, [center + 0.12, center], {
+      iterations: 40000,
+      transient: 5000
+    });
     return {
       id: 'torus-lyapunov',
       description: 'Lyapunov spectrum on the NS torus: neutral on-circle exponent, attracting transverse.',
@@ -99,12 +122,23 @@ const reproductions: Array<() => Reproduction> = [
   },
   () => {
     // Item 8: NS spectral-convergence gate.
-    const conv = neimarkSackerSpectralConvergence(delayedLogistic, 2.02, { initialAmplitude: 0.18, tolerance: 1e-12, maxIterations: 60, floor: 1e-8 });
+    const conv = neimarkSackerSpectralConvergence(delayedLogistic, 2.02, {
+      initialAmplitude: 0.18,
+      tolerance: 1e-12,
+      maxIterations: 60,
+      floor: 1e-8
+    });
     return {
       id: 'ns-spectral-convergence',
       description: 'NS collocation truncation error vs M: geometric (spectral) decay.',
       command: 'npm run research -- nsconv --a 2.02',
-      value: { spectral: conv.spectral, geometricRate: conv.geometricRate, dropFactor: conv.dropFactor, spectralR2: conv.spectralR2, algebraicR2: conv.algebraicR2 }
+      value: {
+        spectral: conv.spectral,
+        geometricRate: conv.geometricRate,
+        dropFactor: conv.dropFactor,
+        spectralR2: conv.spectralR2,
+        algebraicR2: conv.algebraicR2
+      }
     };
   },
   () => {
@@ -122,7 +156,12 @@ const reproductions: Array<() => Reproduction> = [
       id: 'structure-preservation',
       description: 'Long-run energy drift: rk4 secular vs the symmetric Gauss method bounded (~1000 periods).',
       command: 'npm run research -- drift',
-      value: { rk4Secular: rk4.secular, rk4MaxDrift: rk4.maxAbsDrift, gauss2Secular: gauss2.secular, gauss2MaxDrift: gauss2.maxAbsDrift }
+      value: {
+        rk4Secular: rk4.secular,
+        rk4MaxDrift: rk4.maxAbsDrift,
+        gauss2Secular: gauss2.secular,
+        gauss2MaxDrift: gauss2.maxAbsDrift
+      }
     };
   },
   () => {
@@ -136,7 +175,14 @@ const reproductions: Array<() => Reproduction> = [
       initialState: [1],
       diffusion: [0],
       scheme: 'milstein',
-      multiplicative: { diffusion: (s, out) => { out[0] = sigma * s[0]!; }, diffusionPrime: (_s, out) => { out[0] = sigma; } },
+      multiplicative: {
+        diffusion: (s, out) => {
+          out[0] = sigma * s[0]!;
+        },
+        diffusionPrime: (_s, out) => {
+          out[0] = sigma;
+        }
+      },
       dt: 1e-3,
       steps: 1000,
       realizations: 8000,
@@ -147,13 +193,23 @@ const reproductions: Array<() => Reproduction> = [
       id: 'sde-gbm-moments',
       description: 'Langevin/Milstein ensemble: geometric Brownian motion mean & variance vs the closed form.',
       command: 'npm run research -- sde --scheme milstein',
-      value: { mean: res.mean[last]![0], variance: res.variance[last]![0], expectedMean: Math.exp(mu), expectedVar: Math.exp(2 * mu) * (Math.exp(sigma * sigma) - 1) }
+      value: {
+        mean: res.mean[last]![0],
+        variance: res.variance[last]![0],
+        expectedMean: Math.exp(mu),
+        expectedVar: Math.exp(2 * mu) * (Math.exp(sigma * sigma) - 1)
+      }
     };
   },
   () => {
     // Item 7: transcritical branch switch on the normal form.
     const res = switchTranscriticalBranch(
-      { dimension: 1, residual: (state, parameter, out) => { out[0] = parameter * state[0]! - state[0]! * state[0]!; } },
+      {
+        dimension: 1,
+        residual: (state, parameter, out) => {
+          out[0] = parameter * state[0]! - state[0]! * state[0]!;
+        }
+      },
       { state: [0], parameter: 0 },
       { parameterStep: 0.2, branchTangent: [1], referenceBranch: () => [0] }
     );
@@ -211,7 +267,11 @@ async function main(): Promise<void> {
     }
   }
   await mkdir('reports/reproduce', { recursive: true });
-  await writeFile('reports/reproduce/manifest.json', JSON.stringify({ generatedAt: new Date().toISOString(), results }, null, 2), 'utf8');
+  await writeFile(
+    'reports/reproduce/manifest.json',
+    JSON.stringify({ generatedAt: new Date().toISOString(), results }, null, 2),
+    'utf8'
+  );
   await writeFile('reports/reproduce/REPRODUCE.md', markdown(results), 'utf8');
   console.log(`\nWrote reports/reproduce/manifest.json (${results.length} results).`);
   if (failures > 0) process.exitCode = 1;

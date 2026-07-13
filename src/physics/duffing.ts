@@ -62,7 +62,10 @@ export function rhsDuffing(state: ArrayLike<number>, parameters: DuffingParamete
 }
 
 /** Duffing potential V(x) = ½ α x² + ¼ β x⁴ (per unit mass). */
-export function duffingPotential(x: number, parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>): number {
+export function duffingPotential(
+  x: number,
+  parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>
+): number {
   const { linearStiffness, cubicStiffness } = parameters;
   return 0.5 * linearStiffness * x * x + 0.25 * cubicStiffness * x * x * x * x;
 }
@@ -99,7 +102,9 @@ export interface DuffingDoubleWell {
  * not bistable). The curvatures follow from V''(x) = α + 3β x²: V''(0) = α < 0
  * (the barrier) and V''(x*) = -2α > 0 (each well).
  */
-export function duffingDoubleWell(parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>): DuffingDoubleWell {
+export function duffingDoubleWell(
+  parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>
+): DuffingDoubleWell {
   const { linearStiffness: alpha, cubicStiffness: beta } = parameters;
   if (!(alpha < 0) || !(beta > 0)) {
     throw new Error(`duffingDoubleWell: requires α < 0 and β > 0 for a double well (got α=${alpha}, β=${beta})`);

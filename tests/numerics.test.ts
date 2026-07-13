@@ -4,19 +4,21 @@ import {
   leapfrogStep,
   symplecticEulerStep,
   yoshida4Step,
+  yoshida6Step,
+  yoshida8Step,
   rkf45Step,
   gaussLegendre4Step,
   gaussLegendre6Step,
   rk4Step
 } from '../src/physics/integrators';
-import {
-  dormandPrince54Step,
-  adaptiveStep,
-  integrateAdaptive,
-  richardsonStep
-} from '../src/physics/adaptive';
+import { dormandPrince54Step, adaptiveStep, integrateAdaptive, richardsonStep } from '../src/physics/adaptive';
 
-type Stepper = (state: Float64Array, dt: number, rhs: (s: Float64Array, o: Float64Array) => void, out: Float64Array) => Float64Array;
+type Stepper = (
+  state: Float64Array,
+  dt: number,
+  rhs: (s: Float64Array, o: Float64Array) => void,
+  out: Float64Array
+) => Float64Array;
 
 // Harmonic oscillator y = [x, v], x' = v, v' = -x. Exact: x = cos t, v = -sin t.
 function oscillator(state: Float64Array, out: Float64Array): void {
@@ -76,6 +78,13 @@ describe('symplectic integrators are properly implemented (no longer RK4 fallbac
   test('Yoshida 4 is fourth order and beats leapfrog', () => {
     expect(empiricalOrder(yoshida4Step, 0.05, 4)).toBeGreaterThan(3.7);
     expect(globalError(yoshida4Step, 0.02, 4)).toBeLessThan(globalError(leapfrogStep, 0.02, 4));
+  });
+
+  test('Yoshida 6/8 triple-jump compositions reach their designed orders', () => {
+    // Coarser probes keep the eighth-order error above floating-point roundoff.
+    expect(empiricalOrder(yoshida6Step, 0.2, 4)).toBeGreaterThan(5.5);
+    expect(empiricalOrder(yoshida8Step, 0.35, 4.2)).toBeGreaterThan(7.2);
+    expect(globalError(yoshida8Step, 0.2, 4)).toBeLessThan(globalError(yoshida6Step, 0.2, 4));
   });
 });
 

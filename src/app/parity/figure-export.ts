@@ -2,11 +2,16 @@
  * Publication outputs: figures, captions, paper packs, notebook, bundles, provenance, ZIP.
  * Extracted from the former monolithic FeatureParityLayer.ts.
  */
-import type { RuntimeSnapshot } from '../../types/domain';
 import { createSubmissionManifest, downloadBytes, downloadJson } from '../../export/manifest';
 import { integratorRegistry } from '../../physics/integrators';
-import { csvCell, dataUrlByteEstimate, hashText } from '../../research/researchExportUtils';
-import { buildZip, checksumEntriesSha256, dataUrlToBytes, textToBytes, type ZipEntryInput } from '../../research/zipBundle';
+import { csvCell } from '../../research/researchExportUtils';
+import {
+  buildZip,
+  checksumEntriesSha256,
+  dataUrlToBytes,
+  textToBytes,
+  type ZipEntryInput
+} from '../../research/zipBundle';
 import { collectEnvironment, ProvenanceBuilder, type ProvenanceGraph } from '../../research/provenance';
 import { buildNotebookV2 } from '../../research/notebookBuilder';
 import {
@@ -18,14 +23,50 @@ import {
   type FigureTheme
 } from '../../research/figurePipeline';
 import { clear, currentSnapshot, downloadText, html, selectValue, setText, state, toast } from './shared';
-import { RESEARCH_STORAGE_SCHEMA_VERSION, isPlainObject, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
-import { buildComparisonRows, designStudy, designStudyCsvText, logResearchRun, metricValue, parameterStudyResultsCsvText, renderResearchTable, renderResearchWorkbench, studyCompletionSummary, studyPlanHash, studyPointValue } from './research-workbench';
+import { RESEARCH_STORAGE_SCHEMA_VERSION, renderResearchStoragePanel, researchDbInstance } from './storage-sync';
+import {
+  buildComparisonRows,
+  designStudy,
+  designStudyCsvText,
+  logResearchRun,
+  metricValue,
+  parameterStudyResultsCsvText,
+  renderResearchTable,
+  renderResearchWorkbench,
+  studyCompletionSummary,
+  studyPlanHash,
+  studyPointValue
+} from './research-workbench';
 import { $ } from './shared';
+import {
+  FIGURE_CAPTIONS,
+  blankDataUrl,
+  buildPaperFigureManifest as createPaperFigureManifest,
+  collectPaperFigures,
+  effectiveFigureCaption,
+  renderCapturedFigureSvg,
+  saveFigureCaptionOverride,
+  type PaperFigureManifest
+} from './paper-figure-capture';
 
+export {
+  FIGURE_CAPTIONS,
+  FIGURE_CAPTION_OVERRIDE_KEY,
+  blankCanvasCache,
+  blankDataUrl,
+  collectPaperFigures,
+  effectiveFigureCaption,
+  loadFigureCaptionOverrides,
+  renderCapturedFigureSvg,
+  saveFigureCaptionOverride
+} from './paper-figure-capture';
+export type { PaperFigure, PaperFigureManifest } from './paper-figure-capture';
 
 export function buildMethodsText(snapshot = currentSnapshot()): string {
   const method = integratorRegistry[snapshot.method];
-  const limitations = createSubmissionManifest(snapshot).limitations.map((item) => `- ${item}`).join('\n');
+  const limitations = createSubmissionManifest(snapshot)
+    .limitations.map((item) => `- ${item}`)
+    .join('\n');
   return [
     '# Pendulum Lab Methods',
     '',
@@ -42,140 +83,6 @@ export function buildMethodsText(snapshot = currentSnapshot()): string {
     'Limitations:',
     limitations
   ].join('\n');
-}
-
-export interface PaperFigure {
-  id: string;
-  caption: string;
-  width: number;
-  height: number;
-  dataHash: string;
-  byteEstimate: number;
-  /** PNG data URL captured from the live canvas. */
-  dataUrl: string;
-}
-
-export interface PaperFigureManifest {
-  schemaVersion: 'pendulum-paper-figures/v2';
-  generatedAt: string;
-  runtime: RuntimeSnapshot;
-  figureCount: number;
-  totalBytes: number;
-  figures: Array<{
-    id: string;
-    file: string;
-    caption: string;
-    width: number;
-    height: number;
-    dataHash: string;
-    byteEstimate: number;
-    sourceCanvas: string;
-  }>;
-}
-
-/**
- * Captions for every analysis canvas the app can draw. Canvases render only
- * while their tab is (or was) active, so blank canvases are filtered out at
- * capture time rather than listed with empty images.
- */
-export const FIGURE_CAPTIONS: Record<string, string> = {
-  main: 'Pendulum trajectory with long-exposure trail (live simulation canvas).',
-  energy: 'Total energy E(t); drift quantifies integrator fidelity.',
-  lyap: 'Running maximal-Lyapunov estimate λ₁(t) from the live divergence proxy.',
-  phase: 'Phase portrait (θ₁, ω₁).',
-  poincare: 'Poincaré section at the θ₁ = 0 (θ̇₁ > 0) crossing.',
-  fft: 'Frequency spectrum of θ₁ (FFT magnitude).',
-  cmpCanvas: 'Integrator comparison: four methods overlaid on the same system.',
-  cmpEnergy: 'Energy drift per integrator over the comparison run.',
-  cmpDiverge: 'Pairwise trajectory divergence between integrators.',
-  cmpBench: 'Throughput benchmark (steps/ms) across eight integrators.',
-  lyapSpecCanvas: 'Full Lyapunov spectrum with per-exponent uncertainty.',
-  sweepCanvas: 'Chaos map: maximal Lyapunov exponent over the (θ₁, θ₂) grid.',
-  bifCanvas: 'Bifurcation diagram: Poincaré θ₂ values swept over gravity g.',
-  p3dCanvas: '3D phase-space projection (θ₁, θ₂, ω₂), orthographic.',
-  gpuCanvas: 'Phase-density accumulation over (θ₁, ω₁), additive blending.',
-  zeroOneCanvas: '0–1 test translation path (p_c, q_c): bounded ⇒ regular, Brownian ⇒ chaotic.',
-  clvCanvas: 'Covariant Lyapunov vector hyperbolicity angles along the trajectory.',
-  basinCanvas: 'Flip-basin classification over initial conditions; fractal boundary.',
-  rqaCanvas: 'Recurrence plot of the embedded cos θ₁ observable.',
-  ftleCanvas: 'Finite-time Lyapunov exponent field; ridges are Lagrangian coherent structures.'
-};
-
-/** Data URL of an untouched canvas of the same size — used to skip blank canvases. */
-export const blankCanvasCache = new Map<string, string>();
-
-export function blankDataUrl(width: number, height: number): string {
-  const key = `${width}x${height}`;
-  const cached = blankCanvasCache.get(key);
-  if (cached) return cached;
-  const probe = document.createElement('canvas');
-  probe.width = width;
-  probe.height = height;
-  const url = probe.toDataURL('image/png');
-  blankCanvasCache.set(key, url);
-  return url;
-}
-
-export const FIGURE_CAPTION_OVERRIDE_KEY = 'pendulum-lab/figure-captions/v1';
-
-export function loadFigureCaptionOverrides(): Record<string, string> {
-  try {
-    const raw = window.localStorage?.getItem(FIGURE_CAPTION_OVERRIDE_KEY);
-    const parsed = raw ? JSON.parse(raw) as unknown : null;
-    if (isPlainObject(parsed)) {
-      const overrides: Record<string, string> = {};
-      for (const [key, value] of Object.entries(parsed)) {
-        if (typeof value === 'string' && key in FIGURE_CAPTIONS) overrides[key] = value.slice(0, 400);
-      }
-      return overrides;
-    }
-  } catch {
-    /* corrupted overrides are ignored; defaults apply */
-  }
-  return {};
-}
-
-export function saveFigureCaptionOverride(id: string, caption: string): void {
-  const overrides = loadFigureCaptionOverrides();
-  if (caption.trim() && caption.trim() !== FIGURE_CAPTIONS[id]) overrides[id] = caption.trim();
-  else delete overrides[id];
-  try {
-    window.localStorage?.setItem(FIGURE_CAPTION_OVERRIDE_KEY, JSON.stringify(overrides));
-  } catch {
-    /* quota exhausted: caption stays default */
-  }
-}
-
-export function effectiveFigureCaption(id: string): string {
-  return loadFigureCaptionOverrides()[id] ?? FIGURE_CAPTIONS[id] ?? id;
-}
-
-/** Capture every drawn analysis canvas as a captioned PNG figure. */
-export function collectPaperFigures(): PaperFigure[] {
-  const overrides = loadFigureCaptionOverrides();
-  const figures: PaperFigure[] = [];
-  for (const [id, defaultCaption] of Object.entries(FIGURE_CAPTIONS)) {
-    const caption = overrides[id] ?? defaultCaption;
-    const canvas = document.getElementById(id);
-    if (!(canvas instanceof HTMLCanvasElement) || canvas.width === 0 || canvas.height === 0) continue;
-    let dataUrl = '';
-    try {
-      dataUrl = canvas.toDataURL('image/png');
-    } catch {
-      continue;
-    }
-    if (dataUrl === blankDataUrl(canvas.width, canvas.height)) continue;
-    figures.push({
-      id,
-      caption,
-      width: canvas.width,
-      height: canvas.height,
-      dataHash: hashText(dataUrl),
-      byteEstimate: dataUrlByteEstimate(dataUrl),
-      dataUrl
-    });
-  }
-  return figures;
 }
 
 // --- Figure Studio -----------------------------------------------------------
@@ -235,8 +142,16 @@ export function exportStudyFigureSvg(): void {
   }
   const svg = renderStudyFigureSvg(spec);
   downloadText(`pendulum_study_figure_${spec.theme}.svg`, svg, 'image/svg+xml;charset=utf-8');
-  setText('rwFigureSummary', `SVG exported (theme ${spec.theme}, ${spec.points.length} points). Visual fingerprint ${figureFingerprint(svg)}.`);
-  logResearchRun('export', 'Study figure SVG', `theme ${spec.theme}, ${spec.points.length} points, fingerprint ${figureFingerprint(svg)}`, `pendulum_study_figure_${spec.theme}.svg`);
+  setText(
+    'rwFigureSummary',
+    `SVG exported (theme ${spec.theme}, ${spec.points.length} points). Visual fingerprint ${figureFingerprint(svg)}.`
+  );
+  logResearchRun(
+    'export',
+    'Study figure SVG',
+    `theme ${spec.theme}, ${spec.points.length} points, fingerprint ${figureFingerprint(svg)}`,
+    `pendulum_study_figure_${spec.theme}.svg`
+  );
 }
 
 /** Rasterise the themed SVG study figure to PNG at the selected 1x/2x/4x scale. */
@@ -262,9 +177,18 @@ export async function exportStudyFigurePng(): Promise<void> {
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('canvas 2d context unavailable');
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    downloadBytes(`pendulum_study_figure_${spec.theme}_${scale}x.png`, dataUrlToBytes(canvas.toDataURL('image/png')), 'image/png');
+    downloadBytes(
+      `pendulum_study_figure_${spec.theme}_${scale}x.png`,
+      dataUrlToBytes(canvas.toDataURL('image/png')),
+      'image/png'
+    );
     setText('rwFigureSummary', `PNG exported at ${scale}x (${canvas.width}×${canvas.height}, theme ${spec.theme}).`);
-    logResearchRun('export', 'Study figure PNG', `${scale}x, theme ${spec.theme}`, `pendulum_study_figure_${spec.theme}_${scale}x.png`);
+    logResearchRun(
+      'export',
+      'Study figure PNG',
+      `${scale}x, theme ${spec.theme}`,
+      `pendulum_study_figure_${spec.theme}_${scale}x.png`
+    );
   } catch (error) {
     toast(`PNG export failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -277,7 +201,11 @@ export function exportStudyFigureCsv(): void {
     toast('Run a study batch first');
     return;
   }
-  const csv = figureSourceCsv(spec, { planHash: studyPlanHash(plan), variable: plan.variable, strategy: plan.strategy });
+  const csv = figureSourceCsv(spec, {
+    planHash: studyPlanHash(plan),
+    variable: plan.variable,
+    strategy: plan.strategy
+  });
   downloadText('pendulum_study_figure_source.csv', csv, 'text/csv;charset=utf-8');
   logResearchRun('export', 'Figure source CSV', `${spec.points.length} rows`, 'pendulum_study_figure_source.csv');
 }
@@ -298,28 +226,52 @@ export function exportScaledCanvases(): void {
       /* tainted or unreadable canvas: skip */
     }
   }
-  setText('rwFigureSummary', exported > 0 ? `${exported} canvas figure(s) exported at ${scale}x.` : 'No drawn canvases found — visit the analysis tabs first.');
+  setText(
+    'rwFigureSummary',
+    exported > 0
+      ? `${exported} canvas figure(s) exported at ${scale}x.`
+      : 'No drawn canvases found — visit the analysis tabs first.'
+  );
   if (exported > 0) logResearchRun('export', 'Scaled canvas figures', `${exported} canvases at ${scale}x`);
 }
 
-export function buildPaperFigureManifest(figures = collectPaperFigures(), snapshot = currentSnapshot()): PaperFigureManifest {
-  return {
-    schemaVersion: 'pendulum-paper-figures/v2',
-    generatedAt: new Date().toISOString(),
-    runtime: snapshot,
-    figureCount: figures.length,
-    totalBytes: figures.reduce((sum, figure) => sum + figure.byteEstimate, 0),
-    figures: figures.map((figure, index) => ({
-      id: figure.id,
-      file: `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}.png`,
-      caption: figure.caption,
-      width: figure.width,
-      height: figure.height,
-      dataHash: figure.dataHash,
-      byteEstimate: figure.byteEstimate,
-      sourceCanvas: `#${figure.id}`
-    }))
-  };
+/**
+ * Export every drawn analysis canvas as an SVG artifact in one ZIP download.
+ * Live canvases do not retain drawing primitives, so these SVGs are explicitly
+ * marked `raster-embedded`; saved parameter studies use the true-vector path.
+ */
+export function exportCapturedFiguresSvgZip(): void {
+  const figures = collectPaperFigures();
+  if (figures.length === 0) {
+    toast('No drawn figures yet - visit the analysis tabs first');
+    return;
+  }
+  const manifest = buildPaperFigureManifest(figures);
+  const entries: ZipEntryInput[] = figures.map((figure, index) => ({
+    path: `figure-${String(index + 1).padStart(2, '0')}-${figure.id}.svg`,
+    data: textToBytes(renderCapturedFigureSvg(figure))
+  }));
+  entries.push({ path: 'figure-manifest.json', data: textToBytes(JSON.stringify(manifest, null, 2)) });
+  const zip = buildZip(entries);
+  downloadBytes('pendulum_canvas_svg_pack.zip', zip, 'application/zip');
+  logResearchRun(
+    'export',
+    'Canvas SVG pack',
+    `${figures.length} raster-embedded SVG figures with dimensions, captions, and source hashes`,
+    'pendulum_canvas_svg_pack.zip'
+  );
+  setText(
+    'rwFigureSummary',
+    `${figures.length} canvas SVG artifact(s) exported. Saved-data study SVG remains the true-vector path.`
+  );
+  toast(`Canvas SVG pack exported (${figures.length} figures)`);
+}
+
+export function buildPaperFigureManifest(
+  figures = collectPaperFigures(),
+  snapshot = currentSnapshot()
+): PaperFigureManifest {
+  return createPaperFigureManifest(figures, snapshot);
 }
 
 export function escapeHtml(text: string): string {
@@ -339,12 +291,16 @@ export function exportPaperFiguresHtml(): void {
   }
   const snapshot = currentSnapshot();
   const figureManifest = buildPaperFigureManifest(figures, snapshot);
-  const items = figures.map((figure, index) => [
-    '<figure>',
-    `<img src="${figure.dataUrl}" alt="${escapeHtml(figure.caption)}" width="${figure.width}" height="${figure.height}">`,
-    `<figcaption><strong>Figure ${index + 1}.</strong> ${escapeHtml(figure.caption)} <span class="meta">[canvas #${figure.id}, ${figure.width}×${figure.height}, hash ${escapeHtml(figure.dataHash)}]</span></figcaption>`,
-    '</figure>'
-  ].join('\n')).join('\n');
+  const items = figures
+    .map((figure, index) =>
+      [
+        '<figure>',
+        `<img src="${figure.dataUrl}" alt="${escapeHtml(figure.caption)}" width="${figure.width}" height="${figure.height}">`,
+        `<figcaption><strong>Figure ${index + 1}.</strong> ${escapeHtml(figure.caption)} <span class="meta">[canvas #${figure.id}, ${figure.width}×${figure.height}, hash ${escapeHtml(figure.dataHash)}]</span></figcaption>`,
+        '</figure>'
+      ].join('\n')
+    )
+    .join('\n');
   const manifestJson = JSON.stringify(figureManifest, null, 2).replace(/</g, '\\u003c');
   const doc = [
     '<!DOCTYPE html>',
@@ -366,7 +322,12 @@ export function exportPaperFiguresHtml(): void {
     '</body></html>'
   ].join('\n');
   downloadText('pendulum_paper_figures.html', doc, 'text/html;charset=utf-8');
-  logResearchRun('export', 'Figure pack export', `${figures.length} captioned PNG figures`, 'pendulum_paper_figures.html');
+  logResearchRun(
+    'export',
+    'Figure pack export',
+    `${figures.length} captioned PNG figures`,
+    'pendulum_paper_figures.html'
+  );
   renderResearchWorkbench();
   toast(`Figure pack exported (${figures.length} figures)`);
 }
@@ -379,7 +340,12 @@ export function exportPaperFigureManifestJson(): void {
   }
   const manifest = buildPaperFigureManifest(figures);
   downloadJson('pendulum_figure_manifest.json', manifest);
-  logResearchRun('export', 'Figure manifest export', `${manifest.figureCount} figures, ${(manifest.totalBytes / 1024).toFixed(1)} KiB`, 'pendulum_figure_manifest.json');
+  logResearchRun(
+    'export',
+    'Figure manifest export',
+    `${manifest.figureCount} figures, ${(manifest.totalBytes / 1024).toFixed(1)} KiB`,
+    'pendulum_figure_manifest.json'
+  );
   renderResearchWorkbench();
 }
 
@@ -396,7 +362,9 @@ export function buildPaperExportPack(): unknown {
     figureCaptions: [
       `Main trajectory: ${snapshot.systemType} pendulum integrated with ${snapshot.method}, dt=${snapshot.dt}, gamma=${snapshot.damping}.`,
       `Comparison matrix: ${comparisonRows.length} experiment/run rows with drift, lambda proxy, FPS, and quality score.`,
-      state.research.parameterStudy ? `Parameter study: ${state.research.parameterStudy.variable} ${state.research.parameterStudy.strategy} over ${state.research.parameterStudy.count} points.` : 'Parameter study: not generated.'
+      state.research.parameterStudy
+        ? `Parameter study: ${state.research.parameterStudy.variable} ${state.research.parameterStudy.strategy} over ${state.research.parameterStudy.count} points.`
+        : 'Parameter study: not generated.'
     ],
     /** Captioned PNG captures of every drawn analysis canvas at export time. */
     figures,
@@ -414,19 +382,34 @@ export function buildPaperExportPack(): unknown {
 
 export function exportPaperPackJson(): void {
   downloadJson('pendulum_paper_export_pack.json', buildPaperExportPack());
-  logResearchRun('export', 'Paper export pack', 'JSON pack with methods, captions, manifests, run log, and comparison matrix.', 'pendulum_paper_export_pack.json');
+  logResearchRun(
+    'export',
+    'Paper export pack',
+    'JSON pack with methods, captions, manifests, run log, and comparison matrix.',
+    'pendulum_paper_export_pack.json'
+  );
   renderResearchWorkbench();
 }
 
 export function exportPaperMethodsMarkdown(): void {
   const markdown = buildPaperMethodsMarkdown();
   downloadText('pendulum_methods_export.md', markdown, 'text/markdown;charset=utf-8');
-  logResearchRun('export', 'Methods markdown export', 'Citation-ready methods text and comparison table.', 'pendulum_methods_export.md');
+  logResearchRun(
+    'export',
+    'Methods markdown export',
+    'Citation-ready methods text and comparison table.',
+    'pendulum_methods_export.md'
+  );
 }
 
 export function buildPaperMethodsMarkdown(snapshot = currentSnapshot()): string {
   const comparisonRows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows();
-  const rows = comparisonRows.map((rowItem) => `| ${rowItem.source} | ${rowItem.label} | ${rowItem.method} | ${metricValue(rowItem.drift)} | ${metricValue(rowItem.lambdaMax)} | ${rowItem.score} |`).join('\n');
+  const rows = comparisonRows
+    .map(
+      (rowItem) =>
+        `| ${rowItem.source} | ${rowItem.label} | ${rowItem.method} | ${metricValue(rowItem.drift)} | ${metricValue(rowItem.lambdaMax)} | ${rowItem.score} |`
+    )
+    .join('\n');
   return [
     buildMethodsText(snapshot),
     '',
@@ -451,14 +434,20 @@ export function buildPaperMethodsLatex(snapshot = currentSnapshot()): string {
   const comparisonRows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows();
   const study = state.research.parameterStudy;
   const studySummary = study ? studyCompletionSummary(study) : null;
-  const tableRows = comparisonRows.slice(0, 30).map((rowItem) => [
-    escapeLatex(rowItem.source),
-    escapeLatex(rowItem.label),
-    escapeLatex(rowItem.method),
-    escapeLatex(metricValue(rowItem.drift)),
-    escapeLatex(metricValue(rowItem.lambdaMax)),
-    String(rowItem.score)
-  ].join(' & ') + ' \\\\').join('\n');
+  const tableRows = comparisonRows
+    .slice(0, 30)
+    .map(
+      (rowItem) =>
+        [
+          escapeLatex(rowItem.source),
+          escapeLatex(rowItem.label),
+          escapeLatex(rowItem.method),
+          escapeLatex(metricValue(rowItem.drift)),
+          escapeLatex(metricValue(rowItem.lambdaMax)),
+          String(rowItem.score)
+        ].join(' & ') + ' \\\\'
+    )
+    .join('\n');
   return [
     '\\documentclass[11pt]{article}',
     '\\usepackage[margin=1in]{geometry}',
@@ -492,14 +481,21 @@ export function buildPaperMethodsLatex(snapshot = currentSnapshot()): string {
     '\\bottomrule',
     '\\end{longtable}',
     '\\section*{Limitations}',
-    createSubmissionManifest(snapshot).limitations.map((item) => `\\noindent ${escapeLatex(item)}\\\\`).join('\n'),
+    createSubmissionManifest(snapshot)
+      .limitations.map((item) => `\\noindent ${escapeLatex(item)}\\\\`)
+      .join('\n'),
     '\\end{document}'
   ].join('\n');
 }
 
 export function exportPaperMethodsLatex(): void {
   downloadText('pendulum_methods_export.tex', buildPaperMethodsLatex(), 'application/x-tex;charset=utf-8');
-  logResearchRun('export', 'Methods LaTeX export', 'LaTeX methods appendix with comparison matrix.', 'pendulum_methods_export.tex');
+  logResearchRun(
+    'export',
+    'Methods LaTeX export',
+    'LaTeX methods appendix with comparison matrix.',
+    'pendulum_methods_export.tex'
+  );
 }
 
 export function buildResearchNotebook(): unknown {
@@ -518,8 +514,17 @@ export function buildResearchNotebook(): unknown {
 }
 
 export function exportResearchNotebook(): void {
-  downloadText('pendulum_research_notebook.ipynb', JSON.stringify(buildResearchNotebook(), null, 2), 'application/x-ipynb+json;charset=utf-8');
-  logResearchRun('export', 'Research notebook export', 'Jupyter notebook with methods, paper pack, and study CSV loader.', 'pendulum_research_notebook.ipynb');
+  downloadText(
+    'pendulum_research_notebook.ipynb',
+    JSON.stringify(buildResearchNotebook(), null, 2),
+    'application/x-ipynb+json;charset=utf-8'
+  );
+  logResearchRun(
+    'export',
+    'Research notebook export',
+    'Jupyter notebook with methods, paper pack, and study CSV loader.',
+    'pendulum_research_notebook.ipynb'
+  );
 }
 
 export function buildResearchBundle(): unknown {
@@ -528,15 +533,31 @@ export function buildResearchBundle(): unknown {
   const figureManifest = buildPaperFigureManifest(figures, snapshot);
   const paperPack = buildPaperExportPack();
   const files = [
-    { path: 'manifest/submission.json', mediaType: 'application/json', content: JSON.stringify(createSubmissionManifest(snapshot), null, 2) },
+    {
+      path: 'manifest/submission.json',
+      mediaType: 'application/json',
+      content: JSON.stringify(createSubmissionManifest(snapshot), null, 2)
+    },
     { path: 'paper/paper-pack.json', mediaType: 'application/json', content: JSON.stringify(paperPack, null, 2) },
     { path: 'paper/methods.md', mediaType: 'text/markdown', content: buildPaperMethodsMarkdown(snapshot) },
     { path: 'paper/methods.tex', mediaType: 'application/x-tex', content: buildPaperMethodsLatex(snapshot) },
-    { path: 'paper/notebook.ipynb', mediaType: 'application/x-ipynb+json', content: JSON.stringify(buildResearchNotebook(), null, 2) },
-    { path: 'figures/figure-manifest.json', mediaType: 'application/json', content: JSON.stringify(figureManifest, null, 2) }
+    {
+      path: 'paper/notebook.ipynb',
+      mediaType: 'application/x-ipynb+json',
+      content: JSON.stringify(buildResearchNotebook(), null, 2)
+    },
+    {
+      path: 'figures/figure-manifest.json',
+      mediaType: 'application/json',
+      content: JSON.stringify(figureManifest, null, 2)
+    }
   ];
   if (state.research.parameterStudy) {
-    files.push({ path: 'data/parameter-study-results.csv', mediaType: 'text/csv', content: parameterStudyResultsCsvText(state.research.parameterStudy) });
+    files.push({
+      path: 'data/parameter-study-results.csv',
+      mediaType: 'text/csv',
+      content: parameterStudyResultsCsvText(state.research.parameterStudy)
+    });
   }
   figures.forEach((figure, index) => {
     files.push({
@@ -557,20 +578,48 @@ export function buildResearchBundle(): unknown {
 
 export function exportResearchBundleJson(): void {
   downloadJson('pendulum_research_bundle.json', buildResearchBundle());
-  logResearchRun('export', 'Research bundle export', 'Portable bundle with paper pack, methods, LaTeX, notebook, data, and figure payloads.', 'pendulum_research_bundle.json');
+  logResearchRun(
+    'export',
+    'Research bundle export',
+    'Portable bundle with paper pack, methods, LaTeX, notebook, data, and figure payloads.',
+    'pendulum_research_bundle.json'
+  );
 }
 
-export const RESEARCH_APP_VERSION = 'pendulum-lab-v10.29';
+export const RESEARCH_APP_VERSION = '@elliotjung/pendulum-lab@10.36.0';
 
-export function comparisonMatrixCsvText(rows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows()): string {
-  const header = ['id', 'label', 'source', 'timestamp', 'method', 'system', 'dt', 'damping', 'drift', 'lambda_max', 'fps', 'score', 'hash'];
+export function comparisonMatrixCsvText(
+  rows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows()
+): string {
+  const header = [
+    'id',
+    'label',
+    'source',
+    'timestamp',
+    'method',
+    'system',
+    'dt',
+    'damping',
+    'drift',
+    'lambda_max',
+    'fps',
+    'score',
+    'hash'
+  ];
   const lines = rows.map((rowItem) => [
-    rowItem.id, rowItem.label, rowItem.source, rowItem.timestamp, rowItem.method, rowItem.system,
-    String(rowItem.dt), String(rowItem.damping),
+    rowItem.id,
+    rowItem.label,
+    rowItem.source,
+    rowItem.timestamp,
+    rowItem.method,
+    rowItem.system,
+    String(rowItem.dt),
+    String(rowItem.damping),
     rowItem.drift === null ? '' : String(rowItem.drift),
     rowItem.lambdaMax === null ? '' : String(rowItem.lambdaMax),
     rowItem.fps === null ? '' : String(rowItem.fps),
-    String(rowItem.score), rowItem.hash
+    String(rowItem.score),
+    rowItem.hash
   ]);
   return [
     `# schemaVersion=pendulum-comparison-matrix-csv/v1`,
@@ -634,7 +683,12 @@ export function buildResearchProvenance(figures = collectPaperFigures()): Proven
       parentIds: [snapshotNodeId],
       sourceCommand: 'workbench:generateParameterStudy',
       generatedAt: study.generatedAt,
-      metadata: { variable: study.variable, strategy: study.strategy, points: study.count, planHash: studyPlanHash(study) }
+      metadata: {
+        variable: study.variable,
+        strategy: study.strategy,
+        points: study.count,
+        planHash: studyPlanHash(study)
+      }
     });
     const checkpoint = state.research.batchCheckpoint;
     if (checkpoint && checkpoint.planId === study.id) {
@@ -701,7 +755,12 @@ export function buildResearchProvenance(figures = collectPaperFigures()): Proven
 
 export function exportProvenanceJson(): void {
   downloadJson('pendulum_provenance.json', buildResearchProvenance());
-  logResearchRun('export', 'Provenance graph export', 'Artifact DAG with hashes, schema versions, and environment metadata.', 'pendulum_provenance.json');
+  logResearchRun(
+    'export',
+    'Provenance graph export',
+    'Artifact DAG with hashes, schema versions, and environment metadata.',
+    'pendulum_provenance.json'
+  );
   renderResearchWorkbench();
 }
 
@@ -722,7 +781,12 @@ export function renderProvenanceViewer(): void {
     node.parentIds.map((parentId) => (labelById.get(parentId) ?? parentId).slice(0, 32)).join('; ') || '(root)',
     node.sourceCommand.replace('workbench:', '')
   ]);
-  renderResearchTable('rwProvenanceView', ['kind', 'artifact', 'hash', 'derived from', 'source'], rows, 'No provenance nodes yet.');
+  renderResearchTable(
+    'rwProvenanceView',
+    ['kind', 'artifact', 'hash', 'derived from', 'source'],
+    rows,
+    'No provenance nodes yet.'
+  );
   const summary = html('div', {
     className: 'research-summary',
     text: `Provenance: ${graph.nodes.length} nodes, ${graph.edges.length} edges; graph hash ${graph.graphHash}; environment ${graph.environment.appVersion}.`
@@ -744,39 +808,79 @@ export async function buildResearchBundleZipEntries(): Promise<{ entries: ZipEnt
   const figureManifest = buildPaperFigureManifest(figures, snapshot);
   const provenance = buildResearchProvenance(figures);
   const entries: ZipEntryInput[] = [
-    { path: 'manifest/submission.json', data: textToBytes(JSON.stringify(createSubmissionManifest(snapshot), null, 2)) },
+    {
+      path: 'manifest/submission.json',
+      data: textToBytes(JSON.stringify(createSubmissionManifest(snapshot), null, 2))
+    },
     { path: 'manifest/provenance.json', data: textToBytes(JSON.stringify(provenance, null, 2)) },
     { path: 'paper/paper-pack.json', data: textToBytes(JSON.stringify(buildPaperExportPack(), null, 2)) },
     { path: 'paper/methods.md', data: textToBytes(buildPaperMethodsMarkdown(snapshot)) },
     { path: 'paper/methods.tex', data: textToBytes(buildPaperMethodsLatex(snapshot)) },
     { path: 'paper/notebook.ipynb', data: textToBytes(JSON.stringify(buildResearchNotebook(), null, 2)) },
     { path: 'data/comparison-matrix.csv', data: textToBytes(comparisonMatrixCsvText()) },
-    { path: 'data/run-log.json', data: textToBytes(JSON.stringify({ schemaVersion: 'pendulum-run-log/v1', generatedAt: new Date().toISOString(), entries: state.research.runLog }, null, 2)) },
-    { path: 'data/experiments.json', data: textToBytes(JSON.stringify({ schemaVersion: RESEARCH_STORAGE_SCHEMA_VERSION, generatedAt: new Date().toISOString(), experiments: state.research.experiments }, null, 2)) },
+    {
+      path: 'data/run-log.json',
+      data: textToBytes(
+        JSON.stringify(
+          {
+            schemaVersion: 'pendulum-run-log/v1',
+            generatedAt: new Date().toISOString(),
+            entries: state.research.runLog
+          },
+          null,
+          2
+        )
+      )
+    },
+    {
+      path: 'data/experiments.json',
+      data: textToBytes(
+        JSON.stringify(
+          {
+            schemaVersion: RESEARCH_STORAGE_SCHEMA_VERSION,
+            generatedAt: new Date().toISOString(),
+            experiments: state.research.experiments
+          },
+          null,
+          2
+        )
+      )
+    },
     { path: 'figures/figure-manifest.json', data: textToBytes(JSON.stringify(figureManifest, null, 2)) }
   ];
   if (state.research.parameterStudy) {
-    entries.push({ path: 'data/parameter-study-results.csv', data: textToBytes(parameterStudyResultsCsvText(state.research.parameterStudy)) });
+    entries.push({
+      path: 'data/parameter-study-results.csv',
+      data: textToBytes(parameterStudyResultsCsvText(state.research.parameterStudy))
+    });
   }
   if (designStudy) {
     entries.push({ path: 'data/design-study-results.csv', data: textToBytes(designStudyCsvText(designStudy)) });
   }
   figures.forEach((figure, index) => {
+    const stem = `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}`;
     entries.push({
-      path: `figures/figure-${String(index + 1).padStart(2, '0')}-${figure.id}.png`,
+      path: `${stem}.png`,
       data: dataUrlToBytes(figure.dataUrl)
     });
+    entries.push({ path: `${stem}.svg`, data: textToBytes(renderCapturedFigureSvg(figure)) });
   });
   // checksums.json is appended last so it can cover every other member.
   entries.push({
     path: 'manifest/checksums.json',
-    data: textToBytes(JSON.stringify({
-      schemaVersion: 'pendulum-bundle-checksums/v2',
-      generatedAt: new Date().toISOString(),
-      algorithm: 'sha256 + crc32 + fnv1a64',
-      verify: 'extract the archive, then check each file: `sha256sum <path>` must equal the sha256 field below',
-      files: await checksumEntriesSha256(entries)
-    }, null, 2))
+    data: textToBytes(
+      JSON.stringify(
+        {
+          schemaVersion: 'pendulum-bundle-checksums/v2',
+          generatedAt: new Date().toISOString(),
+          algorithm: 'sha256 + crc32 + fnv1a64',
+          verify: 'extract the archive, then check each file: `sha256sum <path>` must equal the sha256 field below',
+          files: await checksumEntriesSha256(entries)
+        },
+        null,
+        2
+      )
+    )
   });
   return { entries, figureCount: figures.length };
 }
@@ -800,7 +904,10 @@ export function archiveBundleToDb(zip: Uint8Array, fileCount: number, figureCoun
       }
       const figures = collectPaperFigures();
       if (figures.length > 0) {
-        await db.putMany('figures', figures.map((figure) => ({ id: figure.id, payload: figure })));
+        await db.putMany(
+          'figures',
+          figures.map((figure) => ({ id: figure.id, payload: figure }))
+        );
       }
       renderResearchStoragePanel();
     } catch (error) {
@@ -817,7 +924,12 @@ export function exportResearchBundleZip(): void {
       const zip = buildZip(entries);
       downloadBytes('pendulum_research_bundle.zip', zip, 'application/zip');
       archiveBundleToDb(zip, entries.length, figureCount);
-      logResearchRun('export', 'Research ZIP bundle export', `${entries.length} files (${figureCount} binary figures), ${(zip.length / 1024).toFixed(1)} KiB, SHA-256 per-file checksums.`, 'pendulum_research_bundle.zip');
+      logResearchRun(
+        'export',
+        'Research ZIP bundle export',
+        `${entries.length} files (${figureCount} binary figures), ${(zip.length / 1024).toFixed(1)} KiB, SHA-256 per-file checksums.`,
+        'pendulum_research_bundle.zip'
+      );
       renderResearchWorkbench();
       toast(`ZIP bundle exported (${entries.length} files, SHA-256 manifest)`);
     } catch (error) {
@@ -826,4 +938,3 @@ export function exportResearchBundleZip(): void {
     }
   })();
 }
-

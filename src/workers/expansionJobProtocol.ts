@@ -39,7 +39,10 @@ export type ExpansionWorkerResponse =
 export function runExpansionJob(request: ExpansionJobRequest): ExpansionJobResult {
   switch (request.kind) {
     case 'suite':
-      return { kind: 'suite', result: runExpansionSuite(request.config, { includeLyapunov: Boolean(request.includeLyapunov) }) };
+      return {
+        kind: 'suite',
+        result: runExpansionSuite(request.config, { includeLyapunov: Boolean(request.includeLyapunov) })
+      };
     case 'matrix':
       return { kind: 'matrix', result: runResearchMatrixStudy(request.config, { gridSize: request.gridSize }) };
     case 'golden':

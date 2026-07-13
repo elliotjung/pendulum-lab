@@ -6,7 +6,12 @@ import type { IntegratorId, RuntimeSnapshot, SystemType } from '../../types/doma
 import { StateStore } from '../../state/StateStore';
 import { downloadJson } from '../../export/manifest';
 import { integratorRegistry } from '../../physics/integrators';
-import { migrateFromLocalStorageV2, ResearchDb, validateResearchDbArchive, type ResearchDbArchive } from '../../research/researchDb';
+import {
+  migrateFromLocalStorageV2,
+  ResearchDb,
+  validateResearchDbArchive,
+  type ResearchDbArchive
+} from '../../research/researchDb';
 import {
   ParameterStudyPlan,
   ParameterStudyPoint,
@@ -31,11 +36,31 @@ import {
   state,
   toast
 } from './shared';
-import { DesignStudyState, applySnapshotControls, designStudy, logResearchRun, persistDesignStudy, renderResearchWorkbench, setDesignStudy, studyEstimate } from './research-workbench';
+import {
+  DesignStudyState,
+  applySnapshotControls,
+  designStudy,
+  logResearchRun,
+  persistDesignStudy,
+  renderResearchWorkbench,
+  setDesignStudy,
+  studyEstimate
+} from './research-workbench';
 import { loadFigureCaptionOverrides, saveFigureCaptionOverride } from './figure-export';
-import { MAX_RESEARCH_SESSIONS, sanitizeResearchProject, sanitizeResearchSession, sanitizeResearchSessions } from './research-session-storage';
+import {
+  MAX_RESEARCH_SESSIONS,
+  sanitizeResearchProject,
+  sanitizeResearchSession,
+  sanitizeResearchSessions
+} from './research-session-storage';
 import { $ } from './shared';
+import {
+  cleanupResearchDbByAge as runResearchDbCleanup,
+  previewResearchDbCleanup as runResearchDbCleanupPreview,
+  type ResearchStorageCleanupController
+} from './storage-cleanup';
 
+export { researchCleanupCutoff } from './storage-cleanup';
 
 export const RESEARCH_STORAGE_KEY = 'pendulum-lab/research-workbench/v1';
 export const RESEARCH_STORAGE_SCHEMA_VERSION = 'pendulum-research-workbench/v4';
@@ -44,8 +69,24 @@ export const MAX_RESEARCH_EXPERIMENTS = 60;
 export const MAX_RESEARCH_RUN_LOG = 120;
 export const MAX_RESEARCH_COMPARISON_ROWS = 80;
 export const MAX_RESEARCH_STUDY_POINTS = 128;
-export const RESEARCH_RUN_TYPES = new Set<ResearchRunType>(['experiment', 'validation', 'parameter-study', 'comparison', 'export', 'probe', 'workspace']);
-export const RESEARCH_STUDY_STRATEGIES = new Set<ParameterStudyPlan['strategy']>(['grid', 'random', 'symmetric', 'latin-hypercube', 'edge-focus', 'sobol', 'chebyshev']);
+export const RESEARCH_RUN_TYPES = new Set<ResearchRunType>([
+  'experiment',
+  'validation',
+  'parameter-study',
+  'comparison',
+  'export',
+  'probe',
+  'workspace'
+]);
+export const RESEARCH_STUDY_STRATEGIES = new Set<ParameterStudyPlan['strategy']>([
+  'grid',
+  'random',
+  'symmetric',
+  'latin-hypercube',
+  'edge-focus',
+  'sobol',
+  'chebyshev'
+]);
 export const RESEARCH_SYSTEM_TYPES = new Set<SystemType>(['double', 'triple']);
 export const RESEARCH_BATCH_STATUSES = new Set<ResearchBatchStatus>(['running', 'cancelled', 'complete', 'failed']);
 
@@ -130,9 +171,10 @@ export function sanitizeResearchExperiment(value: unknown): ResearchExperiment |
 
 export function sanitizeResearchRunLogEntry(value: unknown): ResearchRunLogEntry | null {
   if (!isPlainObject(value)) return null;
-  const type = RESEARCH_RUN_TYPES.has(value.type as ResearchRunType) ? value.type as ResearchRunType : null;
-  const method = typeof value.method === 'string' && value.method in integratorRegistry ? value.method as IntegratorId : null;
-  const system = RESEARCH_SYSTEM_TYPES.has(value.system as SystemType) ? value.system as SystemType : null;
+  const type = RESEARCH_RUN_TYPES.has(value.type as ResearchRunType) ? (value.type as ResearchRunType) : null;
+  const method =
+    typeof value.method === 'string' && value.method in integratorRegistry ? (value.method as IntegratorId) : null;
+  const system = RESEARCH_SYSTEM_TYPES.has(value.system as SystemType) ? (value.system as SystemType) : null;
   if (!type || !method || !system) return null;
   const entry: ResearchRunLogEntry = {
     id: clippedText(value.id, researchUid('run'), 80),
@@ -156,7 +198,14 @@ export function sanitizeResearchRunLogEntry(value: unknown): ResearchRunLogEntry
 
 export function sanitizeStudyPointResults(value: unknown): StudyPointResults | undefined {
   if (!isPlainObject(value)) return undefined;
-  if (!finiteNumber(value.lambdaMax) || !finiteNumber(value.lambdaBlockStdError) || !finiteNumber(value.rqaDeterminism) || !finiteNumber(value.rqaDivergence) || !finiteNumber(value.ftle)) return undefined;
+  if (
+    !finiteNumber(value.lambdaMax) ||
+    !finiteNumber(value.lambdaBlockStdError) ||
+    !finiteNumber(value.rqaDeterminism) ||
+    !finiteNumber(value.rqaDivergence) ||
+    !finiteNumber(value.ftle)
+  )
+    return undefined;
   const results: StudyPointResults = {
     lambdaMax: Number(value.lambdaMax),
     lambdaBlockStdError: Number(value.lambdaBlockStdError),
@@ -196,12 +245,17 @@ export function sanitizeStudyPoint(value: unknown): ParameterStudyPoint | null {
 
 export function sanitizeParameterStudyPlan(value: unknown): ParameterStudyPlan | null {
   if (!isPlainObject(value)) return null;
-  const strategy = RESEARCH_STUDY_STRATEGIES.has(value.strategy as ParameterStudyPlan['strategy']) ? value.strategy as ParameterStudyPlan['strategy'] : 'grid';
+  const strategy = RESEARCH_STUDY_STRATEGIES.has(value.strategy as ParameterStudyPlan['strategy'])
+    ? (value.strategy as ParameterStudyPlan['strategy'])
+    : 'grid';
   const values = Array.isArray(value.values)
     ? value.values.filter(finiteNumber).map(Number).slice(0, MAX_RESEARCH_STUDY_POINTS)
     : [];
   const experiments = Array.isArray(value.experiments)
-    ? value.experiments.map(sanitizeStudyPoint).filter((point): point is ParameterStudyPoint => Boolean(point)).slice(0, MAX_RESEARCH_STUDY_POINTS)
+    ? value.experiments
+        .map(sanitizeStudyPoint)
+        .filter((point): point is ParameterStudyPoint => Boolean(point))
+        .slice(0, MAX_RESEARCH_STUDY_POINTS)
     : [];
   if (experiments.length === 0) return null;
   return {
@@ -219,7 +273,9 @@ export function sanitizeParameterStudyPlan(value: unknown): ParameterStudyPlan |
 
 export function sanitizeBatchCheckpoint(value: unknown): ResearchBatchCheckpoint | null {
   if (!isPlainObject(value)) return null;
-  const status = RESEARCH_BATCH_STATUSES.has(value.status as ResearchBatchStatus) ? value.status as ResearchBatchStatus : null;
+  const status = RESEARCH_BATCH_STATUSES.has(value.status as ResearchBatchStatus)
+    ? (value.status as ResearchBatchStatus)
+    : null;
   if (!status) return null;
   return {
     id: clippedText(value.id, researchUid('batch'), 80),
@@ -240,8 +296,9 @@ export function sanitizeBatchCheckpoint(value: unknown): ResearchBatchCheckpoint
 
 export function sanitizeComparisonRow(value: unknown): ResearchComparisonRow | null {
   if (!isPlainObject(value)) return null;
-  const method = typeof value.method === 'string' && value.method in integratorRegistry ? value.method as IntegratorId : null;
-  const system = RESEARCH_SYSTEM_TYPES.has(value.system as SystemType) ? value.system as SystemType : null;
+  const method =
+    typeof value.method === 'string' && value.method in integratorRegistry ? (value.method as IntegratorId) : null;
+  const system = RESEARCH_SYSTEM_TYPES.has(value.system as SystemType) ? (value.system as SystemType) : null;
   if (!method || !system) return null;
   return {
     id: clippedText(value.id, researchUid('comparison'), 80),
@@ -277,7 +334,8 @@ export function sanitizeWorkspaceProfile(value: unknown): ResearchWorkspaceProfi
 export function sanitizeLayoutPreferences(value: unknown): ResearchLayoutPreferences {
   const fallback = defaultResearchLayoutPreferences();
   if (!isPlainObject(value)) return fallback;
-  const density = value.density === 'compact' ? 'compact' : value.density === 'comfortable' ? 'comfortable' : fallback.density;
+  const density =
+    value.density === 'compact' ? 'compact' : value.density === 'comfortable' ? 'comfortable' : fallback.density;
   return {
     density,
     lastTab: clippedText(value.lastTab, fallback.lastTab, 80),
@@ -298,7 +356,11 @@ export function sanitizeWorkspaceList(value: unknown, active: ResearchWorkspaceP
   return Array.from(byId.values()).slice(0, MAX_RESEARCH_WORKSPACES);
 }
 
-export function normalizeResearchStorage(value: unknown): { research: ResearchWorkbenchState; migrations: string[]; droppedEntries: number } {
+export function normalizeResearchStorage(value: unknown): {
+  research: ResearchWorkbenchState;
+  migrations: string[];
+  droppedEntries: number;
+} {
   const fallbackWorkspace = defaultResearchWorkspaceProfile();
   const fallbackProject = defaultResearchProjectProfile(fallbackWorkspace.createdAt);
   const fallbackSession = defaultResearchSessionProfile(fallbackProject.id, fallbackWorkspace.createdAt);
@@ -318,7 +380,8 @@ export function normalizeResearchStorage(value: unknown): { research: ResearchWo
   if (!isPlainObject(value)) return { research: fallback, migrations: [], droppedEntries: 0 };
   const source = isPlainObject(value.research) ? value.research : value;
   const schema = typeof value.schemaVersion === 'string' ? value.schemaVersion : 'legacy';
-  const migrations = schema === RESEARCH_STORAGE_SCHEMA_VERSION ? [] : [`${schema} -> ${RESEARCH_STORAGE_SCHEMA_VERSION}`];
+  const migrations =
+    schema === RESEARCH_STORAGE_SCHEMA_VERSION ? [] : [`${schema} -> ${RESEARCH_STORAGE_SCHEMA_VERSION}`];
   const rawExperiments = Array.isArray(source.experiments) ? source.experiments : [];
   const rawSessions = Array.isArray(source.sessions) ? source.sessions : [];
   const rawWorkspaces = Array.isArray(source.workspaces) ? source.workspaces : [];
@@ -329,27 +392,57 @@ export function normalizeResearchStorage(value: unknown): { research: ResearchWo
   const project = sanitizeResearchProject(source.project, activeSession.id);
   const sessions = sanitizeResearchSessions(rawSessions, project.id, { ...activeSession, projectId: project.id });
   if (!sessions.some((session) => session.id === project.activeSessionId)) project.activeSessionId = activeSession.id;
-  if (!project.sessionIds.includes(project.activeSessionId)) project.sessionIds = [project.activeSessionId, ...project.sessionIds].slice(0, MAX_RESEARCH_SESSIONS);
+  if (!project.sessionIds.includes(project.activeSessionId))
+    project.sessionIds = [project.activeSessionId, ...project.sessionIds].slice(0, MAX_RESEARCH_SESSIONS);
   const workspaces = sanitizeWorkspaceList(rawWorkspaces, workspace);
   const layout = sanitizeLayoutPreferences(source.layout);
-  const experiments = rawExperiments.map(sanitizeResearchExperiment).filter((entry): entry is ResearchExperiment => Boolean(entry)).slice(0, MAX_RESEARCH_EXPERIMENTS);
-  const runLog = rawRunLog.map(sanitizeResearchRunLogEntry).filter((entry): entry is ResearchRunLogEntry => Boolean(entry)).slice(0, MAX_RESEARCH_RUN_LOG);
-  const comparisonRows = rawComparisonRows.map(sanitizeComparisonRow).filter((entry): entry is ResearchComparisonRow => Boolean(entry)).slice(0, MAX_RESEARCH_COMPARISON_ROWS);
+  const experiments = rawExperiments
+    .map(sanitizeResearchExperiment)
+    .filter((entry): entry is ResearchExperiment => Boolean(entry))
+    .slice(0, MAX_RESEARCH_EXPERIMENTS);
+  const runLog = rawRunLog
+    .map(sanitizeResearchRunLogEntry)
+    .filter((entry): entry is ResearchRunLogEntry => Boolean(entry))
+    .slice(0, MAX_RESEARCH_RUN_LOG);
+  const comparisonRows = rawComparisonRows
+    .map(sanitizeComparisonRow)
+    .filter((entry): entry is ResearchComparisonRow => Boolean(entry))
+    .slice(0, MAX_RESEARCH_COMPARISON_ROWS);
   const parameterStudy = sanitizeParameterStudyPlan(source.parameterStudy);
   const batchCheckpoint = sanitizeBatchCheckpoint(source.batchCheckpoint);
-  const selectedExperimentId = typeof source.selectedExperimentId === 'string' && experiments.some((experiment) => experiment.id === source.selectedExperimentId)
-    ? source.selectedExperimentId
-    : experiments[0]?.id ?? '';
-  const studyDrops = isPlainObject(source.parameterStudy) && Array.isArray(source.parameterStudy.experiments) && parameterStudy
-    ? Math.max(0, source.parameterStudy.experiments.length - parameterStudy.experiments.length)
-    : 0;
-  const droppedEntries = Math.max(0, rawExperiments.length - experiments.length)
-    + Math.max(0, rawSessions.length - Math.min(rawSessions.length, sessions.length))
-    + Math.max(0, rawWorkspaces.length - Math.min(rawWorkspaces.length, workspaces.length))
-    + Math.max(0, rawRunLog.length - runLog.length)
-    + Math.max(0, rawComparisonRows.length - comparisonRows.length)
-    + studyDrops;
-  return { research: { project, sessions, workspace, workspaces, layout, experiments, selectedExperimentId, runLog, parameterStudy, batchCheckpoint, comparisonRows }, migrations, droppedEntries };
+  const selectedExperimentId =
+    typeof source.selectedExperimentId === 'string' &&
+    experiments.some((experiment) => experiment.id === source.selectedExperimentId)
+      ? source.selectedExperimentId
+      : (experiments[0]?.id ?? '');
+  const studyDrops =
+    isPlainObject(source.parameterStudy) && Array.isArray(source.parameterStudy.experiments) && parameterStudy
+      ? Math.max(0, source.parameterStudy.experiments.length - parameterStudy.experiments.length)
+      : 0;
+  const droppedEntries =
+    Math.max(0, rawExperiments.length - experiments.length) +
+    Math.max(0, rawSessions.length - Math.min(rawSessions.length, sessions.length)) +
+    Math.max(0, rawWorkspaces.length - Math.min(rawWorkspaces.length, workspaces.length)) +
+    Math.max(0, rawRunLog.length - runLog.length) +
+    Math.max(0, rawComparisonRows.length - comparisonRows.length) +
+    studyDrops;
+  return {
+    research: {
+      project,
+      sessions,
+      workspace,
+      workspaces,
+      layout,
+      experiments,
+      selectedExperimentId,
+      runLog,
+      parameterStudy,
+      batchCheckpoint,
+      comparisonRows
+    },
+    migrations,
+    droppedEntries
+  };
 }
 
 export function loadResearchState(): void {
@@ -359,7 +452,9 @@ export function loadResearchState(): void {
       const { research, migrations, droppedEntries } = normalizeResearchStorage(JSON.parse(raw));
       state.research = research;
       if (migrations.length || droppedEntries > 0) {
-        state.auditLog.unshift(`research storage normalized: ${migrations.join(', ') || 'current schema'}; dropped ${droppedEntries} invalid entr${droppedEntries === 1 ? 'y' : 'ies'}`);
+        state.auditLog.unshift(
+          `research storage normalized: ${migrations.join(', ') || 'current schema'}; dropped ${droppedEntries} invalid entr${droppedEntries === 1 ? 'y' : 'ies'}`
+        );
         persistResearchState();
       }
     }
@@ -409,14 +504,23 @@ export function mirrorResearchStateToDb(): void {
   researchDbMirrorTimer = window.setTimeout(() => {
     void (async () => {
       try {
-        await db.putMany('experiments', state.research.experiments.map((experiment) => ({ id: experiment.id, payload: experiment })));
-        await db.putMany('runLog', state.research.runLog.map((entry) => ({ id: entry.id, payload: entry })));
+        await db.putMany(
+          'experiments',
+          state.research.experiments.map((experiment) => ({ id: experiment.id, payload: experiment }))
+        );
+        await db.putMany(
+          'runLog',
+          state.research.runLog.map((entry) => ({ id: entry.id, payload: entry }))
+        );
         const study = state.research.parameterStudy;
         if (study) {
           await db.put('parameterStudies', study.id, study);
           const results = study.experiments
             .filter((point) => point.results)
-            .map((point) => ({ id: `${study.id}:${point.id}`, payload: { studyId: study.id, pointId: point.id, patch: point.patch, results: point.results } }));
+            .map((point) => ({
+              id: `${study.id}:${point.id}`,
+              payload: { studyId: study.id, pointId: point.id, patch: point.patch, results: point.results }
+            }));
           if (results.length > 0) await db.putMany('studyResults', results);
         }
         await db.put('settings', 'workbench-state', {
@@ -496,12 +600,47 @@ export function renderResearchStoragePanel(): void {
   })();
 }
 
+function storageCleanupController(): ResearchStorageCleanupController {
+  const db = researchDbInstance();
+  return {
+    countOlderThan: (cutoff) => db.countOlderThan(cutoff),
+    deleteOlderThan: (cutoff) => db.deleteOlderThan(cutoff),
+    afterDelete: (cutoff, total, days) => {
+      const cutoffMs = Date.parse(cutoff);
+      state.research.experiments = state.research.experiments.filter(
+        (item) => !Number.isFinite(Date.parse(item.updatedAt)) || Date.parse(item.updatedAt) >= cutoffMs
+      );
+      state.research.runLog = state.research.runLog.filter(
+        (item) => !Number.isFinite(Date.parse(item.timestamp)) || Date.parse(item.timestamp) >= cutoffMs
+      );
+      if (!state.research.experiments.some((item) => item.id === state.research.selectedExperimentId))
+        state.research.selectedExperimentId = state.research.experiments[0]?.id ?? '';
+      persistResearchState();
+      logResearchRun('workspace', 'IndexedDB age cleanup', `Deleted ${total} records older than ${days} days.`);
+    },
+    refresh: renderResearchStoragePanel,
+    toast
+  };
+}
+
+export function previewResearchDbCleanup(): void {
+  runResearchDbCleanupPreview(storageCleanupController());
+}
+export function cleanupResearchDbByAge(): void {
+  runResearchDbCleanup(storageCleanupController());
+}
+
 export function exportResearchDbArchive(): void {
   void (async () => {
     try {
       const archive = await researchDbInstance().exportArchive();
       downloadJson('pendulum_research_db_archive.json', archive);
-      logResearchRun('export', 'Research DB archive export', `Full IndexedDB archive (${Object.values(archive.stores).reduce((sum, records) => sum + records.length, 0)} records).`, 'pendulum_research_db_archive.json');
+      logResearchRun(
+        'export',
+        'Research DB archive export',
+        `Full IndexedDB archive (${Object.values(archive.stores).reduce((sum, records) => sum + records.length, 0)} records).`,
+        'pendulum_research_db_archive.json'
+      );
       toast('Research DB archive exported');
     } catch (error) {
       toast(`Archive export failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -552,7 +691,12 @@ export function exportWorkspaceJson(): void {
     snapshot: currentSnapshot()
   };
   downloadJson('pendulum_workspace.json', payload);
-  logResearchRun('export', 'Workspace export', 'Full workspace: research state, design study, figure captions, live snapshot.', 'pendulum_workspace.json');
+  logResearchRun(
+    'export',
+    'Workspace export',
+    'Full workspace: research state, design study, figure captions, live snapshot.',
+    'pendulum_workspace.json'
+  );
   toast('Workspace saved');
 }
 
@@ -574,7 +718,12 @@ export function importWorkspaceJson(): void {
         const { research, droppedEntries } = normalizeResearchStorage(parsed.research);
         state.research = research;
         const rawDesign = parsed.designStudy as DesignStudyState | null | undefined;
-        if (rawDesign && rawDesign.schemaVersion === 'pendulum-design-study/v1' && Array.isArray(rawDesign.variables) && Array.isArray(rawDesign.points)) {
+        if (
+          rawDesign &&
+          rawDesign.schemaVersion === 'pendulum-design-study/v1' &&
+          Array.isArray(rawDesign.variables) &&
+          Array.isArray(rawDesign.points)
+        ) {
           setDesignStudy({ ...rawDesign, status: rawDesign.status === 'running' ? 'idle' : rawDesign.status });
           persistDesignStudy();
         }
@@ -587,7 +736,11 @@ export function importWorkspaceJson(): void {
         if (snapshot) applySnapshotControls(snapshot);
         persistResearchState();
         renderResearchWorkbench();
-        logResearchRun('experiment', 'Workspace restored', `${state.research.experiments.length} experiments, ${droppedEntries} entries dropped during sanitisation.`);
+        logResearchRun(
+          'experiment',
+          'Workspace restored',
+          `${state.research.experiments.length} experiments, ${droppedEntries} entries dropped during sanitisation.`
+        );
         toast('Workspace restored');
       } catch (error) {
         toast(`Workspace restore failed: ${error instanceof Error ? error.message : String(error)}`);

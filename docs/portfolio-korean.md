@@ -20,7 +20,7 @@
   - 독립 구현(SciPy DOP853, SymPy 기호 유도, Julia Vern9)과 교차 검증
   - dt-반감 수렴 차수 측정, 시간가역성, 결정론적 재현 해시
   - N≥4 질량행렬 대칭성·양정치성, 극점 차트 한계의 명시적 계약 테스트
-  - 단위 테스트 1004개, Playwright E2E(Chromium/Firefox/WebKit/모바일)
+  - 단위 테스트 1090개, Playwright E2E(Chromium/Firefox/WebKit/모바일)
 - **재현성**: 모든 산출물에 schemaVersion + 재현 해시, ZIP 번들에 파일별
   **SHA-256 체크섬**, 산출물 계보(provenance DAG), 실행 가능한 노트북 내보내기.
 - **결과 신뢰도 배지**: 모든 수치 출력에 5단계 배지
@@ -48,7 +48,7 @@
 
 - TypeScript strict 모드(`noUncheckedIndexedAccess` 포함), 프레임워크 없는
   순수 Canvas 렌더링, 런타임 의존성 0개
-- 계층 구조: headless core 라이브러리(`pendulum-lab-core`, Node/브라우저 겸용)
+- 계층 구조: headless core 라이브러리(`@elliotjung/pendulum-lab`, Node/브라우저 겸용)
   → Web Worker 잡 프로토콜(우선순위 큐, 체크포인트, 취소/재개)
   → UI 계층(TabController/DomBinder로 DOM 결합 분리)
 - 부트 파이프라인 5단계, 전역 API public/debug 분리, 6개 모듈로 분해된
@@ -64,8 +64,9 @@ npm test                      # 단위 테스트
 npm run paper:study && npm run paper:build   # 논문 결과 재현
 ```
 
-서버 없이도 루트의 `index.html`을 더블클릭하면 전체 앱이 실행됩니다
-(단일 파일 빌드). 초심자/학생/연구자 모드는 좌측 레일 하단에서 전환합니다.
+GitHub Release에서 `pendulum-lab-standalone-v*.html`을 내려받아 더블클릭하면
+서버 없이 전체 앱이 실행됩니다(단일 파일 빌드). 초심자/학생/연구자 모드는
+좌측 레일 하단에서 전환합니다.
 
 ## 문서 지도
 

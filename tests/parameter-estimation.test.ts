@@ -54,8 +54,7 @@ describe('levenbergMarquardt (generic least squares)', () => {
     const truth = [0.7, -1.3, 2.1];
     const xs = Array.from({ length: 20 }, (_, i) => -1 + (2 * i) / 19);
     const ys = xs.map((x) => truth[0]! + truth[1]! * x + truth[2]! * x * x);
-    const residual: ResidualFunction = (p) =>
-      xs.map((x, i) => p[0]! + p[1]! * x + p[2]! * x * x - ys[i]!);
+    const residual: ResidualFunction = (p) => xs.map((x, i) => p[0]! + p[1]! * x + p[2]! * x * x - ys[i]!);
 
     const fit = levenbergMarquardt(residual, [0, 0, 0]);
     expect(fit.converged).toBe(true);
@@ -209,10 +208,9 @@ describe('fitDoublePendulum (inverse problem)', () => {
   it('stays close to the truth under small observation noise', () => {
     const clean = referenceAngles(base, 0, initialState, times, dt);
     // Deterministic pseudo-noise (no RNG dependency) at the 2e-3 rad level.
-    const noisy = clean.map(([a, b], i) => [
-      a + 2e-3 * Math.sin(12.9898 * i),
-      b + 2e-3 * Math.cos(78.233 * i)
-    ] as [number, number]);
+    const noisy = clean.map(
+      ([a, b], i) => [a + 2e-3 * Math.sin(12.9898 * i), b + 2e-3 * Math.cos(78.233 * i)] as [number, number]
+    );
     const observation: DoublePendulumObservation = { times, angles: noisy };
 
     const fit = fitDoublePendulum(observation, {

@@ -1,6 +1,6 @@
 # Legacy Risk Audit
 
-Generated: 2026-07-11T04:31:53.303Z
+Generated: 2026-07-13T14:09:00.645Z
 Status: PASS
 Weighted score: 0 (-482 vs baseline)
 
@@ -14,5 +14,5 @@ Weighted score: 0 (-482 vs baseline)
 | globalRuntimeExports | 0 | 5 | 0 | 2 |
 | servedHtmlUnsafeInlineScript | 0 | 20 | 0 | n/a |
 | servedHtmlUnsafeInlineStyle | 0 | 4 | 0 | n/a |
-| standalonePortableInlineScript | 1 | 0 | 0 | n/a |
-| standalonePortableBlobWorker | 1 | 0 | 0 | n/a |
+| standalonePortableInlineScript | 0 | 0 | 0 | n/a |
+| standalonePortableBlobWorker | 0 | 0 | 0 | n/a |

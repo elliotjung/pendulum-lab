@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { fftInPlace, ifftInPlace } from '../src/physics/fft';
-import { createQkrPlan, createQkrState, qkrNorm, qkrStep, runQuantumKickedRotor } from '../src/physics/quantumKickedRotor';
+import {
+  createQkrPlan,
+  createQkrState,
+  qkrNorm,
+  qkrStep,
+  runQuantumKickedRotor
+} from '../src/physics/quantumKickedRotor';
 import { standardMapEnsembleEnergy } from '../src/physics/standardMap';
 import { qkrFloquetMatrix, qkrQuasiEnergySpectrum } from '../src/research/qkrFloquet';
 

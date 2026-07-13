@@ -22,7 +22,7 @@ import type { BenchmarkMetrics } from '../src/types/domain';
  *   BENCHMARK_SAMPLES                   samples per build (default 5, min 3 in compare mode)
  *   BENCHMARK_FAIL_ON_REGRESSION        default '1'; set '0' to demote to warnings
  *   BENCHMARK_MAX_FPS_DROP_FRACTION     default 0.25
- *   BENCHMARK_MAX_PHYSICS_SLOWDOWN_FRACTION  default 0.25
+ *   BENCHMARK_MAX_PHYSICS_SLOWDOWN_FRACTION  default 0.25 (per simulation step)
  *   BENCHMARK_MAX_MEMORY_GROWTH_BYTES   default 50 MB (absolute)
  *   BENCHMARK_MAX_MEMORY_GROWTH_FRACTION default 0.20 (relative)
  */
@@ -37,18 +37,37 @@ const maxPhysicsSlowdownFraction = numberFromEnv('BENCHMARK_MAX_PHYSICS_SLOWDOWN
 const maxMemoryGrowthBytes = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_BYTES', 50_000_000);
 const maxMemoryGrowthFraction = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_FRACTION', 0.2);
 
-type MetricName = 'fps' | 'physicsMsPerFrame' | 'renderMsPerFrame' | 'memoryBytes' | 'workerLatencyMs' | 'longTaskMs';
+type MetricName =
+  | 'fps'
+  | 'physicsMsPerFrame'
+  | 'physicsMsPerStep'
+  | 'stepsAdvanced'
+  | 'renderMsPerFrame'
+  | 'memoryBytes'
+  | 'workerLatencyMs'
+  | 'longTaskMs';
 
-const METRICS: Array<{ metric: MetricName; direction: 'higher-is-better' | 'lower-is-better'; threshold: number }> = [
-  { metric: 'fps', direction: 'higher-is-better', threshold: maxFpsDropFraction },
-  { metric: 'physicsMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'renderMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'memoryBytes', direction: 'lower-is-better', threshold: maxMemoryGrowthFraction },
-  { metric: 'workerLatencyMs', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction },
-  { metric: 'longTaskMs', direction: 'lower-is-better', threshold: 0.5 }
+const METRICS: Array<{
+  metric: MetricName;
+  direction: 'higher-is-better' | 'lower-is-better';
+  threshold: number;
+  gated: boolean;
+}> = [
+  { metric: 'fps', direction: 'higher-is-better', threshold: maxFpsDropFraction, gated: true },
+  // A fixed-dt accumulator deliberately performs more steps after a slow paint.
+  // Keep frame cost and step count visible, but gate the normalized step cost.
+  { metric: 'physicsMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: false },
+  { metric: 'physicsMsPerStep', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'stepsAdvanced', direction: 'higher-is-better', threshold: maxFpsDropFraction, gated: false },
+  { metric: 'renderMsPerFrame', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'memoryBytes', direction: 'lower-is-better', threshold: maxMemoryGrowthFraction, gated: true },
+  { metric: 'workerLatencyMs', direction: 'lower-is-better', threshold: maxPhysicsSlowdownFraction, gated: true },
+  { metric: 'longTaskMs', direction: 'lower-is-better', threshold: 0.5, gated: true }
 ];
 
 interface SampleMetrics extends BenchmarkMetrics {
+  physicsMsPerStep: number | null;
+  stepsAdvanced: number | null;
   renderMsPerFrame: number | null;
   longTaskMs: number | null;
   sampleIndex: number;
@@ -70,7 +89,7 @@ interface BenchmarkDelta {
   noiseFloor: number | null;
   threshold: number;
   direction: 'higher-is-better' | 'lower-is-better';
-  status: 'pass' | 'warn' | 'missing';
+  status: 'pass' | 'warn' | 'missing' | 'info';
 }
 
 interface BenchmarkComparison {
@@ -140,7 +159,9 @@ async function waitForServer(url: string, timeoutMs = 20_000): Promise<void> {
     if (await reachable(url)) return;
     await new Promise((resolve) => setTimeout(resolve, 300));
   }
-  throw new Error(`Timed out waiting for benchmark server at ${url}. Serve the build first (e.g. \`npx vite preview --port <port>\`).`);
+  throw new Error(
+    `Timed out waiting for benchmark server at ${url}. Serve the build first (e.g. \`npx vite preview --port <port>\`).`
+  );
 }
 
 async function ensureLocalProfileServer(url: string): Promise<ChildProcess | null> {
@@ -160,7 +181,12 @@ async function ensureLocalProfileServer(url: string): Promise<ChildProcess | nul
   return server;
 }
 
-async function collectSample(browser: Browser, url: string, label: string, sampleIndex: number): Promise<SampleMetrics> {
+async function collectSample(
+  browser: Browser,
+  url: string,
+  label: string,
+  sampleIndex: number
+): Promise<SampleMetrics> {
   const page = await browser.newPage();
   try {
     await page.addInitScript(() => {
@@ -179,18 +205,37 @@ async function collectSample(browser: Browser, url: string, label: string, sampl
     return await page.evaluate(
       ({ sampleLabel, index }) => {
         const w = window as Window & {
-          __modernLab?: { diagnostics(): { fps: number; physicsMsPerFrame: number; renderMsPerFrame: number; sidePlotMsPerFrame: number } };
+          __modernLab?: {
+            diagnostics(): {
+              fps: number;
+              physicsMsPerFrame: number;
+              renderMsPerFrame: number;
+              sidePlotMsPerFrame: number;
+              stepsAdvanced?: number;
+              stepsPerFrame?: number;
+            };
+          };
           __benchLongTasks?: number[];
         };
         const diag = w.__modernLab ? w.__modernLab.diagnostics() : null;
         const memory = (performance as Performance & { memory?: { usedJSHeapSize?: number } }).memory;
         const longTasks = Array.isArray(w.__benchLongTasks) ? w.__benchLongTasks : null;
+        const physicsMs = typeof diag?.physicsMsPerFrame === 'number' ? diag.physicsMsPerFrame : null;
+        const stepsAdvanced =
+          typeof diag?.stepsAdvanced === 'number'
+            ? diag.stepsAdvanced
+            : typeof diag?.stepsPerFrame === 'number'
+              ? diag.stepsPerFrame
+              : null;
         return {
           label: sampleLabel,
           url: location.href,
           sampleIndex: index,
           fps: typeof diag?.fps === 'number' ? diag.fps : null,
-          physicsMsPerFrame: typeof diag?.physicsMsPerFrame === 'number' ? diag.physicsMsPerFrame : null,
+          physicsMsPerFrame: physicsMs,
+          physicsMsPerStep:
+            physicsMs !== null && stepsAdvanced !== null && stepsAdvanced > 0 ? physicsMs / stepsAdvanced : null,
+          stepsAdvanced,
           renderMsPerFrame: typeof diag?.renderMsPerFrame === 'number' ? diag.renderMsPerFrame : null,
           workerLatencyMs: typeof diag?.sidePlotMsPerFrame === 'number' ? diag.sidePlotMsPerFrame : null,
           memoryBytes: typeof memory?.usedJSHeapSize === 'number' ? memory.usedJSHeapSize : null,
@@ -264,6 +309,8 @@ function medianRow(label: string, url: string, agg: Record<MetricName, MetricAgg
     sampleIndex: -1,
     fps: agg.fps.median,
     physicsMsPerFrame: agg.physicsMsPerFrame.median,
+    physicsMsPerStep: agg.physicsMsPerStep.median,
+    stepsAdvanced: agg.stepsAdvanced.median,
     renderMsPerFrame: agg.renderMsPerFrame.median,
     workerLatencyMs: agg.workerLatencyMs.median,
     memoryBytes: agg.memoryBytes.median,
@@ -276,16 +323,32 @@ function compareMetric(
   candidate: MetricAggregate,
   metric: MetricName,
   threshold: number,
-  direction: 'higher-is-better' | 'lower-is-better'
+  direction: 'higher-is-better' | 'lower-is-better',
+  gated: boolean,
+  minNoiseFloor = 0
 ): BenchmarkDelta {
   const a = original.median;
   const b = candidate.median;
   if (a === null || b === null) {
-    return { metric, original: a, candidate: b, delta: null, relativeDelta: null, noiseFloor: null, threshold, direction, status: 'missing' };
+    return {
+      metric,
+      original: a,
+      candidate: b,
+      delta: null,
+      relativeDelta: null,
+      noiseFloor: null,
+      threshold,
+      direction,
+      status: 'missing'
+    };
   }
   const delta = b - a;
   const rel = a === 0 ? null : delta / Math.abs(a);
-  const noiseFloor = (original.mad ?? 0) + (candidate.mad ?? 0);
+  // MAD collapses to zero when every sample of a quantized timer lands on the
+  // same 0.1 ms tick, which would let a sub-resolution delta count as a real
+  // regression. The floor keeps the gate honest: a delta below what the
+  // instrument can resolve is not evidence.
+  const noiseFloor = Math.max((original.mad ?? 0) + (candidate.mad ?? 0), minNoiseFloor);
   const beyondNoise = Math.abs(delta) > noiseFloor;
   let failed: boolean;
   if (metric === 'memoryBytes') {
@@ -305,12 +368,48 @@ function compareMetric(
     noiseFloor,
     threshold,
     direction,
-    status: failed && beyondNoise ? 'warn' : 'pass'
+    status: gated ? (failed && beyondNoise ? 'warn' : 'pass') : 'info'
   };
 }
 
-function compare(originalAgg: Record<MetricName, MetricAggregate>, candidateAgg: Record<MetricName, MetricAggregate>): BenchmarkComparison {
-  const deltas = METRICS.map(({ metric, direction, threshold }) => compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction));
+function compare(
+  originalAgg: Record<MetricName, MetricAggregate>,
+  candidateAgg: Record<MetricName, MetricAggregate>
+): BenchmarkComparison {
+  // Chromium coarsens performance.now() to 0.1 ms on non-isolated pages, and
+  // the app diagnostics measure single frames, so ms metrics quantize to that
+  // tick. Per-step cost divides the same quantized timer by the step count —
+  // use the SLOWER build's step count so the floor covers both grids (the
+  // fixed-dt accumulator legitimately advances different step counts per
+  // build). Long tasks only exist above the 50 ms observer threshold, so one
+  // marginal task appearing or vanishing swings the sum by ~50 ms.
+  const TIMER_QUANTUM_MS = 0.1;
+  const LONG_TASK_QUANTUM_MS = 50;
+  const minSteps = Math.max(
+    1,
+    Math.min(
+      originalAgg.stepsAdvanced.median ?? Number.POSITIVE_INFINITY,
+      candidateAgg.stepsAdvanced.median ?? Number.POSITIVE_INFINITY
+    )
+  );
+  const minNoiseFloors: Partial<Record<MetricName, number>> = {
+    physicsMsPerFrame: TIMER_QUANTUM_MS,
+    physicsMsPerStep: Number.isFinite(minSteps) ? TIMER_QUANTUM_MS / minSteps : TIMER_QUANTUM_MS,
+    renderMsPerFrame: TIMER_QUANTUM_MS,
+    workerLatencyMs: TIMER_QUANTUM_MS,
+    longTaskMs: LONG_TASK_QUANTUM_MS
+  };
+  const deltas = METRICS.map(({ metric, direction, threshold, gated }) =>
+    compareMetric(
+      originalAgg[metric],
+      candidateAgg[metric],
+      metric,
+      threshold,
+      direction,
+      gated,
+      minNoiseFloors[metric] ?? 0
+    )
+  );
   return {
     originalUrl: originalUrl!,
     candidateUrl: candidateUrl!,
@@ -351,12 +450,12 @@ function environmentSection(env: BenchmarkEnvironment): string[] {
 
 function rowsTable(rows: SampleMetrics[]): string[] {
   const lines = [
-    '| Build | FPS | Physics ms | Render ms | Worker ms | Long-task ms | Memory bytes | URL |',
-    '|---|---:|---:|---:|---:|---:|---:|---|'
+    '| Build | FPS | Physics ms/frame | Physics ms/step | Steps/frame | Render ms | Worker ms | Long-task ms | Memory bytes | URL |',
+    '|---|---:|---:|---:|---:|---:|---:|---:|---:|---|'
   ];
   for (const row of rows) {
     lines.push(
-      `| ${row.label} | ${formatNumber(row.fps)} | ${formatNumber(row.physicsMsPerFrame)} | ${formatNumber(row.renderMsPerFrame)} | ${formatNumber(row.workerLatencyMs)} | ${formatNumber(row.longTaskMs)} | ${formatNumber(row.memoryBytes)} | ${row.url} |`
+      `| ${row.label} | ${formatNumber(row.fps)} | ${formatNumber(row.physicsMsPerFrame)} | ${formatNumber(row.physicsMsPerStep)} | ${formatNumber(row.stepsAdvanced)} | ${formatNumber(row.renderMsPerFrame)} | ${formatNumber(row.workerLatencyMs)} | ${formatNumber(row.longTaskMs)} | ${formatNumber(row.memoryBytes)} | ${row.url} |`
     );
   }
   return lines;
@@ -369,7 +468,7 @@ function compareMarkdown(env: BenchmarkEnvironment, rows: SampleMetrics[], compa
     `Generated: ${new Date().toISOString()}`,
     '',
     ...environmentSection(env),
-    `Interleaved sampling: ${comparison.samplesPerBuild} samples per build in one browser process; medians reported, noise floor = MAD(original)+MAD(candidate).`,
+    `Interleaved sampling: ${comparison.samplesPerBuild} samples per build in one browser process; medians reported, noise floor = max(MAD(original)+MAD(candidate), measurement resolution: 0.1 ms timer quantum, /steps for per-step cost, 50 ms per long task).`,
     '',
     '## Median per build',
     '',
@@ -409,10 +508,14 @@ async function main(): Promise<void> {
   const compareMode = originalUrl !== null;
   if (compareMode) {
     if (!candidateUrl) {
-      throw new Error('Invalid benchmark: ORIGINAL_URL requires CANDIDATE_URL. To profile one deployed build, set only CANDIDATE_URL.');
+      throw new Error(
+        'Invalid benchmark: ORIGINAL_URL requires CANDIDATE_URL. To profile one deployed build, set only CANDIDATE_URL.'
+      );
     }
     if (originalUrl === candidateUrl) {
-      throw new Error(`Invalid benchmark: ORIGINAL_URL and CANDIDATE_URL are identical (${originalUrl}). Serve the baseline and candidate builds separately (e.g. git worktree + \`vite preview\` on two ports).`);
+      throw new Error(
+        `Invalid benchmark: ORIGINAL_URL and CANDIDATE_URL are identical (${originalUrl}). Serve the baseline and candidate builds separately (e.g. git worktree + \`vite preview\` on two ports).`
+      );
     }
   }
 
@@ -445,7 +548,10 @@ async function main(): Promise<void> {
       const originalAgg = aggregate(originalSamples);
       const candidateAgg = aggregate(candidateSamples);
       const comparison = compare(originalAgg, candidateAgg);
-      const results = [medianRow('original', originalUrl!, originalAgg), medianRow('candidate', candidateUrl!, candidateAgg)];
+      const results = [
+        medianRow('original', originalUrl!, originalAgg),
+        medianRow('candidate', candidateUrl!, candidateAgg)
+      ];
       const report = {
         schemaVersion: 2,
         mode: 'compare' as const,
@@ -469,7 +575,8 @@ async function main(): Promise<void> {
     // Profile mode: one build, no comparison claim.
     await waitForServer(profileUrl);
     const samples: SampleMetrics[] = [];
-    for (let i = 0; i < requestedSamples; i += 1) samples.push(await collectSample(browser, profileUrl, 'candidate', i));
+    for (let i = 0; i < requestedSamples; i += 1)
+      samples.push(await collectSample(browser, profileUrl, 'candidate', i));
     const environment = await readEnvironment(browser, profileUrl);
     const agg = aggregate(samples);
     const results = [medianRow('candidate', profileUrl, agg)];

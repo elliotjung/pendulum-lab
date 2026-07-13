@@ -65,7 +65,12 @@ export interface PoincarePlotOptions {
   yLabel?: string;
 }
 
-export function renderPoincareSection(ctx: Ctx2D, rect: Rect, points: readonly Point2D[], options: PoincarePlotOptions = {}): void {
+export function renderPoincareSection(
+  ctx: Ctx2D,
+  rect: Rect,
+  points: readonly Point2D[],
+  options: PoincarePlotOptions = {}
+): void {
   const theme = options.theme ?? DARK_THEME;
   const vp = options.viewport ?? autoViewport(points);
   const inner = innerRect(rect, DEFAULT_PADDING);

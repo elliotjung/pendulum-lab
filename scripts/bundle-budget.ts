@@ -1,4 +1,4 @@
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 
@@ -15,6 +15,12 @@ interface Budget {
   label: string;
   bytes: number;
   budget: number;
+}
+
+interface BudgetResult extends Budget {
+  ok: boolean;
+  ratio: number;
+  remainingBytes: number;
 }
 
 const KiB = 1024;
@@ -91,6 +97,35 @@ function assetRefsFromIndex(indexHtml: string): Set<string> {
   return refs;
 }
 
+function budgetMarkdown(results: readonly BudgetResult[], chunkJsTotal: SizeSet, status: 'pass' | 'fail'): string {
+  const kib = (bytes: number): string => (bytes / KiB).toFixed(1);
+  const lines = [
+    '# Bundle Budget',
+    '',
+    `Status: **${status.toUpperCase()}**`,
+    '',
+    '| Delivery role | Actual KiB | Budget KiB | Usage | Status |',
+    '| --- | ---: | ---: | ---: | :---: |'
+  ];
+  for (const row of results) {
+    lines.push(
+      `| ${row.label} | ${kib(row.bytes)} | ${kib(row.budget)} | ${(row.ratio * 100).toFixed(1)}% | ${row.ok ? 'PASS' : 'OVER'} |`
+    );
+  }
+  lines.push(
+    '',
+    '## Non-initial JavaScript total',
+    '',
+    `- Raw: ${kib(chunkJsTotal.raw)} KiB`,
+    `- Gzip: ${kib(chunkJsTotal.gzip)} KiB`,
+    `- Brotli: ${kib(chunkJsTotal.brotli)} KiB`,
+    '',
+    'This report is deterministic for a fixed build: it intentionally contains no timestamp or runner-specific path.',
+    ''
+  );
+  return lines.join('\n');
+}
+
 async function main(): Promise<void> {
   const rows: Budget[] = [];
   const assetsDir = 'dist/assets';
@@ -135,21 +170,45 @@ async function main(): Promise<void> {
     rows.push({ label: 'standalone HTML brotli', bytes: standalone.brotli, budget: BUDGETS.standaloneBrotli });
   }
 
-  let failed = 0;
-  for (const row of rows) {
-    const ok = row.bytes <= row.budget;
-    if (!ok) failed += 1;
+  const results: BudgetResult[] = rows.map((row) => ({
+    ...row,
+    ok: row.bytes <= row.budget,
+    ratio: row.budget > 0 ? row.bytes / row.budget : 0,
+    remainingBytes: row.budget - row.bytes
+  }));
+  const failed = results.filter((row) => !row.ok).length;
+  const status = failed > 0 ? 'fail' : 'pass';
+  await mkdir('reports', { recursive: true });
+  await writeFile(
+    'reports/bundle-budget.json',
+    `${JSON.stringify(
+      {
+        schemaVersion: 'pendulum-bundle-budget/v1',
+        status,
+        rows: results,
+        nonInitialJsTotal: chunkJsTotal
+      },
+      null,
+      2
+    )}\n`,
+    'utf8'
+  );
+  await writeFile('reports/bundle-budget.md', budgetMarkdown(results, chunkJsTotal, status), 'utf8');
+
+  for (const row of results) {
     const kb = (n: number): string => `${(n / KiB).toFixed(1)} KiB`;
-    console.log(`${ok ? 'OK  ' : 'OVER'}  ${row.label}: ${kb(row.bytes)} / budget ${kb(row.budget)}`);
+    console.log(`${row.ok ? 'OK  ' : 'OVER'}  ${row.label}: ${kb(row.bytes)} / budget ${kb(row.budget)}`);
   }
   const kb = (n: number): string => `${(n / KiB).toFixed(1)} KiB`;
-  console.log(`INFO  total non-initial JS: raw ${kb(chunkJsTotal.raw)}, gzip ${kb(chunkJsTotal.gzip)}, brotli ${kb(chunkJsTotal.brotli)}`);
+  console.log(
+    `INFO  total non-initial JS: raw ${kb(chunkJsTotal.raw)}, gzip ${kb(chunkJsTotal.gzip)}, brotli ${kb(chunkJsTotal.brotli)}`
+  );
   if (failed > 0) {
     console.error(`bundle budget exceeded in ${failed} row(s); raise the budget intentionally or shrink the bundle`);
     process.exitCode = 1;
     return;
   }
-  console.log('bundle budget passed');
+  console.log('bundle budget passed; reports/bundle-budget.json and reports/bundle-budget.md written');
 }
 
 main().catch((error) => {

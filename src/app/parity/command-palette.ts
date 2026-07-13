@@ -26,13 +26,22 @@ export function installCommandPalettes(): void {
     document.body.append(palette);
   }
   if (!$('rgv8Cmd')) {
-    const box = html('div', { id: 'rgv8Cmd', className: 'rgv8-cmd-shell', role: 'dialog', ariaLabel: 'Command palette' });
+    const box = html('div', {
+      id: 'rgv8Cmd',
+      className: 'rgv8-cmd-shell',
+      role: 'dialog',
+      ariaLabel: 'Command palette'
+    });
     box.setAttribute('aria-modal', 'true');
     box.setAttribute('hidden', '');
     const panel = html('div', { className: 'rgv8-cmd-panel' });
     const header = html('div', { className: 'rgv8-cmd-head' });
     const title = html('div', { className: 'rgv8-cmd-title' });
-    append(title, html('span', { text: 'Search' }), html('small', { text: 'Run commands, switch workspaces, export evidence' }));
+    append(
+      title,
+      html('span', { text: 'Search' }),
+      html('small', { text: 'Run commands, switch workspaces, export evidence' })
+    );
     const close = button('rgv8CmdClose', 'Close', () => hideCommandPalette(), 'rgv8-cmd-close');
     const input = html('input', { id: 'rgv8CmdInput', ariaLabel: 'Search command palette' });
     input.setAttribute('placeholder', 'Search commands...');
@@ -54,7 +63,13 @@ export function installCommandPalettes(): void {
       if (event.target === box) hideCommandPalette();
     });
     append(header, title, close);
-    append(panel, header, input, list, html('div', { className: 'rgv8-cmd-hint', text: 'Enter runs the first result. Esc or outside click closes.' }));
+    append(
+      panel,
+      header,
+      input,
+      list,
+      html('div', { className: 'rgv8-cmd-hint', text: 'Enter runs the first result. Esc or outside click closes.' })
+    );
     box.append(panel);
     document.body.append(box);
   }
@@ -82,12 +97,19 @@ export function installCommandPalettes(): void {
 
 export function renderCommandList(query: string): void {
   const q = query.toLowerCase();
-  const commands = commandRegistry.list().filter((cmd) => `${cmd.id} ${cmd.label} ${cmd.description}`.toLowerCase().includes(q));
+  const commands = commandRegistry
+    .list()
+    .filter((cmd) => `${cmd.id} ${cmd.label} ${cmd.description}`.toLowerCase().includes(q));
   for (const id of ['rgv7CmdList', 'rgv8CmdList']) {
     const list = $(id);
     clear(list);
     if (!commands.length) {
-      list?.append(html('div', { className: id === 'rgv7CmdList' ? 'rgv7-cmd-empty' : 'rgv8-cmd-empty', text: 'No matching commands' }));
+      list?.append(
+        html('div', {
+          className: id === 'rgv7CmdList' ? 'rgv7-cmd-empty' : 'rgv8-cmd-empty',
+          text: 'No matching commands'
+        })
+      );
       continue;
     }
     commands.forEach((cmd) => {
@@ -129,7 +151,11 @@ export function hideCommandPalette(restoreFocus = true): void {
   palette?.classList.remove('show');
   palette?.setAttribute('hidden', '');
   if (restoreFocus && commandPaletteReturnFocus?.isConnected) commandPaletteReturnFocus.focus();
-  else if (!restoreFocus && document.activeElement instanceof HTMLElement && document.activeElement.closest('#rgv8Cmd')) {
+  else if (
+    !restoreFocus &&
+    document.activeElement instanceof HTMLElement &&
+    document.activeElement.closest('#rgv8Cmd')
+  ) {
     document.activeElement.blur();
   }
   commandPaletteReturnFocus = null;

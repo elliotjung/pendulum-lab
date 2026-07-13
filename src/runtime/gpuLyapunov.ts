@@ -2,7 +2,12 @@ import type { PendulumParameters } from '../types/domain';
 import type { AccelerationComparison, AccelerationTolerance } from '../chaos/accelerationContract';
 import { compareLyapunovSpectrumAcceleration } from '../chaos/accelerationContract';
 import { analyzeSpectrumConsistency } from '../chaos/spectrumConsistency';
-import { lyapunovSpectrum, type LyapunovSettings, type LyapunovSpectrumResult, kaplanYorkeDimension } from '../chaos/lyapunov';
+import {
+  lyapunovSpectrum,
+  type LyapunovSettings,
+  type LyapunovSpectrumResult,
+  kaplanYorkeDimension
+} from '../chaos/lyapunov';
 import { jacobianDouble, rhsDouble } from '../physics/double';
 import { runComputeKernel } from './gpuEnsemble';
 
@@ -357,7 +362,8 @@ function cpuDoublePendulumSpectrum(
   damping: number
 ): LyapunovSpectrumResult {
   const rhs = (state: Float64Array, out: Float64Array): Float64Array => rhsDouble(state, params, damping, out);
-  const jacobian = (state: ArrayLike<number>, jac: Float64Array): Float64Array => jacobianDouble(state, params, damping, jac);
+  const jacobian = (state: ArrayLike<number>, jac: Float64Array): Float64Array =>
+    jacobianDouble(state, params, damping, jac);
   return lyapunovSpectrum(state0, rhs, settings.count, settings, jacobian);
 }
 
@@ -383,10 +389,22 @@ export async function webgpuDoublePendulumLyapunovSpectrumCandidate(
   const io = new Float32Array(32);
   for (let i = 0; i < FULL_DIMENSION; i += 1) io[i] = Number(state0[i] ?? 0);
   const uniform = new Float32Array([
-    params.m1, params.m2, params.l1, params.l2,
-    params.g, damping, settings.dt, settings.steps,
-    settings.renormEvery, settings.transientSteps, settings.seed, settings.count,
-    0, 0, 0, 0
+    params.m1,
+    params.m2,
+    params.l1,
+    params.l2,
+    params.g,
+    damping,
+    settings.dt,
+    settings.steps,
+    settings.renormEvery,
+    settings.transientSteps,
+    settings.seed,
+    settings.count,
+    0,
+    0,
+    0,
+    0
   ]);
   const started = typeof performance === 'undefined' ? Date.now() : performance.now();
   const reduced = await runComputeKernel(WGSL_FULL_SPECTRUM_KERNEL, uniform, io, 64);
@@ -408,7 +426,8 @@ export async function webgpuDoublePendulumLyapunovSpectrumCandidate(
       consistency: analyzeSpectrumConsistency(spectrum),
       settings: { ...settings, count: FULL_DIMENSION }
     },
-    caveat: 'WebGPU f32 full-spectrum candidate for the 4D double pendulum. It is promotable only after same-run CPU f64 oracle comparison; uncertainty fields are supplied by the CPU oracle during promotion.'
+    caveat:
+      'WebGPU f32 full-spectrum candidate for the 4D double pendulum. It is promotable only after same-run CPU f64 oracle comparison; uncertainty fields are supplied by the CPU oracle during promotion.'
   };
 }
 
@@ -433,14 +452,14 @@ export async function promotedDoublePendulumLyapunovSpectrum(
       cpuOracle,
       gpuCandidate: null,
       comparison: null,
-      caveat: 'CPU f64 result returned because WebGPU was unavailable, disabled, or outside the validated 4D full-spectrum scope.'
+      caveat:
+        'CPU f64 result returned because WebGPU was unavailable, disabled, or outside the validated 4D full-spectrum scope.'
     };
   }
-  const comparison = compareLyapunovSpectrumAcceleration(
-    gpuCandidate.result,
-    cpuOracle,
-    { ...DEFAULT_GPU_TOLERANCES, ...options.tolerances }
-  );
+  const comparison = compareLyapunovSpectrumAcceleration(gpuCandidate.result, cpuOracle, {
+    ...DEFAULT_GPU_TOLERANCES,
+    ...options.tolerances
+  });
   if (!comparison.passed) {
     return {
       backend: 'cpu',
@@ -465,6 +484,7 @@ export async function promotedDoublePendulumLyapunovSpectrum(
     cpuOracle,
     gpuCandidate,
     comparison,
-    caveat: 'WebGPU f32 full-spectrum result promoted after same-run CPU f64 oracle comparison; CPU-derived uncertainty estimates are retained.'
+    caveat:
+      'WebGPU f32 full-spectrum result promoted after same-run CPU f64 oracle comparison; CPU-derived uncertainty estimates are retained.'
   };
 }

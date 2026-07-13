@@ -149,7 +149,14 @@ describe('Neimark-Sacker detection and torus indicator', () => {
 describe('codim-2 regime diagram', () => {
   it('classifies a small driven-pendulum grid with metadata and hashes', () => {
     const result = codimTwoDiagram(
-      (amplitude, damping) => ({ kind: 'driven', g: 9.81, length: 1, damping, driveAmplitude: amplitude, driveFrequency: 2 / 3 }),
+      (amplitude, damping) => ({
+        kind: 'driven',
+        g: 9.81,
+        length: 1,
+        damping,
+        driveAmplitude: amplitude,
+        driveFrequency: 2 / 3
+      }),
       [0.3, 0, 0],
       'driveAmplitude',
       [0.2, 1.4],

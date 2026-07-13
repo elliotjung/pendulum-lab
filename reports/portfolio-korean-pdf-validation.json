@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "pendulum-portfolio-pdf-validation/v1",
+  "generatedAt": "2026-07-13T03:08:56.301Z",
+  "status": "passed",
+  "sourcePath": "docs/portfolio-korean.md",
+  "outputPath": "reports/portfolio-korean.pdf",
+  "htmlPath": "tmp/pdfs/portfolio-korean.html",
+  "renderer": {
+    "pdf": "Playwright Chromium print",
+    "preview": "Poppler pdftoppm 120dpi"
+  },
+  "pdf": {
+    "bytes": 461847,
+    "sha256": "776350db5cc7a3392f77245043427d07381ea1c54a7e5feebc81a3ae55f662b7",
+    "pages": 2
+  },
+  "domAudit": {
+    "title": "Pendulum Lab 한국어 포트폴리오",
+    "language": "ko",
+    "headings": 6,
+    "textCharacters": 2553,
+    "tables": 1,
+    "horizontalOverflow": false
+  },
+  "previews": [
+    {
+      "path": "tmp/pdfs/portfolio-korean-page-1.png",
+      "bytes": 144382,
+      "width": 992,
+      "height": 1404,
+      "sha256": "43a3650ff540bb34e4b0325a92de4caa6225f58782d644d6a415b3690e7fc497"
+    },
+    {
+      "path": "tmp/pdfs/portfolio-korean-page-2.png",
+      "bytes": 140968,
+      "width": 992,
+      "height": 1404,
+      "sha256": "b05c053b87d96e9f07bf307de8012dee40efba59fc4d4a9e4abccdfa7a88f202"
+    }
+  ],
+  "checks": {
+    "pdfHeader": true,
+    "pdfSize": true,
+    "pageCount": true,
+    "previewCount": true,
+    "previewDimensions": true,
+    "previewPayload": true,
+    "koreanSource": true,
+    "documentStructure": true,
+    "noHorizontalOverflow": true,
+    "noConsoleErrors": true
+  },
+  "failedChecks": [],
+  "consoleErrors": []
+}

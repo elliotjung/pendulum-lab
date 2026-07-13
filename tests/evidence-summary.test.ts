@@ -53,7 +53,10 @@ describe('evidence summary', () => {
         caveat: 'Physical evidence only.'
       },
       mutationAggregate: {
-        status: 'passed', mutationScore: 65.32, coveredMutationScore: 68.34, reportCount: 29,
+        status: 'passed',
+        mutationScore: 65.32,
+        coveredMutationScore: 68.34,
+        reportCount: 29,
         statusCounts: { Survived: 2006, NoCoverage: 293 }
       },
       energyBenchmark: {
@@ -64,8 +67,12 @@ describe('evidence summary', () => {
         ]
       },
       provenance: {
-        sourceCommit: 'abc123', packageVersion: '10.35.0', lockfileSha256: 'deadbeef',
-        dirtyWorktree: false, expiresAfterDays: 14, expiresAt: '2026-07-21T00:00:00.000Z'
+        sourceCommit: 'abc123',
+        packageVersion: '10.35.0',
+        lockfileSha256: 'deadbeef',
+        dirtyWorktree: false,
+        expiresAfterDays: 14,
+        expiresAt: '2026-07-21T00:00:00.000Z'
       }
     });
 

@@ -48,7 +48,9 @@ export function classifyFixedPoint(multipliers: readonly FloquetMultiplier[]): F
   }
   const moduli = multipliers.map((mu) => Math.hypot(mu.re, mu.im)).sort((a, b) => b - a);
   const spectralRadius = moduli[0]!;
-  const dominant = multipliers.reduce((best, mu) => (Math.hypot(mu.re, mu.im) > Math.hypot(best.re, best.im) ? mu : best));
+  const dominant = multipliers.reduce((best, mu) =>
+    Math.hypot(mu.re, mu.im) > Math.hypot(best.re, best.im) ? mu : best
+  );
   const rotational = Math.abs(dominant.im) > 1e-9;
   const rotationNumber = rotational ? Math.atan2(dominant.im, dominant.re) / (2 * Math.PI) : null;
 
@@ -83,7 +85,7 @@ export function classifyFixedPoint(multipliers: readonly FloquetMultiplier[]): F
     rotational,
     rotationNumber,
     detail:
-      `multipliers ${multipliers.map((mu) => `${mu.re.toFixed(4)}${mu.im >= 0 ? '+' : ''}${mu.im.toFixed(4)}i`).join(', ')}; `
-      + `spectral radius ${spectralRadius.toFixed(4)} (unit-circle tolerance ${UNIT_TOLERANCE})`
+      `multipliers ${multipliers.map((mu) => `${mu.re.toFixed(4)}${mu.im >= 0 ? '+' : ''}${mu.im.toFixed(4)}i`).join(', ')}; ` +
+      `spectral radius ${spectralRadius.toFixed(4)} (unit-circle tolerance ${UNIT_TOLERANCE})`
   };
 }

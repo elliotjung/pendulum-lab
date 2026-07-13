@@ -10,14 +10,7 @@ export {
   lerpHexColor
 } from './palette';
 export type { VizTheme, Rgb } from './palette';
-export {
-  makeScale,
-  niceTicks,
-  innerRect,
-  drawFrame,
-  formatTick,
-  DEFAULT_PADDING
-} from './scales';
+export { makeScale, niceTicks, innerRect, drawFrame, formatTick, DEFAULT_PADDING } from './scales';
 export type { Scale } from './scales';
 export { renderEnergyPlot, renderDriftGauge } from './energyPlot';
 export type { EnergySeries, EnergyPlotOptions, DriftGaugeOptions } from './energyPlot';

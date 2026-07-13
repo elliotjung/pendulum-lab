@@ -4,7 +4,8 @@ Pendulum Lab V10 is a **100% TypeScript** application. The original ~8,080-line 
 `js/` runtime has been fully removed (preserved in git history under the
 `legacy-js-archive` tag). The live Vite shell
 (`app.html`) loads `src/main.ts` plus the hand-written CSS that styles the static shell
-DOM; the project-root `index.html` is the generated self-contained build. A single
+DOM; the ignored `standalone/` directory holds the generated self-contained release
+build, whose hashes are committed in `standalone-manifest.json`. A single
 dependency-injection container (`runtime/ServiceContainer`, exposed through
 `window.PendulumLabDebug.runtime`) is the canonical source of truth for runtime services.
 
@@ -66,7 +67,7 @@ deprecated debug alias. Public scripting uses `window.PendulumLab`.
 - `src/export/`: typed submission manifest and report export helpers.
 - `src/render/`: runtime metric probes for FPS, physics time, memory, and worker latency.
 - `src/workers/`: separate module worker with main-thread fallback through `WorkerBridge`.
-- `app.html`: the live Vite shell (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell. The project-root `index.html` is the self-contained portable build produced by `npm run build:standalone`.
+- `app.html`: the live Vite shell (static shell DOM + CSS); it loads `src/main.ts`, which boots the runtime, Lab, analysis tabs, and shell. `npm run build:standalone` emits the self-contained portable release file into ignored `standalone/`; release automation publishes it as a GitHub Release asset.
 
 ## Research Workbench Boundary
 
@@ -90,6 +91,10 @@ but its extraction boundary is now explicit:
   design-study render loop, adaptive batch UI state, and export-panel wiring.
   Those should leave `research-workbench.ts` one at a time with focused unit or
   e2e coverage so persisted study/run-log behavior does not drift.
+- Canvas capture, figure captions, portable PNG/SVG paths, and the figure
+  manifest model live in the unit-tested `paper-figure-capture.ts`; artifact
+  orchestration remains in `figure-export.ts`. Command registration likewise
+  lives in `governance-commands.ts`, separate from governance DOM rendering.
 
 ## Module Size Ratchet
 
@@ -97,7 +102,8 @@ but its extraction boundary is now explicit:
 large modules while they are being split. The current ratchet targets are:
 `app/parity/research-workbench.ts`, `app/parity/figure-export.ts`,
 `app/parity/governance-ui.ts`, `app/ExpansionLabTab.ts`,
-`workers/chaosProtocol.ts`, and `app/parity/runtime-diagnostics.ts`.
+`workers/chaosProtocol.ts`, `app/parity/runtime-diagnostics.ts`,
+`app/parity/shared.ts`, and `app/parity/storage-sync.ts`.
 `physics/expandedModels.ts` has already left this list after being split into
 types, factory, suite-runner, Lyapunov, and research-matrix modules. A module
 should leave the known-large list only after its responsibilities have been

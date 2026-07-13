@@ -31,11 +31,7 @@ function effectsAllowed(): boolean {
   return !automated() && !media(REDUCED_QUERY) && !media(COMPACT_QUERY);
 }
 
-function el<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  className: string,
-  text?: string
-): HTMLElementTagNameMap[K] {
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   node.className = className;
   if (text !== undefined) node.textContent = text;
@@ -117,22 +113,26 @@ function installPointerLight(): void {
   let x = 0;
   let y = 0;
 
-  document.addEventListener('pointermove', (event) => {
-    x = event.clientX;
-    y = event.clientY;
-    const target = event.target instanceof Element ? event.target.closest<HTMLElement>('.kinetic-surface') : null;
-    if (target) {
-      const rect = target.getBoundingClientRect();
-      target.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width) * 100}%`);
-      target.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height) * 100}%`);
-    }
-    if (pending) return;
-    pending = window.requestAnimationFrame(() => {
-      pending = 0;
-      document.documentElement.style.setProperty('--ko-x', `${x}px`);
-      document.documentElement.style.setProperty('--ko-y', `${y}px`);
-    });
-  }, { passive: true });
+  document.addEventListener(
+    'pointermove',
+    (event) => {
+      x = event.clientX;
+      y = event.clientY;
+      const target = event.target instanceof Element ? event.target.closest<HTMLElement>('.kinetic-surface') : null;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        target.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width) * 100}%`);
+        target.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height) * 100}%`);
+      }
+      if (pending) return;
+      pending = window.requestAnimationFrame(() => {
+        pending = 0;
+        document.documentElement.style.setProperty('--ko-x', `${x}px`);
+        document.documentElement.style.setProperty('--ko-y', `${y}px`);
+      });
+    },
+    { passive: true }
+  );
 }
 
 export function installKineticOverdrive(): void {

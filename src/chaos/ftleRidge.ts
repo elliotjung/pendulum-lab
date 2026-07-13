@@ -39,7 +39,10 @@ export function extractFtleRidges(
     if (Number.isFinite(value)) finite.push(value);
   }
   finite.sort((a, b) => a - b);
-  const threshold = finite.length > 0 ? finite[Math.min(finite.length - 1, Math.floor(percentile * finite.length))]! : Number.POSITIVE_INFINITY;
+  const threshold =
+    finite.length > 0
+      ? finite[Math.min(finite.length - 1, Math.floor(percentile * finite.length))]!
+      : Number.POSITIVE_INFINITY;
   // A flat background can sit exactly at the percentile (e.g. mostly-zero
   // fields); the global minimum can never be a ridge.
   const minFinite = finite.length > 0 ? finite[0]! : Number.POSITIVE_INFINITY;
@@ -63,8 +66,11 @@ export function extractFtleRidges(
       // gradient (already at a max) test both axes.
       let isRidge: boolean;
       if (Math.abs(gx) + Math.abs(gy) < 1e-12) {
-        isRidge = center >= at(x + 1, y) + margin && center >= at(x - 1, y) + margin
-          && center >= at(x, y + 1) + margin && center >= at(x, y - 1) + margin;
+        isRidge =
+          center >= at(x + 1, y) + margin &&
+          center >= at(x - 1, y) + margin &&
+          center >= at(x, y + 1) + margin &&
+          center >= at(x, y - 1) + margin;
       } else {
         // Dominant transverse axis: compare against neighbours across the ridge.
         const tx = Math.abs(gy) >= Math.abs(gx) ? 1 : 0;
@@ -85,6 +91,7 @@ export function extractFtleRidges(
     ridgeFraction: width * height > 0 ? ridgeCells / (width * height) : 0,
     threshold,
     percentile,
-    caveat: 'Discrete percentile+local-maximum ridge proxy; for publication-grade LCS use the Hessian eigenvalue condition on a refined grid.'
+    caveat:
+      'Discrete percentile+local-maximum ridge proxy; for publication-grade LCS use the Hessian eigenvalue condition on a refined grid.'
   };
 }

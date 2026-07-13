@@ -32,8 +32,10 @@ describe('the double-double port reproduces the trusted float64 dynamics', () =>
       for (const st of states) {
         const o = new Float64Array(4);
         rhsDouble(st, params, 0, o);
-        const yHi = Float64Array.from(st), yLo = new Float64Array(4);
-        const oHi = new Float64Array(4), oLo = new Float64Array(4);
+        const yHi = Float64Array.from(st),
+          yLo = new Float64Array(4);
+        const oHi = new Float64Array(4),
+          oLo = new Float64Array(4);
         ddRhs(yHi, yLo, oHi, oLo);
         for (let i = 0; i < 4; i += 1) {
           expect(Math.abs(ddToNumber([oHi[i]!, oLo[i]!]) - o[i]!)).toBeLessThan(1e-11);
@@ -71,7 +73,8 @@ describe('the double-double reference exposes float64 round-off in the chaotic o
     return Array.from(cur);
   }
   function ddRun(y0: number[], dt: number, steps: number): number[] {
-    const yHi = Float64Array.from(y0), yLo = new Float64Array(4);
+    const yHi = Float64Array.from(y0),
+      yLo = new Float64Array(4);
     for (let s = 0; s < steps; s += 1) ddRk4Step(yHi, yLo, dt, ddRhs);
     return Array.from(yHi).map((h, i) => ddToNumber([h, yLo[i]!]));
   }

@@ -2,7 +2,13 @@ import { describe, expect, test } from 'vitest';
 import { rhsDouble, energyDouble } from '../src/physics/double';
 import { rhsTriple } from '../src/physics/triple';
 import { energyTriple } from '../src/physics/energy';
-import { chainMassMatrixDiagnostics, createChainWorkspace, rhsChain, energyChain, type ChainParameters } from '../src/physics/nPendulum';
+import {
+  chainMassMatrixDiagnostics,
+  createChainWorkspace,
+  rhsChain,
+  energyChain,
+  type ChainParameters
+} from '../src/physics/nPendulum';
 import { rhsSpring, energySpring, type SpringPendulumParameters } from '../src/physics/spring';
 import { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from '../src/physics/driven';
 import { rk4Step, leapfrogStep } from '../src/physics/integrators';
@@ -47,8 +53,8 @@ describe('N-pendulum generalization reduces to the existing systems', () => {
     const dState = new Float64Array([0.6, -0.4, 0.3, -0.2]);
     expect(
       Math.abs(
-        energyChain(dState, { masses: [dParams.m1, dParams.m2], lengths: [dParams.l1, dParams.l2], g: dParams.g }).total -
-          energyDouble(dState, dParams).total
+        energyChain(dState, { masses: [dParams.m1, dParams.m2], lengths: [dParams.l1, dParams.l2], g: dParams.g })
+          .total - energyDouble(dState, dParams).total
       )
     ).toBeLessThan(1e-12);
 
@@ -83,7 +89,9 @@ describe('N-pendulum generalization reduces to the existing systems', () => {
   });
 
   test('rejects mismatched masses/lengths instead of silently truncating N', () => {
-    expect(() => rhsChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81 }, 0, new Float64Array(4))).toThrow(/same length/);
+    expect(() => rhsChain([0, 0, 0, 0], { masses: [1, 1], lengths: [1], g: 9.81 }, 0, new Float64Array(4))).toThrow(
+      /same length/
+    );
     expect(() => energyChain([0, 0], { masses: [1], lengths: [], g: 9.81 })).toThrow(/same length/);
   });
 

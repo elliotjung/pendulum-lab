@@ -27,7 +27,7 @@ async function walkSource(dir: string): Promise<string[]> {
   for (const entry of entries) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await walkSource(full));
+      files.push(...(await walkSource(full)));
     } else if (entry.isFile() && entry.name.endsWith('.ts') && !entry.name.endsWith('.d.ts')) {
       files.push(normalizePath(full));
     }
@@ -64,7 +64,9 @@ if (newMissing.length > 0 || obsoleteBaseline.length > 0) {
   if (newMissing.length > 0) {
     console.error('Coverage scope guard found source files absent from the v8 coverage map:');
     for (const file of newMissing) console.error(`  + ${file}`);
-    console.error('Add focused tests, or add the file to config/coverage-scope-baseline.json with a short follow-up task.');
+    console.error(
+      'Add focused tests, or add the file to config/coverage-scope-baseline.json with a short follow-up task.'
+    );
   }
   if (obsoleteBaseline.length > 0) {
     console.error('Coverage scope baseline contains entries that are now covered or deleted:');
@@ -73,5 +75,7 @@ if (newMissing.length > 0 || obsoleteBaseline.length > 0) {
   }
   process.exitCode = 1;
 } else {
-  console.log(`coverage scope passed: ${sources.length - missing.length}/${sources.length} source files present in coverage map (${missing.length} known baseline gaps).`);
+  console.log(
+    `coverage scope passed: ${sources.length - missing.length}/${sources.length} source files present in coverage map (${missing.length} known baseline gaps).`
+  );
 }

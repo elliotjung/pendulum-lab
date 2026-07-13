@@ -2,9 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CHAIN_COLORS, DOUBLE_STRING_PRESETS, parseClampedNumberList } from '../src/app/parity/lab3d-utils';
 
 const clampNumber = (value: unknown, fallback: number, min: number, max: number): number => {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? Math.max(min, Math.min(max, value))
-    : fallback;
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
 };
 
 describe('lab3d pure helpers', () => {

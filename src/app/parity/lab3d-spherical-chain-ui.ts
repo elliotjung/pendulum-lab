@@ -12,7 +12,13 @@ import type { SystemSpec } from '../../physics/systemSpec';
 import { bindOrbitControls, depthSortIndices, drawPolyline3D, drawSphereWireframe } from '../../viz/orbit3d';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
+import {
+  researchActions,
+  researchCard,
+  researchFormRow,
+  researchInput,
+  researchSelect
+} from './research-ui-components';
 import { CHAIN_COLORS } from './lab3d-utils';
 import {
   buildLab3dChainInitialState,
@@ -162,22 +168,26 @@ export function renderSphereReadout(): void {
   if (!lab3d.sphere) return;
   const diag = lab3d.sphere.diagnostics();
   const [theta, phi, thetaDot, phiDot] = lab3d.sphere.current();
-  setText('s3Readout', [
-    `θ=${theta.toFixed(3)}, φ=${phi.toFixed(3)}, θ̇=${thetaDot.toFixed(3)}, φ̇=${phiDot.toFixed(3)}`,
-    `E/m=${diag.energy.toFixed(5)} (drift ${diag.energyDrift.toExponential(2)})`,
-    `Lz/m=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
-    `T/m=${diag.tension.toFixed(3)} N/kg, constraint err=${diag.constraintEnergyError.toExponential(2)}`,
-    `method=${diag.method}, dt=${diag.dt}`,
-    diag.caveat
-  ].join(' | '));
+  setText(
+    's3Readout',
+    [
+      `θ=${theta.toFixed(3)}, φ=${phi.toFixed(3)}, θ̇=${thetaDot.toFixed(3)}, φ̇=${phiDot.toFixed(3)}`,
+      `E/m=${diag.energy.toFixed(5)} (drift ${diag.energyDrift.toExponential(2)})`,
+      `Lz/m=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
+      `T/m=${diag.tension.toFixed(3)} N/kg, constraint err=${diag.constraintEnergyError.toExponential(2)}`,
+      `method=${diag.method}, dt=${diag.dt}`,
+      diag.caveat
+    ].join(' | ')
+  );
   const warningNode = $('s3Warning');
   if (warningNode) {
     const stringMode = lab3d.sphereStyle === 'rope';
-    const message = stringMode && diag.tension < 0
-      ? 'TENSION COLLAPSE: a string cannot push — this regime needs a rod (string constraint invalid).'
-      : stringMode && diag.tension < 0.05 * lab3d.sphere.params.g
-        ? 'Tension near zero — string constraint about to become invalid.'
-        : '';
+    const message =
+      stringMode && diag.tension < 0
+        ? 'TENSION COLLAPSE: a string cannot push — this regime needs a rod (string constraint invalid).'
+        : stringMode && diag.tension < 0.05 * lab3d.sphere.params.g
+          ? 'Tension near zero — string constraint about to become invalid.'
+          : '';
     warningNode.textContent = message;
     warningNode.style.color = message ? '#e63946' : '';
   }
@@ -231,17 +241,22 @@ export function renderChainReadout(): void {
   const state = lab3d.chain.current();
   const n = lab3d.chain.params.masses.length;
   const sub = (value: number): string => String(value).replace(/\d/g, (digit) => '₀₁₂₃₄₅₆₇₈₉'[Number(digit)]!);
-  const angles = Array.from({ length: n }, (_, k) =>
-    `θ${sub(k + 1)}=${(state[2 * k] ?? 0).toFixed(2)}, φ${sub(k + 1)}=${(state[2 * k + 1] ?? 0).toFixed(2)}`).join(' ');
+  const angles = Array.from(
+    { length: n },
+    (_, k) => `θ${sub(k + 1)}=${(state[2 * k] ?? 0).toFixed(2)}, φ${sub(k + 1)}=${(state[2 * k + 1] ?? 0).toFixed(2)}`
+  ).join(' ');
   const residualText = diag.relativeResidual !== undefined ? `, relres=${diag.relativeResidual.toExponential(1)}` : '';
-  setText('d3Readout', [
-    `N=${n} | ${angles}`,
-    `E=${diag.energy.toFixed(5)} J (drift ${diag.energyDrift.toExponential(2)})`,
-    `Lz=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
-    `mass-matrix cond~${diag.conditionEstimate.toExponential(2)}${residualText}`,
-    `method=${diag.method}, dt=${diag.dt}`,
-    diag.caveat
-  ].join(' | '));
+  setText(
+    'd3Readout',
+    [
+      `N=${n} | ${angles}`,
+      `E=${diag.energy.toFixed(5)} J (drift ${diag.energyDrift.toExponential(2)})`,
+      `Lz=${diag.lz.toFixed(5)} (drift ${diag.lzDrift.toExponential(2)})`,
+      `mass-matrix cond~${diag.conditionEstimate.toExponential(2)}${residualText}`,
+      `method=${diag.method}, dt=${diag.dt}`,
+      diag.caveat
+    ].join(' | ')
+  );
   // Coordinate-chart limit display: the (θ, φ) chart degenerates at the poles
   // (sinθ → 0). Warn while any link is close, and explain the Lz caveat.
   const warningNode = $('d3Warning');
@@ -255,19 +270,25 @@ export function renderChainReadout(): void {
         nearLink = k + 1;
       }
     }
-    const chartMessage = minAbsSin < 5e-3
-      ? `CHART LIMIT: link ${nearLink} is near a pole (|sinθ| = ${minAbsSin.toExponential(1)}). The azimuth φ is ill-conditioned there; with Lz ≠ 0 the chart genuinely diverges (planar Lz = 0 passages are exact).`
-      : minAbsSin < 5e-2
-        ? `Link ${nearLink} approaching a pole (|sinθ| = ${minAbsSin.toFixed(3)}): azimuth chart accuracy degrades below |sinθ| ≈ 1e-6.`
-        : '';
-    const conditionMessage = diag.conditionEstimate > 1e10
-      ? `MASS MATRIX WARNING: condition estimate ${diag.conditionEstimate.toExponential(2)}; reduce dt, avoid pole charts, or switch to a validated CPU reference before treating this as research-grade.`
-      : diag.conditionEstimate > 1e7
-        ? `Mass matrix is getting ill-conditioned (cond~${diag.conditionEstimate.toExponential(2)}); interpret finite-time estimates cautiously.`
-        : '';
+    const chartMessage =
+      minAbsSin < 5e-3
+        ? `CHART LIMIT: link ${nearLink} is near a pole (|sinθ| = ${minAbsSin.toExponential(1)}). The azimuth φ is ill-conditioned there; with Lz ≠ 0 the chart genuinely diverges (planar Lz = 0 passages are exact).`
+        : minAbsSin < 5e-2
+          ? `Link ${nearLink} approaching a pole (|sinθ| = ${minAbsSin.toFixed(3)}): azimuth chart accuracy degrades below |sinθ| ≈ 1e-6.`
+          : '';
+    const conditionMessage =
+      diag.conditionEstimate > 1e10
+        ? `MASS MATRIX WARNING: condition estimate ${diag.conditionEstimate.toExponential(2)}; reduce dt, avoid pole charts, or switch to a validated CPU reference before treating this as research-grade.`
+        : diag.conditionEstimate > 1e7
+          ? `Mass matrix is getting ill-conditioned (cond~${diag.conditionEstimate.toExponential(2)}); interpret finite-time estimates cautiously.`
+          : '';
     const message = [chartMessage, conditionMessage].filter(Boolean).join(' | ');
     warningNode.textContent = message;
-    warningNode.style.color = message ? (minAbsSin < 5e-3 || diag.conditionEstimate > 1e10 ? '#e63946' : '#f4a261') : '';
+    warningNode.style.color = message
+      ? minAbsSin < 5e-3 || diag.conditionEstimate > 1e10
+        ? '#e63946'
+        : '#f4a261'
+      : '';
   }
 }
 
@@ -331,7 +352,10 @@ export function buildSphereCard(handlers: SphereCardHandlers): HTMLElement {
   poincareCanvas.height = 150;
   poincareCanvas.style.width = '100%';
   poincareCanvas.style.maxWidth = '240px';
-  const sphereStyleSelect = researchSelect('s3Style', [['rod', 'rigid rod (full sphere)'], ['rope', 'string (T ≥ 0 required)']]);
+  const sphereStyleSelect = researchSelect('s3Style', [
+    ['rod', 'rigid rod (full sphere)'],
+    ['rope', 'string (T ≥ 0 required)']
+  ]);
   sphereStyleSelect.addEventListener('change', () => {
     lab3d.sphereStyle = sphereStyleSelect.value === 'rope' ? 'rope' : 'rod';
     renderSphereSim();
@@ -348,11 +372,16 @@ export function buildSphereCard(handlers: SphereCardHandlers): HTMLElement {
     researchFormRow('Gravity', researchInput('s3Gravity', 'number', '9.81', 'm/s²')),
     researchFormRow('Damping', researchInput('s3Damping', 'number', '0', '1/s')),
     researchActions(
-      button('s3Run', 'Run', () => {
-        if (!lab3d.sphere) resetSphereSim();
-        lab3d.sphereRunning = true;
-        lab3dEnsureLoop();
-      }, 'primary'),
+      button(
+        's3Run',
+        'Run',
+        () => {
+          if (!lab3d.sphere) resetSphereSim();
+          lab3d.sphereRunning = true;
+          lab3dEnsureLoop();
+        },
+        'primary'
+      ),
       button('s3Pause', 'Pause', () => {
         lab3d.sphereRunning = false;
       }),
@@ -365,7 +394,11 @@ export function buildSphereCard(handlers: SphereCardHandlers): HTMLElement {
     sphereCanvas,
     poincareCanvas,
     html('div', { id: 's3Warning', className: 'research-summary', text: '' }),
-    html('div', { id: 's3Readout', className: 'research-summary', text: 'Reset to initialise. The spherical pendulum integrates θ̈ = sinθcosθ·φ̇² − (g/l)sinθ and conserves E and Lz when undamped — real 3D dynamics, not a camera trick.' })
+    html('div', {
+      id: 's3Readout',
+      className: 'research-summary',
+      text: 'Reset to initialise. The spherical pendulum integrates θ̈ = sinθcosθ·φ̇² − (g/l)sinθ and conserves E and Lz when undamped — real 3D dynamics, not a camera trick.'
+    })
   );
   return sphereCard;
 }
@@ -390,7 +423,13 @@ export function buildChainCard(handlers: ChainCardHandlers): HTMLElement {
   chainCanvas.style.maxWidth = '480px';
   chainCanvas.style.touchAction = 'none';
   bindOrbitControls(chainCanvas, lab3d.chainCamera, () => renderChainSim());
-  const chainN = researchSelect('d3N', [['1', 'N = 1 (spherical pendulum)'], ['2', 'N = 2 (spherical double)'], ['3', 'N = 3 (spherical triple)'], ['4', 'N = 4'], ['5', 'N = 5']]);
+  const chainN = researchSelect('d3N', [
+    ['1', 'N = 1 (spherical pendulum)'],
+    ['2', 'N = 2 (spherical double)'],
+    ['3', 'N = 3 (spherical triple)'],
+    ['4', 'N = 4'],
+    ['5', 'N = 5']
+  ]);
   chainN.value = '2';
   // Changing N re-seeds the per-link lists with sensible defaults of length N.
   chainN.addEventListener('change', () => {
@@ -399,12 +438,30 @@ export function buildChainCard(handlers: ChainCardHandlers): HTMLElement {
       const el = $(id);
       if (el instanceof HTMLInputElement) el.value = values.map((v) => String(v)).join(',');
     };
-    seed('d3Masses', Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8)));
-    seed('d3Lengths', Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8)));
-    seed('d3Thetas', Array.from({ length: n }, (_, k) => Number((1.6 + 0.6 * k).toFixed(2))));
-    seed('d3Phis', Array.from({ length: n }, () => 0));
-    seed('d3ThetaDots', Array.from({ length: n }, () => 0));
-    seed('d3PhiDots', Array.from({ length: n }, (_, k) => (k % 2 === 0 ? 1.2 : -0.8)));
+    seed(
+      'd3Masses',
+      Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8))
+    );
+    seed(
+      'd3Lengths',
+      Array.from({ length: n }, (_, k) => (k === 0 ? 1 : 0.8))
+    );
+    seed(
+      'd3Thetas',
+      Array.from({ length: n }, (_, k) => Number((1.6 + 0.6 * k).toFixed(2)))
+    );
+    seed(
+      'd3Phis',
+      Array.from({ length: n }, () => 0)
+    );
+    seed(
+      'd3ThetaDots',
+      Array.from({ length: n }, () => 0)
+    );
+    seed(
+      'd3PhiDots',
+      Array.from({ length: n }, (_, k) => (k % 2 === 0 ? 1.2 : -0.8))
+    );
     lab3d.chainRunning = false;
     resetChainSim();
   });
@@ -441,11 +498,16 @@ export function buildChainCard(handlers: ChainCardHandlers): HTMLElement {
     researchFormRow('Damping', researchInput('d3Damping', 'number', '0', '1/s')),
     researchFormRow('Export T', researchInput('d3ExportT', 'number', '20', 's of trajectory for CSV export')),
     researchActions(
-      button('d3Run', 'Run', () => {
-        if (!lab3d.chain) resetChainSim();
-        lab3d.chainRunning = true;
-        lab3dEnsureLoop();
-      }, 'primary'),
+      button(
+        'd3Run',
+        'Run',
+        () => {
+          if (!lab3d.chain) resetChainSim();
+          lab3d.chainRunning = true;
+          lab3dEnsureLoop();
+        },
+        'primary'
+      ),
       button('d3Pause', 'Pause', () => {
         lab3d.chainRunning = false;
       }),
@@ -464,10 +526,18 @@ export function buildChainCard(handlers: ChainCardHandlers): HTMLElement {
     ),
     chainCanvas,
     html('div', { id: 'd3Warning', className: 'research-summary', text: '' }),
-    html('div', { id: 'd3Analysis', className: 'research-summary', text: 'Analyze runs the same worker studyPoint job as the Research batch runner (Lyapunov + RQA + FTLE with uncertainties) on the current chain. Full Spectrum adds all 4N exponents with the Hamiltonian self-consistency gate; Detect Conserved Quantities runs the Noether symmetry/drift scan; Energy-Shell Monitor plots E and L drift along a fresh trajectory.' }),
+    html('div', {
+      id: 'd3Analysis',
+      className: 'research-summary',
+      text: 'Analyze runs the same worker studyPoint job as the Research batch runner (Lyapunov + RQA + FTLE with uncertainties) on the current chain. Full Spectrum adds all 4N exponents with the Hamiltonian self-consistency gate; Detect Conserved Quantities runs the Noether symmetry/drift scan; Energy-Shell Monitor plots E and L drift along a fresh trajectory.'
+    }),
     shellCanvas,
     html('div', { id: 'd3ShellInfo', className: 'research-summary', text: '' }),
-    html('div', { id: 'd3Readout', className: 'research-summary', text: 'Reset to initialise. Spherical N-chain (ball joints, 2N DOF): manipulator-form equations cross-checked against an independent SymPy derivation; E and Lz are conserved when undamped.' })
+    html('div', {
+      id: 'd3Readout',
+      className: 'research-summary',
+      text: 'Reset to initialise. Spherical N-chain (ball joints, 2N DOF): manipulator-form equations cross-checked against an independent SymPy derivation; E and Lz are conserved when undamped.'
+    })
   );
   return chainCard;
 }

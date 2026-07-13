@@ -1,5 +1,14 @@
 import { describe, expect, test } from 'vitest';
-import { canonicalHamiltonian, canonicalRhs, canonicalStepThetaOmega, omegaToMomentum, momentumToOmega, rhsDouble, rhsTriple, rk4Step } from '../src/physics';
+import {
+  canonicalHamiltonian,
+  canonicalRhs,
+  canonicalStepThetaOmega,
+  omegaToMomentum,
+  momentumToOmega,
+  rhsDouble,
+  rhsTriple,
+  rk4Step
+} from '../src/physics';
 
 const doubleParameters = { m1: 1, m2: 1, l1: 1.2, l2: 1, g: 9.81 };
 

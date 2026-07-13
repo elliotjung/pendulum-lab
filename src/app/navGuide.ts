@@ -103,6 +103,40 @@ export const NAV_ACTION_GUIDE_KO: Record<string, string> = {
   report: '현재 세션의 전체 리포트를 내보내기'
 };
 
+/** Compact structural labels; descriptions above remain the explanatory layer. */
+export const NAV_TAB_LABEL_KO: Record<string, string> = {
+  lab: '실험실',
+  compare: '비교',
+  lyap: '리아푸노프',
+  sweep: '카오스 지도',
+  bifurc: '분기',
+  phase3d: '3D 위상',
+  density: '밀도',
+  zeroone: '0–1 검정',
+  clv: 'CLV',
+  basin: '흡인역',
+  rqa: 'RQA',
+  ftle: 'FTLE',
+  validate: '검증',
+  research: '연구+',
+  architecture: '구조',
+  lab3d: '3D 실험실',
+  canonical: '정준 검증',
+  aplus: '감사',
+  docs: '문서',
+  expansion: '확장',
+  matrix: '연구 행렬',
+  golden: '기준 비교'
+};
+
+export const NAV_ACTION_LABEL_KO: Record<string, string> = {
+  floquet: '플로케',
+  manifest: '매니페스트',
+  integrity: '무결성',
+  palette: '명령 찾기',
+  report: '리포트'
+};
+
 let currentLocale: NavLocale = 'en';
 
 export function normalizeNavLocale(value: unknown): NavLocale {
@@ -134,10 +168,10 @@ export function setNavLocale(locale: NavLocale): void {
 
 /** Tab description in the active locale (falls back to English). */
 export function tabGuideText(id: string): string | undefined {
-  return currentLocale === 'ko' ? NAV_TAB_GUIDE_KO[id] ?? NAV_TAB_GUIDE[id] : NAV_TAB_GUIDE[id];
+  return currentLocale === 'ko' ? (NAV_TAB_GUIDE_KO[id] ?? NAV_TAB_GUIDE[id]) : NAV_TAB_GUIDE[id];
 }
 
 /** Action description in the active locale (falls back to English). */
 export function actionGuideText(id: string): string | undefined {
-  return currentLocale === 'ko' ? NAV_ACTION_GUIDE_KO[id] ?? NAV_ACTION_GUIDE[id] : NAV_ACTION_GUIDE[id];
+  return currentLocale === 'ko' ? (NAV_ACTION_GUIDE_KO[id] ?? NAV_ACTION_GUIDE[id]) : NAV_ACTION_GUIDE[id];
 }

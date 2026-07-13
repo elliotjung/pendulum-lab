@@ -44,11 +44,7 @@ describe('Noether conserved-quantity detection', () => {
   });
 
   it('spherical chain with g → 0: the full rotation group appears (all three axes conserved)', () => {
-    const report = detectSphericalChainConservedQuantities(
-      { ...CHAIN_PARAMS, g: 1e-8 },
-      CHAIN_STATE,
-      { horizon: 5 }
-    );
+    const report = detectSphericalChainConservedQuantities({ ...CHAIN_PARAMS, g: 1e-8 }, CHAIN_STATE, { horizon: 5 });
     expect(report.conserved).toContain('angular-momentum-vertical');
     expect(report.conserved).toContain('angular-momentum-x');
     expect(report.conserved).toContain('angular-momentum-z');
@@ -58,11 +54,9 @@ describe('Noether conserved-quantity detection', () => {
   });
 
   it('damping destroys every Noether charge (and is reported as broken structure, not asymmetry)', () => {
-    const report = detectSphericalChainConservedQuantities(
-      { ...CHAIN_PARAMS, damping: 0.4 },
-      CHAIN_STATE,
-      { horizon: 5 }
-    );
+    const report = detectSphericalChainConservedQuantities({ ...CHAIN_PARAMS, damping: 0.4 }, CHAIN_STATE, {
+      horizon: 5
+    });
     expect(report.conserved).toHaveLength(0);
     const energy = report.candidates.find((candidate) => candidate.name === 'energy')!;
     expect(energy.symmetric).toBe(false);

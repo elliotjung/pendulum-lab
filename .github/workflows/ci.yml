@@ -24,6 +24,9 @@ jobs:
       # Supply-chain gate: the toolchain that generates research artifacts and
       # signs releases must not carry known high/critical advisories.
       - run: npm run audit:deps
+      # Fast style signal: the repository Prettier config is enforced
+      # (also re-checked at the end of npm run verify after docs:sync writes).
+      - run: npm run format:check
       # Fast PR signal: quick unit tier before the full policy/type/test gate.
       - run: npm run test:quick
       # Scientific acceleration contract: GPU paths must agree with CPU or fall back.
@@ -40,8 +43,7 @@ jobs:
       - run: npm run test:coverage
       - run: npm run build
       - run: npm run build:standalone
-      # The committed root index.html / *.worker.js are build:standalone
-      # outputs; fail if they drifted from what the current source builds.
+      # The compact committed manifest pins the release-only standalone bytes.
       - run: npm run check:standalone-sync
       # Same drift contract for the committed WASM ensemble kernel.
       - run: npm run check:wasm-sync

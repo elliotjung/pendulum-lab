@@ -55,7 +55,9 @@ const lines = [
 ];
 for (const artifact of REVIEWER_KIT_ARTIFACTS) {
   const available = availability.get(artifact.path) ? 'yes' : 'no';
-  lines.push(`| ${priorityIcon(artifact.priority)} | ${available} | \`${artifact.path}\` | \`${artifact.command}\` | ${artifact.description} |`);
+  lines.push(
+    `| ${priorityIcon(artifact.priority)} | ${available} | \`${artifact.path}\` | \`${artifact.command}\` | ${artifact.description} |`
+  );
 }
 lines.push('', '## Commands To Complete The Kit', '');
 if (manifest.commandsToComplete.length) {

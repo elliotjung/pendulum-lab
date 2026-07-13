@@ -44,7 +44,13 @@ interface Study {
   driveFrequency: number;
   dt: number;
   measurements: Measurement[];
-  dtSensitivity: { gamma: number; dtFine: number; ApdFine: number | null; ApdCoarse: number | null; absDelta: number | null };
+  dtSensitivity: {
+    gamma: number;
+    dtFine: number;
+    ApdFine: number | null;
+    ApdCoarse: number | null;
+    absDelta: number | null;
+  };
   bifurcationDiagram: { gamma: number; rows: Array<{ A: number; thetas: number[] }> };
   frequencyScan?: { method: string; scans: Array<{ omega: number; measurements: Measurement[] }> };
   duffingGapMap?: { alpha: number; beta: number; omega: number; method: string; rows: DuffingRow[] };
@@ -115,49 +121,80 @@ function niceTicks(lo: number, hi: number, count = 6): number[] {
 }
 
 function fmt(v: number): string {
-  return Math.abs(v) >= 100 ? v.toFixed(0) : Math.abs(v) >= 1 ? v.toFixed(2).replace(/\.?0+$/, '') : v.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  return Math.abs(v) >= 100
+    ? v.toFixed(0)
+    : Math.abs(v) >= 1
+      ? v.toFixed(2).replace(/\.?0+$/, '')
+      : v.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
 }
 
 /** Deterministic SVG line/scatter chart. */
 function svgChart(
   series: Series[],
-  options: { xLabel: string; yLabel: string; xRange: [number, number]; yRange: [number, number]; hLine?: number; caption?: string }
+  options: {
+    xLabel: string;
+    yLabel: string;
+    xRange: [number, number];
+    yRange: [number, number];
+    hLine?: number;
+    caption?: string;
+  }
 ): string {
   const [x0, x1] = options.xRange;
   const [y0, y1] = options.yRange;
   const px = (x: number): number => MARGIN.left + ((x - x0) / (x1 - x0)) * (W - MARGIN.left - MARGIN.right);
   const py = (y: number): number => H - MARGIN.bottom - ((y - y0) / (y1 - y0)) * (H - MARGIN.top - MARGIN.bottom);
   const parts: string[] = [];
-  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Georgia, serif" font-size="13">`);
+  parts.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Georgia, serif" font-size="13">`
+  );
   parts.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
   // Axes + ticks + grid.
   for (const tx of niceTicks(x0, x1)) {
     const gx = px(tx);
-    parts.push(`<line x1="${gx.toFixed(1)}" y1="${MARGIN.top}" x2="${gx.toFixed(1)}" y2="${H - MARGIN.bottom}" stroke="#eeeeee"/>`);
-    parts.push(`<text x="${gx.toFixed(1)}" y="${H - MARGIN.bottom + 18}" text-anchor="middle" fill="#333">${fmt(tx)}</text>`);
+    parts.push(
+      `<line x1="${gx.toFixed(1)}" y1="${MARGIN.top}" x2="${gx.toFixed(1)}" y2="${H - MARGIN.bottom}" stroke="#eeeeee"/>`
+    );
+    parts.push(
+      `<text x="${gx.toFixed(1)}" y="${H - MARGIN.bottom + 18}" text-anchor="middle" fill="#333">${fmt(tx)}</text>`
+    );
   }
   for (const ty of niceTicks(y0, y1)) {
     const gy = py(ty);
-    parts.push(`<line x1="${MARGIN.left}" y1="${gy.toFixed(1)}" x2="${W - MARGIN.right}" y2="${gy.toFixed(1)}" stroke="#eeeeee"/>`);
-    parts.push(`<text x="${MARGIN.left - 8}" y="${(gy + 4).toFixed(1)}" text-anchor="end" fill="#333">${fmt(ty)}</text>`);
+    parts.push(
+      `<line x1="${MARGIN.left}" y1="${gy.toFixed(1)}" x2="${W - MARGIN.right}" y2="${gy.toFixed(1)}" stroke="#eeeeee"/>`
+    );
+    parts.push(
+      `<text x="${MARGIN.left - 8}" y="${(gy + 4).toFixed(1)}" text-anchor="end" fill="#333">${fmt(ty)}</text>`
+    );
   }
-  parts.push(`<rect x="${MARGIN.left}" y="${MARGIN.top}" width="${W - MARGIN.left - MARGIN.right}" height="${H - MARGIN.top - MARGIN.bottom}" fill="none" stroke="#444"/>`);
+  parts.push(
+    `<rect x="${MARGIN.left}" y="${MARGIN.top}" width="${W - MARGIN.left - MARGIN.right}" height="${H - MARGIN.top - MARGIN.bottom}" fill="none" stroke="#444"/>`
+  );
   if (options.hLine !== undefined && options.hLine >= y0 && options.hLine <= y1) {
-    parts.push(`<line x1="${MARGIN.left}" y1="${py(options.hLine).toFixed(1)}" x2="${W - MARGIN.right}" y2="${py(options.hLine).toFixed(1)}" stroke="#999" stroke-dasharray="6 4"/>`);
+    parts.push(
+      `<line x1="${MARGIN.left}" y1="${py(options.hLine).toFixed(1)}" x2="${W - MARGIN.right}" y2="${py(options.hLine).toFixed(1)}" stroke="#999" stroke-dasharray="6 4"/>`
+    );
   }
   // Series.
   for (const s of series) {
     const pts = s.points.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
     if (s.line !== false && pts.length > 1) {
       const d = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${px(x).toFixed(1)} ${py(y).toFixed(1)}`).join('');
-      parts.push(`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="1.8"${s.dash ? ` stroke-dasharray="${s.dash}"` : ''}/>`);
+      parts.push(
+        `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="1.8"${s.dash ? ` stroke-dasharray="${s.dash}"` : ''}/>`
+      );
     }
     if (s.marker !== 'none') {
       for (const [x, y] of pts) {
         if (s.marker === 'square') {
-          parts.push(`<rect x="${(px(x) - 3.4).toFixed(1)}" y="${(py(y) - 3.4).toFixed(1)}" width="6.8" height="6.8" fill="${s.color}"/>`);
+          parts.push(
+            `<rect x="${(px(x) - 3.4).toFixed(1)}" y="${(py(y) - 3.4).toFixed(1)}" width="6.8" height="6.8" fill="${s.color}"/>`
+          );
         } else if (s.marker === 'star') {
-          parts.push(`<text x="${px(x).toFixed(1)}" y="${(py(y) + 5.6).toFixed(1)}" text-anchor="middle" font-size="19" fill="${s.color}">★</text>`);
+          parts.push(
+            `<text x="${px(x).toFixed(1)}" y="${(py(y) + 5.6).toFixed(1)}" text-anchor="middle" font-size="19" fill="${s.color}">★</text>`
+          );
         } else {
           parts.push(`<circle cx="${px(x).toFixed(1)}" cy="${py(y).toFixed(1)}" r="3.6" fill="${s.color}"/>`);
         }
@@ -167,11 +204,15 @@ function svgChart(
   // Legend (top-left inside the frame).
   let ly = MARGIN.top + 16;
   for (const s of series) {
-    parts.push(`<line x1="${MARGIN.left + 12}" y1="${ly - 4}" x2="${MARGIN.left + 40}" y2="${ly - 4}" stroke="${s.color}" stroke-width="2.4"${s.dash ? ` stroke-dasharray="${s.dash}"` : ''}/>`);
+    parts.push(
+      `<line x1="${MARGIN.left + 12}" y1="${ly - 4}" x2="${MARGIN.left + 40}" y2="${ly - 4}" stroke="${s.color}" stroke-width="2.4"${s.dash ? ` stroke-dasharray="${s.dash}"` : ''}/>`
+    );
     parts.push(`<text x="${MARGIN.left + 48}" y="${ly}" fill="#222">${s.label}</text>`);
     ly += 19;
   }
-  parts.push(`<text x="${(MARGIN.left + W - MARGIN.right) / 2}" y="${H - 10}" text-anchor="middle" fill="#222">${options.xLabel}</text>`);
+  parts.push(
+    `<text x="${(MARGIN.left + W - MARGIN.right) / 2}" y="${H - 10}" text-anchor="middle" fill="#222">${options.xLabel}</text>`
+  );
   parts.push(
     `<text x="16" y="${(MARGIN.top + H - MARGIN.bottom) / 2}" text-anchor="middle" fill="#222" transform="rotate(-90 16 ${(MARGIN.top + H - MARGIN.bottom) / 2})">${options.yLabel}</text>`
   );
@@ -189,13 +230,19 @@ function svgBifurcation(diagram: Study['bifurcationDiagram'], AcMark: number, Ap
   const px = (x: number): number => MARGIN.left + ((x - x0) / (x1 - x0)) * (W - MARGIN.left - MARGIN.right);
   const py = (y: number): number => H - MARGIN.bottom - ((y - y0) / (y1 - y0)) * (H - MARGIN.top - MARGIN.bottom);
   const parts: string[] = [];
-  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Georgia, serif" font-size="13">`);
+  parts.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" font-family="Georgia, serif" font-size="13">`
+  );
   parts.push(`<rect width="${W}" height="${H}" fill="#ffffff"/>`);
   for (const tx of niceTicks(x0, x1)) {
-    parts.push(`<text x="${px(tx).toFixed(1)}" y="${H - MARGIN.bottom + 18}" text-anchor="middle" fill="#333">${fmt(tx)}</text>`);
+    parts.push(
+      `<text x="${px(tx).toFixed(1)}" y="${H - MARGIN.bottom + 18}" text-anchor="middle" fill="#333">${fmt(tx)}</text>`
+    );
   }
   for (const ty of [-3, -2, -1, 0, 1, 2, 3]) {
-    parts.push(`<text x="${MARGIN.left - 8}" y="${(py(ty) + 4).toFixed(1)}" text-anchor="end" fill="#333">${ty}</text>`);
+    parts.push(
+      `<text x="${MARGIN.left - 8}" y="${(py(ty) + 4).toFixed(1)}" text-anchor="end" fill="#333">${ty}</text>`
+    );
   }
   // Point cloud as one path of short horizontal dashes (compact + crisp).
   const segments: string[] = [];
@@ -212,13 +259,21 @@ function svgBifurcation(diagram: Study['bifurcationDiagram'], AcMark: number, Ap
     [ApdMark, '#1f7a3d', 'A_PD']
   ] as Array<[number, string, string]>) {
     if (value >= x0 && value <= x1) {
-      parts.push(`<line x1="${px(value).toFixed(1)}" y1="${MARGIN.top}" x2="${px(value).toFixed(1)}" y2="${H - MARGIN.bottom}" stroke="${color}" stroke-dasharray="5 4" stroke-width="1.6"/>`);
+      parts.push(
+        `<line x1="${px(value).toFixed(1)}" y1="${MARGIN.top}" x2="${px(value).toFixed(1)}" y2="${H - MARGIN.bottom}" stroke="${color}" stroke-dasharray="5 4" stroke-width="1.6"/>`
+      );
       parts.push(`<text x="${(px(value) + 4).toFixed(1)}" y="${MARGIN.top + 14}" fill="${color}">${label}</text>`);
     }
   }
-  parts.push(`<rect x="${MARGIN.left}" y="${MARGIN.top}" width="${W - MARGIN.left - MARGIN.right}" height="${H - MARGIN.top - MARGIN.bottom}" fill="none" stroke="#444"/>`);
-  parts.push(`<text x="${(MARGIN.left + W - MARGIN.right) / 2}" y="${H - 10}" text-anchor="middle" fill="#222">drive amplitude A</text>`);
-  parts.push(`<text x="16" y="${(MARGIN.top + H - MARGIN.bottom) / 2}" text-anchor="middle" fill="#222" transform="rotate(-90 16 ${(MARGIN.top + H - MARGIN.bottom) / 2})">strobe θ (rad)</text>`);
+  parts.push(
+    `<rect x="${MARGIN.left}" y="${MARGIN.top}" width="${W - MARGIN.left - MARGIN.right}" height="${H - MARGIN.top - MARGIN.bottom}" fill="none" stroke="#444"/>`
+  );
+  parts.push(
+    `<text x="${(MARGIN.left + W - MARGIN.right) / 2}" y="${H - 10}" text-anchor="middle" fill="#222">drive amplitude A</text>`
+  );
+  parts.push(
+    `<text x="16" y="${(MARGIN.top + H - MARGIN.bottom) / 2}" text-anchor="middle" fill="#222" transform="rotate(-90 16 ${(MARGIN.top + H - MARGIN.bottom) / 2})">strobe θ (rad)</text>`
+  );
   parts.push('</svg>');
   return parts.join('');
 }
@@ -260,14 +315,32 @@ async function main(): Promise<void> {
         }),
         marker: 'none'
       },
-      { label: 'A_PD(γ) measured (Floquet ρ = −1)', color: '#1f7a3d', points: pd.map((m) => [m.gamma, m.Apd!]), marker: 'circle' },
-      { label: 'Baker & Gollub (γ = 0.5): 1.0663', color: '#b8860b', points: [[0.5, 1.0663]], line: false, marker: 'star' }
+      {
+        label: 'A_PD(γ) measured (Floquet ρ = −1)',
+        color: '#1f7a3d',
+        points: pd.map((m) => [m.gamma, m.Apd!]),
+        marker: 'circle'
+      },
+      {
+        label: 'Baker & Gollub (γ = 0.5): 1.0663',
+        color: '#b8860b',
+        points: [[0.5, 1.0663]],
+        line: false,
+        marker: 'star'
+      }
     ],
     { xLabel: 'damping γ', yLabel: 'drive amplitude A', xRange: [0.1, 0.85], yRange: [0, 1.8] }
   );
 
   const fig2 = svgChart(
-    [{ label: 'A_PD / A_c (measured / analytic)', color: '#1a3a6b', points: pd.map((m) => [m.gamma, m.ratio!]), marker: 'circle' }],
+    [
+      {
+        label: 'A_PD / A_c (measured / analytic)',
+        color: '#1a3a6b',
+        points: pd.map((m) => [m.gamma, m.ratio!]),
+        marker: 'circle'
+      }
+    ],
     {
       xLabel: 'damping γ',
       yLabel: 'A_PD / A_c',
@@ -342,7 +415,9 @@ async function main(): Promise<void> {
 
   const scanUnclassified = study.frequencyScan
     ? study.frequencyScan.scans.flatMap((scan) =>
-        scan.measurements.filter((m) => m.lossType !== 'period-doubling').map((m) => `ω = ${scan.omega}, γ = ${m.gamma}`)
+        scan.measurements
+          .filter((m) => m.lossType !== 'period-doubling')
+          .map((m) => `ω = ${scan.omega}, γ = ${m.gamma}`)
       )
     : [];
 
@@ -350,15 +425,30 @@ async function main(): Promise<void> {
     .map((m) => {
       const apd = m.Apd !== null ? m.Apd.toFixed(5) : '—';
       const ratio = m.ratio !== null ? m.ratio.toFixed(4) : '—';
-      const loss = m.lossType === 'period-doubling' ? 'PD (ρ → −1)' : m.lossType === 'no-loss-below-cap' ? `none below A = ${m.marchCap.toFixed(2)}` : `non-PD (ρ ≈ ${m.rhoBelow?.toFixed(2) ?? '?'})`;
+      const loss =
+        m.lossType === 'period-doubling'
+          ? 'PD (ρ → −1)'
+          : m.lossType === 'no-loss-below-cap'
+            ? `none below A = ${m.marchCap.toFixed(2)}`
+            : `non-PD (ρ ≈ ${m.rhoBelow?.toFixed(2) ?? '?'})`;
       const kb = m.K_below !== null ? m.K_below.toFixed(2) : '—';
       const ka = m.K_above !== null ? m.K_above.toFixed(2) : '—';
       return `<tr><td>${m.gamma.toFixed(2)}</td><td>${m.Ac.toFixed(5)}</td><td>${apd}</td><td>${ratio}</td><td>${loss}</td><td>${kb}</td><td>${ka}</td></tr>`;
     })
     .join('\n');
 
-  const certificationRows = certification.rows.map((row) => `<tr><td>${row.gamma.toFixed(2)}</td><td>${row.Ac.toFixed(6)}</td><td>${row.Apd.toFixed(6)}</td><td>${row.onsetUncertainty.toExponential(2)}</td><td>${row.ratio.toFixed(6)}</td><td>${row.rhoBelow.toFixed(5)}</td><td>${row.rhoAbove.toFixed(5)}</td><td>${esc(row.caveat)}</td></tr>`).join('\n');
-  const externalRows = external.apdChecks.map((row) => `<tr><td>${row.gamma.toFixed(2)}</td><td>${row.reportedApd.toFixed(8)}</td><td>${row.remeasuredApd.toFixed(8)}</td><td>${row.absError.toExponential(2)}</td><td>${row.rhoLow.toFixed(7)}</td><td>${row.rhoHigh.toFixed(7)}</td><td>${row.passed ? 'pass' : 'fail'}</td></tr>`).join('\n');
+  const certificationRows = certification.rows
+    .map(
+      (row) =>
+        `<tr><td>${row.gamma.toFixed(2)}</td><td>${row.Ac.toFixed(6)}</td><td>${row.Apd.toFixed(6)}</td><td>${row.onsetUncertainty.toExponential(2)}</td><td>${row.ratio.toFixed(6)}</td><td>${row.rhoBelow.toFixed(5)}</td><td>${row.rhoAbove.toFixed(5)}</td><td>${esc(row.caveat)}</td></tr>`
+    )
+    .join('\n');
+  const externalRows = external.apdChecks
+    .map(
+      (row) =>
+        `<tr><td>${row.gamma.toFixed(2)}</td><td>${row.reportedApd.toFixed(8)}</td><td>${row.remeasuredApd.toFixed(8)}</td><td>${row.absError.toExponential(2)}</td><td>${row.rhoLow.toFixed(7)}</td><td>${row.rhoHigh.toFixed(7)}</td><td>${row.passed ? 'pass' : 'fail'}</td></tr>`
+    )
+    .join('\n');
 
   const dtNote = study.dtSensitivity.absDelta !== null ? study.dtSensitivity.absDelta.toExponential(1) : 'n/a';
 
@@ -396,7 +486,7 @@ async function main(): Promise<void> {
 <div class="byline">${esc(new Date(study.generatedAt).toISOString().slice(0, 10))} · Pendulum Lab numerical laboratory (TypeScript engine, externally cross-validated)</div>
 
 <div class="abstract">
-<p><strong>Abstract.</strong> The damped driven pendulum θ̈ = −sin θ − γθ̇ + A cos(ωt) (ω = ${(study.driveFrequency).toFixed(4)}) carries two distinct, frequently conflated notions of a “chaos threshold”: the analytic Melnikov amplitude A<sub>c</sub>(γ), above which first-order perturbation theory predicts a transverse homoclinic tangle, and the period-doubling onset A<sub>PD</sub>(γ), where the primary period-1 attractor begins the Feigenbaum cascade that produces the sustained chaotic attractor. We measure A<sub>PD</sub> over γ ∈ [${ms[0]!.gamma}, ${ms[ms.length - 1]!.gamma}] with an attractor-strobed bisection refined by the Floquet multiplier of the Newton periodic orbit (onset interpolated at ρ = −1), and compare it with the closed-form A<sub>c</sub>. The ratio A<sub>PD</sub>/A<sub>c</sub> falls monotonically from ${gammaLo.ratio!.toFixed(2)} at γ = ${gammaLo.gamma} to ${gammaHi.ratio!.toFixed(3)} at γ = ${gammaHi.gamma}${crossing !== null ? `, and the widely quoted ordering A<sub>c</sub> &lt; A<sub>PD</sub> <em>reverses</em> near γ ≈ ${crossing.toFixed(2)}` : ''}: at low damping the tangle precedes the cascade by a wide and rapidly growing margin, while at strong damping the cascade begins <em>below</em> the first-order Melnikov prediction. At the literature point γ = 0.5 our measurement A<sub>PD</sub> = ${anchor.Apd?.toFixed(4)} agrees with the published 1.0663 (Baker &amp; Gollub) to four digits.${study.frequencyScan && study.duffingGapMap ? ' A reduced-grid frequency scan (ω = 0.5, 0.85) and a Duffing double-well companion map show the same monotone gap closure — with the crossing damping itself moving with drive frequency — so the reversal is a robust property of the first-order threshold, not an artifact of the classic parameter point.' : ''}</p>
+<p><strong>Abstract.</strong> The damped driven pendulum θ̈ = −sin θ − γθ̇ + A cos(ωt) (ω = ${study.driveFrequency.toFixed(4)}) carries two distinct, frequently conflated notions of a “chaos threshold”: the analytic Melnikov amplitude A<sub>c</sub>(γ), above which first-order perturbation theory predicts a transverse homoclinic tangle, and the period-doubling onset A<sub>PD</sub>(γ), where the primary period-1 attractor begins the Feigenbaum cascade that produces the sustained chaotic attractor. We measure A<sub>PD</sub> over γ ∈ [${ms[0]!.gamma}, ${ms[ms.length - 1]!.gamma}] with an attractor-strobed bisection refined by the Floquet multiplier of the Newton periodic orbit (onset interpolated at ρ = −1), and compare it with the closed-form A<sub>c</sub>. The ratio A<sub>PD</sub>/A<sub>c</sub> falls monotonically from ${gammaLo.ratio!.toFixed(2)} at γ = ${gammaLo.gamma} to ${gammaHi.ratio!.toFixed(3)} at γ = ${gammaHi.gamma}${crossing !== null ? `, and the widely quoted ordering A<sub>c</sub> &lt; A<sub>PD</sub> <em>reverses</em> near γ ≈ ${crossing.toFixed(2)}` : ''}: at low damping the tangle precedes the cascade by a wide and rapidly growing margin, while at strong damping the cascade begins <em>below</em> the first-order Melnikov prediction. At the literature point γ = 0.5 our measurement A<sub>PD</sub> = ${anchor.Apd?.toFixed(4)} agrees with the published 1.0663 (Baker &amp; Gollub) to four digits.${study.frequencyScan && study.duffingGapMap ? ' A reduced-grid frequency scan (ω = 0.5, 0.85) and a Duffing double-well companion map show the same monotone gap closure — with the crossing damping itself moving with drive frequency — so the reversal is a robust property of the first-order threshold, not an artifact of the classic parameter point.' : ''}</p>
 </div>
 
 <h2>1. Introduction</h2>
@@ -432,8 +522,16 @@ ${tableRows}
 <p>Three regimes emerge. (i) <strong>Low damping (γ ≲ 0.2):</strong> A<sub>c</sub> → 0 linearly while the cascade onset of the primary resonance remains an order-one amplitude, so the ratio diverges (${gammaLo.ratio!.toFixed(2)} already at γ = ${gammaLo.gamma}). The window of “tangle but no strange attractor” — long chaotic transients and fractal basin boundaries below a still-periodic attractor — is widest here, and the phase space is visibly multistable (see §5). (ii) <strong>Moderate damping:</strong> the textbook ordering A<sub>c</sub> &lt; A<sub>PD</sub> holds, but the margin shrinks steadily (to ${((anchor.ratio! - 1) * 100).toFixed(0)}% at γ = 0.5). (iii) <strong>Strong damping${crossing !== null ? ` (γ ≳ ${crossing.toFixed(2)})` : ''}:</strong> the measured cascade begins <em>below</em> the first-order Melnikov prediction. This is not a contradiction — the Melnikov threshold is asymptotically exact only as γ, A → 0, and by γ ≈ 0.7 the perturbation parameter is O(1) — but it sharpens the usual caveat into a measured boundary: the first-order formula stops being even an ordering bound near γ ≈ ${crossing !== null ? crossing.toFixed(2) : '0.7'}.</p>
 <p>The 0–1 test values corroborate the structural picture: K ≈ 0 on the period-1 side everywhere, while above onset K depends on where 1.08·A<sub>PD</sub> falls relative to the cascade accumulation point and the periodic windows visible in Figure 3 — both outcomes occur in the table, as expected for a Feigenbaum scenario with embedded windows.</p>
 
-${study.frequencyScan && study.duffingGapMap ? `<h2>5. Beyond one frequency and one system</h2>
-<p>Two extensions probe whether the closing gap is an artifact of the classic parameter point. First, a reduced-grid <strong>frequency scan</strong> repeats the full Floquet-refined measurement at ω = 0.5 and ω = 0.85. The shape survives: the ratio falls monotonically with damping at every frequency, and the crossing damping γ* moves with ω — at ω = 0.85 the gap is still open at γ = 0.8 (ratio ${(study.frequencyScan.scans.find((s) => s.omega === 0.85)?.measurements.at(-1)?.ratio ?? NaN).toFixed(3)}), while at ω = 0.5 the measured points at γ = 0.65 and 0.8 already sit <em>below</em> 1 (${study.frequencyScan.scans.find((s) => s.omega === 0.5)?.measurements.filter((m) => m.ratio !== null).map((m) => m.ratio!.toFixed(3)).join(', ') ?? ''}). ${scanUnclassified.length > 0 ? `At ${esc(scanUnclassified.join('; '))} the primary branch loses period-1 stability without a verified ρ = −1 crossing, and those points are reported as unclassified rather than forced into the map.` : ''}</p>
+${
+  study.frequencyScan && study.duffingGapMap
+    ? `<h2>5. Beyond one frequency and one system</h2>
+<p>Two extensions probe whether the closing gap is an artifact of the classic parameter point. First, a reduced-grid <strong>frequency scan</strong> repeats the full Floquet-refined measurement at ω = 0.5 and ω = 0.85. The shape survives: the ratio falls monotonically with damping at every frequency, and the crossing damping γ* moves with ω — at ω = 0.85 the gap is still open at γ = 0.8 (ratio ${(study.frequencyScan.scans.find((s) => s.omega === 0.85)?.measurements.at(-1)?.ratio ?? NaN).toFixed(3)}), while at ω = 0.5 the measured points at γ = 0.65 and 0.8 already sit <em>below</em> 1 (${
+        study.frequencyScan.scans
+          .find((s) => s.omega === 0.5)
+          ?.measurements.filter((m) => m.ratio !== null)
+          .map((m) => m.ratio!.toFixed(3))
+          .join(', ') ?? ''
+      }). ${scanUnclassified.length > 0 ? `At ${esc(scanUnclassified.join('; '))} the primary branch loses period-1 stability without a verified ρ = −1 crossing, and those points are reported as unclassified rather than forced into the map.` : ''}</p>
 <figure>
 ${fig4}
 <figcaption><strong>Figure 4.</strong> A<sub>PD</sub>/A<sub>c</sub> versus damping at three drive frequencies (Floquet-refined points only). The monotone closure persists at every ω, and the ratio-1 crossing shifts with frequency — the reversal is a property of the first-order threshold itself, not of ω = 2/3.</figcaption>
@@ -451,7 +549,9 @@ ${duffingTable}
 </table>
 <p>The 0–1 test corroborates every Duffing onset (K ≈ 0 below, K ≈ 1 above — the cascade accumulates quickly in the double well at these parameters). Together the two extensions upgrade the paper's claim from "the thresholds cross at one classic parameter point" to "first-order Melnikov ordering degrades with damping across drive frequencies and across systems".</p>
 
-<h2>6. Limitations and reproducibility</h2>` : `<h2>5. Limitations and reproducibility</h2>`}
+<h2>6. Limitations and reproducibility</h2>`
+    : `<h2>5. Limitations and reproducibility</h2>`
+}
 <p>The ${study.frequencyScan ? 'main grid fixes' : 'study fixes'} ω = 2/3${study.frequencyScan ? ' (the frequency scan of §5 samples ω = 0.5 and 0.85 on a reduced γ grid)' : ''} and follows a single attractor branch per γ (warm-started in A); coexisting attractors reached from other initial conditions may double elsewhere. At the lowest dampings the phase space is multistable enough that a finer warm-started march can hop basins before the doubling — at γ = 0.15 a basin-capture transition of the followed state was observed near A ≈ 0.49 (the orbit itself remains strongly stable there, ρ ≈ +0.29), below the verified doubling at ${(ms.find((m) => m.gamma === 0.15)?.Apd ?? 0.531).toFixed(3)}. The quoted A<sub>PD</sub> values are therefore specifically the ρ = −1 doublings of the primary oscillating branch, not necessarily the first event of any kind along a slow amplitude sweep. The Melnikov comparison concerns the first-order formula specifically — higher-order or numerical manifold computations would move A<sub>c</sub>. The full study regenerates with <code>npm run paper:study</code> (~${Math.round(study.runtimeSeconds / 60)} min) followed by <code>npm run flagship:certify</code>, <code>npm run flagship:external</code>, and <code>npm run paper:build</code>; the engine tests and independent symbolic/trajectory validations are in the same repository.</p>
 
 <section class="appendix">
@@ -508,7 +608,12 @@ ${duffingTable}
   try {
     const page = await browser.newPage();
     await page.goto('file://' + resolve('paper/index.html'));
-    await page.pdf({ path: 'paper/paper.pdf', format: 'A4', margin: { top: '14mm', bottom: '16mm', left: '14mm', right: '14mm' }, printBackground: true });
+    await page.pdf({
+      path: 'paper/paper.pdf',
+      format: 'A4',
+      margin: { top: '14mm', bottom: '16mm', left: '14mm', right: '14mm' },
+      printBackground: true
+    });
     console.log('paper/paper.pdf written');
   } finally {
     await browser.close();

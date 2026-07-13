@@ -23,7 +23,9 @@ const options = {
 describe('N-chain WebGPU STM/QR promotion contract', () => {
   it('builds a finite Jacobian tape for the actual chain trajectory', () => {
     const tape = buildNChainJacobianTape(parameters, state, 0.01, options);
-    expect(tape).toHaveLength((options.forwardTransient + options.window) * options.renormEvery * state.length * state.length);
+    expect(tape).toHaveLength(
+      (options.forwardTransient + options.window) * options.renormEvery * state.length * state.length
+    );
     expect(Array.from(tape).every(Number.isFinite)).toBe(true);
   });
 
@@ -50,6 +52,8 @@ describe('N-chain WebGPU STM/QR promotion contract', () => {
 
   it('rejects chains above the portable workgroup-storage ceiling', async () => {
     const oversized = { masses: new Array(9).fill(1), lengths: new Array(9).fill(1), g: 9.81 };
-    await expect(webgpuNChainVariationalCandidate(oversized, new Array(18).fill(0), options)).rejects.toThrow(/limited to 8 links/);
+    await expect(webgpuNChainVariationalCandidate(oversized, new Array(18).fill(0), options)).rejects.toThrow(
+      /limited to 8 links/
+    );
   });
 });

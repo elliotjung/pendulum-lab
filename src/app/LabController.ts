@@ -1,4 +1,3 @@
-import type { Point2D } from '../viz/poincare';
 import { LabRenderer, type LabRenderOptions } from './LabRenderer';
 import { LabSimulation, type LabConfig, type LabSnapshot } from './LabSimulation';
 

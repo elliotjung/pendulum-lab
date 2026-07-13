@@ -7,12 +7,32 @@
  */
 
 import { installAdoptedStyle } from '../ui/adoptedStyles';
-import { actionGuideText, currentNavLocale, navTipText, tabGuideText } from './navGuide';
+import {
+  NAV_ACTION_LABEL_KO,
+  NAV_TAB_LABEL_KO,
+  actionGuideText,
+  currentNavLocale,
+  navTipText,
+  tabGuideText
+} from './navGuide';
+import {
+  AUDIENCE_MODE_CHANGED_EVENT,
+  normalizeAudienceMode,
+  visibleRailSections,
+  type AudienceMode
+} from './audienceModePolicy';
 
-export type AudienceMode = 'beginner' | 'student' | 'research';
-export const AUDIENCE_MODE_CHANGED_EVENT = 'pendulum:audience-mode-changed';
+export {
+  AUDIENCE_MODE_CHANGED_EVENT,
+  normalizeAudienceMode,
+  visibleRailSections,
+  type AudienceMode
+} from './audienceModePolicy';
 
-export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: string; summary: string; icon: IconName }> = {
+export const AUDIENCE_MODES: Record<
+  AudienceMode,
+  { label: string; description: string; summary: string; icon: IconName }
+> = {
   beginner: {
     label: 'Beginner',
     description: 'Simulator-first view with presets and core physical controls only.',
@@ -33,41 +53,66 @@ export const AUDIENCE_MODES: Record<AudienceMode, { label: string; description: 
   }
 };
 
-/** Rail sections (data-rail-section values) visible in each mode. */
-export function visibleRailSections(mode: AudienceMode): readonly string[] {
-  switch (mode) {
-    case 'beginner':
-      return ['sim'];
-    case 'student':
-      return ['sim', 'analysis', 'check'];
-    case 'research':
-      return ['sim', 'analysis', 'chaos', 'check', 'govern'];
-    default: {
-      const exhaustive: never = mode;
-      throw new Error(`unknown audience mode: ${String(exhaustive)}`);
-    }
-  }
-}
-
-export function normalizeAudienceMode(value: unknown): AudienceMode {
-  return value === 'beginner' || value === 'student' || value === 'research' ? value : 'research';
-}
-
 const STORAGE_KEY = 'pendulum-lab/ui/audience-mode';
 const STYLE_ID = 'audience-mode-style';
 const CHOOSER_ID = 'audienceModeChooser';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 type IconName =
-  | 'spark' | 'chart' | 'lab' | 'explore' | 'analyze' | 'chaos' | 'validate' | 'export'
-  | 'play' | 'compare' | 'spectrum' | 'grid' | 'branch' | 'cube' | 'density'
-  | 'binary' | 'vectors' | 'basin' | 'recurrence' | 'field' | 'manifest' | 'shield'
-  | 'command' | 'report' | 'orbit';
+  | 'spark'
+  | 'chart'
+  | 'lab'
+  | 'explore'
+  | 'analyze'
+  | 'chaos'
+  | 'validate'
+  | 'export'
+  | 'play'
+  | 'compare'
+  | 'spectrum'
+  | 'grid'
+  | 'branch'
+  | 'cube'
+  | 'density'
+  | 'binary'
+  | 'vectors'
+  | 'basin'
+  | 'recurrence'
+  | 'field'
+  | 'manifest'
+  | 'shield'
+  | 'command'
+  | 'report'
+  | 'orbit';
 
 /** Tabs whose panels a non-research mode must not leave active (fallback to lab). */
-const RESEARCH_ONLY_TABS = ['matrix', 'zeroone', 'clv', 'basin', 'rqa', 'ftle', 'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs'];
+const RESEARCH_ONLY_TABS = [
+  'matrix',
+  'zeroone',
+  'clv',
+  'basin',
+  'rqa',
+  'ftle',
+  'architecture',
+  'research',
+  'lab3d',
+  'canonical',
+  'aplus',
+  'docs'
+];
 const STUDENT_HIDDEN_TABS = RESEARCH_ONLY_TABS;
-const BEGINNER_HIDDEN_TABS = [...RESEARCH_ONLY_TABS, 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion', 'validate', 'golden', 'compare'];
+const BEGINNER_HIDDEN_TABS = [
+  ...RESEARCH_ONLY_TABS,
+  'lyap',
+  'sweep',
+  'bifurc',
+  'phase3d',
+  'density',
+  'expansion',
+  'validate',
+  'golden',
+  'compare'
+];
 
 const LAB_STUDENT_ROW_IDS = ['seed', 'th3', 'iw1', 'iw2', 'iw3', 'm3', 'l3', 'gamma'];
 const LAB_STUDENT_DETAIL_ANCHORS = ['trailMode', 'method', 'ensN', 'dlTrajBtn', 'stats'];
@@ -99,12 +144,45 @@ const STUDENT_HIDDEN_SURFACES = [
   '#plxModeCard'
 ];
 
-const SECTION_PRESENTATION: Record<string, { label: string; icon: IconName; hint: string; hintKo: string }> = {
-  sim: { label: 'Explore', icon: 'explore', hint: 'Run the pendulum, try presets, and compare the core motion.', hintKo: '진자를 돌리고, 프리셋을 써 보고, 기본 운동을 비교하세요.' },
-  analysis: { label: 'Analyze', icon: 'analyze', hint: 'Read energy, spectra, maps, and phase-space behavior.', hintKo: '에너지·스펙트럼·지도·위상공간 거동을 읽어 보세요.' },
-  chaos: { label: 'Chaos', icon: 'chaos', hint: 'Use advanced chaos diagnostics for research-mode studies.', hintKo: '연구 모드용 고급 카오스 진단 도구를 사용하세요.' },
-  check: { label: 'Validate', icon: 'validate', hint: 'Check accuracy, validation status, and numerical health.', hintKo: '정확도·검증 상태·수치적 건전성을 확인하세요.' },
-  govern: { label: 'Export', icon: 'export', hint: 'Save figures, manifests, reports, notebooks, and research bundles.', hintKo: '그림·매니페스트·리포트·노트북·연구 번들을 저장하세요.' }
+const SECTION_PRESENTATION: Record<
+  string,
+  { label: string; labelKo: string; icon: IconName; hint: string; hintKo: string }
+> = {
+  sim: {
+    label: 'Explore',
+    labelKo: '탐색',
+    icon: 'explore',
+    hint: 'Run the pendulum, try presets, and compare the core motion.',
+    hintKo: '진자를 돌리고, 프리셋을 써 보고, 기본 운동을 비교하세요.'
+  },
+  analysis: {
+    label: 'Analyze',
+    labelKo: '분석',
+    icon: 'analyze',
+    hint: 'Read energy, spectra, maps, and phase-space behavior.',
+    hintKo: '에너지·스펙트럼·지도·위상공간 거동을 읽어 보세요.'
+  },
+  chaos: {
+    label: 'Chaos',
+    labelKo: '카오스',
+    icon: 'chaos',
+    hint: 'Use advanced chaos diagnostics for research-mode studies.',
+    hintKo: '연구 모드용 고급 카오스 진단 도구를 사용하세요.'
+  },
+  check: {
+    label: 'Validate',
+    labelKo: '검증',
+    icon: 'validate',
+    hint: 'Check accuracy, validation status, and numerical health.',
+    hintKo: '정확도·검증 상태·수치적 건전성을 확인하세요.'
+  },
+  govern: {
+    label: 'Export',
+    labelKo: '내보내기',
+    icon: 'export',
+    hint: 'Save figures, manifests, reports, notebooks, and research bundles.',
+    hintKo: '그림·매니페스트·리포트·노트북·연구 번들을 저장하세요.'
+  }
 };
 
 const TAB_ICONS: Record<string, IconName> = {
@@ -261,29 +339,40 @@ function createIcon(name: IconName): SVGSVGElement {
   switch (name) {
     case 'spark':
       add('path', { d: 'M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6L12 3z' });
-      line(5, 18, 5, 21); line(3.5, 19.5, 6.5, 19.5); line(19, 4, 19, 7); line(17.5, 5.5, 20.5, 5.5);
+      line(5, 18, 5, 21);
+      line(3.5, 19.5, 6.5, 19.5);
+      line(19, 4, 19, 7);
+      line(17.5, 5.5, 20.5, 5.5);
       break;
     case 'chart':
     case 'analyze':
-      line(4, 19, 20, 19); line(6, 16, 6, 11); line(11, 16, 11, 7); line(16, 16, 16, 9); add('path', { d: 'M5 10l4 3 4-6 5 4' });
+      line(4, 19, 20, 19);
+      line(6, 16, 6, 11);
+      line(11, 16, 11, 7);
+      line(16, 16, 16, 9);
+      add('path', { d: 'M5 10l4 3 4-6 5 4' });
       break;
     case 'lab':
-      add('path', { d: 'M9 3h6M10 3v5l-5 9a3 3 0 0 0 2.6 4h8.8A3 3 0 0 0 19 17l-5-9V3' }); add('path', { d: 'M8 15h8' });
+      add('path', { d: 'M9 3h6M10 3v5l-5 9a3 3 0 0 0 2.6 4h8.8A3 3 0 0 0 19 17l-5-9V3' });
+      add('path', { d: 'M8 15h8' });
       break;
     case 'explore':
-      add('circle', { cx: '12', cy: '12', r: '8' }); add('path', { d: 'M10 14l2-6 2 6-2 2-2-2z' });
+      add('circle', { cx: '12', cy: '12', r: '8' });
+      add('path', { d: 'M10 14l2-6 2 6-2 2-2-2z' });
       break;
     case 'chaos':
       add('path', { d: 'M6 12c0-4 6-5 8-2 2 3-2 7-5 4-2-2 0-5 3-5 4 0 7 4 5 8' });
       break;
     case 'validate':
-      add('circle', { cx: '12', cy: '12', r: '8' }); add('path', { d: 'M8 12.5l2.5 2.5L16 9' });
+      add('circle', { cx: '12', cy: '12', r: '8' });
+      add('path', { d: 'M8 12.5l2.5 2.5L16 9' });
       break;
     case 'export':
       add('path', { d: 'M12 4v10M8 10l4 4 4-4M5 18h14' });
       break;
     case 'play':
-      add('circle', { cx: '12', cy: '12', r: '8' }); add('path', { d: 'M10 8l6 4-6 4V8z' });
+      add('circle', { cx: '12', cy: '12', r: '8' });
+      add('path', { d: 'M10 8l6 4-6 4V8z' });
       break;
     case 'compare':
       add('path', { d: 'M5 5h6v14H5zM13 5h6v14h-6z' });
@@ -302,7 +391,14 @@ function createIcon(name: IconName): SVGSVGElement {
       add('path', { d: 'M12 3l7 4v10l-7 4-7-4V7l7-4zM5 7l7 4 7-4M12 11v10' });
       break;
     case 'density':
-      for (const [cx, cy, r] of [[7, 8, 1.3], [13, 6, 1], [17, 11, 1.5], [9, 15, 1.2], [15, 17, 1]]) add('circle', { cx: String(cx), cy: String(cy), r: String(r) });
+      for (const [cx, cy, r] of [
+        [7, 8, 1.3],
+        [13, 6, 1],
+        [17, 11, 1.5],
+        [9, 15, 1.2],
+        [15, 17, 1]
+      ])
+        add('circle', { cx: String(cx), cy: String(cy), r: String(r) });
       break;
     case 'binary':
       add('path', { d: 'M7 7h2v10H7zM15 7a2 2 0 0 1 2 2v6a2 2 0 0 1-4 0V9a2 2 0 0 1 2-2z' });
@@ -324,13 +420,18 @@ function createIcon(name: IconName): SVGSVGElement {
       add('path', { d: 'M7 3h7l3 3v15H7V3zM14 3v4h4M9 11h6M9 15h6M9 19h4' });
       break;
     case 'shield':
-      add('path', { d: 'M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z' }); add('path', { d: 'M9 12l2 2 4-5' });
+      add('path', { d: 'M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z' });
+      add('path', { d: 'M9 12l2 2 4-5' });
       break;
     case 'command':
-      add('path', { d: 'M8 8h8M8 12h5M8 16h8' }); add('circle', { cx: '5', cy: '8', r: '1' }); add('circle', { cx: '5', cy: '12', r: '1' }); add('circle', { cx: '5', cy: '16', r: '1' });
+      add('path', { d: 'M8 8h8M8 12h5M8 16h8' });
+      add('circle', { cx: '5', cy: '8', r: '1' });
+      add('circle', { cx: '5', cy: '12', r: '1' });
+      add('circle', { cx: '5', cy: '16', r: '1' });
       break;
     case 'orbit':
-      add('circle', { cx: '12', cy: '12', r: '2' }); add('path', { d: 'M4 12c3-7 13-7 16 0-3 7-13 7-16 0zM12 4c7 3 7 13 0 16-7-3-7-13 0-16z' });
+      add('circle', { cx: '12', cy: '12', r: '2' });
+      add('path', { d: 'M4 12c3-7 13-7 16 0-3 7-13 7-16 0zM12 4c7 3 7 13 0 16-7-3-7-13 0-16z' });
       break;
     default:
       add('circle', { cx: '12', cy: '12', r: '8' });
@@ -355,9 +456,12 @@ function setLabel(container: Element | null, text: string): void {
  */
 function describeMenuEntry(button: HTMLElement, description: string | undefined): void {
   if (!description) return;
-  const base = button.dataset.navName
-    ?? (button.title || button.querySelector('.tab-label')?.textContent || '');
+  const base = button.dataset.navName ?? (button.title || button.querySelector('.tab-label')?.textContent || '');
   button.dataset.navName = base;
+  // The tooltip anchors the canonical full tool name in every locale — the
+  // Korean short label already localizes the visible menu row, so only the
+  // description switches language here. Pinned by the guided-ui and
+  // audience-mode e2e suites ("Simulation Lab — 실시간 …").
   const tip = navTipText(base, description);
   button.title = tip;
   button.setAttribute('aria-label', tip);
@@ -381,9 +485,11 @@ function decorateNavigation(): void {
     const button = section.querySelector<HTMLElement>('.rail-menu-button');
     const submenu = section.querySelector<HTMLElement>('.rail-submenu');
     setIcon(button?.querySelector('.rail-menu-icon') ?? null, config.icon);
-    setLabel(button?.querySelector('.rail-menu-label') ?? null, config.label);
-    button?.setAttribute('aria-label', `${config.label}: ${hintText}`);
+    const sectionLabel = korean ? config.labelKo : config.label;
+    setLabel(button?.querySelector('.rail-menu-label') ?? null, sectionLabel);
+    button?.setAttribute('aria-label', `${sectionLabel}: ${hintText}`);
     button?.setAttribute('title', hintText);
+    if (button) button.dataset.testid = `nav-section-${sectionName}`;
     if (submenu) {
       let hint = submenu.querySelector('.rail-submenu-hint');
       if (!hint) {
@@ -399,12 +505,26 @@ function decorateNavigation(): void {
     const tabName = tab.dataset.tab;
     const icon = tabName ? TAB_ICONS[tabName] : undefined;
     if (icon) setIcon(tab.querySelector('.tab-icon'), icon);
+    const label = tab.querySelector<HTMLElement>('.tab-label');
+    if (label) {
+      label.dataset.navLabel ??= label.textContent ?? '';
+      label.textContent =
+        korean && tabName ? (NAV_TAB_LABEL_KO[tabName] ?? label.dataset.navLabel) : label.dataset.navLabel;
+    }
+    if (tabName) tab.dataset.testid = `nav-tab-${tabName}`;
     describeMenuEntry(tab, tabName ? tabGuideText(tabName) : undefined);
   });
   document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((button) => {
     const action = button.dataset.railAction;
     const icon = action ? ACTION_ICONS[action] : undefined;
     if (icon) setIcon(button.querySelector('.tab-icon'), icon);
+    const label = button.querySelector<HTMLElement>('.tab-label');
+    if (label) {
+      label.dataset.navLabel ??= label.textContent ?? '';
+      label.textContent =
+        korean && action ? (NAV_ACTION_LABEL_KO[action] ?? label.dataset.navLabel) : label.dataset.navLabel;
+    }
+    if (action) button.dataset.testid = `nav-action-${action}`;
     describeMenuEntry(button, action ? actionGuideText(action) : undefined);
   });
 }
@@ -477,7 +597,8 @@ function showAudienceChooser(): void {
   title.textContent = 'Choose your workspace';
   const copy = document.createElement('div');
   copy.className = 'audience-chooser-copy';
-  copy.textContent = 'Pick the level that matches what you want to do now. You can change this anytime from the Mode selector in the sidebar.';
+  copy.textContent =
+    'Pick the level that matches what you want to do now. You can change this anytime from the Mode selector in the sidebar.';
   titleBlock.append(eyebrow, title, copy);
   const close = document.createElement('button');
   close.type = 'button';

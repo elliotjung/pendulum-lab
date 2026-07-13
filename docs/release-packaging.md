@@ -33,13 +33,24 @@ Required outputs:
 - `reports/publication-status.json`
 - `reports/release-readiness.md`
 - `reports/release-one-page.pdf`
+- `reports/portfolio-korean.pdf`
+- `reports/portfolio-korean-pdf-validation.json`
 - `reports/walkthrough-30s.gif`
+- `reports/demo-narrated-ko.mp4` (67-second Korean narration)
+- `reports/demo-narrated-ko.vtt` and `reports/demo-narrated-ko.md`
 - `reports/reviewer-kit-manifest.md`
 
 ## Release Bundle
 
 - Generated locally by `npm run release:package`: one-page PDF summary,
-  30-second walkthrough GIF, SVG storyboard, and release-readiness manifest.
+  Korean portfolio PDF, Poppler PNG-render validation report, 30-second
+  walkthrough GIF, SVG storyboard, and release-readiness manifest. The
+  intermediate page PNGs live in `tmp/pdfs/` for visual review and are not
+  release assets.
+- To review only the Korean PDF before a full release, run
+  `npx tsx scripts/portfolio-korean-pdf.ts`, inspect every rendered page in
+  `tmp/pdfs/`, then remove the temporary directory. The CI release job installs
+  Poppler explicitly and fails if structural/render checks do not pass.
 - The Pages build serves `reviewer.html`, the paper, and the report JSON.
 - The npm workflow uses OIDC trusted publishing (`npm >= 11.5.1`) and automatic
   npm provenance. The release workflow attests the packed tgz and CycloneDX

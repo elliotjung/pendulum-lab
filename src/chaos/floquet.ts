@@ -127,7 +127,12 @@ function strictLowerNorm(A: Float64Array, n: number): number {
   return norm;
 }
 
-function qrEigenvalues(A: Float64Array, n: number, maxIterations = 160, tolerance = 1e-10): { multipliers: FloquetMultiplier[]; iterations: number; residual: number } {
+function qrEigenvalues(
+  A: Float64Array,
+  n: number,
+  maxIterations = 160,
+  tolerance = 1e-10
+): { multipliers: FloquetMultiplier[]; iterations: number; residual: number } {
   let work: Float64Array = Float64Array.from(A);
   let iterations = 0;
   for (; iterations < maxIterations; iterations += 1) {
@@ -140,12 +145,14 @@ function qrEigenvalues(A: Float64Array, n: number, maxIterations = 160, toleranc
     const subdiag = i < n - 1 ? Math.abs(work[(i + 1) * n + i] ?? 0) : 0;
     const scale = Math.max(1, Math.abs(work[i * n + i] ?? 0), i < n - 1 ? Math.abs(work[(i + 1) * n + i + 1] ?? 0) : 0);
     if (i < n - 1 && subdiag > 1e-8 * scale) {
-      multipliers.push(...eigenvalues2x2([
-        work[i * n + i] ?? 0,
-        work[i * n + i + 1] ?? 0,
-        work[(i + 1) * n + i] ?? 0,
-        work[(i + 1) * n + i + 1] ?? 0
-      ]));
+      multipliers.push(
+        ...eigenvalues2x2([
+          work[i * n + i] ?? 0,
+          work[i * n + i + 1] ?? 0,
+          work[(i + 1) * n + i] ?? 0,
+          work[(i + 1) * n + i + 1] ?? 0
+        ])
+      );
       i += 1;
     } else {
       const value = work[i * n + i] ?? 0;
@@ -203,7 +210,7 @@ export function floquetSpectrum(
   period: number,
   options: FtleOptions = {},
   jacobian?: Jacobian,
-  stateDim = x0.length
+  stateDim: number = x0.length
 ): FloquetSpectrumResult {
   const M = monodromyMatrix(x0, rhs, period, options, jacobian, stateDim);
   const { multipliers, iterations, residual } = qrEigenvalues(M, stateDim);
@@ -217,7 +224,8 @@ export function floquetSpectrum(
     determinant: determinant(M, stateDim),
     qrIterations: iterations,
     qrResidual: residual,
-    caveat: 'Finite-step monodromy spectrum from QR iteration; refine dt/period and inspect qrResidual for near-defective or stiff orbits.'
+    caveat:
+      'Finite-step monodromy spectrum from QR iteration; refine dt/period and inspect qrResidual for near-defective or stiff orbits.'
   };
 }
 

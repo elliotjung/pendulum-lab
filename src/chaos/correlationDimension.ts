@@ -45,7 +45,8 @@ export interface CorrelationDimensionResult {
  * xᵢ = [s_i, s_{i+τ}, …, s_{i+(dimension-1)τ}].
  */
 export function delayEmbed(series: readonly number[], dimension: number, tau = 1): number[][] {
-  if (!Number.isInteger(dimension) || dimension < 1) throw new Error('delayEmbed: dimension must be a positive integer');
+  if (!Number.isInteger(dimension) || dimension < 1)
+    throw new Error('delayEmbed: dimension must be a positive integer');
   if (!Number.isInteger(tau) || tau < 1) throw new Error('delayEmbed: tau must be a positive integer');
   const count = series.length - (dimension - 1) * tau;
   if (count < 1) throw new Error('delayEmbed: series too short for the requested embedding');

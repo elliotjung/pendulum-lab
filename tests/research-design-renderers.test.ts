@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { designPointCanvasPosition, designSummaryText, designTableRows } from '../src/app/parity/research-design-renderers';
+import {
+  designPointCanvasPosition,
+  designSummaryText,
+  designTableRows
+} from '../src/app/parity/research-design-renderers';
 import type { DesignStudyState } from '../src/app/parity/research-design-types';
 
 const design: DesignStudyState = {

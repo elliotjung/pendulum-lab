@@ -51,7 +51,11 @@ function maxEnergyDrift(params: PendulumNetworkParameters, state0: number[], dt:
 describe('reduction to a single pendulum (N = 1)', () => {
   test('RHS and energy match the bare pendulum when uncoupled', () => {
     const params: PendulumNetworkParameters = { masses: [1.3], lengths: [0.7], g: 9.81, coupling: [0] };
-    for (const [theta, omega] of [[0.4, 0.2], [-1.1, 0.5], [2.0, -0.3]]) {
+    for (const [theta, omega] of [
+      [0.4, 0.2],
+      [-1.1, 0.5],
+      [2.0, -0.3]
+    ]) {
       const out = new Float64Array(2);
       rhsPendulumNetwork(Float64Array.of(theta!, omega!), params, out);
       expect(out[0]).toBeCloseTo(omega!, 12);

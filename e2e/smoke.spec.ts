@@ -8,13 +8,19 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
 
   // The modern Lab drives the simulation (no legacy runtime).
   await page.waitForFunction(() => Boolean((window as unknown as { __modernLab?: unknown }).__modernLab));
-  const before = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
+  const before = await page.evaluate(
+    () => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time
+  );
   await page.waitForFunction(
-    (start) => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time > start,
+    (start) =>
+      (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time >
+      start,
     before,
     { timeout: 5000 }
   );
-  const after = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
+  const after = await page.evaluate(
+    () => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time
+  );
   expect(after).toBeGreaterThan(before);
 
   // Pause / resume via the control.
@@ -26,12 +32,18 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
 
   // Tab switching (modern shell).
   await openModernTab(page, 'validate', '#tab-validate');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation)
+  );
 
   // Validation (modern ValidationTab).
   await expect(page.locator('#runValidation')).toBeVisible();
   await page.evaluate(() => document.getElementById('runValidation')?.click());
-  await page.waitForFunction(() => (document.getElementById('validateResults')?.childElementCount ?? 0) >= 5, undefined, { timeout: 15000 });
+  await page.waitForFunction(
+    () => (document.getElementById('validateResults')?.childElementCount ?? 0) >= 5,
+    undefined,
+    { timeout: 15000 }
+  );
 
   // The modern runtime surface is installed.
   const runtime = await page.evaluate(() => {
@@ -45,7 +57,8 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
   await page.waitForFunction(() => Boolean((window as unknown as { PendulumLabIndex?: unknown }).PendulumLabIndex));
   const downloadPromise = page.waitForEvent('download');
   await page.evaluate(() => {
-    const r = (window as unknown as { PendulumLabIndex: { commands: { run(id: string): Promise<void> } } }).PendulumLabIndex;
+    const r = (window as unknown as { PendulumLabIndex: { commands: { run(id: string): Promise<void> } } })
+      .PendulumLabIndex;
     return r.commands.run('index.exportSubmissionManifest');
   });
   expect((await downloadPromise).suggestedFilename()).toContain('pendulum');

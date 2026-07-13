@@ -43,16 +43,24 @@ export function installPendulumRuntime(): ServiceContainer<PendulumServiceMap> {
 
   // Deprecated compatibility readers for old scripts/tests. They resolve
   // lazily through `legacyCompat` so direct global access stays centralized.
-  container.register('legacyApp', () => {
-    const app = legacyApp();
-    if (!app) throw new Error('PendulumRuntime: legacy App is not available (file:// or pre-boot)');
-    return app;
-  }, { singleton: false });
-  container.register('legacyPhysics', () => {
-    const physics = legacyPhysics();
-    if (!physics) throw new Error('PendulumRuntime: legacy Physics is not available');
-    return physics;
-  }, { singleton: false });
+  container.register(
+    'legacyApp',
+    () => {
+      const app = legacyApp();
+      if (!app) throw new Error('PendulumRuntime: legacy App is not available (file:// or pre-boot)');
+      return app;
+    },
+    { singleton: false }
+  );
+  container.register(
+    'legacyPhysics',
+    () => {
+      const physics = legacyPhysics();
+      if (!physics) throw new Error('PendulumRuntime: legacy Physics is not available');
+      return physics;
+    },
+    { singleton: false }
+  );
 
   const surface = Object.freeze({
     version: APP_VERSION,

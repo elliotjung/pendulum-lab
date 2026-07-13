@@ -75,7 +75,14 @@ export function readLabConfig(): LabConfig {
   };
   const initialState =
     system === 'triple'
-      ? [dom.num('th1', 2), dom.num('th2', 2.5), dom.num('th3', 1), dom.num('iw1', 0), dom.num('iw2', 0), dom.num('iw3', 0)]
+      ? [
+          dom.num('th1', 2),
+          dom.num('th2', 2.5),
+          dom.num('th3', 1),
+          dom.num('iw1', 0),
+          dom.num('iw2', 0),
+          dom.num('iw3', 0)
+        ]
       : [dom.num('th1', 2), dom.num('th2', 2.5), dom.num('iw1', 0), dom.num('iw2', 0)];
   return {
     system,
@@ -102,7 +109,9 @@ export class LabControls {
       actions.trimEnsembleToQuality();
     });
 
-    dom.all('[data-preset]').forEach((btn) => btn.addEventListener('click', () => setTimeout(() => actions.reset(), 0)));
+    dom
+      .all('[data-preset]')
+      .forEach((btn) => btn.addEventListener('click', () => setTimeout(() => actions.reset(), 0)));
     dom.el('resetBtn')?.addEventListener('click', () => actions.reset());
     dom.el('clearTrailBtn')?.addEventListener('click', () => actions.clearTrail());
     dom.el('clearPoincBtn')?.addEventListener('click', () => actions.clearPoincare());
@@ -116,8 +125,14 @@ export class LabControls {
 
   private wireAudio(actions: LabControlBindings): void {
     actions.setAudioVolume(dom.num('audioVol', 0.08));
-    dom.takeOver('audioOn')?.addEventListener('change', (e) => actions.setAudioEnabled((e.target as HTMLInputElement).checked));
-    dom.takeOver('audioVol')?.addEventListener('input', (e) => actions.setAudioVolume(Number.parseFloat((e.target as HTMLInputElement).value)));
+    dom
+      .takeOver('audioOn')
+      ?.addEventListener('change', (e) => actions.setAudioEnabled((e.target as HTMLInputElement).checked));
+    dom
+      .takeOver('audioVol')
+      ?.addEventListener('input', (e) =>
+        actions.setAudioVolume(Number.parseFloat((e.target as HTMLInputElement).value))
+      );
   }
 
   private wireExport(actions: LabControlBindings): void {

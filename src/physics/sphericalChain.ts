@@ -93,17 +93,23 @@ export function sphericalChainLength(params: SphericalChainParams): number {
 
 export function validateSphericalChainParams(params: SphericalChainParams): void {
   if (params.masses.length !== params.lengths.length) {
-    throw new Error(`SphericalChainParams: masses (${params.masses.length}) and lengths (${params.lengths.length}) must have the same length`);
+    throw new Error(
+      `SphericalChainParams: masses (${params.masses.length}) and lengths (${params.lengths.length}) must have the same length`
+    );
   }
   if (params.masses.length === 0) throw new Error('SphericalChainParams: at least one link is required');
   for (let i = 0; i < params.masses.length; i += 1) {
     const mass = params.masses[i] ?? NaN;
     const length = params.lengths[i] ?? NaN;
-    if (!Number.isFinite(mass) || mass <= 0) throw new Error(`SphericalChainParams: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(length) || length <= 0) throw new Error(`SphericalChainParams: length[${i}] must be positive and finite`);
+    if (!Number.isFinite(mass) || mass <= 0)
+      throw new Error(`SphericalChainParams: mass[${i}] must be positive and finite`);
+    if (!Number.isFinite(length) || length <= 0)
+      throw new Error(`SphericalChainParams: length[${i}] must be positive and finite`);
   }
-  if (!Number.isFinite(params.g) || params.g <= 0) throw new Error('SphericalChainParams: g must be positive and finite');
-  if (!Number.isFinite(params.damping) || params.damping < 0) throw new Error('SphericalChainParams: damping must be non-negative and finite');
+  if (!Number.isFinite(params.g) || params.g <= 0)
+    throw new Error('SphericalChainParams: g must be positive and finite');
+  if (!Number.isFinite(params.damping) || params.damping < 0)
+    throw new Error('SphericalChainParams: damping must be non-negative and finite');
 }
 
 export function createSphericalChainWorkspace(n: number): SphericalChainWorkspace {
@@ -184,11 +190,12 @@ export function rhsSphericalChain(
   state: ArrayLike<number>,
   params: SphericalChainParams,
   out: Float64Array,
-  workspace = createSphericalChainWorkspace(sphericalChainLength(params))
+  workspace: SphericalChainWorkspace = createSphericalChainWorkspace(sphericalChainLength(params))
 ): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
-  if (workspace.n !== n || workspace.dof !== dof) throw new Error(`rhsSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  if (workspace.n !== n || workspace.dof !== dof)
+    throw new Error(`rhsSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
   const { suffix: s, matrix, force, frames } = workspace;
   fillSuffixMass(params.masses, n, s);
   matrix.fill(0);
@@ -219,7 +226,10 @@ export function rhsSphericalChain(
           matrix[r * dof + (2 * k + beta)] =
             sjk * lj * lk * (rx * frames[colOff]! + ry * frames[colOff + 1]! + rz * frames[colOff + 2]!);
         }
-        coriolis += sjk * lj * (rx * frames[kBase + FRAME_V]! + ry * frames[kBase + FRAME_V + 1]! + rz * frames[kBase + FRAME_V + 2]!);
+        coriolis +=
+          sjk *
+          lj *
+          (rx * frames[kBase + FRAME_V]! + ry * frames[kBase + FRAME_V + 1]! + rz * frames[kBase + FRAME_V + 2]!);
       }
       // Gravity acts only on the θ coordinate of each link.
       const gravity = alpha === 0 ? -params.g * lj * frames[jBase + FRAME_SIN]! * (s[j] ?? 0) : 0;
@@ -248,7 +258,11 @@ export function rhsSphericalChain(
  * Jacobian columns (a for θ, b for φ). Exposed for validation: away from the
  * pole chart-regularisation M must be symmetric positive definite.
  */
-export function sphericalChainMassMatrix(state: ArrayLike<number>, params: SphericalChainParams, out = new Float64Array((2 * sphericalChainLength(params)) ** 2)): Float64Array {
+export function sphericalChainMassMatrix(
+  state: ArrayLike<number>,
+  params: SphericalChainParams,
+  out: Float64Array = new Float64Array((2 * sphericalChainLength(params)) ** 2)
+): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
   const s = new Float64Array(n);
@@ -265,7 +279,12 @@ export function sphericalChainMassMatrix(state: ArrayLike<number>, params: Spher
         for (let beta = 0; beta < 2; beta += 1) {
           const colOff = FRAME_STRIDE * k + FRAME_A + 3 * beta;
           out[(2 * j + alpha) * dof + (2 * k + beta)] =
-            sjk * lj * lk * (frames[rowOff]! * frames[colOff]! + frames[rowOff + 1]! * frames[colOff + 1]! + frames[rowOff + 2]! * frames[colOff + 2]!);
+            sjk *
+            lj *
+            lk *
+            (frames[rowOff]! * frames[colOff]! +
+              frames[rowOff + 1]! * frames[colOff + 1]! +
+              frames[rowOff + 2]! * frames[colOff + 2]!);
         }
       }
     }
@@ -273,7 +292,10 @@ export function sphericalChainMassMatrix(state: ArrayLike<number>, params: Spher
   return out;
 }
 
-export function sphericalChainMassMatrixDiagnostics(state: ArrayLike<number>, params: SphericalChainParams): LinearSolveResult {
+export function sphericalChainMassMatrixDiagnostics(
+  state: ArrayLike<number>,
+  params: SphericalChainParams
+): LinearSolveResult {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
   const matrix = sphericalChainMassMatrix(state, params);
@@ -283,7 +305,10 @@ export function sphericalChainMassMatrixDiagnostics(state: ArrayLike<number>, pa
 }
 
 /** Cartesian bob positions (y up, pivot at the origin). */
-export function sphericalChainPositions(state: ArrayLike<number>, params: SphericalChainParams): Array<{ x: number; y: number; z: number }> {
+export function sphericalChainPositions(
+  state: ArrayLike<number>,
+  params: SphericalChainParams
+): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
   const positions: Array<{ x: number; y: number; z: number }> = [];
   let x = 0;
@@ -306,7 +331,10 @@ export function sphericalChainPositions(state: ArrayLike<number>, params: Spheri
  * Cartesian bob velocities, ṙ_i = Σ_{k≤i} l_k (θ̇_k a_k + φ̇_k sinθ_k e_φk).
  * Uses the un-clamped sinθ (the clamp only protects the mass-matrix solve).
  */
-export function sphericalChainVelocities(state: ArrayLike<number>, params: SphericalChainParams): Array<{ x: number; y: number; z: number }> {
+export function sphericalChainVelocities(
+  state: ArrayLike<number>,
+  params: SphericalChainParams
+): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
   const velocities: Array<{ x: number; y: number; z: number }> = [];
   let vx = 0;
@@ -421,7 +449,11 @@ export class SphericalChain {
   private readonly dt: number;
   private readonly tolerance: number;
 
-  constructor(readonly params: SphericalChainParams, initial: ArrayLike<number>, options: number | SphericalChainOptions = 0.001) {
+  constructor(
+    readonly params: SphericalChainParams,
+    initial: ArrayLike<number>,
+    options: number | SphericalChainOptions = 0.001
+  ) {
     const dof = 4 * sphericalChainLength(params);
     this.state = Float64Array.from({ length: dof }, (_, i) => Number(initial[i] ?? 0));
     const parsed = typeof options === 'number' ? { dt: options } : options;
@@ -455,7 +487,13 @@ export class SphericalChain {
 
   private rk4(h: number): void {
     const dof = this.state.length;
-    const [k1, k2, k3, k4, tmp] = this.scratch as [Float64Array, Float64Array, Float64Array, Float64Array, Float64Array];
+    const [k1, k2, k3, k4, tmp] = this.scratch as [
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array
+    ];
     rhsSphericalChain(this.state, this.params, k1, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + (h / 2) * (k1[i] ?? 0);
     rhsSphericalChain(tmp, this.params, k2, this.rhsWorkspace);
@@ -464,7 +502,8 @@ export class SphericalChain {
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + h * (k3[i] ?? 0);
     rhsSphericalChain(tmp, this.params, k4, this.rhsWorkspace);
     for (let i = 0; i < dof; i += 1) {
-      this.state[i] = (this.state[i] ?? 0) + (h / 6) * ((k1[i] ?? 0) + 2 * (k2[i] ?? 0) + 2 * (k3[i] ?? 0) + (k4[i] ?? 0));
+      this.state[i] =
+        (this.state[i] ?? 0) + (h / 6) * ((k1[i] ?? 0) + 2 * (k2[i] ?? 0) + 2 * (k3[i] ?? 0) + (k4[i] ?? 0));
     }
   }
 
@@ -491,9 +530,10 @@ export class SphericalChain {
       massMatrixScale: conditioning.matrixScale,
       method: this.method,
       dt: this.dt,
-      caveat: this.params.damping > 0
-        ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
-        : 'Conservative run: E and Lz drift measure integrator error. Chart regularised near the poles (|sinθ| < 1e-6).'
+      caveat:
+        this.params.damping > 0
+          ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
+          : 'Conservative run: E and Lz drift measure integrator error. Chart regularised near the poles (|sinθ| < 1e-6).'
     };
     if (conditioning.relativeResidual !== undefined) diagnostics.relativeResidual = conditioning.relativeResidual;
     return diagnostics;

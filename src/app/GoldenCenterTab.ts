@@ -55,9 +55,13 @@ export class GoldenCenterTab extends TabController {
   protected bind(): void {
     this.ensureUi();
     this.populatePresetList();
-    this.dom.onClick('goldenRun', () => {
-      void this.runExclusive(() => this.run(), 'goldenStatus');
-    }, { takeOver: true });
+    this.dom.onClick(
+      'goldenRun',
+      () => {
+        void this.runExclusive(() => this.run(), 'goldenStatus');
+      },
+      { takeOver: true }
+    );
     this.dom.onClick('goldenExport', () => this.exportLatest(), { takeOver: true });
     this.dom.onClick('goldenSelectAll', () => this.setAll(true), { takeOver: true });
     this.dom.onClick('goldenSelectCore', () => this.setCore(), { takeOver: true });
@@ -81,7 +85,10 @@ export class GoldenCenterTab extends TabController {
     tab.setAttribute('aria-selected', 'false');
     tab.setAttribute('aria-label', 'Golden Center');
     tab.title = 'Golden Center';
-    tab.append(el('span', { className: 'tab-icon', text: 'Gd' }), el('span', { className: 'tab-label', text: 'Golden' }));
+    tab.append(
+      el('span', { className: 'tab-icon', text: 'Gd' }),
+      el('span', { className: 'tab-label', text: 'Golden' })
+    );
     const validate = rail.querySelector('.tab[data-tab="validate"]');
     validate?.after(tab);
     if (!validate) rail.append(tab);
@@ -90,26 +97,55 @@ export class GoldenCenterTab extends TabController {
   private ensurePanel(): void {
     if (document.getElementById('tab-golden')) return;
     const tableBody = el('tbody', { id: 'goldenResultsBody' });
-    const table = el('table', { className: 'matrix-table golden-table' },
-      el('thead', {}, el('tr', {},
-        cell('Preset', 'th'),
-        cell('Method', 'th'),
-        cell('Pass', 'th'),
-        cell('Drift', 'th'),
-        cell('Runtime', 'th'),
-        cell('Regression', 'th'),
-        cell('Score', 'th'),
-        cell('Threshold', 'th')
-      )),
+    const table = el(
+      'table',
+      { className: 'matrix-table golden-table' },
+      el(
+        'thead',
+        {},
+        el(
+          'tr',
+          {},
+          cell('Preset', 'th'),
+          cell('Method', 'th'),
+          cell('Pass', 'th'),
+          cell('Drift', 'th'),
+          cell('Runtime', 'th'),
+          cell('Regression', 'th'),
+          cell('Score', 'th'),
+          cell('Threshold', 'th')
+        )
+      ),
       tableBody
     );
-    const panel = el('div', { id: 'tab-golden', className: 'tabpanel golden-center-tab', role: 'tabpanel' },
-      el('div', { className: 'layout' },
-        el('div', { className: 'left-col' },
-          el('section', { className: 'matrix-shell' },
-            el('div', { className: 'matrix-topline' },
-              el('div', {}, el('h2', { text: 'Golden Center' }), el('div', { id: 'goldenSummary', className: 'matrix-sub', text: 'Integrator pass/fail, drift threshold, runtime threshold, and regression signature comparison.' })),
-              el('div', { className: 'matrix-state-grid' },
+    const panel = el(
+      'div',
+      { id: 'tab-golden', className: 'tabpanel golden-center-tab', role: 'tabpanel' },
+      el(
+        'div',
+        { className: 'layout' },
+        el(
+          'div',
+          { className: 'left-col' },
+          el(
+            'section',
+            { className: 'matrix-shell' },
+            el(
+              'div',
+              { className: 'matrix-topline' },
+              el(
+                'div',
+                {},
+                el('h2', { text: 'Golden Center' }),
+                el('div', {
+                  id: 'goldenSummary',
+                  className: 'matrix-sub',
+                  text: 'Integrator pass/fail, drift threshold, runtime threshold, and regression signature comparison.'
+                })
+              ),
+              el(
+                'div',
+                { className: 'matrix-state-grid' },
                 this.pill('Hash', 'goldenHash', '-'),
                 this.pill('Pass', 'goldenPass', '-'),
                 this.pill('Median', 'goldenMedian', '-')
@@ -119,18 +155,29 @@ export class GoldenCenterTab extends TabController {
             el('div', { className: 'matrix-table-wrap' }, table)
           )
         ),
-        el('aside', { className: 'controls matrix-controls' },
-          el('div', { className: 'ctrl-sticky' },
+        el(
+          'aside',
+          { className: 'controls matrix-controls' },
+          el(
+            'div',
+            { className: 'ctrl-sticky' },
             el('div', { className: 'ctrl-sticky-title', text: 'Golden Controls' }),
-            el('div', { className: 'btnrow' },
-              button('goldenRun', 'Run', 'primary'),
-              button('goldenExport', 'Export')
-            ),
+            el('div', { className: 'btnrow' }, button('goldenRun', 'Run', 'primary'), button('goldenExport', 'Export')),
             el('div', { id: 'goldenStatus', className: 'exp-status', text: 'ready' })
           ),
-          el('details', { className: 'acc' },
-            el('summary', {}, el('span', { className: 'acc-icon', text: 'G' }), el('span', { className: 'acc-label', text: 'Golden presets' }), el('span', { className: 'acc-arrow', text: '>' })),
-            el('div', { className: 'acc-body' },
+          el(
+            'details',
+            { className: 'acc' },
+            el(
+              'summary',
+              {},
+              el('span', { className: 'acc-icon', text: 'G' }),
+              el('span', { className: 'acc-label', text: 'Golden presets' }),
+              el('span', { className: 'acc-arrow', text: '>' })
+            ),
+            el(
+              'div',
+              { className: 'acc-body' },
               el('div', { className: 'btnrow' }, button('goldenSelectCore', 'Core'), button('goldenSelectAll', 'All')),
               el('div', { id: 'goldenPresetList', className: 'golden-preset-list' })
             )
@@ -203,7 +250,10 @@ export class GoldenCenterTab extends TabController {
     this.dom.setText('goldenHash', result.manifest.hash);
     this.dom.setText('goldenPass', `${result.summary.passed}/${result.summary.totalMethods}`);
     this.dom.setText('goldenMedian', `${fmt(result.summary.medianRuntimeMs, 1)} ms`);
-    this.dom.setText('goldenSummary', `${result.summary.passed} passed, ${result.summary.failed} failed across ${result.presets.length} preset(s).`);
+    this.dom.setText(
+      'goldenSummary',
+      `${result.summary.passed} passed, ${result.summary.failed} failed across ${result.presets.length} preset(s).`
+    );
     this.renderPresetCards(result);
     this.renderTable(result.presets.flatMap((preset) => preset.methods));
   }
@@ -214,11 +264,15 @@ export class GoldenCenterTab extends TabController {
     box.replaceChildren();
     for (const preset of result.presets) {
       const passed = preset.methods.filter((row) => row.pass).length;
-      box.append(el('div', { className: preset.pass ? 'golden-card pass' : 'golden-card fail' },
-        el('strong', { text: preset.label }),
-        el('span', { text: `${passed}/${preset.methods.length} methods` }),
-        el('em', { text: preset.pass ? 'all thresholds passed' : 'review thresholds' })
-      ));
+      box.append(
+        el(
+          'div',
+          { className: preset.pass ? 'golden-card pass' : 'golden-card fail' },
+          el('strong', { text: preset.label }),
+          el('span', { text: `${passed}/${preset.methods.length} methods` }),
+          el('em', { text: preset.pass ? 'all thresholds passed' : 'review thresholds' })
+        )
+      );
     }
   }
 
@@ -235,7 +289,9 @@ export class GoldenCenterTab extends TabController {
         cell(row.pass ? 'PASS' : 'FAIL'),
         cell(`${row.driftPass ? 'ok' : 'miss'} ${fmt(row.energyDrift, 3)}`),
         cell(`${row.runtimePass ? 'ok' : 'miss'} ${fmt(row.runtimeMs, 1)} ms`),
-        cell(`${row.regressionPass ? 'ok' : 'miss'} ${row.regressionHash} / ${row.expectedRegressionHash ?? 'untracked'}`),
+        cell(
+          `${row.regressionPass ? 'ok' : 'miss'} ${row.regressionHash} / ${row.expectedRegressionHash ?? 'untracked'}`
+        ),
         cell(fmt(row.stabilityScore, 1)),
         cell(row.threshold)
       );

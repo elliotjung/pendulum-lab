@@ -290,7 +290,8 @@ describe('Milstein scheme & multiplicative noise', () => {
     );
 
     const predictor = state[0]! + a * state[0]! * dt + b * state[0]! * dW;
-    const expected = state[0]! + 0.5 * (a * state[0]! + a * predictor) * dt + 0.5 * (b * state[0]! + b * predictor) * dW;
+    const expected =
+      state[0]! + 0.5 * (a * state[0]! + a * predictor) * dt + 0.5 * (b * state[0]! + b * predictor) * dW;
     expect(out[0]!).toBeCloseTo(expected, 14);
   });
 
@@ -324,8 +325,8 @@ describe('Milstein scheme & multiplicative noise', () => {
       out
     );
 
-    const lie0 = (sigma * state[0]!) * sigma;
-    const lie1 = (sigma * state[1]!) * sigma;
+    const lie0 = sigma * state[0]! * sigma;
+    const lie1 = sigma * state[1]! * sigma;
     expect(out[0]!).toBeCloseTo(state[0]! + sigma * state[1]! * dW + 0.5 * lie0 * (dW * dW - dt), 14);
     expect(out[1]!).toBeCloseTo(state[1]! + sigma * state[0]! * dW + 0.5 * lie1 * (dW * dW - dt), 14);
   });
@@ -410,11 +411,29 @@ describe('matrix-noise ensemble schemes (Heun / commutative Milstein wired into 
     };
     // matrixNoise requires a matrix scheme.
     expect(() =>
-      runLangevinEnsemble({ ...base, scheme: 'euler-maruyama', matrixNoise: { noiseDimension: 1, diffusion: (_s: StateVector, m: number[]) => { m[0] = 0.1; } } } as unknown as LangevinEnsembleSpec)
+      runLangevinEnsemble({
+        ...base,
+        scheme: 'euler-maruyama',
+        matrixNoise: {
+          noiseDimension: 1,
+          diffusion: (_s: StateVector, m: number[]) => {
+            m[0] = 0.1;
+          }
+        }
+      } as unknown as LangevinEnsembleSpec)
     ).toThrow(/matrixNoise requires/);
     // commutative-milstein requires the diffusion jacobian.
     expect(() =>
-      runLangevinEnsemble({ ...base, scheme: 'commutative-milstein', matrixNoise: { noiseDimension: 1, diffusion: (_s: StateVector, m: number[]) => { m[0] = 0.1; } } } as unknown as LangevinEnsembleSpec)
+      runLangevinEnsemble({
+        ...base,
+        scheme: 'commutative-milstein',
+        matrixNoise: {
+          noiseDimension: 1,
+          diffusion: (_s: StateVector, m: number[]) => {
+            m[0] = 0.1;
+          }
+        }
+      } as unknown as LangevinEnsembleSpec)
     ).toThrow(/jacobian/);
     // a matrix scheme without matrixNoise.
     expect(() =>
@@ -427,7 +446,10 @@ describe('adaptive SDE integration over a frozen Brownian grid', () => {
   it('a Brownian grid increment is additive across subintervals (consistent refinement)', () => {
     const grid = buildBrownianGrid(1, 8, 1, 7);
     // ΔW[0,256] = ΔW[0,128] + ΔW[128,256] exactly.
-    expect(grid.increment(0, grid.steps, 0)).toBeCloseTo(grid.increment(0, 128, 0) + grid.increment(128, grid.steps, 0), 12);
+    expect(grid.increment(0, grid.steps, 0)).toBeCloseTo(
+      grid.increment(0, 128, 0) + grid.increment(128, grid.steps, 0),
+      12
+    );
   });
 
   it('σ = 0 reduces to an adaptive Euler ODE that tracks the true decay while coarsening', () => {
@@ -439,7 +461,14 @@ describe('adaptive SDE integration over a frozen Brownian grid', () => {
     const drift: Derivative = (s, out) => {
       out[0] = -s[0]!;
     };
-    const adaptive = runAdaptiveLangevinPath({ drift, diffusion: [0], initialState: [1], grid, absoluteTolerance: 1e-6, relativeTolerance: 1e-6 });
+    const adaptive = runAdaptiveLangevinPath({
+      drift,
+      diffusion: [0],
+      initialState: [1],
+      grid,
+      absoluteTolerance: 1e-6,
+      relativeTolerance: 1e-6
+    });
     const xEnd = adaptive.states[adaptive.states.length - 1]![0]!;
     expect(xEnd).toBeCloseTo(Math.exp(-1), 3); // adaptive Euler tracks the true decay
     expect(adaptive.acceptedSteps).toBeLessThan(grid.steps); // coarsened well below the fine grid

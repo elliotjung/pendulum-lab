@@ -39,7 +39,7 @@ export function sphericalRhs(state: SphericalState, params: SphericalParams): Sp
   // dynamics is smooth there, only the chart is singular.
   const safeSin = Math.abs(sin) < SPHERICAL_POLE_EPS ? (sin >= 0 ? SPHERICAL_POLE_EPS : -SPHERICAL_POLE_EPS) : sin;
   const thetaAcc = sin * cos * phiDot * phiDot - (g / l) * sin - damping * thetaDot;
-  const phiAcc = (-2 * cos / safeSin) * thetaDot * phiDot - damping * phiDot;
+  const phiAcc = ((-2 * cos) / safeSin) * thetaDot * phiDot - damping * phiDot;
   return [thetaDot, phiDot, thetaAcc, phiAcc];
 }
 
@@ -104,7 +104,11 @@ export class SphericalPendulum {
   private readonly initialEnergy: number;
   private readonly initialLz: number;
 
-  constructor(readonly params: SphericalParams, initial: SphericalState, readonly dt = 0.002) {
+  constructor(
+    readonly params: SphericalParams,
+    initial: SphericalState,
+    readonly dt = 0.002
+  ) {
     this.state = [...initial] as SphericalState;
     this.initialEnergy = sphericalEnergy(this.state, params);
     this.initialLz = sphericalLz(this.state, params);
@@ -130,8 +134,12 @@ export class SphericalPendulum {
   }
 
   private rk4(h: number): void {
-    const add = (a: SphericalState, b: SphericalState, scale: number): SphericalState =>
-      [a[0] + scale * b[0], a[1] + scale * b[1], a[2] + scale * b[2], a[3] + scale * b[3]];
+    const add = (a: SphericalState, b: SphericalState, scale: number): SphericalState => [
+      a[0] + scale * b[0],
+      a[1] + scale * b[1],
+      a[2] + scale * b[2],
+      a[3] + scale * b[3]
+    ];
     const k1 = sphericalRhs(this.state, this.params);
     const k2 = sphericalRhs(add(this.state, k1, h / 2), this.params);
     const k3 = sphericalRhs(add(this.state, k2, h / 2), this.params);
@@ -159,9 +167,10 @@ export class SphericalPendulum {
       constraintEnergyError: Math.abs(radius - this.params.l),
       method: 'rk4',
       dt: this.dt,
-      caveat: this.params.damping > 0
-        ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
-        : 'Conservative run: E and Lz drift measure integrator error. Chart singular at poles (regularised).'
+      caveat:
+        this.params.damping > 0
+          ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
+          : 'Conservative run: E and Lz drift measure integrator error. Chart singular at poles (regularised).'
     };
   }
 }

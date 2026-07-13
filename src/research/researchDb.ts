@@ -22,6 +22,16 @@ export const RESEARCH_DB_STORES = [
 
 export type ResearchDbStoreName = (typeof RESEARCH_DB_STORES)[number];
 
+/** User-created, potentially large stores eligible for age-based cleanup. */
+export const RESEARCH_DB_CONTENT_STORES: readonly ResearchDbStoreName[] = [
+  'experiments',
+  'runLog',
+  'parameterStudies',
+  'studyResults',
+  'figures',
+  'bundles'
+];
+
 export interface ResearchDbRecord {
   id: string;
   updatedAt: string;
@@ -38,6 +48,12 @@ export interface ResearchDbQuota {
   usageBytes: number;
   quotaBytes: number;
   usageFraction: number;
+}
+
+export interface ResearchDbCleanupSummary {
+  cutoff: string;
+  total: number;
+  byStore: Partial<Record<ResearchDbStoreName, number>>;
 }
 
 function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
@@ -109,7 +125,10 @@ export class ResearchDb {
     });
   }
 
-  private async store(name: ResearchDbStoreName, mode: IDBTransactionMode): Promise<{ store: IDBObjectStore; done: Promise<void> }> {
+  private async store(
+    name: ResearchDbStoreName,
+    mode: IDBTransactionMode
+  ): Promise<{ store: IDBObjectStore; done: Promise<void> }> {
     await this.open();
     if (!this.db) throw new Error('IndexedDB unavailable');
     const tx = this.db.transaction(name, mode);
@@ -162,6 +181,45 @@ export class ResearchDb {
     const out = {} as Record<ResearchDbStoreName, number>;
     for (const name of RESEARCH_DB_STORES) out[name] = await this.count(name);
     return out;
+  }
+
+  /** Count records older than an ISO cutoff without mutating the archive. */
+  async countOlderThan(
+    cutoff: string,
+    stores: readonly ResearchDbStoreName[] = RESEARCH_DB_CONTENT_STORES
+  ): Promise<ResearchDbCleanupSummary> {
+    const cutoffMs = Date.parse(cutoff);
+    if (!Number.isFinite(cutoffMs)) throw new Error('invalid cleanup cutoff');
+    const byStore: Partial<Record<ResearchDbStoreName, number>> = {};
+    let total = 0;
+    for (const name of stores) {
+      const records = await this.getAll(name);
+      const count = records.filter((record) => {
+        const updated = Date.parse(record.updatedAt);
+        return Number.isFinite(updated) && updated < cutoffMs;
+      }).length;
+      byStore[name] = count;
+      total += count;
+    }
+    return { cutoff: new Date(cutoffMs).toISOString(), total, byStore };
+  }
+
+  /** Delete only records older than the cutoff; settings are excluded by default. */
+  async deleteOlderThan(
+    cutoff: string,
+    stores: readonly ResearchDbStoreName[] = RESEARCH_DB_CONTENT_STORES
+  ): Promise<ResearchDbCleanupSummary> {
+    const preview = await this.countOlderThan(cutoff, stores);
+    if (preview.total === 0) return preview;
+    for (const name of stores) {
+      const records = await this.getAll(name);
+      const cutoffMs = Date.parse(preview.cutoff);
+      for (const record of records) {
+        const updated = Date.parse(record.updatedAt);
+        if (Number.isFinite(updated) && updated < cutoffMs) await this.delete(name, record.id);
+      }
+    }
+    return preview;
   }
 
   /** Export every store as a portable JSON archive. */
@@ -239,7 +297,8 @@ export function validateResearchDbArchive(value: unknown): { ok: boolean; proble
   const problems: string[] = [];
   if (typeof value !== 'object' || value === null) return { ok: false, problems: ['archive is not an object'] };
   const archive = value as Partial<ResearchDbArchive>;
-  if (archive.schemaVersion !== RESEARCH_DB_SCHEMA_VERSION) problems.push(`unexpected schemaVersion ${String(archive.schemaVersion)}`);
+  if (archive.schemaVersion !== RESEARCH_DB_SCHEMA_VERSION)
+    problems.push(`unexpected schemaVersion ${String(archive.schemaVersion)}`);
   if (typeof archive.stores !== 'object' || archive.stores === null) {
     problems.push('missing stores');
     return { ok: false, problems };
@@ -285,24 +344,38 @@ export async function migrateFromLocalStorageV2(
     parsed = JSON.parse(rawPayload);
   } catch (error) {
     await db.put('settings', MIGRATION_FLAG_ID, { at: new Date().toISOString(), source: 'corrupted' });
-    return { migrated: false, entries: 0, reason: `corrupted localStorage payload (${error instanceof Error ? error.message : 'parse error'})` };
+    return {
+      migrated: false,
+      entries: 0,
+      reason: `corrupted localStorage payload (${error instanceof Error ? error.message : 'parse error'})`
+    };
   }
   const source = (typeof parsed === 'object' && parsed !== null ? parsed : {}) as Record<string, unknown>;
   let entries = 0;
   const experiments = Array.isArray(source.experiments) ? source.experiments : [];
   if (experiments.length > 0) {
-    await db.putMany('experiments', experiments.map((experiment, index) => ({
-      id: typeof (experiment as { id?: unknown })?.id === 'string' ? (experiment as { id: string }).id : `migrated-exp-${index}`,
-      payload: experiment
-    })));
+    await db.putMany(
+      'experiments',
+      experiments.map((experiment, index) => ({
+        id:
+          typeof (experiment as { id?: unknown })?.id === 'string'
+            ? (experiment as { id: string }).id
+            : `migrated-exp-${index}`,
+        payload: experiment
+      }))
+    );
     entries += experiments.length;
   }
   const runLog = Array.isArray(source.runLog) ? source.runLog : [];
   if (runLog.length > 0) {
-    await db.putMany('runLog', runLog.map((entry, index) => ({
-      id: typeof (entry as { id?: unknown })?.id === 'string' ? (entry as { id: string }).id : `migrated-run-${index}`,
-      payload: entry
-    })));
+    await db.putMany(
+      'runLog',
+      runLog.map((entry, index) => ({
+        id:
+          typeof (entry as { id?: unknown })?.id === 'string' ? (entry as { id: string }).id : `migrated-run-${index}`,
+        payload: entry
+      }))
+    );
     entries += runLog.length;
   }
   if (source.parameterStudy && typeof source.parameterStudy === 'object') {
@@ -319,5 +392,9 @@ export async function migrateFromLocalStorageV2(
     entries += source.comparisonRows.length;
   }
   await db.put('settings', MIGRATION_FLAG_ID, { at: new Date().toISOString(), source: 'localStorage-v2', entries });
-  return { migrated: entries > 0, entries, reason: entries > 0 ? 'migrated localStorage v2 payload' : 'empty localStorage payload' };
+  return {
+    migrated: entries > 0,
+    entries,
+    reason: entries > 0 ? 'migrated localStorage v2 payload' : 'empty localStorage payload'
+  };
 }

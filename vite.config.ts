@@ -71,10 +71,14 @@ export default defineConfig({
         manualChunks(id: string) {
           const path = id.replace(/\\/g, '/');
           if (!path.includes('/src/')) return undefined;
-          if (path.includes('/src/app/parity/') || path.endsWith('/src/app/FeatureParityLayer.ts')) return 'research-ui';
+          if (path.includes('/src/app/parity/') || path.endsWith('/src/app/FeatureParityLayer.ts'))
+            return 'research-ui';
           // One chunk per analysis tab so the lazy per-tab mount in
           // bootstrap.ts defers each tab's bytes until activation.
-          const tab = /\/src\/app\/(LyapunovTab|ValidationTab|SweepTab|CompareTab|BifurcationTab|Phase3DTab|DensityTab|ExpansionLabTab|ResearchMatrixTab|GoldenCenterTab|ZeroOneTab|ClvTab|BasinTab|RqaTab|FtleTab|ResearchPlusTab)\.ts$/.exec(path);
+          const tab =
+            /\/src\/app\/(LyapunovTab|ValidationTab|SweepTab|CompareTab|BifurcationTab|Phase3DTab|DensityTab|ExpansionLabTab|ResearchMatrixTab|GoldenCenterTab|ZeroOneTab|ClvTab|BasinTab|RqaTab|FtleTab|ResearchPlusTab)\.ts$/.exec(
+              path
+            );
           if (tab) return `tab-${tab[1]!.toLowerCase()}`;
           if (/\/src\/app\/(?:TabController|resultBadges|DomBinder)\.ts$/.test(path)) return 'app-tabs';
           if (path.includes('/src/physics/')) return 'physics';

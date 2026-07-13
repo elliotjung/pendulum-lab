@@ -28,7 +28,7 @@ function fixtureNotebook(): unknown {
   return buildNotebookV2({
     stateHash: 'fixture-hash',
     generatedAt: new Date().toISOString(),
-    methodsMarkdown: '# Methods\n\nFixture methods text. Includes a tricky literal: \'\'\' triple quote.',
+    methodsMarkdown: "# Methods\n\nFixture methods text. Includes a tricky literal: ''' triple quote.",
     paperPackJson: JSON.stringify({
       schemaVersion: 'pendulum-paper-pack/v2',
       currentSnapshot: { hash: 'fixture-hash' },
@@ -40,7 +40,9 @@ function fixtureNotebook(): unknown {
       schemaVersion: 'pendulum-paper-figures/v2',
       figureCount: 1,
       totalBytes: 1234,
-      figures: [{ file: 'figures/figure-01-main.png', width: 800, height: 500, dataHash: 'fh', caption: 'Main trajectory' }]
+      figures: [
+        { file: 'figures/figure-01-main.png', width: 800, height: 500, dataHash: 'fh', caption: 'Main trajectory' }
+      ]
     }),
     studyCsv,
     comparisonCsv,
@@ -49,8 +51,15 @@ function fixtureNotebook(): unknown {
 }
 
 function jupyterAvailable(): { command: string[]; available: boolean } {
-  for (const candidate of [['jupyter', '--version'], ['python', '-m', 'jupyter', '--version'], ['py', '-m', 'jupyter', '--version']]) {
-    const probe = spawnSync(candidate[0]!, candidate.slice(1), { encoding: 'utf8', shell: process.platform === 'win32' });
+  for (const candidate of [
+    ['jupyter', '--version'],
+    ['python', '-m', 'jupyter', '--version'],
+    ['py', '-m', 'jupyter', '--version']
+  ]) {
+    const probe = spawnSync(candidate[0]!, candidate.slice(1), {
+      encoding: 'utf8',
+      shell: process.platform === 'win32'
+    });
     if (probe.status === 0) return { command: candidate, available: true };
   }
   return { command: [], available: false };
@@ -62,7 +71,7 @@ async function main(): Promise<void> {
   const inputPath = inIndex >= 0 ? argv[inIndex + 1] : undefined;
   const forceExecute = argv.includes('--execute');
 
-  const notebook = inputPath ? JSON.parse(await readFile(inputPath, 'utf8')) as unknown : fixtureNotebook();
+  const notebook = inputPath ? (JSON.parse(await readFile(inputPath, 'utf8')) as unknown) : fixtureNotebook();
   const validation = validateNotebook(notebook);
   const report: Record<string, unknown> = {
     schemaVersion: 'pendulum-notebook-validation/v1',
@@ -88,27 +97,48 @@ async function main(): Promise<void> {
     console.log(`jupyter detected (${jupyter.command.join(' ')}); executing notebook headlessly…`);
     const exec = spawnSync(
       jupyter.command[0]!,
-      [...jupyter.command.slice(1, -1), 'nbconvert', '--to', 'notebook', '--execute', '--output', 'notebook-validation-executed.ipynb', notebookPath],
+      [
+        ...jupyter.command.slice(1, -1),
+        'nbconvert',
+        '--to',
+        'notebook',
+        '--execute',
+        '--output',
+        'notebook-validation-executed.ipynb',
+        notebookPath
+      ],
       { encoding: 'utf8', timeout: 180_000, shell: process.platform === 'win32' }
     );
     report.execution = { status: exec.status, stderr: (exec.stderr ?? '').slice(-2000) };
     if (exec.status === 0) {
       console.log('notebook EXECUTED successfully');
     } else {
-      console.error(`notebook execution failed (status ${exec.status}); structural validation still ${validation.ok ? 'passed' : 'failed'}`);
+      console.error(
+        `notebook execution failed (status ${exec.status}); structural validation still ${validation.ok ? 'passed' : 'failed'}`
+      );
       if (forceExecute) process.exitCode = 1;
     }
   } else if (!jupyter.available) {
     // Fallback: the notebook's code cells are stdlib-only (matplotlib guarded
     // by try/except), so concatenating them into a plain script and running
     // python is a faithful execution test without a Jupyter install.
-    const python = ['python', 'py'].find((candidate) => spawnSync(candidate, ['--version'], { encoding: 'utf8', shell: process.platform === 'win32' }).status === 0);
+    const python = ['python', 'py'].find(
+      (candidate) =>
+        spawnSync(candidate, ['--version'], { encoding: 'utf8', shell: process.platform === 'win32' }).status === 0
+    );
     if (python && validation.ok) {
       const cells = (notebook as { cells: { cell_type: string; source: string[] }[] }).cells;
-      const script = cells.filter((cell) => cell.cell_type === 'code').map((cell) => cell.source.join('')).join('\n\n');
+      const script = cells
+        .filter((cell) => cell.cell_type === 'code')
+        .map((cell) => cell.source.join(''))
+        .join('\n\n');
       const scriptPath = 'reports/notebook-validation-cells.py';
       await writeFile(scriptPath, script, 'utf8');
-      const exec = spawnSync(python, [scriptPath], { encoding: 'utf8', timeout: 120_000, shell: process.platform === 'win32' });
+      const exec = spawnSync(python, [scriptPath], {
+        encoding: 'utf8',
+        timeout: 120_000,
+        shell: process.platform === 'win32'
+      });
       report.execution = { runner: 'plain-python', status: exec.status, stderr: (exec.stderr ?? '').slice(-2000) };
       if (exec.status === 0) {
         console.log(`code cells EXECUTED successfully with plain ${python} (jupyter not installed)`);

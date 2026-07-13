@@ -156,7 +156,10 @@ function evaluateTerm(term: SindyTerm, state: readonly number[]): number {
  * Build the feature library Θ for a set of state samples: returns the term
  * descriptors and the N×M design matrix Θ (row per sample, column per term).
  */
-export function buildFeatureLibrary(states: readonly number[][], spec: SindyLibrarySpec): { terms: SindyTerm[]; theta: number[][] } {
+export function buildFeatureLibrary(
+  states: readonly number[][],
+  spec: SindyLibrarySpec
+): { terms: SindyTerm[]; theta: number[][] } {
   const dim = rectangular(states, 'states');
   const terms: SindyTerm[] = polynomialExponents(dim, spec.polynomialDegree).map((exponents) => ({
     name: polynomialName(exponents),
@@ -173,7 +176,12 @@ export function buildFeatureLibrary(states: readonly number[][], spec: SindyLibr
 }
 
 /** Ordinary least squares on a subset of columns via the SPD normal equations. */
-function leastSquaresActive(theta: readonly number[][], target: readonly number[], activeCols: readonly number[], ridge: number): number[] {
+function leastSquaresActive(
+  theta: readonly number[][],
+  target: readonly number[],
+  activeCols: readonly number[],
+  ridge: number
+): number[] {
   const n = theta.length;
   const k = activeCols.length;
   const gram = new Float64Array(k * k);
@@ -203,7 +211,14 @@ function leastSquaresActive(theta: readonly number[][], target: readonly number[
 }
 
 /** Sequential Thresholded Least Squares for one target column. */
-function stlsq(theta: readonly number[][], target: readonly number[], termCount: number, threshold: number, maxIterations: number, ridge: number): number[] {
+function stlsq(
+  theta: readonly number[][],
+  target: readonly number[],
+  termCount: number,
+  threshold: number,
+  maxIterations: number,
+  ridge: number
+): number[] {
   let active: number[] = Array.from({ length: termCount }, (_, i) => i);
   let xi = new Array<number>(termCount).fill(0);
   const seed = leastSquaresActive(theta, target, active, ridge);

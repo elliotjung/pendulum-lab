@@ -19,7 +19,12 @@ export interface PhasePortraitOptions {
   background?: string;
 }
 
-export function renderPhasePortrait(ctx: Ctx2D, rect: Rect, samples: readonly PhaseSample[], options: PhasePortraitOptions = {}): void {
+export function renderPhasePortrait(
+  ctx: Ctx2D,
+  rect: Rect,
+  samples: readonly PhaseSample[],
+  options: PhasePortraitOptions = {}
+): void {
   const [xmin, xmax] = options.thetaRange ?? [-Math.PI, Math.PI];
   const [ymin, ymax] = options.omegaRange ?? [-25, 25];
   const mapX = (t: number) => rect.x + ((t - xmin) / (xmax - xmin)) * rect.width;
@@ -68,7 +73,12 @@ export interface SpectrumPlotOptions {
   nyquist?: number;
 }
 
-export function renderSpectrum(ctx: Ctx2D, rect: Rect, mags: readonly number[], options: SpectrumPlotOptions = {}): void {
+export function renderSpectrum(
+  ctx: Ctx2D,
+  rect: Rect,
+  mags: readonly number[],
+  options: SpectrumPlotOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -136,7 +146,12 @@ export interface MultiLineOptions {
  * optional log10 y transform. Used by the integrator-comparison panels
  * (energy drift, divergence). Pure / Ctx2D-testable.
  */
-export function renderMultiLine(ctx: Ctx2D, rect: Rect, series: readonly LineSeries[], options: MultiLineOptions = {}): void {
+export function renderMultiLine(
+  ctx: Ctx2D,
+  rect: Rect,
+  series: readonly LineSeries[],
+  options: MultiLineOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -198,7 +213,13 @@ export interface ScatterPathOptions {
  * line. Used for the 0–1 test translation trajectory (p_c, q_c): a bounded blob
  * means regular dynamics, a Brownian-like wandering means chaos. Pure / Ctx2D.
  */
-export function renderScatterPath(ctx: Ctx2D, rect: Rect, xs: readonly number[], ys: readonly number[], options: ScatterPathOptions = {}): void {
+export function renderScatterPath(
+  ctx: Ctx2D,
+  rect: Rect,
+  xs: readonly number[],
+  ys: readonly number[],
+  options: ScatterPathOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -265,7 +286,12 @@ export interface HistogramOptions {
  * Histogram of a scalar sample set (equal-width bins). Used for the distribution
  * of CLV hyperbolicity angles. Pure / Ctx2D-testable.
  */
-export function renderHistogram(ctx: Ctx2D, rect: Rect, values: readonly number[], options: HistogramOptions = {}): void {
+export function renderHistogram(
+  ctx: Ctx2D,
+  rect: Rect,
+  values: readonly number[],
+  options: HistogramOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -315,7 +341,14 @@ export interface LabelGridOptions {
  * Render a row-major integer label grid (e.g. the double-pendulum flip basin) as
  * a coloured image stretched to fill `rect`. Pure / Ctx2D-testable.
  */
-export function renderLabelGrid(ctx: Ctx2D, rect: Rect, labels: ArrayLike<number>, width: number, height: number, options: LabelGridOptions = {}): void {
+export function renderLabelGrid(
+  ctx: Ctx2D,
+  rect: Rect,
+  labels: ArrayLike<number>,
+  width: number,
+  height: number,
+  options: LabelGridOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -346,7 +379,14 @@ export interface ScalarFieldOptions {
  * Render a row-major scalar field (e.g. an FTLE field) as a heatmap stretched to
  * fill `rect`, using a perceptual blue→cyan→yellow→red ramp. Pure / Ctx2D.
  */
-export function renderScalarField(ctx: Ctx2D, rect: Rect, values: ArrayLike<number>, width: number, height: number, options: ScalarFieldOptions = {}): void {
+export function renderScalarField(
+  ctx: Ctx2D,
+  rect: Rect,
+  values: ArrayLike<number>,
+  width: number,
+  height: number,
+  options: ScalarFieldOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
@@ -415,7 +455,12 @@ export interface SpectrumBarsOptions {
  * down (negative) from a zero line, with the value labeled. Positive bars (chaos)
  * are warm; non-positive bars are cool.
  */
-export function renderSpectrumBars(ctx: Ctx2D, rect: Rect, values: readonly number[], options: SpectrumBarsOptions = {}): void {
+export function renderSpectrumBars(
+  ctx: Ctx2D,
+  rect: Rect,
+  values: readonly number[],
+  options: SpectrumBarsOptions = {}
+): void {
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);

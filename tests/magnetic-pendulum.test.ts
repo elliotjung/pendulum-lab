@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   rhsMagneticPendulum,
   magneticPendulumEnergy,
+  magneticPendulumBasinGrid,
   nearestMagnetIndex,
   magneticPendulumSettle,
   THREE_MAGNET_PRESET,
@@ -84,5 +85,20 @@ describe('magnetic pendulum — energy and settling', () => {
       expect(result.converged).toBe(true);
       expect(result.magnet).toBe(target);
     }
+  });
+});
+
+describe('magnetic pendulum basin-grid adapter', () => {
+  test('returns deterministic labels plus an explicit convergence mask', () => {
+    const options = { n: 4, xRange: [-1, 1] as const, yRange: [-1, 1] as const, dt: 0.006, maxSteps: 4000 };
+    const a = magneticPendulumBasinGrid(THREE_MAGNET_PRESET, options);
+    const b = magneticPendulumBasinGrid(THREE_MAGNET_PRESET, options);
+    expect(a).toMatchObject({ width: 4, height: 4 });
+    expect(Array.from(a.labels)).toEqual(Array.from(b.labels));
+    expect(Array.from(a.converged)).toEqual(Array.from(b.converged));
+    expect(Array.from(a.labels).every((label) => label >= 0 && label < 3)).toBe(true);
+    expect(a.convergedFraction).toBeGreaterThanOrEqual(0);
+    expect(a.convergedFraction).toBeLessThanOrEqual(1);
+    expect(a.meanSteps).toBeGreaterThan(0);
   });
 });

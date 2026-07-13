@@ -31,7 +31,9 @@ test('mobile: Check > Research+ is reachable and fits the viewport', async ({ pa
   expect(cardBox!.width).toBeLessThanOrEqual(390);
 
   // No horizontal page overflow (the classic mobile regression).
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
   expect(overflow).toBeLessThanOrEqual(2);
 
   // The workbench is functional, not just visible: generate a study.

@@ -466,9 +466,15 @@ function finiteNumbers(values: readonly number[]): boolean {
   return values.every((value) => Number.isFinite(value));
 }
 
-function cpuClv(params: PendulumParameters, state0: ArrayLike<number>, settings: ClvSettings & { count: number }, damping: number): ClvResult {
+function cpuClv(
+  params: PendulumParameters,
+  state0: ArrayLike<number>,
+  settings: ClvSettings & { count: number },
+  damping: number
+): ClvResult {
   const rhs = (state: Float64Array, out: Float64Array): Float64Array => rhsDouble(state, params, damping, out);
-  const jacobian = (state: Float64Array, jac: Float64Array): Float64Array => jacobianDouble(state, params, damping, jac);
+  const jacobian = (state: Float64Array, jac: Float64Array): Float64Array =>
+    jacobianDouble(state, params, damping, jac);
   return covariantLyapunovVectors(state0, rhs, settings.count, settings, jacobian);
 }
 
@@ -480,15 +486,33 @@ export async function webgpuDoublePendulumClvCandidate(
 ): Promise<WebgpuClvCandidate | null> {
   const settings = resolveClvSettings(options);
   if (options.forceCpu || settings.count !== DIM) return null;
-  if (settings.dt <= 0 || settings.renormEvery <= 0 || settings.forwardTransient < 0 || settings.window <= 0) return null;
-  if (settings.window > MAX_CLV_WINDOW || settings.backwardTransient < 0 || settings.backwardTransient >= settings.window) return null;
+  if (settings.dt <= 0 || settings.renormEvery <= 0 || settings.forwardTransient < 0 || settings.window <= 0)
+    return null;
+  if (
+    settings.window > MAX_CLV_WINDOW ||
+    settings.backwardTransient < 0 ||
+    settings.backwardTransient >= settings.window
+  )
+    return null;
   const io = new Float32Array(32);
   for (let i = 0; i < DIM; i += 1) io[i] = Number(state0[i] ?? 0);
   const uniform = new Float32Array([
-    params.m1, params.m2, params.l1, params.l2,
-    params.g, damping, settings.dt, settings.renormEvery,
-    settings.forwardTransient, settings.window, settings.backwardTransient, settings.seed,
-    0, 0, 0, 0
+    params.m1,
+    params.m2,
+    params.l1,
+    params.l2,
+    params.g,
+    damping,
+    settings.dt,
+    settings.renormEvery,
+    settings.forwardTransient,
+    settings.window,
+    settings.backwardTransient,
+    settings.seed,
+    0,
+    0,
+    0,
+    0
   ]);
   const started = typeof performance === 'undefined' ? Date.now() : performance.now();
   const reduced = await runComputeKernel(WGSL_CLV_KERNEL, uniform, io, 64);
@@ -500,7 +524,8 @@ export async function webgpuDoublePendulumClvCandidate(
   const angleCount = Math.max(0, Math.round(Number(reduced[6] ?? 0)));
   const vectors = new Float64Array(DIM * DIM);
   for (let i = 0; i < DIM * DIM; i += 1) vectors[i] = Number(reduced[8 + i] ?? 0);
-  if (!finiteNumbers(exponents) || !Number.isFinite(meanAngle) || !Number.isFinite(minAngle) || angleCount <= 0) return null;
+  if (!finiteNumbers(exponents) || !Number.isFinite(meanAngle) || !Number.isFinite(minAngle) || angleCount <= 0)
+    return null;
   return {
     backend: 'webgpu',
     elapsedMs,
@@ -513,7 +538,8 @@ export async function webgpuDoublePendulumClvCandidate(
       minHyperbolicityAngle: minAngle,
       settings: { ...settings, count: DIM }
     },
-    caveat: 'WebGPU f32 CLV candidate for the 4D double pendulum using forward QR tape and backward triangular solves. It is promotable only after CPU f64 Ginelli-oracle comparison.'
+    caveat:
+      'WebGPU f32 CLV candidate for the 4D double pendulum using forward QR tape and backward triangular solves. It is promotable only after CPU f64 Ginelli-oracle comparison.'
   };
 }
 
@@ -533,10 +559,14 @@ export async function promotedDoublePendulumClv(
       cpuOracle,
       gpuCandidate: null,
       comparison: null,
-      caveat: 'CPU f64 CLV result returned because WebGPU was unavailable, disabled, or outside the validated 4D CLV scope.'
+      caveat:
+        'CPU f64 CLV result returned because WebGPU was unavailable, disabled, or outside the validated 4D CLV scope.'
     };
   }
-  const comparison = compareClvAcceleration(gpuCandidate.result, cpuOracle, { ...DEFAULT_CLV_TOLERANCES, ...options.tolerances });
+  const comparison = compareClvAcceleration(gpuCandidate.result, cpuOracle, {
+    ...DEFAULT_CLV_TOLERANCES,
+    ...options.tolerances
+  });
   if (!comparison.passed) {
     return {
       backend: 'cpu',
@@ -558,7 +588,8 @@ export async function promotedDoublePendulumClv(
     cpuOracle,
     gpuCandidate,
     comparison,
-    caveat: 'WebGPU f32 CLV summary promoted after same-run CPU f64 Ginelli-oracle comparison; CPU vectors/times are retained for full-resolution inspection.'
+    caveat:
+      'WebGPU f32 CLV summary promoted after same-run CPU f64 Ginelli-oracle comparison; CPU vectors/times are retained for full-resolution inspection.'
   };
 }
 
@@ -576,15 +607,28 @@ export async function webgpuDoublePendulumVariationalFtleFieldCandidate(
   options: WebgpuFtleFieldOptions = {}
 ): Promise<WebgpuFtleFieldCandidate | null> {
   const resolved = resolveFtleOptions(options);
-  if (options.forceCpu || resolved.n <= 1 || resolved.n > 64 || resolved.dt <= 0 || resolved.totalTime <= 0) return null;
+  if (options.forceCpu || resolved.n <= 1 || resolved.n > 64 || resolved.dt <= 0 || resolved.totalTime <= 0)
+    return null;
   const steps = Math.max(1, Math.round(resolved.totalTime / resolved.dt));
   const n = resolved.n;
   const values = new Float32Array(n * n);
   const uniform = new Float32Array([
-    params.m1, params.m2, params.l1, params.l2,
-    params.g, 0, resolved.dt, steps,
-    n, resolved.range[0], resolved.range[1], steps * resolved.dt,
-    0, 0, 0, 0
+    params.m1,
+    params.m2,
+    params.l1,
+    params.l2,
+    params.g,
+    0,
+    resolved.dt,
+    steps,
+    n,
+    resolved.range[0],
+    resolved.range[1],
+    steps * resolved.dt,
+    0,
+    0,
+    0,
+    0
   ]);
   const started = typeof performance === 'undefined' ? Date.now() : performance.now();
   const reduced = await runComputeKernel(WGSL_VARIATIONAL_FTLE_FIELD_KERNEL, uniform, values, n * n);
@@ -604,7 +648,8 @@ export async function webgpuDoublePendulumVariationalFtleFieldCandidate(
     backend: 'webgpu',
     elapsedMs,
     field: { values: out, width: n, height: n, min, max },
-    caveat: 'WebGPU f32 variational-STM FTLE field for the 4D double pendulum. It is promotable only after cellwise CPU f64 variational-STM oracle comparison.'
+    caveat:
+      'WebGPU f32 variational-STM FTLE field for the 4D double pendulum. It is promotable only after cellwise CPU f64 variational-STM oracle comparison.'
   };
 }
 
@@ -622,10 +667,14 @@ export async function promotedDoublePendulumVariationalFtleField(
       cpuOracle,
       gpuCandidate: null,
       comparison: null,
-      caveat: 'CPU f64 variational-STM FTLE field returned because WebGPU was unavailable, disabled, or outside the validated field scope.'
+      caveat:
+        'CPU f64 variational-STM FTLE field returned because WebGPU was unavailable, disabled, or outside the validated field scope.'
     };
   }
-  const comparison = compareFtleFieldAcceleration(gpuCandidate.field, cpuOracle, { ...DEFAULT_FTLE_TOLERANCES, ...options.tolerances });
+  const comparison = compareFtleFieldAcceleration(gpuCandidate.field, cpuOracle, {
+    ...DEFAULT_FTLE_TOLERANCES,
+    ...options.tolerances
+  });
   if (!comparison.passed) {
     return {
       backend: 'cpu',
@@ -633,7 +682,8 @@ export async function promotedDoublePendulumVariationalFtleField(
       cpuOracle,
       gpuCandidate,
       comparison,
-      caveat: 'CPU f64 variational-STM FTLE field returned because the WebGPU f32 candidate failed the CPU oracle promotion gate.'
+      caveat:
+        'CPU f64 variational-STM FTLE field returned because the WebGPU f32 candidate failed the CPU oracle promotion gate.'
     };
   }
   return {

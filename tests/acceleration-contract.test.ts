@@ -17,16 +17,20 @@ describe('chaos GPU acceleration promotion contracts', () => {
 
   it('accepts near-identical Lyapunov spectra and rejects drift', () => {
     const reference = { spectrum: [0.2, 0.01, -0.01, -0.2], sum: 0, kaplanYorkeDimension: 4 };
-    expect(compareLyapunovSpectrumAcceleration(
-      { spectrum: [0.201, 0.009, -0.011, -0.199], sum: 0, kaplanYorkeDimension: 3.999 },
-      reference,
-      { spectrum: 0.005, aggregate: 0.01 }
-    ).passed).toBe(true);
-    expect(compareLyapunovSpectrumAcceleration(
-      { spectrum: [0.24, 0.01, -0.01, -0.2], sum: 0.04, kaplanYorkeDimension: 3.8 },
-      reference,
-      { spectrum: 0.005, aggregate: 0.01 }
-    ).passed).toBe(false);
+    expect(
+      compareLyapunovSpectrumAcceleration(
+        { spectrum: [0.201, 0.009, -0.011, -0.199], sum: 0, kaplanYorkeDimension: 3.999 },
+        reference,
+        { spectrum: 0.005, aggregate: 0.01 }
+      ).passed
+    ).toBe(true);
+    expect(
+      compareLyapunovSpectrumAcceleration(
+        { spectrum: [0.24, 0.01, -0.01, -0.2], sum: 0.04, kaplanYorkeDimension: 3.8 },
+        reference,
+        { spectrum: 0.005, aggregate: 0.01 }
+      ).passed
+    ).toBe(false);
   });
 
   it('compares CLV summaries with sign-invariant angle gates', () => {
@@ -41,15 +45,19 @@ describe('chaos GPU acceleration promotion contracts', () => {
 
   it('requires FTLE field shape and value agreement', () => {
     const reference = { values: Float64Array.of(0.1, 0.2, 0.3, 0.4), width: 2, height: 2, min: 0.1, max: 0.4 };
-    expect(compareFtleFieldAcceleration(
-      { values: Float64Array.of(0.101, 0.199, 0.301, 0.399), width: 2, height: 2, min: 0.101, max: 0.399 },
-      reference,
-      { field: 0.01, aggregate: 0.01 }
-    ).passed).toBe(true);
-    expect(compareFtleFieldAcceleration(
-      { values: Float64Array.of(0.1, 0.2), width: 1, height: 2, min: 0.1, max: 0.2 },
-      reference,
-      { field: 0.01, aggregate: 0.01 }
-    ).passed).toBe(false);
+    expect(
+      compareFtleFieldAcceleration(
+        { values: Float64Array.of(0.101, 0.199, 0.301, 0.399), width: 2, height: 2, min: 0.101, max: 0.399 },
+        reference,
+        { field: 0.01, aggregate: 0.01 }
+      ).passed
+    ).toBe(true);
+    expect(
+      compareFtleFieldAcceleration(
+        { values: Float64Array.of(0.1, 0.2), width: 1, height: 2, min: 0.1, max: 0.2 },
+        reference,
+        { field: 0.01, aggregate: 0.01 }
+      ).passed
+    ).toBe(false);
   });
 });

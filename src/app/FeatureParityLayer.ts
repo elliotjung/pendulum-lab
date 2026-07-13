@@ -68,6 +68,10 @@ import {
 } from './parity/runtime-diagnostics';
 
 export { currentSnapshot } from './parity/shared';
+// Re-exported for the early Ctrl+K shim in main.ts: the shortcut must work
+// before (and regardless of) this lazy layer being mounted, and the shim
+// opens the palette directly once the chunk lands.
+export { showCommandPalette } from './parity/command-palette';
 
 let installed = false;
 
@@ -135,8 +139,5 @@ export function installFeatureParityLayer(): void {
   // Research workspace is part of the supported public API; integrity/audit
   // tooling is debug-only. Old global names stay as deprecated aliases.
   publishPublicApi({ research: researchWorkspace }, { PendulumResearchWorkspace: researchWorkspace });
-  publishDebugApi(
-    { featureIntegrity, aPlus },
-    { PendulumFeatureIntegrity: featureIntegrity, PendulumLabAPlus: aPlus }
-  );
+  publishDebugApi({ featureIntegrity, aPlus }, { PendulumFeatureIntegrity: featureIntegrity, PendulumLabAPlus: aPlus });
 }

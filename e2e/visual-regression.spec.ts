@@ -6,9 +6,13 @@
  * Generate initial golden snapshots with:
  *   npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium
  */
-import { devices, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test.use({ ...devices['Desktop Chrome'] });
+// The app now follows the OS light/dark preference. Pin the original dark
+// presentation so a runner's desktop preference cannot invalidate every
+// baseline before any component pixels are compared. Keep the project device
+// settings intact so mobile-chrome snapshots exercise the real mobile layout.
+test.use({ colorScheme: 'dark' });
 
 test('rail sidebar renders correctly', async ({ page }) => {
   await page.goto('/');
@@ -17,15 +21,29 @@ test('rail sidebar renders correctly', async ({ page }) => {
   await expect(page.locator('.rail')).toHaveScreenshot('rail-sidebar.png');
 });
 
-test('lab tab control panel renders correctly', async ({ page }) => {
+test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   const labBtn = page.locator('.rail-menu-button[data-rail-section-button="lab"]').first();
   if (await labBtn.isVisible()) await labBtn.click();
   await page.waitForTimeout(300);
   await expect(page.getByRole('region', { name: 'controls' })).toHaveScreenshot('lab-controls.png', {
-    mask: [page.locator('canvas')],
-    maxDiffPixels: 500
+    // Runtime diagnostics update every frame, and the fast rows re-create
+    // their value spans while the capture retries — masks bound to those
+    // spans silently fall off and live digits leak into the comparison
+    // (measured as an intermittent failure whose diff was only telemetry
+    // text). Mask the stable #stats container instead; the accordion frame
+    // and every label around it remain in scope.
+    mask: [page.locator('canvas'), page.locator('#stats')],
+    // The mobile panel is a ~4000-CSS-px element captured at dpr 2.75; at
+    // device scale its fractional top rounds differently run-to-run and the
+    // whole capture ghosts by one device pixel. CSS-pixel scale removes the
+    // rounding entirely (and shrinks the baseline bytes).
+    scale: 'css',
+    // The tall mobile element screenshot can differ at a subpixel scrollbar
+    // edge while Playwright scrolls it into view. Keep that tolerance below
+    // 0.25% of the captured panel and stricter on desktop.
+    maxDiffPixels: testInfo.project.name === 'mobile-chrome' ? 1_200 : 500
   });
 });
 

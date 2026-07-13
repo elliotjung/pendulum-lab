@@ -81,7 +81,14 @@ export function realEigenvector2x2(M: ArrayLike<number>, lambda: number): [numbe
 }
 
 /** n-fold strobe with an exact-period step (dt adjusted so steps·dt = T exactly). */
-function strobeN(rhs: Derivative, theta: number, omega: number, drivePeriod: number, n: number, dt: number): Array<[number, number]> {
+function strobeN(
+  rhs: Derivative,
+  theta: number,
+  omega: number,
+  drivePeriod: number,
+  n: number,
+  dt: number
+): Array<[number, number]> {
   const stepsPerPeriod = Math.max(1, Math.round(drivePeriod / dt));
   const dtEff = drivePeriod / stepsPerPeriod;
   const cur = new Float64Array([theta, omega, 0]);
@@ -203,7 +210,14 @@ export function switchPeriodDoubling(
     last = candidate;
     const separation = Math.hypot(candidate.orbit[0] - period1[0], candidate.orbit[1] - period1[1]);
     if (candidate.converged && separation > minSeparation) {
-      return { doubled: candidate, criticalMultiplier: critical, eigenvector, seedStep: step, separation, switched: true };
+      return {
+        doubled: candidate,
+        criticalMultiplier: critical,
+        eigenvector,
+        seedStep: step,
+        separation,
+        switched: true
+      };
     }
   }
   return {
@@ -321,10 +335,7 @@ export function switchSymmetryBreaking(
     for (let j = i + 1; j < found.length; j += 1) {
       const a = found[i]!;
       const b = found[j]!;
-      const midpoint: [number, number] = [
-        0.5 * (a.orbit[0] + b.orbit[0]),
-        0.5 * (a.orbit[1] + b.orbit[1])
-      ];
+      const midpoint: [number, number] = [0.5 * (a.orbit[0] + b.orbit[0]), 0.5 * (a.orbit[1] + b.orbit[1])];
       const residual = distance(midpoint, symmetricOrbit);
       if (residual < bestResidual) {
         bestResidual = residual;
@@ -428,7 +439,8 @@ function fillFiniteDifferenceJacobian(
     const h = eps * Math.max(1, Math.abs(state[col] ?? 0));
     probe[col] = (state[col] ?? 0) + h;
     system.residual(probe, parameter, residualProbe);
-    for (let row = 0; row < n; row += 1) jacobian[row * n + col] = ((residualProbe[row] ?? 0) - (residual[row] ?? 0)) / h;
+    for (let row = 0; row < n; row += 1)
+      jacobian[row * n + col] = ((residualProbe[row] ?? 0) - (residual[row] ?? 0)) / h;
     probe[col] = state[col] ?? 0;
   }
 }
@@ -449,9 +461,12 @@ export function switchTranscriticalBranch(
 ): TranscriticalSwitchResult {
   const n = system.dimension;
   if (n < 1) throw new Error('switchTranscriticalBranch: system.dimension must be positive.');
-  if (critical.state.length !== n) throw new Error('switchTranscriticalBranch: critical.state length does not match system.dimension.');
-  if (options.branchTangent.length !== n) throw new Error('switchTranscriticalBranch: branchTangent length does not match system.dimension.');
-  if (!Number.isFinite(options.parameterStep) || options.parameterStep === 0) throw new Error('switchTranscriticalBranch: parameterStep must be finite and non-zero.');
+  if (critical.state.length !== n)
+    throw new Error('switchTranscriticalBranch: critical.state length does not match system.dimension.');
+  if (options.branchTangent.length !== n)
+    throw new Error('switchTranscriticalBranch: branchTangent length does not match system.dimension.');
+  if (!Number.isFinite(options.parameterStep) || options.parameterStep === 0)
+    throw new Error('switchTranscriticalBranch: parameterStep must be finite and non-zero.');
 
   const targetParameter = critical.parameter + options.parameterStep;
   const tolerance = options.tolerance ?? 1e-10;
@@ -508,7 +523,10 @@ export function switchTranscriticalBranch(
     converged,
     switched,
     separation,
-    method: system.jacobian ? 'Newton switch with analytic state Jacobian' : 'Newton switch with finite-difference state Jacobian',
-    caveat: 'Generic transcritical switching needs the target-branch tangent from local normal-form or nullspace analysis; this routine verifies the switched residual but does not classify the crossing by itself.'
+    method: system.jacobian
+      ? 'Newton switch with analytic state Jacobian'
+      : 'Newton switch with finite-difference state Jacobian',
+    caveat:
+      'Generic transcritical switching needs the target-branch tangent from local normal-form or nullspace analysis; this routine verifies the switched residual but does not classify the crossing by itself.'
   };
 }

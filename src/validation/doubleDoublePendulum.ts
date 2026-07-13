@@ -1,7 +1,17 @@
 import type { PendulumParameters } from '../types/domain';
 import {
-  ddAdd, ddSub, ddMul, ddMulDouble, ddNeg, ddDiv, ddSinCos, ddSin, ddFromNumber, ddToNumber,
-  type DD, type DdDerivative
+  ddAdd,
+  ddSub,
+  ddMul,
+  ddMulDouble,
+  ddNeg,
+  ddDiv,
+  ddSinCos,
+  ddSin,
+  ddFromNumber,
+  ddToNumber,
+  type DD,
+  type DdDerivative
 } from './doubleDouble';
 
 /**
@@ -33,8 +43,10 @@ export function ddDoublePendulumRhs(parameters: PendulumParameters): DdDerivativ
     const w2: DD = [yHi[3] ?? 0, yLo[3] ?? 0];
 
     // θ̇₁ = ω₁, θ̇₂ = ω₂.
-    outHi[0] = yHi[2] ?? 0; outLo[0] = yLo[2] ?? 0;
-    outHi[1] = yHi[3] ?? 0; outLo[1] = yLo[3] ?? 0;
+    outHi[0] = yHi[2] ?? 0;
+    outLo[0] = yLo[2] ?? 0;
+    outHi[1] = yHi[3] ?? 0;
+    outLo[1] = yLo[3] ?? 0;
 
     const delta = ddSub(t1, t2);
     const [sinD, cosD] = ddSinCos(delta);
@@ -55,8 +67,10 @@ export function ddDoublePendulumRhs(parameters: PendulumParameters): DdDerivativ
     const n3 = ddSub(ddMulDouble(f2, m11), ddMul(m12, f1));
     const o2 = ddDiv(n2, det);
     const o3 = ddDiv(n3, det);
-    outHi[2] = o2[0]; outLo[2] = o2[1];
-    outHi[3] = o3[0]; outLo[3] = o3[1];
+    outHi[2] = o2[0];
+    outLo[2] = o2[1];
+    outHi[3] = o3[0];
+    outLo[3] = o3[1];
   };
 }
 

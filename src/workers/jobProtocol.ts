@@ -5,12 +5,7 @@ import {
   type StudyPointRequest,
   type StudyPointResponse
 } from './chaosProtocol';
-import {
-  finiteTimeLyapunov,
-  maximalLyapunov,
-  recurrenceQuantification,
-  sampleObservable
-} from '../chaos';
+import { finiteTimeLyapunov, maximalLyapunov, recurrenceQuantification, sampleObservable } from '../chaos';
 import { buildJacobian, buildRhs } from '../physics/systemSpec';
 
 /**
@@ -59,13 +54,47 @@ export type JobInboundMessage = JobSubmitMessage | JobControlMessage;
 
 export type JobEventMessage =
   | { protocol: typeof JOB_PROTOCOL_V2; type: 'accepted'; jobId: string; queuePosition: number }
-  | { protocol: typeof JOB_PROTOCOL_V2; type: 'progress'; jobId: string; phase: string; completedPhases: number; totalPhases: number; elapsedMs: number }
-  | { protocol: typeof JOB_PROTOCOL_V2; type: 'checkpoint'; jobId: string; checkpoint: JobCheckpointState; elapsedMs: number }
+  | {
+      protocol: typeof JOB_PROTOCOL_V2;
+      type: 'progress';
+      jobId: string;
+      phase: string;
+      completedPhases: number;
+      totalPhases: number;
+      elapsedMs: number;
+    }
+  | {
+      protocol: typeof JOB_PROTOCOL_V2;
+      type: 'checkpoint';
+      jobId: string;
+      checkpoint: JobCheckpointState;
+      elapsedMs: number;
+    }
   | { protocol: typeof JOB_PROTOCOL_V2; type: 'status'; jobId: string; status: JobStatus }
   | { protocol: typeof JOB_PROTOCOL_V2; type: 'result'; jobId: string; response: ChaosResponse; elapsedMs: number }
-  | { protocol: typeof JOB_PROTOCOL_V2; type: 'failed'; jobId: string; error: string; phase: string; elapsedMs: number; checkpoint: JobCheckpointState }
-  | { protocol: typeof JOB_PROTOCOL_V2; type: 'cancelled'; jobId: string; atPhase: string; checkpoint: JobCheckpointState }
-  | { protocol: typeof JOB_PROTOCOL_V2; type: 'timed-out'; jobId: string; elapsedMs: number; checkpoint: JobCheckpointState }
+  | {
+      protocol: typeof JOB_PROTOCOL_V2;
+      type: 'failed';
+      jobId: string;
+      error: string;
+      phase: string;
+      elapsedMs: number;
+      checkpoint: JobCheckpointState;
+    }
+  | {
+      protocol: typeof JOB_PROTOCOL_V2;
+      type: 'cancelled';
+      jobId: string;
+      atPhase: string;
+      checkpoint: JobCheckpointState;
+    }
+  | {
+      protocol: typeof JOB_PROTOCOL_V2;
+      type: 'timed-out';
+      jobId: string;
+      elapsedMs: number;
+      checkpoint: JobCheckpointState;
+    }
   | { protocol: typeof JOB_PROTOCOL_V2; type: 'paused'; jobId: string; atPhase: string }
   | { protocol: typeof JOB_PROTOCOL_V2; type: 'resumed'; jobId: string };
 
@@ -107,7 +136,13 @@ function runStudyPointPhase(request: StudyPointRequest, phase: string): Record<s
   }
   if (phase === 'ftle') {
     const horizon = settings.ftleHorizon ?? 5;
-    const ftle = finiteTimeLyapunov(request.state0, rhs, horizon, { dt: settings.ftleDt ?? 0.01 }, buildJacobian(request.spec));
+    const ftle = finiteTimeLyapunov(
+      request.state0,
+      rhs,
+      horizon,
+      { dt: settings.ftleDt ?? 0.01 },
+      buildJacobian(request.spec)
+    );
     return { ftle, ftleHorizon: horizon };
   }
   throw new Error(`unknown studyPoint phase: ${phase}`);
@@ -219,7 +254,12 @@ export class JobEngine {
     this.jobs.set(message.jobId, job);
     this.queue.push(job);
     this.queue.sort((a, b) => b.message.priority - a.message.priority || a.submittedAt - b.submittedAt);
-    this.emit({ protocol: JOB_PROTOCOL_V2, type: 'accepted', jobId: message.jobId, queuePosition: this.queue.indexOf(job) });
+    this.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'accepted',
+      jobId: message.jobId,
+      queuePosition: this.queue.indexOf(job)
+    });
     void this.drain();
   }
 
@@ -250,7 +290,13 @@ export class JobEngine {
     if (job.cancelRequested) {
       if (job.status !== 'cancelled') {
         job.status = 'cancelled';
-        this.emit({ protocol: JOB_PROTOCOL_V2, type: 'cancelled', jobId, atPhase: 'queued', checkpoint: this.checkpointOf(job) });
+        this.emit({
+          protocol: JOB_PROTOCOL_V2,
+          type: 'cancelled',
+          jobId,
+          atPhase: 'queued',
+          checkpoint: this.checkpointOf(job)
+        });
       }
       return;
     }
@@ -265,7 +311,13 @@ export class JobEngine {
       // Phase-boundary control point: cancellation, pause, deadline.
       if (job.cancelRequested) {
         job.status = 'cancelled';
-        this.emit({ protocol: JOB_PROTOCOL_V2, type: 'cancelled', jobId, atPhase: phase, checkpoint: this.checkpointOf(job) });
+        this.emit({
+          protocol: JOB_PROTOCOL_V2,
+          type: 'cancelled',
+          jobId,
+          atPhase: phase,
+          checkpoint: this.checkpointOf(job)
+        });
         return;
       }
       while (job.pauseRequested && !job.cancelRequested) {
@@ -277,14 +329,26 @@ export class JobEngine {
       }
       if (job.cancelRequested) {
         job.status = 'cancelled';
-        this.emit({ protocol: JOB_PROTOCOL_V2, type: 'cancelled', jobId, atPhase: phase, checkpoint: this.checkpointOf(job) });
+        this.emit({
+          protocol: JOB_PROTOCOL_V2,
+          type: 'cancelled',
+          jobId,
+          atPhase: phase,
+          checkpoint: this.checkpointOf(job)
+        });
         return;
       }
       job.status = 'running';
       const elapsed = this.now() - startedAt;
       if (timeoutMs !== undefined && elapsed > timeoutMs) {
         job.status = 'timed-out';
-        this.emit({ protocol: JOB_PROTOCOL_V2, type: 'timed-out', jobId, elapsedMs: elapsed, checkpoint: this.checkpointOf(job) });
+        this.emit({
+          protocol: JOB_PROTOCOL_V2,
+          type: 'timed-out',
+          jobId,
+          elapsedMs: elapsed,
+          checkpoint: this.checkpointOf(job)
+        });
         return;
       }
       this.emit({
@@ -316,7 +380,13 @@ export class JobEngine {
       sinceCheckpoint += 1;
       if (checkpointEvery > 0 && sinceCheckpoint >= checkpointEvery) {
         sinceCheckpoint = 0;
-        this.emit({ protocol: JOB_PROTOCOL_V2, type: 'checkpoint', jobId, checkpoint: this.checkpointOf(job), elapsedMs: this.now() - startedAt });
+        this.emit({
+          protocol: JOB_PROTOCOL_V2,
+          type: 'checkpoint',
+          jobId,
+          checkpoint: this.checkpointOf(job),
+          elapsedMs: this.now() - startedAt
+        });
       }
       await yieldToEventLoop();
     }

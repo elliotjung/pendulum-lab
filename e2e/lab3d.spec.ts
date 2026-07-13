@@ -62,7 +62,9 @@ test('3D lab: spherical double pendulum runs in 3D and conserves E and Lz', asyn
   const phi1 = Number.parseFloat(/φ₁=([0-9.e+-]+)/.exec(readout ?? '')?.[1] ?? '0');
   expect(Math.abs(phi1)).toBeGreaterThan(0.01);
   // Conservative run: drifts stay tiny (RK4 at dt=1ms over ~3s).
-  const driftMatches = [...(readout ?? '').matchAll(/drift ([0-9.e+-]+)/gi)].map((match) => Number.parseFloat(match[1]!));
+  const driftMatches = [...(readout ?? '').matchAll(/drift ([0-9.e+-]+)/gi)].map((match) =>
+    Number.parseFloat(match[1]!)
+  );
   expect(driftMatches.length).toBeGreaterThanOrEqual(2);
   for (const drift of driftMatches) expect(drift).toBeLessThan(1e-4);
 
@@ -96,7 +98,9 @@ test('3D lab: spherical pendulum conserves E and Lz, orbit camera rotates, snaps
   expect(readout).toContain('E/m=');
   expect(readout).toContain('Lz/m=');
   // Conservative run: drifts stay tiny (RK4 at dt=2ms over ~3s).
-  const driftMatches = [...(readout ?? '').matchAll(/drift ([0-9.e+-]+)/gi)].map((match) => Number.parseFloat(match[1]!));
+  const driftMatches = [...(readout ?? '').matchAll(/drift ([0-9.e+-]+)/gi)].map((match) =>
+    Number.parseFloat(match[1]!)
+  );
   expect(driftMatches.length).toBeGreaterThanOrEqual(2);
   for (const drift of driftMatches) expect(drift).toBeLessThan(1e-4);
 

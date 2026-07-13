@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { promotedDoublePendulumLyapunovSpectrum, webgpuDoublePendulumLyapunovSpectrumCandidate } from '../src/runtime/gpuLyapunov';
+import {
+  promotedDoublePendulumLyapunovSpectrum,
+  webgpuDoublePendulumLyapunovSpectrumCandidate
+} from '../src/runtime/gpuLyapunov';
 
 const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
 const state0 = [1.2, 0.7, 0.12, -0.04];

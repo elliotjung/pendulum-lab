@@ -36,7 +36,11 @@ const grid = (lo: number, hi: number, count: number): number[] =>
 describe('Hamiltonian learning — exact recovery from canonical fields', () => {
   it('recovers the harmonic oscillator H = ½p² + ½ω²q²', () => {
     const omega = 1.7;
-    const data = sampleField1d((q, p) => ({ qDot: p, pDot: -omega * omega * q }), grid(-1.5, 1.5, 9), grid(-1.5, 1.5, 9));
+    const data = sampleField1d(
+      (q, p) => ({ qDot: p, pDot: -omega * omega * q }),
+      grid(-1.5, 1.5, 9),
+      grid(-1.5, 1.5, 9)
+    );
     const model = learnHamiltonian(data.q, data.p, data.qDot, data.pDot, { degreesOfFreedom: 1, polynomialDegree: 2 });
     expect(hamiltonianCoefficient(model, 'p0^2')).toBeCloseTo(0.5, 6);
     expect(hamiltonianCoefficient(model, 'q0^2')).toBeCloseTo(0.5 * omega * omega, 6);
@@ -78,12 +82,15 @@ describe('Hamiltonian learning — exact recovery from canonical fields', () => 
     const p: number[][] = [];
     const qDot: number[][] = [];
     const pDot: number[][] = [];
-    for (const a of qs) for (const b of qs) for (const c of [-0.8, 0.4]) for (const d of [0.3, -0.6]) {
-      q.push([a, b]);
-      p.push([c, d]);
-      qDot.push([c, d]);
-      pDot.push([-(1 + kappa) * a + kappa * b, kappa * a - (1 + kappa) * b]);
-    }
+    for (const a of qs)
+      for (const b of qs)
+        for (const c of [-0.8, 0.4])
+          for (const d of [0.3, -0.6]) {
+            q.push([a, b]);
+            p.push([c, d]);
+            qDot.push([c, d]);
+            pDot.push([-(1 + kappa) * a + kappa * b, kappa * a - (1 + kappa) * b]);
+          }
     const model = learnHamiltonian(q, p, qDot, pDot, { degreesOfFreedom: 2, polynomialDegree: 2 });
     expect(hamiltonianCoefficient(model, 'p0^2')).toBeCloseTo(0.5, 6);
     expect(hamiltonianCoefficient(model, 'p1^2')).toBeCloseTo(0.5, 6);

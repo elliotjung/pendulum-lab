@@ -84,7 +84,8 @@ export interface MathieuStabilityDiagram {
 }
 
 function linspace(min: number, max: number, count: number): number[] {
-  if (!Number.isInteger(count) || count < 2) throw new Error('mathieuStabilityDiagram: sample counts must be integers ≥ 2.');
+  if (!Number.isInteger(count) || count < 2)
+    throw new Error('mathieuStabilityDiagram: sample counts must be integers ≥ 2.');
   return Array.from({ length: count }, (_, i) => min + ((max - min) * i) / (count - 1));
 }
 

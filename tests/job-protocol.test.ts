@@ -50,7 +50,14 @@ const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 
 describe('jobPhases', () => {
   it('splits studyPoint into three phases and everything else into one', () => {
     expect(jobPhases(studyRequest())).toEqual(['lyapunov', 'rqa', 'ftle']);
-    expect(jobPhases({ id: 'x', kind: 'lyapunov', spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, state0: [1, 1, 0, 0] })).toEqual(['compute']);
+    expect(
+      jobPhases({
+        id: 'x',
+        kind: 'lyapunov',
+        spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
+        state0: [1, 1, 0, 0]
+      })
+    ).toEqual(['compute']);
   });
 });
 
@@ -99,7 +106,8 @@ describe('JobEngine protocol semantics', () => {
     engine.handle(submitMessage('job-first'));
     engine.handle(submitMessage('job-second'));
     engine.handle({ protocol: JOB_PROTOCOL_V2, type: 'cancel', jobId: 'job-second' });
-    for (let i = 0; i < 20 && !events.some((event) => event.type === 'result' && event.jobId === 'job-first'); i += 1) await flush();
+    for (let i = 0; i < 20 && !events.some((event) => event.type === 'result' && event.jobId === 'job-first'); i += 1)
+      await flush();
 
     const cancelled = events.find((event) => event.type === 'cancelled' && event.jobId === 'job-second');
     expect(cancelled && cancelled.type === 'cancelled' && cancelled.atPhase).toBe('queued');
@@ -155,9 +163,11 @@ describe('JobEngine protocol semantics', () => {
   it('resumes from a checkpoint without re-running completed phases', async () => {
     const { calls, runner } = instrumentedRunner();
     const { engine, events } = collectEngine(runner);
-    engine.handle(submitMessage('job-r', {
-      checkpoint: { completedPhases: ['lyapunov'], partial: { lambdaMax: 9.9, lambdaBlockStdError: 0.5 } }
-    }));
+    engine.handle(
+      submitMessage('job-r', {
+        checkpoint: { completedPhases: ['lyapunov'], partial: { lambdaMax: 9.9, lambdaBlockStdError: 0.5 } }
+      })
+    );
     for (let i = 0; i < 30 && !events.some((event) => event.type === 'result'); i += 1) await flush();
 
     expect(calls).toEqual(['job-r:rqa', 'job-r:ftle']);
@@ -282,7 +292,9 @@ describe('JobClient pool (in-process fallback)', () => {
   it('submitWithRetry surfaces a JobFailedError after exhausting attempts', async () => {
     const { runner } = instrumentedRunner({ failPhases: new Set(['lyapunov']) });
     const client = new JobClient(inProcessTransportFactory(runner), { poolSize: 1 });
-    await expect(client.submitWithRetry(studyRequest('always-fails'), { attempts: 2 })).rejects.toBeInstanceOf(JobFailedError);
+    await expect(client.submitWithRetry(studyRequest('always-fails'), { attempts: 2 })).rejects.toBeInstanceOf(
+      JobFailedError
+    );
     client.terminate();
   });
 

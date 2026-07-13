@@ -48,7 +48,11 @@ export const THREE_MAGNET_PRESET: MagneticPendulumParameters = Object.freeze({
   height: 0.25
 });
 
-export function rhsMagneticPendulum(state: ArrayLike<number>, parameters: MagneticPendulumParameters, out: StateVector): StateVector {
+export function rhsMagneticPendulum(
+  state: ArrayLike<number>,
+  parameters: MagneticPendulumParameters,
+  out: StateVector
+): StateVector {
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -78,7 +82,10 @@ export function rhsMagneticPendulum(state: ArrayLike<number>, parameters: Magnet
  * drag (dE/dt = -γ(ẋ² + ẏ²) ≤ 0), so it is monotone non-increasing when γ ≥ 0.
  * PE here bundles the harmonic restoring well and the attractive magnet wells.
  */
-export function magneticPendulumEnergy(state: ArrayLike<number>, parameters: MagneticPendulumParameters): EnergyBreakdown {
+export function magneticPendulumEnergy(
+  state: ArrayLike<number>,
+  parameters: MagneticPendulumParameters
+): EnergyBreakdown {
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -132,6 +139,24 @@ export interface MagneticSettleOptions {
   speedTolerance?: number;
 }
 
+export interface MagneticBasinGridOptions extends MagneticSettleOptions {
+  /** Grid cells per axis. */
+  n?: number;
+  xRange?: readonly [number, number];
+  yRange?: readonly [number, number];
+}
+
+export interface MagneticBasinGrid {
+  labels: Int32Array;
+  converged: Uint8Array;
+  width: number;
+  height: number;
+  convergedFraction: number;
+  meanSteps: number;
+  xRange: readonly [number, number];
+  yRange: readonly [number, number];
+}
+
 /**
  * Integrate (velocity-Verlet, which is symplectic-friendly and cheap for this
  * separable-force system) from rest at (x0, y0) until the bob settles, returning
@@ -175,5 +200,49 @@ export function magneticPendulumSettle(
     converged: speed < speedTol,
     steps,
     finalState: Array.from(state)
+  };
+}
+
+/**
+ * Fractal launch-basin grid ready for `basinEntropy`/`wadaCandidate` and the
+ * existing label-grid renderer. Labels are nearest-magnet outcomes; a separate
+ * convergence mask prevents a finite integration budget from being mistaken
+ * for a certified settled basin.
+ */
+export function magneticPendulumBasinGrid(
+  parameters: MagneticPendulumParameters,
+  options: MagneticBasinGridOptions = {}
+): MagneticBasinGrid {
+  const n = options.n ?? 80;
+  if (!Number.isInteger(n) || n < 2) throw new Error('magneticPendulumBasinGrid: n must be an integer >= 2.');
+  const xRange = options.xRange ?? ([-2, 2] as const);
+  const yRange = options.yRange ?? ([-2, 2] as const);
+  if (!(xRange[1] > xRange[0]) || !(yRange[1] > yRange[0]))
+    throw new Error('magneticPendulumBasinGrid: ranges must be increasing.');
+  const labels = new Int32Array(n * n);
+  const converged = new Uint8Array(n * n);
+  let convergedCount = 0;
+  let stepSum = 0;
+  for (let iy = 0; iy < n; iy += 1) {
+    const y = yRange[0] + ((yRange[1] - yRange[0]) * iy) / (n - 1);
+    for (let ix = 0; ix < n; ix += 1) {
+      const x = xRange[0] + ((xRange[1] - xRange[0]) * ix) / (n - 1);
+      const result = magneticPendulumSettle(parameters, x, y, options);
+      const index = iy * n + ix;
+      labels[index] = result.magnet;
+      converged[index] = result.converged ? 1 : 0;
+      convergedCount += result.converged ? 1 : 0;
+      stepSum += result.steps;
+    }
+  }
+  return {
+    labels,
+    converged,
+    width: n,
+    height: n,
+    convergedFraction: convergedCount / (n * n),
+    meanSteps: stepSum / (n * n),
+    xRange,
+    yRange
   };
 }

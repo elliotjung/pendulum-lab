@@ -1,0 +1,3739 @@
+{
+  "schemaVersion": "css-coverage/v1",
+  "generatedAt": "2026-07-13T02:00:41.329Z",
+  "url": "http://127.0.0.1:4173/app.html",
+  "traversal": "desktop Chromium: load, visit every workspace tab, reopen Lab, expand details",
+  "totals": {
+    "stylesheets": 10,
+    "cssBytes": 161742,
+    "usedBytes": 61910,
+    "usedPercent": 38.27700906381769,
+    "unusedCandidateRules": 620
+  },
+  "unusedCandidates": [
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-field",
+      "line": 19,
+      "bytes": 653
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-flyout",
+      "line": 244,
+      "bytes": 538
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab",
+      "line": 157,
+      "bytes": 495
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[data-tip]:hover::after",
+      "line": 192,
+      "bytes": 449
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-channel",
+      "line": 83,
+      "bytes": 438
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-tool-btn[data-tip]:hover::after,.dev-tool-btn[data-tip]:focus-visible::after",
+      "line": 927,
+      "bytes": 425
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance.kinetic-overdrive header::before, body.quality-performance .kinetic-channel::before, body.quality-performance .kinetic-flash, body.quality-performance.kinetic-overdrive .rail-menu-button::after, body.quality-performance.kinetic-overdrive .rail-palette-launcher::after, body.quality-performance.kinetic-overdrive .pbtn::after",
+      "line": 293,
+      "bytes": 411
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[data-tip]:focus-visible::after,.dev-trigger[data-tip]:focus-visible::after",
+      "line": 918,
+      "bytes": 410
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-surface::before",
+      "line": 157,
+      "bytes": 396
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .rail-menu-button::after, body.kinetic-overdrive .rail-palette-launcher::after, body.kinetic-overdrive .pbtn::after",
+      "line": 234,
+      "bytes": 395
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-channel::before",
+      "line": 97,
+      "bytes": 383
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-trigger[data-tip]:hover::after",
+      "line": 235,
+      "bytes": 382
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-trigger",
+      "line": 216,
+      "bytes": 356
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=range]::-moz-range-thumb, .row input[type=range]::-moz-range-thumb",
+      "line": 183,
+      "bytes": 356
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-panel",
+      "line": 791,
+      "bytes": 351
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "button.primary:hover",
+      "line": 408,
+      "bytes": 344
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudCursorGlow",
+      "line": 603,
+      "bytes": 341
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab, .rail-submenu .dev-tool-btn.rail-action",
+      "line": 1127,
+      "bytes": 339
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".tab[aria-selected=\"true\"]",
+      "line": 262,
+      "bytes": 334
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive::before",
+      "line": 38,
+      "bytes": 334
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "button.primary:hover",
+      "line": 419,
+      "bytes": 332
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab-desc",
+      "line": 1157,
+      "bytes": 315
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-button[aria-expanded=\"true\"] .rail-menu-icon",
+      "line": 262,
+      "bytes": 308
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "input[type=range]::-moz-range-thumb",
+      "line": 197,
+      "bytes": 306
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-item",
+      "line": 275,
+      "bytes": 302
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive header::before",
+      "line": 60,
+      "bytes": 302
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "button:hover",
+      "line": 76,
+      "bytes": 300
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab[aria-selected=\"true\"]",
+      "line": 314,
+      "bytes": 295
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".hud-scan",
+      "line": 245,
+      "bytes": 288
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx header::after, body.hud-fx .rail-submenu .tab[aria-selected=\"true\"]::before, body.hud-fx .rail-section.open .rail-submenu > *, body.hud-fx .rail-logo .pendulum-logo-svg, body.hud-fx .tabpanel.active, body.hud-fx .rail-palette-launcher .tab-icon",
+      "line": 667,
+      "bytes": 285
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-palette-launcher:hover, .rail-palette-launcher:focus-visible",
+      "line": 641,
+      "bytes": 277
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section[data-rail-section] .rail-submenu",
+      "line": 1213,
+      "bytes": 276
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".ui-ripple",
+      "line": 116,
+      "bytes": 276
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-palette-launcher:hover, .rail-palette-launcher:focus-visible",
+      "line": 333,
+      "bytes": 276
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".workflow-strip button:hover, .workflow-strip button:focus-visible",
+      "line": 373,
+      "bytes": 275
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".panel-toggle[aria-pressed=\"true\"]",
+      "line": 310,
+      "bytes": 273
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".pbtn:hover",
+      "line": 392,
+      "bytes": 273
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row > span",
+      "line": 356,
+      "bytes": 272
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-button[aria-expanded=\"true\"]::before",
+      "line": 999,
+      "bytes": 268
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance .kinetic-field, body.quality-performance .kinetic-strip, body.quality-performance .kinetic-orbit, body.quality-performance .hud-scan, body.quality-performance #hudParticles, body.quality-performance #hudCursorGlow",
+      "line": 280,
+      "bytes": 268
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-search",
+      "line": 811,
+      "bytes": 263
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".pbtn:hover",
+      "line": 379,
+      "bytes": 258
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "button.primary:hover",
+      "line": 94,
+      "bytes": 257
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plots-row",
+      "line": 1410,
+      "bytes": 256
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-button:hover, .rail-menu-button[aria-expanded=\"true\"]",
+      "line": 992,
+      "bytes": 255
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[aria-selected=\"true\"]",
+      "line": 178,
+      "bytes": 254
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance.kinetic-overdrive .main-wrap, body.quality-performance.kinetic-overdrive .plot-cell, body.quality-performance.kinetic-overdrive .controls",
+      "line": 303,
+      "bytes": 250
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-menu-button:hover .rail-menu-icon, .rail-menu-button[aria-expanded=\"true\"] .rail-menu-icon",
+      "line": 291,
+      "bytes": 248
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".kinetic-channel",
+      "line": 497,
+      "bytes": 248
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-flyout-title",
+      "line": 262,
+      "bytes": 247
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[aria-selected=\"true\"]::before",
+      "line": 184,
+      "bytes": 243
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-button[aria-expanded=\"true\"]",
+      "line": 256,
+      "bytes": 241
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu-hint",
+      "line": 296,
+      "bytes": 241
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .main-wrap, body.kinetic-overdrive .plot-cell, body.kinetic-overdrive .controls",
+      "line": 175,
+      "bytes": 239
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-card .plx-title",
+      "line": 849,
+      "bytes": 237
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-tabs [role=\"tab\"]",
+      "line": 1972,
+      "bytes": 232
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-badge",
+      "line": 5,
+      "bytes": 232
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".rail, #hudBoot, .kinetic-field, .workflow-strip, .presets, .controls, .trust-toggle, .trust-drawer, #toast, #nanOverlay, .scrub-row, .btnrow, .hud-corner, .hud-scan, #hudParticles, #hudCursorGlow",
+      "line": 88,
+      "bytes": 230
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge",
+      "line": 855,
+      "bytes": 229
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail",
+      "line": 893,
+      "bytes": 229
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ":root",
+      "line": 79,
+      "bytes": 229
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-item-icon",
+      "line": 286,
+      "bytes": 228
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive header::before, .kinetic-channel::before, .kinetic-flash, body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-a, body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-b",
+      "line": 341,
+      "bytes": 228
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap",
+      "line": 1621,
+      "bytes": 223
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-help",
+      "line": 821,
+      "bytes": 220
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-check",
+      "line": 1672,
+      "bytes": 217
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".grp-title",
+      "line": 779,
+      "bytes": 215
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".workflow-strip button:hover, .workflow-strip button:focus-visible",
+      "line": 1287,
+      "bytes": 215
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer #ueFloatingDiag",
+      "line": 1990,
+      "bytes": 215
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-badge",
+      "line": 948,
+      "bytes": 214
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab[aria-selected=\"true\"]",
+      "line": 320,
+      "bytes": 213
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".patch-changelog",
+      "line": 935,
+      "bytes": 212
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".rail-group-label",
+      "line": 277,
+      "bytes": 212
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-fault pre",
+      "line": 7,
+      "bytes": 210
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-panel",
+      "line": 864,
+      "bytes": 208
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-button[aria-expanded=\"true\"]::before",
+      "line": 269,
+      "bytes": 207
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-close",
+      "line": 1962,
+      "bytes": 206
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-value",
+      "line": 129,
+      "bytes": 204
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .dev-tool-btn.rail-action:hover, .rail-submenu .dev-tool-btn.rail-action:focus-visible",
+      "line": 1178,
+      "bytes": 203
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-title",
+      "line": 944,
+      "bytes": 202
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-tool-btn:hover,.dev-tool-btn:focus-visible",
+      "line": 926,
+      "bytes": 201
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=range]::-webkit-slider-thumb:hover, .row input[type=range]::-webkit-slider-thumb:hover",
+      "line": 174,
+      "bytes": 201
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab",
+      "line": 302,
+      "bytes": 201
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-logo:hover, .rail-logo:focus-visible",
+      "line": 276,
+      "bytes": 200
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".row input[type=range]::-moz-range-thumb",
+      "line": 582,
+      "bytes": 199
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-note",
+      "line": 816,
+      "bytes": 199
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-panel",
+      "line": 1,
+      "bytes": 199
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "button.danger:hover",
+      "line": 106,
+      "bytes": 199
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-title",
+      "line": 2,
+      "bytes": 198
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".tab[aria-selected=\"true\"], .rail-submenu .tab[aria-selected=\"true\"]",
+      "line": 66,
+      "bytes": 197
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-trigger:hover, .dev-hub:hover .dev-trigger",
+      "line": 229,
+      "bytes": 195
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".fig-panel",
+      "line": 841,
+      "bytes": 195
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc-count",
+      "line": 526,
+      "bytes": 194
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".honesty-note",
+      "line": 931,
+      "bytes": 189
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-card",
+      "line": 1,
+      "bytes": 189
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "button:hover",
+      "line": 393,
+      "bytes": 189
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid em",
+      "line": 1768,
+      "bytes": 188
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".tab",
+      "line": 256,
+      "bytes": 187
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row",
+      "line": 351,
+      "bytes": 185
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid em",
+      "line": 1560,
+      "bytes": 185
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-visual-grid figcaption",
+      "line": 1794,
+      "bytes": 185
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help",
+      "line": 2,
+      "bytes": 184
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-canvas-grid figcaption",
+      "line": 1585,
+      "bytes": 182
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-group-label",
+      "line": 148,
+      "bytes": 179
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-flyout-section",
+      "line": 269,
+      "bytes": 179
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "button:hover",
+      "line": 405,
+      "bytes": 179
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric b",
+      "line": 806,
+      "bytes": 177
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row",
+      "line": 1468,
+      "bytes": 177
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .badge",
+      "line": 255,
+      "bytes": 177
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-title",
+      "line": 799,
+      "bytes": 176
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".diag-row > span",
+      "line": 144,
+      "bytes": 176
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".diag-row > span",
+      "line": 136,
+      "bytes": 176
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-logo:hover, .rail-logo:focus-visible",
+      "line": 224,
+      "bytes": 176
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section[data-rail-section=\"govern\"] .rail-tab-list, .rail-section[data-rail-section=\"govern\"] .rail-action-grid",
+      "line": 1227,
+      "bytes": 175
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table th, .matrix-table td",
+      "line": 1856,
+      "bytes": 174
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric",
+      "line": 801,
+      "bytes": 172
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer .si-panel, .trust-drawer .ri-panel, .trust-drawer .rgv8-card, .trust-drawer .sfv9-card, .trust-drawer .v10-card, .trust-drawer .plx-card",
+      "line": 1985,
+      "bytes": 172
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .rail-menu-button:hover::after, body.kinetic-overdrive .rail-palette-launcher:hover::after, body.kinetic-overdrive .pbtn:hover::after",
+      "line": 249,
+      "bytes": 172
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub",
+      "line": 210,
+      "bytes": 170
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button.primary:hover",
+      "line": 651,
+      "bytes": 170
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-card",
+      "line": 943,
+      "bytes": 170
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid span",
+      "line": 1754,
+      "bytes": 170
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab[aria-selected=\"true\"]::before",
+      "line": 320,
+      "bytes": 170
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section[data-rail-section=\"govern\"] .rail-tab-list, .rail-section[data-rail-section=\"govern\"] .rail-action-grid",
+      "line": 1088,
+      "bytes": 169
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".pbtn:hover, button:hover, select:hover",
+      "line": 130,
+      "bytes": 169
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "::-webkit-scrollbar-thumb",
+      "line": 314,
+      "bytes": 169
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-note",
+      "line": 4,
+      "bytes": 168
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid span",
+      "line": 1546,
+      "bytes": 167
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-palette-box",
+      "line": 8,
+      "bytes": 167
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab:hover .tab-desc, .rail-submenu .dev-tool-btn.rail-action:hover .tab-desc, .rail-submenu .tab[aria-selected=\"true\"] .tab-desc",
+      "line": 315,
+      "bytes": 165
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-card",
+      "line": 848,
+      "bytes": 164
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-warning",
+      "line": 953,
+      "bytes": 164
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-shell",
+      "line": 1723,
+      "bytes": 164
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".plot-cell:hover",
+      "line": 175,
+      "bytes": 164
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric, .golden-card",
+      "line": 1808,
+      "bytes": 163
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table th",
+      "line": 1864,
+      "bytes": 162
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".plot-cell:hover",
+      "line": 192,
+      "bytes": 162
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudParticles",
+      "line": 592,
+      "bytes": 162
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-shell",
+      "line": 1516,
+      "bytes": 161
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-orbit",
+      "line": 189,
+      "bytes": 161
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-kv",
+      "line": 851,
+      "bytes": 160
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric-wide",
+      "line": 1816,
+      "bytes": 160
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .rail-menu-button, body.kinetic-overdrive .rail-palette-launcher, body.kinetic-overdrive .pbtn",
+      "line": 227,
+      "bytes": 160
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table th",
+      "line": 1612,
+      "bytes": 159
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".rail-menu-button:hover",
+      "line": 273,
+      "bytes": 159
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-visual-grid figure",
+      "line": 1782,
+      "bytes": 158
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-kv",
+      "line": 3,
+      "bytes": 157
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-canvas-grid figure",
+      "line": 1574,
+      "bytes": 155
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive #fpsBadge",
+      "line": 261,
+      "bytes": 155
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "input[type=range]::-moz-range-track",
+      "line": 183,
+      "bytes": 154
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-kv",
+      "line": 946,
+      "bytes": 152
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=range]::-moz-range-track",
+      "line": 155,
+      "bytes": 152
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".plot-cell:hover",
+      "line": 349,
+      "bytes": 152
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-search",
+      "line": 2,
+      "bytes": 151
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".diag-row > span:hover",
+      "line": 358,
+      "bytes": 151
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "*::-webkit-scrollbar-thumb",
+      "line": 506,
+      "bytes": 151
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric em, .golden-card em",
+      "line": 1836,
+      "bytes": 149
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=range]:active::-webkit-slider-thumb",
+      "line": 179,
+      "bytes": 149
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".main-wrap, .plot-cell, .research-card, .ri-panel, .rg-card",
+      "line": 96,
+      "bytes": 148
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-badge",
+      "line": 2,
+      "bytes": 147
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-orbit-a",
+      "line": 199,
+      "bytes": 146
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-tabs [role=\"tab\"][aria-selected=\"true\"]",
+      "line": 1978,
+      "bytes": 145
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[aria-selected=\"true\"]::before",
+      "line": 907,
+      "bytes": 144
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance.kinetic-overdrive .main-wrap canvas, body.quality-performance.kinetic-overdrive .plot-cell canvas",
+      "line": 309,
+      "bytes": 144
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table th, .exp-table td",
+      "line": 1605,
+      "bytes": 143
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".fig-badge:hover, .fig-badge:focus-within",
+      "line": 354,
+      "bytes": 142
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "*, *::before, *::after",
+      "line": 86,
+      "bytes": 142
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button:hover",
+      "line": 642,
+      "bytes": 141
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "input[type=range]::-webkit-slider-thumb:hover",
+      "line": 196,
+      "bytes": 141
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-kv span:last-child",
+      "line": 853,
+      "bytes": 140
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .dev-tool-btn.rail-action",
+      "line": 1173,
+      "bytes": 140
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab[data-tip]::after, .dev-trigger[data-tip]::after, .dev-tool-btn[data-tip]::after",
+      "line": 959,
+      "bytes": 139
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-kv span:last-child",
+      "line": 3,
+      "bytes": 139
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-results",
+      "line": 6,
+      "bytes": 139
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".main-wrap:hover",
+      "line": 183,
+      "bytes": 139
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".pbtn:hover",
+      "line": 389,
+      "bytes": 138
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-kv span:last-child",
+      "line": 947,
+      "bytes": 138
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "body.panel-collapsed .layout > .controls",
+      "line": 288,
+      "bytes": 137
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".main-wrap:hover",
+      "line": 342,
+      "bytes": 137
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-history-row",
+      "line": 1652,
+      "bytes": 136
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric span, .golden-card span",
+      "line": 1829,
+      "bytes": 136
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-logo .pendulum-logo-svg",
+      "line": 617,
+      "bytes": 136
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .main-wrap canvas, body.kinetic-overdrive .plot-cell canvas",
+      "line": 184,
+      "bytes": 136
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section[data-rail-section=\"govern\"] .rail-submenu",
+      "line": 1193,
+      "bytes": 135
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid b",
+      "line": 1762,
+      "bytes": 135
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-title",
+      "line": 1958,
+      "bytes": 135
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu-hint",
+      "line": 308,
+      "bytes": 135
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-fault h3",
+      "line": 7,
+      "bytes": 134
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".main-wrap:hover",
+      "line": 169,
+      "bytes": 134
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid b",
+      "line": 1554,
+      "bytes": 132
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-badge.experimental,.v10-badge.degraded",
+      "line": 950,
+      "bytes": 131
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-label",
+      "line": 122,
+      "bytes": 130
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-button:hover .rail-menu-icon",
+      "line": 251,
+      "bytes": 129
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-group-sep",
+      "line": 143,
+      "bytes": 128
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".row",
+      "line": 1425,
+      "bytes": 128
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-topline",
+      "line": 1730,
+      "bytes": 127
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-guide",
+      "line": 2,
+      "bytes": 127
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section.open::after",
+      "line": 1053,
+      "bytes": 126
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab-label",
+      "line": 1143,
+      "bytes": 126
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric strong, .golden-card strong",
+      "line": 1822,
+      "bytes": 126
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid",
+      "line": 1748,
+      "bytes": 125
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-tabs",
+      "line": 1968,
+      "bytes": 125
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".grp-title::after",
+      "line": 785,
+      "bytes": 124
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-topline",
+      "line": 1523,
+      "bytes": 124
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-note",
+      "line": 2,
+      "bytes": 124
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-head",
+      "line": 1954,
+      "bytes": 123
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-cmd",
+      "line": 8,
+      "bytes": 123
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row > span::before",
+      "line": 364,
+      "bytes": 122
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid",
+      "line": 1540,
+      "bytes": 122
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".golden-preset-cards",
+      "line": 1889,
+      "bytes": 121
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".diag-row > span",
+      "line": 355,
+      "bytes": 121
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "html, body, .app-shell, .main-col",
+      "line": 87,
+      "bytes": 121
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab",
+      "line": 883,
+      "bytes": 120
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric b",
+      "line": 2,
+      "bytes": 120
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".audience-select select:hover",
+      "line": 358,
+      "bytes": 120
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".ui-ripple",
+      "line": 415,
+      "bytes": 120
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap .exp-doc-title",
+      "line": 1631,
+      "bytes": 119
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table-wrap",
+      "line": 1844,
+      "bytes": 119
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".audience-select select:hover",
+      "line": 360,
+      "bytes": 119
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".ui-ripple",
+      "line": 425,
+      "bytes": 119
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-check span",
+      "line": 1689,
+      "bytes": 118
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-test",
+      "line": 6,
+      "bytes": 118
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".diag-row > span:hover",
+      "line": 142,
+      "bytes": 118
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-button:hover",
+      "line": 246,
+      "bytes": 118
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-history",
+      "line": 1645,
+      "bytes": 117
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric",
+      "line": 2,
+      "bytes": 117
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-menu-button:hover .rail-menu-icon, .rail-menu-button[aria-expanded=\"true\"] .rail-menu-icon",
+      "line": 674,
+      "bytes": 117
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-orbit-b",
+      "line": 205,
+      "bytes": 117
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-help h2",
+      "line": 827,
+      "bytes": 116
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-tool-grid",
+      "line": 924,
+      "bytes": 116
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table-wrap",
+      "line": 1593,
+      "bytes": 116
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-visual-grid",
+      "line": 1777,
+      "bytes": 116
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-panel h2",
+      "line": 865,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-panel h3",
+      "line": 866,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap-spectrum",
+      "line": 1640,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "::-webkit-scrollbar-thumb:hover",
+      "line": 319,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=range]::-moz-range-progress",
+      "line": 160,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-submenu .tab[aria-selected=\"true\"]::before",
+      "line": 326,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-strip",
+      "line": 76,
+      "bytes": 115
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-table th",
+      "line": 871,
+      "bytes": 114
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-title:after",
+      "line": 2,
+      "bytes": 114
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".layout, .layout > .controls, .panel-toggle, .acc > summary, .acc::details-content",
+      "line": 378,
+      "bytes": 114
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".diag-row > span::before",
+      "line": 150,
+      "bytes": 114
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "canvas",
+      "line": 97,
+      "bytes": 114
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-canvas-grid",
+      "line": 1569,
+      "bytes": 113
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metrics",
+      "line": 1802,
+      "bytes": 113
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-top",
+      "line": 2,
+      "bytes": 113
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".diag-row > span:hover",
+      "line": 155,
+      "bytes": 112
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#qualBadge.degraded",
+      "line": 340,
+      "bytes": 111
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-palette-launcher:hover .tab-icon, .rail-palette-launcher:focus-visible .tab-icon",
+      "line": 339,
+      "bytes": 111
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "body.kinetic-overdrive",
+      "line": 491,
+      "bytes": 111
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button, input, select, textarea, .tab, .trust-drawer, .trust-launcher",
+      "line": 69,
+      "bytes": 109
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-topline h2",
+      "line": 1737,
+      "bytes": 109
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-b",
+      "line": 219,
+      "bytes": 109
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".trust-toggle:hover",
+      "line": 130,
+      "bytes": 109
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".panel-toggle:hover",
+      "line": 1249,
+      "bytes": 108
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help h2",
+      "line": 2,
+      "bytes": 108
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-title",
+      "line": 2,
+      "bytes": 107
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-toggle",
+      "line": 2,
+      "bytes": 107
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".hud-boot-ring, .hud-boot-ring2, .hud-boot-ring3, .hud-boot-core, .hud-boot-bar::after",
+      "line": 676,
+      "bytes": 107
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".main-wrap:hover > .hud-corner, .plot-cell:hover > .hud-corner",
+      "line": 205,
+      "bytes": 107
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-badge.validated",
+      "line": 949,
+      "bytes": 106
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-topline h2",
+      "line": 1530,
+      "bytes": 106
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#qualBadge.low",
+      "line": 341,
+      "bytes": 105
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".main-wrap:hover > .hud-corner, .plot-cell:hover > .hud-corner",
+      "line": 238,
+      "bytes": 105
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge.warn",
+      "line": 857,
+      "bytes": 104
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-badge.invalid",
+      "line": 951,
+      "bytes": 104
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge.good",
+      "line": 856,
+      "bytes": 103
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-controls .btnrow",
+      "line": 1884,
+      "bytes": 103
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-badge.warn",
+      "line": 5,
+      "bytes": 103
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > *",
+      "line": 336,
+      "bytes": 103
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "*::-webkit-scrollbar-thumb:hover",
+      "line": 512,
+      "bytes": 103
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".chip.warn",
+      "line": 688,
+      "bytes": 102
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge.bad",
+      "line": 858,
+      "bytes": 102
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge.info",
+      "line": 859,
+      "bytes": 102
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab-icon",
+      "line": 1150,
+      "bytes": 102
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-badge.good",
+      "line": 5,
+      "bytes": 102
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row > span",
+      "line": 1480,
+      "bytes": 101
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-badge.bad",
+      "line": 5,
+      "bytes": 101
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "h1",
+      "line": 92,
+      "bytes": 101
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".chip.bad",
+      "line": 687,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".honesty-note.bad",
+      "line": 933,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".honesty-note.good",
+      "line": 934,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-controls .btnrow",
+      "line": 1658,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table tr.good td:nth-child(3), .matrix-table tr.good td:first-child",
+      "line": 1871,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .main-wrap:hover .kinetic-orbit-a",
+      "line": 215,
+      "bytes": 100
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".chip.on",
+      "line": 686,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".honesty-note.warn",
+      "line": 932,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-warning.bad",
+      "line": 953,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-warning.good",
+      "line": 953,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-palette-launcher .tab-icon",
+      "line": 647,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-label, .kinetic-value",
+      "line": 114,
+      "bytes": 99
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button.danger:hover",
+      "line": 660,
+      "bytes": 98
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-desc",
+      "line": 800,
+      "bytes": 98
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-table th,.plx-table td",
+      "line": 870,
+      "bytes": 98
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-visual-grid, .matrix-metrics, .golden-preset-cards",
+      "line": 1914,
+      "bytes": 98
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "input[type=number]:focus, input[type=text]:focus",
+      "line": 229,
+      "bytes": 98
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub:hover .dev-flyout",
+      "line": 258,
+      "bytes": 97
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub:focus-within .dev-flyout",
+      "line": 923,
+      "bytes": 97
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table",
+      "line": 1850,
+      "bytes": 97
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".pbtn:hover",
+      "line": 130,
+      "bytes": 97
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-sep",
+      "line": 204,
+      "bytes": 96
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-action-grid",
+      "line": 1078,
+      "bytes": 96
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-table tr.bad td:nth-child(3), .matrix-table tr.bad td:first-child",
+      "line": 1875,
+      "bytes": 96
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-toggle[aria-expanded=\"true\"]",
+      "line": 1943,
+      "bytes": 96
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive header",
+      "line": 55,
+      "bytes": 95
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".rail-menu-button:hover, .tab:hover, button:hover",
+      "line": 65,
+      "bytes": 95
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table",
+      "line": 1599,
+      "bytes": 94
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-tabs [role=\"tab\"]:hover",
+      "line": 1977,
+      "bytes": 94
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-check input",
+      "line": 1683,
+      "bytes": 93
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "body.panel-collapsed .layout",
+      "line": 278,
+      "bytes": 93
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".workflow-strip button",
+      "line": 1490,
+      "bytes": 92
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-sub",
+      "line": 1742,
+      "bytes": 92
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab:hover",
+      "line": 310,
+      "bytes": 92
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-palette-launcher",
+      "line": 1197,
+      "bytes": 91
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu",
+      "line": 1204,
+      "bytes": 91
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section[data-rail-section=\"govern\"] .rail-submenu",
+      "line": 1224,
+      "bytes": 91
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap-ok",
+      "line": 1638,
+      "bytes": 90
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap-warn",
+      "line": 1639,
+      "bytes": 90
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-status",
+      "line": 1663,
+      "bytes": 90
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric span",
+      "line": 2,
+      "bytes": 90
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".controls::-webkit-scrollbar-thumb",
+      "line": 471,
+      "bytes": 89
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-flyout",
+      "line": 904,
+      "bytes": 89
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-toggle:hover",
+      "line": 1942,
+      "bytes": 89
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-palette input",
+      "line": 8,
+      "bytes": 89
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-val",
+      "line": 368,
+      "bytes": 88
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".grp",
+      "line": 777,
+      "bytes": 88
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner header",
+      "line": 1357,
+      "bytes": 88
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".canvas-label",
+      "line": 1463,
+      "bytes": 87
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-close:hover",
+      "line": 1967,
+      "bytes": 87
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(n+8)",
+      "line": 345,
+      "bytes": 87
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-palette-launcher .tab-label, .rail-palette-launcher .rail-kbd",
+      "line": 1198,
+      "bytes": 86
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx header::after",
+      "line": 125,
+      "bytes": 86
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(2)",
+      "line": 339,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(3)",
+      "line": 340,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(4)",
+      "line": 341,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(5)",
+      "line": 342,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(6)",
+      "line": 343,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-section.open .rail-submenu > :nth-child(7)",
+      "line": 344,
+      "bytes": 85
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-logo:hover",
+      "line": 127,
+      "bytes": 84
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".workflow-strip",
+      "line": 1486,
+      "bytes": 84
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .main-wrap > .hud-scan",
+      "line": 255,
+      "bytes": 84
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-note.bad",
+      "line": 4,
+      "bytes": 83
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive",
+      "line": 34,
+      "bytes": 83
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".presets",
+      "line": 1399,
+      "bytes": 82
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-body",
+      "line": 1981,
+      "bytes": 82
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-collapsible>.grp-title:before",
+      "line": 2,
+      "bytes": 82
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-note.warn",
+      "line": 4,
+      "bytes": 82
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-panel p,.plx-panel li",
+      "line": 867,
+      "bytes": 81
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-table",
+      "line": 869,
+      "bytes": 81
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-status",
+      "line": 2,
+      "bytes": 81
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".trust-drawer",
+      "line": 14,
+      "bytes": 81
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".diag-row > span::before",
+      "line": 362,
+      "bytes": 80
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-collapsible>.grp-title:before",
+      "line": 828,
+      "bytes": 79
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-grid",
+      "line": 850,
+      "bytes": 79
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-logo:focus-visible",
+      "line": 129,
+      "bytes": 78
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".badge, #qualBadge, #fpsBadge",
+      "line": 1454,
+      "bytes": 78
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-grid",
+      "line": 3,
+      "bytes": 78
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-test b",
+      "line": 6,
+      "bytes": 78
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-item:hover",
+      "line": 283,
+      "bytes": 77
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-grid",
+      "line": 945,
+      "bytes": 77
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap p",
+      "line": 1636,
+      "bytes": 77
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-controls .btnrow",
+      "line": 1717,
+      "bytes": 77
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .rail-logo:hover .pendulum-logo-svg",
+      "line": 282,
+      "bytes": 77
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".row input[type=range]::-webkit-slider-thumb:hover",
+      "line": 581,
+      "bytes": 76
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "input[type=number]:focus,input[type=text]:focus",
+      "line": 630,
+      "bytes": 76
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "header",
+      "line": 91,
+      "bytes": 76
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc > summary:hover",
+      "line": 509,
+      "bytes": 75
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-visual-grid canvas",
+      "line": 1789,
+      "bytes": 75
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "body.hud-fx .tabpanel.active",
+      "line": 627,
+      "bytes": 75
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-button",
+      "line": 1187,
+      "bytes": 74
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".tab[aria-selected=\"true\"]::before",
+      "line": 332,
+      "bytes": 74
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".val-flash, .row input[type=checkbox]:checked::after",
+      "line": 385,
+      "bytes": 74
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/05-extracted-inline.css",
+      "selector": ".xs-16",
+      "line": 20,
+      "bytes": 74
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-actions",
+      "line": 2,
+      "bytes": 73
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help p,.si-help li",
+      "line": 2,
+      "bytes": 73
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-field, .kinetic-strip, .kinetic-orbit",
+      "line": 329,
+      "bytes": 73
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc-body .grp",
+      "line": 540,
+      "bytes": 71
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-field, body.kinetic-overdrive::before",
+      "line": 337,
+      "bytes": 71
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".grp:last-child",
+      "line": 778,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub:focus-within .dev-flyout",
+      "line": 936,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-sub",
+      "line": 1535,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .app-shell",
+      "line": 50,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-channel:nth-child(2) .kinetic-value",
+      "line": 139,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-channel:nth-child(3) .kinetic-value",
+      "line": 140,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .main-wrap:hover .kinetic-orbit",
+      "line": 211,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-strip",
+      "line": 323,
+      "bytes": 70
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ":focus-visible",
+      "line": 72,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-collapsible.si-collapsed>:not(.grp-title)",
+      "line": 2,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudBoot",
+      "line": 504,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-channel:nth-child(4) .kinetic-value",
+      "line": 141,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.kinetic-overdrive .kinetic-surface:hover::before",
+      "line": 171,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance.kinetic-overdrive::before",
+      "line": 289,
+      "bytes": 69
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.panel-collapsed .layout",
+      "line": 1237,
+      "bytes": 68
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap strong",
+      "line": 1637,
+      "bytes": 68
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".row input[type=checkbox]:hover",
+      "line": 205,
+      "bytes": 68
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "#shortcutHelpDialog::backdrop",
+      "line": 75,
+      "bytes": 68
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "canvas",
+      "line": 73,
+      "bytes": 67
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button:disabled",
+      "line": 664,
+      "bytes": 67
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#toast.show",
+      "line": 738,
+      "bytes": 67
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub:hover .dev-flyout",
+      "line": 905,
+      "bytes": 66
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-test-body",
+      "line": 6,
+      "bytes": 66
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric span",
+      "line": 807,
+      "bytes": 65
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".row label:has(input[type=checkbox])",
+      "line": 1433,
+      "bytes": 65
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-actions",
+      "line": 5,
+      "bytes": 65
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "#toast.show",
+      "line": 371,
+      "bytes": 65
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab:hover",
+      "line": 177,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric.good",
+      "line": 808,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric.warn",
+      "line": 809,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".si-metric.bad",
+      "line": 810,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-method",
+      "line": 952,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-cmd small",
+      "line": 8,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".research-table tr:hover td",
+      "line": 305,
+      "bytes": 64
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-note",
+      "line": 862,
+      "bytes": 63
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-tab-list, .rail-action-grid",
+      "line": 1073,
+      "bytes": 63
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".has-tip:hover::after",
+      "line": 721,
+      "bytes": 62
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section.open .rail-submenu",
+      "line": 1046,
+      "bytes": 62
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-spark",
+      "line": 1879,
+      "bytes": 62
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-badge.warn",
+      "line": 2,
+      "bytes": 62
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-flash",
+      "line": 143,
+      "bytes": 62
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plot-cell",
+      "line": 1421,
+      "bytes": 61
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help h3",
+      "line": 2,
+      "bytes": 61
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-cmd-list",
+      "line": 8,
+      "bytes": 61
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "select:hover",
+      "line": 226,
+      "bytes": 61
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-surface",
+      "line": 152,
+      "bytes": 61
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row > span:hover",
+      "line": 363,
+      "bytes": 60
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-small",
+      "line": 2,
+      "bytes": 60
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-badge.good",
+      "line": 2,
+      "bytes": 60
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-status",
+      "line": 3,
+      "bytes": 60
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-performance #dQuality",
+      "line": 318,
+      "bytes": 60
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-icon",
+      "line": 1212,
+      "bytes": 59
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .acc > summary",
+      "line": 1374,
+      "bytes": 59
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-collapsible>.grp-title",
+      "line": 2,
+      "bytes": 59
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-collapsible.si-collapsed>.grp-title:before",
+      "line": 2,
+      "bytes": 59
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "input[type=range]::-webkit-slider-thumb",
+      "line": 218,
+      "bytes": 59
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "select:focus",
+      "line": 227,
+      "bytes": 58
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.panel-collapsed .layout > .controls",
+      "line": 1238,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .ctrl-sticky",
+      "line": 1370,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".golden-card.pass",
+      "line": 1895,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".golden-card.fail",
+      "line": 1898,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "button:active, .pbtn:active",
+      "line": 294,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".row input[type=checkbox]:active",
+      "line": 206,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudBoot.hud-boot-done",
+      "line": 497,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-balanced #dQuality",
+      "line": 319,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-cinematic #dQuality",
+      "line": 320,
+      "bytes": 57
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .presets",
+      "line": 1362,
+      "bytes": 56
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table tr.good td:first-child",
+      "line": 1619,
+      "bytes": 56
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid",
+      "line": 1910,
+      "bytes": 56
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-fault",
+      "line": 9,
+      "bytes": 56
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc > summary::-webkit-details-marker",
+      "line": 508,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .main-col",
+      "line": 1353,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .controls",
+      "line": 1366,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail",
+      "line": 1510,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-canvas-grid canvas",
+      "line": 1581,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-badge.bad",
+      "line": 2,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".controls:hover, .controls:focus-within",
+      "line": 247,
+      "bytes": 55
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-state-grid",
+      "line": 1925,
+      "bytes": 54
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".ui-ripple-host",
+      "line": 115,
+      "bytes": 54
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".val-flash",
+      "line": 194,
+      "bytes": 54
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab:hover",
+      "line": 307,
+      "bytes": 54
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-badge-row",
+      "line": 854,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-table tr.bad td:first-child",
+      "line": 1620,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid",
+      "line": 1701,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "button:active",
+      "line": 83,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".tab[aria-selected=\"true\"]::before",
+      "line": 383,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": "body.quality-balanced .kinetic-field",
+      "line": 314,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "button:active",
+      "line": 410,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "*::-webkit-scrollbar-track",
+      "line": 513,
+      "bytes": 53
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-tool-grid",
+      "line": 936,
+      "bytes": 52
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-canvas-grid",
+      "line": 1705,
+      "bytes": 52
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-highlight",
+      "line": 2,
+      "bytes": 52
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "::-webkit-scrollbar-track",
+      "line": 313,
+      "bytes": 52
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "button:active",
+      "line": 398,
+      "bytes": 52
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row::-webkit-scrollbar",
+      "line": 1477,
+      "bytes": 51
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-state-grid",
+      "line": 1711,
+      "bytes": 51
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".pbtn:active",
+      "line": 385,
+      "bytes": 51
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".pbtn:active",
+      "line": 399,
+      "bytes": 51
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "select:hover",
+      "line": 621,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-button",
+      "line": 1210,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".presets::-webkit-scrollbar",
+      "line": 1404,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-metric-wide span",
+      "line": 1821,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer .diag-row-drawer",
+      "line": 1983,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-toggle .trust-toggle-label",
+      "line": 1997,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric.good",
+      "line": 2,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric.warn",
+      "line": 2,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".panel-toggle:hover",
+      "line": 308,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/07-kinetic-overdrive.css",
+      "selector": ".kinetic-surface::before",
+      "line": 348,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-label",
+      "line": 1211,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "body.audience-beginner .row",
+      "line": 1378,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#fpsBadge",
+      "line": 1395,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".golden-preset-list",
+      "line": 1901,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer-body > section > *",
+      "line": 1982,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-metric.bad",
+      "line": 2,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-note strong",
+      "line": 2,
+      "bytes": 48
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "button:active, .pbtn:active",
+      "line": 337,
+      "bytes": 48
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".trust-drawer",
+      "line": 1996,
+      "bytes": 47
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab-desc",
+      "line": 314,
+      "bytes": 47
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".tabpanel.active",
+      "line": 94,
+      "bytes": 47
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tabs::-webkit-scrollbar",
+      "line": 139,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".controls",
+      "line": 469,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-kv span:first-child",
+      "line": 852,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-method-grid",
+      "line": 1668,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab-desc",
+      "line": 324,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "a",
+      "line": 98,
+      "bytes": 46
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab-label,.rail-group-label",
+      "line": 884,
+      "bytes": 45
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".workflow-strip small",
+      "line": 1498,
+      "bytes": 45
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-desc",
+      "line": 2,
+      "bytes": 45
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-kv span:first-child",
+      "line": 3,
+      "bytes": 45
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".panel-toggle:active",
+      "line": 309,
+      "bytes": 45
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".pbtn",
+      "line": 887,
+      "bytes": 44
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-tool-btn[data-tip]::after",
+      "line": 936,
+      "bytes": 44
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-kv span:first-child",
+      "line": 947,
+      "bytes": 44
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".workflow-strip span",
+      "line": 1495,
+      "bytes": 44
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": "#shortcutHelpDialog",
+      "line": 74,
+      "bytes": 44
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#fpsBadge",
+      "line": 889,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-icon",
+      "line": 1188,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".main-col",
+      "line": 1442,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".rail-submenu .tab:hover",
+      "line": 665,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab",
+      "line": 307,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-submenu .tab:hover",
+      "line": 525,
+      "bytes": 43
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-logo:active",
+      "line": 128,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".controls::-webkit-scrollbar",
+      "line": 470,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc-body .grp .grp-title",
+      "line": 543,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ":root",
+      "line": 880,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab-label",
+      "line": 1189,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section.open::after",
+      "line": 1207,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".acc > summary:hover",
+      "line": 243,
+      "bytes": 42
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "select:focus",
+      "line": 622,
+      "bytes": 41
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "button:active",
+      "line": 646,
+      "bytes": 41
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-section",
+      "line": 1205,
+      "bytes": 41
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".pbtn:active",
+      "line": 393,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tab-icon",
+      "line": 885,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".app-shell",
+      "line": 892,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu .tab-desc",
+      "line": 1191,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".acc > summary",
+      "line": 1507,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-kv span:last-child",
+      "line": 9,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".tab:hover",
+      "line": 261,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".ui-ripple",
+      "line": 384,
+      "bytes": 40
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-flyout",
+      "line": 936,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail",
+      "line": 1203,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-palette-launcher",
+      "line": 1209,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "header",
+      "line": 1392,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-actions",
+      "line": 3,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".hud-corner, .hud-scan",
+      "line": 655,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".tabpanel",
+      "line": 93,
+      "bytes": 39
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-grid",
+      "line": 874,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".controls",
+      "line": 1501,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".ctrl-sticky",
+      "line": 1504,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-topline",
+      "line": 1907,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-actions button",
+      "line": 2,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-row-hidden",
+      "line": 2,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-test:last-child",
+      "line": 6,
+      "bytes": 38
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".layout",
+      "line": 409,
+      "bytes": 37
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-select",
+      "line": 861,
+      "bytes": 37
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".tabs",
+      "line": 906,
+      "bytes": 37
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-grid",
+      "line": 9,
+      "bytes": 37
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".main-col",
+      "line": 881,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".dev-hub",
+      "line": 903,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-grid",
+      "line": 955,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".matrix-shell",
+      "line": 1922,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help-backdrop.show",
+      "line": 2,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-guide",
+      "line": 3,
+      "bytes": 36
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-note strong",
+      "line": 863,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".v10-warnings",
+      "line": 953,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".controls",
+      "line": 1386,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-topline",
+      "line": 1698,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": ".plot-cell:hover",
+      "line": 387,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".plot-cell:hover",
+      "line": 664,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".plot-cell:hover",
+      "line": 524,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".rail-menu-icon",
+      "line": 526,
+      "bytes": 35
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".sval.warn",
+      "line": 675,
+      "bytes": 34
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-panel ul",
+      "line": 868,
+      "bytes": 34
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-group-label",
+      "line": 902,
+      "bytes": 34
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".diag-row",
+      "line": 1262,
+      "bytes": 34
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-top",
+      "line": 3,
+      "bytes": 34
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".main-col",
+      "line": 911,
+      "bytes": 33
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-menu-label",
+      "line": 1186,
+      "bytes": 33
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-submenu",
+      "line": 1192,
+      "bytes": 33
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-shell",
+      "line": 1714,
+      "bytes": 33
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-group-sep",
+      "line": 901,
+      "bytes": 32
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".main-wrap",
+      "line": 1460,
+      "bytes": 32
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".exp-lyap:empty",
+      "line": 1630,
+      "bytes": 32
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-panel *",
+      "line": 2,
+      "bytes": 32
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-palette.show",
+      "line": 8,
+      "bytes": 32
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help .si-close",
+      "line": 2,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-muted",
+      "line": 6,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/02-research-governance-v7-style.css",
+      "selector": ".rgv7-fault.show",
+      "line": 7,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": "body::before",
+      "line": 217,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "body::before",
+      "line": 377,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/04-premium.css",
+      "selector": "button:hover",
+      "line": 388,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".hud-corner",
+      "line": 660,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "button:hover",
+      "line": 662,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudCursorGlow",
+      "line": 673,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "button:hover",
+      "line": 522,
+      "bytes": 31
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "#main.dragging",
+      "line": 427,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".plx-card",
+      "line": 875,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".row label",
+      "line": 1430,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".h1-sub",
+      "line": 1451,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/01-stable-intuitive-style.css",
+      "selector": ".si-help ul",
+      "line": 2,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".pbtn:hover",
+      "line": 663,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": ".pbtn:hover",
+      "line": 523,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".pbtn",
+      "line": 1407,
+      "bytes": 29
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/03-liquid-glass.css",
+      "selector": ".tab:hover",
+      "line": 336,
+      "bytes": 29
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".presets",
+      "line": 886,
+      "bytes": 28
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "header",
+      "line": 1445,
+      "bytes": 28
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/05-extracted-inline.css",
+      "selector": ".xs-15",
+      "line": 19,
+      "bytes": 28
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/05-extracted-inline.css",
+      "selector": ".xs-17",
+      "line": 21,
+      "bytes": 28
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "#hudBoot",
+      "line": 678,
+      "bytes": 28
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-logo",
+      "line": 899,
+      "bytes": 27
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "html::after",
+      "line": 656,
+      "bytes": 27
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": "h1",
+      "line": 657,
+      "bytes": 27
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/08-refined-luxe.css",
+      "selector": "h1",
+      "line": 519,
+      "bytes": 27
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/09-accessibility-themes.css",
+      "selector": ".layout",
+      "line": 95,
+      "bytes": 27
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".rail-sep",
+      "line": 900,
+      "bytes": 26
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".layout",
+      "line": 1383,
+      "bytes": 26
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/06-futuristic-hud.css",
+      "selector": ".hud-scan",
+      "line": 661,
+      "bytes": 26
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": ".val",
+      "line": 1436,
+      "bytes": 25
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "h1",
+      "line": 1448,
+      "bytes": 23
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "h1",
+      "line": 882,
+      "bytes": 21
+    },
+    {
+      "source": "http://127.0.0.1:4173/css/00-base.css",
+      "selector": "header",
+      "line": 888,
+      "bytes": 18
+    }
+  ],
+  "caveats": [
+    "Candidates are not deletion instructions.",
+    "Hover/focus, print, reduced-motion, compact viewport, delayed jobs, and browser-specific selectors may be valid but uncovered."
+  ]
+}

@@ -28,7 +28,7 @@ const SPLIT = 134217729; // 2^27 + 1, the Dekker splitting constant for IEEE dou
 export function twoSum(a: number, b: number): DD {
   const s = a + b;
   const bb = s - a;
-  const err = (a - (s - bb)) + (b - bb);
+  const err = a - (s - bb) + (b - bb);
   return [s, err];
 }
 
@@ -52,7 +52,7 @@ export function twoProd(a: number, b: number): DD {
   const p = a * b;
   const [ah, al] = split(a);
   const [bh, bl] = split(b);
-  const err = ((ah * bh - p) + ah * bl + al * bh) + al * bl;
+  const err = ah * bh - p + ah * bl + al * bh + al * bl;
   return [p, err];
 }
 
@@ -131,7 +131,7 @@ function sinCosSmall(r: DD): [DD, DD] {
   let sinTerm: DD = r;
   let sinSum: DD = r;
   for (let k = 1; k < 30; k += 1) {
-    sinTerm = ddDivDouble(ddMul(sinTerm, negR2), (2 * k) * (2 * k + 1));
+    sinTerm = ddDivDouble(ddMul(sinTerm, negR2), 2 * k * (2 * k + 1));
     sinSum = ddAdd(sinSum, sinTerm);
     if (Math.abs(sinTerm[0]) < 1e-34) break;
   }
@@ -173,10 +173,13 @@ export function ddCos(x: DD): DD {
 
 /** out[i] = y[i] + scalar · k[i], all in double-double (scalar is an exact double). */
 function ddAxpy(
-  yHi: Float64Array, yLo: Float64Array,
-  kHi: Float64Array, kLo: Float64Array,
+  yHi: Float64Array,
+  yLo: Float64Array,
+  kHi: Float64Array,
+  kLo: Float64Array,
   scalar: number,
-  outHi: Float64Array, outLo: Float64Array
+  outHi: Float64Array,
+  outLo: Float64Array
 ): void {
   for (let i = 0; i < yHi.length; i += 1) {
     const scaled = ddMulDouble([kHi[i] ?? 0, kLo[i] ?? 0], scalar);
@@ -199,11 +202,16 @@ export type DdForce = (qHi: Float64Array, qLo: Float64Array, outHi: Float64Array
  */
 export function ddRk4Step(yHi: Float64Array, yLo: Float64Array, dt: number, rhs: DdDerivative): void {
   const n = yHi.length;
-  const k1Hi = new Float64Array(n), k1Lo = new Float64Array(n);
-  const k2Hi = new Float64Array(n), k2Lo = new Float64Array(n);
-  const k3Hi = new Float64Array(n), k3Lo = new Float64Array(n);
-  const k4Hi = new Float64Array(n), k4Lo = new Float64Array(n);
-  const tHi = new Float64Array(n), tLo = new Float64Array(n);
+  const k1Hi = new Float64Array(n),
+    k1Lo = new Float64Array(n);
+  const k2Hi = new Float64Array(n),
+    k2Lo = new Float64Array(n);
+  const k3Hi = new Float64Array(n),
+    k3Lo = new Float64Array(n);
+  const k4Hi = new Float64Array(n),
+    k4Lo = new Float64Array(n);
+  const tHi = new Float64Array(n),
+    tLo = new Float64Array(n);
 
   rhs(yHi, yLo, k1Hi, k1Lo);
   ddAxpy(yHi, yLo, k1Hi, k1Lo, dt / 2, tHi, tLo);
@@ -232,13 +240,16 @@ export function ddRk4Step(yHi: Float64Array, yLo: Float64Array, dt: number, rhs:
  * actually exposes the precision difference between float64 and double-double.
  */
 export function ddVerletStep(
-  qHi: Float64Array, qLo: Float64Array,
-  pHi: Float64Array, pLo: Float64Array,
+  qHi: Float64Array,
+  qLo: Float64Array,
+  pHi: Float64Array,
+  pLo: Float64Array,
   dt: number,
   force: DdForce
 ): void {
   const n = qHi.length;
-  const fHi = new Float64Array(n), fLo = new Float64Array(n);
+  const fHi = new Float64Array(n),
+    fLo = new Float64Array(n);
 
   force(qHi, qLo, fHi, fLo); // half kick
   ddAxpy(pHi, pLo, fHi, fLo, dt / 2, pHi, pLo);

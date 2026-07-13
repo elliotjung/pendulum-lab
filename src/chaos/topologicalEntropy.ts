@@ -150,8 +150,10 @@ export function coveringTransitionMatrix1D(
   boxes: number,
   samplesPerBox = 64
 ): number[][] {
-  if (!Number.isInteger(boxes) || boxes < 2) throw new Error('coveringTransitionMatrix1D: boxes must be an integer ≥ 2.');
-  if (!Number.isInteger(samplesPerBox) || samplesPerBox < 1) throw new Error('coveringTransitionMatrix1D: samplesPerBox must be ≥ 1.');
+  if (!Number.isInteger(boxes) || boxes < 2)
+    throw new Error('coveringTransitionMatrix1D: boxes must be an integer ≥ 2.');
+  if (!Number.isInteger(samplesPerBox) || samplesPerBox < 1)
+    throw new Error('coveringTransitionMatrix1D: samplesPerBox must be ≥ 1.');
   const [a, b] = domain;
   if (!(b > a)) throw new Error('coveringTransitionMatrix1D: domain must have b > a.');
   const width = (b - a) / boxes;

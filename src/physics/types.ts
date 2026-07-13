@@ -45,7 +45,20 @@ export interface IntegratorMeta {
 }
 
 export interface PhysicsAdapter {
-  derivative(system: SystemType, state: StateVector, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector;
+  derivative(
+    system: SystemType,
+    state: StateVector,
+    parameters: PendulumParameters,
+    gamma: number,
+    out: StateVector
+  ): StateVector;
   energy(system: SystemType, state: StateVector, parameters: PendulumParameters): EnergyBreakdown;
-  step(method: IntegratorId, state: StateVector, dt: number, rhs: Derivative, out: StateVector, options?: StepOptions): StateVector;
+  step(
+    method: IntegratorId,
+    state: StateVector,
+    dt: number,
+    rhs: Derivative,
+    out: StateVector,
+    options?: StepOptions
+  ): StateVector;
 }

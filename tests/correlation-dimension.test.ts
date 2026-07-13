@@ -1,9 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import {
-  correlationDimension,
-  correlationSum,
-  delayEmbed
-} from '../src/chaos/correlationDimension';
+import { correlationDimension, correlationSum, delayEmbed } from '../src/chaos/correlationDimension';
 
 /**
  * Grassberger–Procaccia correlation dimension. Pinned on point sets of known

@@ -139,8 +139,9 @@ describe('duffingPotential / duffingDoubleWell', () => {
     expect(well.wellFrequency).toBeCloseTo(2, 12); // √(-2α) = √4
     expect(well.barrierFrequency).toBeCloseTo(Math.SQRT2, 12); // √(-α) = √2
     // The barrier height equals V(0) − V(x*) computed from the potential.
-    const dv = duffingPotential(0, { linearStiffness: -2, cubicStiffness: 0.5 })
-      - duffingPotential(2, { linearStiffness: -2, cubicStiffness: 0.5 });
+    const dv =
+      duffingPotential(0, { linearStiffness: -2, cubicStiffness: 0.5 }) -
+      duffingPotential(2, { linearStiffness: -2, cubicStiffness: 0.5 });
     expect(well.barrierHeight).toBeCloseTo(dv, 12);
   });
 

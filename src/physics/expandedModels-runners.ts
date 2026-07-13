@@ -6,7 +6,6 @@ import {
   GOLDEN_EXPANSION_PRESET_IDS,
   createExpansionSystem,
   expansionModelDefinition,
-  finiteParam,
   numberAt
 } from './expandedModels-factory';
 import { expansionLyapunovProfile } from './expandedModels-lyapunov';
@@ -19,7 +18,6 @@ import {
   type ExpansionLyapunovProfiler,
   type ExpansionMethodResult,
   type ExpansionParameterMap,
-  type ExpansionPoint,
   type ExpansionPreset,
   type ExpansionSuiteConfig,
   type ExpansionSuiteResult,
@@ -115,10 +113,15 @@ function stateDistance(a: readonly number[], b: readonly number[]): number {
 }
 
 export function scoreRow(row: ExpansionMethodResult, conservative: boolean): number {
-  const driftPenalty = conservative ? Math.log10(1 + row.energyDrift * 1e6) : Math.log10(1 + row.referenceDivergence * 1e4);
+  const driftPenalty = conservative
+    ? Math.log10(1 + row.energyDrift * 1e6)
+    : Math.log10(1 + row.referenceDivergence * 1e4);
   const stabilityPenalty = row.stable ? 0 : 100;
   const speedBonus = Math.log10(1 + row.stepsPerMs);
-  return Math.max(0, 100 - driftPenalty * 12 - Math.log10(1 + row.referenceDivergence * 1e6) * 9 - stabilityPenalty + speedBonus * 2);
+  return Math.max(
+    0,
+    100 - driftPenalty * 12 - Math.log10(1 + row.referenceDivergence * 1e6) * 9 - stabilityPenalty + speedBonus * 2
+  );
 }
 
 function heatmapFromSamples(samples: readonly ExpansionTrajectorySample[], bins = 36): ExpansionHeatmap {
@@ -136,7 +139,14 @@ function heatmapFromSamples(samples: readonly ExpansionTrajectorySample[], bins 
   return { xMin: -Math.PI, xMax: Math.PI, yMin: -yMax, yMax, bins, counts, maxCount };
 }
 
-function ghostFrames(system: ExpansionSystem, method: IntegratorId, dt: number, steps: number, sampleStride: number, epsilon: number): ExpansionGhostFrame[] {
+function ghostFrames(
+  system: ExpansionSystem,
+  method: IntegratorId,
+  dt: number,
+  steps: number,
+  sampleStride: number,
+  epsilon: number
+): ExpansionGhostFrame[] {
   const base = cloneState(system.initialState);
   const ghost = cloneState(system.initialState);
   ghost[0] = numberAt(ghost, 0) + epsilon;
@@ -160,10 +170,12 @@ function ghostFrames(system: ExpansionSystem, method: IntegratorId, dt: number, 
   return frames;
 }
 
-function bifurcationPreview(config: Required<Pick<ExpansionSuiteConfig, 'model' | 'dt' | 'horizon' | 'bifurcationColumns'>> & {
-  parameterOverrides: Partial<ExpansionParameterMap>;
-  initialState?: readonly number[];
-}): ExpansionBifurcationColumn[] {
+function bifurcationPreview(
+  config: Required<Pick<ExpansionSuiteConfig, 'model' | 'dt' | 'horizon' | 'bifurcationColumns'>> & {
+    parameterOverrides: Partial<ExpansionParameterMap>;
+    initialState?: readonly number[];
+  }
+): ExpansionBifurcationColumn[] {
   const definition = expansionModelDefinition(config.model);
   const columns: ExpansionBifurcationColumn[] = [];
   const count = Math.max(4, Math.min(32, Math.round(config.bifurcationColumns)));
@@ -173,7 +185,11 @@ function bifurcationPreview(config: Required<Pick<ExpansionSuiteConfig, 'model' 
   for (let c = 0; c < count; c += 1) {
     const u = count === 1 ? 0 : c / (count - 1);
     const value = definition.sweep.min + (definition.sweep.max - definition.sweep.min) * u;
-    const system = createExpansionSystem(config.model, { ...config.parameterOverrides, [definition.sweep.parameter]: value }, config.initialState);
+    const system = createExpansionSystem(
+      config.model,
+      { ...config.parameterOverrides, [definition.sweep.parameter]: value },
+      config.initialState
+    );
     const state = cloneState(system.initialState);
     const out = new Float64Array(state.length);
     const values: number[] = [];
@@ -228,10 +244,18 @@ export function parseExpansionShareHash(hash: string): ExpansionSuiteConfig | nu
     if (!parsed.model || !EXPANSION_MODEL_IDS.includes(parsed.model)) return null;
     return {
       model: parsed.model,
-      ...(Array.isArray(parsed.methods) ? { methods: parsed.methods.filter((method): method is IntegratorId => typeof method === 'string') as IntegratorId[] } : {}),
+      ...(Array.isArray(parsed.methods)
+        ? {
+            methods: parsed.methods.filter(
+              (method): method is IntegratorId => typeof method === 'string'
+            ) as IntegratorId[]
+          }
+        : {}),
       ...(typeof parsed.dt === 'number' ? { dt: parsed.dt } : {}),
       ...(typeof parsed.horizon === 'number' ? { horizon: parsed.horizon } : {}),
-      ...(parsed.parameterOverrides && typeof parsed.parameterOverrides === 'object' ? { parameterOverrides: parsed.parameterOverrides as ExpansionParameterMap } : {})
+      ...(parsed.parameterOverrides && typeof parsed.parameterOverrides === 'object'
+        ? { parameterOverrides: parsed.parameterOverrides as ExpansionParameterMap }
+        : {})
     };
   } catch {
     return null;
@@ -256,7 +280,10 @@ export function configFromPreset(id: string): ExpansionSuiteConfig {
 
 export function buildExpansionReport(result: ExpansionSuiteResult): string {
   const rows = result.rows
-    .map((row) => `| ${row.method} | ${row.stable ? 'yes' : 'no'} | ${row.energyDrift.toExponential(3)} | ${row.referenceDivergence.toExponential(3)} | ${row.stepsPerMs.toFixed(1)} |`)
+    .map(
+      (row) =>
+        `| ${row.method} | ${row.stable ? 'yes' : 'no'} | ${row.energyDrift.toExponential(3)} | ${row.referenceDivergence.toExponential(3)} | ${row.stepsPerMs.toFixed(1)} |`
+    )
     .join('\n');
   const params = Object.entries(result.parameters)
     .sort(([a], [b]) => a.localeCompare(b))
@@ -300,7 +327,9 @@ export function buildExpansionReport(result: ExpansionSuiteResult): string {
   ].join('\n');
 }
 
-export function runGoldenExpansionChecks(presetIds: readonly string[] = GOLDEN_EXPANSION_PRESET_IDS): GoldenExperimentResult[] {
+export function runGoldenExpansionChecks(
+  presetIds: readonly string[] = GOLDEN_EXPANSION_PRESET_IDS
+): GoldenExperimentResult[] {
   return presetIds.map((presetId) => {
     const preset = expansionPreset(presetId);
     const result = runExpansionSuite({
@@ -310,7 +339,10 @@ export function runGoldenExpansionChecks(presetIds: readonly string[] = GOLDEN_E
       bifurcationColumns: 5
     });
     const conservativeLimit = result.conservative ? 0.08 : 1;
-    const ok = result.summary.stableMethods >= 2 && result.summary.energyShellSpan <= conservativeLimit && Number.isFinite(result.summary.maxGhostDivergence);
+    const ok =
+      result.summary.stableMethods >= 2 &&
+      result.summary.energyShellSpan <= conservativeLimit &&
+      Number.isFinite(result.summary.maxGhostDivergence);
     return {
       presetId,
       label: preset.label,
@@ -319,12 +351,16 @@ export function runGoldenExpansionChecks(presetIds: readonly string[] = GOLDEN_E
       bestMethod: result.summary.bestMethod,
       energyShellSpan: result.summary.energyShellSpan,
       maxGhostDivergence: result.summary.maxGhostDivergence,
-      reason: ok ? 'within golden thresholds' : `threshold miss: shell=${result.summary.energyShellSpan.toExponential(2)}, stable=${result.summary.stableMethods}`
+      reason: ok
+        ? 'within golden thresholds'
+        : `threshold miss: shell=${result.summary.energyShellSpan.toExponential(2)}, stable=${result.summary.stableMethods}`
     };
   });
 }
 
-export function runExpansionBatch(presetIds: readonly string[] = EXPANSION_PRESETS.map((preset) => preset.id)): BatchExperimentResult[] {
+export function runExpansionBatch(
+  presetIds: readonly string[] = EXPANSION_PRESETS.map((preset) => preset.id)
+): BatchExperimentResult[] {
   return presetIds.map((presetId) => {
     const preset = expansionPreset(presetId);
     return {
@@ -356,10 +392,21 @@ export function runExpansionSuite(
   const system = createExpansionSystem(config.model, config.parameterOverrides ?? {}, config.initialState);
   const rows = methods.map((method) => simulateMethod(system, method, dt, steps, sampleStride));
   const reference = rows[0]!;
-  for (const row of rows) row.referenceDivergence = row === reference ? 0 : stateDistance(row.finalState, reference.finalState);
-  const best = rows.reduce((acc, row) => (scoreRow(row, definition.conservative) > scoreRow(acc, definition.conservative) ? row : acc), rows[0]!);
+  for (const row of rows)
+    row.referenceDivergence = row === reference ? 0 : stateDistance(row.finalState, reference.finalState);
+  const best = rows.reduce(
+    (acc, row) => (scoreRow(row, definition.conservative) > scoreRow(acc, definition.conservative) ? row : acc),
+    rows[0]!
+  );
   const primarySamples = best.samples.length > 0 ? best.samples : reference.samples;
-  const ghost = ghostFrames(system, best.method, dt, Math.min(steps, Math.round(18 / dt)), sampleStride, config.ghostEpsilon ?? 1e-5);
+  const ghost = ghostFrames(
+    system,
+    best.method,
+    dt,
+    Math.min(steps, Math.round(18 / dt)),
+    sampleStride,
+    config.ghostEpsilon ?? 1e-5
+  );
   const profileLyapunov = options.lyapunovProfiler ?? expansionLyapunovProfile;
   const lyapunov = options.includeLyapunov ? profileLyapunov(config, { maxTimelinePoints: 120 }) : undefined;
   const maxGhostDivergence = Math.max(0, ...ghost.map((frame) => frame.divergence));
@@ -380,7 +427,12 @@ export function runExpansionSuite(
     dt,
     horizon,
     summary,
-    rows: rows.map((row) => ({ method: row.method, energyDrift: row.energyDrift, referenceDivergence: row.referenceDivergence, stable: row.stable }))
+    rows: rows.map((row) => ({
+      method: row.method,
+      energyDrift: row.energyDrift,
+      referenceDivergence: row.referenceDivergence,
+      stable: row.stable
+    }))
   };
   const hash = stableExperimentHash(hashPayload);
   return {

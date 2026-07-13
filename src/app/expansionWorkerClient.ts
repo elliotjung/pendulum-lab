@@ -23,7 +23,9 @@ export interface ExpansionJobOutcome {
 }
 
 function uid(): string {
-  return typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `exp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `exp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 function runOnMainThread(request: ExpansionJobRequest, fallbackReason?: string): ExpansionJobOutcome {
@@ -39,7 +41,10 @@ function workerLoadError(message: string): Error {
   return error;
 }
 
-export async function runExpansionWorkerJob(request: ExpansionJobRequest, timeoutMs = 30_000): Promise<ExpansionJobOutcome> {
+export async function runExpansionWorkerJob(
+  request: ExpansionJobRequest,
+  timeoutMs = 30_000
+): Promise<ExpansionJobOutcome> {
   if (typeof Worker === 'undefined') {
     const reason = 'worker unavailable';
     notifyWorkerFallback('expansion-worker', reason);
@@ -47,7 +52,10 @@ export async function runExpansionWorkerJob(request: ExpansionJobRequest, timeou
   }
   let worker: Worker;
   try {
-    worker = new Worker(new URL('../workers/expansion.worker.ts', import.meta.url), { type: 'module', name: 'pendulum-expansion-worker' });
+    worker = new Worker(new URL('../workers/expansion.worker.ts', import.meta.url), {
+      type: 'module',
+      name: 'pendulum-expansion-worker'
+    });
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'worker creation failed';
     notifyWorkerFallback('expansion-worker', reason);

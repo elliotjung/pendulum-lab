@@ -41,7 +41,9 @@ export function runReplayDeterminismCheck(): ValidationCaseResult {
       rk4Step(state, 0.002, rhs, out);
       state.set(out);
     }
-    return Array.from(state).map((x) => x.toPrecision(15)).join(',');
+    return Array.from(state)
+      .map((x) => x.toPrecision(15))
+      .join(',');
   };
   const first = makeRun();
   const second = makeRun();
@@ -54,7 +56,9 @@ export function runReplayDeterminismCheck(): ValidationCaseResult {
 }
 
 export function runJsonImportValidationCheck(): ValidationCaseResult {
-  const bad = parseStrictJsonImport('{"systemType":"double","method":"rk4","mode":"demo","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1,"l2":1,"g":9.81},"state":[0,null,0,0],"simTime":0}');
+  const bad = parseStrictJsonImport(
+    '{"systemType":"double","method":"rk4","mode":"demo","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1,"l2":1,"g":9.81},"state":[0,null,0,0],"simTime":0}'
+  );
   return {
     id: 'json-import-rejects-non-finite',
     status: bad.ok ? 'FAIL' : 'PASS',
@@ -98,7 +102,13 @@ export function runCanonicalResidualCheck(): ValidationCaseResult {
 }
 
 export function runAllValidationChecks(): ImportValidationResult<ValidationCaseResult[]> {
-  const results = [runEnergyDriftCheck(), runReplayDeterminismCheck(), runJsonImportValidationCheck(), runDtHalvingCheck(), runCanonicalResidualCheck()];
+  const results = [
+    runEnergyDriftCheck(),
+    runReplayDeterminismCheck(),
+    runJsonImportValidationCheck(),
+    runDtHalvingCheck(),
+    runCanonicalResidualCheck()
+  ];
   return {
     ok: results.every((result) => result.status === 'PASS'),
     value: results,

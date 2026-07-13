@@ -44,9 +44,11 @@ async function readJson<T>(path: string): Promise<T | null> {
 }
 
 function candidateMemory(report: BenchmarkReport): BenchmarkMetricRow | null {
-  return report.results?.find((row) => row.label === 'candidate' && typeof row.memoryBytes === 'number')
-    ?? report.results?.find((row) => typeof row.memoryBytes === 'number')
-    ?? null;
+  return (
+    report.results?.find((row) => row.label === 'candidate' && typeof row.memoryBytes === 'number') ??
+    report.results?.find((row) => typeof row.memoryBytes === 'number') ??
+    null
+  );
 }
 
 /**
@@ -59,7 +61,11 @@ function effectiveCapBytes(baseline: MemoryBaseline): number {
   return Math.min(baseline.maxGrowthBytes, Math.round(baseline.memoryBytes * fraction));
 }
 
-function markdown(status: 'created' | 'pass' | 'warn' | 'missing', row: BenchmarkMetricRow | null, baseline: MemoryBaseline | null): string {
+function markdown(
+  status: 'created' | 'pass' | 'warn' | 'missing',
+  row: BenchmarkMetricRow | null,
+  baseline: MemoryBaseline | null
+): string {
   const lines = [
     '# Memory Regression Report',
     '',

@@ -69,7 +69,9 @@ export class Phase3DTab extends TabController {
     for (let i = 0; i < n; i += 1) {
       const p = rotateProject(this.points[i]!, this.yaw, this.pitch);
       const recency = i / n;
-      const alpha = depthFade ? Math.max(0.05, 0.2 + 0.5 * ((p.depth + 1.5) / 3)) * (0.3 + 0.7 * recency) : 0.3 + 0.7 * recency;
+      const alpha = depthFade
+        ? Math.max(0.05, 0.2 + 0.5 * ((p.depth + 1.5) / 3)) * (0.3 + 0.7 * recency)
+        : 0.3 + 0.7 * recency;
       ctx.globalAlpha = Math.min(1, alpha);
       ctx.fillStyle = lerpHexColor(OKABE_ITO.blue, OKABE_ITO.vermillion, recency);
       ctx.fillRect(cx + p.x * scale, cy - p.y * scale, 2, 2);

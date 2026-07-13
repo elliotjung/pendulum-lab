@@ -79,10 +79,7 @@ export function pendulumPeriodElliptic(theta0: number, omega0: number): number {
  * linear interpolation (θ̈ = −sin θ vanishes at θ = 0, so the crossing is
  * locally linear and the interpolation error is O(dt³)).
  */
-export function measurePendulumPeriod(
-  theta0: number,
-  options: { dt?: number; crossings?: number } = {}
-): number {
+export function measurePendulumPeriod(theta0: number, options: { dt?: number; crossings?: number } = {}): number {
   const dt = options.dt ?? 0.001;
   const wanted = options.crossings ?? 11;
   const params: DrivenParameters = { g: 1, length: 1, damping: 0, driveAmplitude: 0, driveFrequency: 1 };
@@ -93,7 +90,7 @@ export function measurePendulumPeriod(
   let next = new Float64Array(3);
   const crossings: number[] = [];
   let t = 0;
-  const maxSteps = Math.ceil((wanted + 2) * 12 / dt);
+  const maxSteps = Math.ceil(((wanted + 2) * 12) / dt);
   for (let i = 0; i < maxSteps && crossings.length < wanted; i += 1) {
     rk4Step(state, dt, rhs, next);
     const thPrev = state[0]!;
@@ -116,9 +113,11 @@ export function measurePendulumPeriod(
  * period-1 stroboscopic orbit in drive amplitude (warm-started Newton) and
  * locate where the most negative real Floquet multiplier crosses −1.
  */
-export function measurePeriodDoublingOnset(
-  options: { from?: number; to?: number; step?: number; dt?: number } = {}
-): { onset: number; bracket: [number, number]; converged: boolean } {
+export function measurePeriodDoublingOnset(options: { from?: number; to?: number; step?: number; dt?: number } = {}): {
+  onset: number;
+  bracket: [number, number];
+  converged: boolean;
+} {
   const from = options.from ?? 1.05;
   const to = options.to ?? 1.08;
   const step = options.step ?? 0.0025;

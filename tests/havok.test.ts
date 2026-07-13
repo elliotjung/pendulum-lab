@@ -14,7 +14,10 @@ function matchesSet(recovered: Complex[], expected: Complex[], tol: number): boo
   for (const e of expected) {
     let found = -1;
     for (let i = 0; i < recovered.length; i += 1) {
-      if (!used[i] && complexAbs({ re: recovered[i]!.re - e.re, im: recovered[i]!.im - e.im }) < tol) { found = i; break; }
+      if (!used[i] && complexAbs({ re: recovered[i]!.re - e.re, im: recovered[i]!.im - e.im }) < tol) {
+        found = i;
+        break;
+      }
     }
     if (found < 0) return false;
     used[found] = true;

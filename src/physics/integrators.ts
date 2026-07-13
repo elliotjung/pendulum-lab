@@ -1,8 +1,10 @@
 import type { IntegratorId } from '../types/domain';
-import type { Derivative, IntegratorMeta, StateVector, StepOptions } from './types';
+import type { Derivative, StateVector, StepOptions } from './types';
 import { dormandPrince54Step, bulirschStoerStep } from './adaptive';
 import { trBdf2Step } from './stiff';
 import { implicitMidpointNewton } from './implicitDiagnostics';
+
+export { integratorRegistry } from './integratorRegistry';
 
 function ensureScratch(n: number): Float64Array[] {
   return Array.from({ length: 5 }, () => new Float64Array(n));
@@ -37,155 +39,6 @@ function evalAcceleration(
 function isSplittable(n: number): boolean {
   return n > 0 && n % 2 === 0;
 }
-
-export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> = Object.freeze({
-  euler: {
-    id: 'euler',
-    name: 'Explicit Euler',
-    order: 1,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Fast smoke-test method only; large energy drift is expected.'],
-    recommendedDt: [0.0005, 0.002]
-  },
-  rk2: {
-    id: 'rk2',
-    name: 'Midpoint RK2',
-    order: 2,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Useful for qualitative comparison, not a publication baseline.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  rk4: {
-    id: 'rk4',
-    name: 'Runge-Kutta 4',
-    order: 4,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Good general baseline; energy conservation is diagnostic only.'],
-    recommendedDt: [0.0005, 0.006]
-  },
-  verlet: {
-    id: 'verlet',
-    name: 'Velocity Verlet Alias',
-    order: 2,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Legacy compatibility alias for the leapfrog KDK path.',
-      'Kept for imported sessions that used the single-file compatibility method id.'
-    ],
-    recommendedDt: [0.0005, 0.004]
-  },
-  leapfrog: {
-    id: 'leapfrog',
-    name: 'Leapfrog Approximation',
-    order: 2,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Only symplectic for separable canonical Hamiltonians; theta/omega coordinates are not sufficient for a blanket claim.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  symplectic: {
-    id: 'symplectic',
-    name: 'Semi-Implicit Euler',
-    order: 1,
-    symplectic: 'pseudo-coordinate',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Treat as a qualitative phase-space view unless canonical coordinates are explicitly used.'],
-    recommendedDt: [0.0005, 0.002]
-  },
-  yoshida4: {
-    id: 'yoshida4',
-    name: 'Yoshida 4 Composition',
-    order: 4,
-    symplectic: 'separable-approximation',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: ['Composition method inherits symplectic claims only from a valid separable canonical sub-step.'],
-    recommendedDt: [0.0005, 0.004]
-  },
-  hmidpoint: {
-    id: 'hmidpoint',
-    name: 'Implicit Midpoint',
-    order: 'implicit',
-    symplectic: 'canonical-only',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Canonical symplectic claims require theta/p coordinates, gamma = 0, and residual reporting.',
-      'Uses Newton iteration when an analytic Jacobian is supplied; otherwise falls back to Picard fixed-point iteration.'
-    ],
-    recommendedDt: [0.0005, 0.008]
-  },
-  gauss2: {
-    id: 'gauss2',
-    name: 'Gauss-Legendre 4 (2-stage)',
-    order: 'implicit',
-    symplectic: 'canonical-only',
-    dampingSupport: 'diagnostic-only',
-    stabilityNotes: [
-      'Two-stage collocation: classical order 4, symplectic and A-stable for canonical systems.',
-      'Stage equations are solved by fixed-point iteration; the final residual is exported via previousError.'
-    ],
-    recommendedDt: [0.0005, 0.012]
-  },
-  rkf45: {
-    id: 'rkf45',
-    name: 'RKF45 Adaptive',
-    order: 'adaptive',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: ['Adaptive step statistics must be exported for replay and comparison.'],
-    recommendedDt: [0.0002, 0.01]
-  },
-  dopri5: {
-    id: 'dopri5',
-    name: 'Dormand-Prince 5(4)',
-    order: 5,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'The fifth-order solution advances; the embedded fourth-order pair provides the error estimate (the method underlying MATLAB ode45).'
-    ],
-    recommendedDt: [0.0002, 0.012]
-  },
-  dop853: {
-    id: 'dop853',
-    name: 'DOP853 8(5,3)',
-    order: 8,
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'Explicit Dormand-Prince 8th-order tableau with embedded 5th/3rd error monitors.',
-      'Use as a high-accuracy fixed macro-step reference; SciPy DOP853 remains the independent external oracle.'
-    ],
-    recommendedDt: [0.0005, 0.03]
-  },
-  gbs: {
-    id: 'gbs',
-    name: 'Gragg-Bulirsch-Stoer',
-    order: 'adaptive',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'Modified-midpoint extrapolation; effective order grows with the number of stages.',
-      'Extrapolation weights are computed from substep ratios, not transcribed, so high accuracy is reached without a large hand-written tableau.'
-    ],
-    recommendedDt: [0.001, 0.05]
-  },
-  bdf2: {
-    id: 'bdf2',
-    name: 'TR-BDF2 (stiff, L-stable)',
-    order: 'implicit',
-    symplectic: 'no',
-    dampingSupport: 'supported',
-    stabilityNotes: [
-      'One-step, self-starting, L-stable second-order method for stiff systems.',
-      'Each stage uses Newton iteration with a finite-difference Jacobian; the final residual is exported via previousError.'
-    ],
-    recommendedDt: [0.001, 0.05]
-  }
-});
 
 export function eulerStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
   const n = state.length;
@@ -225,12 +78,20 @@ export function rk4Step(state: StateVector, dt: number, rhs: Derivative, out: St
   addScaled(tmp, state, dt, k3, n);
   rhs(tmp, k4);
   for (let i = 0; i < n; i += 1) {
-    out[i] = Number(state[i] ?? 0) + (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
+    out[i] =
+      Number(state[i] ?? 0) +
+      (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
   }
   return out;
 }
 
-export function implicitMidpointStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function implicitMidpointStep(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   if (options.jacobian) {
     const newtonOptions: { tolerance?: number; maxIterations: number } = { maxIterations: 25 };
     if (options.tolerance !== undefined) newtonOptions.tolerance = options.tolerance;
@@ -368,6 +229,45 @@ export function yoshida4Step(state: StateVector, dt: number, rhs: Derivative, ou
   return out;
 }
 
+type SymmetricStepper = (state: StateVector, dt: number, rhs: Derivative, out: StateVector) => StateVector;
+
+/**
+ * Raise a symmetric method of even order p to order p+2 using Yoshida's
+ * triple jump S(z1 h) S(z0 h) S(z1 h), where
+ * z1=1/(2-2^(1/(p+1))) and z0=-2^(1/(p+1)) z1.
+ */
+function yoshidaTripleJump(
+  base: SymmetricStepper,
+  baseOrder: number,
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector
+): StateVector {
+  const n = state.length;
+  const root = 2 ** (1 / (baseOrder + 1));
+  const z1 = 1 / (2 - root);
+  const z0 = -root * z1;
+  const a = new Float64Array(n);
+  const b = new Float64Array(n);
+  base(state, z1 * dt, rhs, a);
+  base(a, z0 * dt, rhs, b);
+  base(b, z1 * dt, rhs, out);
+  return out;
+}
+
+/** Sixth-order symmetric Yoshida composition of the leapfrog split. */
+export function yoshida6Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
+  if (!isSplittable(state.length)) return rk4Step(state, dt, rhs, out);
+  return yoshidaTripleJump(yoshida4Step, 4, state, dt, rhs, out);
+}
+
+/** Eighth-order symmetric Yoshida composition (27 leapfrog substeps). */
+export function yoshida8Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
+  if (!isSplittable(state.length)) return rk4Step(state, dt, rhs, out);
+  return yoshidaTripleJump(yoshida6Step, 6, state, dt, rhs, out);
+}
+
 // Runge-Kutta-Fehlberg 4(5) Butcher tableau.
 const RKF_A: readonly (readonly number[])[] = [
   [],
@@ -386,7 +286,13 @@ const RKF_B4 = [25 / 216, 0, 1408 / 2565, 2197 / 4104, -1 / 5, 0];
  * and reports the infinity-norm difference against the embedded 4th-order
  * solution through `options.previousError` for adaptive step-size control.
  */
-export function rkf45Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function rkf45Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 6 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -447,46 +353,43 @@ const DOP853_A: readonly (readonly number[])[] = [
   [0.037037037037037035, 0, 0, 0.17082860872947386, 0.12546768756682242],
   [0.037109375, 0, 0, 0.17025221101954405, 0.06021653898045596, -0.017578125],
   [0.03709200011850479, 0, 0, 0.17038392571223998, 0.10726203044637328, -0.015319437748624402, 0.008273789163814023],
-  [0.6241109587160757, 0, 0, -3.3608926294469414, -0.868219346841726, 27.59209969944671, 20.154067550477894, -43.48988418106996],
-  [0.47766253643826434, 0, 0, -2.4881146199716677, -0.590290826836843, 21.230051448181193, 15.279233632882423, -33.28821096898486, -0.020331201708508627],
-  [-0.9371424300859873, 0, 0, 5.186372428844064, 1.0914373489967295, -8.149787010746927, -18.52006565999696, 22.739487099350505, 2.4936055526796523, -3.0467644718982196],
-  [2.273310147516538, 0, 0, -10.53449546673725, -2.0008720582248625, -17.9589318631188, 27.94888452941996, -2.8589982771350235, -8.87285693353063, 12.360567175794303, 0.6433927460157636]
+  [
+    0.6241109587160757, 0, 0, -3.3608926294469414, -0.868219346841726, 27.59209969944671, 20.154067550477894,
+    -43.48988418106996
+  ],
+  [
+    0.47766253643826434, 0, 0, -2.4881146199716677, -0.590290826836843, 21.230051448181193, 15.279233632882423,
+    -33.28821096898486, -0.020331201708508627
+  ],
+  [
+    -0.9371424300859873, 0, 0, 5.186372428844064, 1.0914373489967295, -8.149787010746927, -18.52006565999696,
+    22.739487099350505, 2.4936055526796523, -3.0467644718982196
+  ],
+  [
+    2.273310147516538, 0, 0, -10.53449546673725, -2.0008720582248625, -17.9589318631188, 27.94888452941996,
+    -2.8589982771350235, -8.87285693353063, 12.360567175794303, 0.6433927460157636
+  ]
 ];
 
 const DOP853_B = [
-  0.054293734116568765,
-  0,
-  0,
-  0,
-  0,
-  4.450312892752409,
-  1.8915178993145003,
-  -5.801203960010585,
-  0.3111643669578199,
-  -0.1521609496625161,
-  0.20136540080403034,
-  0.04471061572777259
+  0.054293734116568765, 0, 0, 0, 0, 4.450312892752409, 1.8915178993145003, -5.801203960010585, 0.3111643669578199,
+  -0.1521609496625161, 0.20136540080403034, 0.04471061572777259
 ] as const;
 
 const DOP853_E5 = [
-  0.01312004499419488,
-  0,
-  0,
-  0,
-  0,
-  -1.2251564463762044,
-  -0.4957589496572502,
-  1.6643771824549864,
-  -0.35032884874997366,
-  0.3341791187130175,
-  0.08192320648511571,
-  -0.022355307863886294,
-  0
+  0.01312004499419488, 0, 0, 0, 0, -1.2251564463762044, -0.4957589496572502, 1.6643771824549864, -0.35032884874997366,
+  0.3341791187130175, 0.08192320648511571, -0.022355307863886294, 0
 ] as const;
 
 void DOP853_C;
 
-export function dop853Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function dop853Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 13 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -585,15 +488,34 @@ const GL6_A: readonly (readonly number[])[] = [
 ];
 const GL6_B = [5 / 18, 4 / 9, 5 / 18];
 
-export function gaussLegendre4Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function gaussLegendre4Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   return gaussLegendreStep(GL4_A, GL4_B, state, dt, rhs, out, options);
 }
 
-export function gaussLegendre6Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function gaussLegendre6Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   return gaussLegendreStep(GL6_A, GL6_B, state, dt, rhs, out, options);
 }
 
-export function step(method: IntegratorId, state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function step(
+  method: IntegratorId,
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   switch (method) {
     case 'euler':
       return eulerStep(state, dt, rhs, out);
@@ -611,6 +533,10 @@ export function step(method: IntegratorId, state: StateVector, dt: number, rhs: 
       return leapfrogStep(state, dt, rhs, out);
     case 'yoshida4':
       return yoshida4Step(state, dt, rhs, out);
+    case 'yoshida6':
+      return yoshida6Step(state, dt, rhs, out);
+    case 'yoshida8':
+      return yoshida8Step(state, dt, rhs, out);
     case 'rkf45':
       return rkf45Step(state, dt, rhs, out, options);
     case 'dopri5': {

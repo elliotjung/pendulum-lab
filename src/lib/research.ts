@@ -13,6 +13,7 @@ export * from '../research/sobolSensitivity';
 export * from '../research/surrogate';
 export * from '../research/parameterEstimation';
 export * from '../research/experimentalDataImport';
+export * from '../research/videoTracking';
 export * from '../research/sindy';
 export * from '../research/complexEig';
 export * from '../research/eigenGeneral';
@@ -21,6 +22,7 @@ export * from '../research/svd';
 export * from '../research/dmd';
 export * from '../research/havok';
 export * from '../research/qkrFloquet';
+export * from '../research/qkrViewModel';
 export * from '../research/reservoir';
 export * from '../research/hamiltonianLearning';
 export * from '../research/lanczos';
@@ -70,4 +72,12 @@ export type {
   ZeroOneResponse
 } from '../workers/chaosProtocol';
 export { JobEngine, jobPhases, JOB_PROTOCOL_V2 } from '../workers/jobProtocol';
-export type { JobControlMessage, JobEventMessage, JobInboundMessage, JobStatus, JobCheckpointState, JobSubmitMessage, PhaseRunner } from '../workers/jobProtocol';
+export type {
+  JobControlMessage,
+  JobEventMessage,
+  JobInboundMessage,
+  JobStatus,
+  JobCheckpointState,
+  JobSubmitMessage,
+  PhaseRunner
+} from '../workers/jobProtocol';

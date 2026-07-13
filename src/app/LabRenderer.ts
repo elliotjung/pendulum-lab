@@ -1,6 +1,12 @@
 import type { Ctx2D } from '../viz/types';
 import type { Point2D } from '../viz/poincare';
 import type { BobPosition } from './LabSimulation';
+import {
+  orderedTrailPoints,
+  tryCreateWebGLTrailRenderer,
+  type TrailCanvasLike,
+  type WebGLTrailRenderer
+} from '../render/webglTrailRenderer';
 
 /**
  * Canvas renderer for the Lab pendulum. Geometry reproduces the legacy `#main`
@@ -33,6 +39,8 @@ export interface LabDrawExtras {
   trailLength?: number;
   skipTrail?: boolean;
   glow?: boolean;
+  /** Experimental long-trail backend. WebGL2 failures stay on Canvas2D. */
+  trailBackend?: 'canvas2d' | 'webgl2';
 }
 
 interface TrailBuffer {
@@ -62,6 +70,10 @@ export class LabRenderer {
   private trailLayer: TrailLayerCanvas | null = null;
   private trailLayerCtx: TrailLayerContext | null = null;
   private lastTrailTip: Point2D | null = null;
+  private webglTrailLayer: TrailLayerCanvas | null = null;
+  private webglTrailRenderer: WebGLTrailRenderer | null = null;
+  private webglTrailUnavailable = false;
+  private lastTrailBackend: 'canvas2d' | 'webgl2' = 'canvas2d';
 
   constructor(ctx: Ctx2D, options: LabRenderOptions) {
     this.ctx = ctx;
@@ -85,6 +97,11 @@ export class LabRenderer {
   /** Number of stored main-trail points, used by diagnostics and resize regression tests. */
   trailPointCount(): number {
     return this.trail.filled;
+  }
+
+  /** Last backend that successfully drew the main trail. */
+  activeTrailBackend(): 'canvas2d' | 'webgl2' {
+    return this.lastTrailBackend;
   }
 
   /**
@@ -143,7 +160,7 @@ export class LabRenderer {
   draw(bobsMeters: readonly BobPosition[], extras: LabDrawExtras = {}): void {
     const ctx = this.ctx;
     const { width, height } = this.opts;
-    const fade = extras.skipTrail ? 1 : extras.fade ?? this.opts.fade;
+    const fade = extras.skipTrail ? 1 : (extras.fade ?? this.opts.fade);
 
     ctx.save();
     ctx.globalAlpha = 1;
@@ -166,7 +183,9 @@ export class LabRenderer {
     if (!extras.skipTrail && tip) {
       const trailLength = Math.max(2, Math.round(extras.trailLength ?? 1500));
       this.pushTrail(this.trail, tip.x, tip.y, trailLength);
-      if (!this.drawLayerTrail(tip, trailLength, extras.trailMode ?? 'rainbow', extras.trailColor)) {
+      const webglDrawn = extras.trailBackend === 'webgl2' ? this.drawWebGLTrail(extras.trailMode ?? 'rainbow') : false;
+      this.lastTrailBackend = webglDrawn ? 'webgl2' : 'canvas2d';
+      if (!webglDrawn && !this.drawLayerTrail(tip, trailLength, extras.trailMode ?? 'rainbow', extras.trailColor)) {
         this.drawMainTrail(extras.trailMode ?? 'rainbow', extras.trailColor);
       }
     } else if (extras.skipTrail) {
@@ -280,7 +299,8 @@ export class LabRenderer {
       const f0 = b / buckets;
       const f1 = (b + 1) / buckets;
       const fmid = (f0 + f1) / 2;
-      ctx.strokeStyle = fallbackColor && mode === 'fixed' ? fallbackColor : this.trailColor(fmid, mode, fmid * 0.85 + 0.1);
+      ctx.strokeStyle =
+        fallbackColor && mode === 'fixed' ? fallbackColor : this.trailColor(fmid, mode, fmid * 0.85 + 0.1);
       ctx.beginPath();
       const first = Math.max(1, Math.floor(f0 * filled));
       const last = Math.min(filled - 1, Math.max(first, Math.ceil(f1 * filled) - 1));
@@ -329,8 +349,48 @@ export class LabRenderer {
     return true;
   }
 
+  private drawWebGLTrail(mode: string): boolean {
+    const drawCtx = this.ctx as DrawableCtx;
+    if (this.webglTrailUnavailable || typeof drawCtx.drawImage !== 'function') return false;
+    if (!this.webglTrailRenderer || !this.webglTrailLayer) {
+      const layer = createTrailLayer(this.opts.width, this.opts.height);
+      const renderer = layer ? tryCreateWebGLTrailRenderer(layer as unknown as TrailCanvasLike) : null;
+      if (!layer || !renderer) {
+        this.webglTrailUnavailable = true;
+        return false;
+      }
+      this.webglTrailLayer = layer;
+      this.webglTrailRenderer = renderer;
+    }
+
+    const points = orderedTrailPoints(this.trail.buf, this.trail.idx, this.trail.filled);
+    const colors = trailGradient(mode);
+    try {
+      const ok = this.webglTrailRenderer.draw(points, {
+        width: this.opts.width,
+        height: this.opts.height,
+        lineWidth: 1.45,
+        additive: mode === 'plasma' || mode === 'rainbow',
+        oldColor: colors.old,
+        newColor: colors.next
+      });
+      if (!ok) {
+        this.webglTrailUnavailable = true;
+        return false;
+      }
+      drawCtx.save();
+      drawCtx.drawImage(this.webglTrailLayer as CanvasImageSource, 0, 0, this.opts.width, this.opts.height);
+      drawCtx.restore();
+      return true;
+    } catch {
+      this.webglTrailUnavailable = true;
+      return false;
+    }
+  }
+
   private ensureTrailLayer(): TrailLayerContext | null {
-    if (this.trailLayer && this.trailLayer.width === this.opts.width && this.trailLayer.height === this.opts.height) return this.trailLayerCtx;
+    if (this.trailLayer && this.trailLayer.width === this.opts.width && this.trailLayer.height === this.opts.height)
+      return this.trailLayerCtx;
 
     const layer = createTrailLayer(this.opts.width, this.opts.height);
     if (!layer) return null;
@@ -350,7 +410,11 @@ export class LabRenderer {
   private drawEnsemble(tips: readonly Point2D[]): void {
     const ctx = this.ctx;
     if (this.ensembleTrails.length !== tips.length) {
-      this.ensembleTrails = Array.from({ length: tips.length }, () => ({ buf: new Float32Array(0), idx: 0, filled: 0 }));
+      this.ensembleTrails = Array.from({ length: tips.length }, () => ({
+        buf: new Float32Array(0),
+        idx: 0,
+        filled: 0
+      }));
     }
 
     ctx.save();
@@ -391,4 +455,24 @@ function createTrailLayer(width: number, height: number): TrailLayerCanvas | nul
     return canvas;
   }
   return null;
+}
+
+function trailGradient(mode: string): {
+  old: readonly [number, number, number, number];
+  next: readonly [number, number, number, number];
+} {
+  switch (mode) {
+    case 'heat':
+      return { old: [0.25, 0.01, 0, 0.05], next: [1, 0.45, 0.04, 0.9] };
+    case 'ice':
+      return { old: [0.04, 0.12, 0.25, 0.05], next: [0.5, 0.88, 1, 0.88] };
+    case 'plasma':
+      return { old: [0.18, 0.01, 0.3, 0.04], next: [1, 0.3, 0.65, 0.78] };
+    case 'white':
+      return { old: [0.35, 0.35, 0.4, 0.04], next: [1, 1, 1, 0.82] };
+    case 'green':
+      return { old: [0.01, 0.2, 0.06, 0.04], next: [0.24, 1, 0.48, 0.86] };
+    default:
+      return { old: [0.05, 0.08, 0.2, 0.04], next: [0, 0.83, 1, 0.84] };
+  }
 }

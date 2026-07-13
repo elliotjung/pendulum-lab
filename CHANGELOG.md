@@ -2,6 +2,86 @@
 
 ## Unreleased
 
+### Porcelain Daylight: a complete system light theme
+
+- **The light theme is now whole.** The old light block lived in `css/09`
+  inside `<head>`, before layers 01–08 — so every `:root` token those layers
+  re-declared unconditionally (`--bg-mesh`, `--cyan`, `--focus`, the `--pm-`,
+  `--hud-` and `--ko-` families) flipped light mode back to dark values, and
+  literal-dark paints (header gradient, workflow strip, obsidian border-box
+  frames, command palette, governance overlays, workspace chooser) were never
+  covered at all. The new final-position `css/10-porcelain-daylight.css`
+  re-asserts the full palette and restyles every surface — porcelain glass,
+  ink text, deep-teal and bronze accents — including the adopted-stylesheet
+  components (workspace chooser, tour card, result badges, parity panels,
+  command palette). A structural unit test now pins the load order so the
+  regression cannot silently return.
+- **Shared finish, baseline-frozen dark**: analysis canvases get an idle
+  "instrument face" (faint reticle grid plus vignette) instead of a dead
+  black void, and the workflow strip gains engraved step indices on desktop.
+  The dark pixels of the three visual-regression baseline components (rail,
+  Lab controls, research experiment card) are intentionally unchanged — all
+  six win32 baselines pass without regeneration.
+- **Locale contract restored**: menu tooltips keep the canonical English tool
+  name in every locale ("Simulation Lab — 실시간 …"), as the guided-ui and
+  audience-mode suites pin; the Korean switch had regressed them to fully
+  localized names.
+- **Ctrl+K works from the first keystroke**: the palette shortcut binding
+  lives in the lazily-loaded research chunk, so early presses (fresh session,
+  beginner/student modes) were silently dropped — the keyboard twin of the
+  already-shimmed rail-action clicks. main.ts now claims the shortcut until
+  the real listener exists, mounts the layer, and opens the palette; the
+  guided-ui palette test no longer flakes.
+- **Deterministic Lab-controls visual capture**: live diagnostics re-create
+  their value spans while `toHaveScreenshot` retries, so masks bound to the
+  spans fell off and telemetry digits leaked into the comparison; the mask
+  now covers the stable `#stats` container. The tall mobile panel is also
+  captured at CSS-pixel scale — at dpr 2.75 its fractional element top
+  rounded differently run-to-run and ghosted every glyph by one device
+  pixel. win32 baselines are regenerated; the Linux set is removed pending
+  the Visual Baselines promotion workflow (the documented reskin flow).
+
+## 10.36.0 - 2026-07-13
+
+### Enforced formatting gate and one-time Prettier re-baseline
+
+- **Prettier is now an enforced gate, not just a config**: `npm run verify`
+  ends with `format:check` (after `docs:sync`, so generated rewrites are
+  covered), and the PR/mainline workflows run it explicitly. All TypeScript
+  and JSON sources were reformatted once with the committed
+  `.prettierrc.json`; the `audit:modules` ratchets were re-pinned to the exact
+  post-format line counts (formatting-only growth — every file still fails
+  the gate on any further growth, and the split priorities in `ROADMAP.md`
+  are unchanged). Markdown prose is deliberately exempt because the
+  `docs:sync` generators own its synced numbers.
+- **Testing strategy documented**: `docs/testing-strategy.md` now describes
+  the ordered verify gate, test tiers, oracle ladder,
+  browser/visual/mutation/coverage gates, and what is deliberately out of
+  headless scope (fixes the previously broken `CONTRIBUTING.md` link).
+
+### Public readiness, coordinated releases, classroom UX, and research surfaces
+
+- **Scoped publishing and coordinated releases**: Renamed the unpublished package coordinate to `@elliotjung/pendulum-lab`,
+  added npm/JSR OIDC publication lanes, and made one simulator tag gate the
+  landing evidence sync, smoke/Lighthouse pass, package publication, release
+  assets, and final GitHub Release publication.
+- **Portable, evidence-rich release assets**: Replaced committed root standalone blobs with a compact SHA-256 manifest;
+  the double-click HTML and workers are now generated and attached as release
+  assets. Added Korean/English portfolio PDFs and a captioned narrated demo.
+- **Broader verification gates**: Added ESLint, Prettier, TypeScript 5.9 isolated declarations, Node 24/26
+  compatibility checks, required pinned Julia validation, CSS coverage,
+  mutation-survivor triage, coverage badges, and benchmark history.
+- **Performance, classroom UX, and accessibility**: Added fixed-step wall-clock simulation timing, opt-in OffscreenCanvas and
+  WebGL trail renderers, SharedArrayBuffer fallback infrastructure, PWA assets,
+  light/print themes, Korean structural labels, share permalinks, shortcut
+  help, storage cleanup, and visible energy-drift curves.
+- **New physics and measurement surfaces**: Added Kuramoto/Huygens and chimera analysis, magnetic-basin and quantum
+  Floquet UI surfaces, Yoshida-6/8, friction and Pyragas DDE models, periodic
+  orbit helpers, webcam marker capture, and DeviceMotion capture.
+- **Public governance and adoption material**: Added governance/security/community templates, a guest GPU runner protocol,
+  curriculum/submission mappings, technical articles, and fail-closed external
+  owner checklists for npm, JSR, Zenodo, arXiv, Cloudflare, devices, and NVDA.
+
 ### Refined-luxe UI pass, rail-action reliability, and roadmap closeouts
 
 - **Refined Luxe presentation layer** (`css/08-refined-luxe.css`, loaded after
@@ -40,7 +120,7 @@
   unitary-grid quantum Floquet scale-up, OffscreenCanvas/WebGPU evaluation,
   figure-export presets, worker-offload status) are closed out honestly.
 
-### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1004)
+### Hardware-comparison lane, WASM ensemble kernel, and gap-map extensions (additive; suite 982 -> 1090)
 
 - **Theory vs measured hardware** (`docs/hardware-validation.md`): a full
   parameter-extraction lane — video-tracker CSV (pixels) → scale-free angle

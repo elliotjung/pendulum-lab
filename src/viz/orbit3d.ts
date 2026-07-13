@@ -37,7 +37,12 @@ export class OrbitCamera {
   }
 
   /** Project a world point (y up) to canvas pixels. `scale` is px per world unit. */
-  project(point: { x: number; y: number; z: number }, width: number, height: number, scale: number): Projected & { screenX: number; screenY: number } {
+  project(
+    point: { x: number; y: number; z: number },
+    width: number,
+    height: number,
+    scale: number
+  ): Projected & { screenX: number; screenY: number } {
     const rotated = rotateProject(point, this.yaw, this.pitch);
     // Perspective: shrink with depth (depth > 0 is away from the viewer).
     const denom = 1 + this.perspective * Math.max(-0.9, rotated.depth * 0.25);

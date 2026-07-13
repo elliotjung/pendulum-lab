@@ -33,11 +33,7 @@ export interface WadaConvergenceOptions {
   range?: [number, number];
 }
 
-export type WadaConvergenceVerdict =
-  | 'stable-wada-evidence'
-  | 'stable-non-wada'
-  | 'unstable'
-  | 'insufficient-data';
+export type WadaConvergenceVerdict = 'stable-wada-evidence' | 'stable-non-wada' | 'unstable' | 'insufficient-data';
 
 export interface WadaConvergenceResult {
   schemaVersion: 'pendulum-wada-convergence/v1';
@@ -72,9 +68,9 @@ export interface WadaConvergenceResult {
 }
 
 const WADA_CAVEAT =
-  'Finite-grid evidence only: a converged Wada fraction at several resolutions supports (does not prove) the Wada property. '
-  + 'Mathematical proof requires the unrestricted grid-refinement limit or the saddle-straddle method; '
-  + 'treat this verdict as numerical evidence with the stated tolerance.';
+  'Finite-grid evidence only: a converged Wada fraction at several resolutions supports (does not prove) the Wada property. ' +
+  'Mathematical proof requires the unrestricted grid-refinement limit or the saddle-straddle method; ' +
+  'treat this verdict as numerical evidence with the stated tolerance.';
 
 function hashGrid(grid: LabelGrid): string {
   // Hash a deterministic decimation of the labels (full grids can be ~100k cells).
@@ -130,9 +126,9 @@ export function wadaConvergenceFromGrids(
   const result: WadaConvergenceResult = {
     schemaVersion: 'pendulum-wada-convergence/v1',
     method:
-      `Grid Wada test (Daza et al. 2018) at ${grids.length} independent resolutions; `
-      + `RK4 flip-basin grids, neighbourhood radius ${radius} cells, candidacy threshold ${threshold}; `
-      + `verdict from adjacent-resolution deltas <= ${convergenceTolerance}.`,
+      `Grid Wada test (Daza et al. 2018) at ${grids.length} independent resolutions; ` +
+      `RK4 flip-basin grids, neighbourhood radius ${radius} cells, candidacy threshold ${threshold}; ` +
+      `verdict from adjacent-resolution deltas <= ${convergenceTolerance}.`,
     resolutions: [...resolutions],
     wadaFractions,
     numColors,
@@ -153,16 +149,18 @@ export function wadaConvergenceFromGrids(
     reproducibilityHash: '',
     generatedAt: new Date().toISOString()
   };
-  result.reproducibilityHash = hashText(JSON.stringify({
-    resolutions: result.resolutions,
-    radius,
-    threshold,
-    convergenceTolerance,
-    dt: context.dt,
-    maxTime: context.maxTime,
-    range: context.range,
-    gridHashes
-  }));
+  result.reproducibilityHash = hashText(
+    JSON.stringify({
+      resolutions: result.resolutions,
+      radius,
+      threshold,
+      convergenceTolerance,
+      dt: context.dt,
+      maxTime: context.maxTime,
+      range: context.range,
+      gridHashes
+    })
+  );
   return result;
 }
 

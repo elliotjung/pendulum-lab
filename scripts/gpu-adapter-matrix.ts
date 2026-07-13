@@ -17,7 +17,11 @@ interface LadderEvidence {
   } | null;
   nChainVariational?: {
     backend?: string;
-    comparison?: { passed?: boolean; ftleAbsDiff?: number; clv?: { metrics?: Record<string, number | boolean> } } | null;
+    comparison?: {
+      passed?: boolean;
+      ftleAbsDiff?: number;
+      clv?: { metrics?: Record<string, number | boolean> };
+    } | null;
     dimension?: number;
   } | null;
 }
@@ -37,7 +41,12 @@ const vendors: Vendor[] = ['intel', 'nvidia', 'amd'];
 const inputRoot = process.env.GPU_MATRIX_INPUT_DIR ?? 'reports';
 
 async function exists(path: string): Promise<boolean> {
-  try { await access(path); return true; } catch { return false; }
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function collectJson(root: string): Promise<string[]> {
@@ -50,7 +59,13 @@ async function collectJson(root: string): Promise<string[]> {
 }
 
 function classify(evidence: LadderEvidence): Vendor | null {
-  const text = [evidence.adapter?.vendor, evidence.adapter?.name, evidence.adapter?.architecture, evidence.adapter?.device, evidence.adapter?.description]
+  const text = [
+    evidence.adapter?.vendor,
+    evidence.adapter?.name,
+    evidence.adapter?.architecture,
+    evidence.adapter?.device,
+    evidence.adapter?.description
+  ]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
@@ -73,7 +88,8 @@ for (const path of await collectJson(inputRoot)) {
 }
 
 const rows: VendorRow[] = vendors.map((vendor) => {
-  const available = candidates.get(vendor)!
+  const available = candidates
+    .get(vendor)!
     .sort((a, b) => String(b.evidence.generatedAt ?? '').localeCompare(String(a.evidence.generatedAt ?? '')));
   const selected = available[0];
   if (!selected) {
@@ -88,8 +104,9 @@ const rows: VendorRow[] = vendors.map((vendor) => {
       caveat: `No ${vendor} hardware ladder artifact was supplied. This row is not simulated or inferred.`
     };
   }
-  const nChainPassed = selected.evidence.nChainVariational?.backend === 'webgpu'
-    && selected.evidence.nChainVariational?.comparison?.passed === true;
+  const nChainPassed =
+    selected.evidence.nChainVariational?.backend === 'webgpu' &&
+    selected.evidence.nChainVariational?.comparison?.passed === true;
   const passed = selected.evidence.status === 'pass' && nChainPassed;
   return {
     vendor,
@@ -121,9 +138,10 @@ const report = {
     artifactName: 'gpu-ladder-<vendor>',
     rule: 'Only reports produced on a real adapter and passing same-run CPU f64 oracle gates count as vendor evidence.'
   },
-  caveat: status === 'pass'
-    ? 'All three vendor classes have real-adapter evidence; driver and architecture diversity within each vendor remains visible in the adapter metadata.'
-    : 'The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.'
+  caveat:
+    status === 'pass'
+      ? 'All three vendor classes have real-adapter evidence; driver and architecture diversity within each vendor remains visible in the adapter metadata.'
+      : 'The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.'
 };
 
 const lines = [
@@ -135,7 +153,10 @@ const lines = [
   '',
   '| Vendor | Evidence | Adapter | Architecture | N-chain | Source |',
   '|---|---|---|---|---|---|',
-  ...rows.map((row) => `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} | ${row.adapter?.architecture ?? 'n/a'} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} |`),
+  ...rows.map(
+    (row) =>
+      `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} | ${row.adapter?.architecture ?? 'n/a'} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} |`
+  ),
   '',
   '## Contract',
   '',

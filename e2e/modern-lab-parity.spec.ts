@@ -14,9 +14,13 @@ test('modern Lab presets, export, and Poincaré work by default', async ({ page 
   const th1Before = await page.evaluate(() => Number((document.getElementById('th1') as HTMLInputElement).value));
   await waitForModernShell(page);
   await page.evaluate(() => {
-    (window as unknown as { __modernShell?: { applyPreset(name: string): void } }).__modernShell?.applyPreset('periodic');
+    (window as unknown as { __modernShell?: { applyPreset(name: string): void } }).__modernShell?.applyPreset(
+      'periodic'
+    );
   });
-  await page.waitForFunction(() => Math.abs(Number((document.getElementById('th1') as HTMLInputElement).value) - 0.5) < 0.01);
+  await page.waitForFunction(
+    () => Math.abs(Number((document.getElementById('th1') as HTMLInputElement).value) - 0.5) < 0.01
+  );
   const th1After = await page.evaluate(() => Number((document.getElementById('th1') as HTMLInputElement).value));
   expect(th1Before).toBeGreaterThan(1); // was the chaotic default (~2.0)
   expect(Math.abs(th1After - 0.5)).toBeLessThan(0.01);
@@ -34,10 +38,16 @@ test('modern Lab presets, export, and Poincaré work by default', async ({ page 
 
   // Poincaré section accumulates crossings for the chaotic default over time.
   await page.waitForFunction(
-    () => (window as unknown as { __modernLab: { diagnostics(): { poincarePoints: number } } }).__modernLab.diagnostics().poincarePoints > 0,
+    () =>
+      (window as unknown as { __modernLab: { diagnostics(): { poincarePoints: number } } }).__modernLab.diagnostics()
+        .poincarePoints > 0,
     undefined,
     { timeout: 8000 }
   );
-  const diag = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { poincarePoints: number; lambdaMax: number } } }).__modernLab.diagnostics());
+  const diag = await page.evaluate(() =>
+    (
+      window as unknown as { __modernLab: { diagnostics(): { poincarePoints: number; lambdaMax: number } } }
+    ).__modernLab.diagnostics()
+  );
   expect(diag.poincarePoints).toBeGreaterThan(0);
 });

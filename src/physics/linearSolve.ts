@@ -1,6 +1,7 @@
 import { MASS_MATRIX_SINGULARITY_THRESHOLD } from './constants';
 
-export type LinearSolveFailureReason = 'dimension-mismatch' | 'singular-matrix' | 'non-finite-input' | 'not-positive-definite';
+export type LinearSolveFailureReason =
+  'dimension-mismatch' | 'singular-matrix' | 'non-finite-input' | 'not-positive-definite';
 export type LinearSolveFallbackPolicy = 'return-diagnostics' | 'throw';
 
 export interface LinearSolveResult {
@@ -89,7 +90,8 @@ export function solveLinearInPlace(
   options: LinearSolveOptions = {}
 ): LinearSolveResult {
   const fallbackPolicy = options.fallbackPolicy ?? 'return-diagnostics';
-  if (a.length < n * n || b.length < n || n <= 0) return solveFailure('dimension-mismatch', Infinity, Infinity, fallbackPolicy);
+  if (a.length < n * n || b.length < n || n <= 0)
+    return solveFailure('dimension-mismatch', Infinity, Infinity, fallbackPolicy);
 
   let scale = 0;
   for (let i = 0; i < n * n; i += 1) {
@@ -175,7 +177,12 @@ export interface CholeskyFactorResult {
  * so callers solving many right-hand sides against one matrix (e.g. the
  * column-by-column mass-matrix Jacobian assembly) factor exactly once.
  */
-export function choleskyFactor(a: Float64Array, n: number, factor: Float64Array, pivotFloor = MASS_MATRIX_SINGULARITY_THRESHOLD): CholeskyFactorResult {
+export function choleskyFactor(
+  a: Float64Array,
+  n: number,
+  factor: Float64Array,
+  pivotFloor: number = MASS_MATRIX_SINGULARITY_THRESHOLD
+): CholeskyFactorResult {
   let minDiag = Infinity;
   let maxDiag = 0;
   for (let j = 0; j < n; j += 1) {
@@ -259,7 +266,16 @@ export function solveCholeskyInPlace(
 
   const factored = choleskyFactor(a, n, factor, pivotFloor);
   if (!factored.ok) {
-    return solveFailure('not-positive-definite', scale, rhsScale, fallbackPolicy, factored.failIndex, factored.failValue, factored.minDiag, factored.maxDiag);
+    return solveFailure(
+      'not-positive-definite',
+      scale,
+      rhsScale,
+      fallbackPolicy,
+      factored.failIndex,
+      factored.failValue,
+      factored.minDiag,
+      factored.maxDiag
+    );
   }
   const { minDiag, maxDiag } = factored;
 
@@ -282,8 +298,11 @@ export function solveCholeskyInPlace(
 
 export function assertLinearSolve(result: LinearSolveResult, context: string): void {
   if (result.ok) return;
-  const detail = result.reason === 'singular-matrix'
-    ? `pivot ${result.pivotIndex ?? '?'} = ${result.pivotAbs ?? 0}`
-    : result.reason ?? 'unknown';
-  throw new Error(`${context}: linear solve failed (${detail}; condition ${result.conditionEstimate}; fallback ${result.fallbackPolicy})`);
+  const detail =
+    result.reason === 'singular-matrix'
+      ? `pivot ${result.pivotIndex ?? '?'} = ${result.pivotAbs ?? 0}`
+      : (result.reason ?? 'unknown');
+  throw new Error(
+    `${context}: linear solve failed (${detail}; condition ${result.conditionEstimate}; fallback ${result.fallbackPolicy})`
+  );
 }

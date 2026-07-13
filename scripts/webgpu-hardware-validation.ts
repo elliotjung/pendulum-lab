@@ -26,9 +26,10 @@ async function waitForServer(target: string, timeoutMs = 45_000): Promise<void> 
 async function ensureServer(): Promise<ChildProcess | null> {
   if (await isReachable(url)) return null;
   const command = process.platform === 'win32' ? (process.env.ComSpec ?? 'cmd.exe') : 'npm';
-  const args = process.platform === 'win32'
-    ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1 --port 5173']
-    : ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'];
+  const args =
+    process.platform === 'win32'
+      ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1 --port 5173']
+      : ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'];
   const child = spawn(command, args, {
     cwd: process.cwd(),
     stdio: 'ignore',
@@ -149,10 +150,16 @@ try {
     const spectrumModulePath = '/src/runtime/gpuLyapunov.ts';
     const promotionModulePath = '/src/runtime/gpuChaosPromotion.ts';
     const nChainModulePath = '/src/runtime/gpuNChainVariational.ts';
-    const mod = await import(/* @vite-ignore */ ensembleModulePath) as typeof import('../src/runtime/gpuEnsemble');
-    const spectrumMod = await import(/* @vite-ignore */ spectrumModulePath) as typeof import('../src/runtime/gpuLyapunov');
-    const promotionMod = await import(/* @vite-ignore */ promotionModulePath) as typeof import('../src/runtime/gpuChaosPromotion');
-    const nChainMod = await import(/* @vite-ignore */ nChainModulePath) as typeof import('../src/runtime/gpuNChainVariational');
+    const mod = (await import(/* @vite-ignore */ ensembleModulePath)) as typeof import('../src/runtime/gpuEnsemble');
+    const spectrumMod = (await import(
+      /* @vite-ignore */ spectrumModulePath
+    )) as typeof import('../src/runtime/gpuLyapunov');
+    const promotionMod = (await import(
+      /* @vite-ignore */ promotionModulePath
+    )) as typeof import('../src/runtime/gpuChaosPromotion');
+    const nChainMod = (await import(
+      /* @vite-ignore */ nChainModulePath
+    )) as typeof import('../src/runtime/gpuNChainVariational');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
     const initial = mod.ensembleGrid(5, [-1.1, 1.1]);
     const gpuRun = await mod.runDoublePendulumEnsemble(params, initial, { steps: 80, dt: 0.01 });
@@ -166,7 +173,7 @@ try {
       covariance: 3e-3,
       rmsSpread: 3e-3,
       flipFraction: 0
-      });
+    });
     const lyapunovPromotion = await spectrumMod.promotedDoublePendulumLyapunovSpectrum(
       params,
       [1.2, 0.7, 0.12, -0.04],
@@ -179,29 +186,22 @@ try {
         tolerances: { spectrum: 0.1, aggregate: 0.12 }
       }
     );
-    const clvPromotion = await promotionMod.promotedDoublePendulumClv(
-      params,
-      [1.2, 0.7, 0.12, -0.04],
-      {
-        dt: 0.01,
-        renormEvery: 4,
-        forwardTransient: 4,
-        window: 10,
-        backwardTransient: 2,
-        seed: 0x1234,
-        tolerances: { exponents: 0.2, angle: 0.4 }
-      }
-    );
-    const ftlePromotion = await promotionMod.promotedDoublePendulumVariationalFtleField(
-      params,
-      {
-        n: 4,
-        range: [-1.1, 1.1],
-        totalTime: 0.16,
-        dt: 0.04,
-        tolerances: { field: 0.12, aggregate: 0.08 }
-      }
-    );
+    const clvPromotion = await promotionMod.promotedDoublePendulumClv(params, [1.2, 0.7, 0.12, -0.04], {
+      dt: 0.01,
+      renormEvery: 4,
+      forwardTransient: 4,
+      window: 10,
+      backwardTransient: 2,
+      seed: 0x1234,
+      tolerances: { exponents: 0.2, angle: 0.4 }
+    });
+    const ftlePromotion = await promotionMod.promotedDoublePendulumVariationalFtleField(params, {
+      n: 4,
+      range: [-1.1, 1.1],
+      totalTime: 0.16,
+      dt: 0.04,
+      tolerances: { field: 0.12, aggregate: 0.08 }
+    });
     const nChainPromotion = await nChainMod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],

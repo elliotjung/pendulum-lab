@@ -111,7 +111,10 @@ export interface GeneralizedDimensionOptions {
 }
 
 /** Generalized dimensions of a point cloud via multi-scale box counting. */
-export function generalizedDimensions(points: readonly (readonly number[])[], options: GeneralizedDimensionOptions = {}): GeneralizedDimensions {
+export function generalizedDimensions(
+  points: readonly (readonly number[])[],
+  options: GeneralizedDimensionOptions = {}
+): GeneralizedDimensions {
   if (points.length < 10) throw new Error('generalizedDimensions: need at least 10 points');
   const dim = points[0]!.length;
   const qs = options.qs ?? [0, 1, 2, 3, 4, 5];
@@ -132,7 +135,10 @@ export function generalizedDimensions(points: readonly (readonly number[])[], op
     boxSizes = [];
     for (let i = 0; i < 6; i += 1) boxSizes.push(extent / Math.pow(2, 1 + i * 0.6));
   }
-  const scales: ScaleMeasure[] = boxSizes.map((epsilon) => ({ epsilon, probabilities: boxProbabilities(points, epsilon) }));
+  const scales: ScaleMeasure[] = boxSizes.map((epsilon) => ({
+    epsilon,
+    probabilities: boxProbabilities(points, epsilon)
+  }));
   return renyiDimensions(scales, qs);
 }
 

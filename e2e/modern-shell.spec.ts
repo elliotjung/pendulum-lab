@@ -11,7 +11,10 @@ test('modern shell owns tab navigation', async ({ page }) => {
 
   // Switch through several tabs via the real rail buttons.
   for (const tab of ['compare', 'bifurc', 'phase3d', 'validate', 'lab']) {
-    await page.evaluate((t) => (document.querySelector(`.tab[data-tab="${t}"]`) as HTMLButtonElement | null)?.click(), tab);
+    await page.evaluate(
+      (t) => (document.querySelector(`.tab[data-tab="${t}"]`) as HTMLButtonElement | null)?.click(),
+      tab
+    );
     await expect(page.locator(`#tab-${tab}`)).toHaveClass(/active/);
     const selected = await page.evaluate(
       (t) => (document.querySelector(`.tab[data-tab="${t}"]`) as HTMLElement | null)?.getAttribute('aria-selected'),
@@ -25,6 +28,8 @@ test('modern shell owns tab navigation', async ({ page }) => {
 
   // Ended on the lab tab: its panel is the active one.
   await expect(page.locator('#tab-lab')).toHaveClass(/active/);
-  const labSelected = await page.evaluate(() => (document.querySelector('.tab[data-tab="lab"]') as HTMLElement | null)?.getAttribute('aria-selected'));
+  const labSelected = await page.evaluate(() =>
+    (document.querySelector('.tab[data-tab="lab"]') as HTMLElement | null)?.getAttribute('aria-selected')
+  );
   expect(labSelected).toBe('true');
 });

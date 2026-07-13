@@ -49,6 +49,9 @@ export function presentLabChrome(s: LabChromeSnapshot): void {
     driftEl.className = `sval ${s.drift > 1e-2 ? 'bad' : s.drift > 1e-4 ? 'warn' : 'good'}`;
   }
   set('lyapStat', `${s.lambdaMax.toFixed(4)} /s`);
-  set('dPoinc', `${s.poincare.size}/${s.poincare.capacity} ${s.poincare.direction}${s.poincare.refined ? ' refined' : ' linear'}`);
+  set(
+    'dPoinc',
+    `${s.poincare.size}/${s.poincare.capacity} ${s.poincare.direction}${s.poincare.refined ? ' refined' : ' linear'}`
+  );
   set('modeLabel', s.modeLabel);
 }

@@ -39,8 +39,10 @@ export function workerFallbackMessage(detail: WorkerFallbackNoticeDetail): strin
 function jobSizeWarning(estimatedWorkUnits?: number, jobLabel?: string): string | undefined {
   if (estimatedWorkUnits === undefined) return undefined;
   const label = jobLabel ? `${jobLabel} job` : 'job';
-  if (estimatedWorkUnits >= 1_000_000) return `Large ${label} (${estimatedWorkUnits.toLocaleString()} work units) may block rendering; reduce resolution/horizon or use the dev server.`;
-  if (estimatedWorkUnits >= 100_000) return `${label} is running on the main thread (${estimatedWorkUnits.toLocaleString()} work units); expect visible UI stalls on slower devices.`;
+  if (estimatedWorkUnits >= 1_000_000)
+    return `Large ${label} (${estimatedWorkUnits.toLocaleString()} work units) may block rendering; reduce resolution/horizon or use the dev server.`;
+  if (estimatedWorkUnits >= 100_000)
+    return `${label} is running on the main thread (${estimatedWorkUnits.toLocaleString()} work units); expect visible UI stalls on slower devices.`;
   return undefined;
 }
 
@@ -70,7 +72,16 @@ export function notifyWorkerFallback(
     if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
       window.dispatchEvent(new CustomEvent<WorkerFallbackNoticeDetail>(WORKER_FALLBACK_EVENT, { detail }));
     }
-    if (typeof window.toast === 'function') window.toast(workerFallbackMessage(detail), 4200);
+    const message = workerFallbackMessage(detail);
+    if (typeof window.toast === 'function') window.toast(message, 4200);
+    else {
+      const box = document.getElementById('toast');
+      if (box) {
+        box.textContent = message;
+        box.classList.add('show');
+        window.setTimeout(() => box.classList.remove('show'), 4200);
+      }
+    }
   }
   return detail;
 }

@@ -42,7 +42,13 @@ describe('runChaosJob (pure handler shared by worker and fallback)', () => {
   });
 
   test('response is plain serializable JSON (no functions, survives a round-trip)', () => {
-    const res = runChaosJob({ id: 'r2', kind: 'lyapunov', spec: DRIVEN, state0: [0.2, 0, 0], settings: { steps: 2000 } });
+    const res = runChaosJob({
+      id: 'r2',
+      kind: 'lyapunov',
+      spec: DRIVEN,
+      state0: [0.2, 0, 0],
+      settings: { steps: 2000 }
+    });
     const clone = JSON.parse(JSON.stringify(res));
     expect(clone).toEqual(res);
   });

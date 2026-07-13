@@ -116,7 +116,10 @@ export function renderDriftGauge(ctx: Ctx2D, rect: Rect, drift: number, options:
   ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
   const decades = 3;
-  const value = Math.max(0, Math.min(1, (Math.log10(Math.max(drift, 1e-30)) - Math.log10(tol / 10 ** decades)) / decades));
+  const value = Math.max(
+    0,
+    Math.min(1, (Math.log10(Math.max(drift, 1e-30)) - Math.log10(tol / 10 ** decades)) / decades)
+  );
   const barX = rect.x + 2;
   const barW = rect.width - 4;
   const barY = rect.y + 2;

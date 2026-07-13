@@ -40,7 +40,21 @@ describe('research controller helpers', () => {
       count: 3,
       values: [0, 0.5, 1],
       experiments: [
-        { id: 'a', label: 'a', patch: {}, snapshot, estimate: 'ok', results: { lambdaMax: 0, lambdaBlockStdError: 0, rqaDeterminism: 1, rqaDivergence: 0, ftle: 0, completedAt: 'now' } },
+        {
+          id: 'a',
+          label: 'a',
+          patch: {},
+          snapshot,
+          estimate: 'ok',
+          results: {
+            lambdaMax: 0,
+            lambdaBlockStdError: 0,
+            rqaDeterminism: 1,
+            rqaDivergence: 0,
+            ftle: 0,
+            completedAt: 'now'
+          }
+        },
         { id: 'b', label: 'b', patch: {}, snapshot, estimate: 'todo' },
         { id: 'c', label: 'c', patch: {}, snapshot, estimate: 'failed', error: 'timeout' }
       ]

@@ -195,16 +195,12 @@ export function complexCharacteristicPolynomial(matrix: ComplexMatrix): Complex[
   return coeffs;
 }
 
-export function complexPolynomialRoots(
-  coeffs: readonly Complex[],
-  maxIterations = 1200,
-  tolerance = 1e-13
-): Complex[] {
+export function complexPolynomialRoots(coeffs: readonly Complex[], maxIterations = 1200, tolerance = 1e-13): Complex[] {
   const n = coeffs.length - 1;
   if (n < 1) return [];
   const lead = coeffs[n] ?? c(1);
   if (complexAbs(cSub(lead, c(1))) > 1e-12) throw new Error('complexPolynomialRoots: polynomial must be monic.');
-  if (n === 1) return [c(-((coeffs[0] ?? c()).re), -((coeffs[0] ?? c()).im))];
+  if (n === 1) return [c(-(coeffs[0] ?? c()).re, -(coeffs[0] ?? c()).im)];
 
   const evalPoly = (z: Complex): Complex => {
     let result = coeffs[n] ?? c(1);
@@ -422,6 +418,7 @@ export function complexUnitaryFloquetArnoldiSchurSpectrum(
     residualNorms: projected.residualNorms,
     basisSize: projected.basisSize,
     converged: residualBound <= residualTolerance,
-    caveat: 'Arnoldi-Schur projection of a matrix-free unitary operator; increase krylovDim or use shift/filtering for crowded phase windows.'
+    caveat:
+      'Arnoldi-Schur projection of a matrix-free unitary operator; increase krylovDim or use shift/filtering for crowded phase windows.'
   };
 }

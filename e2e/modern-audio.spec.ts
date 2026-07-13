@@ -46,9 +46,13 @@ test('modern audio toggles without errors and keeps the sim running', async ({ p
   });
 
   // Sim still advancing, no uncaught errors from the audio path.
-  const t1 = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
+  const t1 = await page.evaluate(
+    () => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time
+  );
   await page.waitForTimeout(200);
-  const t2 = await page.evaluate(() => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time);
+  const t2 = await page.evaluate(
+    () => (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time
+  );
   expect(t2).toBeGreaterThan(t1);
   expect(errors).toEqual([]);
 });

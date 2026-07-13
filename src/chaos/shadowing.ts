@@ -61,7 +61,14 @@ function makeStepper(method: IntegratorId): Stepper {
 }
 
 /** Advance `state` by total time `dt` using `subSteps` sub-steps of `stepper`. */
-function advance(stepper: Stepper, state: StateVector, dt: number, subSteps: number, rhs: Derivative, out: StateVector): void {
+function advance(
+  stepper: Stepper,
+  state: StateVector,
+  dt: number,
+  subSteps: number,
+  rhs: Derivative,
+  out: StateVector
+): void {
   const h = dt / subSteps;
   for (let s = 0; s < subSteps; s += 1) {
     stepper(state, h, rhs, out);
@@ -69,7 +76,11 @@ function advance(stepper: Stepper, state: StateVector, dt: number, subSteps: num
   }
 }
 
-export function shadowingHorizon(state0: ArrayLike<number>, rhs: Derivative, options: ShadowingOptions): ShadowingResult {
+export function shadowingHorizon(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  options: ShadowingOptions
+): ShadowingResult {
   const method = options.method ?? 'rk4';
   const referenceMethod = options.referenceMethod ?? 'gbs';
   const dt = options.dt;

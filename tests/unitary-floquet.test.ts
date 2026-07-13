@@ -87,7 +87,7 @@ describe('complex unitary Floquet spectrum', () => {
     expect(r.converged).toBe(true);
     expect(r.selected).toHaveLength(2);
     expect(r.selected[0]!.phase).toBeCloseTo(0.2, 8);
-    expect(r.selected[0]!.quasiEnergy).toBeCloseTo(-0.5 * 0.2 / 2, 8);
+    expect(r.selected[0]!.quasiEnergy).toBeCloseTo((-0.5 * 0.2) / 2, 8);
     expect(r.selected[0]!.residualBound).toBeLessThan(1e-10);
     expect(r.caveat).toContain('matrix-free');
   });

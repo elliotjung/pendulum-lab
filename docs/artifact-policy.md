@@ -9,11 +9,11 @@ or durable evidence for a README claim.
 
 - `src/`, `app.html`, `css/`, `scripts/`, `tests/`, `e2e/`, and config
   files are edited by hand and reviewed as source.
-- `index.html` at the project root is the generated portable single-file build.
-  Regenerate it with `npm run build:standalone`; do not hand-edit it.
-- Root worker files such as `chaos.worker.js` and `expansion.worker.js` are
-  generated compatibility assets for the portable build path. They should change
-  only as a consequence of the build scripts.
+- `standalone/index.html` and its worker siblings are release-only generated
+  output. The repository tracks `standalone-manifest.json` (file sizes and
+  SHA-256 hashes), not the ~850 KB HTML/worker blobs. Regenerate with
+  `npm run build:standalone && npm run standalone:manifest` and review the hash
+  diff; releases attach both the direct HTML and a complete ZIP.
 
 ## Tracked Evidence
 
@@ -21,6 +21,10 @@ or durable evidence for a README claim.
   paper, or portfolio claims cite them directly.
 - `paper/index.html` and `paper/paper.pdf` are tracked portfolio artifacts and
   should be regenerated through `npm run paper:build`.
+- `reports/portfolio-korean.pdf` and its validation JSON are tracked submission
+  artifacts generated from `docs/portfolio-korean.md` by
+  `npm run release:package`. Poppler page PNGs are temporary visual-review files
+  under `tmp/pdfs/` and are not committed.
 - Portfolio summaries under `docs/` may be tracked when they are intended for
   review outside the dev server.
 - External reference claims should cite `docs/reference-manifest.md`, including

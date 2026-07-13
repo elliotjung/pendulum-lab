@@ -18,7 +18,14 @@ import {
   type WadaConvergenceResponse,
   type CodimTwoResponse
 } from '../workers/chaosProtocol';
-import type { ClvSettings, CodimTwoOptions, FlipBasinOptions, FtleFieldOptions, LyapunovSettings, WadaConvergenceOptions } from '../chaos';
+import type {
+  ClvSettings,
+  CodimTwoOptions,
+  FlipBasinOptions,
+  FtleFieldOptions,
+  LyapunovSettings,
+  WadaConvergenceOptions
+} from '../chaos';
 import type { SystemSpec } from '../physics/systemSpec';
 import { notifyWorkerFallback } from './workerFallbackNotice';
 
@@ -109,7 +116,11 @@ export class ChaosClient {
     }
   }
 
-  lyapunov(spec: SystemSpec, state0: ArrayLike<number>, settings?: Partial<LyapunovSettings>): Promise<LyapunovResponse> {
+  lyapunov(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    settings?: Partial<LyapunovSettings>
+  ): Promise<LyapunovResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'lyapunov',
@@ -120,7 +131,12 @@ export class ChaosClient {
     return this.run<LyapunovResponse>(request);
   }
 
-  lyapunovSpectrum(spec: SystemSpec, state0: ArrayLike<number>, count?: number, settings?: Partial<LyapunovSettings>): Promise<LyapunovSpectrumResponse> {
+  lyapunovSpectrum(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    count?: number,
+    settings?: Partial<LyapunovSettings>
+  ): Promise<LyapunovSpectrumResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'lyapunovSpectrum',
@@ -162,7 +178,12 @@ export class ChaosClient {
   }
 
   /** Covariant Lyapunov vectors (Ginelli) + hyperbolicity angle. */
-  clv(spec: SystemSpec, state0: ArrayLike<number>, count?: number, settings?: Partial<ClvSettings>): Promise<ClvResponse> {
+  clv(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    count?: number,
+    settings?: Partial<ClvSettings>
+  ): Promise<ClvResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'clv',
@@ -209,7 +230,11 @@ export class ChaosClient {
   }
 
   /** One parameter-study point: maximal λ (+SE), RQA DET/DIV, and per-point FTLE in a single job. */
-  studyPoint(spec: SystemSpec, state0: ArrayLike<number>, settings?: StudyPointJobSettings): Promise<StudyPointResponse> {
+  studyPoint(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    settings?: StudyPointJobSettings
+  ): Promise<StudyPointResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'studyPoint',
@@ -221,7 +246,10 @@ export class ChaosClient {
   }
 
   /** Multi-resolution Wada convergence analysis on the flip basin. */
-  wadaConvergence(spec: Extract<SystemSpec, { kind: 'double' }>, settings?: WadaConvergenceOptions): Promise<WadaConvergenceResponse> {
+  wadaConvergence(
+    spec: Extract<SystemSpec, { kind: 'double' }>,
+    settings?: WadaConvergenceOptions
+  ): Promise<WadaConvergenceResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'wadaConvergence',

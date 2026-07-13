@@ -30,8 +30,7 @@ export type LabSidePlotWorkerMessage =
   | { kind: 'render'; plot: LabSidePlotId; width: number; height: number; dpr: number; payload: LabSidePlotPayload };
 
 export type LabSidePlotWorkerResponse =
-  | { kind: 'rendered'; plot: LabSidePlotId; elapsedMs: number }
-  | { kind: 'dropped'; plot: LabSidePlotId };
+  { kind: 'rendered'; plot: LabSidePlotId; elapsedMs: number } | { kind: 'dropped'; plot: LabSidePlotId };
 
 export function sidePlotTransferables(payload: LabSidePlotPayload): Transferable[] {
   const buffers: ArrayBuffer[] = [];

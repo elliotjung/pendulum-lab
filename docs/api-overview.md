@@ -10,6 +10,24 @@ TypeDoc is generated from `src/lib.ts`, the supported headless entry point.
 | Experimental | Useful, tested, but still allowed to change while the feature matures. | `experimental` |
 | Compatibility | Flat re-exports preserved for older scripts. Prefer grouped namespaces for new code. | root-level named exports |
 
+## Runtime Subpath Contracts
+
+The package also exposes environment-specific entry points. These entry points
+are stable API surfaces: removing an export or changing its runtime requirement
+is a SemVer-major change. Import the narrowest subpath that matches the runtime
+instead of relying on browser globals or bundler polyfills.
+
+| Subpath | Stability | Runtime contract | Intended use |
+|---|---|---|---|
+| `./browser` | Stable | Requires a DOM-capable browser. Importing it does not install UI automatically; callers explicitly invoke adapters such as `installJsonImportGuard`. | Canvas rasterization, orbit controls, and browser import guards |
+| `./worker` | Stable | Runs in Web Workers and other worker-like runtimes. It has no application-DOM dependency; callers provide the worker message/transport boundary. | `JobEngine`, protocol v2, and headless chaos jobs |
+| `./node` | Stable | Headless ESM on supported Node versions (`>=22 <27`). It excludes browser UI and the experimental namespace. | CLI, batch research, validation, and report generation |
+
+The root, `./core`, `./analysis`, and `./research` entry points remain
+dependency-free ESM and are safe to bundle for either Node or browsers when the
+consumer does not import an environment adapter. `./experimental` remains under
+the minor-release change policy described below.
+
 ## Semantic-Versioning Policy
 
 - Patch releases may fix bugs, add tests, improve performance, or add optional fields.
@@ -20,7 +38,7 @@ TypeDoc is generated from `src/lib.ts`, the supported headless entry point.
 
 ## Deprecation Timeline
 
-| Surface | Status in 10.35.0 | Migration target | Earliest removal |
+| Surface | Status in 10.36.0 | Migration target | Earliest removal |
 |---|---|---|---|
 | `window.PendulumLabIndex` | Deprecated browser alias | `window.PendulumLab` for supported API; `window.PendulumLabDebug` for diagnostics | 11.0 |
 | `window.__modernLab` / `window.__modernTabs` | Debug-only compatibility alias | `window.PendulumLabDebug` | 11.0 |
@@ -34,7 +52,7 @@ a release artifact that still documents how older archives/scripts can be read.
 ## Recommended Imports
 
 ```ts
-import { core, analysis, research } from 'pendulum-lab-core';
+import { core, analysis, research } from '@elliotjung/pendulum-lab';
 
 const rhs = core.buildRhs({ kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81, damping: 0 });
 const lambda = analysis.maximalLyapunov;
@@ -44,3 +62,13 @@ const bundle = research.buildZip;
 New application code should avoid browser globals. Browser-only debug surfaces
 (`window.PendulumLabDebug`, deprecated aliases) are not part of the stable
 library contract.
+
+## Figure artifact contract
+
+Research figure exports are application artifacts, not public library entry
+points. Saved parameter-study rows regenerate deterministic, true-vector SVG.
+Live analysis canvases can be exported as PNG and as provenance-labelled SVG
+containers; the latter declare `data-rendering="raster-embedded"` because a
+canvas does not retain the original drawing primitives. Figure manifests list
+both filenames plus the source canvas id, dimensions, content hash, and
+rendering mode so downstream paper tooling cannot confuse the two paths.

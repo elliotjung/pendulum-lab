@@ -48,12 +48,7 @@ describe('Perron eigenvalue (spectral radius via power iteration)', () => {
 
   it('rejects malformed or negative matrices', () => {
     expect(() => perronEigenvalue([])).toThrow(/non-empty/);
-    expect(() =>
-      perronEigenvalue([
-        [1, 1],
-        [1]
-      ])
-    ).toThrow(/square/);
+    expect(() => perronEigenvalue([[1, 1], [1]])).toThrow(/square/);
     expect(() =>
       perronEigenvalue([
         [-1, 0],

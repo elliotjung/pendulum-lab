@@ -36,4 +36,3 @@ export function createRailTabButton(tab: RailTabDefinition): HTMLButtonElement {
   button.append(icon, label);
   return button;
 }
-

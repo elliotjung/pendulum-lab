@@ -50,7 +50,13 @@ interface StrobeResult {
 }
 
 /** Integrate and sample (θ, ω) at every drive period after the transient. */
-function strobeAttractor(p: DrivenParameters, ic: [number, number], transient: number, samples: number, dt0 = DT): StrobeResult {
+function strobeAttractor(
+  p: DrivenParameters,
+  ic: [number, number],
+  transient: number,
+  samples: number,
+  dt0 = DT
+): StrobeResult {
   const period = (2 * Math.PI) / p.driveFrequency;
   const steps = Math.max(1, Math.round(period / dt0));
   const dt = period / steps;
@@ -234,7 +240,13 @@ const duffingParams = (delta: number, Gamma: number): DuffingParameters => ({
 });
 
 /** Integrate and sample (x, v) at every drive period after the transient. */
-function strobeDuffing(p: DuffingParameters, ic: [number, number], transient: number, samples: number, dt0 = DT): StrobeResult {
+function strobeDuffing(
+  p: DuffingParameters,
+  ic: [number, number],
+  transient: number,
+  samples: number,
+  dt0 = DT
+): StrobeResult {
   const period = (2 * Math.PI) / p.driveFrequency;
   const steps = Math.max(1, Math.round(period / dt0));
   const dt = period / steps;
@@ -343,7 +355,12 @@ function measureDuffingOnset(delta: number, dt0 = DT): DuffingOnsetRow {
 }
 
 /** Strobe bifurcation diagram data: A vs θ strobe points (γ fixed). */
-function bifurcationDiagram(gamma: number, from: number, to: number, steps: number): Array<{ A: number; thetas: number[] }> {
+function bifurcationDiagram(
+  gamma: number,
+  from: number,
+  to: number,
+  steps: number
+): Array<{ A: number; thetas: number[] }> {
   const rows: Array<{ A: number; thetas: number[] }> = [];
   let ic: [number, number] = [0.1, 0];
   for (let i = 0; i <= steps; i += 1) {
@@ -379,7 +396,17 @@ async function main(): Promise<void> {
     await mkdir('reports', { recursive: true });
     await writeFile(
       'reports/paper-study-probe.json',
-      JSON.stringify({ schemaVersion: 'paper-study-probe/v1', generatedAt: new Date().toISOString(), scan, duffing, runtimeSeconds: (Date.now() - t0) / 1000 }, null, 1)
+      JSON.stringify(
+        {
+          schemaVersion: 'paper-study-probe/v1',
+          generatedAt: new Date().toISOString(),
+          scan,
+          duffing,
+          runtimeSeconds: (Date.now() - t0) / 1000
+        },
+        null,
+        1
+      )
     );
     console.log(`probe complete (${((Date.now() - t0) / 1000).toFixed(0)}s)`);
     return;
@@ -395,7 +422,10 @@ async function main(): Promise<void> {
       `γ=${gamma.toFixed(2)}  A_c=${m.Ac.toFixed(5)}  ` +
         (m.Apd !== null
           ? `A_PD=${m.Apd.toFixed(6)}  ratio=${m.ratio!.toFixed(4)}  K(0.97·A)=${m.K_below?.toFixed(3)}  K(1.08·A)=${m.K_above?.toFixed(3)}`
-          : `loss=${m.lossType}` + (m.attractorBracket ? ` bracket=[${m.attractorBracket[0].toFixed(4)},${m.attractorBracket[1].toFixed(4)}] ρ=[${m.rhoBelow?.toFixed(3)},${m.rhoAbove?.toFixed(3)}]` : ''))
+          : `loss=${m.lossType}` +
+            (m.attractorBracket
+              ? ` bracket=[${m.attractorBracket[0].toFixed(4)},${m.attractorBracket[1].toFixed(4)}] ρ=[${m.rhoBelow?.toFixed(3)},${m.rhoAbove?.toFixed(3)}]`
+              : ''))
     );
   }
 
@@ -404,7 +434,9 @@ async function main(): Promise<void> {
   const fine = measureOnset(0.5, 0.0025);
   const coarse05 = measurements.find((m) => m.gamma === 0.5)!;
   const dtSensitivity = fine.Apd !== null && coarse05.Apd !== null ? Math.abs(fine.Apd - coarse05.Apd) : null;
-  console.log(`  A_PD(dt=0.005)=${coarse05.Apd?.toFixed(6)}  A_PD(dt=0.0025)=${fine.Apd?.toFixed(6)}  |Δ|=${dtSensitivity?.toExponential(2)}`);
+  console.log(
+    `  A_PD(dt=0.005)=${coarse05.Apd?.toFixed(6)}  A_PD(dt=0.0025)=${fine.Apd?.toFixed(6)}  |Δ|=${dtSensitivity?.toExponential(2)}`
+  );
 
   // Strobe bifurcation diagram at γ = 0.5 (the classic picture).
   console.log('bifurcation diagram at γ = 0.5…');
@@ -452,13 +484,21 @@ async function main(): Promise<void> {
         driveFrequency: OMEGA,
         dt: DT,
         method: {
-          attractor: 'strobe at drive period, warm-started march + bisection of the period-1 boundary (300–600 transient periods)',
-          refinement: 'Floquet multiplier of the Newton period-1 orbit seeded from the attractor; onset interpolated at ρ = −1',
+          attractor:
+            'strobe at drive period, warm-started march + bisection of the period-1 boundary (300–600 transient periods)',
+          refinement:
+            'Floquet multiplier of the Newton period-1 orbit seeded from the attractor; onset interpolated at ρ = −1',
           corroboration: '0–1 test (Gottwald–Melbourne) on cosθ strobe series, 700 samples, seed 12345',
           literatureAnchor: 'Baker & Gollub: A_PD ≈ 1.0663 at γ = 0.5, ω = 2/3'
         },
         measurements,
-        dtSensitivity: { gamma: 0.5, dtFine: 0.0025, ApdFine: fine.Apd, ApdCoarse: coarse05.Apd, absDelta: dtSensitivity },
+        dtSensitivity: {
+          gamma: 0.5,
+          dtFine: 0.0025,
+          ApdFine: fine.Apd,
+          ApdCoarse: coarse05.Apd,
+          absDelta: dtSensitivity
+        },
         bifurcationDiagram: { gamma: 0.5, rows: diagram },
         frequencyScan: {
           method:

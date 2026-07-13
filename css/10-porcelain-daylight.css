@@ -1,0 +1,644 @@
+/* ============================================================================
+   Porcelain Daylight — the complete light theme, plus final shared finish
+   ----------------------------------------------------------------------------
+   Loaded last so ordinary source order wins. This layer exists because the
+   original light block in css/09 sat in <head>, *before* layers 01–08: any
+   `:root` token those later layers re-declared unconditionally (--bg-mesh in
+   04, --cyan/--focus in 06/08, the --pm-, --hud- and --ko- families) silently
+   flipped light mode back to dark values, and literal-dark component paints
+   (header gradient, workflow strip, obsidian border-box frames) were never
+   overridden at all. The result was the documented half-dark light mode.
+
+   Contract (same as 03/04/06/07/08):
+   - Visual only: no display/position/sizing changes to interactive structure.
+   - No new continuous animations; body.hud-fx gating from css/06 is untouched.
+   - Dark presentation of the visual-regression baseline components (.rail,
+     the Lab .controls region, #researchExperimentCard) is intentionally left
+     pixel-identical — Part A touches neither, and Part B is scoped to
+     prefers-color-scheme: light, which the baselines pin to dark.
+   - `!important` appears only where an earlier layer painted a literal
+     (non-token) color, or where an adopted stylesheet (audienceMode,
+     onboardingTour, resultBadges, parity/shared, educationCards) would
+     otherwise win the cascade by injection order.
+   ========================================================================== */
+
+/* ============================================================================
+   PART A — SHARED FINISH (both themes; baseline-safe)
+   ========================================================================== */
+
+/* Workflow strip: engraved step indices give the journey rail a readable
+   order at a glance. Indices live on the label span (bare buttons must stay
+   pseudo-element-free for the rail tooltip contract from css/04). Desktop
+   only: on phones the four columns are too narrow for a prefix, and the
+   index's fractional line-box growth nudges everything below the strip —
+   measured as a moved mobile visual-regression crop at dpr 2.75. */
+@media (min-width:781px){
+  .workflow-strip{ counter-reset:pl-workflow; }
+  .workflow-strip button{ counter-increment:pl-workflow; }
+  .workflow-strip span::before{
+    content:counter(pl-workflow, decimal-leading-zero) " · ";
+    color:var(--lux-gold,#e7c887);
+    font:750 9px/1 var(--font-mono);
+    letter-spacing:.14em;
+    opacity:.85;
+  }
+  .workflow-strip button:hover span::before,
+  .workflow-strip button:focus-visible span::before{ opacity:1; }
+}
+
+/* Analysis instruments: an idle screen instead of a dead black void. The
+   backdrop is painted on the canvas itself, so the first rendered frame
+   covers it and the "awaiting run" state reads as a designed instrument
+   face — faint reticle grid, centre glow, vignette. The live Lab/side-plot
+   canvases keep the plain deep base (their renderers blend with alpha). */
+#sweepCanvas, #bifCanvas, #zeroOneCanvas, #clvCanvas, #basinCanvas,
+#rqaCanvas, #ftleCanvas, #gpuCanvas, #p3dCanvas, #lyapSpecCanvas,
+#cmpCanvas, #rpSdeCanvas{
+  background:
+    radial-gradient(58% 58% at 50% 46%, rgba(24,212,248,.05), transparent 70%),
+    linear-gradient(rgba(140,190,255,.045) 1px, transparent 1px) 0 0/100% 40px,
+    linear-gradient(90deg, rgba(140,190,255,.045) 1px, transparent 1px) 0 0/40px 100%,
+    radial-gradient(120% 120% at 50% 50%, #04060f 58%, #01020a 100%);
+}
+
+/* ============================================================================
+   PART B — PORCELAIN & INK (complete system light theme)
+   ========================================================================== */
+@media (prefers-color-scheme: light){
+
+  /* ---- Tokens: the full palette, re-asserted after every later layer ------ */
+  :root{
+    --bg:#eef2f9;
+    --bg-mesh:
+      radial-gradient(1100px 700px at 6% -12%, #d4ecfa 0, transparent 60%),
+      radial-gradient(900px 620px at 102% -4%, #e9e3fb 0, transparent 56%),
+      radial-gradient(760px 560px at 96% 104%, #f6ecdc 0, transparent 52%),
+      #eef2f9;
+    --panel:rgba(255,255,255,.9);
+    --panel2:rgba(246,249,253,.94);
+    --panel-solid:#ffffff;
+    --panel-elevated:#f6f9fd;
+    --glass-stroke:rgba(16,38,64,.1);
+    --glass-stroke-strong:rgba(16,38,64,.18);
+    --border:rgba(16,38,64,.12);
+    --border-strong:rgba(16,38,64,.22);
+    --divider:rgba(16,38,64,.09);
+
+    --muted:#586c82;
+    --subtle:#42566d;
+    --text:#2e4358;
+    --fg:#182e44;
+    --fg-bright:#081e33;
+
+    --cyan:#087b9a;
+    --cyan-mid:#0a94c0;
+    --cyan-deep:#075e7c;
+    --orange:#b0500e;
+    --orange-soft:rgba(176,80,14,.85);
+    --green:#0b7a43;
+    --red:#b7273d;
+    --yellow:#8a6100;
+    --purple:#6845b6;
+    --pink:#ad3f7d;
+    --focus:#8a5a00;
+
+    --shadow-xs:0 1px 3px rgba(23,42,66,.1);
+    --shadow-sm:0 3px 12px rgba(23,42,66,.1);
+    --shadow-md:0 10px 30px rgba(23,42,66,.12);
+    --shadow-lg:0 24px 64px rgba(23,42,66,.16);
+    --shadow-glow-cyan:0 0 30px -12px rgba(8,123,154,.4);
+    --shadow-glow-orange:0 0 26px -10px rgba(176,80,14,.3);
+    --shadow-glow-purple:0 0 24px -10px rgba(104,69,182,.26);
+
+    /* Liquid-glass family (03) */
+    --lg-tint:rgba(255,255,255,.55);
+    --lg-tint-strong:rgba(255,255,255,.72);
+    --lg-tint-soft:rgba(255,255,255,.4);
+    --lg-stroke:rgba(16,38,64,.16);
+    --lg-stroke-soft:rgba(16,38,64,.1);
+    --lg-specular:rgba(255,255,255,.9);
+    --lg-inner:inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(16,38,64,.06);
+    --lg-drop:0 10px 30px -14px rgba(23,42,66,.18), 0 2px 8px -5px rgba(23,42,66,.12);
+
+    /* Premium family (04) */
+    --pm-grad-accent:linear-gradient(90deg, #0a94c0, #6845b6);
+    --pm-grad-accent-soft:linear-gradient(120deg, rgba(10,148,192,.2), rgba(8,123,154,.1) 45%, rgba(104,69,182,.16));
+    --pm-track:rgba(16,38,64,.14);
+
+    /* HUD family (06) */
+    --hud-cyan:#087b9a;
+    --hud-cyan-soft:rgba(8,123,154,.5);
+    --hud-line:rgba(8,123,154,.2);
+    --hud-line-strong:rgba(8,123,154,.36);
+    --hud-purple:rgba(104,69,182,.34);
+    --hud-orange:rgba(176,80,14,.3);
+    --hud-panel:rgba(255,255,255,.86);
+    --hud-panel-deep:rgba(250,252,255,.94);
+    --hud-frame:linear-gradient(165deg, rgba(8,123,154,.4), rgba(16,38,64,.08) 30%, rgba(104,69,182,.24) 64%, rgba(146,106,31,.28));
+    --hud-frame-soft:linear-gradient(165deg, rgba(8,123,154,.22), rgba(16,38,64,.06) 32%, rgba(104,69,182,.14) 66%, rgba(146,106,31,.16));
+    --hud-glow:0 0 26px -12px rgba(8,123,154,.35);
+    --hud-glow-strong:0 0 34px -12px rgba(8,123,154,.5);
+
+    /* Kinetic family (07) */
+    --ko-cyan:#0a94c0;
+    --ko-amber:#9a6a14;
+    --ko-green:#0b7a43;
+    --ko-rose:#ad3f7d;
+    --ko-grid:rgba(8,123,154,.07);
+    --ko-line:rgba(16,38,64,.14);
+    --ko-panel:rgba(255,255,255,.85);
+
+    /* Refined-luxe family (08) */
+    --lux-gold:#8a6a1f;
+    --lux-gold-soft:rgba(138,106,31,.7);
+    --lux-gold-line:rgba(138,106,31,.34);
+    --lux-hairline:rgba(16,38,64,.11);
+    --lux-hairline-strong:rgba(16,38,64,.2);
+    --lux-ice:#075e7c;
+    --lux-ink:rgba(255,255,255,.94);
+  }
+
+  /* ---- Page field: porcelain mesh, pastel aurora, ink reticle ------------- */
+  html{ background:var(--bg-mesh) fixed !important; }
+  body{ background:transparent !important; color:var(--fg); }
+  body::before{ /* 03's aurora, re-lit as a pastel wash */
+    filter:blur(14px) saturate(88%) !important;
+    opacity:.42;
+  }
+  body::after{ opacity:.18 !important; } /* film grain */
+  html::after{ /* 06's holographic grid → faint ink reticle */
+    background:
+      linear-gradient(rgba(16,38,64,.05) 1px, transparent 1px) 0 0/52px 52px,
+      linear-gradient(90deg, rgba(16,38,64,.05) 1px, transparent 1px) 0 0/52px 52px;
+    opacity:.4;
+  }
+  .kinetic-field, body.kinetic-overdrive::before{ opacity:.1 !important; }
+
+  ::selection{ background:rgba(10,148,192,.22); color:var(--fg-bright); }
+
+  /* ---- Boot veil ----------------------------------------------------------- */
+  #hudBoot{
+    background:
+      radial-gradient(120% 100% at 50% 0%, #f7fafe, #e9eef7 70%, #e3e9f4) !important;
+  }
+  #hudBoot .hud-boot-title{ color:var(--fg-bright); text-shadow:none; }
+  #hudBoot .hud-boot-status{ color:var(--subtle); }
+
+  /* ---- Header: porcelain slab, ink-engraved title -------------------------- */
+  header{
+    background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.28)) !important;
+    border-bottom:1px solid var(--lux-hairline-strong) !important;
+    box-shadow:none !important;
+  }
+  h1{
+    background:linear-gradient(96deg, #0a2033 0%, #075e7c 56%, #6d5316 100%) !important;
+    -webkit-background-clip:text !important; background-clip:text !important;
+    -webkit-text-fill-color:transparent !important;
+  }
+  h1 .h1-sub{
+    -webkit-text-fill-color:var(--subtle) !important;
+    background:rgba(16,38,64,.04) !important;
+    border-color:var(--lux-hairline) !important;
+  }
+  header::after{
+    background:linear-gradient(90deg, rgba(7,94,124,.75), rgba(138,106,31,.55), transparent) !important;
+    box-shadow:none !important;
+  }
+  .badge, #qualBadge, #fpsBadge{
+    background:rgba(255,255,255,.75) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9) !important;
+  }
+  .badge{
+    color:var(--lux-gold) !important;
+    border-color:var(--lux-gold-line) !important;
+  }
+  #qualBadge{ color:var(--lux-ice) !important; border-color:var(--lux-hairline-strong) !important; }
+  #fpsBadge{ color:var(--green) !important; border-color:rgba(11,122,67,.3) !important; }
+  .trust-toggle{
+    color:var(--subtle) !important;
+    background:rgba(255,255,255,.8) !important;
+    border-color:var(--lux-hairline-strong) !important;
+  }
+  .trust-toggle:hover{
+    color:var(--fg-bright) !important;
+    border-color:rgba(8,123,154,.45) !important;
+    box-shadow:0 0 16px -10px rgba(8,123,154,.5) !important;
+  }
+  .diag-row > span{
+    background:rgba(255,255,255,.8) !important;
+    border-color:var(--lux-hairline) !important;
+    color:var(--muted);
+  }
+
+  /* ---- Workflow strip: porcelain steps ------------------------------------- */
+  .workflow-strip button{
+    background:linear-gradient(180deg, #ffffff, #f3f7fc) !important;
+    border-color:var(--lux-hairline) !important;
+    box-shadow:var(--shadow-xs) !important;
+  }
+  .workflow-strip button:hover,
+  .workflow-strip button:focus-visible{
+    border-color:rgba(8,123,154,.4) !important;
+    background:linear-gradient(180deg, #ffffff, #ecf5fa) !important;
+    box-shadow:var(--shadow-sm) !important;
+  }
+  .workflow-strip span{ color:var(--fg-bright) !important; }
+  .workflow-strip small{ color:var(--muted) !important; }
+
+  /* ---- Rail: the porcelain spine ------------------------------------------- */
+  .rail{
+    background:rgba(248,251,255,.96) !important;
+    border-right:1px solid var(--border) !important;
+    box-shadow:5px 0 24px rgba(23,42,66,.08) !important;
+  }
+  .rail-menu-icon{
+    color:var(--subtle) !important;
+    border-color:var(--lux-hairline) !important;
+    background:linear-gradient(180deg, #ffffff, #f2f6fb) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9) !important;
+  }
+  .rail-menu-label{ color:var(--subtle); }
+  .rail-menu-button:hover{ background:rgba(8,123,154,.07) !important; }
+  .rail-menu-button:hover .rail-menu-icon{ color:var(--fg-bright) !important; }
+  .rail-menu-button[aria-expanded="true"]{
+    color:var(--fg-bright) !important;
+    background:linear-gradient(180deg, rgba(8,123,154,.1), rgba(8,123,154,.03)) !important;
+    border-color:rgba(8,123,154,.28) !important;
+  }
+  .rail-menu-button[aria-expanded="true"] .rail-menu-icon{
+    color:#075e7c !important;
+    border-color:rgba(8,123,154,.4) !important;
+    background:linear-gradient(180deg, rgba(8,123,154,.12), rgba(8,123,154,.04)) !important;
+    box-shadow:none !important;
+  }
+  .rail-menu-button[aria-expanded="true"]::before{
+    background:linear-gradient(180deg, #075e7c, #8a6a1f) !important;
+    box-shadow:none !important;
+  }
+  .rail-submenu, .dev-flyout{
+    background:#ffffff !important;
+    border:1px solid var(--border) !important;
+    box-shadow:var(--shadow-lg) !important;
+  }
+  .rail-submenu-hint{
+    background:rgba(8,123,154,.06) !important;
+    box-shadow:inset 0 0 0 1px rgba(8,123,154,.14) !important;
+    color:var(--subtle) !important;
+  }
+  .rail-submenu .tab:hover{ background:rgba(8,123,154,.07) !important; }
+  .tab[aria-selected="true"], .rail-submenu .tab[aria-selected="true"]{
+    color:#075e7c !important;
+    background:rgba(8,123,154,.1) !important;
+    box-shadow:inset 0 0 0 1px rgba(8,123,154,.26) !important;
+  }
+  .rail-submenu .tab[aria-selected="true"]::before{
+    background:linear-gradient(180deg, #075e7c, #8a6a1f) !important;
+    box-shadow:none !important;
+  }
+  .tab-icon{ color:var(--subtle) !important; }
+  .tab[aria-selected="true"] .tab-icon{ color:#075e7c !important; }
+  .tab-desc{ color:var(--muted) !important; }
+  .rail-palette-launcher{
+    border-color:var(--lux-hairline) !important;
+    background:linear-gradient(180deg, #ffffff, #f2f6fb) !important;
+  }
+  .rail-palette-launcher:hover, .rail-palette-launcher:focus-visible{
+    border-color:rgba(8,123,154,.4) !important;
+    background:linear-gradient(180deg, #ffffff, #eaf4fa) !important;
+    box-shadow:0 0 16px -10px rgba(8,123,154,.5) !important;
+  }
+  .rail-kbd{
+    border-color:var(--lux-hairline) !important;
+    background:rgba(16,38,64,.04) !important;
+  }
+  .audience-select{
+    border-color:var(--lux-hairline) !important;
+    background:linear-gradient(180deg, #ffffff, #f4f8fc) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85) !important;
+  }
+  .audience-select select{ background-color:#ffffff !important; }
+
+  /* ---- Presets ------------------------------------------------------------- */
+  .presets{
+    background:rgba(255,255,255,.9) !important;
+    border:1px solid var(--border) !important;
+    box-shadow:var(--shadow-sm) !important;
+  }
+  .pbtn{
+    background:linear-gradient(180deg, #ffffff, #f3f7fc) !important;
+    border-color:var(--lux-hairline) !important;
+    color:var(--text) !important;
+  }
+  .pbtn:hover{
+    border-color:var(--lux-gold-line) !important;
+    color:var(--fg-bright) !important;
+    background:linear-gradient(180deg, #fffdf6, #faf3e3) !important;
+    box-shadow:0 6px 16px -8px rgba(23,42,66,.25), 0 0 14px -9px rgba(138,106,31,.5) !important;
+  }
+
+  /* ---- Instrument bays: porcelain bezel, dark glass screen ----------------- */
+  .main-wrap, .plot-cell, .scrub-row{
+    background:linear-gradient(172deg, #ffffff, #f4f7fc) !important;
+    border:1px solid var(--border) !important;
+    box-shadow:var(--shadow-sm) !important;
+  }
+  .main-wrap{ box-shadow:var(--shadow-md) !important; }
+  .main-wrap:hover{ box-shadow:var(--shadow-md), 0 0 30px -18px rgba(8,123,154,.4) !important; }
+  .plot-cell:hover{ box-shadow:var(--shadow-md) !important; }
+  /* The canvases stay dark on purpose — they are the instrument screens.
+     A crisp ink bezel seats them into the porcelain. */
+  canvas{ border-color:rgba(9,20,36,.5) !important; }
+  .canvas-label{ color:var(--muted) !important; }
+  .canvas-label::before{ color:var(--lux-gold-soft) !important; }
+  .controls::after, .main-wrap::after{
+    background:linear-gradient(90deg, transparent, rgba(8,123,154,.28), transparent) !important;
+  }
+  .hud-corner{
+    border-color:rgba(8,123,154,.55) !important;
+    filter:none !important;
+    opacity:.5;
+  }
+  #scrubber{ accent-color:var(--orange); }
+
+  /* ---- Control panel: etched porcelain stack ------------------------------- */
+  .controls{
+    background:#ffffff !important;
+    border:1px solid var(--border) !important;
+    box-shadow:var(--shadow-md) !important;
+  }
+  .ctrl-sticky{
+    background:linear-gradient(180deg, #ffffff, rgba(255,255,255,.92)) !important;
+    border-bottom:1px solid var(--lux-hairline) !important;
+  }
+  .ctrl-sticky-title{ color:var(--lux-ice) !important; }
+  .ctrl-sticky-title::after{
+    background:linear-gradient(90deg, rgba(7,94,124,.4), rgba(138,106,31,.35), transparent) !important;
+  }
+  .acc{ border-bottom:1px solid var(--divider) !important; }
+  .acc > summary{ color:var(--subtle) !important; }
+  .acc > summary:hover{ background:rgba(8,123,154,.05) !important; color:var(--fg-bright) !important; }
+  .acc[open] > summary{
+    background:linear-gradient(90deg, rgba(8,123,154,.07), transparent 72%) !important;
+    box-shadow:inset 2px 0 0 rgba(8,123,154,.45) !important;
+    color:var(--fg-bright) !important;
+  }
+  .acc-icon{
+    color:var(--subtle) !important;
+    border-color:var(--lux-hairline) !important;
+    background:#ffffff !important;
+  }
+  .acc[open] > summary .acc-icon{
+    color:#075e7c !important;
+    background:rgba(8,123,154,.08) !important;
+    border-color:rgba(8,123,154,.34) !important;
+    box-shadow:none !important;
+  }
+  .acc-sub{ color:var(--lux-gold) !important; }
+  .row label{ color:var(--subtle) !important; }
+  .val{ color:var(--cyan-deep) !important; }
+  .stats .srow{ border-bottom:1px solid var(--divider) !important; }
+  .skey{ color:var(--muted) !important; }
+  .sval{ color:var(--fg) !important; }
+  .sval.hi{ color:var(--cyan-deep) !important; }
+  .sval.good{ color:var(--green) !important; }
+  .sval.bad{ color:var(--red) !important; }
+  .chip{
+    color:var(--cyan-deep) !important;
+    border-color:rgba(8,123,154,.3) !important;
+    background:rgba(8,123,154,.07) !important;
+  }
+  .cost-chip{
+    color:var(--lux-gold) !important;
+    border-color:var(--lux-gold-line) !important;
+    background:rgba(138,106,31,.07) !important;
+  }
+  .shorts{ color:var(--muted) !important; }
+  kbd{
+    color:var(--fg-bright) !important;
+    background:var(--panel-elevated) !important;
+    border-color:var(--border-strong) !important;
+    box-shadow:inset 0 -1px rgba(16,38,64,.14) !important;
+  }
+
+  /* ---- Buttons: machined porcelain keys ------------------------------------ */
+  button{
+    color:var(--fg);
+    background:linear-gradient(180deg, #ffffff, #f0f4fa) !important;
+    border:1px solid var(--glass-stroke-strong) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9), 0 1px 4px rgba(23,42,66,.12) !important;
+  }
+  button:hover{
+    background:linear-gradient(180deg, #ffffff, #e9f2f9) !important;
+    border-color:rgba(8,123,154,.4) !important;
+    color:var(--fg-bright);
+    box-shadow:inset 0 1px 0 #ffffff, 0 6px 16px -8px rgba(23,42,66,.28), 0 0 14px -9px rgba(8,123,154,.4) !important;
+  }
+  button.primary{
+    color:#ffffff !important;
+    background:linear-gradient(135deg, #0a94c0, #075e7c) !important;
+    border-color:rgba(7,94,124,.75) !important;
+    text-shadow:none !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.32), 0 8px 22px -10px rgba(8,123,154,.55) !important;
+  }
+  button.primary:hover{
+    background:linear-gradient(135deg, #0aa2d2, #086a8c) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 10px 26px -10px rgba(8,123,154,.7) !important;
+  }
+  button.danger{
+    color:#8f1f31 !important;
+    background:linear-gradient(180deg, #ffffff, #fdf1f3) !important;
+    border-color:rgba(183,39,61,.4) !important;
+  }
+  button.danger:hover{
+    color:#ffffff !important;
+    background:linear-gradient(135deg, #c6394f, #a32138) !important;
+    border-color:rgba(163,33,56,.75) !important;
+    box-shadow:0 8px 20px -10px rgba(183,39,61,.6) !important;
+  }
+  .ui-ripple{
+    background:radial-gradient(circle, rgba(8,123,154,.28) 0%, rgba(8,123,154,.14) 40%, transparent 70%) !important;
+  }
+  .panel-toggle{ background:#ffffff !important; }
+
+  /* ---- Inputs --------------------------------------------------------------- */
+  input, select, textarea{
+    color:var(--fg-bright) !important;
+    background-color:#ffffff !important;
+    border-color:var(--border-strong) !important;
+  }
+  input[type="range"]{ color-scheme:light; background:transparent !important; }
+  input[type="checkbox"], input[type="radio"]{ accent-color:var(--cyan-mid); }
+  input[type=range]::-webkit-slider-thumb{
+    background:radial-gradient(circle at 35% 30%, #ffffff, #cfeefb 38%, #0a94c0 100%) !important;
+    border:1px solid rgba(7,94,124,.5) !important;
+    box-shadow:0 1px 4px rgba(23,42,66,.35) !important;
+  }
+  input[type=range]::-moz-range-thumb{
+    background:radial-gradient(circle at 35% 30%, #ffffff, #cfeefb 38%, #0a94c0 100%) !important;
+    border:1px solid rgba(7,94,124,.5) !important;
+    box-shadow:0 1px 4px rgba(23,42,66,.35) !important;
+  }
+  input[type=range]::-webkit-slider-runnable-track{ box-shadow:inset 0 1px 2px rgba(23,42,66,.18) !important; }
+  select:hover{ box-shadow:0 0 12px -8px rgba(8,123,154,.5) !important; }
+  select:focus{ box-shadow:0 0 0 3px rgba(8,123,154,.14) !important; }
+
+  /* ---- Comms: toast, faults, logs ------------------------------------------ */
+  #toast{
+    color:var(--fg-bright) !important;
+    background:#ffffff !important;
+    border:1px solid rgba(8,123,154,.4) !important;
+    box-shadow:var(--shadow-lg) !important;
+  }
+  #nanOverlay{
+    color:#8f1f31 !important;
+    background:#fff6f6 !important;
+    border-color:rgba(183,39,61,.5) !important;
+  }
+  .plx-log, pre.plx-log{
+    color:var(--text) !important;
+    background:#f4f7fc !important;
+    border-color:var(--border) !important;
+  }
+  .plx-note, .si-desc{ color:var(--muted) !important; }
+
+  /* ---- Trust drawer + parity panels ---------------------------------------- */
+  .trust-drawer{
+    background:#ffffff !important;
+    border-color:var(--border) !important;
+    box-shadow:var(--shadow-lg) !important;
+    color:var(--fg);
+  }
+  .trust-drawer-tabs button[aria-selected="true"]{
+    color:#075e7c !important;
+    background:rgba(8,123,154,.09) !important;
+  }
+  .research-card, .ri-panel, .rgv8-card, .sfv9-card, .rg-card, .v10-card, .plx-card{
+    color:var(--fg) !important;
+    background:#ffffff !important;
+    border-color:var(--border) !important;
+    box-shadow:var(--shadow-sm) !important;
+  }
+  .patch-changelog{ background:#f4f7fc !important; color:var(--text) !important; }
+  .education-card{
+    background:linear-gradient(90deg, rgba(8,123,154,.06), #ffffff) !important;
+    border-color:var(--divider) !important;
+    border-left:2px solid var(--cyan) !important;
+  }
+
+  /* ---- Result badges: same taxonomy, ink-density inks ----------------------- */
+  .rb-visual-only{ color:#4c6076 !important; border-color:rgba(76,96,118,.4) !important; background:rgba(76,96,118,.07) !important; }
+  .rb-finite-time-estimate{ color:#075e7c !important; border-color:rgba(8,123,154,.4) !important; background:rgba(8,123,154,.06) !important; }
+  .rb-validated{ color:#0b6a3c !important; border-color:rgba(11,122,67,.42) !important; background:rgba(11,122,67,.06) !important; }
+  .rb-publication-ready{ color:#7a5a10 !important; border-color:rgba(138,106,31,.45) !important; background:rgba(138,106,31,.07) !important; }
+  .rb-caveat{ color:#9a4409 !important; border-color:rgba(176,80,14,.45) !important; background:rgba(176,80,14,.07) !important; }
+
+  /* ---- Workspace chooser: a porcelain gallery ------------------------------- */
+  .audience-chooser{
+    background:
+      linear-gradient(rgba(16,38,64,.045) 1px, transparent 1px) 0 0/100% 52px,
+      linear-gradient(90deg, rgba(16,38,64,.045) 1px, transparent 1px) 0 0/52px 100%,
+      radial-gradient(130% 130% at 50% 0%, rgba(250,252,255,.96), rgba(233,239,248,.98)) !important;
+  }
+  .audience-chooser-card{
+    background:#ffffff !important;
+    border:1px solid var(--border) !important;
+    box-shadow:var(--shadow-lg) !important;
+  }
+  .audience-chooser-eyebrow{ color:var(--lux-gold) !important; text-shadow:none !important; }
+  .audience-chooser-title{
+    background:linear-gradient(96deg, #0a2033 0%, #075e7c 56%, #6d5316 100%) !important;
+    -webkit-background-clip:text !important; background-clip:text !important;
+    -webkit-text-fill-color:transparent !important;
+  }
+  .audience-choice{
+    background:linear-gradient(180deg, #ffffff, #f5f8fc) !important;
+    border:1px solid var(--border) !important;
+    color:var(--text) !important;
+  }
+  .audience-choice:hover, .audience-choice:focus-visible{
+    border-color:rgba(8,123,154,.45) !important;
+    background:linear-gradient(180deg, #ffffff, #ecf5fa) !important;
+    color:var(--fg-bright) !important;
+    box-shadow:0 14px 30px -14px rgba(23,42,66,.3), 0 0 22px -12px rgba(8,123,154,.45) !important;
+  }
+  .audience-choice-icon{
+    color:#075e7c !important;
+    background:rgba(8,123,154,.08) !important;
+    border-color:rgba(8,123,154,.3) !important;
+    box-shadow:none !important;
+  }
+  .audience-choice strong{ color:var(--fg-bright) !important; }
+  .audience-choice span{ color:var(--text) !important; }
+  .audience-choice small{ color:var(--muted) !important; }
+  .audience-choice-current{
+    border-color:rgba(138,106,31,.5) !important;
+    box-shadow:0 0 20px -12px rgba(138,106,31,.55) !important;
+  }
+  .audience-choice-current::after{
+    color:#7a5a10 !important;
+    border-color:rgba(138,106,31,.45) !important;
+    background:rgba(138,106,31,.08) !important;
+  }
+
+  /* ---- Command palette + governance overlays (parity/shared adopted sheet) -- */
+  #rgv8Cmd{
+    background:
+      radial-gradient(900px 520px at 50% 8%, rgba(8,123,154,.1), transparent 58%),
+      linear-gradient(rgba(238,242,249,.8), rgba(228,235,245,.9)) !important;
+  }
+  .rgv8-cmd-panel{
+    background:#ffffff !important;
+    border:1px solid rgba(8,123,154,.34) !important;
+    box-shadow:var(--shadow-lg) !important;
+  }
+  #rgv8Cmd input, #rgv7Palette input{
+    background:#f4f7fc !important;
+    border-color:rgba(8,123,154,.36) !important;
+    color:var(--fg-bright) !important;
+    box-shadow:inset 0 1px 2px rgba(23,42,66,.1) !important;
+  }
+  .rgv8-cmd-row{
+    background:#f8fafd !important;
+    border-color:var(--divider) !important;
+    color:var(--text) !important;
+  }
+  .rgv8-cmd-row:hover, .rgv8-cmd-row:focus-visible{
+    border-color:rgba(8,123,154,.45) !important;
+    background:rgba(8,123,154,.08) !important;
+    color:var(--fg-bright) !important;
+  }
+  .rgv8-cmd-close{ background:#ffffff !important; }
+  .rgv7-palette, .rgv8-overlay{ background:rgba(23,42,66,.38) !important; }
+  .rgv7-palette-box, .rgv8-modal{
+    background:#ffffff !important;
+    border-color:rgba(8,123,154,.32) !important;
+  }
+  .fig-badge, .fig-panel{
+    background:#ffffff !important;
+    color:var(--text) !important;
+  }
+  .fig-panel{ border-color:rgba(8,123,154,.4) !important; }
+  .fig-card{ background:#f6f9fd !important; }
+  .fig-list{ background:#f4f7fc !important; color:var(--text) !important; }
+  #ueFloatingDiag{
+    background:rgba(255,255,255,.94) !important;
+    border-color:var(--border-strong) !important;
+    color:var(--text) !important;
+    box-shadow:var(--shadow-md) !important;
+  }
+
+  /* ---- Guided layers: tour card, dialogs, backdrops -------------------------- */
+  .tour-card{
+    background:#ffffff !important;
+    border:1px solid rgba(8,123,154,.35) !important;
+    box-shadow:var(--shadow-lg) !important;
+  }
+  .tour-dots i{ background:rgba(16,38,64,.18) !important; }
+  .trust-inspector-backdrop{ background:rgba(23,42,66,.4) !important; }
+  #shortcutHelpDialog::backdrop{ background:rgba(23,42,66,.42) !important; }
+  #shortcutHelpDialog{ color-scheme:light; }
+
+  /* ---- Scrollbars ------------------------------------------------------------ */
+  *::-webkit-scrollbar-thumb{ background:rgba(70,96,126,.35); background-clip:padding-box; }
+  *::-webkit-scrollbar-thumb:hover{ background-color:rgba(8,123,154,.5); background-clip:padding-box; }
+}

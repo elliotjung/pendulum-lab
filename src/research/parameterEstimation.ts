@@ -62,11 +62,7 @@ export interface LevenbergMarquardtOptions {
 }
 
 export type LeastSquaresStatus =
-  | 'cost-converged'
-  | 'step-converged'
-  | 'gradient-converged'
-  | 'max-iterations'
-  | 'lambda-overflow';
+  'cost-converged' | 'step-converged' | 'gradient-converged' | 'max-iterations' | 'lambda-overflow';
 
 export interface LeastSquaresResult {
   /** Best-fit parameter vector. */

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeResearchStorage, RESEARCH_STORAGE_SCHEMA_VERSION, sanitizeWorkspaceList } from '../src/app/parity/storage-sync';
+import {
+  normalizeResearchStorage,
+  RESEARCH_STORAGE_SCHEMA_VERSION,
+  sanitizeWorkspaceList
+} from '../src/app/parity/storage-sync';
 
 const activeWorkspace = {
   id: 'workspace-active',
@@ -36,16 +40,22 @@ describe('research workspace storage v3', () => {
     expect(normalized.research.project.activeSessionId).toBe(normalized.research.sessions[0]?.id);
     expect(normalized.research.sessions[0]?.artifactManifest).toEqual([]);
     expect(normalized.research.workspace.name).toBe('Active Study');
-    expect(normalized.research.workspaces.map((workspace) => workspace.id)).toEqual(['workspace-active', 'workspace-secondary']);
+    expect(normalized.research.workspaces.map((workspace) => workspace.id)).toEqual([
+      'workspace-active',
+      'workspace-secondary'
+    ]);
     expect(normalized.research.workspaces[0]?.name).toBe('Active Study');
   });
 
   it('deduplicates workspace profiles and preserves the active profile first', () => {
-    const list = sanitizeWorkspaceList([
-      { ...activeWorkspace, name: 'old active' },
-      { ...activeWorkspace, id: 'workspace-other', name: 'Other' },
-      { ...activeWorkspace, id: 'workspace-other', name: 'Other newest' }
-    ], activeWorkspace);
+    const list = sanitizeWorkspaceList(
+      [
+        { ...activeWorkspace, name: 'old active' },
+        { ...activeWorkspace, id: 'workspace-other', name: 'Other' },
+        { ...activeWorkspace, id: 'workspace-other', name: 'Other newest' }
+      ],
+      activeWorkspace
+    );
 
     expect(list.map((workspace) => workspace.id)).toEqual(['workspace-active', 'workspace-other']);
     expect(list[0]?.name).toBe('Active Study');

@@ -1,16 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import {
-  NAV_ACTION_GUIDE, NAV_ACTION_GUIDE_KO, NAV_TAB_GUIDE, NAV_TAB_GUIDE_KO,
-  actionGuideText, currentNavLocale, navTipText, normalizeNavLocale, resolveInitialNavLocale, setNavLocale, tabGuideText
+  NAV_ACTION_GUIDE,
+  NAV_ACTION_GUIDE_KO,
+  NAV_TAB_GUIDE,
+  NAV_TAB_GUIDE_KO,
+  actionGuideText,
+  currentNavLocale,
+  navTipText,
+  normalizeNavLocale,
+  resolveInitialNavLocale,
+  setNavLocale,
+  tabGuideText
 } from '../src/app/navGuide';
 import { EXTRA_RAIL_TABS } from '../src/app/railNavigation';
 
 /** The static rail tabs declared in app.html (data-tab values). */
 const STATIC_RAIL_TABS = [
-  'lab', 'compare',
-  'lyap', 'sweep', 'bifurc', 'phase3d', 'density',
-  'zeroone', 'clv', 'basin', 'rqa', 'ftle',
-  'validate', 'research'
+  'lab',
+  'compare',
+  'lyap',
+  'sweep',
+  'bifurc',
+  'phase3d',
+  'density',
+  'zeroone',
+  'clv',
+  'basin',
+  'rqa',
+  'ftle',
+  'validate',
+  'research'
 ] as const;
 
 /** The static rail action buttons declared in app.html (data-rail-action). */

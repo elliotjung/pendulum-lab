@@ -23,7 +23,9 @@ test('0–1 test tab computes K and draws the translation path', async ({ page }
   await openModernTab(page, 'zeroone', '#tab-zeroone');
 
   await page.evaluate(() => document.getElementById('zeroOneStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('zeroOneK')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
+  await page.waitForFunction(() => (document.getElementById('zeroOneK')?.textContent ?? '—') !== '—', undefined, {
+    timeout: 30000
+  });
 
   const k = await page.evaluate(() => Number.parseFloat(document.getElementById('zeroOneK')?.textContent ?? ''));
   expect(Number.isFinite(k)).toBe(true);
@@ -37,7 +39,9 @@ test('CLV tab computes exponents + hyperbolicity and renders', async ({ page }) 
   await openModernTab(page, 'clv', '#tab-clv');
 
   await page.evaluate(() => document.getElementById('clvStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('clvLambda1')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
+  await page.waitForFunction(() => (document.getElementById('clvLambda1')?.textContent ?? '—') !== '—', undefined, {
+    timeout: 30000
+  });
 
   const l1 = await page.evaluate(() => Number.parseFloat(document.getElementById('clvLambda1')?.textContent ?? ''));
   const hyp = await page.evaluate(() => document.getElementById('clvHypMean')?.textContent ?? '');
@@ -53,7 +57,9 @@ test('RQA tab computes measures and draws the recurrence plot', async ({ page })
   await openModernTab(page, 'rqa', '#tab-rqa');
 
   await page.evaluate(() => document.getElementById('rqaStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('rqaDET')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
+  await page.waitForFunction(() => (document.getElementById('rqaDET')?.textContent ?? '—') !== '—', undefined, {
+    timeout: 30000
+  });
 
   const det = await page.evaluate(() => Number.parseFloat(document.getElementById('rqaDET')?.textContent ?? ''));
   const lmax = await page.evaluate(() => document.getElementById('rqaLmax')?.textContent ?? '');
@@ -74,7 +80,9 @@ test('FTLE tab computes the field range and draws the heatmap', async ({ page })
     if (r) r.value = '30';
   });
   await page.evaluate(() => document.getElementById('ftleStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('ftleMax')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
+  await page.waitForFunction(() => (document.getElementById('ftleMax')?.textContent ?? '—') !== '—', undefined, {
+    timeout: 30000
+  });
 
   const max = await page.evaluate(() => Number.parseFloat(document.getElementById('ftleMax')?.textContent ?? ''));
   expect(Number.isFinite(max)).toBe(true);
@@ -92,7 +100,9 @@ test('flip-basin tab computes entropy + dimension and draws the basin', async ({
     if (r) r.value = '40';
   });
   await page.evaluate(() => document.getElementById('basinStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('basinDim')?.textContent ?? '—') !== '—', undefined, { timeout: 30000 });
+  await page.waitForFunction(() => (document.getElementById('basinDim')?.textContent ?? '—') !== '—', undefined, {
+    timeout: 30000
+  });
 
   const dim = await page.evaluate(() => Number.parseFloat(document.getElementById('basinDim')?.textContent ?? ''));
   expect(Number.isFinite(dim)).toBe(true);

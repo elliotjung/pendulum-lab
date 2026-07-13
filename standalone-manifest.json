@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "pendulum-standalone-manifest/v1",
+  "artifacts": [
+    {
+      "path": "standalone/chaos.worker.js",
+      "bytes": 64512,
+      "sha256": "63c1ed66827780d3a1e5276b8be28df7a1ad4d406b30c3653b01bc7f6fd6165b"
+    },
+    {
+      "path": "standalone/expansion.worker.js",
+      "bytes": 54113,
+      "sha256": "a9932b4803027637dfb9bfb13964e7295ab72c24d85d922b56fde270f33cf4c3"
+    },
+    {
+      "path": "standalone/index.html",
+      "bytes": 1024210,
+      "sha256": "650d3721eb6c3eac9fc7c9e80ca84a540367e2cd287d2b8a526df68de8a38b77"
+    },
+    {
+      "path": "standalone/labSidePlots.worker.js",
+      "bytes": 9350,
+      "sha256": "a3916036b8497d466e1ea893450a0bf75fc23a3ec59d11d5aedd2ee76c5c5c94"
+    },
+    {
+      "path": "standalone/mainCanvas.worker.js",
+      "bytes": 13548,
+      "sha256": "38d9c3d89cdf05a919dfa0629e2e611476dbae6710e981b841581f1abbcf3e83"
+    }
+  ]
+}

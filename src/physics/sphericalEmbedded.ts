@@ -61,7 +61,10 @@ export function sphericalEmbeddedLz(state: EmbeddedSphericalState, params: Spher
 }
 
 /** Cartesian bob position (y up, pivot at origin): r = l·u. */
-export function sphericalEmbeddedPosition(state: EmbeddedSphericalState, params: SphericalParams): { x: number; y: number; z: number } {
+export function sphericalEmbeddedPosition(
+  state: EmbeddedSphericalState,
+  params: SphericalParams
+): { x: number; y: number; z: number } {
   return { x: params.l * state[0], y: params.l * state[1], z: params.l * state[2] };
 }
 
@@ -126,7 +129,11 @@ export class EmbeddedSphericalPendulum {
   private readonly initialEnergy: number;
   private readonly initialLz: number;
 
-  constructor(readonly params: SphericalParams, initial: EmbeddedSphericalState, readonly dt = 0.002) {
+  constructor(
+    readonly params: SphericalParams,
+    initial: EmbeddedSphericalState,
+    readonly dt = 0.002
+  ) {
     this.state = project(initial);
     this.initialEnergy = sphericalEmbeddedEnergy(this.state, params);
     this.initialLz = sphericalEmbeddedLz(this.state, params);
@@ -157,8 +164,14 @@ export class EmbeddedSphericalPendulum {
 
   private rk4(h: number): void {
     const s = this.state;
-    const add = (a: EmbeddedSphericalState, k: EmbeddedSphericalState, scale: number): EmbeddedSphericalState =>
-      [a[0] + scale * k[0], a[1] + scale * k[1], a[2] + scale * k[2], a[3] + scale * k[3], a[4] + scale * k[4], a[5] + scale * k[5]];
+    const add = (a: EmbeddedSphericalState, k: EmbeddedSphericalState, scale: number): EmbeddedSphericalState => [
+      a[0] + scale * k[0],
+      a[1] + scale * k[1],
+      a[2] + scale * k[2],
+      a[3] + scale * k[3],
+      a[4] + scale * k[4],
+      a[5] + scale * k[5]
+    ];
     const k1 = sphericalEmbeddedRhs(s, this.params);
     const k2 = sphericalEmbeddedRhs(add(s, k1, h / 2), this.params);
     const k3 = sphericalEmbeddedRhs(add(s, k2, h / 2), this.params);
@@ -189,9 +202,10 @@ export class EmbeddedSphericalPendulum {
       tangentConstraintError: Math.abs(tangent),
       method: 'rk4',
       dt: this.dt,
-      caveat: this.params.damping > 0
-        ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
-        : 'Conservative run: E and Lz drift measure integrator error. Embedded chart is regular at the poles (no clamp).'
+      caveat:
+        this.params.damping > 0
+          ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
+          : 'Conservative run: E and Lz drift measure integrator error. Embedded chart is regular at the poles (no clamp).'
     };
   }
 }

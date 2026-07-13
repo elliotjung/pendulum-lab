@@ -41,7 +41,8 @@ export class FtleTab extends TabController {
         source: 'FTLE tab system gate',
         parameters: { selectedSystem: spec.kind },
         uncertainty: 'No FTLE field was computed.',
-        externalValidation: 'Double-pendulum FTLE field is pinned by tests; other systems need separate field definitions.',
+        externalValidation:
+          'Double-pendulum FTLE field is pinned by tests; other systems need separate field definitions.',
         reproduce: 'npm test -- tests/ftle.test.ts tests/gpu-fields-validation.test.ts',
         caveat: 'This UI field currently supports only the double pendulum section.',
         artifact: 'none'
@@ -50,7 +51,10 @@ export class FtleTab extends TabController {
     }
     this.running = true;
     const useGpu = this.dom.el<HTMLInputElement>('ftleGpu')?.checked ?? false;
-    this.dom.setText('ftleStatus', useGpu ? 'computing (WebGPU)…' : this.client.usesWorker() ? 'computing (worker)…' : 'computing…');
+    this.dom.setText(
+      'ftleStatus',
+      useGpu ? 'computing (WebGPU)…' : this.client.usesWorker() ? 'computing (worker)…' : 'computing…'
+    );
     const n = Math.max(20, Math.min(160, Math.round(num('ftleRes', 70))));
     const totalTime = Math.max(0.5, num('ftleT', 3));
     try {
@@ -73,10 +77,12 @@ export class FtleTab extends TabController {
         this.gridHeight = r.height;
         min = r.min;
         max = r.max;
-        backendNote = r.backend === 'webgpu'
-          ? ` · WebGPU f32 (probe Δ≤${(r.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU)`
-          : ' · CPU fallback (f64)';
-        badgeLevel = r.backend === 'webgpu' ? (r.validation?.passed ? 'finite-time-estimate' : 'caveat') : 'finite-time-estimate';
+        backendNote =
+          r.backend === 'webgpu'
+            ? ` · WebGPU f32 (probe Δ≤${(r.validation?.maxAbsDiff ?? 0).toFixed(3)} vs CPU)`
+            : ' · CPU fallback (f64)';
+        badgeLevel =
+          r.backend === 'webgpu' ? (r.validation?.passed ? 'finite-time-estimate' : 'caveat') : 'finite-time-estimate';
         badgeText = r.caveat;
       } else {
         const r = await this.client.ftle(doubleSpec, { n, totalTime });
@@ -98,14 +104,26 @@ export class FtleTab extends TabController {
         `${this.ridges.ridgeCells} (${(this.ridges.ridgeFraction * 100).toFixed(1)}%, σ_T ≥ ${this.ridges.threshold.toFixed(2)})`
       );
       this.render();
-      this.dom.setText('ftleStatus', `done · σ_T∈[${min.toFixed(2)}, ${max.toFixed(2)}] · T=${totalTime.toFixed(1)}s · ${this.ridges.ridgeCells} LCS ridge cells${backendNote}`);
+      this.dom.setText(
+        'ftleStatus',
+        `done · σ_T∈[${min.toFixed(2)}, ${max.toFixed(2)}] · T=${totalTime.toFixed(1)}s · ${this.ridges.ridgeCells} LCS ridge cells${backendNote}`
+      );
       this.badge('ftleStatus', badgeLevel, `${badgeText} Ridge overlay: ${this.ridges.caveat}`, {
         title: 'FTLE Field Trust',
         source: useGpu ? 'FTLE tab -> ftleFieldFiniteDifference' : 'FTLE tab -> ChaosClient.ftle',
-        parameters: { system: doubleSpec.kind, resolution: `${this.gridWidth}x${this.gridHeight}`, totalTime, backend: useGpu ? 'gpu-field-or-fallback' : 'worker-or-main-thread' },
+        parameters: {
+          system: doubleSpec.kind,
+          resolution: `${this.gridWidth}x${this.gridHeight}`,
+          totalTime,
+          backend: useGpu ? 'gpu-field-or-fallback' : 'worker-or-main-thread'
+        },
         uncertainty: `Finite-horizon field range [${min.toPrecision(4)}, ${max.toPrecision(4)}]; ridge threshold ${this.ridges.threshold.toPrecision(4)}.`,
-        externalValidation: useGpu ? 'GPU finite-difference field must pass CPU probe validation or return CPU fallback.' : 'Variational FTLE path is pinned against linear systems and double-pendulum separation tests.',
-        reproduce: useGpu ? 'npm run validate:gpu-scale' : 'npm test -- tests/ftle.test.ts tests/chaos-protocol-diagnostics.test.ts',
+        externalValidation: useGpu
+          ? 'GPU finite-difference field must pass CPU probe validation or return CPU fallback.'
+          : 'Variational FTLE path is pinned against linear systems and double-pendulum separation tests.',
+        reproduce: useGpu
+          ? 'npm run validate:gpu-scale'
+          : 'npm test -- tests/ftle.test.ts tests/chaos-protocol-diagnostics.test.ts',
         caveat: `${badgeText} ${this.ridges.caveat}`,
         artifact: 'PNG export: pendulum_ftle_field.png'
       });
@@ -125,9 +143,16 @@ export class FtleTab extends TabController {
     const canvas = this.dom.el<HTMLCanvasElement>('ftleCanvas');
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    renderScalarField(ctx, { x: 0, y: 0, width: canvas.width, height: canvas.height }, this.values, this.gridWidth, this.gridHeight, {
-      range: [this.min, this.max]
-    });
+    renderScalarField(
+      ctx,
+      { x: 0, y: 0, width: canvas.width, height: canvas.height },
+      this.values,
+      this.gridWidth,
+      this.gridHeight,
+      {
+        range: [this.min, this.max]
+      }
+    );
     if (!this.ridges || !this.ridgeOverlayEnabled() || this.gridWidth === 0 || this.gridHeight === 0) return;
     // Ridge cells drawn with the same cell geometry as the scalar field so the
     // overlay registers exactly; red reads as "barrier" against the blue→red

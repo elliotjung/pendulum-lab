@@ -43,7 +43,13 @@ describe('continueNeimarkSackerTorus — trigonometric-collocation invariant cir
       },
       center: () => [0, 0]
     };
-    const res = continueNeimarkSackerTorus(rotation, { start: 0, end: 0, step: 1, initialAmplitude: 0.7, collocation: 21 });
+    const res = continueNeimarkSackerTorus(rotation, {
+      start: 0,
+      end: 0,
+      step: 1,
+      initialAmplitude: 0.7,
+      collocation: 21
+    });
     const p = res.points[0]!;
     expect(p.converged).toBe(true);
     expect(p.rotationNumber).toBeCloseTo(0.2, 9);
@@ -123,7 +129,15 @@ describe('continueNeimarkSackerTorus — trigonometric-collocation invariant cir
   });
 
   test('the solve is deterministic', () => {
-    const opts = { start: 2.05, end: 2.02, step: 0.01, initialAmplitude: 0.24, collocation: 31, tolerance: 1e-8, maxIterations: 40 } as const;
+    const opts = {
+      start: 2.05,
+      end: 2.02,
+      step: 0.01,
+      initialAmplitude: 0.24,
+      collocation: 31,
+      tolerance: 1e-8,
+      maxIterations: 40
+    } as const;
     const a = continueNeimarkSackerTorus(delayedLogistic, opts);
     const b = continueNeimarkSackerTorus(delayedLogistic, opts);
     expect(a.points.map((p) => p.rotationNumber)).toEqual(b.points.map((p) => p.rotationNumber));
@@ -158,7 +172,9 @@ describe('continueNeimarkSackerTorus — trigonometric-collocation invariant cir
 
   test('input validation', () => {
     const base = { start: 2.05, end: 2.01, step: 0.01, initialAmplitude: 0.2 };
-    expect(() => continueNeimarkSackerTorus(delayedLogistic, { ...base, initialAmplitude: 0 })).toThrow(/initialAmplitude/);
+    expect(() => continueNeimarkSackerTorus(delayedLogistic, { ...base, initialAmplitude: 0 })).toThrow(
+      /initialAmplitude/
+    );
     expect(() => continueNeimarkSackerTorus(delayedLogistic, { ...base, step: 0 })).toThrow(/step/);
     expect(() => continueNeimarkSackerTorus(delayedLogistic, { ...base, collocation: 30 })).toThrow(/odd/);
     expect(() => continueNeimarkSackerTorus(delayedLogistic, { ...base, collocation: 7 })).toThrow(/odd/);

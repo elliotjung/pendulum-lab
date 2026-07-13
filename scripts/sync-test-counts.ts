@@ -36,7 +36,11 @@ interface ProjectMetadata extends TestSummary {
 
 async function readReport(path: string): Promise<TestSummary> {
   const report = JSON.parse(await readFile(path, 'utf8')) as VitestJsonReport;
-  if (!Number.isInteger(report.numTotalTests) || !Number.isInteger(report.numPassedTests) || !Array.isArray(report.testResults)) {
+  if (
+    !Number.isInteger(report.numTotalTests) ||
+    !Number.isInteger(report.numPassedTests) ||
+    !Array.isArray(report.testResults)
+  ) {
     throw new Error(`Invalid Vitest JSON report at ${path}`);
   }
   return {
@@ -79,7 +83,9 @@ async function replaceInFile({ file, pattern, replace }: Replacement, metadata: 
   await rename(tempFile, file);
 }
 
-const summary = await readEvidenceSummary('reports/evidence-summary.json').catch(() => readReport('reports/vitest-results.json'));
+const summary = await readEvidenceSummary('reports/evidence-summary.json').catch(() =>
+  readReport('reports/vitest-results.json')
+);
 const metadata: ProjectMetadata = {
   ...summary,
   version: await readPackageVersion('package.json')
@@ -93,8 +99,10 @@ const replacements: Replacement[] = [
   },
   {
     file: 'README.md',
-    pattern: /\| `npm test`(?: \/ `test:quick` \/ `test:slow`)? \| Vitest unit suite \([^)]*\)(?: plus quick\/slow tiers for local and CI iteration)? \|/,
-    replace: ({ totalTests, testFiles }) => `| \`npm test\` / \`test:quick\` / \`test:slow\` | Vitest unit suite (${totalTests} tests across ${testFiles} files; synced from \`reports/vitest-results.json\`) plus quick/slow tiers for local and CI iteration |`
+    pattern:
+      /\| `npm test`(?: \/ `test:quick` \/ `test:slow`)? \| Vitest unit suite \([^)]*\)(?: plus quick\/slow tiers for local and CI iteration)? \|/,
+    replace: ({ totalTests, testFiles }) =>
+      `| \`npm test\` / \`test:quick\` / \`test:slow\` | Vitest unit suite (${totalTests} tests across ${testFiles} files; synced from \`reports/vitest-results.json\`) plus quick/slow tiers for local and CI iteration |`
   },
   {
     file: 'README.md',
@@ -109,12 +117,14 @@ const replacements: Replacement[] = [
   {
     file: 'docs/engine-overview.md',
     pattern: /layer is unit-tested \([^)]*\) and the build, typecheck, and Playwright/,
-    replace: ({ totalTests, testFiles }) => `layer is unit-tested (${totalTests} tests across ${testFiles} files, synced from \`reports/vitest-results.json\`) and the build, typecheck, and Playwright`
+    replace: ({ totalTests, testFiles }) =>
+      `layer is unit-tested (${totalTests} tests across ${testFiles} files, synced from \`reports/vitest-results.json\`) and the build, typecheck, and Playwright`
   },
   {
     file: 'docs/tutorial-reproduce-paper.md',
     pattern: /npm test\s+# [^\n]+/,
-    replace: ({ totalTests }) => `npm test                      # ${totalTests} unit tests (physics, chaos, research tooling)`
+    replace: ({ totalTests }) =>
+      `npm test                      # ${totalTests} unit tests (physics, chaos, research tooling)`
   },
   {
     file: 'docs/portfolio-korean.md',
@@ -132,4 +142,6 @@ for (const replacement of replacements) {
   await replaceInFile(replacement, metadata);
 }
 
-console.log(`Synced project metadata: v${metadata.version}, ${metadata.passedTests}/${metadata.totalTests} tests across ${metadata.testFiles} files.`);
+console.log(
+  `Synced project metadata: v${metadata.version}, ${metadata.passedTests}/${metadata.totalTests} tests across ${metadata.testFiles} files.`
+);

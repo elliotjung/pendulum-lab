@@ -35,7 +35,10 @@ function sanitizeStringList(value: unknown, maxItems = 12): string[] {
 
 export function sanitizeArtifactManifestEntry(value: unknown): ResearchArtifactManifestEntry | null {
   if (!isPlainObject(value)) return null;
-  const kind = value.kind === 'figure' || value.kind === 'dataset' || value.kind === 'workspace' || value.kind === 'export' ? value.kind : 'report';
+  const kind =
+    value.kind === 'figure' || value.kind === 'dataset' || value.kind === 'workspace' || value.kind === 'export'
+      ? value.kind
+      : 'report';
   const path = clippedText(value.path, '', 220);
   if (!path) return null;
   const entry: ResearchArtifactManifestEntry = {
@@ -54,7 +57,10 @@ export function sanitizeResearchSession(value: unknown, fallbackProjectId: strin
   if (!isPlainObject(value)) return fallback;
   const createdAt = isoText(value.createdAt, fallback.createdAt);
   const artifacts = Array.isArray(value.artifactManifest)
-    ? value.artifactManifest.map(sanitizeArtifactManifestEntry).filter((entry): entry is ResearchArtifactManifestEntry => Boolean(entry)).slice(0, MAX_RESEARCH_SESSION_ARTIFACTS)
+    ? value.artifactManifest
+        .map(sanitizeArtifactManifestEntry)
+        .filter((entry): entry is ResearchArtifactManifestEntry => Boolean(entry))
+        .slice(0, MAX_RESEARCH_SESSION_ARTIFACTS)
     : [];
   return {
     id: clippedText(value.id, fallback.id, 100),
@@ -86,7 +92,11 @@ export function sanitizeResearchProject(value: unknown, activeSessionId: string)
   };
 }
 
-export function sanitizeResearchSessions(value: unknown, projectId: string, activeSession: ResearchSessionProfile): ResearchSessionProfile[] {
+export function sanitizeResearchSessions(
+  value: unknown,
+  projectId: string,
+  activeSession: ResearchSessionProfile
+): ResearchSessionProfile[] {
   const raw = Array.isArray(value) ? value : [];
   const byId = new Map<string, ResearchSessionProfile>();
   byId.set(activeSession.id, activeSession);

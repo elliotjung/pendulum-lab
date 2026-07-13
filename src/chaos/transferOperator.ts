@@ -47,7 +47,8 @@ export function ulamTransitionMatrix1D(
   samplesPerBox = 50
 ): UlamMatrix {
   if (!Number.isInteger(boxes) || boxes < 2) throw new Error('ulamTransitionMatrix1D: boxes must be an integer ≥ 2.');
-  if (!Number.isInteger(samplesPerBox) || samplesPerBox < 1) throw new Error('ulamTransitionMatrix1D: samplesPerBox must be ≥ 1.');
+  if (!Number.isInteger(samplesPerBox) || samplesPerBox < 1)
+    throw new Error('ulamTransitionMatrix1D: samplesPerBox must be ≥ 1.');
   const [a, b] = domain;
   if (!(b > a)) throw new Error('ulamTransitionMatrix1D: domain must have b > a.');
   const width = (b - a) / boxes;
@@ -85,7 +86,11 @@ export function ulamTransitionMatrix1D(
  * matrix: the leading left eigenvector μP = μ with μ ≥ 0, Σμ = 1, via power
  * iteration from the uniform distribution.
  */
-export function invariantMeasure(transition: readonly number[], boxes: number, options: { iterations?: number; tolerance?: number } = {}): number[] {
+export function invariantMeasure(
+  transition: readonly number[],
+  boxes: number,
+  options: { iterations?: number; tolerance?: number } = {}
+): number[] {
   if (transition.length < boxes * boxes) throw new Error('invariantMeasure: transition shorter than boxes².');
   const iterations = options.iterations ?? 2000;
   const tolerance = options.tolerance ?? 1e-14;
@@ -152,7 +157,8 @@ export interface TransferOperatorSpectrum {
  * random walk has the cosine spectrum {cos(2πk/N)}.
  */
 export function transferOperatorSpectrum(transition: readonly number[], boxes: number): TransferOperatorSpectrum {
-  if (!Number.isInteger(boxes) || boxes < 1) throw new Error('transferOperatorSpectrum: boxes must be a positive integer.');
+  if (!Number.isInteger(boxes) || boxes < 1)
+    throw new Error('transferOperatorSpectrum: boxes must be a positive integer.');
   if (transition.length < boxes * boxes) throw new Error('transferOperatorSpectrum: transition shorter than boxes².');
   const matrix: number[][] = Array.from({ length: boxes }, (_, i) =>
     Array.from({ length: boxes }, (_, j) => transition[i * boxes + j] ?? 0)
@@ -160,7 +166,7 @@ export function transferOperatorSpectrum(transition: readonly number[], boxes: n
   const eigenvalues = eigenvaluesGeneral(matrix);
   eigenvalues.sort((p, q) => Math.hypot(q.re, q.im) - Math.hypot(p.re, p.im));
   const moduli = eigenvalues.map((z) => Math.hypot(z.re, z.im));
-  const subdominantModulus = boxes >= 2 ? moduli[1] ?? 0 : 0;
+  const subdominantModulus = boxes >= 2 ? (moduli[1] ?? 0) : 0;
   return {
     eigenvalues,
     moduli,

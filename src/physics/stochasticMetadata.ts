@@ -37,7 +37,9 @@ export function stochasticSchemeMetadata(scheme: LangevinScheme, hasMatrixNoise:
   if (scheme === 'milstein') {
     return {
       strongOrder: 'strong order 1 for diagonal multiplicative noise with the supplied diffusion derivative',
-      caveats: ['Milstein strong-order claims require the diffusion derivative to match the integrated drift/diffusion model.']
+      caveats: [
+        'Milstein strong-order claims require the diffusion derivative to match the integrated drift/diffusion model.'
+      ]
     };
   }
   if (scheme === 'heun-stratonovich') {
@@ -47,7 +49,9 @@ export function stochasticSchemeMetadata(scheme: LangevinScheme, hasMatrixNoise:
     };
   }
   return {
-    strongOrder: hasMatrixNoise ? 'strong order 1/2 for matrix-noise Euler-Maruyama' : 'strong order 1/2 (weak order 1 for additive noise)',
+    strongOrder: hasMatrixNoise
+      ? 'strong order 1/2 for matrix-noise Euler-Maruyama'
+      : 'strong order 1/2 (weak order 1 for additive noise)',
     caveats: ['Euler-Maruyama is not strong order 1; refine dt and report seed, dt, horizon, and ensemble size.']
   };
 }

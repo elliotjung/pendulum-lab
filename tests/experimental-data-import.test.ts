@@ -3,10 +3,9 @@ import { parseObservedDoublePendulumCsv } from '../src/research/experimentalData
 
 describe('experimental data CSV import', () => {
   it('parses angle CSV data and converts degrees to radians', () => {
-    const observation = parseObservedDoublePendulumCsv(
-      'time,theta1,theta2\n0,90,0\n0.1,45,-45\n',
-      { angleUnit: 'degree' }
-    );
+    const observation = parseObservedDoublePendulumCsv('time,theta1,theta2\n0,90,0\n0.1,45,-45\n', {
+      angleUnit: 'degree'
+    });
     expect(observation.times).toEqual([0, 0.1]);
     expect(observation.angles[0]![0]).toBeCloseTo(Math.PI / 2);
     expect(observation.angles[1]![1]).toBeCloseTo(-Math.PI / 4);

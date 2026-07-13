@@ -46,7 +46,14 @@ export interface DemoSystem {
 const wrapPi = (x: number): number => Math.atan2(Math.sin(x), Math.cos(x));
 
 /** Chain pendulum bodies (double / triple / N) share this geometry and section. */
-function chainSystem(id: string, label: string, lengths: number[], initial: number[], spec: SystemSpec, energy: (s: ArrayLike<number>) => number): DemoSystem {
+function chainSystem(
+  id: string,
+  label: string,
+  lengths: number[],
+  initial: number[],
+  spec: SystemSpec,
+  energy: (s: ArrayLike<number>) => number
+): DemoSystem {
   const n = lengths.length;
   const dim = 2 * n;
   return {
@@ -90,13 +97,27 @@ function chainSystem(id: string, label: string, lengths: number[], initial: numb
 function makeDouble(): DemoSystem {
   const p = { m1: 1, m2: 1, l1: 1.2, l2: 1, g: 9.81 };
   const spec: SystemSpec = { kind: 'double', ...p };
-  return chainSystem('double', 'Double pendulum', [p.l1, p.l2], [1.35, 1.05, 0, 0], spec, (s) => energyDouble(s, p).total);
+  return chainSystem(
+    'double',
+    'Double pendulum',
+    [p.l1, p.l2],
+    [1.35, 1.05, 0, 0],
+    spec,
+    (s) => energyDouble(s, p).total
+  );
 }
 
 function makeTriple(): DemoSystem {
   const p = { m1: 1, m2: 1, m3: 1, l1: 1, l2: 1, l3: 1, g: 9.81 };
   const spec: SystemSpec = { kind: 'triple', ...p };
-  return chainSystem('triple', 'Triple pendulum', [p.l1, p.l2, p.l3], [1.0, 1.0, 1.0, 0, 0, 0], spec, (s) => energyTriple(s, p).total);
+  return chainSystem(
+    'triple',
+    'Triple pendulum',
+    [p.l1, p.l2, p.l3],
+    [1.0, 1.0, 1.0, 0, 0, 0],
+    spec,
+    (s) => energyTriple(s, p).total
+  );
 }
 
 function makeChainN(): DemoSystem {
