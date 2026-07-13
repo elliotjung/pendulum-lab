@@ -40,11 +40,18 @@ describe('UX and accessibility contracts', () => {
   it('loads the final light/print stylesheet and defines both structural media profiles', () => {
     const root = resolve(import.meta.dirname, '..');
     const html = readFileSync(resolve(root, 'app.html'), 'utf8');
-    const css = readFileSync(resolve(root, 'css/09-accessibility-themes.css'), 'utf8');
+    const themes = readFileSync(resolve(root, 'css/09-accessibility-themes.css'), 'utf8');
+    const daylight = readFileSync(resolve(root, 'css/10-porcelain-daylight.css'), 'utf8');
     expect(html).toContain('./css/09-accessibility-themes.css');
-    expect(css).toContain('@media (prefers-color-scheme: light)');
-    expect(css).toContain('@media print');
-    expect(css).toContain('color-scheme: dark light');
-    expect(css).toContain('.trust-drawer');
+    expect(themes).toContain('@media print');
+    expect(themes).toContain('color-scheme: dark light');
+    expect(themes).toContain('.trust-drawer');
+    // The system light theme must live in the LAST stylesheet: layers 01-08
+    // re-declare :root tokens unconditionally, so an earlier light block
+    // (the old css/09 arrangement) loses the cascade and goes half-dark.
+    const daylightLink = html.indexOf('./css/10-porcelain-daylight.css');
+    expect(daylightLink).toBeGreaterThan(html.indexOf('./css/08-refined-luxe.css'));
+    expect(daylight).toContain('@media (prefers-color-scheme: light)');
+    expect(daylight).toContain('--bg-mesh');
   });
 });

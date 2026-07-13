@@ -454,11 +454,15 @@ function setLabel(container: Element | null, text: string): void {
  * Idempotent — decorateNavigation reruns on every mode change, so the original
  * full name is stashed in data-nav-name the first time through.
  */
-function describeMenuEntry(button: HTMLElement, description: string | undefined, localizedName?: string): void {
+function describeMenuEntry(button: HTMLElement, description: string | undefined): void {
   if (!description) return;
   const base = button.dataset.navName ?? (button.title || button.querySelector('.tab-label')?.textContent || '');
   button.dataset.navName = base;
-  const tip = navTipText(localizedName ?? base, description);
+  // The tooltip anchors the canonical full tool name in every locale — the
+  // Korean short label already localizes the visible menu row, so only the
+  // description switches language here. Pinned by the guided-ui and
+  // audience-mode e2e suites ("Simulation Lab — 실시간 …").
+  const tip = navTipText(base, description);
   button.title = tip;
   button.setAttribute('aria-label', tip);
   let desc = button.querySelector('.tab-desc');
@@ -508,11 +512,7 @@ function decorateNavigation(): void {
         korean && tabName ? (NAV_TAB_LABEL_KO[tabName] ?? label.dataset.navLabel) : label.dataset.navLabel;
     }
     if (tabName) tab.dataset.testid = `nav-tab-${tabName}`;
-    describeMenuEntry(
-      tab,
-      tabName ? tabGuideText(tabName) : undefined,
-      korean && tabName ? NAV_TAB_LABEL_KO[tabName] : undefined
-    );
+    describeMenuEntry(tab, tabName ? tabGuideText(tabName) : undefined);
   });
   document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((button) => {
     const action = button.dataset.railAction;
@@ -525,11 +525,7 @@ function decorateNavigation(): void {
         korean && action ? (NAV_ACTION_LABEL_KO[action] ?? label.dataset.navLabel) : label.dataset.navLabel;
     }
     if (action) button.dataset.testid = `nav-action-${action}`;
-    describeMenuEntry(
-      button,
-      action ? actionGuideText(action) : undefined,
-      korean && action ? NAV_ACTION_LABEL_KO[action] : undefined
-    );
+    describeMenuEntry(button, action ? actionGuideText(action) : undefined);
   });
 }
 

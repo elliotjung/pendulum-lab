@@ -197,6 +197,20 @@ function armResearchOnDemand(): void {
       if (btn.dataset.parityBound === 'true') btn.click();
     });
   });
+  // The Ctrl+K binding itself also lives in that lazy chunk, so a keystroke
+  // landing before it installs (fresh session, or any mode that has not
+  // loaded the research layer yet) would be silently dropped — the keyboard
+  // twin of the click-replay above. Until the real listener exists (#rgv8Cmd
+  // is created by installCommandPalettes), claim the shortcut, mount the
+  // layer, and open the palette directly.
+  document.addEventListener('keydown', (event) => {
+    if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
+    if (document.getElementById('rgv8Cmd')) return; // the parity listener owns it now
+    event.preventDefault();
+    void ensureResearch().then(async () => {
+      (await import('./app/FeatureParityLayer')).showCommandPalette();
+    });
+  });
 }
 
 /**

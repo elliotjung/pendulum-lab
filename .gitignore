@@ -18,3 +18,6 @@ desktop.ini
 Thumbs.db
 reports/paper-study-probe.json
 tmp/
+# Ad-hoc UI review captures (design passes); never release evidence.
+reports/analysis-screenshots/
+.claude/

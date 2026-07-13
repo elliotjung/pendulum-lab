@@ -28,9 +28,18 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   if (await labBtn.isVisible()) await labBtn.click();
   await page.waitForTimeout(300);
   await expect(page.getByRole('region', { name: 'controls' })).toHaveScreenshot('lab-controls.png', {
-    // Runtime diagnostics update every frame. Their labels/layout remain in
-    // scope, while only the changing values are masked for stable pixels.
-    mask: [page.locator('canvas'), page.locator('#stats .sval')],
+    // Runtime diagnostics update every frame, and the fast rows re-create
+    // their value spans while the capture retries — masks bound to those
+    // spans silently fall off and live digits leak into the comparison
+    // (measured as an intermittent failure whose diff was only telemetry
+    // text). Mask the stable #stats container instead; the accordion frame
+    // and every label around it remain in scope.
+    mask: [page.locator('canvas'), page.locator('#stats')],
+    // The mobile panel is a ~4000-CSS-px element captured at dpr 2.75; at
+    // device scale its fractional top rounds differently run-to-run and the
+    // whole capture ghosts by one device pixel. CSS-pixel scale removes the
+    // rounding entirely (and shrinks the baseline bytes).
+    scale: 'css',
     // The tall mobile element screenshot can differ at a subpixel scrollbar
     // edge while Playwright scrolls it into view. Keep that tolerance below
     // 0.25% of the captured panel and stricter on desktop.

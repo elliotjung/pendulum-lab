@@ -2,6 +2,45 @@
 
 ## Unreleased
 
+### Porcelain Daylight: a complete system light theme
+
+- **The light theme is now whole.** The old light block lived in `css/09`
+  inside `<head>`, before layers 01–08 — so every `:root` token those layers
+  re-declared unconditionally (`--bg-mesh`, `--cyan`, `--focus`, the `--pm-`,
+  `--hud-` and `--ko-` families) flipped light mode back to dark values, and
+  literal-dark paints (header gradient, workflow strip, obsidian border-box
+  frames, command palette, governance overlays, workspace chooser) were never
+  covered at all. The new final-position `css/10-porcelain-daylight.css`
+  re-asserts the full palette and restyles every surface — porcelain glass,
+  ink text, deep-teal and bronze accents — including the adopted-stylesheet
+  components (workspace chooser, tour card, result badges, parity panels,
+  command palette). A structural unit test now pins the load order so the
+  regression cannot silently return.
+- **Shared finish, baseline-frozen dark**: analysis canvases get an idle
+  "instrument face" (faint reticle grid plus vignette) instead of a dead
+  black void, and the workflow strip gains engraved step indices on desktop.
+  The dark pixels of the three visual-regression baseline components (rail,
+  Lab controls, research experiment card) are intentionally unchanged — all
+  six win32 baselines pass without regeneration.
+- **Locale contract restored**: menu tooltips keep the canonical English tool
+  name in every locale ("Simulation Lab — 실시간 …"), as the guided-ui and
+  audience-mode suites pin; the Korean switch had regressed them to fully
+  localized names.
+- **Ctrl+K works from the first keystroke**: the palette shortcut binding
+  lives in the lazily-loaded research chunk, so early presses (fresh session,
+  beginner/student modes) were silently dropped — the keyboard twin of the
+  already-shimmed rail-action clicks. main.ts now claims the shortcut until
+  the real listener exists, mounts the layer, and opens the palette; the
+  guided-ui palette test no longer flakes.
+- **Deterministic Lab-controls visual capture**: live diagnostics re-create
+  their value spans while `toHaveScreenshot` retries, so masks bound to the
+  spans fell off and telemetry digits leaked into the comparison; the mask
+  now covers the stable `#stats` container. The tall mobile panel is also
+  captured at CSS-pixel scale — at dpr 2.75 its fractional element top
+  rounded differently run-to-run and ghosted every glyph by one device
+  pixel. win32 baselines are regenerated; the Linux set is removed pending
+  the Visual Baselines promotion workflow (the documented reskin flow).
+
 ## 10.36.0 - 2026-07-13
 
 ### Enforced formatting gate and one-time Prettier re-baseline

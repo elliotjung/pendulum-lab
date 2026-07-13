@@ -14,66 +14,11 @@
   .trust-drawer { left:0; right:0; width:auto; max-width:100%; overflow-x:hidden; }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #eef3f8;
-    --bg-mesh: radial-gradient(900px 600px at 0 -10%, #c9eafb 0, transparent 62%),
-      radial-gradient(760px 520px at 100% 0, #eee2ff 0, transparent 58%), #eef3f8;
-    --panel: rgba(255, 255, 255, .88);
-    --panel2: rgba(244, 248, 253, .94);
-    --panel-solid: #fff;
-    --panel-elevated: #f5f8fc;
-    --glass-stroke: rgba(19, 45, 72, .12);
-    --glass-stroke-strong: rgba(19, 45, 72, .2);
-    --border: rgba(19, 45, 72, .14);
-    --border-strong: rgba(19, 45, 72, .24);
-    --divider: rgba(19, 45, 72, .1);
-    --muted: #586c82;
-    --subtle: #425a72;
-    --text: #293e54;
-    --fg: #182e44;
-    --fg-bright: #071d32;
-    --cyan: #006f91;
-    --cyan-mid: #087b9a;
-    --purple: #6845b6;
-    --orange: #b84b08;
-    --green: #08783f;
-    --red: #b7273d;
-    --yellow: #8b6100;
-    --focus: #7a4f00;
-    --lux-ice: #006f91;
-    --lux-gold: #8b6100;
-    --lux-hairline: rgba(19, 45, 72, .12);
-    --lux-hairline-strong: rgba(19, 45, 72, .22);
-    --shadow-xs: 0 1px 3px rgba(19, 45, 72, .12);
-    --shadow-sm: 0 3px 12px rgba(19, 45, 72, .12);
-    --shadow-md: 0 10px 30px rgba(19, 45, 72, .14);
-    --shadow-lg: 0 24px 64px rgba(19, 45, 72, .18);
-  }
-
-  html, body { background: var(--bg-mesh) fixed; color: var(--fg); }
-  html::after, body.kinetic-overdrive::before, .kinetic-field { opacity: .12; }
-  .rail { background: rgba(248, 251, 255, .96) !important; border-color: var(--border) !important; box-shadow: 5px 0 24px rgba(19, 45, 72, .1) !important; }
-  .rail-submenu, .dev-flyout, .audience-select,
-  .main-wrap, .plot-cell, .controls, .presets, .scrub-row,
-  .trust-drawer, .research-card, .ri-panel, .rg-card {
-    color: var(--fg);
-    background: rgba(255, 255, 255, .92) !important;
-    border-color: var(--border) !important;
-    box-shadow: var(--shadow-sm) !important;
-  }
-  .rail-menu-button:hover, .tab:hover, button:hover { background-color: rgba(0, 111, 145, .08); }
-  .tab[aria-selected="true"], .rail-submenu .tab[aria-selected="true"] {
-    color: #005f7d;
-    background: rgba(0, 111, 145, .1) !important;
-    border-color: rgba(0, 111, 145, .24) !important;
-  }
-  input, select, textarea, button { color: var(--fg-bright); background-color: rgba(255, 255, 255, .9); border-color: var(--border-strong); }
-  input[type="range"] { color-scheme: light; }
-  .diag-row > span, .badge, #qualBadge, #fpsBadge { background: rgba(255, 255, 255, .68); }
-  #shortcutHelpDialog { color-scheme: light; }
-  #shortcutHelpDialog::backdrop { background: rgba(23, 43, 62, .42); }
-}
+/* The system light theme lives in css/10-porcelain-daylight.css. It must load
+   *after* layers 01–08: this file sits in <head>, so any token those later
+   layers re-declare unconditionally (e.g. --bg-mesh in 04, --cyan in 06/08)
+   would override a light block written here — that ordering bug is exactly
+   what the porcelain-daylight layer replaced. */
 
 @media print {
   :root {
