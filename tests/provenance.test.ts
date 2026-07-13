@@ -64,7 +64,15 @@ describe('provenance graph', () => {
 
   it('drops references to unknown parents instead of recording dangling edges', () => {
     const builder = new ProvenanceBuilder(collectEnvironment('x'));
-    builder.addNode({ id: 'figure:f1', kind: 'figure', label: 'fig', content: 1, schemaVersion: 'v1', parentIds: ['missing:p'], sourceCommand: 'test' });
+    builder.addNode({
+      id: 'figure:f1',
+      kind: 'figure',
+      label: 'fig',
+      content: 1,
+      schemaVersion: 'v1',
+      parentIds: ['missing:p'],
+      sourceCommand: 'test'
+    });
     const graph = builder.build();
     expect(graph.nodes[0]!.parentIds).toEqual([]);
     expect(validateProvenanceGraph(graph).ok).toBe(true);

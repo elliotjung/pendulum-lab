@@ -6,11 +6,7 @@ import { LyapunovEstimator } from './LyapunovEstimator';
 import { downloadDataUrl, downloadText, poincareCsv, runJson, trajectoryCsv } from './labExport';
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
-import {
-  canvasQualityDiagnostics,
-  configureCanvas2D,
-  type ManagedCanvas2D
-} from './canvasQuality';
+import { canvasQualityDiagnostics, configureCanvas2D, type ManagedCanvas2D } from './canvasQuality';
 import { DiagnosticsScheduler } from './DiagnosticsScheduler';
 import { LabSidePlotCoordinator } from './LabSidePlotCoordinator';
 import { LabEnsembleController } from './LabEnsembleController';
@@ -133,7 +129,8 @@ export class LabApp {
 
     this.sim = new LabSimulation(config);
     const dim = config.system === 'triple' ? 6 : 4;
-    const rhs = (s: Float64Array, o: Float64Array) => physicsAdapter.derivative(config.system, s, config.parameters, config.gamma, o);
+    const rhs = (s: Float64Array, o: Float64Array) =>
+      physicsAdapter.derivative(config.system, s, config.parameters, config.gamma, o);
     this.rhs = rhs;
     this.lyap = new LyapunovEstimator(rhs, dim, config.dt);
     this.lyap.reset(config.initialState);
@@ -201,9 +198,8 @@ export class LabApp {
     // Interactive rendering follows elapsed wall time through a fixed-dt
     // accumulator, so a slow paint does not slow simulation time. Deterministic
     // replay remains an explicit fixed-steps-per-frame mode.
-    const effectiveStepsPerFrame = timingMode === 'wall-clock'
-      ? Math.max(0, this.spf)
-      : Math.max(0, Math.round(this.spf * speedMultiplier));
+    const effectiveStepsPerFrame =
+      timingMode === 'wall-clock' ? Math.max(0, this.spf) : Math.max(0, Math.round(this.spf * speedMultiplier));
     const frame = this.simulationClock.advance({
       sim,
       stepsPerFrame: effectiveStepsPerFrame,
@@ -415,13 +411,24 @@ export class LabApp {
     const y2 = y1 + l2 * Math.cos(state[1]!);
     if (this.sim.config.system === 'triple') {
       const ell3 = l3 ?? 1;
-      return [{ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x2 + ell3 * Math.sin(state[2]!), y: y2 + ell3 * Math.cos(state[2]!) }];
+      return [
+        { x: x1, y: y1 },
+        { x: x2, y: y2 },
+        { x: x2 + ell3 * Math.sin(state[2]!), y: y2 + ell3 * Math.cos(state[2]!) }
+      ];
     }
-    return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+    return [
+      { x: x1, y: y1 },
+      { x: x2, y: y2 }
+    ];
   }
 
   /** Refresh the header/diagnostics chrome from the latest frame snapshot. */
-  private updateChrome(snapshot: { time: number; energy: number; drift: number; state: ArrayLike<number> }, w1Index: number, w2Index: number): void {
+  private updateChrome(
+    snapshot: { time: number; energy: number; drift: number; state: ArrayLike<number> },
+    w1Index: number,
+    w2Index: number
+  ): void {
     presentLabChrome({
       ...snapshot,
       initialEnergy: this.sim.initialEnergy,
@@ -437,7 +444,12 @@ export class LabApp {
       backend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
       lambdaMax: this.lyap.value(),
       poincare: { size: this.poincare.size, ...this.poincare.policy() },
-      modeLabel: this.scrubIndex >= 0 ? 'replay' : this.running ? `${this.timingMode()} · ${this.lastAdvancedSteps} step(s)` : 'paused'
+      modeLabel:
+        this.scrubIndex >= 0
+          ? 'replay'
+          : this.running
+            ? `${this.timingMode()} · ${this.lastAdvancedSteps} step(s)`
+            : 'paused'
     });
   }
 
@@ -486,7 +498,9 @@ export class LabApp {
       trailQualityScale: this.quality.trailQualityScale,
       sidePlotBackend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
       mainCanvasBackend: this.mainCanvasWorker?.isActive() ? 'offscreen' : 'main',
-      mainTrailBackend: this.mainCanvasWorker?.isActive() ? 'worker' : this.renderer?.activeTrailBackend() ?? 'canvas2d',
+      mainTrailBackend: this.mainCanvasWorker?.isActive()
+        ? 'worker'
+        : (this.renderer?.activeTrailBackend() ?? 'canvas2d'),
       pendingUiTasks: this.diagnosticsScheduler.pendingCount(),
       canvasQualityEvents: canvasQualityDiagnostics()
     };
@@ -556,15 +570,25 @@ export class LabApp {
         this.running = !this.running;
         if (this.running) this.rafId = requestAnimationFrame(this.loop);
       },
-      exportTrajectory: () => downloadText('pendulum_modern_trajectory.csv', trajectoryCsv(this.recording.samples(), cfg().system), 'text/csv'),
+      exportTrajectory: () =>
+        downloadText(
+          'pendulum_modern_trajectory.csv',
+          trajectoryCsv(this.recording.samples(), cfg().system),
+          'text/csv'
+        ),
       exportPoincare: () => downloadText('pendulum_modern_poincare.csv', poincareCsv(this.poincare.list()), 'text/csv'),
       exportJson: () => {
         const snap = this.sim.snapshot();
-        downloadText('pendulum_modern_run.json', JSON.stringify(runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift), null, 2), 'application/json');
+        downloadText(
+          'pendulum_modern_run.json',
+          JSON.stringify(runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift), null, 2),
+          'application/json'
+        );
       },
       exportPng: () => {
         const canvas = dom.el<HTMLCanvasElement>('main');
-        if (canvas && !this.mainCanvasWorker?.isActive()) downloadDataUrl('pendulum_modern.png', canvas.toDataURL('image/png'));
+        if (canvas && !this.mainCanvasWorker?.isActive())
+          downloadDataUrl('pendulum_modern.png', canvas.toDataURL('image/png'));
       },
       scrubLength: () => this.recording.length,
       setScrubIndex: (index) => {
@@ -578,7 +602,8 @@ export class LabApp {
       setAudioVolume: (volume) => this.audio.setVolume(volume),
       drag: {
         rendererSize: () => this.renderer?.size() ?? null,
-        bobPixels: () => (this.renderer ? this.bobsFromState(this.sim.stateView()).map((b) => this.renderer!.toPixels(b)) : []),
+        bobPixels: () =>
+          this.renderer ? this.bobsFromState(this.sim.stateView()).map((b) => this.renderer!.toPixels(b)) : [],
         pivot: () => this.renderer?.pivot() ?? null,
         stateAngles: () => {
           const state = this.sim.stateView();

@@ -19,7 +19,11 @@ const FORBIDDEN_PATTERNS: Array<{ pattern: RegExp; message: string; allow?: RegE
     allow: AUDIT_TOOL_ALLOWLIST
   },
   { pattern: /\bouterHTML\b/g, message: 'Avoid outerHTML; use safe DOM builders.', allow: AUDIT_TOOL_ALLOWLIST },
-  { pattern: /\binsertAdjacentHTML\b/g, message: 'Avoid insertAdjacentHTML; build DOM nodes explicitly.', allow: AUDIT_TOOL_ALLOWLIST },
+  {
+    pattern: /\binsertAdjacentHTML\b/g,
+    message: 'Avoid insertAdjacentHTML; build DOM nodes explicitly.',
+    allow: AUDIT_TOOL_ALLOWLIST
+  },
   { pattern: /\beval\s*\(/g, message: 'Avoid eval().', allow: AUDIT_TOOL_ALLOWLIST },
   { pattern: /\bnew\s+Function\b/g, message: 'Avoid new Function().', allow: AUDIT_TOOL_ALLOWLIST },
   { pattern: /\bdocument\.write\s*\(/g, message: 'Avoid document.write().', allow: AUDIT_TOOL_ALLOWLIST }
@@ -35,7 +39,13 @@ async function collectFiles(dir: string, out: string[] = []): Promise<string[]> 
   for (const entry of entries) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'standalone' || entry.name === 'archive') continue;
+      if (
+        entry.name === 'node_modules' ||
+        entry.name === 'dist' ||
+        entry.name === 'standalone' ||
+        entry.name === 'archive'
+      )
+        continue;
       await collectFiles(full, out);
     } else if (TEXT_EXTENSIONS.has(extensionOf(entry.name))) {
       out.push(full);
@@ -61,7 +71,11 @@ async function main(): Promise<void> {
 
   const rootEntries = await readdir('.');
   const rootWorkers = rootEntries.filter((name) => /\.worker.*\.js$/i.test(name));
-  if (rootWorkers.length > 0) findings.push({ file: '.', message: 'Generated worker bundles belong under standalone/, never the repository root.' });
+  if (rootWorkers.length > 0)
+    findings.push({
+      file: '.',
+      message: 'Generated worker bundles belong under standalone/, never the repository root.'
+    });
 
   const files = [
     ...ROOT_TEXT_FILES.filter((file) => rootEntries.includes(file)),
@@ -82,7 +96,9 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  console.log(`Source lint passed (${files.length} files scanned, ${rootWorkers.length} root worker bundle${rootWorkers.length === 1 ? '' : 's'}).`);
+  console.log(
+    `Source lint passed (${files.length} files scanned, ${rootWorkers.length} root worker bundle${rootWorkers.length === 1 ? '' : 's'}).`
+  );
 }
 
 main().catch((error) => {

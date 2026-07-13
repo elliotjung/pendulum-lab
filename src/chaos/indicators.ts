@@ -76,7 +76,12 @@ function normalize(v: StateVector, n: number): number {
   return norm;
 }
 
-export function saliIndicator(state0: ArrayLike<number>, rhs: Derivative, options: Partial<IndicatorSettings> = {}, jacobian?: Jacobian): SaliResult {
+export function saliIndicator(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  options: Partial<IndicatorSettings> = {},
+  jacobian?: Jacobian
+): SaliResult {
   const settings = resolve(options);
   const n = state0.length;
   const varRhs = makeVariationalRhs(rhs, n, 2, jacobian);
@@ -107,7 +112,12 @@ export function saliIndicator(state0: ArrayLike<number>, rhs: Derivative, option
   return { finalSali: sali, series, settings };
 }
 
-export function fliIndicator(state0: ArrayLike<number>, rhs: Derivative, options: Partial<IndicatorSettings> = {}, jacobian?: Jacobian): FliResult {
+export function fliIndicator(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  options: Partial<IndicatorSettings> = {},
+  jacobian?: Jacobian
+): FliResult {
   const settings = resolve(options);
   const n = state0.length;
   const varRhs = makeVariationalRhs(rhs, n, 1, jacobian);

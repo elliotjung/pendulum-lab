@@ -20,7 +20,8 @@ describe('import/export round-trip and security guards', () => {
   });
 
   test('strict import rejects constructor and prototype pollution keys', () => {
-    const base = '"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"';
+    const base =
+      '"schemaVersion":"pendulum-session/v10-ts","systemType":"double","method":"rk4","mode":"research","dt":0.003,"tolerance":1e-7,"stepsPerFrame":6,"damping":0,"parameters":{"m1":1,"m2":1,"l1":1.2,"l2":1,"g":9.81},"state":[0.1,0.2,0,0],"simTime":0,"seed":123,"hash":"test"';
     expect(parseStrictJsonImport(`{${base},"constructor":{"polluted":true}}`).ok).toBe(false);
     expect(parseStrictJsonImport(`{${base},"prototype":{"polluted":true}}`).ok).toBe(false);
   });

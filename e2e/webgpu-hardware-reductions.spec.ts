@@ -15,7 +15,7 @@ test('real WebGPU ensemble reduction matches the CPU oracle', async ({ page, bro
       throw new Error('navigator.gpu unavailable; this runner is not a WebGPU hardware CI target.');
     }
     const modulePath = '/src/runtime/gpuEnsemble.ts';
-    const mod = await import(/* @vite-ignore */ modulePath) as typeof import('../src/runtime/gpuEnsemble');
+    const mod = (await import(/* @vite-ignore */ modulePath)) as typeof import('../src/runtime/gpuEnsemble');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
     const initial = mod.ensembleGrid(5, [-1.1, 1.1]);
     const gpu = await mod.runDoublePendulumEnsemble(params, initial, { steps: 80, dt: 0.01 });
@@ -39,7 +39,9 @@ test('real WebGPU ensemble reduction matches the CPU oracle', async ({ page, bro
   });
   expect(result.backend).toBe('webgpu');
   expect(result.comparison.passed).toBe(true);
-  expect(Math.abs(result.rmsSpreadGpu - result.rmsSpreadCpu)).toBeLessThanOrEqual(result.comparison.tolerances.rmsSpread);
+  expect(Math.abs(result.rmsSpreadGpu - result.rmsSpreadCpu)).toBeLessThanOrEqual(
+    result.comparison.tolerances.rmsSpread
+  );
 });
 
 test('real WebGPU full-spectrum Lyapunov candidate passes CPU oracle promotion gate', async ({ page, browserName }) => {
@@ -50,20 +52,16 @@ test('real WebGPU full-spectrum Lyapunov candidate passes CPU oracle promotion g
       throw new Error('navigator.gpu unavailable; this runner is not a WebGPU hardware CI target.');
     }
     const modulePath = '/src/runtime/gpuLyapunov.ts';
-    const mod = await import(/* @vite-ignore */ modulePath) as typeof import('../src/runtime/gpuLyapunov');
+    const mod = (await import(/* @vite-ignore */ modulePath)) as typeof import('../src/runtime/gpuLyapunov');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
-    const promotion = await mod.promotedDoublePendulumLyapunovSpectrum(
-      params,
-      [1.2, 0.7, 0.12, -0.04],
-      {
-        dt: 0.01,
-        steps: 320,
-        renormEvery: 8,
-        transientSteps: 40,
-        seed: 0x1234,
-        tolerances: { spectrum: 0.1, aggregate: 0.12 }
-      }
-    );
+    const promotion = await mod.promotedDoublePendulumLyapunovSpectrum(params, [1.2, 0.7, 0.12, -0.04], {
+      dt: 0.01,
+      steps: 320,
+      renormEvery: 8,
+      transientSteps: 40,
+      seed: 0x1234,
+      tolerances: { spectrum: 0.1, aggregate: 0.12 }
+    });
     return {
       backend: promotion.backend,
       passed: promotion.comparison?.passed ?? false,
@@ -80,7 +78,10 @@ test('real WebGPU full-spectrum Lyapunov candidate passes CPU oracle promotion g
   expect(result.cpuSpectrum.length).toBe(4);
 });
 
-test('real WebGPU CLV and variational-FTLE candidates pass CPU oracle promotion gates', async ({ page, browserName }) => {
+test('real WebGPU CLV and variational-FTLE candidates pass CPU oracle promotion gates', async ({
+  page,
+  browserName
+}) => {
   test.skip(browserName !== 'chromium', 'WebGPU hardware validation is Chromium-only.');
   await page.goto('/');
   const result = await page.evaluate(async () => {
@@ -88,31 +89,24 @@ test('real WebGPU CLV and variational-FTLE candidates pass CPU oracle promotion 
       throw new Error('navigator.gpu unavailable; this runner is not a WebGPU hardware CI target.');
     }
     const modulePath = '/src/runtime/gpuChaosPromotion.ts';
-    const mod = await import(/* @vite-ignore */ modulePath) as typeof import('../src/runtime/gpuChaosPromotion');
+    const mod = (await import(/* @vite-ignore */ modulePath)) as typeof import('../src/runtime/gpuChaosPromotion');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
-    const clv = await mod.promotedDoublePendulumClv(
-      params,
-      [1.2, 0.7, 0.12, -0.04],
-      {
-        dt: 0.01,
-        renormEvery: 4,
-        forwardTransient: 4,
-        window: 10,
-        backwardTransient: 2,
-        seed: 0x1234,
-        tolerances: { exponents: 0.2, angle: 0.4 }
-      }
-    );
-    const ftle = await mod.promotedDoublePendulumVariationalFtleField(
-      params,
-      {
-        n: 4,
-        range: [-1.1, 1.1],
-        totalTime: 0.16,
-        dt: 0.04,
-        tolerances: { field: 0.12, aggregate: 0.08 }
-      }
-    );
+    const clv = await mod.promotedDoublePendulumClv(params, [1.2, 0.7, 0.12, -0.04], {
+      dt: 0.01,
+      renormEvery: 4,
+      forwardTransient: 4,
+      window: 10,
+      backwardTransient: 2,
+      seed: 0x1234,
+      tolerances: { exponents: 0.2, angle: 0.4 }
+    });
+    const ftle = await mod.promotedDoublePendulumVariationalFtleField(params, {
+      n: 4,
+      range: [-1.1, 1.1],
+      totalTime: 0.16,
+      dt: 0.04,
+      tolerances: { field: 0.12, aggregate: 0.08 }
+    });
     return {
       clvBackend: clv.backend,
       clvPassed: clv.comparison?.passed ?? false,
@@ -145,7 +139,7 @@ test('real WebGPU N-chain tiled STM/QR pipeline passes its f64 oracle gate', asy
       throw new Error('navigator.gpu unavailable; this runner is not a WebGPU hardware CI target.');
     }
     const modulePath = '/src/runtime/gpuNChainVariational.ts';
-    const mod = await import(/* @vite-ignore */ modulePath) as typeof import('../src/runtime/gpuNChainVariational');
+    const mod = (await import(/* @vite-ignore */ modulePath)) as typeof import('../src/runtime/gpuNChainVariational');
     const promotion = await mod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],

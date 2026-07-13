@@ -2,7 +2,12 @@ import type { PendulumParameters } from '../types/domain';
 import type { StateVector } from './types';
 import { MASS_MATRIX_SINGULARITY_THRESHOLD as DET_THRESHOLD } from './constants';
 
-export function rhsTriple(state: ArrayLike<number>, parameters: Required<PendulumParameters>, gamma: number, out: StateVector): StateVector {
+export function rhsTriple(
+  state: ArrayLike<number>,
+  parameters: Required<PendulumParameters>,
+  gamma: number,
+  out: StateVector
+): StateVector {
   const t1 = Number(state[0] ?? 0);
   const t2 = Number(state[1] ?? 0);
   const t3 = Number(state[2] ?? 0);
@@ -21,9 +26,21 @@ export function rhsTriple(state: ArrayLike<number>, parameters: Required<Pendulu
   const m22 = (m2 + m3) * l2 * l2;
   const m23 = m3 * l2 * l3 * Math.cos(d23);
   const m33 = m3 * l3 * l3;
-  const f1 = -(m2 + m3) * l1 * l2 * Math.sin(d12) * w2 * w2 - m3 * l1 * l3 * Math.sin(d13) * w3 * w3 - (m1 + m2 + m3) * g * l1 * Math.sin(t1) - gamma * w1;
-  const f2 = (m2 + m3) * l1 * l2 * Math.sin(d12) * w1 * w1 - m3 * l2 * l3 * Math.sin(d23) * w3 * w3 - (m2 + m3) * g * l2 * Math.sin(t2) - gamma * w2;
-  const f3 = m3 * l1 * l3 * Math.sin(d13) * w1 * w1 + m3 * l2 * l3 * Math.sin(d23) * w2 * w2 - m3 * g * l3 * Math.sin(t3) - gamma * w3;
+  const f1 =
+    -(m2 + m3) * l1 * l2 * Math.sin(d12) * w2 * w2 -
+    m3 * l1 * l3 * Math.sin(d13) * w3 * w3 -
+    (m1 + m2 + m3) * g * l1 * Math.sin(t1) -
+    gamma * w1;
+  const f2 =
+    (m2 + m3) * l1 * l2 * Math.sin(d12) * w1 * w1 -
+    m3 * l2 * l3 * Math.sin(d23) * w3 * w3 -
+    (m2 + m3) * g * l2 * Math.sin(t2) -
+    gamma * w2;
+  const f3 =
+    m3 * l1 * l3 * Math.sin(d13) * w1 * w1 +
+    m3 * l2 * l3 * Math.sin(d23) * w2 * w2 -
+    m3 * g * l3 * Math.sin(t3) -
+    gamma * w3;
 
   matrix.set([m11, m12, m13, f1, m12, m22, m23, f2, m13, m23, m33, f3]);
   for (let c = 0; c < 3; c += 1) {

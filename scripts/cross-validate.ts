@@ -77,13 +77,22 @@ const TRIPLE: SystemSpec = {
 
 function runScipy(spec: SystemSpec, state0: number[], tEnd: number, sampleEvery: number): ScipyResult {
   const job = JSON.stringify({ system: spec.system, ...spec.params, state0, tEnd, sampleEvery });
-  const proc = spawnSync('python', ['scripts/scipy_reference.py'], { input: job, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  const proc = spawnSync('python', ['scripts/scipy_reference.py'], {
+    input: job,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024
+  });
   if (proc.status !== 0) throw new Error(`scipy reference failed: ${proc.stderr || proc.stdout}`);
   return JSON.parse(proc.stdout) as ScipyResult;
 }
 
 /** Integrate with the engine's own RHS via fine-dt RK4 and sample at the same times. */
-function runTs(spec: SystemSpec, state0: number[], tEnd: number, sampleEvery: number): { samples: ScipySample[]; energyDrift: number } {
+function runTs(
+  spec: SystemSpec,
+  state0: number[],
+  tEnd: number,
+  sampleEvery: number
+): { samples: ScipySample[]; energyDrift: number } {
   const dt = 2e-5; // global error ~1e-13: matches the SciPy tolerance floor
   const stepsPerSample = Math.round(sampleEvery / dt);
   const state = new Float64Array(state0);
@@ -101,7 +110,14 @@ function runTs(spec: SystemSpec, state0: number[], tEnd: number, sampleEvery: nu
   return { samples, energyDrift: Math.abs(spec.energy(state) - e0) };
 }
 
-function compare(name: string, spec: SystemSpec, state0: number[], tEnd: number, sampleEvery: number, bound: number): CaseReport {
+function compare(
+  name: string,
+  spec: SystemSpec,
+  state0: number[],
+  tEnd: number,
+  sampleEvery: number,
+  bound: number
+): CaseReport {
   const scipy = runScipy(spec, state0, tEnd, sampleEvery);
   const ts = runTs(spec, state0, tEnd, sampleEvery);
   const perSample = scipy.samples.map((sample, index) => {
@@ -152,7 +168,9 @@ function markdown(cases: CaseReport[]): string {
     '|---|---|---:|---:|---:|---:|:--:|---:|---:|'
   ];
   for (const c of cases) {
-    lines.push(`| ${c.name} | ${c.system} | ${c.tEnd} s | ${fmt(c.maxDivergence)} | ${fmt(c.divergenceAtEnd)} | ${fmt(c.bound)} | ${c.pass ? 'PASS' : 'FAIL'} | ${fmt(c.tsEnergyDrift)} | ${fmt(c.scipyEnergyDrift)} |`);
+    lines.push(
+      `| ${c.name} | ${c.system} | ${c.tEnd} s | ${fmt(c.maxDivergence)} | ${fmt(c.divergenceAtEnd)} | ${fmt(c.bound)} | ${c.pass ? 'PASS' : 'FAIL'} | ${fmt(c.tsEnergyDrift)} | ${fmt(c.scipyEnergyDrift)} |`
+    );
   }
   lines.push(
     '',
@@ -184,10 +202,20 @@ async function main(): Promise<void> {
     compare('chaotic', TRIPLE, [2.6, 2.0, 1.4, 0, 0, 0], 8, 0.5, 1e-4)
   ];
   await mkdir('reports', { recursive: true });
-  await writeFile('reports/cross-validation.json', JSON.stringify({ generatedAt: new Date().toISOString(), parameters: { double: DOUBLE_PARAMS, triple: TRIPLE_PARAMS }, cases }, null, 2), 'utf8');
+  await writeFile(
+    'reports/cross-validation.json',
+    JSON.stringify(
+      { generatedAt: new Date().toISOString(), parameters: { double: DOUBLE_PARAMS, triple: TRIPLE_PARAMS }, cases },
+      null,
+      2
+    ),
+    'utf8'
+  );
   await writeFile('reports/cross-validation.md', markdown(cases), 'utf8');
   for (const c of cases) {
-    console.log(`${c.pass ? 'PASS' : 'FAIL'} ${c.system} ${c.name}: max divergence ${fmt(c.maxDivergence)} (bound ${fmt(c.bound)}), end ${fmt(c.divergenceAtEnd)}`);
+    console.log(
+      `${c.pass ? 'PASS' : 'FAIL'} ${c.system} ${c.name}: max divergence ${fmt(c.maxDivergence)} (bound ${fmt(c.bound)}), end ${fmt(c.divergenceAtEnd)}`
+    );
   }
   if (cases.some((c) => !c.pass)) process.exitCode = 1;
 }

@@ -4,12 +4,7 @@
  * to reports/reproducibility/. Pure Node — run with `npm run export:repro`.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import {
-  buildReproPackage,
-  verifyReproPackage,
-  reproMethodsText,
-  type ReproRun
-} from '../src/research/reproPackage';
+import { buildReproPackage, verifyReproPackage, reproMethodsText, type ReproRun } from '../src/research/reproPackage';
 
 const pkgJson = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')) as { version: string };
 const libraryVersion = pkgJson.version;

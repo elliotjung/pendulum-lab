@@ -45,7 +45,7 @@ export interface PoincarePresetOptions extends Omit<PoincareOptions, 'section' |
 }
 
 function centeredModulo(value: number, period: number): number {
-  const wrapped = ((value + period / 2) % period + period) % period;
+  const wrapped = (((value + period / 2) % period) + period) % period;
   return wrapped - period / 2;
 }
 
@@ -85,12 +85,17 @@ export function buildPoincareSection(preset: PoincareSectionPreset): PoincareSec
 export function poincareSection(state0: ArrayLike<number>, rhs: Derivative, options: PoincareOptions): PoincareResult {
   const transient = options.transientCrossings ?? 0;
   const maxPoints = options.maxPoints ?? Infinity;
-  const result = detectEvents(new Float64Array(state0), rhs, [{ g: options.section, direction: options.direction ?? 'both' }], {
-    dt: options.dt ?? 1e-3,
-    maxTime: options.maxTime,
-    rootTol: options.rootTol ?? 1e-9,
-    maxEvents: Number.isFinite(maxPoints) ? transient + maxPoints : Infinity
-  });
+  const result = detectEvents(
+    new Float64Array(state0),
+    rhs,
+    [{ g: options.section, direction: options.direction ?? 'both' }],
+    {
+      dt: options.dt ?? 1e-3,
+      maxTime: options.maxTime,
+      rootTol: options.rootTol ?? 1e-9,
+      maxEvents: Number.isFinite(maxPoints) ? transient + maxPoints : Infinity
+    }
+  );
   const kept = result.events.slice(transient);
   return {
     points: kept.map((e) => e.state),
@@ -98,7 +103,11 @@ export function poincareSection(state0: ArrayLike<number>, rhs: Derivative, opti
   };
 }
 
-export function poincareSectionPreset(state0: ArrayLike<number>, rhs: Derivative, options: PoincarePresetOptions): PoincareResult {
+export function poincareSectionPreset(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  options: PoincarePresetOptions
+): PoincareResult {
   const built = buildPoincareSection(options.preset);
   return poincareSection(state0, rhs, {
     ...options,

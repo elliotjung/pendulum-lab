@@ -11,7 +11,9 @@ const browser = await chromium.launch();
 try {
   for (const size of [192, 512]) {
     const page = await browser.newPage({ viewport: { width: size, height: size } });
-    await page.setContent(`<style>*{box-sizing:border-box}html,body{margin:0;background:#05060f}.tile{width:${size}px;height:${size}px;display:grid;place-items:center;background:radial-gradient(circle at 68% 25%,#172654,#05060f 64%)}svg{width:${Math.round(size * 0.72)}px;height:${Math.round(size * 0.72)}px;filter:drop-shadow(0 0 ${Math.round(size * 0.06)}px rgba(24,212,248,.45))}</style><div class="tile">${mark}</div>`);
+    await page.setContent(
+      `<style>*{box-sizing:border-box}html,body{margin:0;background:#05060f}.tile{width:${size}px;height:${size}px;display:grid;place-items:center;background:radial-gradient(circle at 68% 25%,#172654,#05060f 64%)}svg{width:${Math.round(size * 0.72)}px;height:${Math.round(size * 0.72)}px;filter:drop-shadow(0 0 ${Math.round(size * 0.06)}px rgba(24,212,248,.45))}</style><div class="tile">${mark}</div>`
+    );
     await page.locator('.tile').screenshot({ path: join(output, `pendulum-lab-${size}.png`) });
   }
 } finally {

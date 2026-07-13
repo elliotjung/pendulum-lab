@@ -17,26 +17,37 @@ import {
 
 describe('expanded physics model suite', () => {
   test('covers the requested expansion families', () => {
-    expect(EXPANSION_MODEL_IDS).toEqual(['driven', 'coupled', 'inverted', 'cartpole', 'parametric', 'spherical', 'chain']);
+    expect(EXPANSION_MODEL_IDS).toEqual([
+      'driven',
+      'coupled',
+      'inverted',
+      'cartpole',
+      'parametric',
+      'spherical',
+      'chain'
+    ]);
   });
 
-  test.each(EXPANSION_MODEL_IDS)('runs %s with integrator comparison and visual analysis artifacts', (model: ExpansionModelId) => {
-    const result = runExpansionSuite({
-      model,
-      methods: ['rk4', 'symplectic'],
-      horizon: model === 'chain' ? 2 : 3,
-      sampleLimit: 48,
-      bifurcationColumns: 5
-    });
-    expect(result.model).toBe(model);
-    expect(result.rows).toHaveLength(2);
-    expect(result.rows.every((row) => row.completedSteps > 0)).toBe(true);
-    expect(result.phaseHeatmap.maxCount).toBeGreaterThan(0);
-    expect(result.ghost.length).toBeGreaterThan(2);
-    expect(result.bifurcation).toHaveLength(5);
-    expect(result.replay.length).toBeGreaterThan(2);
-    expect(result.manifest.hash).toMatch(/^exp-[0-9a-f]{8}$/);
-  });
+  test.each(EXPANSION_MODEL_IDS)(
+    'runs %s with integrator comparison and visual analysis artifacts',
+    (model: ExpansionModelId) => {
+      const result = runExpansionSuite({
+        model,
+        methods: ['rk4', 'symplectic'],
+        horizon: model === 'chain' ? 2 : 3,
+        sampleLimit: 48,
+        bifurcationColumns: 5
+      });
+      expect(result.model).toBe(model);
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows.every((row) => row.completedSteps > 0)).toBe(true);
+      expect(result.phaseHeatmap.maxCount).toBeGreaterThan(0);
+      expect(result.ghost.length).toBeGreaterThan(2);
+      expect(result.bifurcation).toHaveLength(5);
+      expect(result.replay.length).toBeGreaterThan(2);
+      expect(result.manifest.hash).toMatch(/^exp-[0-9a-f]{8}$/);
+    }
+  );
 
   test('rk4 is a stronger conservative baseline than explicit Euler on coupled pendulums', () => {
     const result = runExpansionSuite({
@@ -68,14 +79,25 @@ describe('expanded physics model suite', () => {
   });
 
   test('share hashes round-trip expansion configs', () => {
-    const result = runExpansionSuite({ model: 'parametric', methods: ['rk4'], horizon: 3, parameterOverrides: { amplitude: 0.42 } });
+    const result = runExpansionSuite({
+      model: 'parametric',
+      methods: ['rk4'],
+      horizon: 3,
+      parameterOverrides: { amplitude: 0.42 }
+    });
     const parsed = parseExpansionShareHash(result.manifest.shareHash);
     expect(parsed?.model).toBe('parametric');
     expect(parsed?.parameterOverrides?.amplitude).toBe(0.42);
   });
 
   test('markdown report includes reproducibility and caveats', () => {
-    const result = runExpansionSuite({ model: 'spherical', methods: ['rk4'], horizon: 3, sampleLimit: 32, bifurcationColumns: 4 });
+    const result = runExpansionSuite({
+      model: 'spherical',
+      methods: ['rk4'],
+      horizon: 3,
+      sampleLimit: 32,
+      bifurcationColumns: 4
+    });
     const report = buildExpansionReport(result);
     expect(report).toContain('Pendulum Expansion Report');
     expect(report).toContain(result.manifest.hash);
@@ -93,15 +115,18 @@ describe('expanded physics model suite', () => {
   });
 
   test('research matrix builds comparison, 2D sweep, units, and chaos diagnostics', () => {
-    const matrix = runResearchMatrixStudy({
-      model: 'driven',
-      methods: ['rk4', 'symplectic'],
-      horizon: 3,
-      dt: 0.012,
-      parameterOverrides: { driveAmplitude: 1.1 },
-      sampleLimit: 48,
-      bifurcationColumns: 4
-    }, { gridSize: 4 });
+    const matrix = runResearchMatrixStudy(
+      {
+        model: 'driven',
+        methods: ['rk4', 'symplectic'],
+        horizon: 3,
+        dt: 0.012,
+        parameterOverrides: { driveAmplitude: 1.1 },
+        sampleLimit: 48,
+        bifurcationColumns: 4
+      },
+      { gridSize: 4 }
+    );
     expect(matrix.schemaVersion).toBe('pendulum-research-matrix/v1');
     expect(matrix.comparison.some((row) => row.kind === 'integrator')).toBe(true);
     expect(matrix.comparison.some((row) => row.kind === 'parameter')).toBe(true);
@@ -114,14 +139,17 @@ describe('expanded physics model suite', () => {
   });
 
   test('chain research matrix uses a real link-length scale axis', () => {
-    const matrix = runResearchMatrixStudy({
-      model: 'chain',
-      methods: ['rk4'],
-      horizon: 2,
-      dt: 0.004,
-      sampleLimit: 32,
-      bifurcationColumns: 4
-    }, { gridSize: 4 });
+    const matrix = runResearchMatrixStudy(
+      {
+        model: 'chain',
+        methods: ['rk4'],
+        horizon: 2,
+        dt: 0.004,
+        sampleLimit: 32,
+        bifurcationColumns: 4
+      },
+      { gridSize: 4 }
+    );
     expect(matrix.sweep2d.yAxis.parameter).toBe('lengthScale');
     expect(matrix.sweep2d.yAxis.label).toContain('link length');
     const firstColumn = matrix.sweep2d.cells.filter((_, index) => index % matrix.sweep2d.size === 0);
@@ -132,14 +160,17 @@ describe('expanded physics model suite', () => {
   });
 
   test('energy landscape carries a caveat for driven or dissipative models', () => {
-    const matrix = runResearchMatrixStudy({
-      model: 'driven',
-      methods: ['rk4'],
-      horizon: 2,
-      dt: 0.012,
-      sampleLimit: 32,
-      bifurcationColumns: 4
-    }, { gridSize: 4 });
+    const matrix = runResearchMatrixStudy(
+      {
+        model: 'driven',
+        methods: ['rk4'],
+        horizon: 2,
+        dt: 0.012,
+        sampleLimit: 32,
+        bifurcationColumns: 4
+      },
+      { gridSize: 4 }
+    );
     expect(matrix.diagnostics.energyLandscape.note).toContain('not a true separatrix');
   });
 
@@ -149,7 +180,9 @@ describe('expanded physics model suite', () => {
     expect(center.presets).toHaveLength(1);
     expect(center.summary.totalMethods).toBe(2);
     expect(center.presets[0]?.methods.every((row) => row.regressionHash.match(/^exp-[0-9a-f]{8}$/))).toBe(true);
-    expect(center.presets[0]?.methods[0]?.expectedRegressionHash).toBe(GOLDEN_REGRESSION_BASELINES['coupled-normal-mode']?.rk4);
+    expect(center.presets[0]?.methods[0]?.expectedRegressionHash).toBe(
+      GOLDEN_REGRESSION_BASELINES['coupled-normal-mode']?.rk4
+    );
     expect(center.presets[0]?.methods.every((row) => row.regressionPass)).toBe(true);
     expect(center.manifest.hash).toMatch(/^exp-[0-9a-f]{8}$/);
   });

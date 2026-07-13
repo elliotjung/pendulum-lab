@@ -13,14 +13,7 @@ import { hashText } from './researchExportUtils';
  */
 
 export type ProvenanceKind =
-  | 'snapshot'
-  | 'experiment'
-  | 'study'
-  | 'worker-job'
-  | 'result'
-  | 'figure'
-  | 'paper-pack'
-  | 'bundle';
+  'snapshot' | 'experiment' | 'study' | 'worker-job' | 'result' | 'figure' | 'paper-pack' | 'bundle';
 
 export interface ProvenanceNode {
   id: string;
@@ -53,7 +46,16 @@ export interface ProvenanceGraph {
   graphHash: string;
 }
 
-const KIND_ORDER: ProvenanceKind[] = ['snapshot', 'experiment', 'study', 'worker-job', 'result', 'figure', 'paper-pack', 'bundle'];
+const KIND_ORDER: ProvenanceKind[] = [
+  'snapshot',
+  'experiment',
+  'study',
+  'worker-job',
+  'result',
+  'figure',
+  'paper-pack',
+  'bundle'
+];
 
 export function kindRank(kind: ProvenanceKind): number {
   return KIND_ORDER.indexOf(kind);
@@ -107,7 +109,9 @@ export class ProvenanceBuilder {
   }
 
   build(): ProvenanceGraph {
-    const nodes = [...this.nodes.values()].sort((a, b) => kindRank(a.kind) - kindRank(b.kind) || a.generatedAt.localeCompare(b.generatedAt));
+    const nodes = [...this.nodes.values()].sort(
+      (a, b) => kindRank(a.kind) - kindRank(b.kind) || a.generatedAt.localeCompare(b.generatedAt)
+    );
     const edges: { from: string; to: string }[] = [];
     for (const node of nodes) {
       for (const parent of node.parentIds) edges.push({ from: parent, to: node.id });

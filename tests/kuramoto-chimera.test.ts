@@ -21,7 +21,7 @@ describe('Kuramoto/Huygens phase network', () => {
 
   it('reports exact coherent and uniformly-spaced global order', () => {
     expect(kuramotoOrderParameter([0.7, 0.7, 0.7]).magnitude).toBeCloseTo(1, 14);
-    expect(kuramotoOrderParameter([0, Math.PI / 2, Math.PI, 3 * Math.PI / 2]).magnitude).toBeLessThan(1e-14);
+    expect(kuramotoOrderParameter([0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2]).magnitude).toBeLessThan(1e-14);
   });
 
   it('builds a symmetric nonlocal ring and resolves local coherence', () => {
@@ -61,10 +61,7 @@ describe('chimera local-order diagnostics', () => {
   });
 
   it('flags spatial coexistence as a finite-size chimera candidate', () => {
-    const phases = [
-      ...new Array(24).fill(0),
-      ...Array.from({ length: 24 }, (_, i) => (i % 2) * Math.PI)
-    ];
+    const phases = [...new Array(24).fill(0), ...Array.from({ length: 24 }, (_, i) => (i % 2) * Math.PI)];
     const result = chimeraDiagnostics(phases, { radius: 2, coherentThreshold: 0.9, incoherentThreshold: 0.2 });
     expect(result.classification).toBe('chimera-candidate');
     expect(result.coherentFraction).toBeGreaterThan(0.25);

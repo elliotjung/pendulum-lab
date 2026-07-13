@@ -135,8 +135,5 @@ export function installFeatureParityLayer(): void {
   // Research workspace is part of the supported public API; integrity/audit
   // tooling is debug-only. Old global names stay as deprecated aliases.
   publishPublicApi({ research: researchWorkspace }, { PendulumResearchWorkspace: researchWorkspace });
-  publishDebugApi(
-    { featureIntegrity, aPlus },
-    { PendulumFeatureIntegrity: featureIntegrity, PendulumLabAPlus: aPlus }
-  );
+  publishDebugApi({ featureIntegrity, aPlus }, { PendulumFeatureIntegrity: featureIntegrity, PendulumLabAPlus: aPlus });
 }

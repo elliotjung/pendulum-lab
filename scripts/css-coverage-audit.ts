@@ -109,10 +109,20 @@ export function extractStyleRuleRanges(css: string, from = 0, to = css.length): 
     const close = matchingBrace(css, open, to);
     const prelude = css.slice(cursor, open).trim();
     const preludeStart = cursor + Math.max(0, css.slice(cursor, open).indexOf(prelude));
-    if (prelude.startsWith('@media') || prelude.startsWith('@supports') || prelude.startsWith('@layer') || prelude.startsWith('@container')) {
+    if (
+      prelude.startsWith('@media') ||
+      prelude.startsWith('@supports') ||
+      prelude.startsWith('@layer') ||
+      prelude.startsWith('@container')
+    ) {
       rules.push(...extractStyleRuleRanges(css, open + 1, close));
     } else if (prelude && !prelude.startsWith('@')) {
-      rules.push({ selector: prelude.replace(/\s+/g, ' '), start: preludeStart, end: close + 1, line: lineAt(css, preludeStart) });
+      rules.push({
+        selector: prelude.replace(/\s+/g, ' '),
+        start: preludeStart,
+        end: close + 1,
+        line: lineAt(css, preludeStart)
+      });
     }
     cursor = close + 1;
   }
@@ -137,7 +147,9 @@ export function unusedCandidatesForEntry(entry: CssCoverageEntry): CssUnusedCand
 }
 
 export function mergeRanges(ranges: readonly CoverageRange[]): CoverageRange[] {
-  const sorted = [...ranges].filter((range) => range.end > range.start).sort((a, b) => a.start - b.start || a.end - b.end);
+  const sorted = [...ranges]
+    .filter((range) => range.end > range.start)
+    .sort((a, b) => a.start - b.start || a.end - b.end);
   const merged: CoverageRange[] = [];
   for (const range of sorted) {
     const last = merged[merged.length - 1];
@@ -150,9 +162,9 @@ export function mergeRanges(ranges: readonly CoverageRange[]): CoverageRange[] {
 async function representativeTraversal(page: Page): Promise<void> {
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(500);
-  const tabs = await page.locator('.tab[data-tab]').evaluateAll((nodes) =>
-    nodes.map((node) => (node as HTMLElement).dataset.tab ?? '').filter(Boolean)
-  );
+  const tabs = await page
+    .locator('.tab[data-tab]')
+    .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.tab ?? '').filter(Boolean));
   for (const tab of tabs) {
     await page.evaluate((id) => {
       (document.querySelector(`.tab[data-tab="${CSS.escape(id)}"]`) as HTMLButtonElement | null)?.click();
@@ -161,26 +173,33 @@ async function representativeTraversal(page: Page): Promise<void> {
   }
   await page.evaluate(() => {
     (document.querySelector('.tab[data-tab="lab"]') as HTMLButtonElement | null)?.click();
-    document.querySelectorAll('details').forEach((details) => { details.open = true; });
+    document.querySelectorAll('details').forEach((details) => {
+      details.open = true;
+    });
   });
   await page.waitForTimeout(150);
 }
 
 function reportMarkdown(report: CssCoverageReport): string {
   const rows = report.unusedCandidates
-    .map((candidate) => `| \`${candidate.selector.replace(/\|/g, '\\|')}\` | ${candidate.source} | ${candidate.line} | ${candidate.bytes} |`)
+    .map(
+      (candidate) =>
+        `| \`${candidate.selector.replace(/\|/g, '\\|')}\` | ${candidate.source} | ${candidate.line} | ${candidate.bytes} |`
+    )
     .join('\n');
-  return `# CSS coverage audit\n\n` +
+  return (
+    `# CSS coverage audit\n\n` +
     `Generated: ${report.generatedAt}\n\n` +
     `Representative tab traversal used ${report.totals.usedPercent.toFixed(2)}% of ${report.totals.cssBytes} CSS bytes across ${report.totals.stylesheets} stylesheet entries. ` +
     `${report.totals.unusedCandidateRules} rules are review candidates only.\n\n` +
     `> ${report.caveats.join(' ')}\n\n` +
-    `| Selector candidate | Source | Line | Rule bytes |\n|---|---|---:|---:|\n${rows || '| _None_ | | | |'}\n`;
+    `| Selector candidate | Source | Line | Rule bytes |\n|---|---|---:|---:|\n${rows || '| _None_ | | | |'}\n`
+  );
 }
 
 function argument(name: string, fallback: string): string {
   const index = process.argv.indexOf(name);
-  return index >= 0 ? process.argv[index + 1] ?? fallback : fallback;
+  return index >= 0 ? (process.argv[index + 1] ?? fallback) : fallback;
 }
 
 export async function runCssCoverageAudit(url: string): Promise<CssCoverageReport> {
@@ -192,8 +211,13 @@ export async function runCssCoverageAudit(url: string): Promise<CssCoverageRepor
     await representativeTraversal(page);
     const entries = await page.coverage.stopCSSCoverage();
     const cssBytes = entries.reduce((sum, entry) => sum + (entry.text?.length ?? 0), 0);
-    const usedBytes = entries.reduce((sum, entry) => sum + mergeRanges(entry.ranges).reduce((inner, range) => inner + range.end - range.start, 0), 0);
-    const unusedCandidates = entries.flatMap((entry) => unusedCandidatesForEntry(entry)).sort((a, b) => b.bytes - a.bytes || a.source.localeCompare(b.source) || a.line - b.line);
+    const usedBytes = entries.reduce(
+      (sum, entry) => sum + mergeRanges(entry.ranges).reduce((inner, range) => inner + range.end - range.start, 0),
+      0
+    );
+    const unusedCandidates = entries
+      .flatMap((entry) => unusedCandidatesForEntry(entry))
+      .sort((a, b) => b.bytes - a.bytes || a.source.localeCompare(b.source) || a.line - b.line);
     return {
       schemaVersion: 'css-coverage/v1',
       generatedAt: new Date().toISOString(),
@@ -225,7 +249,9 @@ async function main(): Promise<void> {
   await mkdir('reports', { recursive: true });
   await writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   await writeFile(markdownPath, reportMarkdown(report), 'utf8');
-  console.log(`CSS coverage: ${report.totals.usedPercent.toFixed(2)}% bytes used; ${report.totals.unusedCandidateRules} review candidates.`);
+  console.log(
+    `CSS coverage: ${report.totals.usedPercent.toFixed(2)}% bytes used; ${report.totals.unusedCandidateRules} review candidates.`
+  );
   console.log(`${jsonPath} and ${markdownPath} written (no CSS changed).`);
 }
 

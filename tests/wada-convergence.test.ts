@@ -62,7 +62,12 @@ describe('wadaConvergenceFromGrids', () => {
 
   it('carries full scientific metadata: method, dt, threshold, transients, caveat, hashes', () => {
     const resolutions = [24, 36, 48];
-    const result = wadaConvergenceFromGrids(resolutions.map(threeColorWadaLikeGrid), resolutions, {}, { dt: 0.005, maxTime: 30, range: [-2, 2] });
+    const result = wadaConvergenceFromGrids(
+      resolutions.map(threeColorWadaLikeGrid),
+      resolutions,
+      {},
+      { dt: 0.005, maxTime: 30, range: [-2, 2] }
+    );
     expect(result.method).toContain('Daza');
     expect(result.dt).toBe(0.005);
     expect(result.maxTime).toBe(30);
@@ -74,7 +79,12 @@ describe('wadaConvergenceFromGrids', () => {
     expect(new Set(result.gridHashes).size).toBeGreaterThan(1); // different grids -> different hashes
     expect(result.reproducibilityHash).toMatch(/^[0-9a-f]+$/);
     // Reproducibility hash is deterministic for identical inputs.
-    const again = wadaConvergenceFromGrids(resolutions.map(threeColorWadaLikeGrid), resolutions, {}, { dt: 0.005, maxTime: 30, range: [-2, 2] });
+    const again = wadaConvergenceFromGrids(
+      resolutions.map(threeColorWadaLikeGrid),
+      resolutions,
+      {},
+      { dt: 0.005, maxTime: 30, range: [-2, 2] }
+    );
     expect(again.reproducibilityHash).toBe(result.reproducibilityHash);
   });
 

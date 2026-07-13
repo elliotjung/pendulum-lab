@@ -122,9 +122,10 @@ async function waitForServer(target: string, timeoutMs = 45_000): Promise<void> 
 async function ensureServer(): Promise<ChildProcess | null> {
   if (await isReachable(url)) return null;
   const command = process.platform === 'win32' ? (process.env.ComSpec ?? 'cmd.exe') : 'npm';
-  const args = process.platform === 'win32'
-    ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1 --port 5173']
-    : ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'];
+  const args =
+    process.platform === 'win32'
+      ? ['/d', '/s', '/c', 'npm run dev -- --host 127.0.0.1 --port 5173']
+      : ['run', 'dev', '--', '--host', '127.0.0.1', '--port', '5173'];
   const child = spawn(command, args, {
     cwd: process.cwd(),
     stdio: 'ignore',
@@ -181,7 +182,10 @@ function markdown(report: GpuBenchmarkLadderReport): string {
     '',
     '| steps | backend | n | GPU ms | CPU ms | reduction pass | reduction mean diff | f32/f64 mean drift | f32/f64 covariance drift |',
     '|---:|---|---:|---:|---:|---:|---:|---:|---:|',
-    ...report.ensemble.horizons.map((row) => `| ${row.steps} | ${row.backend} | ${row.n} | ${(row.gpuElapsedMs ?? 0).toFixed(2)} | ${(row.cpuElapsedMs ?? 0).toFixed(2)} | ${String(row.reductionComparison?.passed ?? false)} | ${fmt(row.reductionComparison?.maxMeanAbsDiff)} | ${fmt(row.integrationDriftComparison?.maxMeanAbsDiff)} | ${fmt(row.integrationDriftComparison?.maxCovarianceAbsDiff)} |`),
+    ...report.ensemble.horizons.map(
+      (row) =>
+        `| ${row.steps} | ${row.backend} | ${row.n} | ${(row.gpuElapsedMs ?? 0).toFixed(2)} | ${(row.cpuElapsedMs ?? 0).toFixed(2)} | ${String(row.reductionComparison?.passed ?? false)} | ${fmt(row.reductionComparison?.maxMeanAbsDiff)} | ${fmt(row.integrationDriftComparison?.maxMeanAbsDiff)} | ${fmt(row.integrationDriftComparison?.maxCovarianceAbsDiff)} |`
+    ),
     '',
     `Max f32/f64 mean drift: \`${fmt(report.ensemble.maxIntegrationMeanDrift)}\``,
     '',
@@ -193,7 +197,10 @@ function markdown(report: GpuBenchmarkLadderReport): string {
     '',
     '| steps | backend | GPU ms | pass | spectrum max diff | sum diff | KY diff |',
     '|---:|---|---:|---:|---:|---:|---:|',
-    ...report.lyapunovSpectrum.horizons.map((row) => `| ${row.steps} | ${row.backend} | ${row.elapsedMs === null ? 'n/a' : row.elapsedMs.toFixed(2)} | ${String(row.comparison?.passed ?? false)} | ${fmt(row.comparison?.metrics?.spectrumMaxAbsDiff)} | ${fmt(row.comparison?.metrics?.sumAbsDiff)} | ${fmt(row.comparison?.metrics?.kaplanYorkeAbsDiff)} |`),
+    ...report.lyapunovSpectrum.horizons.map(
+      (row) =>
+        `| ${row.steps} | ${row.backend} | ${row.elapsedMs === null ? 'n/a' : row.elapsedMs.toFixed(2)} | ${String(row.comparison?.passed ?? false)} | ${fmt(row.comparison?.metrics?.spectrumMaxAbsDiff)} | ${fmt(row.comparison?.metrics?.sumAbsDiff)} | ${fmt(row.comparison?.metrics?.kaplanYorkeAbsDiff)} |`
+    ),
     '',
     `Max adjacent spectrum shift: \`${fmt(report.lyapunovSpectrum.maxAdjacentSpectrumShift)}\``,
     '',
@@ -278,10 +285,18 @@ try {
     const spectrumModulePath = '/src/runtime/gpuLyapunov.ts';
     const chaosModulePath = '/src/runtime/gpuChaosPromotion.ts';
     const nChainModulePath = '/src/runtime/gpuNChainVariational.ts';
-    const ensembleMod = await import(/* @vite-ignore */ ensembleModulePath) as typeof import('../src/runtime/gpuEnsemble');
-    const spectrumMod = await import(/* @vite-ignore */ spectrumModulePath) as typeof import('../src/runtime/gpuLyapunov');
-    const chaosMod = await import(/* @vite-ignore */ chaosModulePath) as typeof import('../src/runtime/gpuChaosPromotion');
-    const nChainMod = await import(/* @vite-ignore */ nChainModulePath) as typeof import('../src/runtime/gpuNChainVariational');
+    const ensembleMod = (await import(
+      /* @vite-ignore */ ensembleModulePath
+    )) as typeof import('../src/runtime/gpuEnsemble');
+    const spectrumMod = (await import(
+      /* @vite-ignore */ spectrumModulePath
+    )) as typeof import('../src/runtime/gpuLyapunov');
+    const chaosMod = (await import(
+      /* @vite-ignore */ chaosModulePath
+    )) as typeof import('../src/runtime/gpuChaosPromotion');
+    const nChainMod = (await import(
+      /* @vite-ignore */ nChainModulePath
+    )) as typeof import('../src/runtime/gpuNChainVariational');
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
     const initial = ensembleMod.ensembleGrid(5, [-1.2, 1.2]);
     const ensembleHorizons = [];
@@ -291,7 +306,8 @@ try {
       const gpuReductionOnCpuStates = await ensembleMod.webgpuEnsembleStatistics(cpuRun.states);
       if (!gpuReductionOnCpuStates) throw new Error(`GPU-side reduction returned null at steps=${steps}.`);
       const gpuReductionOnGpuStates = await ensembleMod.webgpuEnsembleStatistics(gpuRun.states);
-      if (!gpuReductionOnGpuStates) throw new Error(`GPU-side reduction of GPU states returned null at steps=${steps}.`);
+      if (!gpuReductionOnGpuStates)
+        throw new Error(`GPU-side reduction of GPU states returned null at steps=${steps}.`);
       const cpuStats = ensembleMod.ensembleStatistics(cpuRun.states);
       ensembleHorizons.push({
         steps,
@@ -318,18 +334,14 @@ try {
 
     const spectrumHorizons = [];
     for (const steps of [160, 320]) {
-      const promotion = await spectrumMod.promotedDoublePendulumLyapunovSpectrum(
-        params,
-        [1.2, 0.7, 0.12, -0.04],
-        {
-          dt: 0.01,
-          steps,
-          renormEvery: 8,
-          transientSteps: 40,
-          seed: 0x1234,
-          tolerances: { spectrum: 0.14, aggregate: 0.16 }
-        }
-      );
+      const promotion = await spectrumMod.promotedDoublePendulumLyapunovSpectrum(params, [1.2, 0.7, 0.12, -0.04], {
+        dt: 0.01,
+        steps,
+        renormEvery: 8,
+        transientSteps: 40,
+        seed: 0x1234,
+        tolerances: { spectrum: 0.14, aggregate: 0.16 }
+      });
       spectrumHorizons.push({
         steps,
         backend: promotion.backend,
@@ -340,29 +352,22 @@ try {
       });
     }
 
-    const clv = await chaosMod.promotedDoublePendulumClv(
-      params,
-      [1.2, 0.7, 0.12, -0.04],
-      {
-        dt: 0.01,
-        renormEvery: 4,
-        forwardTransient: 4,
-        window: 10,
-        backwardTransient: 2,
-        seed: 0x1234,
-        tolerances: { exponents: 0.2, angle: 0.4 }
-      }
-    );
-    const variationalFtleField = await chaosMod.promotedDoublePendulumVariationalFtleField(
-      params,
-      {
-        n: 4,
-        range: [-1.1, 1.1],
-        totalTime: 0.16,
-        dt: 0.04,
-        tolerances: { field: 0.12, aggregate: 0.08 }
-      }
-    );
+    const clv = await chaosMod.promotedDoublePendulumClv(params, [1.2, 0.7, 0.12, -0.04], {
+      dt: 0.01,
+      renormEvery: 4,
+      forwardTransient: 4,
+      window: 10,
+      backwardTransient: 2,
+      seed: 0x1234,
+      tolerances: { exponents: 0.2, angle: 0.4 }
+    });
+    const variationalFtleField = await chaosMod.promotedDoublePendulumVariationalFtleField(params, {
+      n: 4,
+      range: [-1.1, 1.1],
+      totalTime: 0.16,
+      dt: 0.04,
+      tolerances: { field: 0.12, aggregate: 0.08 }
+    });
     const nChainVariational = await nChainMod.promotedNChainVariational(
       { masses: [1, 0.9, 0.8], lengths: [1, 0.85, 0.7], g: 9.81 },
       [1.2, 0.7, -0.45, 0.12, -0.08, 0.05],
@@ -412,27 +417,37 @@ try {
   });
   const ensembleHorizons = payload.ensembleHorizons as EnsembleHorizonRow[];
   const spectrumHorizons = payload.spectrumHorizons as SpectrumHorizonRow[];
-  const maxIntegrationMeanDrift = Math.max(...ensembleHorizons.map((row) => row.integrationDriftComparison?.maxMeanAbsDiff ?? Infinity));
-  const maxIntegrationCovarianceDrift = Math.max(...ensembleHorizons.map((row) => row.integrationDriftComparison?.maxCovarianceAbsDiff ?? Infinity));
+  const maxIntegrationMeanDrift = Math.max(
+    ...ensembleHorizons.map((row) => row.integrationDriftComparison?.maxMeanAbsDiff ?? Infinity)
+  );
+  const maxIntegrationCovarianceDrift = Math.max(
+    ...ensembleHorizons.map((row) => row.integrationDriftComparison?.maxCovarianceAbsDiff ?? Infinity)
+  );
   let maxAdjacentSpectrumShift = 0;
   for (let i = 1; i < spectrumHorizons.length; i += 1) {
-    maxAdjacentSpectrumShift = Math.max(maxAdjacentSpectrumShift, maxAbsDiff(spectrumHorizons[i - 1]!.spectrum, spectrumHorizons[i]!.spectrum));
+    maxAdjacentSpectrumShift = Math.max(
+      maxAdjacentSpectrumShift,
+      maxAbsDiff(spectrumHorizons[i - 1]!.spectrum, spectrumHorizons[i]!.spectrum)
+    );
   }
   const allReductionComparisonsPassed = ensembleHorizons.every((row) => row.reductionComparison?.passed === true);
-  const allSpectrumPromotionsPassed = spectrumHorizons.every((row) => row.backend === 'webgpu' && row.comparison?.passed === true);
+  const allSpectrumPromotionsPassed = spectrumHorizons.every(
+    (row) => row.backend === 'webgpu' && row.comparison?.passed === true
+  );
   const clv = payload.clv as GpuBenchmarkLadderReport['clv'];
   const variationalFtleField = payload.variationalFtleField as GpuBenchmarkLadderReport['variationalFtleField'];
   const nChainVariational = payload.nChainVariational as GpuBenchmarkLadderReport['nChainVariational'];
-  const status: Status = allReductionComparisonsPassed
-    && allSpectrumPromotionsPassed
-    && clv?.backend === 'webgpu'
-    && clv.comparison?.passed === true
-    && variationalFtleField?.backend === 'webgpu'
-    && variationalFtleField.comparison?.passed === true
-    && nChainVariational?.backend === 'webgpu'
-    && nChainVariational.comparison?.passed === true
-    ? 'pass'
-    : 'fail';
+  const status: Status =
+    allReductionComparisonsPassed &&
+    allSpectrumPromotionsPassed &&
+    clv?.backend === 'webgpu' &&
+    clv.comparison?.passed === true &&
+    variationalFtleField?.backend === 'webgpu' &&
+    variationalFtleField.comparison?.passed === true &&
+    nChainVariational?.backend === 'webgpu' &&
+    nChainVariational.comparison?.passed === true
+      ? 'pass'
+      : 'fail';
   report = {
     schemaVersion: 'pendulum-gpu-benchmark-ladder/v2',
     generatedAt,
@@ -445,13 +460,15 @@ try {
       allReductionComparisonsPassed,
       maxIntegrationMeanDrift,
       maxIntegrationCovarianceDrift,
-      caveat: 'Reduction comparisons use identical CPU f64 states to isolate GPU-side reduction correctness; f32/f64 integration drift is recorded separately because chaotic trajectories diverge with horizon.'
+      caveat:
+        'Reduction comparisons use identical CPU f64 states to isolate GPU-side reduction correctness; f32/f64 integration drift is recorded separately because chaotic trajectories diverge with horizon.'
     },
     lyapunovSpectrum: {
       horizons: spectrumHorizons,
       allPromotionComparisonsPassed: allSpectrumPromotionsPassed,
       maxAdjacentSpectrumShift,
-      caveat: 'Full-spectrum rows are promoted only after same-run CPU f64 oracle comparison; adjacent-horizon shift is a convergence/stability diagnostic, not a pass/fail tolerance.'
+      caveat:
+        'Full-spectrum rows are promoted only after same-run CPU f64 oracle comparison; adjacent-horizon shift is a convergence/stability diagnostic, not a pass/fail tolerance.'
     },
     clv,
     variationalFtleField,

@@ -1,4 +1,11 @@
-import type { ImportValidationResult, IntegratorId, PendulumParameters, RunMode, RuntimeSnapshot, SystemType } from '../types/domain';
+import type {
+  ImportValidationResult,
+  IntegratorId,
+  PendulumParameters,
+  RunMode,
+  RuntimeSnapshot,
+  SystemType
+} from '../types/domain';
 import { integratorRegistry } from '../physics/integrators';
 import { eventBus } from '../runtime/EventBus';
 import { legacyApp } from '../runtime/legacyCompat';
@@ -139,7 +146,8 @@ export class StateStore {
     const method = v.method;
     const mode = v.mode ?? 'demo';
     if (systemType !== 'double' && systemType !== 'triple') problems.push('systemType must be double or triple');
-    if (typeof method !== 'string' || !(method in integratorRegistry)) problems.push('method must be a known integrator');
+    if (typeof method !== 'string' || !(method in integratorRegistry))
+      problems.push('method must be a known integrator');
     if (typeof mode !== 'string' || !modes.has(mode as RunMode)) problems.push('mode is not allowed');
     for (const key of ['dt', 'tolerance', 'stepsPerFrame', 'damping', 'simTime']) {
       if (!finite(v[key])) problems.push(`${key} must be finite`);
@@ -148,10 +156,19 @@ export class StateStore {
     if (finite(v.damping) && (v.damping < 0 || v.damping > 10)) problems.push('damping is outside safe bounds');
     const state = v.state;
     const expectedStateLength = systemType === 'triple' ? 6 : 4;
-    if (!Array.isArray(state) || state.length !== expectedStateLength) problems.push(`state must have length ${expectedStateLength}`);
-    else if (state.some((x) => !finite(x) || Math.abs(x) > 1e8)) problems.push('state contains non-finite or extreme values');
+    if (!Array.isArray(state) || state.length !== expectedStateLength)
+      problems.push(`state must have length ${expectedStateLength}`);
+    else if (state.some((x) => !finite(x) || Math.abs(x) > 1e8))
+      problems.push('state contains non-finite or extreme values');
     const parameters = sanitizeParameters(v.parameters, problems);
-    if (problems.length || !parameters || !Array.isArray(state) || typeof method !== 'string' || typeof mode !== 'string' || !systemTypes.has(systemType as SystemType)) {
+    if (
+      problems.length ||
+      !parameters ||
+      !Array.isArray(state) ||
+      typeof method !== 'string' ||
+      typeof mode !== 'string' ||
+      !systemTypes.has(systemType as SystemType)
+    ) {
       return { ok: false, problems };
     }
     return {

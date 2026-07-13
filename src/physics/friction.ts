@@ -44,8 +44,10 @@ export function coulombFrictionForce(velocity: number, parameters: RegularizedCo
   nonNegative(parameters.magnitude, 'Coulomb magnitude');
   nonNegative(parameters.viscous ?? 0, 'Coulomb viscous coefficient');
   if (velocity === 0) return 0;
-  return -parameters.magnitude * smoothFrictionSign(velocity, parameters.regularizationVelocity) -
-    (parameters.viscous ?? 0) * velocity;
+  return (
+    -parameters.magnitude * smoothFrictionSign(velocity, parameters.regularizationVelocity) -
+    (parameters.viscous ?? 0) * velocity
+  );
 }
 
 /** Speed-dependent pre-sliding magnitude in the Stribeck curve. */
@@ -60,8 +62,10 @@ export function stribeckFrictionMagnitude(speed: number, parameters: StribeckFri
   const exponent = parameters.exponent ?? 2;
   positive(exponent, 'Stribeck exponent');
   const ratio = speed / parameters.stribeckVelocity;
-  return parameters.dynamicFriction +
-    (parameters.staticFriction - parameters.dynamicFriction) * Math.exp(-(ratio ** exponent));
+  return (
+    parameters.dynamicFriction +
+    (parameters.staticFriction - parameters.dynamicFriction) * Math.exp(-(ratio ** exponent))
+  );
 }
 
 /**
@@ -75,8 +79,9 @@ export function stribeckFrictionForce(velocity: number, parameters: StribeckFric
   nonNegative(parameters.viscous ?? 0, 'Stribeck viscous coefficient');
   if (velocity === 0) return 0;
   const magnitude = stribeckFrictionMagnitude(Math.abs(velocity), parameters);
-  return -magnitude * smoothFrictionSign(velocity, parameters.regularizationVelocity) -
-    (parameters.viscous ?? 0) * velocity;
+  return (
+    -magnitude * smoothFrictionSign(velocity, parameters.regularizationVelocity) - (parameters.viscous ?? 0) * velocity
+  );
 }
 
 /** Apply the scalar law component-wise without allocating an intermediate array. */
@@ -85,7 +90,8 @@ export function applyStribeckFriction(
   parameters: StribeckFrictionParameters,
   out: Float64Array
 ): Float64Array {
-  if (out.length < velocities.length) throw new Error('applyStribeckFriction output is shorter than the velocity vector.');
+  if (out.length < velocities.length)
+    throw new Error('applyStribeckFriction output is shorter than the velocity vector.');
   for (let i = 0; i < velocities.length; i += 1) out[i] = stribeckFrictionForce(Number(velocities[i] ?? 0), parameters);
   return out;
 }

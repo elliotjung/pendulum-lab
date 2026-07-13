@@ -160,7 +160,7 @@ export class LabRenderer {
   draw(bobsMeters: readonly BobPosition[], extras: LabDrawExtras = {}): void {
     const ctx = this.ctx;
     const { width, height } = this.opts;
-    const fade = extras.skipTrail ? 1 : extras.fade ?? this.opts.fade;
+    const fade = extras.skipTrail ? 1 : (extras.fade ?? this.opts.fade);
 
     ctx.save();
     ctx.globalAlpha = 1;
@@ -183,9 +183,7 @@ export class LabRenderer {
     if (!extras.skipTrail && tip) {
       const trailLength = Math.max(2, Math.round(extras.trailLength ?? 1500));
       this.pushTrail(this.trail, tip.x, tip.y, trailLength);
-      const webglDrawn = extras.trailBackend === 'webgl2'
-        ? this.drawWebGLTrail(extras.trailMode ?? 'rainbow')
-        : false;
+      const webglDrawn = extras.trailBackend === 'webgl2' ? this.drawWebGLTrail(extras.trailMode ?? 'rainbow') : false;
       this.lastTrailBackend = webglDrawn ? 'webgl2' : 'canvas2d';
       if (!webglDrawn && !this.drawLayerTrail(tip, trailLength, extras.trailMode ?? 'rainbow', extras.trailColor)) {
         this.drawMainTrail(extras.trailMode ?? 'rainbow', extras.trailColor);
@@ -301,7 +299,8 @@ export class LabRenderer {
       const f0 = b / buckets;
       const f1 = (b + 1) / buckets;
       const fmid = (f0 + f1) / 2;
-      ctx.strokeStyle = fallbackColor && mode === 'fixed' ? fallbackColor : this.trailColor(fmid, mode, fmid * 0.85 + 0.1);
+      ctx.strokeStyle =
+        fallbackColor && mode === 'fixed' ? fallbackColor : this.trailColor(fmid, mode, fmid * 0.85 + 0.1);
       ctx.beginPath();
       const first = Math.max(1, Math.floor(f0 * filled));
       const last = Math.min(filled - 1, Math.max(first, Math.ceil(f1 * filled) - 1));
@@ -355,9 +354,7 @@ export class LabRenderer {
     if (this.webglTrailUnavailable || typeof drawCtx.drawImage !== 'function') return false;
     if (!this.webglTrailRenderer || !this.webglTrailLayer) {
       const layer = createTrailLayer(this.opts.width, this.opts.height);
-      const renderer = layer
-        ? tryCreateWebGLTrailRenderer(layer as unknown as TrailCanvasLike)
-        : null;
+      const renderer = layer ? tryCreateWebGLTrailRenderer(layer as unknown as TrailCanvasLike) : null;
       if (!layer || !renderer) {
         this.webglTrailUnavailable = true;
         return false;
@@ -392,7 +389,8 @@ export class LabRenderer {
   }
 
   private ensureTrailLayer(): TrailLayerContext | null {
-    if (this.trailLayer && this.trailLayer.width === this.opts.width && this.trailLayer.height === this.opts.height) return this.trailLayerCtx;
+    if (this.trailLayer && this.trailLayer.width === this.opts.width && this.trailLayer.height === this.opts.height)
+      return this.trailLayerCtx;
 
     const layer = createTrailLayer(this.opts.width, this.opts.height);
     if (!layer) return null;
@@ -412,7 +410,11 @@ export class LabRenderer {
   private drawEnsemble(tips: readonly Point2D[]): void {
     const ctx = this.ctx;
     if (this.ensembleTrails.length !== tips.length) {
-      this.ensembleTrails = Array.from({ length: tips.length }, () => ({ buf: new Float32Array(0), idx: 0, filled: 0 }));
+      this.ensembleTrails = Array.from({ length: tips.length }, () => ({
+        buf: new Float32Array(0),
+        idx: 0,
+        filled: 0
+      }));
     }
 
     ctx.save();

@@ -1,9 +1,6 @@
 import { createQkrPlan, qkrStep, type QuantumKickedRotorParams } from '../physics/quantumKickedRotor';
 import { qkrQuasiEnergySpectrum } from './qkrFloquet';
-import {
-  complexUnitaryFloquetArnoldiSchurSpectrum,
-  type ComplexLinearOperator
-} from './unitaryFloquet';
+import { complexUnitaryFloquetArnoldiSchurSpectrum, type ComplexLinearOperator } from './unitaryFloquet';
 
 export interface QkrFloquetBandPoint {
   phase: number;
@@ -60,7 +57,8 @@ export function buildQkrFloquetViewModel(
     maxUnitCircleDrift = spectrum.maxUnitCircleDrift;
     basisSize = parameters.gridSize;
     converged = true;
-    caveat = 'Dense eigenspectrum of the exact split-step Floquet matrix; finite grid size sets the quasi-energy resolution.';
+    caveat =
+      'Dense eigenspectrum of the exact split-step Floquet matrix; finite grid size sets the quasi-energy resolution.';
   } else {
     const plan = createQkrPlan(parameters);
     const apply: ComplexLinearOperator = (vector) => {
@@ -91,8 +89,8 @@ export function buildQkrFloquetViewModel(
   }
   bands.sort((a, b) => a.phase - b.phase);
   const quasiEnergies = bands.map((band) => band.quasiEnergy);
-  const min = quasiEnergies.length ? Math.min(...quasiEnergies) : -parameters.hbar * Math.PI / period;
-  const max = quasiEnergies.length ? Math.max(...quasiEnergies) : parameters.hbar * Math.PI / period;
+  const min = quasiEnergies.length ? Math.min(...quasiEnergies) : (-parameters.hbar * Math.PI) / period;
+  const max = quasiEnergies.length ? Math.max(...quasiEnergies) : (parameters.hbar * Math.PI) / period;
   return {
     backend,
     parameters: { ...parameters },

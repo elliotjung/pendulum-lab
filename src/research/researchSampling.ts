@@ -1,11 +1,5 @@
 export type ParameterStudyStrategy =
-  | 'grid'
-  | 'random'
-  | 'symmetric'
-  | 'latin-hypercube'
-  | 'edge-focus'
-  | 'sobol'
-  | 'chebyshev';
+  'grid' | 'random' | 'symmetric' | 'latin-hypercube' | 'edge-focus' | 'sobol' | 'chebyshev';
 
 function seedFromText(text: string): number {
   return Math.abs(text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) || 17;

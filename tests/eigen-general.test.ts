@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  balanceMatrix,
-  eigenvaluesGeneral,
-  francisEigenvalues,
-  hessenbergReduce
-} from '../src/research/eigenGeneral';
+import { balanceMatrix, eigenvaluesGeneral, francisEigenvalues, hessenbergReduce } from '../src/research/eigenGeneral';
 import { matrixEigenvalues, type Complex } from '../src/research/complexEig';
 import { jacobiEigenSymmetric } from '../src/research/svd';
 
@@ -121,9 +116,7 @@ describe('eigenvaluesGeneral — closed-form spectra', () => {
     for (const n of [5, 6]) {
       const c = Array.from({ length: n }, (_, j) => Math.cos(0.9 * j) - 0.3 * j); // arbitrary first row
       // C[i][j] = c[(j - i) mod n]
-      const m = Array.from({ length: n }, (_, i) =>
-        Array.from({ length: n }, (_, j) => c[(((j - i) % n) + n) % n]!)
-      );
+      const m = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => c[(((j - i) % n) + n) % n]!));
       const target: Complex[] = [];
       for (let k = 0; k < n; k += 1) {
         let re = 0;

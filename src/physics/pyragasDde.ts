@@ -51,26 +51,34 @@ export function rhsPyragasPendulum(
   const driveAmplitude = parameters.driveAmplitude ?? 0;
   const driveFrequency = parameters.driveFrequency ?? 0;
   out[0] = omega;
-  out[1] = -(parameters.g / parameters.length) * Math.sin(theta) - parameters.damping * omega +
+  out[1] =
+    -(parameters.g / parameters.length) * Math.sin(theta) -
+    parameters.damping * omega +
     driveAmplitude * Math.cos(driveFrequency * time) +
     pyragasFeedback(theta, delayedTheta, parameters.feedbackGain);
   return out;
 }
 
 function validate(parameters: PyragasPendulumParameters, options: PyragasDdeOptions): void {
-  if (!(parameters.length > 0) || !Number.isFinite(parameters.length)) throw new Error('Pyragas pendulum length must be positive and finite.');
-  if (!(parameters.g >= 0) || !Number.isFinite(parameters.g)) throw new Error('Pyragas gravity must be finite and non-negative.');
-  if (!(parameters.damping >= 0) || !Number.isFinite(parameters.damping)) throw new Error('Pyragas damping must be finite and non-negative.');
+  if (!(parameters.length > 0) || !Number.isFinite(parameters.length))
+    throw new Error('Pyragas pendulum length must be positive and finite.');
+  if (!(parameters.g >= 0) || !Number.isFinite(parameters.g))
+    throw new Error('Pyragas gravity must be finite and non-negative.');
+  if (!(parameters.damping >= 0) || !Number.isFinite(parameters.damping))
+    throw new Error('Pyragas damping must be finite and non-negative.');
   if (!Number.isFinite(parameters.feedbackGain)) throw new Error('Pyragas feedback gain must be finite.');
-  if (!(parameters.delay > 0) || !Number.isFinite(parameters.delay)) throw new Error('Pyragas delay must be positive and finite.');
+  if (!(parameters.delay > 0) || !Number.isFinite(parameters.delay))
+    throw new Error('Pyragas delay must be positive and finite.');
   if (!(options.dt > 0) || !Number.isFinite(options.dt)) throw new Error('Pyragas dt must be positive and finite.');
-  if (!(options.duration >= 0) || !Number.isFinite(options.duration)) throw new Error('Pyragas duration must be finite and non-negative.');
+  if (!(options.duration >= 0) || !Number.isFinite(options.duration))
+    throw new Error('Pyragas duration must be finite and non-negative.');
   // Then every delayed RK stage lies in the already accepted history.  Smaller
   // delays need an implicit within-step interpolation, outside this explicit
   // method-of-steps contract.
   if (parameters.delay + 1e-15 < options.dt) throw new Error('Pyragas method-of-steps requires delay >= dt.');
   const recordEvery = options.recordEvery ?? 1;
-  if (!Number.isInteger(recordEvery) || recordEvery < 1) throw new Error('Pyragas recordEvery must be a positive integer.');
+  if (!Number.isInteger(recordEvery) || recordEvery < 1)
+    throw new Error('Pyragas recordEvery must be a positive integer.');
 }
 
 /**
@@ -156,6 +164,7 @@ export function integratePyragasPendulumDde(
     finalState: [state[0]!, state[1]!],
     steps,
     method: 'method-of-steps-rk4-linear-history',
-    caveat: 'Fixed-step explicit method of steps with linear delay interpolation; delay must be at least dt. Refine dt and the history function before quoting event times or stability boundaries.'
+    caveat:
+      'Fixed-step explicit method of steps with linear delay interpolation; delay must be at least dt. Refine dt and the history function before quoting event times or stability boundaries.'
   };
 }

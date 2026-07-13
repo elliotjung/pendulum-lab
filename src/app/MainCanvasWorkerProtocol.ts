@@ -31,9 +31,7 @@ export type MainCanvasWorkerMessage =
   | { kind: 'dispose' };
 
 export type MainCanvasWorkerResponse =
-  | { kind: 'ready' }
-  | { kind: 'rendered'; sequence: number; elapsedMs: number }
-  | { kind: 'error'; detail: string };
+  { kind: 'ready' } | { kind: 'rendered'; sequence: number; elapsedMs: number } | { kind: 'error'; detail: string };
 
 /** Pack tiny per-frame object arrays before crossing the worker boundary. */
 export function packBobPositions(points: readonly BobPosition[]): Float32Array {

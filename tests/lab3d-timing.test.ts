@@ -6,9 +6,7 @@ import {
 } from '../src/app/parity/lab3d-timing';
 
 const clampNumber = (value: unknown, fallback: number, min: number, max: number): number => {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? Math.max(min, Math.min(max, value))
-    : fallback;
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
 };
 
 describe('lab3d timing policy', () => {
@@ -21,21 +19,25 @@ describe('lab3d timing policy', () => {
   });
 
   test('demo mode follows wall-clock deltas with a catch-up clamp', () => {
-    expect(resolveLab3dStepTiming({
-      timestamp: 1016,
-      lastFrame: 1000,
-      mode: 'demo',
-      researchStep: 0.01,
-      clampNumber
-    })).toEqual({ elapsed: 0.016, nextLastFrame: 1016, deterministic: false });
+    expect(
+      resolveLab3dStepTiming({
+        timestamp: 1016,
+        lastFrame: 1000,
+        mode: 'demo',
+        researchStep: 0.01,
+        clampNumber
+      })
+    ).toEqual({ elapsed: 0.016, nextLastFrame: 1016, deterministic: false });
 
-    expect(resolveLab3dStepTiming({
-      timestamp: 2000,
-      lastFrame: 1000,
-      mode: 'demo',
-      researchStep: 0.01,
-      clampNumber
-    }).elapsed).toBe(0.05);
+    expect(
+      resolveLab3dStepTiming({
+        timestamp: 2000,
+        lastFrame: 1000,
+        mode: 'demo',
+        researchStep: 0.01,
+        clampNumber
+      }).elapsed
+    ).toBe(0.05);
   });
 
   test('research mode ignores wall-clock jitter and advances a fixed quantum', () => {

@@ -1,5 +1,10 @@
 import { createQkrPlan, qkrStep, type QuantumKickedRotorParams, type QkrPlan } from '../physics/quantumKickedRotor';
-import { complexUnitaryFloquetSpectrum, type ComplexMatrix, type UnitaryFloquetOptions, type UnitaryFloquetSpectrum } from './unitaryFloquet';
+import {
+  complexUnitaryFloquetSpectrum,
+  type ComplexMatrix,
+  type UnitaryFloquetOptions,
+  type UnitaryFloquetSpectrum
+} from './unitaryFloquet';
 
 export interface QkrQuasiEnergySpectrum extends UnitaryFloquetSpectrum {
   gridSize: number;
@@ -29,7 +34,11 @@ export function qkrQuasiEnergySpectrum(
   options: Omit<UnitaryFloquetOptions, 'hbar'> = {}
 ): QkrQuasiEnergySpectrum {
   const matrix = qkrFloquetMatrix(params);
-  const spectrum = complexUnitaryFloquetSpectrum(matrix, { ...options, hbar: params.hbar, period: options.period ?? 1 });
+  const spectrum = complexUnitaryFloquetSpectrum(matrix, {
+    ...options,
+    hbar: params.hbar,
+    period: options.period ?? 1
+  });
   return {
     ...spectrum,
     gridSize: params.gridSize,

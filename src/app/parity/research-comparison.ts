@@ -9,7 +9,11 @@ import {
 import { renderResearchTable } from './research-renderers';
 
 function metricValue(value: number | null, digits = 3): string {
-  return value === null || !Number.isFinite(value) ? '-' : Math.abs(value) >= 1000 || Math.abs(value) < 0.01 ? value.toExponential(2) : value.toFixed(digits);
+  return value === null || !Number.isFinite(value)
+    ? '-'
+    : Math.abs(value) >= 1000 || Math.abs(value) < 0.01
+      ? value.toExponential(2)
+      : value.toFixed(digits);
 }
 
 export function comparisonRowFromExperiment(experiment: ResearchExperiment): ResearchComparisonRow {
@@ -53,7 +57,9 @@ export function buildComparisonRows(): ResearchComparisonRow[] {
   return [
     ...state.research.experiments.map(comparisonRowFromExperiment),
     ...state.research.runLog.slice(0, 24).map(comparisonRowFromRun)
-  ].sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 60);
+  ]
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+    .slice(0, 60);
 }
 
 export function renderComparisonMatrix(): void {
@@ -67,11 +73,20 @@ export function renderComparisonMatrix(): void {
     metricValue(entry.lambdaMax),
     String(entry.score)
   ]);
-  renderResearchTable('rwComparisonMatrix', ['source', 'label', 'method', 'system', 'dt', 'drift', 'lambda', 'score'], rows, 'No comparison rows yet.');
+  renderResearchTable(
+    'rwComparisonMatrix',
+    ['source', 'label', 'method', 'system', 'dt', 'drift', 'lambda', 'score'],
+    rows,
+    'No comparison rows yet.'
+  );
 }
 
 export function renderPaperSummary(): void {
-  const ready = state.research.experiments.length > 0 || state.research.runLog.length > 0 || Boolean(state.research.parameterStudy);
+  const ready =
+    state.research.experiments.length > 0 || state.research.runLog.length > 0 || Boolean(state.research.parameterStudy);
   const rowCount = state.research.comparisonRows.length || buildComparisonRows().length;
-  setText('rwPaperSummary', `${ready ? 'ready' : 'not ready'}: ${state.research.experiments.length} experiments, ${state.research.runLog.length} run log entries, ${state.research.parameterStudy?.count ?? 0} study points, ${rowCount} comparison rows.`);
+  setText(
+    'rwPaperSummary',
+    `${ready ? 'ready' : 'not ready'}: ${state.research.experiments.length} experiments, ${state.research.runLog.length} run log entries, ${state.research.parameterStudy?.count ?? 0} study points, ${rowCount} comparison rows.`
+  );
 }

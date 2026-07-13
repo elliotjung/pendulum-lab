@@ -11,7 +11,8 @@ export interface ImuMotionSample {
 
 export interface ImuMotionCaptureDependencies {
   secureContext: boolean;
-  deviceMotionEvent: (typeof DeviceMotionEvent & { requestPermission?: () => Promise<'granted' | 'denied'> }) | undefined;
+  deviceMotionEvent:
+    (typeof DeviceMotionEvent & { requestPermission?: () => Promise<'granted' | 'denied'> }) | undefined;
   addListener: (listener: (event: DeviceMotionEvent) => void) => void;
   removeListener: (listener: (event: DeviceMotionEvent) => void) => void;
 }
@@ -24,9 +25,10 @@ export interface ImuMotionCaptureOptions {
 }
 
 function browserDependencies(): ImuMotionCaptureDependencies {
-  const eventType = typeof DeviceMotionEvent === 'undefined'
-    ? undefined
-    : DeviceMotionEvent as ImuMotionCaptureDependencies['deviceMotionEvent'];
+  const eventType =
+    typeof DeviceMotionEvent === 'undefined'
+      ? undefined
+      : (DeviceMotionEvent as ImuMotionCaptureDependencies['deviceMotionEvent']);
   return {
     secureContext: typeof window !== 'undefined' && window.isSecureContext,
     deviceMotionEvent: eventType,
@@ -41,16 +43,12 @@ function inclination(event: DeviceMotionEvent, axis: ImuAxis): number | null {
   const y = acceleration?.y;
   const z = acceleration?.z;
   if (x == null || y == null || z == null || ![x, y, z].every(Number.isFinite)) return null;
-  return axis === 'beta'
-    ? Math.atan2(y, Math.hypot(x, z))
-    : Math.atan2(x, Math.hypot(y, z));
+  return axis === 'beta' ? Math.atan2(y, Math.hypot(x, z)) : Math.atan2(x, Math.hypot(y, z));
 }
 
 function angularVelocity(event: DeviceMotionEvent, axis: ImuAxis): number | null {
   const degreesPerSecond = event.rotationRate?.[axis];
-  return degreesPerSecond == null || !Number.isFinite(degreesPerSecond)
-    ? null
-    : degreesPerSecond * Math.PI / 180;
+  return degreesPerSecond == null || !Number.isFinite(degreesPerSecond) ? null : (degreesPerSecond * Math.PI) / 180;
 }
 
 /** DeviceMotion collector with the explicit iOS permission handshake. */
@@ -59,7 +57,9 @@ export class ImuMotionCaptureController {
   private readonly dependencies: ImuMotionCaptureDependencies;
   private readonly onSample: ((sample: ImuMotionSample) => void) | undefined;
   private readonly onStateChange: ((state: ImuCaptureState, message: string) => void) | undefined;
-  private readonly listener = (event: DeviceMotionEvent): void => { this.consume(event); };
+  private readonly listener = (event: DeviceMotionEvent): void => {
+    this.consume(event);
+  };
   private samples: ImuMotionSample[] = [];
   private rawAngle = 0;
   private angleOffset = 0;
@@ -95,7 +95,7 @@ export class ImuMotionCaptureController {
     this.setState('requesting', 'Requesting motion-sensor permission…');
     if (eventType.requestPermission) {
       try {
-        if (await eventType.requestPermission() !== 'granted') {
+        if ((await eventType.requestPermission()) !== 'granted') {
           this.setState('denied', 'Motion-sensor permission was denied. You can import a sensor CSV instead.');
           return false;
         }
@@ -150,7 +150,11 @@ export class ImuMotionCaptureController {
   exportCsv(): string {
     return [
       'time,angle,angular_velocity,angular_acceleration',
-      ...this.samples.map((sample) => [sample.timestamp, sample.angle, sample.angularVelocity, sample.angularAcceleration].map((value) => value.toPrecision(12)).join(','))
+      ...this.samples.map((sample) =>
+        [sample.timestamp, sample.angle, sample.angularVelocity, sample.angularAcceleration]
+          .map((value) => value.toPrecision(12))
+          .join(',')
+      )
     ].join('\n');
   }
 

@@ -30,13 +30,15 @@ function validateFrame(frame: RgbaFrame): void {
   if (!Number.isInteger(frame.width) || !Number.isInteger(frame.height) || frame.width <= 0 || frame.height <= 0) {
     throw new Error('RGBA frame dimensions must be positive integers.');
   }
-  if (frame.data.length < frame.width * frame.height * 4) throw new Error('RGBA frame data is shorter than width*height*4.');
+  if (frame.data.length < frame.width * frame.height * 4)
+    throw new Error('RGBA frame data is shorter than width*height*4.');
 }
 
 /** Weighted centroid of pixels lying within an RGB target ball. */
 export function colorMarkerCentroid(frame: RgbaFrame, target: ColorMarkerTarget): ColorCentroid | null {
   validateFrame(frame);
-  if (!(target.tolerance > 0) || !Number.isFinite(target.tolerance)) throw new Error('marker tolerance must be positive and finite.');
+  if (!(target.tolerance > 0) || !Number.isFinite(target.tolerance))
+    throw new Error('marker tolerance must be positive and finite.');
   const minAlpha = target.minAlpha ?? 1;
   const minPixels = target.minPixels ?? 1;
   let weightedX = 0;
@@ -112,7 +114,8 @@ export function trackDoublePendulumRecording(
   times: readonly number[],
   spec: DoubleMarkerTrackingSpec
 ): DoublePendulumObservation {
-  if (frames.length !== times.length || frames.length === 0) throw new Error('recording frames/times must have equal non-zero length.');
+  if (frames.length !== times.length || frames.length === 0)
+    throw new Error('recording frames/times must have equal non-zero length.');
   const angles: Array<readonly [number, number]> = [];
   for (let i = 0; i < frames.length; i += 1) {
     if (i > 0 && !(times[i]! > times[i - 1]!)) throw new Error('recording times must be strictly increasing.');

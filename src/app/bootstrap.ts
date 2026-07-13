@@ -54,7 +54,8 @@ export function maybeMountModernLabProbe(): boolean {
   canvas.width = 400;
   canvas.height = 400;
   canvas.setAttribute('aria-label', 'modern lab probe');
-  canvas.style.cssText = 'position:fixed;right:8px;bottom:8px;width:200px;height:200px;z-index:9999;border:1px solid #2a3340;border-radius:8px';
+  canvas.style.cssText =
+    'position:fixed;right:8px;bottom:8px;width:200px;height:200px;z-index:9999;border:1px solid #2a3340;border-radius:8px';
   document.body.appendChild(canvas);
 
   const handle = mountModernLab(canvas, PROBE_CONFIG, { stepsPerFrame: 6, trailLength: 1200 });
@@ -116,7 +117,11 @@ interface TabMount {
 }
 
 function buildTabRegistry(tabs: ModernTabs): TabMount[] {
-  function entry<K extends keyof ModernTabs>(tab: string, key: K, load: () => Promise<NonNullable<ModernTabs[K]>>): TabMount {
+  function entry<K extends keyof ModernTabs>(
+    tab: string,
+    key: K,
+    load: () => Promise<NonNullable<ModernTabs[K]>>
+  ): TabMount {
     let loaded: Promise<NonNullable<ModernTabs[K]>> | null = null;
     let mounted = false;
     const loadOnce = (): Promise<NonNullable<ModernTabs[K]>> => {
@@ -168,7 +173,13 @@ function activeTabName(): string {
   return active && active.id.startsWith('tab-') ? active.id.slice('tab-'.length) : 'lab';
 }
 
-function ensureLazyTabPlaceholder(tab: string, label: string, shortIcon: string, railId: string, afterTab: string): void {
+function ensureLazyTabPlaceholder(
+  tab: string,
+  label: string,
+  shortIcon: string,
+  railId: string,
+  afterTab: string
+): void {
   if (document.querySelector(`.tab[data-tab="${tab}"]`)) return;
   const rail = document.getElementById(railId);
   if (!rail) return;

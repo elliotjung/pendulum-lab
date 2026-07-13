@@ -10,4 +10,3 @@ export const SLOW_TEST_FILES = [
   'tests/mathieu-stability.test.ts',
   'tests/stochastic.test.ts'
 ] as const;
-

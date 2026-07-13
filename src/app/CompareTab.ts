@@ -97,7 +97,13 @@ export class CompareTab extends TabController {
     this.rafId = requestAnimationFrame(() => this.frame());
   }
 
-  private drawPendulum(ctx: CanvasRenderingContext2D, sim: LabSimulation, pivot: { x: number; y: number }, scale: number, color: string): void {
+  private drawPendulum(
+    ctx: CanvasRenderingContext2D,
+    sim: LabSimulation,
+    pivot: { x: number; y: number },
+    scale: number,
+    color: string
+  ): void {
     const pixels = sim.bobPositionsMeters().map((b) => ({ x: pivot.x + b.x * scale, y: pivot.y + b.y * scale }));
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
@@ -118,7 +124,10 @@ export class CompareTab extends TabController {
     const canvas = this.dom.el(canvasId) as HTMLCanvasElement | null;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    const series: LineSeries[] = hist.map((values, k) => ({ color: OVERLAY[canvasId === 'cmpDiverge' ? k + 1 : k]!.color, values }));
+    const series: LineSeries[] = hist.map((values, k) => ({
+      color: OVERLAY[canvasId === 'cmpDiverge' ? k + 1 : k]!.color,
+      values
+    }));
     renderMultiLine(ctx, { x: 0, y: 0, width: canvas.width, height: canvas.height }, series, { log: true });
   }
 
@@ -139,7 +148,14 @@ export class CompareTab extends TabController {
     const steps = 20_000;
     const results: { id: IntegratorId; stepsPerMs: number }[] = [];
     for (const m of BENCH) {
-      const sim = new LabSimulation({ system: 'double', parameters: params, gamma: 0, method: m.id, dt, initialState: [2, 2.5, 0, 0] });
+      const sim = new LabSimulation({
+        system: 'double',
+        parameters: params,
+        gamma: 0,
+        method: m.id,
+        dt,
+        initialState: [2, 2.5, 0, 0]
+      });
       const t0 = performance.now();
       sim.step(steps);
       const elapsed = performance.now() - t0;

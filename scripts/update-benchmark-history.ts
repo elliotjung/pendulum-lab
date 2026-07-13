@@ -38,7 +38,9 @@ const point: HistoryPoint = {
   longTaskMs: metric('longTaskMs'),
   environment: report.environment
 };
-for (const [key, value] of Object.entries(point).filter(([key]) => !['commit', 'generatedAt', 'environment'].includes(key))) {
+for (const [key, value] of Object.entries(point).filter(
+  ([key]) => !['commit', 'generatedAt', 'environment'].includes(key)
+)) {
   if (!Number.isFinite(Number(value))) throw new Error(`benchmark aggregate ${key} is missing`);
 }
 
@@ -77,11 +79,13 @@ function chart(points: readonly HistoryPoint[], label: string, key: keyof Histor
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = Math.max(Number.EPSILON, max - min);
-  const path = values.map((value, index) => {
-    const x = 18 + (index / Math.max(1, values.length - 1)) * (width - 36);
-    const y = height - 24 - ((value - min) / span) * (height - 48);
-    return `${index ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
+  const path = values
+    .map((value, index) => {
+      const x = 18 + (index / Math.max(1, values.length - 1)) * (width - 36);
+      const y = height - 24 - ((value - min) / span) * (height - 48);
+      return `${index ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
   return `<article class="card"><h2>${escapeHtml(label)}</h2><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(label)} from ${min.toFixed(2)} to ${max.toFixed(2)}"><path class="axis" d="M18 12V156H462"/><path class="line" stroke="${color}" d="${path}"/><text class="value" x="24" y="28">max ${max.toFixed(2)}</text><text class="value" x="24" y="150">min ${min.toFixed(2)}</text></svg></article>`;
 }
 

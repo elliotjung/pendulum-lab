@@ -1,6 +1,12 @@
 import { energyDriven, rhsDriven, type DrivenParameters } from './driven';
 import { energyChain, rhsChain, type ChainParameters } from './nPendulum';
-import { sphericalEnergy, sphericalPosition, sphericalRhs, type SphericalParams, type SphericalState } from './spherical';
+import {
+  sphericalEnergy,
+  sphericalPosition,
+  sphericalRhs,
+  type SphericalParams,
+  type SphericalState
+} from './spherical';
 import type { IntegratorId } from '../types/domain';
 import type { StateVector } from './types';
 import {
@@ -43,7 +49,8 @@ export const EXPANSION_MODEL_DEFINITIONS: readonly ExpansionModelDefinition[] = 
     defaultState: [0.65, -0.2, 0, 0],
     defaultParameters: { g: 9.81, length: 1, coupling: 2.2, damping: 0 },
     sweep: { parameter: 'coupling', label: 'coupling', min: 0.1, max: 5 },
-    equation: "theta_i' = omega_i; omega_1' = -(g/l) sin(theta_1) - k(theta_1-theta_2); omega_2' = -(g/l) sin(theta_2) + k(theta_1-theta_2).",
+    equation:
+      "theta_i' = omega_i; omega_1' = -(g/l) sin(theta_1) - k(theta_1-theta_2); omega_2' = -(g/l) sin(theta_2) + k(theta_1-theta_2).",
     energyNote: 'Energy includes two pendulum potentials plus a quadratic coupling spring.',
     caveat: 'The coupling is a compact educational model, not a full elastic-rod derivation.'
   },
@@ -103,7 +110,8 @@ export const EXPANSION_MODEL_DEFINITIONS: readonly ExpansionModelDefinition[] = 
     defaultState: [0.8, 0, 0, 2.2],
     defaultParameters: { g: 9.81, length: 1, damping: 0 },
     sweep: { parameter: 'g', label: 'gravity', min: 2, max: 18 },
-    equation: "theta' = thetaDot; phi' = phiDot; thetaDot' = sin(theta)cos(theta)phiDot^2 - (g/l)sin(theta); phiDot' = -2 cot(theta) thetaDot phiDot.",
+    equation:
+      "theta' = thetaDot; phi' = phiDot; thetaDot' = sin(theta)cos(theta)phiDot^2 - (g/l)sin(theta); phiDot' = -2 cot(theta) thetaDot phiDot.",
     energyNote: 'Conservative runs preserve both energy and vertical angular momentum in exact arithmetic.',
     caveat: 'Spherical coordinates are regularized near the poles; avoid over-interpreting pole-adjacent runs.'
   },
@@ -116,9 +124,21 @@ export const EXPANSION_MODEL_DEFINITIONS: readonly ExpansionModelDefinition[] = 
     defaultDt: 0.003,
     defaultHorizon: 12,
     defaultState: [1.05, 0.8, 0.45, 0.2, 0, 0, 0, 0],
-    defaultParameters: { links: 4, g: 9.81, damping: 0, mass1: 1, mass2: 0.9, mass3: 0.8, mass4: 0.7, length1: 1, length2: 0.85, length3: 0.7, length4: 0.55 },
+    defaultParameters: {
+      links: 4,
+      g: 9.81,
+      damping: 0,
+      mass1: 1,
+      mass2: 0.9,
+      mass3: 0.8,
+      mass4: 0.7,
+      length1: 1,
+      length2: 0.85,
+      length3: 0.7,
+      length4: 0.55
+    },
     sweep: { parameter: 'g', label: 'gravity', min: 2, max: 18 },
-    equation: "M(theta) alpha = f(theta, omega), with state [theta_0..theta_N, omega_0..omega_N].",
+    equation: 'M(theta) alpha = f(theta, omega), with state [theta_0..theta_N, omega_0..omega_N].',
     energyNote: 'Energy is the full chain kinetic plus gravitational potential energy.',
     caveat: 'Large N and energetic initial states can be stiff; compare methods before trusting fine structure.'
   }
@@ -130,14 +150,26 @@ export const EXPANSION_PRESETS: readonly ExpansionPreset[] = [
     label: 'Driven chaos window',
     model: 'driven',
     description: 'Classic damped-driven single pendulum route to chaos.',
-    config: { model: 'driven', parameterOverrides: { driveAmplitude: 1.15 }, horizon: 24, dt: 0.01, bifurcationColumns: 10 }
+    config: {
+      model: 'driven',
+      parameterOverrides: { driveAmplitude: 1.15 },
+      horizon: 24,
+      dt: 0.01,
+      bifurcationColumns: 10
+    }
   },
   {
     id: 'coupled-normal-mode',
     label: 'Coupled normal modes',
     model: 'coupled',
     description: 'Energy exchange between two weakly coupled pendulums.',
-    config: { model: 'coupled', initialState: [0.45, -0.45, 0, 0], parameterOverrides: { coupling: 1.2 }, horizon: 18, dt: 0.006 }
+    config: {
+      model: 'coupled',
+      initialState: [0.45, -0.45, 0, 0],
+      parameterOverrides: { coupling: 1.2 },
+      horizon: 18,
+      dt: 0.006
+    }
   },
   {
     id: 'inverted-growth',
@@ -178,7 +210,10 @@ export const EXPANSION_PRESETS: readonly ExpansionPreset[] = [
 
 export const GOLDEN_EXPANSION_PRESET_IDS = ['coupled-normal-mode', 'spherical-conical', 'chain-cascade'] as const;
 
-function cloneParameters(definition: ExpansionModelDefinition, overrides: Partial<ExpansionParameterMap> = {}): ExpansionParameterMap {
+function cloneParameters(
+  definition: ExpansionModelDefinition,
+  overrides: Partial<ExpansionParameterMap> = {}
+): ExpansionParameterMap {
   const parameters: ExpansionParameterMap = { ...definition.defaultParameters };
   for (const [key, value] of Object.entries(overrides)) {
     if (value !== undefined) parameters[key] = value;
@@ -224,8 +259,12 @@ function sphericalParams(parameters: ExpansionParameterMap): SphericalParams {
 
 export function chainParams(parameters: ExpansionParameterMap): ChainParameters {
   const n = Math.max(2, Math.min(8, Math.round(finiteParam(parameters, 'links', 4))));
-  const masses = Array.from({ length: n }, (_, i) => finiteParam(parameters, `mass${i + 1}`, Math.max(0.25, 1 - i * 0.1)));
-  const lengths = Array.from({ length: n }, (_, i) => finiteParam(parameters, `length${i + 1}`, Math.max(0.25, 1 - i * 0.15)));
+  const masses = Array.from({ length: n }, (_, i) =>
+    finiteParam(parameters, `mass${i + 1}`, Math.max(0.25, 1 - i * 0.1))
+  );
+  const lengths = Array.from({ length: n }, (_, i) =>
+    finiteParam(parameters, `length${i + 1}`, Math.max(0.25, 1 - i * 0.15))
+  );
   return { masses, lengths, g: finiteParam(parameters, 'g', 9.81) };
 }
 
@@ -263,9 +302,11 @@ function coupledEnergy(state: ArrayLike<number>, parameters: ExpansionParameterM
   const g = finiteParam(parameters, 'g', 9.81);
   const length = finiteParam(parameters, 'length', 1);
   const coupling = finiteParam(parameters, 'coupling', 2);
-  return 0.5 * length * length * (omega1 * omega1 + omega2 * omega2)
-    - g * length * (Math.cos(theta1) + Math.cos(theta2))
-    + 0.5 * coupling * (theta1 - theta2) * (theta1 - theta2);
+  return (
+    0.5 * length * length * (omega1 * omega1 + omega2 * omega2) -
+    g * length * (Math.cos(theta1) + Math.cos(theta2)) +
+    0.5 * coupling * (theta1 - theta2) * (theta1 - theta2)
+  );
 }
 
 function invertedRhs(state: StateVector, parameters: ExpansionParameterMap, out: StateVector): void {
@@ -363,7 +404,9 @@ export function createExpansionSystem(
       definition,
       parameters,
       initialState: state,
-      rhs: (s, out) => { rhsDriven(s, drivenParams(parameters), out); },
+      rhs: (s, out) => {
+        rhsDriven(s, drivenParams(parameters), out);
+      },
       energy: (s) => energyDriven(s, drivenParams(parameters)).total,
       coordinates: (s) => [pendulumPoint(numberAt(s, 0), finiteParam(parameters, 'length', 1))],
       phasePoint: (s) => ({ x: wrapAngle(numberAt(s, 0)), y: numberAt(s, 1) })
@@ -405,7 +448,10 @@ export function createExpansionSystem(
         const x = numberAt(s, 0);
         const theta = numberAt(s, 1);
         const length = finiteParam(parameters, 'length', 0.75);
-        return [{ x, y: 0 }, { x: x + length * Math.sin(theta), y: -length * Math.cos(theta) }];
+        return [
+          { x, y: 0 },
+          { x: x + length * Math.sin(theta), y: -length * Math.cos(theta) }
+        ];
       },
       phasePoint: (s) => ({ x: wrapAngle(numberAt(s, 1)), y: numberAt(s, 3) })
     };
@@ -418,7 +464,9 @@ export function createExpansionSystem(
       rhs: (s, out) => parametricRhs(s, parameters, out),
       energy: (s) => parametricEnergy(s, parameters),
       coordinates: (s) => {
-        const length = finiteParam(parameters, 'length', 1) * (1 + 0.15 * finiteParam(parameters, 'amplitude', 0.34) * Math.cos(numberAt(s, 2)));
+        const length =
+          finiteParam(parameters, 'length', 1) *
+          (1 + 0.15 * finiteParam(parameters, 'amplitude', 0.34) * Math.cos(numberAt(s, 2)));
         return [pendulumPoint(numberAt(s, 0), length)];
       },
       phasePoint: (s) => ({ x: wrapAngle(numberAt(s, 0)), y: numberAt(s, 1) })
@@ -430,16 +478,29 @@ export function createExpansionSystem(
       parameters,
       initialState: state,
       rhs: (s, out) => {
-        const next = sphericalRhs([numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState, sphericalParams(parameters));
+        const next = sphericalRhs(
+          [numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState,
+          sphericalParams(parameters)
+        );
         out[0] = next[0];
         out[1] = next[1];
         out[2] = next[2];
         out[3] = next[3];
       },
-      energy: (s) => sphericalEnergy([numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState, sphericalParams(parameters)),
+      energy: (s) =>
+        sphericalEnergy(
+          [numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState,
+          sphericalParams(parameters)
+        ),
       coordinates: (s) => {
-        const position = sphericalPosition([numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState, sphericalParams(parameters));
-        return [{ x: position.x, y: position.y }, { x: position.z, y: position.y }];
+        const position = sphericalPosition(
+          [numberAt(s, 0), numberAt(s, 1), numberAt(s, 2), numberAt(s, 3)] as SphericalState,
+          sphericalParams(parameters)
+        );
+        return [
+          { x: position.x, y: position.y },
+          { x: position.z, y: position.y }
+        ];
       },
       phasePoint: (s) => ({ x: wrapAngle(numberAt(s, 0)), y: numberAt(s, 2) })
     };

@@ -35,25 +35,66 @@ export * as experimental from './lib/experimental';
 
 // --- Flat compatibility surface (pre-10.31) --------------------------------
 
-export type { EnergyBreakdown, PendulumParameters, SystemType, IntegratorId, RunMode, RuntimeSnapshot } from './types/domain';
+export type {
+  EnergyBreakdown,
+  PendulumParameters,
+  SystemType,
+  IntegratorId,
+  RunMode,
+  RuntimeSnapshot
+} from './types/domain';
 
 // Physics
 export * from './physics/types';
 export * from './physics/integrators';
 export { rhsDouble } from './physics/double';
 export { energyDouble } from './physics/energy';
-export { rhsChain, energyChain, chainMassMatrix, chainMassMatrixDiagnostics, createChainWorkspace, validateChainParameters } from './physics/nPendulum';
+export {
+  rhsChain,
+  energyChain,
+  chainMassMatrix,
+  chainMassMatrixDiagnostics,
+  createChainWorkspace,
+  validateChainParameters
+} from './physics/nPendulum';
 export type { ChainParameters, ChainWorkspace } from './physics/nPendulum';
 export { assertLinearSolve, solveLinearInPlace } from './physics/linearSolve';
-export type { LinearSolveFailureReason, LinearSolveFallbackPolicy, LinearSolveOptions, LinearSolveResult } from './physics/linearSolve';
+export type {
+  LinearSolveFailureReason,
+  LinearSolveFallbackPolicy,
+  LinearSolveOptions,
+  LinearSolveResult
+} from './physics/linearSolve';
 export { buildRhs, buildJacobian } from './physics/systemSpec';
 export type { SystemSpec } from './physics/systemSpec';
-export { gaussianSampler, eulerMaruyamaStep, milsteinStep, stochasticHeunStratonovichStep, commutativeMilsteinStep, runLangevinEnsemble, buildBrownianGrid, runAdaptiveLangevinPath, fixedGridLangevinPath } from './physics/stochastic';
+export {
+  gaussianSampler,
+  eulerMaruyamaStep,
+  milsteinStep,
+  stochasticHeunStratonovichStep,
+  commutativeMilsteinStep,
+  runLangevinEnsemble,
+  buildBrownianGrid,
+  runAdaptiveLangevinPath,
+  fixedGridLangevinPath
+} from './physics/stochastic';
 export { commutativityDefect } from './physics/noiseCommutativity';
 // Quantum chaos & Hamiltonian maps: Chirikov standard map + quantum kicked rotor.
 export { fftInPlace, ifftInPlace } from './physics/fft';
-export { STANDARD_MAP_KC, standardMapStep, standardMapEnsembleEnergy, standardMapDiffusionRate } from './physics/standardMap';
-export { createQkrPlan, createQkrState, qkrStep, qkrNorm, qkrMeanSquareMomentum, runQuantumKickedRotor } from './physics/quantumKickedRotor';
+export {
+  STANDARD_MAP_KC,
+  standardMapStep,
+  standardMapEnsembleEnergy,
+  standardMapDiffusionRate
+} from './physics/standardMap';
+export {
+  createQkrPlan,
+  createQkrState,
+  qkrStep,
+  qkrNorm,
+  qkrMeanSquareMomentum,
+  runQuantumKickedRotor
+} from './physics/quantumKickedRotor';
 export type { QuantumKickedRotorParams, QkrPlan, QkrState, QkrRun } from './physics/quantumKickedRotor';
 export type {
   GaussianSampler,
@@ -73,7 +114,13 @@ export type { CrossingDirection, EventFunction } from './physics/events';
 export { DAMPED_DRIVEN_CHAOS_PRESET, energyDriven, rhsDriven } from './physics/driven';
 export type { DrivenParameters } from './physics/driven';
 // Canonical nonlinear oscillators + escape/phonon/diagnostic helpers.
-export { rhsDuffing, energyDuffing, duffingPotential, duffingDoubleWell, DUFFING_CHAOS_PRESET } from './physics/duffing';
+export {
+  rhsDuffing,
+  energyDuffing,
+  duffingPotential,
+  duffingDoubleWell,
+  DUFFING_CHAOS_PRESET
+} from './physics/duffing';
 export type { DuffingParameters, DuffingDoubleWell } from './physics/duffing';
 export { rhsVanDerPol, energyVanDerPol, vanDerPolPeriodEstimate } from './physics/vanDerPol';
 export type { VanDerPolParameters } from './physics/vanDerPol';
@@ -89,10 +136,21 @@ export {
   huygensLockedPhaseDifference
 } from './physics/kuramoto';
 export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from './physics/kuramoto';
-export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from './physics/friction';
+export {
+  smoothFrictionSign,
+  coulombFrictionForce,
+  stribeckFrictionMagnitude,
+  stribeckFrictionForce,
+  applyStribeckFriction
+} from './physics/friction';
 export type { RegularizedCoulombFriction, StribeckFrictionParameters } from './physics/friction';
 export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from './physics/pyragasDde';
-export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from './physics/pyragasDde';
+export type {
+  PyragasPendulumParameters,
+  PyragasHistory,
+  PyragasDdeOptions,
+  PyragasDdeResult
+} from './physics/pyragasDde';
 export {
   rhsKapitza,
   energyKapitza,
@@ -110,7 +168,14 @@ export {
   magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from './physics/magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from './physics/magneticPendulum';
+export type {
+  MagneticPendulumParameters,
+  MagnetSpec,
+  MagneticSettleResult,
+  MagneticSettleOptions,
+  MagneticBasinGridOptions,
+  MagneticBasinGrid
+} from './physics/magneticPendulum';
 export {
   kramersRateOverdamped,
   kramersMeanFirstPassage,
@@ -126,9 +191,18 @@ export {
   acousticSoundSpeed,
   diatomicGroupVelocity
 } from './physics/latticeDispersion';
-export type { DiatomicChainParams, DispersionBranches, DiatomicBandGap, DispersionSample } from './physics/latticeDispersion';
+export type {
+  DiatomicChainParams,
+  DispersionBranches,
+  DiatomicBandGap,
+  DispersionSample
+} from './physics/latticeDispersion';
 export { implicitMidpointNewton } from './physics/implicitDiagnostics';
-export type { ImplicitMidpointReport, NewtonStepRecord, ImplicitMidpointNewtonOptions } from './physics/implicitDiagnostics';
+export type {
+  ImplicitMidpointReport,
+  NewtonStepRecord,
+  ImplicitMidpointNewtonOptions
+} from './physics/implicitDiagnostics';
 export {
   SINE_GORDON_KINK_REST_ENERGY,
   sineGordonKink,
@@ -177,8 +251,20 @@ export {
 export type { FputParameters, FputVerletScratch, FputRecurrenceResult } from './physics/fput';
 export { RopePendulum } from './physics/rope';
 export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from './physics/rope';
-export { DoubleStringPendulum, doubleStringEnergy, doubleStringEnergyFromTautState, doubleStringTautFraction, doubleStringTensions } from './physics/doubleString';
-export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot, TautFractionResult } from './physics/doubleString';
+export {
+  DoubleStringPendulum,
+  doubleStringEnergy,
+  doubleStringEnergyFromTautState,
+  doubleStringTautFraction,
+  doubleStringTensions
+} from './physics/doubleString';
+export type {
+  DoubleStringEvent,
+  DoubleStringParams,
+  DoubleStringPhase,
+  DoubleStringSnapshot,
+  TautFractionResult
+} from './physics/doubleString';
 export {
   SphericalPendulum,
   sphericalRhs,
@@ -210,7 +296,12 @@ export {
   sphericalChainVelocities,
   validateSphericalChainParams
 } from './physics/sphericalChain';
-export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from './physics/sphericalChain';
+export type {
+  SphericalChainParams,
+  SphericalChainDiagnostics,
+  SphericalChainOptions,
+  SphericalChainWorkspace
+} from './physics/sphericalChain';
 export {
   EmbeddedSphericalChain,
   createEmbeddedChainWorkspace,
@@ -222,7 +313,12 @@ export {
   angleChainToEmbedded,
   embeddedChainToAngle
 } from './physics/sphericalEmbeddedChain';
-export type { EmbeddedChainParams, EmbeddedChainState, EmbeddedChainDiagnostics, EmbeddedChainWorkspace } from './physics/sphericalEmbeddedChain';
+export type {
+  EmbeddedChainParams,
+  EmbeddedChainState,
+  EmbeddedChainDiagnostics,
+  EmbeddedChainWorkspace
+} from './physics/sphericalEmbeddedChain';
 
 // Chaos diagnostics (re-exports the curated chaos index).
 export * from './chaos';
@@ -261,7 +357,15 @@ export type {
   ZeroOneResponse
 } from './workers/chaosProtocol';
 export { JobEngine, jobPhases, JOB_PROTOCOL_V2 } from './workers/jobProtocol';
-export type { JobControlMessage, JobEventMessage, JobInboundMessage, JobStatus, JobCheckpointState, JobSubmitMessage, PhaseRunner } from './workers/jobProtocol';
+export type {
+  JobControlMessage,
+  JobEventMessage,
+  JobInboundMessage,
+  JobStatus,
+  JobCheckpointState,
+  JobSubmitMessage,
+  PhaseRunner
+} from './workers/jobProtocol';
 
 // Research tooling
 export * from './research/researchSampling';
@@ -292,17 +396,41 @@ export * from './research/cliBatchSpec';
 export { hashText, csvCell, dataUrlByteEstimate } from './research/researchExportUtils';
 
 // Ensembles
-export { runDoublePendulumEnsemble, ensembleGrid, ensembleStatistics, webgpuEnsembleStatistics, compareEnsembleStatistics } from './runtime/gpuEnsemble';
-export type { EnsembleOptions, EnsembleResult, EnsembleStatistics, EnsembleStatisticsComparison, EnsembleStatisticsTolerances } from './runtime/gpuEnsemble';
-export { promotedDoublePendulumLyapunovSpectrum, webgpuDoublePendulumLyapunovSpectrumCandidate } from './runtime/gpuLyapunov';
-export type { WebgpuLyapunovSpectrumCandidate, WebgpuLyapunovSpectrumOptions, WebgpuLyapunovSpectrumPromotion } from './runtime/gpuLyapunov';
+export {
+  runDoublePendulumEnsemble,
+  ensembleGrid,
+  ensembleStatistics,
+  webgpuEnsembleStatistics,
+  compareEnsembleStatistics
+} from './runtime/gpuEnsemble';
+export type {
+  EnsembleOptions,
+  EnsembleResult,
+  EnsembleStatistics,
+  EnsembleStatisticsComparison,
+  EnsembleStatisticsTolerances
+} from './runtime/gpuEnsemble';
+export {
+  promotedDoublePendulumLyapunovSpectrum,
+  webgpuDoublePendulumLyapunovSpectrumCandidate
+} from './runtime/gpuLyapunov';
+export type {
+  WebgpuLyapunovSpectrumCandidate,
+  WebgpuLyapunovSpectrumOptions,
+  WebgpuLyapunovSpectrumPromotion
+} from './runtime/gpuLyapunov';
 export {
   promotedDoublePendulumClv,
   promotedDoublePendulumVariationalFtleField,
   webgpuDoublePendulumClvCandidate,
   webgpuDoublePendulumVariationalFtleFieldCandidate
 } from './runtime/gpuChaosPromotion';
-export { buildNChainJacobianTape, nChainVariationalCpuOracle, promotedNChainVariational, webgpuNChainVariationalCandidate } from './runtime/gpuNChainVariational';
+export {
+  buildNChainJacobianTape,
+  nChainVariationalCpuOracle,
+  promotedNChainVariational,
+  webgpuNChainVariationalCandidate
+} from './runtime/gpuNChainVariational';
 export type {
   NChainVariationalComparison,
   NChainVariationalOptions,

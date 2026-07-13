@@ -6,7 +6,9 @@ describe('QKR Floquet UI-ready view model', () => {
     const view = buildQkrFloquetViewModel({ gridSize: 4, kickStrength: 1.2, hbar: 0.7 });
     expect(view.backend).toBe('dense');
     expect(view.bands).toHaveLength(4);
-    expect(view.bands.map((band) => band.phase)).toEqual([...view.bands.map((band) => band.phase)].sort((a, b) => a - b));
+    expect(view.bands.map((band) => band.phase)).toEqual(
+      [...view.bands.map((band) => band.phase)].sort((a, b) => a - b)
+    );
     expect(view.maxUnitCircleDrift).toBeLessThan(1e-8);
     expect(view.phaseDomain).toEqual([-Math.PI, Math.PI]);
   });

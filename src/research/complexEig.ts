@@ -131,10 +131,16 @@ export function matrixEigenvalues(a: readonly number[], n: number): Complex[] {
     const disc = tr * tr - 4 * det;
     if (disc >= 0) {
       const s = Math.sqrt(disc);
-      return [{ re: (tr + s) / 2, im: 0 }, { re: (tr - s) / 2, im: 0 }];
+      return [
+        { re: (tr + s) / 2, im: 0 },
+        { re: (tr - s) / 2, im: 0 }
+      ];
     }
     const s = Math.sqrt(-disc);
-    return [{ re: tr / 2, im: s / 2 }, { re: tr / 2, im: -s / 2 }];
+    return [
+      { re: tr / 2, im: s / 2 },
+      { re: tr / 2, im: -s / 2 }
+    ];
   }
   return polynomialRoots(characteristicPolynomial(a, n));
 }

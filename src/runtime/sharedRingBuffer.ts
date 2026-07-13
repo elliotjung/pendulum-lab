@@ -27,8 +27,10 @@ export class Float64RingBuffer {
   private readonly values: Float64Array;
 
   constructor(options: Float64RingBufferOptions | Float64RingBufferDescriptor) {
-    if (!Number.isInteger(options.capacity) || options.capacity < 1) throw new RangeError('capacity must be a positive integer');
-    if (!Number.isInteger(options.stride) || options.stride < 1) throw new RangeError('stride must be a positive integer');
+    if (!Number.isInteger(options.capacity) || options.capacity < 1)
+      throw new RangeError('capacity must be a positive integer');
+    if (!Number.isInteger(options.stride) || options.stride < 1)
+      throw new RangeError('stride must be a positive integer');
     this.capacity = options.capacity;
     this.stride = options.stride;
 
@@ -61,7 +63,8 @@ export class Float64RingBuffer {
   }
 
   push(sample: ArrayLike<number>): void {
-    if (sample.length !== this.stride) throw new RangeError(`sample length ${sample.length} does not match stride ${this.stride}`);
+    if (sample.length !== this.stride)
+      throw new RangeError(`sample length ${sample.length} does not match stride ${this.stride}`);
     const sequence = this.load(0);
     const slot = sequence % this.capacity;
     const offset = slot * this.stride;
@@ -119,7 +122,7 @@ export function sharedMemoryCapability(): {
 }
 
 function globalIsolationState(): boolean {
-  return typeof globalThis !== 'undefined'
-    && 'crossOriginIsolated' in globalThis
-    && globalThis.crossOriginIsolated === true;
+  return (
+    typeof globalThis !== 'undefined' && 'crossOriginIsolated' in globalThis && globalThis.crossOriginIsolated === true
+  );
 }

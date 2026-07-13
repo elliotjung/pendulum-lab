@@ -117,7 +117,12 @@ export interface ReferenceReport {
 
 // ---- pure grading helpers (unit-tested) ----------------------------------
 
-export function gradeOrder(measured: number | null, expected: number, roundOffLimited: boolean, roundOffError: number): boolean {
+export function gradeOrder(
+  measured: number | null,
+  expected: number,
+  roundOffLimited: boolean,
+  roundOffError: number
+): boolean {
   if (roundOffLimited) return roundOffError < 1e-8;
   return measured !== null && measured >= expected - 0.6;
 }

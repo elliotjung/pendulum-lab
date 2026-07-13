@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { canvasQualityDiagnostics, latestCanvasQualityReason, recordCanvasQualityEvent, setCanvasDprCap } from '../src/app/canvasQuality';
+import {
+  canvasQualityDiagnostics,
+  latestCanvasQualityReason,
+  recordCanvasQualityEvent,
+  setCanvasDprCap
+} from '../src/app/canvasQuality';
 import { LabRecording } from '../src/app/LabRecording';
 import { pairsToPoints, sidePlotTransferables, type LabSidePlotPayload } from '../src/app/LabSidePlotProtocol';
 import { PoincareAccumulator } from '../src/app/PoincareAccumulator';

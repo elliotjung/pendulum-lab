@@ -12,13 +12,7 @@
     "./worker": "./src/lib/worker.ts",
     "./node": "./src/lib/node.ts"
   },
-  "include": [
-    "src/**/*.ts",
-    "README.md",
-    "LICENSE",
-    "CITATION.cff",
-    "docs/api-overview.md"
-  ],
+  "include": ["src/**/*.ts", "README.md", "LICENSE", "CITATION.cff", "docs/api-overview.md"],
   "exclude": [
     ".github",
     "app.html",

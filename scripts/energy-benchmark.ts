@@ -108,7 +108,9 @@ function markdown(rows: DriftRow[]): string {
     '|---|---|---:|---:|---:|'
   ];
   for (const r of rows) {
-    lines.push(`| ${r.name} (\`${r.id}\`) | ${r.order} | ${fmt(r.maxRelDrift)} | ${fmt(r.finalRelDrift)} | ${r.wallMs.toFixed(0)} |`);
+    lines.push(
+      `| ${r.name} (\`${r.id}\`) | ${r.order} | ${fmt(r.maxRelDrift)} | ${fmt(r.finalRelDrift)} | ${r.wallMs.toFixed(0)} |`
+    );
   }
   return `${lines.join('\n')}\n`;
 }
@@ -117,6 +119,9 @@ const ids = Object.keys(integratorRegistry) as IntegratorId[];
 const rows = ids.map(benchmark).sort((a, b) => a.maxRelDrift - b.maxRelDrift);
 
 await mkdir('reports', { recursive: true });
-await writeFile('reports/energy-benchmark.json', JSON.stringify({ generatedAt: new Date().toISOString(), parameters: PARAMETERS, dt: DT, steps: STEPS, rows }, null, 2));
+await writeFile(
+  'reports/energy-benchmark.json',
+  JSON.stringify({ generatedAt: new Date().toISOString(), parameters: PARAMETERS, dt: DT, steps: STEPS, rows }, null, 2)
+);
 await writeFile('reports/energy-benchmark.md', markdown(rows));
 console.log(markdown(rows));

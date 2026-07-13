@@ -47,7 +47,9 @@ let blockCapacity = 0;
 
 /** True only when this engine validates a module containing a simd128 opcode. */
 export function wasmSimdSupported(): boolean {
-  return typeof WebAssembly !== 'undefined' && typeof WebAssembly.validate === 'function' && WebAssembly.validate(SIMD_PROBE);
+  return (
+    typeof WebAssembly !== 'undefined' && typeof WebAssembly.validate === 'function' && WebAssembly.validate(SIMD_PROBE)
+  );
 }
 
 async function kernelBytes(): Promise<ArrayBuffer | null> {
@@ -101,15 +103,25 @@ export async function wasmNChainAvailable(): Promise<boolean> {
   return (await loadKernel()) !== null;
 }
 
-function validateSettings(parameters: ChainParameters, state0: ArrayLike<number>, settings: WasmNChainTapeSettings): number {
+function validateSettings(
+  parameters: ChainParameters,
+  state0: ArrayLike<number>,
+  settings: WasmNChainTapeSettings
+): number {
   validateChainParameters(parameters);
   const links = parameters.masses.length;
   if (links > MAX_LINKS) throw new Error(`WASM N-chain candidate is limited to ${MAX_LINKS} links`);
-  if (state0.length !== links * 2) throw new Error(`N-chain state length ${state0.length} does not match 2N=${links * 2}`);
+  if (state0.length !== links * 2)
+    throw new Error(`N-chain state length ${state0.length} does not match 2N=${links * 2}`);
   if (!(settings.dt > 0) || !Number.isInteger(settings.renormEvery) || settings.renormEvery <= 0) {
     throw new Error('WASM N-chain settings require dt>0 and an integer renormEvery>0');
   }
-  if (!Number.isInteger(settings.forwardTransient) || settings.forwardTransient < 0 || !Number.isInteger(settings.window) || settings.window <= 0) {
+  if (
+    !Number.isInteger(settings.forwardTransient) ||
+    settings.forwardTransient < 0 ||
+    !Number.isInteger(settings.window) ||
+    settings.window <= 0
+  ) {
     throw new Error('WASM N-chain settings require integer forwardTransient>=0 and window>0');
   }
   return (settings.forwardTransient + settings.window) * settings.renormEvery;
@@ -147,9 +159,18 @@ export async function buildNChainJacobianTapeWasm(
 ): Promise<WasmNChainTapeResult> {
   const steps = validateSettings(parameters, state0, settings);
   const started = performance.now();
-  if (settings.forceCpu) return cpuResult(parameters, state0, damping, settings, started, 'WASM was disabled by the caller.');
+  if (settings.forceCpu)
+    return cpuResult(parameters, state0, damping, settings, started, 'WASM was disabled by the caller.');
   const kernel = await loadKernel();
-  if (!kernel) return cpuResult(parameters, state0, damping, settings, started, 'The SIMD kernel was unavailable or failed its ABI/feature probe.');
+  if (!kernel)
+    return cpuResult(
+      parameters,
+      state0,
+      damping,
+      settings,
+      started,
+      'The SIMD kernel was unavailable or failed its ABI/feature probe.'
+    );
 
   const links = parameters.masses.length;
   const dimension = links * 2;
@@ -157,7 +178,14 @@ export async function buildNChainJacobianTapeWasm(
   const tapeOffset = kernel.nChainTapeOffset(links);
   const tapeLength = steps * dimension * dimension;
   if (bytes <= 0 || tapeOffset !== links * 4 * Float64Array.BYTES_PER_ELEMENT) {
-    return cpuResult(parameters, state0, damping, settings, started, 'The SIMD kernel returned an invalid versioned memory layout.');
+    return cpuResult(
+      parameters,
+      state0,
+      damping,
+      settings,
+      started,
+      'The SIMD kernel returned an invalid versioned memory layout.'
+    );
   }
   if (bytes > blockCapacity) {
     blockPtr = kernel.alloc(bytes);
@@ -170,7 +198,15 @@ export async function buildNChainJacobianTapeWasm(
   new Float64Array(memory, blockPtr + links * 8, links).set(parameters.lengths);
   new Float64Array(memory, blockPtr + links * 16, dimension).set(Float64Array.from(state0));
   const status = kernel.buildNChainJacobianTapeSimd(blockPtr, links, steps, settings.dt, parameters.g, damping);
-  if (status !== 0) return cpuResult(parameters, state0, damping, settings, started, `The SIMD kernel rejected the workload (status ${status}).`);
+  if (status !== 0)
+    return cpuResult(
+      parameters,
+      state0,
+      damping,
+      settings,
+      started,
+      `The SIMD kernel rejected the workload (status ${status}).`
+    );
 
   // The function performs no allocation, so memory cannot grow during this
   // call. Copy both outputs before the reusable block is overwritten.

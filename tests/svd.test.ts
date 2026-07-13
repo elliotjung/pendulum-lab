@@ -8,7 +8,8 @@ describe('jacobiEigenSymmetric', () => {
     expect(values[0]).toBeCloseTo(3, 12);
     expect(values[1]).toBeCloseTo(1, 12);
     // Columns orthonormal: VᵀV = I.
-    const dot = (p: number, q: number): number => vectors[0 * 2 + p]! * vectors[0 * 2 + q]! + vectors[1 * 2 + p]! * vectors[1 * 2 + q]!;
+    const dot = (p: number, q: number): number =>
+      vectors[0 * 2 + p]! * vectors[0 * 2 + q]! + vectors[1 * 2 + p]! * vectors[1 * 2 + q]!;
     expect(dot(0, 0)).toBeCloseTo(1, 12);
     expect(dot(1, 1)).toBeCloseTo(1, 12);
     expect(dot(0, 1)).toBeCloseTo(0, 12);

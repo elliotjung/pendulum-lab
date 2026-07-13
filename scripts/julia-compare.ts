@@ -28,7 +28,10 @@ async function loadReference(): Promise<JuliaReference | null> {
   const julia = spawnSync('julia', ['--version'], { encoding: 'utf8' });
   if (julia.status === 0) {
     console.log(`julia found (${(julia.stdout ?? '').trim()}); generating Vern9 reference…`);
-    const run = spawnSync('julia', ['--project=julia', 'scripts/julia_reference.jl'], { encoding: 'utf8', timeout: 600_000 });
+    const run = spawnSync('julia', ['--project=julia', 'scripts/julia_reference.jl'], {
+      encoding: 'utf8',
+      timeout: 600_000
+    });
     if (run.status !== 0) {
       console.error(`julia run failed:\n${(run.stderr ?? '').slice(-1000)}`);
       if (required) return null;
@@ -47,12 +50,20 @@ async function main(): Promise<void> {
   if (!reference) {
     console.log('SKIPPED: no Julia on PATH and no cached reports/julia-vern9-reference.json.');
     console.log('Install Julia + OrdinaryDiffEq to enable the external Vern9 cross-check.');
-    await writeFile('reports/julia-comparison.json', JSON.stringify({
-      schemaVersion: 'pendulum-julia-comparison/v1',
-      status: 'skipped',
-      reason: 'julia unavailable and no cached reference',
-      generatedAt: new Date().toISOString()
-    }, null, 2), 'utf8');
+    await writeFile(
+      'reports/julia-comparison.json',
+      JSON.stringify(
+        {
+          schemaVersion: 'pendulum-julia-comparison/v1',
+          status: 'skipped',
+          reason: 'julia unavailable and no cached reference',
+          generatedAt: new Date().toISOString()
+        },
+        null,
+        2
+      ),
+      'utf8'
+    );
     if (required) {
       console.error('Julia reference is required by this gate.');
       process.exitCode = 1;
@@ -85,7 +96,9 @@ async function main(): Promise<void> {
     .filter((sample) => sample.t <= 4.0)
     .map((sample) => {
       const ts = tsSamples.get(Number(sample.t.toFixed(4)));
-      const maxDelta = ts ? Math.max(...sample.state.map((value, index) => Math.abs(value - (ts[index] ?? Number.NaN)))) : Number.NaN;
+      const maxDelta = ts
+        ? Math.max(...sample.state.map((value, index) => Math.abs(value - (ts[index] ?? Number.NaN))))
+        : Number.NaN;
       return { t: sample.t, maxStateDelta: maxDelta };
     });
   const e0 = energyDouble(new Float64Array(state0), params).total;
@@ -106,7 +119,9 @@ async function main(): Promise<void> {
     generatedAt: new Date().toISOString()
   };
   await writeFile('reports/julia-comparison.json', JSON.stringify(report, null, 2), 'utf8');
-  console.log(`Julia Vern9 vs TS gbs: ${report.status.toUpperCase()} — early-time max deltas ${rows.map((row) => row.maxStateDelta.toExponential(1)).join(', ')}`);
+  console.log(
+    `Julia Vern9 vs TS gbs: ${report.status.toUpperCase()} — early-time max deltas ${rows.map((row) => row.maxStateDelta.toExponential(1)).join(', ')}`
+  );
   console.log(`energy drift: julia ${reference.energyDrift.toExponential(2)}, ts ${tsEnergyDrift.toExponential(2)}`);
   if (!earlyAgreement) process.exitCode = 1;
 }

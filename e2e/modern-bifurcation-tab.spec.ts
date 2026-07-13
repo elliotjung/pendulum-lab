@@ -15,7 +15,11 @@ test('modern Bifurcation tab sweeps g and renders the diagram', async ({ page })
     (document.getElementById('bifT') as HTMLInputElement).value = '20';
   });
   await page.evaluate(() => document.getElementById('bifStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('bifStatus')?.textContent ?? '').includes('done'), undefined, { timeout: 30000 });
+  await page.waitForFunction(
+    () => (document.getElementById('bifStatus')?.textContent ?? '').includes('done'),
+    undefined,
+    { timeout: 30000 }
+  );
 
   // The bifurcation canvas is non-blank.
   const drawn = await page.evaluate(() => {

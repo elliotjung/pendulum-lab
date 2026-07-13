@@ -64,7 +64,13 @@ function parameterUnit(model: ExpansionModelId, parameter: string): string {
   return units[parameter] ?? 'model unit';
 }
 
-function modelAxis(model: ExpansionModelId, parameter: string, label: string, min: number, max: number): ExpansionSweepAxis {
+function modelAxis(
+  model: ExpansionModelId,
+  parameter: string,
+  label: string,
+  min: number,
+  max: number
+): ExpansionSweepAxis {
   return { parameter, label, unit: parameterUnit(model, parameter), min, max };
 }
 
@@ -124,7 +130,10 @@ function withAxisValue(
   }
   if (model === 'chain' && axis.parameter === 'lengthScale') {
     const definition = expansionModelDefinition(model);
-    const links = Math.max(2, Math.min(8, Math.round(finiteParam(next, 'links', definition.defaultParameters.links ?? 4))));
+    const links = Math.max(
+      2,
+      Math.min(8, Math.round(finiteParam(next, 'links', definition.defaultParameters.links ?? 4)))
+    );
     for (let i = 1; i <= links; i += 1) {
       const key = `length${i}`;
       const baseLength = finiteParam(definition.defaultParameters, key, Math.max(0.25, 1 - (i - 1) * 0.15));
@@ -178,7 +187,10 @@ function rounded(value: number, digits = 6): number {
 function miniGraphFromSamples(samples: readonly ExpansionTrajectorySample[], count = 28): number[] {
   if (samples.length === 0) return [];
   const stride = Math.max(1, Math.floor(samples.length / count));
-  const values = samples.filter((_, index) => index % stride === 0).slice(0, count).map((sample) => sample.energy);
+  const values = samples
+    .filter((_, index) => index % stride === 0)
+    .slice(0, count)
+    .map((sample) => sample.energy);
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = Math.max(1e-12, max - min);
@@ -211,7 +223,11 @@ function comparisonRow(
   };
 }
 
-function quickProbe(config: ExpansionSuiteConfig, method: IntegratorId, horizonCap = 5): {
+function quickProbe(
+  config: ExpansionSuiteConfig,
+  method: IntegratorId,
+  horizonCap = 5
+): {
   row: ExpansionMethodResult;
   score: number;
   finalPhase: ExpansionPoint;
@@ -240,19 +256,18 @@ function build2dSweep(config: ExpansionSuiteConfig, gridSize: number): Expansion
     for (let xIndex = 0; xIndex < size; xIndex += 1) {
       const x = interpolate(xAxis.min, xAxis.max, xIndex, size);
       const baseOverrides = config.parameterOverrides ?? {};
-      const axisOverrides = withAxisValue(
-        config.model,
-        withAxisValue(config.model, baseOverrides, xAxis, x),
-        yAxis,
-        y
+      const axisOverrides = withAxisValue(config.model, withAxisValue(config.model, baseOverrides, xAxis, x), yAxis, y);
+      const { row, score, finalPhase } = quickProbe(
+        {
+          ...config,
+          methods: ['rk4'],
+          parameterOverrides: axisOverrides,
+          sampleLimit: 48,
+          bifurcationColumns: 4
+        },
+        'rk4',
+        4
       );
-      const { row, score, finalPhase } = quickProbe({
-        ...config,
-        methods: ['rk4'],
-        parameterOverrides: axisOverrides,
-        sampleLimit: 48,
-        bifurcationColumns: 4
-      }, 'rk4', 4);
       cells.push({
         x,
         y,
@@ -267,7 +282,10 @@ function build2dSweep(config: ExpansionSuiteConfig, gridSize: number): Expansion
   return { xAxis, yAxis, size, cells };
 }
 
-function physicalMetricsFor(config: ExpansionSuiteConfig, result: ExpansionSuiteResult): ExpansionDimensionlessMetric[] {
+function physicalMetricsFor(
+  config: ExpansionSuiteConfig,
+  result: ExpansionSuiteResult
+): ExpansionDimensionlessMetric[] {
   const parameters = result.parameters;
   const g = Math.max(1e-9, finiteParam(parameters, 'g', 9.81));
   const length = Math.max(1e-9, primaryLength(parameters));
@@ -282,17 +300,64 @@ function physicalMetricsFor(config: ExpansionSuiteConfig, result: ExpansionSuite
   const metrics: ExpansionDimensionlessMetric[] = [
     { id: 't0', label: 'Characteristic time', value: characteristicTime, unit: 's', note: 'sqrt(length / gravity)' },
     { id: 'dt-star', label: 'dt / t0', value: dt / characteristicTime, unit: '1', note: 'time-step resolution' },
-    { id: 'horizon-star', label: 'T / t0', value: horizon / characteristicTime, unit: '1', note: 'dimensionless experiment horizon' }
+    {
+      id: 'horizon-star',
+      label: 'T / t0',
+      value: horizon / characteristicTime,
+      unit: '1',
+      note: 'dimensionless experiment horizon'
+    }
   ];
-  if (damping > 0) metrics.push({ id: 'damping-star', label: 'gamma t0', value: damping * characteristicTime, unit: '1', note: 'dimensionless damping' });
-  if (driveFrequency > 0) metrics.push({ id: 'drive-frequency-star', label: 'Omega t0', value: driveFrequency * characteristicTime, unit: '1', note: 'drive frequency ratio' });
-  if (driveAmplitude !== 0) metrics.push({ id: 'forcing-star', label: 'forcing ratio', value: Math.abs(driveAmplitude) / Math.max(1e-9, g / length), unit: '1', note: 'forcing versus gravity scale' });
-  if (force !== 0) metrics.push({ id: 'force-star', label: 'F / mg', value: force / (primaryMass(parameters) * g), unit: '1', note: 'cart-pole open-loop force ratio' });
-  if (coupling !== 0) metrics.push({ id: 'coupling-star', label: 'k / (g/l)', value: coupling / (g / length), unit: '1', note: 'coupling versus pendulum frequency squared' });
+  if (damping > 0)
+    metrics.push({
+      id: 'damping-star',
+      label: 'gamma t0',
+      value: damping * characteristicTime,
+      unit: '1',
+      note: 'dimensionless damping'
+    });
+  if (driveFrequency > 0)
+    metrics.push({
+      id: 'drive-frequency-star',
+      label: 'Omega t0',
+      value: driveFrequency * characteristicTime,
+      unit: '1',
+      note: 'drive frequency ratio'
+    });
+  if (driveAmplitude !== 0)
+    metrics.push({
+      id: 'forcing-star',
+      label: 'forcing ratio',
+      value: Math.abs(driveAmplitude) / Math.max(1e-9, g / length),
+      unit: '1',
+      note: 'forcing versus gravity scale'
+    });
+  if (force !== 0)
+    metrics.push({
+      id: 'force-star',
+      label: 'F / mg',
+      value: force / (primaryMass(parameters) * g),
+      unit: '1',
+      note: 'cart-pole open-loop force ratio'
+    });
+  if (coupling !== 0)
+    metrics.push({
+      id: 'coupling-star',
+      label: 'k / (g/l)',
+      value: coupling / (g / length),
+      unit: '1',
+      note: 'coupling versus pendulum frequency squared'
+    });
   if (config.model === 'cartpole') {
     const cart = finiteParam(parameters, 'cartMass', 1);
     const pole = finiteParam(parameters, 'poleMass', 0.16);
-    metrics.push({ id: 'mass-ratio', label: 'pole/cart mass', value: pole / Math.max(1e-9, cart), unit: '1', note: 'underactuated mass ratio' });
+    metrics.push({
+      id: 'mass-ratio',
+      label: 'pole/cart mass',
+      value: pole / Math.max(1e-9, cart),
+      unit: '1',
+      note: 'underactuated mass ratio'
+    });
   }
   return metrics.map((metric) => ({ ...metric, value: rounded(metric.value, 6) }));
 }
@@ -327,9 +392,10 @@ function poincareSection(config: ExpansionSuiteConfig, method: IntegratorId): Ex
   return points;
 }
 
-
-
-function basinGrid(config: ExpansionSuiteConfig, gridSize: number): ExpansionResearchMatrixResult['diagnostics']['basin'] {
+function basinGrid(
+  config: ExpansionSuiteConfig,
+  gridSize: number
+): ExpansionResearchMatrixResult['diagnostics']['basin'] {
   const definition = expansionModelDefinition(config.model);
   const size = Math.max(5, Math.min(13, Math.round(gridSize)));
   const state0 = [...(config.initialState ?? definition.defaultState)];
@@ -344,7 +410,11 @@ function basinGrid(config: ExpansionSuiteConfig, gridSize: number): ExpansionRes
       const state = [...state0];
       state[indexes.position] = x;
       state[indexes.velocity] = y;
-      const { row, finalPhase } = quickProbe({ ...config, initialState: state, methods: ['rk4'], sampleLimit: 24, bifurcationColumns: 4 }, 'rk4', 3);
+      const { row, finalPhase } = quickProbe(
+        { ...config, initialState: state, methods: ['rk4'], sampleLimit: 24, bifurcationColumns: 4 },
+        'rk4',
+        3
+      );
       const basin = !row.stable ? 3 : finalPhase.x < -0.35 ? 0 : finalPhase.x > 0.35 ? 1 : 2;
       cells.push({ x, y, basin, stable: row.stable });
     }
@@ -352,7 +422,10 @@ function basinGrid(config: ExpansionSuiteConfig, gridSize: number): ExpansionRes
   return { xAxis, yAxis, size, cells };
 }
 
-function energyLandscape(config: ExpansionSuiteConfig, gridSize: number): ExpansionResearchMatrixResult['diagnostics']['energyLandscape'] {
+function energyLandscape(
+  config: ExpansionSuiteConfig,
+  gridSize: number
+): ExpansionResearchMatrixResult['diagnostics']['energyLandscape'] {
   const definition = expansionModelDefinition(config.model);
   const size = Math.max(9, Math.min(31, Math.round(gridSize * 2 + 3)));
   const system = createExpansionSystem(config.model, config.parameterOverrides ?? {}, config.initialState);
@@ -408,7 +481,16 @@ export function runResearchMatrixStudy(
   });
   const comparison: ResearchComparisonRun[] = [];
   for (const row of base.rows) {
-    comparison.push(comparisonRow(base, row, `same condition / ${row.method}`, 'integrator', definition.sweep.parameter, base.parameters[definition.sweep.parameter] ?? 0));
+    comparison.push(
+      comparisonRow(
+        base,
+        row,
+        `same condition / ${row.method}`,
+        'integrator',
+        definition.sweep.parameter,
+        base.parameters[definition.sweep.parameter] ?? 0
+      )
+    );
   }
 
   const current = base.parameters[definition.sweep.parameter] ?? (definition.sweep.min + definition.sweep.max) / 2;
@@ -419,8 +501,20 @@ export function runResearchMatrixStudy(
   ];
   for (const value of parameterValues) {
     const suite = runExpansionSuite(comparisonSuiteConfig(config, definition.sweep.parameter, value));
-    const best = suite.rows.reduce((acc, row) => (scoreRow(row, suite.conservative) > scoreRow(acc, suite.conservative) ? row : acc), suite.rows[0]!);
-    comparison.push(comparisonRow(suite, best, `${definition.sweep.label} ${value.toPrecision(3)}`, 'parameter', definition.sweep.parameter, value));
+    const best = suite.rows.reduce(
+      (acc, row) => (scoreRow(row, suite.conservative) > scoreRow(acc, suite.conservative) ? row : acc),
+      suite.rows[0]!
+    );
+    comparison.push(
+      comparisonRow(
+        suite,
+        best,
+        `${definition.sweep.label} ${value.toPrecision(3)}`,
+        'parameter',
+        definition.sweep.parameter,
+        value
+      )
+    );
   }
 
   const sweep2d = build2dSweep(config, gridSize);
@@ -431,7 +525,10 @@ export function runResearchMatrixStudy(
   const basin = basinGrid(config, gridSize);
   const landscape = energyLandscape(config, gridSize);
   const stableComparisons = comparison.filter((row) => row.stable).length;
-  const bestComparison = comparison.reduce((acc, row) => (row.stabilityScore > acc.stabilityScore ? row : acc), comparison[0]!);
+  const bestComparison = comparison.reduce(
+    (acc, row) => (row.stabilityScore > acc.stabilityScore ? row : acc),
+    comparison[0]!
+  );
   const maxLyapunovEstimate = lyapunov.leadingExponent;
   const createdAt = new Date().toISOString();
   const summary = {
@@ -448,8 +545,18 @@ export function runResearchMatrixStudy(
     initialState: base.initialState,
     dt: base.dt,
     horizon: base.horizon,
-    comparison: comparison.map((row) => ({ id: row.id, score: row.stabilityScore, stable: row.stable, hash: row.hash })),
-    sweep: sweep2d.cells.map((cell) => ({ x: rounded(cell.x, 4), y: rounded(cell.y, 4), score: rounded(cell.score, 2), stable: cell.stable })),
+    comparison: comparison.map((row) => ({
+      id: row.id,
+      score: row.stabilityScore,
+      stable: row.stable,
+      hash: row.hash
+    })),
+    sweep: sweep2d.cells.map((cell) => ({
+      x: rounded(cell.x, 4),
+      y: rounded(cell.y, 4),
+      score: rounded(cell.score, 2),
+      stable: cell.stable
+    })),
     summary
   });
   return {
@@ -481,20 +588,63 @@ function median(values: readonly number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2 : sorted[middle] ?? 0;
+  return sorted.length % 2 === 0 ? ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2 : (sorted[middle] ?? 0);
 }
 
 // ===== Section: Golden Regression (GOLDEN_REGRESSION_BASELINES, runGoldenExpansionCenter) =
 
-export const GOLDEN_REGRESSION_BASELINES: Readonly<Record<string, Partial<Record<IntegratorId, string>>>> = Object.freeze({
-  'driven-chaos': { rk4: 'exp-d4df1991', dopri5: 'exp-02e3f836', leapfrog: 'exp-46ffd90b', symplectic: 'exp-a15c4262', euler: 'exp-8633ecb8' },
-  'coupled-normal-mode': { rk4: 'exp-50ed08d1', dopri5: 'exp-cde68620', leapfrog: 'exp-903d21ef', symplectic: 'exp-2f56e213', euler: 'exp-6bdd225a' },
-  'inverted-growth': { rk4: 'exp-26212d81', dopri5: 'exp-ea58c760', leapfrog: 'exp-49255901', symplectic: 'exp-2bc2741c', euler: 'exp-b7ce02a9' },
-  'cartpole-open-loop': { rk4: 'exp-f2b35906', dopri5: 'exp-3d195f04', leapfrog: 'exp-0d97aad4', symplectic: 'exp-6053f497', euler: 'exp-1fb29c06' },
-  'parametric-resonance': { rk4: 'exp-5d7918d0', dopri5: 'exp-9d76947e', leapfrog: 'exp-0de34b55', symplectic: 'exp-29a1bdb7', euler: 'exp-90e7641f' },
-  'spherical-conical': { rk4: 'exp-e32cfcda', dopri5: 'exp-59d1105c', leapfrog: 'exp-6b1635f9', symplectic: 'exp-ef0f627c', euler: 'exp-df184220' },
-  'chain-cascade': { rk4: 'exp-cc31d2b4', dopri5: 'exp-beff4a42', leapfrog: 'exp-c77e95b3', symplectic: 'exp-5591e72b', euler: 'exp-f1b6295e' }
-});
+export const GOLDEN_REGRESSION_BASELINES: Readonly<Record<string, Partial<Record<IntegratorId, string>>>> =
+  Object.freeze({
+    'driven-chaos': {
+      rk4: 'exp-d4df1991',
+      dopri5: 'exp-02e3f836',
+      leapfrog: 'exp-46ffd90b',
+      symplectic: 'exp-a15c4262',
+      euler: 'exp-8633ecb8'
+    },
+    'coupled-normal-mode': {
+      rk4: 'exp-50ed08d1',
+      dopri5: 'exp-cde68620',
+      leapfrog: 'exp-903d21ef',
+      symplectic: 'exp-2f56e213',
+      euler: 'exp-6bdd225a'
+    },
+    'inverted-growth': {
+      rk4: 'exp-26212d81',
+      dopri5: 'exp-ea58c760',
+      leapfrog: 'exp-49255901',
+      symplectic: 'exp-2bc2741c',
+      euler: 'exp-b7ce02a9'
+    },
+    'cartpole-open-loop': {
+      rk4: 'exp-f2b35906',
+      dopri5: 'exp-3d195f04',
+      leapfrog: 'exp-0d97aad4',
+      symplectic: 'exp-6053f497',
+      euler: 'exp-1fb29c06'
+    },
+    'parametric-resonance': {
+      rk4: 'exp-5d7918d0',
+      dopri5: 'exp-9d76947e',
+      leapfrog: 'exp-0de34b55',
+      symplectic: 'exp-29a1bdb7',
+      euler: 'exp-90e7641f'
+    },
+    'spherical-conical': {
+      rk4: 'exp-e32cfcda',
+      dopri5: 'exp-59d1105c',
+      leapfrog: 'exp-6b1635f9',
+      symplectic: 'exp-ef0f627c',
+      euler: 'exp-df184220'
+    },
+    'chain-cascade': {
+      rk4: 'exp-cc31d2b4',
+      dopri5: 'exp-beff4a42',
+      leapfrog: 'exp-c77e95b3',
+      symplectic: 'exp-5591e72b',
+      euler: 'exp-f1b6295e'
+    }
+  });
 
 export function runGoldenExpansionCenter(
   presetIds: readonly string[] = GOLDEN_EXPANSION_PRESET_IDS,

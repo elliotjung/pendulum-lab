@@ -53,7 +53,12 @@ const polarAngle = (rand: () => number) => (rand() < 0.5 ? -1 : 1) * uniform(ran
 const DOUBLE_PARAMS = { m1: 1.1, m2: 0.9, l1: 1.2, l2: 1.0, g: 9.81 };
 const TRIPLE_PARAMS = { m1: 1.1, m2: 0.9, m3: 0.8, l1: 1.2, l2: 1.0, l3: 0.8, g: 9.81 };
 const SPHERICAL_DOUBLE: SphericalChainParams = { masses: [1.1, 0.9], lengths: [1.2, 1.0], g: 9.81, damping: 0 };
-const SPHERICAL_TRIPLE: SphericalChainParams = { masses: [1.1, 0.9, 0.8], lengths: [1.2, 1.0, 0.8], g: 9.81, damping: 0 };
+const SPHERICAL_TRIPLE: SphericalChainParams = {
+  masses: [1.1, 0.9, 0.8],
+  lengths: [1.2, 1.0, 0.8],
+  g: 9.81,
+  damping: 0
+};
 
 const CASES: SystemCase[] = [
   {

@@ -10,10 +10,12 @@ const registry = new Map<string, CSSStyleSheet>();
 
 /** Whether Constructable Stylesheets are available (all evergreen browsers). */
 function supported(): boolean {
-  return typeof document !== 'undefined'
-    && 'adoptedStyleSheets' in Document.prototype
-    && typeof CSSStyleSheet !== 'undefined'
-    && 'replaceSync' in CSSStyleSheet.prototype;
+  return (
+    typeof document !== 'undefined' &&
+    'adoptedStyleSheets' in Document.prototype &&
+    typeof CSSStyleSheet !== 'undefined' &&
+    'replaceSync' in CSSStyleSheet.prototype
+  );
 }
 
 /**

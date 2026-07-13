@@ -1,6 +1,15 @@
 import type { DesignBudget, StudyVariable } from '../../research/experimentDesign';
 
-export const DESIGN_VARIABLE_KEYS = new Set(['theta1', 'theta2', 'omega1', 'omega2', 'damping', 'dt', 'mass-ratio', 'length-ratio']);
+export const DESIGN_VARIABLE_KEYS = new Set([
+  'theta1',
+  'theta2',
+  'omega1',
+  'omega2',
+  'damping',
+  'dt',
+  'mass-ratio',
+  'length-ratio'
+]);
 
 export function parseDesignVariableLines(text: string): StudyVariable[] {
   const variables: StudyVariable[] = [];

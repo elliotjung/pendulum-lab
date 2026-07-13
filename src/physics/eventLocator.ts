@@ -77,7 +77,13 @@ export function refineCrossing(
  * return the refined transition offset τ* ∈ (0, h], or `h` unchanged when the
  * bracket is degenerate (event already active at the step start).
  */
-export function locateTransition(g: (tau: number) => number, h: number, g0: number, g1: number, options: RefineOptions = {}): RefinedCrossing {
+export function locateTransition(
+  g: (tau: number) => number,
+  h: number,
+  g0: number,
+  g1: number,
+  options: RefineOptions = {}
+): RefinedCrossing {
   if (!(g0 > 0 && g1 <= 0) && !(g0 < 0 && g1 >= 0)) {
     return { tBefore: h, tAfter: h, gBefore: g0, gAfter: g1, iterations: 0 };
   }

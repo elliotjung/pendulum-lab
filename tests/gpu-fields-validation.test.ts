@@ -100,7 +100,16 @@ const f = Math.fround;
 const PARAMS = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
 
 /** f32-per-operation double-pendulum RHS, mirroring the WGSL kernel exactly. */
-function rhsF32(s: Float32Array, out: Float32Array, m1: number, m2: number, l1: number, l2: number, g: number, damping: number): void {
+function rhsF32(
+  s: Float32Array,
+  out: Float32Array,
+  m1: number,
+  m2: number,
+  l1: number,
+  l2: number,
+  g: number,
+  damping: number
+): void {
   const th1 = s[0]!;
   const th2 = s[1]!;
   const w1 = s[2]!;
@@ -109,19 +118,38 @@ function rhsF32(s: Float32Array, out: Float32Array, m1: number, m2: number, l1: 
   const cd = f(Math.cos(d));
   const sd = f(Math.sin(d));
   const den = f(m1 + f(m2 * f(sd * sd)));
-  const a1 = f(f(f(f(f(-m2 * l1) * f(w1 * w1)) * f(sd * cd))
-    + f(f(f(m2 * g) * f(Math.sin(th2))) * cd)
-    - f(f(f(m2 * l2) * f(w2 * w2)) * sd)
-    - f(f((m1 + m2) * g) * f(Math.sin(th1)))) / f(l1 * den)) - f(damping * w1);
-  const a2 = f(f(f(f((m1 + m2)) * f(f(f(l1 * f(w1 * w1)) * sd) - f(g * f(Math.sin(th2))) + f(f(g * f(Math.sin(th1))) * cd)))
-    + f(f(f(m2 * l2) * f(w2 * w2)) * f(sd * cd))) / f(l2 * den)) - f(damping * w2);
+  const a1 =
+    f(
+      f(
+        f(f(f(-m2 * l1) * f(w1 * w1)) * f(sd * cd)) +
+          f(f(f(m2 * g) * f(Math.sin(th2))) * cd) -
+          f(f(f(m2 * l2) * f(w2 * w2)) * sd) -
+          f(f((m1 + m2) * g) * f(Math.sin(th1)))
+      ) / f(l1 * den)
+    ) - f(damping * w1);
+  const a2 =
+    f(
+      f(
+        f(f(m1 + m2) * f(f(f(l1 * f(w1 * w1)) * sd) - f(g * f(Math.sin(th2))) + f(f(g * f(Math.sin(th1))) * cd))) +
+          f(f(f(m2 * l2) * f(w2 * w2)) * f(sd * cd))
+      ) / f(l2 * den)
+    ) - f(damping * w2);
   out[0] = w1;
   out[1] = w2;
   out[2] = a1;
   out[3] = a2;
 }
 
-function rk4F32(s: Float32Array, h: number, m1: number, m2: number, l1: number, l2: number, g: number, damping: number): void {
+function rk4F32(
+  s: Float32Array,
+  h: number,
+  m1: number,
+  m2: number,
+  l1: number,
+  l2: number,
+  g: number,
+  damping: number
+): void {
   const k1 = new Float32Array(4);
   const k2 = new Float32Array(4);
   const k3 = new Float32Array(4);

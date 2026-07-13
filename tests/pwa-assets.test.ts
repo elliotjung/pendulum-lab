@@ -23,7 +23,7 @@ describe('PWA assets', () => {
   test('service worker has versioned offline shell and same-origin fetch policy', async () => {
     const source = await readFile('public/sw.js', 'utf8');
     expect(source).toContain("const VERSION = 'pendulum-lab-v10.36.0'");
-    expect(source).toContain("url.origin !== self.location.origin");
+    expect(source).toContain('url.origin !== self.location.origin');
     expect(source).toContain("caches.match('./index.html')");
   });
 

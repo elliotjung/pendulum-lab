@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { buildZip, checksumEntriesSha256, parseZip, sha256Hex, textToBytes, type ZipEntryParsed } from '../src/research/zipBundle';
+import {
+  buildZip,
+  checksumEntriesSha256,
+  parseZip,
+  sha256Hex,
+  textToBytes,
+  type ZipEntryParsed
+} from '../src/research/zipBundle';
 
 describe('ZIP SHA-256 checksums', () => {
   it('sha256Hex matches a known test vector', async () => {

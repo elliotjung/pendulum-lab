@@ -9,7 +9,12 @@ import { installPerformanceProbe } from './render/performance';
 import { installAccessibilityEnhancements } from './ui/accessibility';
 import { workerBridge } from './runtime/WorkerBridge';
 import { installPendulumRuntime } from './runtime/PendulumRuntime';
-import { maybeMountModernAnalysisTabs, maybeMountModernLab, maybeMountModernLabProbe, maybeMountModernShell } from './app/bootstrap';
+import {
+  maybeMountModernAnalysisTabs,
+  maybeMountModernLab,
+  maybeMountModernLabProbe,
+  maybeMountModernShell
+} from './app/bootstrap';
 import { installTrustDrawer } from './app/trustDrawer';
 import { installUiPolish } from './app/UiPolish';
 import { installHudEffects } from './app/hudEffects';
@@ -163,7 +168,9 @@ function ensureResearch(tabAfterInstall?: string): Promise<void> {
     applyAudienceMode(currentAudienceMode(), false);
     applyStructuralLocale();
     if (tabAfterInstall) {
-      (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabAfterInstall);
+      (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(
+        tabAfterInstall
+      );
     }
   });
 }
@@ -227,7 +234,13 @@ async function boot(): Promise<void> {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => { void boot(); }, { once: true });
+  document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+      void boot();
+    },
+    { once: true }
+  );
 } else {
   void boot();
 }

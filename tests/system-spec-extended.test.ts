@@ -54,7 +54,12 @@ describe('SystemSpec: spherical-chain', () => {
     const rhs = buildRhs(CHAIN_SPEC);
     const out = new Float64Array(8);
     rhs(Float64Array.from(CHAIN_STATE), out);
-    const expected = rhsSphericalChain(CHAIN_STATE, CHAIN_PARAMS, new Float64Array(8), createSphericalChainWorkspace(2));
+    const expected = rhsSphericalChain(
+      CHAIN_STATE,
+      CHAIN_PARAMS,
+      new Float64Array(8),
+      createSphericalChainWorkspace(2)
+    );
     for (let i = 0; i < 8; i += 1) expect(out[i]).toBeCloseTo(expected[i]!, 12);
   });
 
@@ -83,7 +88,12 @@ describe('SystemSpec: spherical-chain', () => {
       kind: 'studyPoint',
       spec: CHAIN_SPEC,
       state0: CHAIN_STATE,
-      settings: { lyapunov: { steps: 3000, dt: 0.002 }, rqa: { samples: 200, dt: 0.002 }, ftleHorizon: 2, ftleDt: 0.002 }
+      settings: {
+        lyapunov: { steps: 3000, dt: 0.002 },
+        rqa: { samples: 200, dt: 0.002 },
+        ftleHorizon: 2,
+        ftleDt: 0.002
+      }
     });
     expect(response.ok).toBe(true);
     if (response.ok && response.kind === 'studyPoint') {
@@ -134,7 +144,14 @@ describe('SystemSpec: double-string', () => {
   });
 
   it('taut-fraction probe: small-angle release stays fully taut', () => {
-    const result = doubleStringTautFraction({ m1: 1, m2: 1, l1: 1.2, l2: 1.0, g: 9.81, damping: 0 }, 0.3, 0.35, 0, 0, 10);
+    const result = doubleStringTautFraction(
+      { m1: 1, m2: 1, l1: 1.2, l2: 1.0, g: 9.81, damping: 0 },
+      0.3,
+      0.35,
+      0,
+      0,
+      10
+    );
     expect(result.tautFraction).toBeGreaterThan(0.999);
     expect(result.slackEvents).toBe(0);
     expect(result.caveat).toContain('valid');
@@ -144,7 +161,14 @@ describe('SystemSpec: double-string', () => {
     // Folded near-inverted release: the outer string loses tension during the
     // fall. (A fast-whirling state, by contrast, stays taut — centripetal
     // demand keeps tension positive.)
-    const result = doubleStringTautFraction({ m1: 1, m2: 1, l1: 1.2, l2: 1.0, g: 9.81, damping: 0 }, 2.5, -2.5, 0, 0, 10);
+    const result = doubleStringTautFraction(
+      { m1: 1, m2: 1, l1: 1.2, l2: 1.0, g: 9.81, damping: 0 },
+      2.5,
+      -2.5,
+      0,
+      0,
+      10
+    );
     expect(result.slackEvents).toBeGreaterThan(0);
     expect(result.captureEvents).toBeGreaterThan(0);
     expect(result.tautFraction).toBeLessThan(1);

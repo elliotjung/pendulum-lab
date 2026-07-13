@@ -26,8 +26,16 @@ describe('periodic-orbit database and cycle expansion', () => {
   });
 
   it('measures cyclic equivalence independently of the representative point', () => {
-    const a = [[0.1, 0.2], [0.3, 0.4], [0.5, 0.6]];
-    const b = [[0.3, 0.4], [0.5, 0.6], [0.1, 0.2]];
+    const a = [
+      [0.1, 0.2],
+      [0.3, 0.4],
+      [0.5, 0.6]
+    ];
+    const b = [
+      [0.3, 0.4],
+      [0.5, 0.6],
+      [0.1, 0.2]
+    ];
     expect(cyclicOrbitDistance(a, b)).toBeLessThan(1e-15);
     expect(cyclicOrbitDistance(a, [[0.3, 0.4]])).toBe(Infinity);
   });

@@ -137,14 +137,21 @@ export function melnikovVerdict(p: DrivenParameters): MelnikovVerdict {
  */
 
 /** Closed-form Duffing double-well critical drive Γ_c (requires α < 0, β > 0). */
-export function melnikovCriticalAmplitudeDuffing(p: Pick<DuffingParameters, 'damping' | 'linearStiffness' | 'cubicStiffness' | 'driveFrequency'>): number {
+export function melnikovCriticalAmplitudeDuffing(
+  p: Pick<DuffingParameters, 'damping' | 'linearStiffness' | 'cubicStiffness' | 'driveFrequency'>
+): number {
   const a = -p.linearStiffness;
   const beta = p.cubicStiffness;
   if (!(a > 0) || !(beta > 0)) {
-    throw new Error(`melnikovCriticalAmplitudeDuffing: needs a double well (α < 0, β > 0); got α=${p.linearStiffness}, β=${beta}`);
+    throw new Error(
+      `melnikovCriticalAmplitudeDuffing: needs a double well (α < 0, β > 0); got α=${p.linearStiffness}, β=${beta}`
+    );
   }
   const omega = p.driveFrequency;
-  return (4 * p.damping * a * a * Math.cosh((Math.PI * omega) / (2 * Math.sqrt(a)))) / (3 * Math.PI * omega * Math.sqrt(2 * a * beta));
+  return (
+    (4 * p.damping * a * a * Math.cosh((Math.PI * omega) / (2 * Math.sqrt(a)))) /
+    (3 * Math.PI * omega * Math.sqrt(2 * a * beta))
+  );
 }
 
 /**

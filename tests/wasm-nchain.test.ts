@@ -26,7 +26,8 @@ function fixture(links: number): { parameters: ChainParameters; state: Float64Ar
 
 function maximumAbsoluteError(left: ArrayLike<number>, right: ArrayLike<number>): number {
   let maximum = 0;
-  for (let index = 0; index < left.length; index += 1) maximum = Math.max(maximum, Math.abs(Number(left[index]) - Number(right[index])));
+  for (let index = 0; index < left.length; index += 1)
+    maximum = Math.max(maximum, Math.abs(Number(left[index]) - Number(right[index])));
   return maximum;
 }
 
@@ -74,8 +75,12 @@ describe('N-chain WASM SIMD candidate', () => {
 
   it('rejects states outside the ABI-2 N<=8 contract', async () => {
     const { parameters } = fixture(8);
-    await expect(buildNChainJacobianTapeWasm(parameters, new Float64Array(15), 0, SETTINGS)).rejects.toThrow(/does not match/);
+    await expect(buildNChainJacobianTapeWasm(parameters, new Float64Array(15), 0, SETTINGS)).rejects.toThrow(
+      /does not match/
+    );
     const tooMany = fixture(9);
-    await expect(buildNChainJacobianTapeWasm(tooMany.parameters, tooMany.state, 0, SETTINGS)).rejects.toThrow(/limited to 8/);
+    await expect(buildNChainJacobianTapeWasm(tooMany.parameters, tooMany.state, 0, SETTINGS)).rejects.toThrow(
+      /limited to 8/
+    );
   });
 });

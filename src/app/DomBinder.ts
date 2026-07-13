@@ -18,7 +18,8 @@ export class DomBinder {
 
   /** Typed element lookup. */
   el<T extends HTMLElement = HTMLElement>(id: string): T | null {
-    const found = this.root instanceof Document ? this.root.getElementById(id) : this.root.querySelector(`#${CSS.escape(id)}`);
+    const found =
+      this.root instanceof Document ? this.root.getElementById(id) : this.root.querySelector(`#${CSS.escape(id)}`);
     return (found as T | null) ?? null;
   }
 
@@ -54,7 +55,9 @@ export class DomBinder {
   }
 
   /** A canvas plus its 2D context, or null when absent. */
-  canvas2d(id: string): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; width: number; height: number } | null {
+  canvas2d(
+    id: string
+  ): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; width: number; height: number } | null {
     const canvas = this.el<HTMLCanvasElement>(id);
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return null;
@@ -74,21 +77,33 @@ export class DomBinder {
   }
 
   /** Bind a click handler, optionally taking the element over first. */
-  onClick(id: string, handler: (el: HTMLElement, event: MouseEvent) => void, options: { takeOver?: boolean } = {}): HTMLElement | null {
+  onClick(
+    id: string,
+    handler: (el: HTMLElement, event: MouseEvent) => void,
+    options: { takeOver?: boolean } = {}
+  ): HTMLElement | null {
     const el = options.takeOver ? this.takeOver(id) : this.el(id);
     el?.addEventListener('click', (event) => handler(el, event as MouseEvent));
     return el;
   }
 
   /** Bind a change handler, optionally taking the element over first. */
-  onChange(id: string, handler: (el: HTMLElement, event: Event) => void, options: { takeOver?: boolean } = {}): HTMLElement | null {
+  onChange(
+    id: string,
+    handler: (el: HTMLElement, event: Event) => void,
+    options: { takeOver?: boolean } = {}
+  ): HTMLElement | null {
     const el = options.takeOver ? this.takeOver(id) : this.el(id);
     el?.addEventListener('change', (event) => handler(el, event));
     return el;
   }
 
   /** Bind an input handler, optionally taking the element over first. */
-  onInput(id: string, handler: (el: HTMLElement, event: Event) => void, options: { takeOver?: boolean } = {}): HTMLElement | null {
+  onInput(
+    id: string,
+    handler: (el: HTMLElement, event: Event) => void,
+    options: { takeOver?: boolean } = {}
+  ): HTMLElement | null {
     const el = options.takeOver ? this.takeOver(id) : this.el(id);
     el?.addEventListener('input', (event) => handler(el, event));
     return el;

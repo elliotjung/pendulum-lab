@@ -101,7 +101,13 @@ describe('colorblind-safe palette', () => {
 
 describe('viewport helpers', () => {
   test('autoViewport bounds the points with a margin', () => {
-    const vp = autoViewport([{ x: 0, y: 0 }, { x: 10, y: 4 }], 0.1);
+    const vp = autoViewport(
+      [
+        { x: 0, y: 0 },
+        { x: 10, y: 4 }
+      ],
+      0.1
+    );
     expect(vp.xMin).toBeLessThan(0);
     expect(vp.xMax).toBeGreaterThan(10);
     expect(vp.yMin).toBeLessThan(0);

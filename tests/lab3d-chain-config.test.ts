@@ -9,9 +9,7 @@ import {
 } from '../src/app/parity/lab3d-chain-config';
 
 const clampNumber = (value: unknown, fallback: number, min: number, max: number): number => {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? Math.max(min, Math.min(max, value))
-    : fallback;
+  return typeof value === 'number' && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
 };
 
 function input(overrides: Partial<Lab3dChainInput> = {}): Lab3dChainInput {
@@ -50,12 +48,18 @@ describe('lab3d spherical-chain config', () => {
 
   it('builds the full [theta, phi, thetaDot, phiDot] state layout', () => {
     expect(buildLab3dChainInitialState(input())).toEqual([
-      1.6, 0,
-      2.2, Math.PI,
-      3.05, Math.PI,
-      0, 1.2,
-      0.2, -0.8,
-      0.2, 10
+      1.6,
+      0,
+      2.2,
+      Math.PI,
+      3.05,
+      Math.PI,
+      0,
+      1.2,
+      0.2,
+      -0.8,
+      0.2,
+      10
     ]);
   });
 

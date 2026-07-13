@@ -80,9 +80,13 @@ export class ResearchMatrixTab extends TabController {
     this.dom.onInput('matrixHorizon', () => this.syncLabels());
     this.dom.onInput('matrixDt', () => this.syncLabels());
     this.dom.onInput('matrixParam', () => this.syncLabels());
-    this.dom.onClick('matrixRun', () => {
-      void this.runExclusive(() => this.run(), 'matrixStatus');
-    }, { takeOver: true });
+    this.dom.onClick(
+      'matrixRun',
+      () => {
+        void this.runExclusive(() => this.run(), 'matrixStatus');
+      },
+      { takeOver: true }
+    );
     this.dom.onClick('matrixExport', () => this.exportLatest(), { takeOver: true });
   }
 
@@ -104,7 +108,10 @@ export class ResearchMatrixTab extends TabController {
     tab.setAttribute('aria-selected', 'false');
     tab.setAttribute('aria-label', 'Research Matrix');
     tab.title = 'Research Matrix';
-    tab.append(el('span', { className: 'tab-icon', text: 'Mx' }), el('span', { className: 'tab-label', text: 'Matrix' }));
+    tab.append(
+      el('span', { className: 'tab-icon', text: 'Mx' }),
+      el('span', { className: 'tab-label', text: 'Matrix' })
+    );
     const expansion = rail.querySelector('.tab[data-tab="expansion"]');
     expansion?.after(tab);
     if (!expansion) rail.append(tab);
@@ -113,9 +120,15 @@ export class ResearchMatrixTab extends TabController {
   private ensurePanel(): void {
     if (document.getElementById('tab-matrix')) return;
     const tableBody = el('tbody', { id: 'matrixComparisonBody' });
-    const table = el('table', { className: 'matrix-table' },
-      el('thead', {},
-        el('tr', {},
+    const table = el(
+      'table',
+      { className: 'matrix-table' },
+      el(
+        'thead',
+        {},
+        el(
+          'tr',
+          {},
           cell('Run', 'th'),
           cell('Kind', 'th'),
           cell('Method', 'th'),
@@ -128,19 +141,42 @@ export class ResearchMatrixTab extends TabController {
       ),
       tableBody
     );
-    const panel = el('div', { id: 'tab-matrix', className: 'tabpanel research-matrix-tab', role: 'tabpanel' },
-      el('div', { className: 'layout' },
-        el('div', { className: 'left-col' },
-          el('section', { className: 'matrix-shell' },
-            el('div', { className: 'matrix-topline' },
-              el('div', {}, el('h2', { text: 'Research Matrix' }), el('div', { id: 'matrixSummary', className: 'matrix-sub', text: 'Compare experiments, scan 2D parameter planes, and inspect chaos diagnostics.' })),
-              el('div', { className: 'matrix-state-grid' },
+    const panel = el(
+      'div',
+      { id: 'tab-matrix', className: 'tabpanel research-matrix-tab', role: 'tabpanel' },
+      el(
+        'div',
+        { className: 'layout' },
+        el(
+          'div',
+          { className: 'left-col' },
+          el(
+            'section',
+            { className: 'matrix-shell' },
+            el(
+              'div',
+              { className: 'matrix-topline' },
+              el(
+                'div',
+                {},
+                el('h2', { text: 'Research Matrix' }),
+                el('div', {
+                  id: 'matrixSummary',
+                  className: 'matrix-sub',
+                  text: 'Compare experiments, scan 2D parameter planes, and inspect chaos diagnostics.'
+                })
+              ),
+              el(
+                'div',
+                { className: 'matrix-state-grid' },
                 this.pill('Hash', 'matrixHash', '-'),
                 this.pill('Stable', 'matrixStable', '-'),
                 this.pill('Lyap', 'matrixLyap', '-')
               )
             ),
-            el('div', { className: 'matrix-visual-grid' },
+            el(
+              'div',
+              { className: 'matrix-visual-grid' },
               this.figure('matrixSweepCanvas', 520, 300, '2D stability heatmap with contour lines'),
               this.figure('matrixPoincareCanvas', 360, 300, 'Poincare section'),
               this.figure('matrixLyapCanvas', 360, 220, 'Variational/QR Lyapunov timeline (λ₁, λ₂)'),
@@ -151,21 +187,46 @@ export class ResearchMatrixTab extends TabController {
             el('div', { className: 'matrix-table-wrap' }, table)
           )
         ),
-        el('aside', { className: 'controls matrix-controls' },
-          el('div', { className: 'ctrl-sticky' },
+        el(
+          'aside',
+          { className: 'controls matrix-controls' },
+          el(
+            'div',
+            { className: 'ctrl-sticky' },
             el('div', { className: 'ctrl-sticky-title', text: 'Research Matrix Controls' }),
             el('div', { className: 'btnrow' }, button('matrixRun', 'Run', 'primary'), button('matrixExport', 'Export')),
             el('div', { id: 'matrixStatus', className: 'exp-status', text: 'ready' })
           ),
-          this.details('Model',
+          this.details(
+            'Model',
             this.row('Preset', el('select', { id: 'matrixPreset' })),
             this.row('Model', el('select', { id: 'matrixModel' })),
-            this.row('dt', input('matrixDt', { type: 'number', min: '0.001', max: '0.05', step: '0.001' }), 'matrixDtV'),
-            this.row('Horizon', input('matrixHorizon', { type: 'number', min: '2', max: '40', step: '1' }), 'matrixHorizonV'),
-            this.row('Parameter', input('matrixParam', { type: 'number', step: '0.01' }), 'matrixParamV', 'matrixParamLabel')
+            this.row(
+              'dt',
+              input('matrixDt', { type: 'number', min: '0.001', max: '0.05', step: '0.001' }),
+              'matrixDtV'
+            ),
+            this.row(
+              'Horizon',
+              input('matrixHorizon', { type: 'number', min: '2', max: '40', step: '1' }),
+              'matrixHorizonV'
+            ),
+            this.row(
+              'Parameter',
+              input('matrixParam', { type: 'number', step: '0.01' }),
+              'matrixParamV',
+              'matrixParamLabel'
+            )
           ),
           this.details('Methods', el('div', { id: 'matrixMethodGrid', className: 'exp-method-grid' })),
-          this.details('Sweep', this.row('Grid', input('matrixGrid', { type: 'number', min: '4', max: '12', step: '1', value: '8' }), 'matrixGridV'))
+          this.details(
+            'Sweep',
+            this.row(
+              'Grid',
+              input('matrixGrid', { type: 'number', min: '4', max: '12', step: '1', value: '8' }),
+              'matrixGridV'
+            )
+          )
         )
       )
     );
@@ -177,14 +238,27 @@ export class ResearchMatrixTab extends TabController {
   }
 
   private figure(id: string, width: number, height: number, caption: string): HTMLElement {
-    return el('figure', {}, el('canvas', { id, attrs: { width: String(width), height: String(height) } }), el('figcaption', { text: caption }));
+    return el(
+      'figure',
+      {},
+      el('canvas', { id, attrs: { width: String(width), height: String(height) } }),
+      el('figcaption', { text: caption })
+    );
   }
 
   private details(label: string, ...children: Node[]): HTMLDetailsElement {
     const details = el('details', { className: 'acc' });
     details.open = true;
-    details.append(el('summary', {}, el('span', { className: 'acc-icon', text: label.slice(0, 1) }), el('span', { className: 'acc-label', text: label }), el('span', { className: 'acc-arrow', text: '>' })),
-      el('div', { className: 'acc-body' }, ...children));
+    details.append(
+      el(
+        'summary',
+        {},
+        el('span', { className: 'acc-icon', text: label.slice(0, 1) }),
+        el('span', { className: 'acc-label', text: label }),
+        el('span', { className: 'acc-arrow', text: '>' })
+      ),
+      el('div', { className: 'acc-body' }, ...children)
+    );
     return details;
   }
 
@@ -231,7 +305,12 @@ export class ResearchMatrixTab extends TabController {
     this.dom.setValue('matrixModel', config.model);
     this.dom.setValue('matrixDt', config.dt ?? definition.defaultDt);
     this.dom.setValue('matrixHorizon', config.horizon ?? definition.defaultHorizon);
-    this.dom.setValue('matrixParam', config.parameterOverrides?.[definition.sweep.parameter] ?? definition.defaultParameters[definition.sweep.parameter] ?? 0);
+    this.dom.setValue(
+      'matrixParam',
+      config.parameterOverrides?.[definition.sweep.parameter] ??
+        definition.defaultParameters[definition.sweep.parameter] ??
+        0
+    );
     this.syncLabels();
   }
 
@@ -243,7 +322,9 @@ export class ResearchMatrixTab extends TabController {
       param.min = String(definition.sweep.min);
       param.max = String(definition.sweep.max);
       param.step = String(Math.max(0.001, Math.abs(definition.sweep.max - definition.sweep.min) / 100));
-      param.value = String(definition.defaultParameters[definition.sweep.parameter] ?? (definition.sweep.min + definition.sweep.max) / 2);
+      param.value = String(
+        definition.defaultParameters[definition.sweep.parameter] ?? (definition.sweep.min + definition.sweep.max) / 2
+      );
     }
     this.dom.setValue('matrixDt', definition.defaultDt);
     this.dom.setValue('matrixHorizon', Math.min(definition.defaultHorizon, 18));
@@ -262,11 +343,13 @@ export class ResearchMatrixTab extends TabController {
 
   private currentModel(): ExpansionModelId {
     const value = this.dom.str('matrixModel', 'driven');
-    return EXPANSION_MODEL_DEFINITIONS.some((item) => item.id === value) ? value as ExpansionModelId : 'driven';
+    return EXPANSION_MODEL_DEFINITIONS.some((item) => item.id === value) ? (value as ExpansionModelId) : 'driven';
   }
 
   private selectedMethods(): IntegratorId[] {
-    const selected = this.dom.all<HTMLInputElement>('input[data-matrix-method]:checked').map((item) => item.value as IntegratorId);
+    const selected = this.dom
+      .all<HTMLInputElement>('input[data-matrix-method]:checked')
+      .map((item) => item.value as IntegratorId);
     return selected.length > 0 ? selected : ['rk4'];
   }
 
@@ -278,7 +361,12 @@ export class ResearchMatrixTab extends TabController {
       methods: this.selectedMethods(),
       dt: this.dom.num('matrixDt', definition.defaultDt),
       horizon: this.dom.num('matrixHorizon', definition.defaultHorizon),
-      parameterOverrides: { [definition.sweep.parameter]: this.dom.num('matrixParam', definition.defaultParameters[definition.sweep.parameter] ?? 0) },
+      parameterOverrides: {
+        [definition.sweep.parameter]: this.dom.num(
+          'matrixParam',
+          definition.defaultParameters[definition.sweep.parameter] ?? 0
+        )
+      },
       ghostEpsilon: 1e-5,
       sampleLimit: 160,
       bifurcationColumns: 8
@@ -309,10 +397,19 @@ export class ResearchMatrixTab extends TabController {
     this.dom.setText('matrixHash', result.manifest.hash);
     this.dom.setText('matrixStable', `${result.summary.stableComparisons}/${result.comparison.length}`);
     this.dom.setText('matrixLyap', fmt(result.summary.maxLyapunovEstimate, 3));
-    this.dom.setText('matrixSummary', `${result.base.modelLabel}: ${result.summary.bestComparison}, sweep stable ${(result.summary.sweepStableRatio * 100).toFixed(0)}%`);
+    this.dom.setText(
+      'matrixSummary',
+      `${result.base.modelLabel}: ${result.summary.bestComparison}, sweep stable ${(result.summary.sweepStableRatio * 100).toFixed(0)}%`
+    );
     this.renderMetrics(result);
     this.renderComparison(result.comparison);
-    this.drawSweep(result.sweep2d.cells, result.sweep2d.size, 'matrixSweepCanvas', result.sweep2d.xAxis.label, result.sweep2d.yAxis.label);
+    this.drawSweep(
+      result.sweep2d.cells,
+      result.sweep2d.size,
+      'matrixSweepCanvas',
+      result.sweep2d.xAxis.label,
+      result.sweep2d.yAxis.label
+    );
     this.drawPoincare(result.diagnostics.poincare);
     this.drawLyapunov(result.diagnostics.lyapunovTimeline);
     this.drawBasin(result.diagnostics.basin.cells, result.diagnostics.basin.size);
@@ -331,18 +428,31 @@ export class ResearchMatrixTab extends TabController {
     if (spectrum.length > 0) {
       const consistency = result.diagnostics.lyapunovConsistency;
       const verdict = consistency.symplectic ? 'symplectic ✓' : 'pairing ✗';
-      box.append(el('div', { className: 'matrix-metric matrix-metric-wide' },
-        el('strong', { text: 'Lyapunov spectrum (variational/QR)' }),
-        el('span', { text: `λ = [ ${spectrum.map((value) => fmt(value, 3)).join(',  ')} ]` }),
-        el('em', { text: `Σλ = ${fmt(spectrum.reduce((a, b) => a + b, 0), 4)} · D_KY = ${fmt(result.diagnostics.kaplanYorkeDimension, 3)} · ${verdict} (pair err ${fmt(consistency.pairingError, 4)})` })
-      ));
+      box.append(
+        el(
+          'div',
+          { className: 'matrix-metric matrix-metric-wide' },
+          el('strong', { text: 'Lyapunov spectrum (variational/QR)' }),
+          el('span', { text: `λ = [ ${spectrum.map((value) => fmt(value, 3)).join(',  ')} ]` }),
+          el('em', {
+            text: `Σλ = ${fmt(
+              spectrum.reduce((a, b) => a + b, 0),
+              4
+            )} · D_KY = ${fmt(result.diagnostics.kaplanYorkeDimension, 3)} · ${verdict} (pair err ${fmt(consistency.pairingError, 4)})`
+          })
+        )
+      );
     }
     for (const metric of result.physicalMetrics) {
-      box.append(el('div', { className: 'matrix-metric' },
-        el('strong', { text: metric.label }),
-        el('span', { text: `${fmt(metric.value, 4)} ${metric.unit}` }),
-        el('em', { text: metric.note })
-      ));
+      box.append(
+        el(
+          'div',
+          { className: 'matrix-metric' },
+          el('strong', { text: metric.label }),
+          el('span', { text: `${fmt(metric.value, 4)} ${metric.unit}` }),
+          el('em', { text: metric.note })
+        )
+      );
     }
   }
 
@@ -396,7 +506,13 @@ export class ResearchMatrixTab extends TabController {
     ctx.stroke();
   }
 
-  private drawSweep(cells: readonly ExpansionMatrixCell[], size: number, canvasId: string, xLabel: string, yLabel: string): void {
+  private drawSweep(
+    cells: readonly ExpansionMatrixCell[],
+    size: number,
+    canvasId: string,
+    xLabel: string,
+    yLabel: string
+  ): void {
     const canvas = this.dom.el<HTMLCanvasElement>(canvasId);
     if (!canvas) return;
     const ctx = this.clear(canvas);
@@ -408,7 +524,9 @@ export class ResearchMatrixTab extends TabController {
       const xi = index % size;
       const yi = Math.floor(index / size);
       const t = Math.max(0, Math.min(1, item.score / max));
-      ctx.fillStyle = item.stable ? `rgb(${Math.round(20 + 20 * t)},${Math.round(70 + 170 * t)},${Math.round(90 + 80 * (1 - t))})` : '#451827';
+      ctx.fillStyle = item.stable
+        ? `rgb(${Math.round(20 + 20 * t)},${Math.round(70 + 170 * t)},${Math.round(90 + 80 * (1 - t))})`
+        : '#451827';
       ctx.fillRect(xi * cw, canvas.height - (yi + 1) * ch, cw + 1, ch + 1);
     });
     ctx.strokeStyle = 'rgba(255,255,255,.32)';
@@ -478,7 +596,7 @@ export class ResearchMatrixTab extends TabController {
     cells.forEach((cellItem, index) => {
       const xi = index % size;
       const yi = Math.floor(index / size);
-      ctx.fillStyle = cellItem.stable ? colors[cellItem.basin] ?? '#6b7686' : '#34121b';
+      ctx.fillStyle = cellItem.stable ? (colors[cellItem.basin] ?? '#6b7686') : '#34121b';
       ctx.fillRect(xi * cw, canvas.height - (yi + 1) * ch, cw + 1, ch + 1);
     });
   }
@@ -501,13 +619,23 @@ export class ResearchMatrixTab extends TabController {
       ctx.fillRect(xi * cw, canvas.height - (yi + 1) * ch, cw + 1, ch + 1);
       if (item.separatrix) {
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(xi * cw + cw * 0.35, canvas.height - (yi + 1) * ch + ch * 0.35, Math.max(1, cw * 0.3), Math.max(1, ch * 0.3));
+        ctx.fillRect(
+          xi * cw + cw * 0.35,
+          canvas.height - (yi + 1) * ch + ch * 0.35,
+          Math.max(1, cw * 0.3),
+          Math.max(1, ch * 0.3)
+        );
       }
     });
     this.drawCanvasLegend(ctx, canvas, 'phase energy shell', note);
   }
 
-  private drawCanvasLegend(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, title: string, detail: string): void {
+  private drawCanvasLegend(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    title: string,
+    detail: string
+  ): void {
     ctx.save();
     ctx.fillStyle = 'rgba(5,8,13,.78)';
     ctx.fillRect(8, 8, Math.min(canvas.width - 16, 300), 38);

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { RESULT_BADGES, classifyEstimate, classifyExport, classifyValidation, normalizeTrustInspection, trustInspectionSummary } from '../src/app/resultBadges';
+import {
+  RESULT_BADGES,
+  classifyEstimate,
+  classifyExport,
+  classifyValidation,
+  normalizeTrustInspection,
+  trustInspectionSummary
+} from '../src/app/resultBadges';
 import { AUDIENCE_MODES, normalizeAudienceMode, visibleRailSections } from '../src/app/audienceMode';
 
 describe('result badge classification', () => {

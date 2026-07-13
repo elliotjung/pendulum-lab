@@ -17,18 +17,40 @@ export interface SharedExperimentV1 {
 const HASH_PREFIX = '#experiment=';
 const MAX_HASH_LENGTH = 8_192;
 const TABS = new Set([
-  'lab', 'compare', 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion',
-  'matrix', 'validate', 'golden', 'zeroone', 'clv', 'basin', 'rqa', 'ftle',
-  'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs'
+  'lab',
+  'compare',
+  'lyap',
+  'sweep',
+  'bifurc',
+  'phase3d',
+  'density',
+  'expansion',
+  'matrix',
+  'validate',
+  'golden',
+  'zeroone',
+  'clv',
+  'basin',
+  'rqa',
+  'ftle',
+  'architecture',
+  'research',
+  'lab3d',
+  'canonical',
+  'aplus',
+  'docs'
 ]);
 
 function finite(value: unknown, fallback: number, min: number, max: number): number {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? Math.min(max, Math.max(min, value))
-    : fallback;
+  return typeof value === 'number' && Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
 }
 
-function tuple3(value: unknown, fallback: [number, number, number], min: number, max: number): [number, number, number] {
+function tuple3(
+  value: unknown,
+  fallback: [number, number, number],
+  min: number,
+  max: number
+): [number, number, number] {
   if (!Array.isArray(value)) return fallback;
   return [
     finite(value[0], fallback[0], min, max),
@@ -45,7 +67,7 @@ function encodeBase64Url(text: string): string {
 }
 
 function decodeBase64Url(text: string): string {
-  const padded = `${text.replaceAll('-', '+').replaceAll('_', '/')}${'='.repeat((4 - text.length % 4) % 4)}`;
+  const padded = `${text.replaceAll('-', '+').replaceAll('_', '/')}${'='.repeat((4 - (text.length % 4)) % 4)}`;
   const binary = atob(padded);
   const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
   return new TextDecoder().decode(bytes);
@@ -61,15 +83,16 @@ export function decodeSharedExperiment(hash: string): SharedExperimentV1 | null 
   try {
     const parsed = JSON.parse(decodeBase64Url(hash.slice(HASH_PREFIX.length))) as Record<string, unknown>;
     if (parsed.v !== 1) return null;
-    const parameters = typeof parsed.parameters === 'object' && parsed.parameters !== null
-      ? parsed.parameters as Record<string, unknown>
-      : {};
-    const initial = typeof parsed.initial === 'object' && parsed.initial !== null
-      ? parsed.initial as Record<string, unknown>
-      : {};
-    const method = typeof parsed.method === 'string' && parsed.method in integratorRegistry
-      ? parsed.method as IntegratorId
-      : 'rk4';
+    const parameters =
+      typeof parsed.parameters === 'object' && parsed.parameters !== null
+        ? (parsed.parameters as Record<string, unknown>)
+        : {};
+    const initial =
+      typeof parsed.initial === 'object' && parsed.initial !== null ? (parsed.initial as Record<string, unknown>) : {};
+    const method =
+      typeof parsed.method === 'string' && parsed.method in integratorRegistry
+        ? (parsed.method as IntegratorId)
+        : 'rk4';
     const tab = typeof parsed.tab === 'string' && TABS.has(parsed.tab) ? parsed.tab : 'lab';
     return {
       v: 1,
@@ -117,13 +140,17 @@ export function captureSharedExperiment(): SharedExperimentV1 {
   return {
     v: 1,
     system: selected('sysType', 'double') === 'triple' ? 'triple' : 'double',
-    method: methodValue in integratorRegistry ? methodValue as IntegratorId : 'rk4',
+    method: methodValue in integratorRegistry ? (methodValue as IntegratorId) : 'rk4',
     dt: controlValue('dt', 0.003),
     damping: controlValue('gamma', 0),
     toleranceExponent: controlValue('tol', -6),
     parameters: {
-      m1: controlValue('m1', 1), m2: controlValue('m2', 1), m3: controlValue('m3', 1),
-      l1: controlValue('l1', 1.2), l2: controlValue('l2', 1), l3: controlValue('l3', 0.8),
+      m1: controlValue('m1', 1),
+      m2: controlValue('m2', 1),
+      m3: controlValue('m3', 1),
+      l1: controlValue('l1', 1.2),
+      l2: controlValue('l2', 1),
+      l3: controlValue('l3', 0.8),
       g: controlValue('g', 9.81)
     },
     initial: {
@@ -138,7 +165,8 @@ function setControl(id: string, value: string | number): void {
   const element = document.getElementById(id) as HTMLInputElement | HTMLSelectElement | null;
   if (!element) return;
   const next = String(value);
-  if (element instanceof HTMLSelectElement && !Array.from(element.options).some((option) => option.value === next)) return;
+  if (element instanceof HTMLSelectElement && !Array.from(element.options).some((option) => option.value === next))
+    return;
   element.value = next;
   element.dispatchEvent(new Event('input', { bubbles: true }));
 }

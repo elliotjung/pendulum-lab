@@ -64,7 +64,8 @@ export function detectNeimarkSacker(branch: readonly BranchSample[], resonanceTo
     const crossesOut = modulusBefore < 1 && modulusAfter >= 1;
     const crossesIn = modulusBefore >= 1 && modulusAfter < 1;
     if (!crossesOut && !crossesIn) continue;
-    const t = Math.abs(modulusAfter - modulusBefore) > 1e-12 ? (1 - modulusBefore) / (modulusAfter - modulusBefore) : 0.5;
+    const t =
+      Math.abs(modulusAfter - modulusBefore) > 1e-12 ? (1 - modulusBefore) / (modulusAfter - modulusBefore) : 0.5;
     const critical = Math.abs(1 - modulusBefore) <= Math.abs(modulusAfter - 1) ? pairBefore : pairAfter;
     const rotation = Math.abs(Math.atan2(critical.im, critical.re)) / (2 * Math.PI);
     points.push({
@@ -80,8 +81,10 @@ export function detectNeimarkSacker(branch: readonly BranchSample[], resonanceTo
   }
   return {
     points,
-    method: 'dominant complex Floquet pair |mu| crossing 1 between adjacent branch samples; critical parameter by linear interpolation of |mu|',
-    caveat: 'Detection brackets crossings between continuation samples; strong resonances (rotation number near 0, 1/2, 1/3, 1/4) require dedicated normal-form analysis. Torus existence past the crossing assumes the generic non-degenerate NS scenario.'
+    method:
+      'dominant complex Floquet pair |mu| crossing 1 between adjacent branch samples; critical parameter by linear interpolation of |mu|',
+    caveat:
+      'Detection brackets crossings between continuation samples; strong resonances (rotation number near 0, 1/2, 1/3, 1/4) require dedicated normal-form analysis. Torus existence past the crossing assumes the generic non-degenerate NS scenario.'
   };
 }
 
@@ -208,7 +211,12 @@ function mapJacobian(system: PlanarMapSystem, parameter: number, x: readonly [nu
 }
 
 /** Newton fixed point of F (solve F(x) − x = 0) from a seed. */
-function mapFixedPoint(system: PlanarMapSystem, parameter: number, seed: readonly [number, number], h: number): [number, number] {
+function mapFixedPoint(
+  system: PlanarMapSystem,
+  parameter: number,
+  seed: readonly [number, number],
+  h: number
+): [number, number] {
   let x: [number, number] = [seed[0], seed[1]];
   for (let it = 0; it < 60; it += 1) {
     const fx = applyMap(system, x[0], x[1], parameter);
@@ -249,9 +257,15 @@ function focusEigenpair(J: number[][]): { alpha: number; vR: [number, number]; v
   let v1re: number;
   let v1im: number;
   if (Math.abs(b) > 1e-12) {
-    v0re = b; v0im = 0; v1re = re - a; v1im = im;
+    v0re = b;
+    v0im = 0;
+    v1re = re - a;
+    v1im = im;
   } else {
-    v0re = re - d; v0im = im; v1re = c; v1im = 0;
+    v0re = re - d;
+    v0im = im;
+    v1re = c;
+    v1im = 0;
   }
   const nrm = Math.hypot(v0re, v0im, v1re, v1im) || 1;
   return { alpha, vR: [v0re / nrm, v1re / nrm], vI: [v0im / nrm, v1im / nrm] };
@@ -266,10 +280,17 @@ function solveDense(A: number[][], b: number[]): number[] | null {
     let best = Math.abs(M[col]![col] ?? 0);
     for (let r = col + 1; r < m; r += 1) {
       const v = Math.abs(M[r]![col] ?? 0);
-      if (v > best) { best = v; pivot = r; }
+      if (v > best) {
+        best = v;
+        pivot = r;
+      }
     }
     if (best < 1e-300) return null;
-    if (pivot !== col) { const t = M[col]!; M[col] = M[pivot]!; M[pivot] = t; }
+    if (pivot !== col) {
+      const t = M[col]!;
+      M[col] = M[pivot]!;
+      M[pivot] = t;
+    }
     const diag = M[col]![col] ?? 0;
     for (let r = col + 1; r < m; r += 1) {
       const f = (M[r]![col] ?? 0) / diag;
@@ -300,7 +321,7 @@ function spectralTangent(curve: readonly number[], m: number): number[] {
     let dy = 0;
     for (let l = 0; l < m; l += 1) {
       if (l === j) continue;
-      const w = 0.5 * (((j - l) % 2 === 0) ? 1 : -1) / Math.tan((Math.PI * (j - l)) / m);
+      const w = (0.5 * ((j - l) % 2 === 0 ? 1 : -1)) / Math.tan((Math.PI * (j - l)) / m);
       dx += w * curve[2 * l]!;
       dy += w * curve[2 * l + 1]!;
     }
@@ -378,11 +399,17 @@ function offGridInvariance(
  * bifurcation of a 2D stroboscopic map, by trigonometric collocation of the
  * invariance equation F(u(θ)) = u(θ + 2πρ).
  */
-export function continueNeimarkSackerTorus(system: PlanarMapSystem, options: InvariantTorusOptions): InvariantTorusContinuation {
-  if (!(options.initialAmplitude > 0)) throw new Error('continueNeimarkSackerTorus: initialAmplitude must be positive.');
-  if (options.step === 0 || !Number.isFinite(options.step)) throw new Error('continueNeimarkSackerTorus: step must be finite and non-zero.');
+export function continueNeimarkSackerTorus(
+  system: PlanarMapSystem,
+  options: InvariantTorusOptions
+): InvariantTorusContinuation {
+  if (!(options.initialAmplitude > 0))
+    throw new Error('continueNeimarkSackerTorus: initialAmplitude must be positive.');
+  if (options.step === 0 || !Number.isFinite(options.step))
+    throw new Error('continueNeimarkSackerTorus: step must be finite and non-zero.');
   const m = options.collocation ?? 31;
-  if (!Number.isInteger(m) || m < 9 || m % 2 === 0) throw new Error('continueNeimarkSackerTorus: collocation must be an odd integer >= 9.');
+  if (!Number.isInteger(m) || m < 9 || m % 2 === 0)
+    throw new Error('continueNeimarkSackerTorus: collocation must be an odd integer >= 9.');
   const tol = options.tolerance ?? 1e-10;
   const maxIter = options.maxIterations ?? 25;
   const fd = options.finiteDifferenceEpsilon ?? 1e-6;
@@ -433,17 +460,25 @@ export function continueNeimarkSackerTorus(system: PlanarMapSystem, options: Inv
       iterations = it + 1;
       const r = invarianceResidualVector(system, parameter, vars, uRef, tRef, m, thetas);
       const r0 = vecNorm(r);
-      if (r0 <= tol) { converged = true; break; }
+      if (r0 <= tol) {
+        converged = true;
+        break;
+      }
       const Jmat: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0));
       for (let kcol = 0; kcol < n; kcol += 1) {
         const h = fd * Math.max(1, Math.abs(vars[kcol]!));
-        const vp = vars.slice(); vp[kcol] = vp[kcol]! + h;
-        const vm = vars.slice(); vm[kcol] = vm[kcol]! - h;
+        const vp = vars.slice();
+        vp[kcol] = vp[kcol]! + h;
+        const vm = vars.slice();
+        vm[kcol] = vm[kcol]! - h;
         const rp = invarianceResidualVector(system, parameter, vp, uRef, tRef, m, thetas);
         const rm = invarianceResidualVector(system, parameter, vm, uRef, tRef, m, thetas);
         for (let irow = 0; irow < n; irow += 1) Jmat[irow]![kcol] = (rp[irow]! - rm[irow]!) / (2 * h);
       }
-      const delta = solveDense(Jmat, r.map((v) => -v));
+      const delta = solveDense(
+        Jmat,
+        r.map((v) => -v)
+      );
       if (!delta) break;
       // Damped Newton: backtrack until the residual decreases (keeps far-from-onset steps stable).
       let lambda = 1;

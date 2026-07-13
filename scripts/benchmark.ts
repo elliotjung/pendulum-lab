@@ -37,9 +37,22 @@ const maxPhysicsSlowdownFraction = numberFromEnv('BENCHMARK_MAX_PHYSICS_SLOWDOWN
 const maxMemoryGrowthBytes = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_BYTES', 50_000_000);
 const maxMemoryGrowthFraction = numberFromEnv('BENCHMARK_MAX_MEMORY_GROWTH_FRACTION', 0.2);
 
-type MetricName = 'fps' | 'physicsMsPerFrame' | 'physicsMsPerStep' | 'stepsAdvanced' | 'renderMsPerFrame' | 'memoryBytes' | 'workerLatencyMs' | 'longTaskMs';
+type MetricName =
+  | 'fps'
+  | 'physicsMsPerFrame'
+  | 'physicsMsPerStep'
+  | 'stepsAdvanced'
+  | 'renderMsPerFrame'
+  | 'memoryBytes'
+  | 'workerLatencyMs'
+  | 'longTaskMs';
 
-const METRICS: Array<{ metric: MetricName; direction: 'higher-is-better' | 'lower-is-better'; threshold: number; gated: boolean }> = [
+const METRICS: Array<{
+  metric: MetricName;
+  direction: 'higher-is-better' | 'lower-is-better';
+  threshold: number;
+  gated: boolean;
+}> = [
   { metric: 'fps', direction: 'higher-is-better', threshold: maxFpsDropFraction, gated: true },
   // A fixed-dt accumulator deliberately performs more steps after a slow paint.
   // Keep frame cost and step count visible, but gate the normalized step cost.
@@ -146,7 +159,9 @@ async function waitForServer(url: string, timeoutMs = 20_000): Promise<void> {
     if (await reachable(url)) return;
     await new Promise((resolve) => setTimeout(resolve, 300));
   }
-  throw new Error(`Timed out waiting for benchmark server at ${url}. Serve the build first (e.g. \`npx vite preview --port <port>\`).`);
+  throw new Error(
+    `Timed out waiting for benchmark server at ${url}. Serve the build first (e.g. \`npx vite preview --port <port>\`).`
+  );
 }
 
 async function ensureLocalProfileServer(url: string): Promise<ChildProcess | null> {
@@ -166,7 +181,12 @@ async function ensureLocalProfileServer(url: string): Promise<ChildProcess | nul
   return server;
 }
 
-async function collectSample(browser: Browser, url: string, label: string, sampleIndex: number): Promise<SampleMetrics> {
+async function collectSample(
+  browser: Browser,
+  url: string,
+  label: string,
+  sampleIndex: number
+): Promise<SampleMetrics> {
   const page = await browser.newPage();
   try {
     await page.addInitScript(() => {
@@ -185,25 +205,36 @@ async function collectSample(browser: Browser, url: string, label: string, sampl
     return await page.evaluate(
       ({ sampleLabel, index }) => {
         const w = window as Window & {
-          __modernLab?: { diagnostics(): { fps: number; physicsMsPerFrame: number; renderMsPerFrame: number; sidePlotMsPerFrame: number; stepsAdvanced?: number; stepsPerFrame?: number } };
+          __modernLab?: {
+            diagnostics(): {
+              fps: number;
+              physicsMsPerFrame: number;
+              renderMsPerFrame: number;
+              sidePlotMsPerFrame: number;
+              stepsAdvanced?: number;
+              stepsPerFrame?: number;
+            };
+          };
           __benchLongTasks?: number[];
         };
         const diag = w.__modernLab ? w.__modernLab.diagnostics() : null;
         const memory = (performance as Performance & { memory?: { usedJSHeapSize?: number } }).memory;
         const longTasks = Array.isArray(w.__benchLongTasks) ? w.__benchLongTasks : null;
         const physicsMs = typeof diag?.physicsMsPerFrame === 'number' ? diag.physicsMsPerFrame : null;
-        const stepsAdvanced = typeof diag?.stepsAdvanced === 'number'
-          ? diag.stepsAdvanced
-          : typeof diag?.stepsPerFrame === 'number'
-            ? diag.stepsPerFrame
-            : null;
+        const stepsAdvanced =
+          typeof diag?.stepsAdvanced === 'number'
+            ? diag.stepsAdvanced
+            : typeof diag?.stepsPerFrame === 'number'
+              ? diag.stepsPerFrame
+              : null;
         return {
           label: sampleLabel,
           url: location.href,
           sampleIndex: index,
           fps: typeof diag?.fps === 'number' ? diag.fps : null,
           physicsMsPerFrame: physicsMs,
-          physicsMsPerStep: physicsMs !== null && stepsAdvanced !== null && stepsAdvanced > 0 ? physicsMs / stepsAdvanced : null,
+          physicsMsPerStep:
+            physicsMs !== null && stepsAdvanced !== null && stepsAdvanced > 0 ? physicsMs / stepsAdvanced : null,
           stepsAdvanced,
           renderMsPerFrame: typeof diag?.renderMsPerFrame === 'number' ? diag.renderMsPerFrame : null,
           workerLatencyMs: typeof diag?.sidePlotMsPerFrame === 'number' ? diag.sidePlotMsPerFrame : null,
@@ -298,7 +329,17 @@ function compareMetric(
   const a = original.median;
   const b = candidate.median;
   if (a === null || b === null) {
-    return { metric, original: a, candidate: b, delta: null, relativeDelta: null, noiseFloor: null, threshold, direction, status: 'missing' };
+    return {
+      metric,
+      original: a,
+      candidate: b,
+      delta: null,
+      relativeDelta: null,
+      noiseFloor: null,
+      threshold,
+      direction,
+      status: 'missing'
+    };
   }
   const delta = b - a;
   const rel = a === 0 ? null : delta / Math.abs(a);
@@ -326,8 +367,13 @@ function compareMetric(
   };
 }
 
-function compare(originalAgg: Record<MetricName, MetricAggregate>, candidateAgg: Record<MetricName, MetricAggregate>): BenchmarkComparison {
-  const deltas = METRICS.map(({ metric, direction, threshold, gated }) => compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction, gated));
+function compare(
+  originalAgg: Record<MetricName, MetricAggregate>,
+  candidateAgg: Record<MetricName, MetricAggregate>
+): BenchmarkComparison {
+  const deltas = METRICS.map(({ metric, direction, threshold, gated }) =>
+    compareMetric(originalAgg[metric], candidateAgg[metric], metric, threshold, direction, gated)
+  );
   return {
     originalUrl: originalUrl!,
     candidateUrl: candidateUrl!,
@@ -426,10 +472,14 @@ async function main(): Promise<void> {
   const compareMode = originalUrl !== null;
   if (compareMode) {
     if (!candidateUrl) {
-      throw new Error('Invalid benchmark: ORIGINAL_URL requires CANDIDATE_URL. To profile one deployed build, set only CANDIDATE_URL.');
+      throw new Error(
+        'Invalid benchmark: ORIGINAL_URL requires CANDIDATE_URL. To profile one deployed build, set only CANDIDATE_URL.'
+      );
     }
     if (originalUrl === candidateUrl) {
-      throw new Error(`Invalid benchmark: ORIGINAL_URL and CANDIDATE_URL are identical (${originalUrl}). Serve the baseline and candidate builds separately (e.g. git worktree + \`vite preview\` on two ports).`);
+      throw new Error(
+        `Invalid benchmark: ORIGINAL_URL and CANDIDATE_URL are identical (${originalUrl}). Serve the baseline and candidate builds separately (e.g. git worktree + \`vite preview\` on two ports).`
+      );
     }
   }
 
@@ -462,7 +512,10 @@ async function main(): Promise<void> {
       const originalAgg = aggregate(originalSamples);
       const candidateAgg = aggregate(candidateSamples);
       const comparison = compare(originalAgg, candidateAgg);
-      const results = [medianRow('original', originalUrl!, originalAgg), medianRow('candidate', candidateUrl!, candidateAgg)];
+      const results = [
+        medianRow('original', originalUrl!, originalAgg),
+        medianRow('candidate', candidateUrl!, candidateAgg)
+      ];
       const report = {
         schemaVersion: 2,
         mode: 'compare' as const,
@@ -486,7 +539,8 @@ async function main(): Promise<void> {
     // Profile mode: one build, no comparison claim.
     await waitForServer(profileUrl);
     const samples: SampleMetrics[] = [];
-    for (let i = 0; i < requestedSamples; i += 1) samples.push(await collectSample(browser, profileUrl, 'candidate', i));
+    for (let i = 0; i < requestedSamples; i += 1)
+      samples.push(await collectSample(browser, profileUrl, 'candidate', i));
     const environment = await readEnvironment(browser, profileUrl);
     const agg = aggregate(samples);
     const results = [medianRow('candidate', profileUrl, agg)];

@@ -109,8 +109,17 @@ describe('shared event locator', () => {
   it('dense-output event detection agrees with the RK4 path', () => {
     const state0 = Float64Array.from([1, 0]);
     const section = (s: StateVector): number => Number(s[0] ?? 0); // x = 0 crossings at t = π/2, 3π/2…
-    const base = detectEvents(state0, sho, [{ g: section, direction: 'falling' }], { dt: 0.01, maxTime: 2, rootTol: 1e-10 });
-    const dense = detectEvents(state0, sho, [{ g: section, direction: 'falling' }], { dt: 0.01, maxTime: 2, rootTol: 1e-10, denseOutput: true });
+    const base = detectEvents(state0, sho, [{ g: section, direction: 'falling' }], {
+      dt: 0.01,
+      maxTime: 2,
+      rootTol: 1e-10
+    });
+    const dense = detectEvents(state0, sho, [{ g: section, direction: 'falling' }], {
+      dt: 0.01,
+      maxTime: 2,
+      rootTol: 1e-10,
+      denseOutput: true
+    });
     expect(base.events.length).toBe(1);
     expect(dense.events.length).toBe(1);
     expect(Math.abs((base.events[0]?.time ?? 0) - Math.PI / 2)).toBeLessThan(1e-7);

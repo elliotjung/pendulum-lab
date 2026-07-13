@@ -247,7 +247,7 @@ export function commutativeMilsteinStep(
         let lieDerivative = 0;
         for (let l = 0; l < dim; l += 1) {
           const bLj = ws.diffusion0[l * noiseDimension + j] ?? 0;
-          const dBikDxl = ws.diffusionJacobian[((i * noiseDimension + k) * dim) + l] ?? 0;
+          const dBikDxl = ws.diffusionJacobian[(i * noiseDimension + k) * dim + l] ?? 0;
           lieDerivative += bLj * dBikDxl;
         }
         const quadratic = (ws.increments[j] ?? 0) * (ws.increments[k] ?? 0) - (j === k ? dt : 0);
@@ -288,8 +288,10 @@ export interface BrownianGrid {
 /** Build a frozen, reproducible Wiener path on 2^levels intervals of [0, totalTime]. */
 export function buildBrownianGrid(totalTime: number, levels: number, dimension: number, seed = 1): BrownianGrid {
   if (!(totalTime > 0)) throw new Error('buildBrownianGrid: totalTime must be positive.');
-  if (!Number.isInteger(levels) || levels < 1 || levels > 24) throw new Error('buildBrownianGrid: levels must be an integer in [1, 24].');
-  if (!Number.isInteger(dimension) || dimension < 1) throw new Error('buildBrownianGrid: dimension must be a positive integer.');
+  if (!Number.isInteger(levels) || levels < 1 || levels > 24)
+    throw new Error('buildBrownianGrid: levels must be an integer in [1, 24].');
+  if (!Number.isInteger(dimension) || dimension < 1)
+    throw new Error('buildBrownianGrid: dimension must be a positive integer.');
   const steps = 2 ** levels;
   const dt = totalTime / steps;
   const sqrtDt = Math.sqrt(dt);
@@ -380,7 +382,8 @@ function adaptiveBaseStep(
 export function runAdaptiveLangevinPath(spec: AdaptiveLangevinSpec): AdaptiveLangevinResult {
   const dim = spec.initialState.length;
   if (dim === 0) throw new Error('runAdaptiveLangevinPath: empty initial state.');
-  if (spec.grid.dimension !== dim) throw new Error('runAdaptiveLangevinPath: grid dimension must equal the state dimension.');
+  if (spec.grid.dimension !== dim)
+    throw new Error('runAdaptiveLangevinPath: grid dimension must equal the state dimension.');
   const atol = spec.absoluteTolerance ?? 1e-3;
   const rtol = spec.relativeTolerance ?? 1e-3;
   const totalSteps = spec.grid.steps;
@@ -609,9 +612,28 @@ export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembl
     for (let s = 1; s <= spec.steps; s += 1) {
       if (matrixNoise) {
         if (scheme === 'commutative-milstein') {
-          commutativeMilsteinStep(state, spec.dt, spec.drift, matrixNoise.noiseDimension, matrixNoise.diffusion, matrixNoise.jacobian!, gaussian, next, matrixScratchBuffers);
+          commutativeMilsteinStep(
+            state,
+            spec.dt,
+            spec.drift,
+            matrixNoise.noiseDimension,
+            matrixNoise.diffusion,
+            matrixNoise.jacobian!,
+            gaussian,
+            next,
+            matrixScratchBuffers
+          );
         } else {
-          stochasticHeunStratonovichStep(state, spec.dt, spec.drift, matrixNoise.noiseDimension, matrixNoise.diffusion, gaussian, next, matrixScratchBuffers);
+          stochasticHeunStratonovichStep(
+            state,
+            spec.dt,
+            spec.drift,
+            matrixNoise.noiseDimension,
+            matrixNoise.diffusion,
+            gaussian,
+            next,
+            matrixScratchBuffers
+          );
         }
       } else if (multiplicative) {
         multiplicative.diffusion(state, bScratch);

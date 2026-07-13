@@ -124,7 +124,8 @@ export function jacobianChain(
   workspace: ChainJacobianWorkspace = createChainJacobianWorkspace(chainLength(parameters))
 ): Float64Array {
   const n = chainLength(parameters);
-  if (workspace.n !== n) throw new Error(`jacobianChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  if (workspace.n !== n)
+    throw new Error(`jacobianChain: workspace length ${workspace.n} does not match chain length ${n}`);
   const { masses, lengths, g } = parameters;
   const nv = 2 * n;
   const { theta, omega, mDual, fDual, t1, t2, t3, suffix } = workspace;
@@ -271,7 +272,8 @@ export function jacobianSphericalChain(
   workspace: SphericalChainJacobianWorkspace = createSphericalChainJacobianWorkspace(sphericalChainLength(params))
 ): Float64Array {
   const n = sphericalChainLength(params);
-  if (workspace.n !== n) throw new Error(`jacobianSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  if (workspace.n !== n)
+    throw new Error(`jacobianSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
   const dof = 2 * n;
   const nv = 4 * n;
   const { thetaDot, phiDot, links, mDual, fDual, t1, t2, t3, suffix } = workspace;
@@ -412,7 +414,11 @@ export function jacobianSphericalChain(
  * (length 9): the drive phase makes the system autonomous, so the only
  * non-trivial row is ω̇ = −(g/l)sinθ − γω + A·cosφ.
  */
-export function jacobianDriven(state: ArrayLike<number>, parameters: DrivenParameters, jac: Float64Array): Float64Array {
+export function jacobianDriven(
+  state: ArrayLike<number>,
+  parameters: DrivenParameters,
+  jac: Float64Array
+): Float64Array {
   const theta = Number(state[0] ?? 0);
   const phi = Number(state[2] ?? 0);
   const { g, length, damping, driveAmplitude } = parameters;

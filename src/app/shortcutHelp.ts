@@ -58,7 +58,9 @@ function buildDialog(): HTMLDialogElement {
   title.id = 'shortcutHelpTitle';
   title.textContent = korean ? '키보드 단축키' : 'Keyboard shortcuts';
   const intro = document.createElement('p');
-  intro.textContent = korean ? '입력 칸 밖에서 누르면 바로 실행됩니다.' : 'Use these keys anywhere outside a text or numeric input.';
+  intro.textContent = korean
+    ? '입력 칸 밖에서 누르면 바로 실행됩니다.'
+    : 'Use these keys anywhere outside a text or numeric input.';
   copy.append(title, intro);
   const close = document.createElement('button');
   close.type = 'button';
@@ -83,7 +85,11 @@ function buildDialog(): HTMLDialogElement {
   dialog.addEventListener('click', (event) => {
     if (event.target !== dialog) return;
     const rect = dialog.getBoundingClientRect();
-    const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+    const inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
     if (!inside) dialog.close();
   });
   dialog.addEventListener('close', () => {

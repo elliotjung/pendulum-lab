@@ -104,9 +104,13 @@ export function codimTwoDiagram(
     dt,
     steps,
     neutralBand,
-    transientHandling: 'Benettin renormalisation discards the orientation transient; finite-time lambda over the full window',
-    caveat: 'Coarse finite-time scan: the lambda=0 contour locates the chaotic boundary to grid resolution only; organising (codim-2) points need continuation of the bracketing bifurcation curves.',
-    reproducibilityHash: hashText(JSON.stringify({ xParam, yParam, xRange, yRange, n, steps, dt, neutralBand, state0: [...state0] })),
+    transientHandling:
+      'Benettin renormalisation discards the orientation transient; finite-time lambda over the full window',
+    caveat:
+      'Coarse finite-time scan: the lambda=0 contour locates the chaotic boundary to grid resolution only; organising (codim-2) points need continuation of the bracketing bifurcation curves.',
+    reproducibilityHash: hashText(
+      JSON.stringify({ xParam, yParam, xRange, yRange, n, steps, dt, neutralBand, state0: [...state0] })
+    ),
     generatedAt: new Date().toISOString()
   };
 }

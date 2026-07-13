@@ -36,12 +36,24 @@ const lines = [
 ];
 
 for (const row of certification.rows) {
-  lines.push(`| ${row.gamma.toFixed(2)} | ${row.Ac.toFixed(6)} | ${row.Apd.toFixed(6)} | ${row.ratio.toFixed(6)} | ${row.ratioUncertainty.toExponential(2)} | ${row.rhoBelow === null ? 'n/a' : row.rhoBelow.toFixed(4)} | ${row.rhoAbove === null ? 'n/a' : row.rhoAbove.toFixed(4)} | ${row.kBelow === null ? 'n/a' : row.kBelow.toFixed(3)} | ${row.kAbove === null ? 'n/a' : row.kAbove.toFixed(3)} | ${row.caveat} |`);
+  lines.push(
+    `| ${row.gamma.toFixed(2)} | ${row.Ac.toFixed(6)} | ${row.Apd.toFixed(6)} | ${row.ratio.toFixed(6)} | ${row.ratioUncertainty.toExponential(2)} | ${row.rhoBelow === null ? 'n/a' : row.rhoBelow.toFixed(4)} | ${row.rhoAbove === null ? 'n/a' : row.rhoAbove.toFixed(4)} | ${row.kBelow === null ? 'n/a' : row.kBelow.toFixed(3)} | ${row.kAbove === null ? 'n/a' : row.kAbove.toFixed(3)} | ${row.caveat} |`
+  );
 }
 
 lines.push('', '## Basin / Transient Caveat Map', '');
 for (const caveat of certification.caveats) lines.push(`- ${caveat}`);
-lines.push('', '## Reproduce', '', '```bash', 'npm run paper:study', 'npm run flagship:certify', 'npm run flagship:external', '```', '');
+lines.push(
+  '',
+  '## Reproduce',
+  '',
+  '```bash',
+  'npm run paper:study',
+  'npm run flagship:certify',
+  'npm run flagship:external',
+  '```',
+  ''
+);
 
 await mkdir('reports', { recursive: true });
 await writeFile('reports/flagship-certification.json', `${JSON.stringify(certification, null, 2)}\n`, 'utf8');

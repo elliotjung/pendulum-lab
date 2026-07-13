@@ -11,7 +11,11 @@ interface ArcCall {
 }
 
 /** Recording stub implementing the Ctx2D subset, capturing arc/line coordinates. */
-function makeStubCtx(): Ctx2D & { calls: Record<string, number>; arcs: ArcCall[]; lineTos: Array<{ x: number; y: number }> } {
+function makeStubCtx(): Ctx2D & {
+  calls: Record<string, number>;
+  arcs: ArcCall[];
+  lineTos: Array<{ x: number; y: number }>;
+} {
   const calls: Record<string, number> = {};
   const arcs: ArcCall[] = [];
   const lineTos: Array<{ x: number; y: number }> = [];
@@ -78,7 +82,10 @@ describe('LabRenderer', () => {
     const ctx = makeStubCtx();
     const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
     // Double pendulum hanging straight down: bobs at (0,1.2) and (0,2.2) metres.
-    renderer.draw([{ x: 0, y: 1.2 }, { x: 0, y: 2.2 }]);
+    renderer.draw([
+      { x: 0, y: 1.2 },
+      { x: 0, y: 2.2 }
+    ]);
     // 3 arcs: pivot + 2 bobs.
     expect(ctx.arcs).toHaveLength(3);
     const pivotY = 400 * 0.38;
@@ -90,16 +97,40 @@ describe('LabRenderer', () => {
   it('preserves the main trail across logical resize', () => {
     const ctx = makeStubCtx();
     const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
-    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.1, y: 2.2 }], { trailLength: 8 });
-    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.2, y: 2.1 }], { trailLength: 8 });
-    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.3, y: 2.0 }], { trailLength: 8 });
+    renderer.draw(
+      [
+        { x: 0, y: 1.2 },
+        { x: 0.1, y: 2.2 }
+      ],
+      { trailLength: 8 }
+    );
+    renderer.draw(
+      [
+        { x: 0, y: 1.2 },
+        { x: 0.2, y: 2.1 }
+      ],
+      { trailLength: 8 }
+    );
+    renderer.draw(
+      [
+        { x: 0, y: 1.2 },
+        { x: 0.3, y: 2.0 }
+      ],
+      { trailLength: 8 }
+    );
 
     expect(renderer.trailPointCount()).toBe(3);
     renderer.resize({ width: 640, height: 420 });
     expect(renderer.size()).toEqual({ width: 640, height: 420 });
     expect(renderer.trailPointCount()).toBe(3);
 
-    renderer.draw([{ x: 0, y: 1.2 }, { x: 0.4, y: 1.9 }], { trailLength: 8 });
+    renderer.draw(
+      [
+        { x: 0, y: 1.2 },
+        { x: 0.4, y: 1.9 }
+      ],
+      { trailLength: 8 }
+    );
     expect(renderer.trailPointCount()).toBe(4);
   });
 });

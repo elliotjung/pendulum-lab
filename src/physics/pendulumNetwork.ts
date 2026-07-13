@@ -67,7 +67,9 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
   const n = parameters.masses.length;
   if (n === 0) throw new Error('PendulumNetworkParameters: at least one node is required');
   if (parameters.lengths.length !== n) {
-    throw new Error(`PendulumNetworkParameters: masses (${n}) and lengths (${parameters.lengths.length}) must have the same length`);
+    throw new Error(
+      `PendulumNetworkParameters: masses (${n}) and lengths (${parameters.lengths.length}) must have the same length`
+    );
   }
   if (!Number.isFinite(parameters.g) || parameters.g <= 0) {
     throw new Error('PendulumNetworkParameters: g must be positive and finite');
@@ -75,11 +77,15 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
   for (let i = 0; i < n; i += 1) {
     const m = parameters.masses[i] ?? NaN;
     const l = parameters.lengths[i] ?? NaN;
-    if (!Number.isFinite(m) || m <= 0) throw new Error(`PendulumNetworkParameters: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(l) || l <= 0) throw new Error(`PendulumNetworkParameters: length[${i}] must be positive and finite`);
+    if (!Number.isFinite(m) || m <= 0)
+      throw new Error(`PendulumNetworkParameters: mass[${i}] must be positive and finite`);
+    if (!Number.isFinite(l) || l <= 0)
+      throw new Error(`PendulumNetworkParameters: length[${i}] must be positive and finite`);
   }
   if (parameters.coupling.length !== n * n) {
-    throw new Error(`PendulumNetworkParameters: coupling must be an N×N (${n * n}) matrix, got ${parameters.coupling.length}`);
+    throw new Error(
+      `PendulumNetworkParameters: coupling must be an N×N (${n * n}) matrix, got ${parameters.coupling.length}`
+    );
   }
   for (let i = 0; i < n; i += 1) {
     for (let j = i + 1; j < n; j += 1) {
@@ -89,15 +95,19 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
         throw new Error(`PendulumNetworkParameters: coupling[${i},${j}] must be finite and non-negative`);
       }
       if (Math.abs(kij - kji) > 1e-12 * (1 + Math.abs(kij))) {
-        throw new Error(`PendulumNetworkParameters: coupling must be symmetric (coupling[${i},${j}] != coupling[${j},${i}])`);
+        throw new Error(
+          `PendulumNetworkParameters: coupling must be symmetric (coupling[${i},${j}] != coupling[${j},${i}])`
+        );
       }
     }
   }
   if (parameters.damping) {
-    if (parameters.damping.length !== n) throw new Error(`PendulumNetworkParameters: damping must have length N (${n})`);
+    if (parameters.damping.length !== n)
+      throw new Error(`PendulumNetworkParameters: damping must have length N (${n})`);
     for (let i = 0; i < n; i += 1) {
       const gi = parameters.damping[i] ?? NaN;
-      if (!Number.isFinite(gi) || gi < 0) throw new Error(`PendulumNetworkParameters: damping[${i}] must be finite and non-negative`);
+      if (!Number.isFinite(gi) || gi < 0)
+        throw new Error(`PendulumNetworkParameters: damping[${i}] must be finite and non-negative`);
     }
   }
 }
@@ -144,7 +154,11 @@ export function ringCouplingMatrix(n: number, kappa: number): Float64Array {
  * dense coupling sum). Writes [θ', ω'] into `out`; angles measured from the
  * downward vertical.
  */
-export function rhsPendulumNetwork(state: ArrayLike<number>, parameters: PendulumNetworkParameters, out: StateVector): StateVector {
+export function rhsPendulumNetwork(
+  state: ArrayLike<number>,
+  parameters: PendulumNetworkParameters,
+  out: StateVector
+): StateVector {
   const n = parameters.masses.length;
   const { g, coupling } = parameters;
   const damping = parameters.damping;
@@ -170,7 +184,10 @@ export function rhsPendulumNetwork(state: ArrayLike<number>, parameters: Pendulu
  * Total mechanical energy of the network: kinetic + gravitational + the
  * torsional-spring coupling potential ½ Σ_{i<j} κ_ij (θ_i − θ_j)².
  */
-export function pendulumNetworkEnergy(state: ArrayLike<number>, parameters: PendulumNetworkParameters): EnergyBreakdown {
+export function pendulumNetworkEnergy(
+  state: ArrayLike<number>,
+  parameters: PendulumNetworkParameters
+): EnergyBreakdown {
   const n = parameters.masses.length;
   const { g, coupling } = parameters;
   let KE = 0;

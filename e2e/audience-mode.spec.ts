@@ -9,9 +9,7 @@ async function visibleInteractiveCount(page: import('@playwright/test').Page, ro
       const box = element.getBoundingClientRect();
       return style.display !== 'none' && style.visibility !== 'hidden' && box.width > 0 && box.height > 0;
     };
-    return Array.from(root.querySelectorAll('button,input,select,textarea,canvas'))
-      .filter(visible)
-      .length;
+    return Array.from(root.querySelectorAll('button,input,select,textarea,canvas')).filter(visible).length;
   }, rootSelector);
 }
 
@@ -83,7 +81,10 @@ test('rail uses task-centered labels and icons', async ({ page }) => {
   // enriched "Full name — what it does" tooltip (see src/app/navGuide.ts).
   await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"] .tab-desc')).toContainText('Run the live simulation');
   await expect(page.locator('#rail-panel-check .tab[data-tab="research"] .tab-desc')).toContainText('Fit parameters');
-  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"]')).toHaveAttribute('title', /Simulation Lab — Run the live simulation/);
+  await expect(page.locator('#rail-panel-sim .tab[data-tab="lab"]')).toHaveAttribute(
+    'title',
+    /Simulation Lab — Run the live simulation/
+  );
 });
 
 test('beginner mode turns the lab into a focused simulator', async ({ page }) => {

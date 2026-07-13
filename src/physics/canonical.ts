@@ -37,7 +37,11 @@ export function doubleMassMatrix(q1: number, q2: number, parameters: PendulumPar
   return { m11, m12, m22, det: m11 * m22 - m12 * m12 };
 }
 
-export function momentumToOmega(canonical: ArrayLike<number>, parameters: PendulumParameters, out = new Float64Array(4)): Float64Array {
+export function momentumToOmega(
+  canonical: ArrayLike<number>,
+  parameters: PendulumParameters,
+  out = new Float64Array(4)
+): Float64Array {
   const q1 = Number(canonical[0] ?? 0);
   const q2 = Number(canonical[1] ?? 0);
   const p1 = Number(canonical[2] ?? 0);
@@ -55,7 +59,11 @@ export function momentumToOmega(canonical: ArrayLike<number>, parameters: Pendul
   return out;
 }
 
-export function omegaToMomentum(thetaOmega: ArrayLike<number>, parameters: PendulumParameters, out = new Float64Array(4)): Float64Array {
+export function omegaToMomentum(
+  thetaOmega: ArrayLike<number>,
+  parameters: PendulumParameters,
+  out = new Float64Array(4)
+): Float64Array {
   const q1 = Number(thetaOmega[0] ?? 0);
   const q2 = Number(thetaOmega[1] ?? 0);
   const w1 = Number(thetaOmega[2] ?? 0);
@@ -85,7 +93,11 @@ export function canonicalHamiltonian(canonical: ArrayLike<number>, parameters: P
  * a genuine (not merely approximate) symplectic integrator of the true
  * Hamiltonian vector field. Verified against finite differences in the tests.
  */
-export function hamiltonianGradient(canonical: ArrayLike<number>, parameters: PendulumParameters, out = new Float64Array(4)): Float64Array {
+export function hamiltonianGradient(
+  canonical: ArrayLike<number>,
+  parameters: PendulumParameters,
+  out = new Float64Array(4)
+): Float64Array {
   const q1 = Number(canonical[0] ?? 0);
   const q2 = Number(canonical[1] ?? 0);
   const { m1, m2, l1, l2, g } = parameters;
@@ -104,7 +116,12 @@ export function hamiltonianGradient(canonical: ArrayLike<number>, parameters: Pe
   return out;
 }
 
-export function canonicalRhs(canonical: ArrayLike<number>, parameters: PendulumParameters, gamma: number, out = new Float64Array(4)): Float64Array {
+export function canonicalRhs(
+  canonical: ArrayLike<number>,
+  parameters: PendulumParameters,
+  gamma: number,
+  out = new Float64Array(4)
+): Float64Array {
   const grad = hamiltonianGradient(canonical, parameters);
   const thetaOmega = momentumToOmega(canonical, parameters);
   out[0] = grad[2] ?? 0;
@@ -122,7 +139,12 @@ export function implicitMidpointCanonical(
   tolerance = 1e-10,
   maxIterations = 12
 ): CanonicalStepResult {
-  const y0 = new Float64Array([Number(canonical[0] ?? 0), Number(canonical[1] ?? 0), Number(canonical[2] ?? 0), Number(canonical[3] ?? 0)]);
+  const y0 = new Float64Array([
+    Number(canonical[0] ?? 0),
+    Number(canonical[1] ?? 0),
+    Number(canonical[2] ?? 0),
+    Number(canonical[3] ?? 0)
+  ]);
   const trial = new Float64Array(y0);
   const mid = new Float64Array(4);
   const rhs = new Float64Array(4);

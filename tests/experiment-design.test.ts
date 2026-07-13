@@ -69,7 +69,9 @@ describe('multi-dimensional samplers', () => {
     }
     expect(design.filter((point) => point.origin === 'replicate')).toHaveLength(10);
 
-    const capped = generateDesign(vars2, 'latin-hypercube', 100, { budget: { maxPoints: 12, maxTimeMs: 1, maxFailures: 1 } });
+    const capped = generateDesign(vars2, 'latin-hypercube', 100, {
+      budget: { maxPoints: 12, maxTimeMs: 1, maxFailures: 1 }
+    });
     expect(capped.length).toBeLessThanOrEqual(12);
   });
 });

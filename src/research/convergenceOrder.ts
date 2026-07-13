@@ -40,7 +40,13 @@ export interface ConvergenceResult {
 }
 
 /** Integrate `state0` to `totalTime` with a fixed `dt`, returning the final state. */
-function integrateFixed(method: IntegratorId, rhs: Derivative, state0: ArrayLike<number>, dt: number, totalTime: number): Float64Array {
+function integrateFixed(
+  method: IntegratorId,
+  rhs: Derivative,
+  state0: ArrayLike<number>,
+  dt: number,
+  totalTime: number
+): Float64Array {
   const n = state0.length;
   let current = new Float64Array(n);
   let next = new Float64Array(n);

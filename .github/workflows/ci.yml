@@ -24,6 +24,9 @@ jobs:
       # Supply-chain gate: the toolchain that generates research artifacts and
       # signs releases must not carry known high/critical advisories.
       - run: npm run audit:deps
+      # Fast style signal: the repository Prettier config is enforced
+      # (also re-checked at the end of npm run verify after docs:sync writes).
+      - run: npm run format:check
       # Fast PR signal: quick unit tier before the full policy/type/test gate.
       - run: npm run test:quick
       # Scientific acceleration contract: GPU paths must agree with CPU or fall back.

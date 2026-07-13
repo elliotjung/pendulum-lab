@@ -1,8 +1,23 @@
 import { describe, expect, test } from 'vitest';
 import {
-  twoSum, twoProd, ddFromNumber, ddToNumber, ddAddDouble, ddAdd, ddSub, ddMul, ddMulDouble, ddNeg,
-  ddDiv, ddDivDouble, ddSin, ddCos, ddSinCos,
-  ddRk4Step, ddVerletStep, type DD
+  twoSum,
+  twoProd,
+  ddFromNumber,
+  ddToNumber,
+  ddAddDouble,
+  ddAdd,
+  ddSub,
+  ddMul,
+  ddMulDouble,
+  ddNeg,
+  ddDiv,
+  ddDivDouble,
+  ddSin,
+  ddCos,
+  ddSinCos,
+  ddRk4Step,
+  ddVerletStep,
+  type DD
 } from '../src/validation/doubleDouble';
 import { rk4Step } from '../src/physics/integrators';
 import type { Derivative } from '../src/physics/types';
@@ -100,12 +115,16 @@ const f64Rhs: Derivative = (s, o) => {
 const ddRhs = (yHi: Float64Array, yLo: Float64Array, outHi: Float64Array, outLo: Float64Array): void => {
   const x: DD = [yHi[0] ?? 0, yLo[0] ?? 0];
   const y: DD = [yHi[1] ?? 0, yLo[1] ?? 0];
-  outHi[0] = yHi[2] ?? 0; outLo[0] = yLo[2] ?? 0; // ẋ = px
-  outHi[1] = yHi[3] ?? 0; outLo[1] = yLo[3] ?? 0; // ẏ = py
+  outHi[0] = yHi[2] ?? 0;
+  outLo[0] = yLo[2] ?? 0; // ẋ = px
+  outHi[1] = yHi[3] ?? 0;
+  outLo[1] = yLo[3] ?? 0; // ẏ = py
   const fx = ddNeg(ddAdd(x, ddMulDouble(ddMul(x, y), 2))); // −x − 2xy
   const fy = ddSub(ddSub(ddMul(y, y), y), ddMul(x, x)); // y² − y − x²
-  outHi[2] = fx[0]; outLo[2] = fx[1];
-  outHi[3] = fy[0]; outLo[3] = fy[1];
+  outHi[2] = fx[0];
+  outLo[2] = fx[1];
+  outHi[3] = fy[0];
+  outLo[3] = fy[1];
 };
 
 const ddForce = (qHi: Float64Array, qLo: Float64Array, outHi: Float64Array, outLo: Float64Array): void => {
@@ -113,8 +132,10 @@ const ddForce = (qHi: Float64Array, qLo: Float64Array, outHi: Float64Array, outL
   const y: DD = [qHi[1] ?? 0, qLo[1] ?? 0];
   const fx = ddNeg(ddAdd(x, ddMulDouble(ddMul(x, y), 2)));
   const fy = ddSub(ddSub(ddMul(y, y), y), ddMul(x, x));
-  outHi[0] = fx[0]; outLo[0] = fx[1];
-  outHi[1] = fy[0]; outLo[1] = fy[1];
+  outHi[0] = fx[0];
+  outLo[0] = fx[1];
+  outHi[1] = fy[0];
+  outLo[1] = fy[1];
 };
 
 /** Plain float64 Störmer–Verlet for the same separable system. */
@@ -122,10 +143,13 @@ function f64Verlet(q: number[], p: number[], dt: number, steps: number): void {
   const F = (qx: number, qy: number): [number, number] => [-qx - 2 * qx * qy, -qy - qx * qx + qy * qy];
   for (let s = 0; s < steps; s += 1) {
     let [fx, fy] = F(q[0]!, q[1]!);
-    p[0]! += (dt / 2) * fx; p[1]! += (dt / 2) * fy;
-    q[0]! += dt * p[0]!; q[1]! += dt * p[1]!;
+    p[0]! += (dt / 2) * fx;
+    p[1]! += (dt / 2) * fy;
+    q[0]! += dt * p[0]!;
+    q[1]! += dt * p[1]!;
     [fx, fy] = F(q[0]!, q[1]!);
-    p[0]! += (dt / 2) * fx; p[1]! += (dt / 2) * fy;
+    p[0]! += (dt / 2) * fx;
+    p[1]! += (dt / 2) * fy;
   }
 }
 
@@ -140,19 +164,25 @@ describe('double-double carries ~15 more digits than float64 (Verlet round trip)
     const steps = 8000;
 
     // float64 round trip.
-    const qf = [...q0], pf = [...p0];
+    const qf = [...q0],
+      pf = [...p0];
     f64Verlet(qf, pf, dt, steps);
     f64Verlet(qf, pf, -dt, steps);
-    const f64Err = Math.abs(qf[0]! - q0[0]!) + Math.abs(qf[1]! - q0[1]!) + Math.abs(pf[0]! - p0[0]!) + Math.abs(pf[1]! - p0[1]!);
+    const f64Err =
+      Math.abs(qf[0]! - q0[0]!) + Math.abs(qf[1]! - q0[1]!) + Math.abs(pf[0]! - p0[0]!) + Math.abs(pf[1]! - p0[1]!);
 
     // double-double round trip.
-    const qHi = Float64Array.from(q0), qLo = new Float64Array(2);
-    const pHi = Float64Array.from(p0), pLo = new Float64Array(2);
+    const qHi = Float64Array.from(q0),
+      qLo = new Float64Array(2);
+    const pHi = Float64Array.from(p0),
+      pLo = new Float64Array(2);
     for (let s = 0; s < steps; s += 1) ddVerletStep(qHi, qLo, pHi, pLo, dt, ddForce);
     for (let s = 0; s < steps; s += 1) ddVerletStep(qHi, qLo, pHi, pLo, -dt, ddForce);
     const ddErr =
-      Math.abs(ddToNumber([qHi[0]!, qLo[0]!]) - q0[0]!) + Math.abs(ddToNumber([qHi[1]!, qLo[1]!]) - q0[1]!) +
-      Math.abs(ddToNumber([pHi[0]!, pLo[0]!]) - p0[0]!) + Math.abs(ddToNumber([pHi[1]!, pLo[1]!]) - p0[1]!);
+      Math.abs(ddToNumber([qHi[0]!, qLo[0]!]) - q0[0]!) +
+      Math.abs(ddToNumber([qHi[1]!, qLo[1]!]) - q0[1]!) +
+      Math.abs(ddToNumber([pHi[0]!, pLo[0]!]) - p0[0]!) +
+      Math.abs(ddToNumber([pHi[1]!, pLo[1]!]) - p0[1]!);
 
     expect(f64Err).toBeGreaterThan(1e-14); // float64 round-off is clearly visible (~5e-14)
     expect(ddErr).toBeLessThan(1e-22); // double-double is essentially exact (~1e-31)
@@ -171,7 +201,8 @@ describe('double-double RK4 is an exact-arithmetic reference for the float64 RK4
       }
       return Array.from(cur);
     }
-    const yHi = Float64Array.from(y0), yLo = new Float64Array(y0.length);
+    const yHi = Float64Array.from(y0),
+      yLo = new Float64Array(y0.length);
     for (let s = 0; s < steps; s += 1) ddRk4Step(yHi, yLo, dt, ddRhs);
     return Array.from(yHi).map((h, i) => ddToNumber([h, yLo[i]!]));
   }

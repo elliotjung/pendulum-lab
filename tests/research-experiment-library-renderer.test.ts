@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { experimentBadgeText, experimentOptionLabel, experimentSummaryText } from '../src/app/parity/research-experiment-library-renderer';
+import {
+  experimentBadgeText,
+  experimentOptionLabel,
+  experimentSummaryText
+} from '../src/app/parity/research-experiment-library-renderer';
 import type { ResearchExperiment } from '../src/app/parity/shared';
 import type { RuntimeSnapshot } from '../src/types/domain';
 
@@ -36,7 +40,9 @@ describe('research experiment library renderer helpers', () => {
   });
 
   it('summarizes selected and filtered experiment counts', () => {
-    expect(experimentSummaryText(3, 1, experiment)).toContain('3 experiment(s) (1 matching filter). Selected: baseline');
+    expect(experimentSummaryText(3, 1, experiment)).toContain(
+      '3 experiment(s) (1 matching filter). Selected: baseline'
+    );
     expect(experimentSummaryText(0, 0)).toBe('0 experiment(s). Save current state to begin.');
   });
 

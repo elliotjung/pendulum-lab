@@ -63,7 +63,11 @@ const DP_B4 = [5179 / 57600, 0, 7571 / 16695, 393 / 640, -92097 / 339200, 187 / 
 void DP_C; // tableau nodes retained for documentation/extension
 
 /** Shared stage computation for the plain and dense Dormand-Prince steps. */
-function dormandPrinceStages(state: StateVector, dt: number, rhs: Derivative): { k: StateVector[]; y: StateVector; error: number } {
+function dormandPrinceStages(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative
+): { k: StateVector[]; y: StateVector; error: number } {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 7 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -159,7 +163,11 @@ export function dormandPrince54StepDense(state: StateVector, dt: number, rhs: De
     interpolate(theta: number, out: StateVector): StateVector {
       const oneMinus = 1 - theta;
       for (let i = 0; i < n; i += 1) {
-        out[i] = Number(r1[i] ?? 0) + theta * (Number(r2[i] ?? 0) + oneMinus * (Number(r3[i] ?? 0) + theta * (Number(r4[i] ?? 0) + oneMinus * Number(r5[i] ?? 0))));
+        out[i] =
+          Number(r1[i] ?? 0) +
+          theta *
+            (Number(r2[i] ?? 0) +
+              oneMinus * (Number(r3[i] ?? 0) + theta * (Number(r4[i] ?? 0) + oneMinus * Number(r5[i] ?? 0))));
       }
       return out;
     }
@@ -193,14 +201,16 @@ export interface StepController {
 
 const PI42: StepControllerCoefficients = { kI: 0.7, kP: 0.4 };
 
-export function createStepController(options: {
-  kind?: StepControllerKind;
-  order?: number;
-  safety?: number;
-  minFactor?: number;
-  maxFactor?: number;
-  coefficients?: StepControllerCoefficients;
-} = {}): StepController {
+export function createStepController(
+  options: {
+    kind?: StepControllerKind;
+    order?: number;
+    safety?: number;
+    minFactor?: number;
+    maxFactor?: number;
+    coefficients?: StepControllerCoefficients;
+  } = {}
+): StepController {
   const order = options.order ?? 5;
   const safety = options.safety ?? 0.9;
   const minFactor = options.minFactor ?? 0.2;
@@ -213,9 +223,10 @@ export function createStepController(options: {
   return {
     factor(errorNorm: number, accepted: boolean): number {
       const err = Math.max(errorNorm, ERR_FLOOR);
-      let raw = errorNorm === 0
-        ? maxFactor
-        : safety * err ** (-co.kI / order) * prev ** (co.kP / order) * prev2 ** (-(co.kD ?? 0) / order);
+      let raw =
+        errorNorm === 0
+          ? maxFactor
+          : safety * err ** (-co.kI / order) * prev ** (co.kP / order) * prev2 ** (-(co.kD ?? 0) / order);
       if (!accepted) raw = Math.min(raw, 1);
       if (accepted) {
         prev2 = prev;
@@ -289,14 +300,15 @@ export function integrateAdaptive(
   const maxIterations = 10_000_000;
   // The stateful PI(D) controller path; `basic`/unset keeps the historical
   // memoryless adaptiveStep behaviour bit for bit.
-  const controller = options.controller && options.controller !== 'basic'
-    ? createStepController({
-        kind: options.controller,
-        order: options.order ?? 5,
-        safety: options.safety ?? 0.9,
-        ...(options.controllerCoefficients ? { coefficients: options.controllerCoefficients } : {})
-      })
-    : undefined;
+  const controller =
+    options.controller && options.controller !== 'basic'
+      ? createStepController({
+          kind: options.controller,
+          order: options.order ?? 5,
+          safety: options.safety ?? 0.9,
+          ...(options.controllerCoefficients ? { coefficients: options.controllerCoefficients } : {})
+        })
+      : undefined;
   const absTol = options.absTol ?? 1e-8;
   const relTol = options.relTol ?? 1e-6;
   const minDt = options.minDt ?? 1e-9;

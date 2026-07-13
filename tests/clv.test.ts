@@ -27,13 +27,19 @@ describe('CLV recovery on a linear system with known eigenvectors', () => {
     jac[3] = A[3]!;
   };
 
-  const result = covariantLyapunovVectors([1, 0.5], rhs, 2, {
-    dt: 0.01,
-    renormEvery: 10,
-    forwardTransient: 100,
-    window: 200,
-    backwardTransient: 100
-  }, jacobian);
+  const result = covariantLyapunovVectors(
+    [1, 0.5],
+    rhs,
+    2,
+    {
+      dt: 0.01,
+      renormEvery: 10,
+      forwardTransient: 100,
+      window: 200,
+      backwardTransient: 100
+    },
+    jacobian
+  );
 
   test('recovers the exponents log-eigenvalues 0.5 and −0.3', () => {
     expect(result.exponents[0]!).toBeCloseTo(0.5, 2);
@@ -66,13 +72,19 @@ describe('CLV on the double pendulum cross-checks the Lyapunov spectrum', () => 
   const jacobian = buildJacobian({ kind: 'double', ...params });
 
   test('CLV exponents match lyapunovSpectrum and the spectrum is ≈ {λ,0,0,−λ}', () => {
-    const clv = covariantLyapunovVectors([2.0, 2.0, 0, 0], rhs, 4, {
-      dt: 0.01,
-      renormEvery: 10,
-      forwardTransient: 300,
-      window: 600,
-      backwardTransient: 300
-    }, jacobian);
+    const clv = covariantLyapunovVectors(
+      [2.0, 2.0, 0, 0],
+      rhs,
+      4,
+      {
+        dt: 0.01,
+        renormEvery: 10,
+        forwardTransient: 300,
+        window: 600,
+        backwardTransient: 300
+      },
+      jacobian
+    );
     const spec = lyapunovSpectrum(new Float64Array([2.0, 2.0, 0, 0]), rhs, 4, { dt: 0.01, steps: 9000 }, jacobian);
 
     // Same largest exponent (chaotic, positive) within finite-time scatter.

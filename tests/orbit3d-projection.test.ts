@@ -84,11 +84,11 @@ describe('OrbitCamera.project golden values', () => {
   });
 });
 
-describe('bob depth ordering (painter\'s algorithm)', () => {
+describe("bob depth ordering (painter's algorithm)", () => {
   it('orders indices far-to-near so near bobs draw last (on top)', () => {
     const order = depthSortIndices([
       { depth: -0.5 }, // nearest
-      { depth: 1.2 },  // farthest
+      { depth: 1.2 }, // farthest
       { depth: 0.3 }
     ]);
     expect(order).toEqual([1, 2, 0]);

@@ -179,7 +179,14 @@ export interface ExpansionLyapunovProfile {
   /** Running (leading, secondary) exponents versus time. */
   timeline: ExpansionLyapunovTimelinePoint[];
   /** The settings the estimate was computed with (a bare number is not reproducible). */
-  settings: { dt: number; steps: number; renormEvery: number; transientSteps: number; count: number; jacobian: 'exact' | 'central-difference' };
+  settings: {
+    dt: number;
+    steps: number;
+    renormEvery: number;
+    transientSteps: number;
+    count: number;
+    jacobian: 'exact' | 'central-difference';
+  };
 }
 
 export interface ExpansionBasinCell {

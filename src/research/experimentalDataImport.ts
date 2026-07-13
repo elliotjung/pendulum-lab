@@ -1,5 +1,10 @@
 import type { LevenbergMarquardtOptions } from './parameterEstimation';
-import { fitDoublePendulum, type DoublePendulumFitResult, type DoublePendulumFitSpec, type DoublePendulumObservation } from './parameterEstimation';
+import {
+  fitDoublePendulum,
+  type DoublePendulumFitResult,
+  type DoublePendulumFitSpec,
+  type DoublePendulumObservation
+} from './parameterEstimation';
 
 export interface ExperimentalCsvImportOptions {
   angleUnit?: 'radian' | 'degree';
@@ -42,11 +47,17 @@ function splitCsvLine(line: string): string[] {
 }
 
 function normalizeHeader(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, '');
 }
 
 function parseRows(text: string): RecordRow[] {
-  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter((line) => line.length > 0 && !line.startsWith('#'));
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'));
   if (lines.length < 2) throw new Error('parseObservedDoublePendulumCsv: CSV needs a header and at least one row.');
   const headers = splitCsvLine(lines[0]!).map(normalizeHeader);
   return lines.slice(1).map((line) => {
@@ -75,7 +86,7 @@ function readNumber(row: RecordRow, keys: readonly string[], label: string): num
 }
 
 function toRadians(value: number, unit: 'radian' | 'degree'): number {
-  return unit === 'degree' ? value * Math.PI / 180 : value;
+  return unit === 'degree' ? (value * Math.PI) / 180 : value;
 }
 
 function positionAngles(row: RecordRow, options: ExperimentalCsvImportOptions): [number, number] {
@@ -94,7 +105,10 @@ function hasAngleColumns(row: RecordRow): boolean {
   return pick(row, THETA1_KEYS) !== undefined && pick(row, THETA2_KEYS) !== undefined;
 }
 
-export function parseObservedDoublePendulumCsv(text: string, options: ExperimentalCsvImportOptions = {}): DoublePendulumObservation {
+export function parseObservedDoublePendulumCsv(
+  text: string,
+  options: ExperimentalCsvImportOptions = {}
+): DoublePendulumObservation {
   const rows = parseRows(text);
   const unit = options.angleUnit ?? 'radian';
   const times: number[] = [];
@@ -111,7 +125,8 @@ export function parseObservedDoublePendulumCsv(text: string, options: Experiment
     }
   }
   for (let i = 1; i < times.length; i += 1) {
-    if (!(times[i]! > times[i - 1]!)) throw new Error('parseObservedDoublePendulumCsv: time column must be strictly increasing.');
+    if (!(times[i]! > times[i - 1]!))
+      throw new Error('parseObservedDoublePendulumCsv: time column must be strictly increasing.');
   }
   return { times, angles };
 }

@@ -136,6 +136,7 @@ export function recurrenceNetworkMetrics(matrix: ArrayLike<number>, n: number): 
     transitivity: triples > 0 ? trianglesX3 / triples : 0,
     averagePathLength: pathPairs > 0 ? pathSum / pathPairs : 0,
     largestComponent,
-    caveat: 'Network measures depend on the embedding/threshold used to build the recurrence matrix; compare only across runs with identical RQA settings.'
+    caveat:
+      'Network measures depend on the embedding/threshold used to build the recurrence matrix; compare only across runs with identical RQA settings.'
   };
 }

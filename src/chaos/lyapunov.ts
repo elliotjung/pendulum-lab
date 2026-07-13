@@ -218,7 +218,11 @@ function resolve(partial: Partial<LyapunovSettings>): LyapunovSettings {
  * accumulate its logarithmic growth, and rescale the shadow back to the initial
  * separation along the current direction.
  */
-export function maximalLyapunov(state0: ArrayLike<number>, rhs: Derivative, options: Partial<LyapunovSettings> = {}): MaximalLyapunovResult {
+export function maximalLyapunov(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  options: Partial<LyapunovSettings> = {}
+): MaximalLyapunovResult {
   const settings = resolve(options);
   const stepper = makeStepper(settings.method);
   const n = state0.length;
@@ -271,7 +275,8 @@ export function maximalLyapunov(state0: ArrayLike<number>, rhs: Derivative, opti
       localExponents.push(Math.log(d / d0) / intervalTime);
       // Rescale shadow back to separation d0 along the current direction.
       const scale = d0 / d;
-      for (let i = 0; i < n; i += 1) shadow[i] = Number(ref[i] ?? 0) + scale * (Number(shadow[i] ?? 0) - Number(ref[i] ?? 0));
+      for (let i = 0; i < n; i += 1)
+        shadow[i] = Number(ref[i] ?? 0) + scale * (Number(shadow[i] ?? 0) - Number(ref[i] ?? 0));
     }
   }
 

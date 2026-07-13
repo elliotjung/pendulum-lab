@@ -5,7 +5,8 @@ import {
 } from '../research/videoTracking';
 import type { DoublePendulumObservation } from '../research/parameterEstimation';
 
-export type VideoMarkerCaptureState = 'idle' | 'requesting' | 'streaming' | 'denied' | 'unsupported' | 'stopped' | 'error';
+export type VideoMarkerCaptureState =
+  'idle' | 'requesting' | 'streaming' | 'denied' | 'unsupported' | 'stopped' | 'error';
 
 export interface VideoMarkerSample extends TrackedDoublePendulumFrame {
   /** Monotonic seconds since capture started. */
@@ -67,7 +68,10 @@ export class VideoMarkerCaptureController {
     this.video = options.video;
     this.canvas = options.canvas;
     this.tracking = options.tracking;
-    this.constraints = options.constraints ?? { video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false };
+    this.constraints = options.constraints ?? {
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false
+    };
     const defaults = browserDependencies();
     this.dependencies = { ...defaults, ...options.dependencies };
     this.onSample = options.onSample;
@@ -106,10 +110,14 @@ export class VideoMarkerCaptureController {
       stopStream(this.stream);
       this.stream = null;
       this.video.srcObject = null;
-      const denied = error instanceof DOMException && (error.name === 'NotAllowedError' || error.name === 'SecurityError');
-      this.setState(denied ? 'denied' : 'error', denied
-        ? 'Camera permission was denied. Import a recorded CSV instead.'
-        : `Camera could not start: ${error instanceof Error ? error.message : String(error)}`);
+      const denied =
+        error instanceof DOMException && (error.name === 'NotAllowedError' || error.name === 'SecurityError');
+      this.setState(
+        denied ? 'denied' : 'error',
+        denied
+          ? 'Camera permission was denied. Import a recorded CSV instead.'
+          : `Camera could not start: ${error instanceof Error ? error.message : String(error)}`
+      );
       return false;
     }
   }
@@ -153,7 +161,10 @@ export class VideoMarkerCaptureController {
     const observation = this.observation();
     return [
       'time,theta1,theta2',
-      ...observation.times.map((time, index) => `${time.toPrecision(12)},${observation.angles[index]![0].toPrecision(12)},${observation.angles[index]![1].toPrecision(12)}`)
+      ...observation.times.map(
+        (time, index) =>
+          `${time.toPrecision(12)},${observation.angles[index]![0].toPrecision(12)},${observation.angles[index]![1].toPrecision(12)}`
+      )
     ].join('\n');
   }
 

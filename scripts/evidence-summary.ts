@@ -52,7 +52,8 @@ const summary = buildEvidenceSummary({
     sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     packageVersion: packageJson.version ?? 'unknown',
     lockfileSha256: createHash('sha256').update(lockfile).digest('hex'),
-    dirtyWorktree: execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).trim().length > 0,
+    dirtyWorktree:
+      execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).trim().length > 0,
     expiresAfterDays,
     expiresAt: new Date(generatedAt.getTime() + expiresAfterDays * 86_400_000).toISOString()
   }

@@ -164,7 +164,10 @@ export function rhsEmbeddedChain(
   workspace: EmbeddedChainWorkspace = createEmbeddedChainWorkspace(params)
 ): Float64Array {
   const n = workspace.n;
-  if (n !== sphericalChainLength(params)) throw new Error(`rhsEmbeddedChain: workspace length ${n} does not match chain length ${sphericalChainLength(params)}`);
+  if (n !== sphericalChainLength(params))
+    throw new Error(
+      `rhsEmbeddedChain: workspace length ${n} does not match chain length ${sphericalChainLength(params)}`
+    );
   const { bInv, phi, gMatrix, gFactor, lambda, wSq } = workspace;
   const uOff = 0;
   const wOff = 3 * n;
@@ -186,7 +189,10 @@ export function rhsEmbeddedChain(
     const uiy = Number(state[uOff + 3 * i + 1] ?? 0);
     const uiz = Number(state[uOff + 3 * i + 2] ?? 0);
     for (let j = 0; j < n; j += 1) {
-      const dot = uix * Number(state[uOff + 3 * j] ?? 0) + uiy * Number(state[uOff + 3 * j + 1] ?? 0) + uiz * Number(state[uOff + 3 * j + 2] ?? 0);
+      const dot =
+        uix * Number(state[uOff + 3 * j] ?? 0) +
+        uiy * Number(state[uOff + 3 * j + 1] ?? 0) +
+        uiz * Number(state[uOff + 3 * j + 2] ?? 0);
       gMatrix[i * n + j] = (bInv[i * n + j] ?? 0) * dot;
     }
     lambda[i] = -(wSq[i] ?? 0) + uiy * (phi[i] ?? 0);
@@ -220,7 +226,10 @@ export function rhsEmbeddedChain(
 }
 
 /** Cartesian bob positions r_i = Σ_{k≤i} l_k u_k (y up, pivot at the origin). */
-export function embeddedChainPositions(state: ArrayLike<number>, params: EmbeddedChainParams): Array<{ x: number; y: number; z: number }> {
+export function embeddedChainPositions(
+  state: ArrayLike<number>,
+  params: EmbeddedChainParams
+): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
   const out: Array<{ x: number; y: number; z: number }> = [];
   let x = 0;
@@ -237,7 +246,10 @@ export function embeddedChainPositions(state: ArrayLike<number>, params: Embedde
 }
 
 /** Cartesian bob velocities ṙ_i = Σ_{k≤i} l_k w_k. */
-export function embeddedChainVelocities(state: ArrayLike<number>, params: EmbeddedChainParams): Array<{ x: number; y: number; z: number }> {
+export function embeddedChainVelocities(
+  state: ArrayLike<number>,
+  params: EmbeddedChainParams
+): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
   const wOff = 3 * n;
   const out: Array<{ x: number; y: number; z: number }> = [];
@@ -401,7 +413,11 @@ export class EmbeddedSphericalChain {
   private readonly scratch: Float64Array[];
   private readonly dt: number;
 
-  constructor(readonly params: EmbeddedChainParams, initial: ArrayLike<number>, dt = 0.002) {
+  constructor(
+    readonly params: EmbeddedChainParams,
+    initial: ArrayLike<number>,
+    dt = 0.002
+  ) {
     validateSphericalChainParams(params);
     this.n = sphericalChainLength(params);
     const dof = 6 * this.n;
@@ -441,7 +457,13 @@ export class EmbeddedSphericalChain {
 
   private rk4(h: number): void {
     const dof = this.state.length;
-    const [k1, k2, k3, k4, tmp] = this.scratch as [Float64Array, Float64Array, Float64Array, Float64Array, Float64Array];
+    const [k1, k2, k3, k4, tmp] = this.scratch as [
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array,
+      Float64Array
+    ];
     rhsEmbeddedChain(this.state, this.params, k1, this.workspace);
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + (h / 2) * (k1[i] ?? 0);
     rhsEmbeddedChain(tmp, this.params, k2, this.workspace);
@@ -450,7 +472,8 @@ export class EmbeddedSphericalChain {
     for (let i = 0; i < dof; i += 1) tmp[i] = (this.state[i] ?? 0) + h * (k3[i] ?? 0);
     rhsEmbeddedChain(tmp, this.params, k4, this.workspace);
     for (let i = 0; i < dof; i += 1) {
-      this.state[i] = (this.state[i] ?? 0) + (h / 6) * ((k1[i] ?? 0) + 2 * (k2[i] ?? 0) + 2 * (k3[i] ?? 0) + (k4[i] ?? 0));
+      this.state[i] =
+        (this.state[i] ?? 0) + (h / 6) * ((k1[i] ?? 0) + 2 * (k2[i] ?? 0) + 2 * (k3[i] ?? 0) + (k4[i] ?? 0));
     }
   }
 
@@ -480,9 +503,10 @@ export class EmbeddedSphericalChain {
       tangentConstraintError: tangentErr,
       method: 'rk4',
       dt: this.dt,
-      caveat: this.params.damping > 0
-        ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
-        : 'Conservative run: E and Lz drift measure integrator error. Embedded chart is globally regular — no pole clamp.'
+      caveat:
+        this.params.damping > 0
+          ? 'Damping active: E and Lz decay physically; drift is not an integrator error metric.'
+          : 'Conservative run: E and Lz drift measure integrator error. Embedded chart is globally regular — no pole clamp.'
     };
   }
 
@@ -493,7 +517,10 @@ export class EmbeddedSphericalChain {
     const { bInv } = this.workspace;
     for (let i = 0; i < n; i += 1) {
       for (let j = 0; j < n; j += 1) {
-        const dot = (this.state[3 * i] ?? 0) * (this.state[3 * j] ?? 0) + (this.state[3 * i + 1] ?? 0) * (this.state[3 * j + 1] ?? 0) + (this.state[3 * i + 2] ?? 0) * (this.state[3 * j + 2] ?? 0);
+        const dot =
+          (this.state[3 * i] ?? 0) * (this.state[3 * j] ?? 0) +
+          (this.state[3 * i + 1] ?? 0) * (this.state[3 * j + 1] ?? 0) +
+          (this.state[3 * i + 2] ?? 0) * (this.state[3 * j + 2] ?? 0);
         g[i * n + j] = (bInv[i * n + j] ?? 0) * dot;
       }
     }

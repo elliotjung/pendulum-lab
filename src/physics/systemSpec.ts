@@ -214,7 +214,12 @@ export function energyForSpec(spec: SystemSpec, state: ArrayLike<number>): Energ
     case 'spring':
       return energySpring(state, spec);
     case 'spherical-chain':
-      return sphericalChainEnergy(state, { masses: spec.masses, lengths: spec.lengths, g: spec.g, damping: spec.damping });
+      return sphericalChainEnergy(state, {
+        masses: spec.masses,
+        lengths: spec.lengths,
+        g: spec.g,
+        damping: spec.damping
+      });
     case 'double-string':
       // Taut chart: energies coincide with the rigid double pendulum's.
       return energyDouble(state, { m1: spec.m1, m2: spec.m2, l1: spec.l1, l2: spec.l2, g: spec.g });

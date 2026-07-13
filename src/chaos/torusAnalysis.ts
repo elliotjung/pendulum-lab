@@ -23,7 +23,13 @@ import { continueNeimarkSackerTorus, type PlanarMapSystem } from './neimarkSacke
  */
 
 /** Central-difference 2×2 Jacobian of the planar map at (x, y). */
-function mapJacobian(system: PlanarMapSystem, parameter: number, x: number, y: number, h: number): [[number, number], [number, number]] {
+function mapJacobian(
+  system: PlanarMapSystem,
+  parameter: number,
+  x: number,
+  y: number,
+  h: number
+): [[number, number], [number, number]] {
   const out = new Float64Array(2);
   system.map(Float64Array.of(x + h, y), parameter, out);
   const fpx0 = out[0]!;
@@ -147,7 +153,8 @@ export function torusLyapunovSpectrum(
     transverseExponent: exponents[1],
     verdict,
     iterations: counted,
-    method: 'Benettin QR (two tangent vectors, continuous Gram–Schmidt) along an orbit on the invariant circle; central-difference map Jacobian',
+    method:
+      'Benettin QR (two tangent vectors, continuous Gram–Schmidt) along an orbit on the invariant circle; central-difference map Jacobian',
     caveat:
       'Assumes the orbit has settled onto the attracting invariant circle. A quasi-periodic torus has a neutral (≈0) on-circle exponent; a strictly positive largest exponent indicates the object is not a smooth torus (chaos), a strictly negative one indicates phase-locking/attraction to a periodic orbit.'
   };
@@ -243,7 +250,9 @@ export function neimarkSackerSpectralConvergence(
   }
 
   // Fit over converged samples with a strictly positive residual (above the float64 floor).
-  const usable = samples.filter((s) => s.converged && s.invarianceResidual > 0 && Number.isFinite(s.invarianceResidual));
+  const usable = samples.filter(
+    (s) => s.converged && s.invarianceResidual > 0 && Number.isFinite(s.invarianceResidual)
+  );
   const ms = usable.map((s) => s.collocation);
   const lnRes = usable.map((s) => Math.log(s.invarianceResidual));
   const lnMs = usable.map((s) => Math.log(s.collocation));
@@ -264,7 +273,8 @@ export function neimarkSackerSpectralConvergence(
     algebraicR2: algebraicFit.r2,
     dropFactor,
     spectral,
-    method: 'off-grid invariance residual vs collocation count M; ln(res)~M (spectral) vs ln(res)~ln(M) (algebraic) least-squares fits',
+    method:
+      'off-grid invariance residual vs collocation count M; ln(res)~M (spectral) vs ln(res)~ln(M) (algebraic) least-squares fits',
     caveat:
       'Spectral convergence holds only for a smooth (analytic) invariant curve near onset; phase-locked or strongly deformed curves lose it. The residual floors at the Newton tolerance / float64 round-off, so very high M shows a flat tail rather than continued decay.'
   };

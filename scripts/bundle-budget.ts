@@ -108,7 +108,9 @@ function budgetMarkdown(results: readonly BudgetResult[], chunkJsTotal: SizeSet,
     '| --- | ---: | ---: | ---: | :---: |'
   ];
   for (const row of results) {
-    lines.push(`| ${row.label} | ${kib(row.bytes)} | ${kib(row.budget)} | ${(row.ratio * 100).toFixed(1)}% | ${row.ok ? 'PASS' : 'OVER'} |`);
+    lines.push(
+      `| ${row.label} | ${kib(row.bytes)} | ${kib(row.budget)} | ${(row.ratio * 100).toFixed(1)}% | ${row.ok ? 'PASS' : 'OVER'} |`
+    );
   }
   lines.push(
     '',
@@ -177,12 +179,20 @@ async function main(): Promise<void> {
   const failed = results.filter((row) => !row.ok).length;
   const status = failed > 0 ? 'fail' : 'pass';
   await mkdir('reports', { recursive: true });
-  await writeFile('reports/bundle-budget.json', `${JSON.stringify({
-    schemaVersion: 'pendulum-bundle-budget/v1',
-    status,
-    rows: results,
-    nonInitialJsTotal: chunkJsTotal
-  }, null, 2)}\n`, 'utf8');
+  await writeFile(
+    'reports/bundle-budget.json',
+    `${JSON.stringify(
+      {
+        schemaVersion: 'pendulum-bundle-budget/v1',
+        status,
+        rows: results,
+        nonInitialJsTotal: chunkJsTotal
+      },
+      null,
+      2
+    )}\n`,
+    'utf8'
+  );
   await writeFile('reports/bundle-budget.md', budgetMarkdown(results, chunkJsTotal, status), 'utf8');
 
   for (const row of results) {
@@ -190,7 +200,9 @@ async function main(): Promise<void> {
     console.log(`${row.ok ? 'OK  ' : 'OVER'}  ${row.label}: ${kb(row.bytes)} / budget ${kb(row.budget)}`);
   }
   const kb = (n: number): string => `${(n / KiB).toFixed(1)} KiB`;
-  console.log(`INFO  total non-initial JS: raw ${kb(chunkJsTotal.raw)}, gzip ${kb(chunkJsTotal.gzip)}, brotli ${kb(chunkJsTotal.brotli)}`);
+  console.log(
+    `INFO  total non-initial JS: raw ${kb(chunkJsTotal.raw)}, gzip ${kb(chunkJsTotal.gzip)}, brotli ${kb(chunkJsTotal.brotli)}`
+  );
   if (failed > 0) {
     console.error(`bundle budget exceeded in ${failed} row(s); raise the budget intentionally or shrink the bundle`);
     process.exitCode = 1;

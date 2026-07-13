@@ -30,7 +30,13 @@ function numberInput(id: string, labelText: string, value: string): HTMLLabelEle
   return label;
 }
 
-function parseColor(input: HTMLInputElement): { red: number; green: number; blue: number; tolerance: number; minPixels: number } {
+function parseColor(input: HTMLInputElement): {
+  red: number;
+  green: number;
+  blue: number;
+  tolerance: number;
+  minPixels: number;
+} {
   const match = /^#([0-9a-f]{6})$/i.exec(input.value);
   if (!match) throw new Error('Marker colour must be a six-digit hex colour.');
   const value = Number.parseInt(match[1]!, 16);
@@ -38,7 +44,11 @@ function parseColor(input: HTMLInputElement): { red: number; green: number; blue
 }
 
 function sensorCard(testId: string, title: string, description: string): HTMLElement {
-  const section = node('section', { class: 'research-card', 'data-testid': testId, 'aria-labelledby': `${testId}-title` });
+  const section = node('section', {
+    class: 'research-card',
+    'data-testid': testId,
+    'aria-labelledby': `${testId}-title`
+  });
   section.append(node('h3', { id: `${testId}-title` }, title), node('p', { class: 'xs-11' }, description));
   return section;
 }
@@ -52,8 +62,12 @@ function installCameraCard(root: HTMLElement, cleanup: Array<() => void>): void 
   const video = node('video', { id: 'rpCameraVideo', playsinline: '', muted: '', 'aria-label': 'Live camera source' });
   video.hidden = true;
   const preview = node('canvas', {
-    id: 'rpCameraPreview', width: '320', height: '240', role: 'img',
-    'aria-label': 'Camera colour-marker tracking preview', 'data-testid': 'research-camera-preview'
+    id: 'rpCameraPreview',
+    width: '320',
+    height: '240',
+    role: 'img',
+    'aria-label': 'Camera colour-marker tracking preview',
+    'data-testid': 'research-camera-preview'
   });
   const controls = node('div', { class: 'row' });
   controls.append(
@@ -69,7 +83,11 @@ function installCameraCard(root: HTMLElement, cleanup: Array<() => void>): void 
   stop.disabled = true;
   exportButton.disabled = true;
   fit.disabled = true;
-  const output = node('p', { id: 'rpCameraStatus', role: 'status', 'aria-live': 'polite', class: 'xs-10' }, 'Camera idle. HTTPS/localhost and explicit permission are required.');
+  const output = node(
+    'p',
+    { id: 'rpCameraStatus', role: 'status', 'aria-live': 'polite', class: 'xs-10' },
+    'Camera idle. HTTPS/localhost and explicit permission are required.'
+  );
   let controller: VideoMarkerCaptureController | null = null;
 
   start.addEventListener('click', async () => {
@@ -93,7 +111,10 @@ function installCameraCard(root: HTMLElement, cleanup: Array<() => void>): void 
         if (context) {
           context.save();
           context.lineWidth = 3;
-          [[sample.first, first.value], [sample.second, second.value]].forEach(([marker, color]) => {
+          [
+            [sample.first, first.value],
+            [sample.second, second.value]
+          ].forEach(([marker, color]) => {
             const point = marker as typeof sample.first;
             context.strokeStyle = String(color);
             context.beginPath();
@@ -105,7 +126,8 @@ function installCameraCard(root: HTMLElement, cleanup: Array<() => void>): void 
           context.fillText(`t=${sample.timestamp.toFixed(3)} s`, 8, 20);
           context.restore();
         }
-        if (count % 10 === 0) output.textContent = `Camera active · t=${sample.timestamp.toFixed(3)} s · ${count} tracked frames (unmatched frames are skipped).`;
+        if (count % 10 === 0)
+          output.textContent = `Camera active · t=${sample.timestamp.toFixed(3)} s · ${count} tracked frames (unmatched frames are skipped).`;
         exportButton.disabled = count < 2;
         fit.disabled = count < 6;
       }
@@ -118,21 +140,27 @@ function installCameraCard(root: HTMLElement, cleanup: Array<() => void>): void 
     stop.disabled = true;
   });
   exportButton.addEventListener('click', () => {
-    if (controller) downloadText('double-pendulum-camera-observations.csv', controller.observationCsv(), 'text/csv;charset=utf-8');
+    if (controller)
+      downloadText('double-pendulum-camera-observations.csv', controller.observationCsv(), 'text/csv;charset=utf-8');
   });
   fit.addEventListener('click', () => {
     if (!controller) return;
     try {
       const observation = controller.observation();
       const initial = observation.angles[0]!;
-      const result = fitDoublePendulumFromCsv(controller.observationCsv(), {
-        initialState: [initial[0], initial[1], 0, 0],
-        base: { m1: 1, m2: 1, l1: 1, l2: 1, g: 8 },
-        gamma: 0,
-        estimate: ['g'],
-        initialGuess: [8],
-        dt: 0.005
-      }, {}, { maxIterations: 25 });
+      const result = fitDoublePendulumFromCsv(
+        controller.observationCsv(),
+        {
+          initialState: [initial[0], initial[1], 0, 0],
+          base: { m1: 1, m2: 1, l1: 1, l2: 1, g: 8 },
+          gamma: 0,
+          estimate: ['g'],
+          initialGuess: [8],
+          dt: 0.005
+        },
+        {},
+        { maxIterations: 25 }
+      );
       output.textContent = `Captured-data fit: ĝ=${(result.estimated.g ?? NaN).toFixed(4)} · RMSE=${result.rmse.toExponential(2)} · ${result.status}. Verify lengths and pixel pivot before interpreting g.`;
     } catch (error) {
       output.textContent = `Fit error: ${error instanceof Error ? error.message : String(error)}`;
@@ -151,7 +179,10 @@ function installImuCard(root: HTMLElement, cleanup: Array<() => void>): void {
   );
   const axisLabel = node('label', { for: 'rpImuAxis' }, 'Rotation axis');
   const axis = node('select', { id: 'rpImuAxis', 'aria-label': 'Device motion rotation axis' });
-  axis.append(node('option', { value: 'beta' }, 'beta (front/back)'), node('option', { value: 'gamma' }, 'gamma (left/right)'));
+  axis.append(
+    node('option', { value: 'beta' }, 'beta (front/back)'),
+    node('option', { value: 'gamma' }, 'gamma (left/right)')
+  );
   axisLabel.append(axis);
   const start = button('rpImuStart', 'research-imu-start', 'Start motion sensor');
   const calibrate = button('rpImuCalibrate', 'research-imu-calibrate', 'Zero current angle');
@@ -160,7 +191,11 @@ function installImuCard(root: HTMLElement, cleanup: Array<() => void>): void {
   calibrate.disabled = true;
   stop.disabled = true;
   exportButton.disabled = true;
-  const output = node('p', { id: 'rpImuStatus', role: 'status', 'aria-live': 'polite', class: 'xs-10' }, 'Motion sensor idle. If unavailable, a previously exported CSV remains the fallback.');
+  const output = node(
+    'p',
+    { id: 'rpImuStatus', role: 'status', 'aria-live': 'polite', class: 'xs-10' },
+    'Motion sensor idle. If unavailable, a previously exported CSV remains the fallback.'
+  );
   let controller: ImuMotionCaptureController | null = null;
 
   start.addEventListener('click', async () => {

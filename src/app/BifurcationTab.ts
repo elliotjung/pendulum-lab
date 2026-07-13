@@ -85,7 +85,10 @@ export class BifurcationTab extends TabController {
       this.columns.push(this.columnFor(this.gValues[this.cursor]!));
       this.cursor += 1;
     }
-    renderBifurcation(ctx, { x: 0, y: 0, width: canvas.width, height: canvas.height }, this.columns, { xLabel: 'g (m/s²)', yLabel: 'θ₂ at section' });
+    renderBifurcation(ctx, { x: 0, y: 0, width: canvas.width, height: canvas.height }, this.columns, {
+      xLabel: 'g (m/s²)',
+      yLabel: 'θ₂ at section'
+    });
     const progress = this.cursor / this.gValues.length;
     const bar = this.dom.el('bifProgress');
     if (bar) bar.style.width = `${(progress * 100).toFixed(1)}%`;
@@ -97,8 +100,14 @@ export class BifurcationTab extends TabController {
       this.badge('bifStatus', 'finite-time-estimate', 'Bifurcation diagram: finite-transient section sampling.', {
         title: 'Bifurcation section sweep',
         source: 'Bifurcation tab → poincareSection + renderBifurcation',
-        parameters: { columns: this.gValues.length, maxTime: this.maxTime, section: 'theta1=0 rising', transientCrossings: 20 },
-        uncertainty: 'Finite transient and finite number of section crossings; refine g steps and max time before publication use.',
+        parameters: {
+          columns: this.gValues.length,
+          maxTime: this.maxTime,
+          section: 'theta1=0 rising',
+          transientCrossings: 20
+        },
+        uncertainty:
+          'Finite transient and finite number of section crossings; refine g steps and max time before publication use.',
         externalValidation: 'Poincare event refinement is unit-tested against analytic-crossing fixtures.',
         reproduce: 'npm test -- tests/poincare-event-refinement.test.ts',
         caveat: 'A rendered bifurcation diagram is a diagnostic map, not a proof of an attractor classification.'
@@ -147,16 +156,23 @@ export class BifurcationTab extends TabController {
         `orbit (θ,ω) = (${wrapPi(point.orbit[0]).toFixed(4)}, ${point.orbit[1].toFixed(4)})\n` +
           `Floquet ρ = ${fmtMultiplier(point.multipliers[0]!)}, ${fmtMultiplier(point.multipliers[1]!)}`
       );
-      this.badge('bifDrivenStatus', 'validated', 'Floquet multipliers (monodromy eigenvalues) of the driven period-1 orbit, branch-traced from A=0.7.', {
-        title: 'Driven period-1 Floquet multipliers',
-        source: 'Bifurcation tab → continueDrivenPeriodicOrbit',
-        parameters: { A: point.parameter.toFixed(6), gamma, driveFrequency: '2/3', dt: 0.004, tolerance: '1e-10' },
-        uncertainty: 'Continuation tolerance controls the fixed-point residual; refine dt/tolerance to quote more digits.',
-        externalValidation: 'Floquet pipeline is pinned on linear oscillator anchors and the Baker-Gollub period-doubling onset.',
-        reproduce: 'npm test -- tests/floquet.test.ts tests/continuation.test.ts tests/literature-anchors.test.ts',
-        caveat: 'Branch-traced from A=0.7; multistability can place a direct simulation on a different basin.',
-        artifact: 'reports/literature-anchors.json'
-      });
+      this.badge(
+        'bifDrivenStatus',
+        'validated',
+        'Floquet multipliers (monodromy eigenvalues) of the driven period-1 orbit, branch-traced from A=0.7.',
+        {
+          title: 'Driven period-1 Floquet multipliers',
+          source: 'Bifurcation tab → continueDrivenPeriodicOrbit',
+          parameters: { A: point.parameter.toFixed(6), gamma, driveFrequency: '2/3', dt: 0.004, tolerance: '1e-10' },
+          uncertainty:
+            'Continuation tolerance controls the fixed-point residual; refine dt/tolerance to quote more digits.',
+          externalValidation:
+            'Floquet pipeline is pinned on linear oscillator anchors and the Baker-Gollub period-doubling onset.',
+          reproduce: 'npm test -- tests/floquet.test.ts tests/continuation.test.ts tests/literature-anchors.test.ts',
+          caveat: 'Branch-traced from A=0.7; multistability can place a direct simulation on a different basin.',
+          artifact: 'reports/literature-anchors.json'
+        }
+      );
     }, 'bifDrivenStatus');
   }
 
@@ -186,23 +202,38 @@ export class BifurcationTab extends TabController {
       const critA = cont.bifurcation.parameter;
       const lastStable = cont.branch.filter((p) => p.parameter < critA).pop();
       const params = { ...base, driveAmplitude: critA };
-      const sym = drivenPeriodicOrbitN(params, lastStable ? lastStable.orbit : [0, 0], 1, { dt: 0.004, tolerance: 1e-11 });
+      const sym = drivenPeriodicOrbitN(params, lastStable ? lastStable.orbit : [0, 0], 1, {
+        dt: 0.004,
+        tolerance: 1e-11
+      });
       const result = switchSymmetryBreaking(params, sym.orbit, { dt: 0.004, tolerance: 1e-11 });
       if (!result.switched) {
-        this.dom.setText('bifDrivenStatus', `${cont.bifurcation.type} at A=${critA.toFixed(4)} — no pitchfork pair found`);
-        this.badge('bifDrivenStatus', 'caveat', 'A +1 crossing was found but no stable straddling pair (sub-critical or not a pitchfork here).', {
-          title: 'Pitchfork branch switch',
-          source: 'Bifurcation tab → switchSymmetryBreaking',
-          parameters: { gamma, driveFrequency: '2/3', criticalA: critA.toFixed(6) },
-          uncertainty: 'Newton switch failed to locate a separated stable pair at the chosen settings.',
-          externalValidation: 'Branch switching logic is tested on period-doubling, pitchfork, and transcritical normal forms.',
-          reproduce: 'npm test -- tests/branch-switching.test.ts',
-          caveat: 'The +1 crossing may be subcritical or not a pitchfork for this branch.'
-        });
+        this.dom.setText(
+          'bifDrivenStatus',
+          `${cont.bifurcation.type} at A=${critA.toFixed(4)} — no pitchfork pair found`
+        );
+        this.badge(
+          'bifDrivenStatus',
+          'caveat',
+          'A +1 crossing was found but no stable straddling pair (sub-critical or not a pitchfork here).',
+          {
+            title: 'Pitchfork branch switch',
+            source: 'Bifurcation tab → switchSymmetryBreaking',
+            parameters: { gamma, driveFrequency: '2/3', criticalA: critA.toFixed(6) },
+            uncertainty: 'Newton switch failed to locate a separated stable pair at the chosen settings.',
+            externalValidation:
+              'Branch switching logic is tested on period-doubling, pitchfork, and transcritical normal forms.',
+            reproduce: 'npm test -- tests/branch-switching.test.ts',
+            caveat: 'The +1 crossing may be subcritical or not a pitchfork for this branch.'
+          }
+        );
         return;
       }
       const [branchA, branchB] = result.branches;
-      this.dom.setText('bifDrivenStatus', `pitchfork at A=${critA.toFixed(4)} · 2 stable branches · sep=${result.separation.toFixed(3)}`);
+      this.dom.setText(
+        'bifDrivenStatus',
+        `pitchfork at A=${critA.toFixed(4)} · 2 stable branches · sep=${result.separation.toFixed(3)}`
+      );
       this.dom.setText(
         'bifDrivenOut',
         `symmetric (θ,ω) = (${wrapPi(sym.orbit[0]).toFixed(4)}, ${sym.orbit[1].toFixed(4)}) [unstable]\n` +
@@ -210,15 +241,28 @@ export class BifurcationTab extends TabController {
           `branch B = (${wrapPi(branchB.orbit[0]).toFixed(4)}, ${branchB.orbit[1].toFixed(4)})\n` +
           `midpoint Z₂ residual = ${result.pitchforkResidual.toExponential(2)}`
       );
-      this.badge('bifDrivenStatus', 'validated', 'Symmetry-breaking pitchfork: two stable mirror-image period-1 orbits straddling the symmetric one (midpoint residual confirms Z₂).', {
-        title: 'Symmetry-breaking pitchfork switch',
-        source: 'Bifurcation tab → switchSymmetryBreaking',
-        parameters: { gamma, driveFrequency: '2/3', criticalA: critA.toFixed(6), separation: result.separation.toFixed(6), residual: result.pitchforkResidual.toExponential(3) },
-        uncertainty: 'Reported residual is the midpoint Z2 symmetry check; refine dt/tolerance for tighter branch coordinates.',
-        externalValidation: 'Branch-switching tests reject fallback onto the parent branch and verify normal-form switches.',
-        reproduce: 'npm test -- tests/branch-switching.test.ts',
-        caveat: 'This follows the symmetric branch near the detected +1 crossing; other basins can coexist.'
-      });
+      this.badge(
+        'bifDrivenStatus',
+        'validated',
+        'Symmetry-breaking pitchfork: two stable mirror-image period-1 orbits straddling the symmetric one (midpoint residual confirms Z₂).',
+        {
+          title: 'Symmetry-breaking pitchfork switch',
+          source: 'Bifurcation tab → switchSymmetryBreaking',
+          parameters: {
+            gamma,
+            driveFrequency: '2/3',
+            criticalA: critA.toFixed(6),
+            separation: result.separation.toFixed(6),
+            residual: result.pitchforkResidual.toExponential(3)
+          },
+          uncertainty:
+            'Reported residual is the midpoint Z2 symmetry check; refine dt/tolerance for tighter branch coordinates.',
+          externalValidation:
+            'Branch-switching tests reject fallback onto the parent branch and verify normal-form switches.',
+          reproduce: 'npm test -- tests/branch-switching.test.ts',
+          caveat: 'This follows the symmetric branch near the detected +1 crossing; other basins can coexist.'
+        }
+      );
     }, 'bifDrivenStatus');
   }
 
@@ -258,23 +302,45 @@ export class BifurcationTab extends TabController {
         this.dom.setText('bifTorusStatus', 'continuation did not converge');
         return;
       }
-      this.dom.setText('bifTorusStatus', `${converged.length} circles · ρ→${last.rotationNumber.toFixed(4)} (1/6≈0.1667)`);
+      this.dom.setText(
+        'bifTorusStatus',
+        `${converged.length} circles · ρ→${last.rotationNumber.toFixed(4)} (1/6≈0.1667)`
+      );
       this.dom.setText(
         'bifTorusOut',
         cont.points
-          .map((p) => `a=${p.parameter.toFixed(2)}  ρ=${p.rotationNumber.toFixed(5)}  amp=${p.amplitude.toFixed(4)}  resid=${p.invarianceResidual.toExponential(1)}${p.converged ? '' : '  (no conv)'}`)
+          .map(
+            (p) =>
+              `a=${p.parameter.toFixed(2)}  ρ=${p.rotationNumber.toFixed(5)}  amp=${p.amplitude.toFixed(4)}  resid=${p.invarianceResidual.toExponential(1)}${p.converged ? '' : '  (no conv)'}`
+          )
           .join('\n')
       );
-      this.badge('bifTorusStatus', 'validated', 'Neimark–Sacker invariant circle by trigonometric collocation; ρ → 1/6 and the curve shrinks to the fixed point at the onset a = 2 (delayed-logistic anchor).', {
-        title: 'Neimark-Sacker invariant circle',
-        source: 'Bifurcation tab → continueNeimarkSackerTorus',
-        parameters: { start: 2.05, end: 2.01, step: 0.01, collocation: 31, tolerance: '1e-10', rotationNumber: last.rotationNumber.toFixed(6) },
-        uncertainty: 'Off-grid invariance residual is sampled between collocation nodes; spectral convergence is checked separately.',
-        externalValidation: 'Delayed-logistic onset and rotation number are cross-validated by direct winding and SciPy reference.',
-        reproduce: 'npm test -- tests/neimark-sacker-torus.test.ts tests/torus-analysis.test.ts && npm run validate:ns',
-        caveat: 'Smooth collocation is not valid inside phase-locked Arnold tongues; robust winding fallback reports those cases.',
-        artifact: 'reports/ns-cross-validation.json'
-      });
+      this.badge(
+        'bifTorusStatus',
+        'validated',
+        'Neimark–Sacker invariant circle by trigonometric collocation; ρ → 1/6 and the curve shrinks to the fixed point at the onset a = 2 (delayed-logistic anchor).',
+        {
+          title: 'Neimark-Sacker invariant circle',
+          source: 'Bifurcation tab → continueNeimarkSackerTorus',
+          parameters: {
+            start: 2.05,
+            end: 2.01,
+            step: 0.01,
+            collocation: 31,
+            tolerance: '1e-10',
+            rotationNumber: last.rotationNumber.toFixed(6)
+          },
+          uncertainty:
+            'Off-grid invariance residual is sampled between collocation nodes; spectral convergence is checked separately.',
+          externalValidation:
+            'Delayed-logistic onset and rotation number are cross-validated by direct winding and SciPy reference.',
+          reproduce:
+            'npm test -- tests/neimark-sacker-torus.test.ts tests/torus-analysis.test.ts && npm run validate:ns',
+          caveat:
+            'Smooth collocation is not valid inside phase-locked Arnold tongues; robust winding fallback reports those cases.',
+          artifact: 'reports/ns-cross-validation.json'
+        }
+      );
     }, 'bifTorusStatus');
   }
 
@@ -302,7 +368,10 @@ export class BifurcationTab extends TabController {
       }
     }
     const pad = 0.12 * Math.max(maxX - minX, maxY - minY, 1e-6);
-    minX -= pad; maxX += pad; minY -= pad; maxY += pad;
+    minX -= pad;
+    maxX += pad;
+    minY -= pad;
+    maxY += pad;
     const sx = (x: number): number => ((x - minX) / (maxX - minX)) * (W - 20) + 10;
     const sy = (y: number): number => H - (((y - minY) / (maxY - minY)) * (H - 20) + 10);
     points.forEach((p, idx) => {

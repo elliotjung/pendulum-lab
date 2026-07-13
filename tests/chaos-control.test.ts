@@ -80,24 +80,48 @@ describe('OGY control', () => {
   test('OGY stabilises the UPO with small control; uncontrolled it escapes', () => {
     const spec = buildSpec();
     const start = [spec.fixedPoint[0]! + 0.01, spec.fixedPoint[1]!];
-    const controlled = simulateOgyControl(henonParam, spec, { nominalParameter: A0, maxDelta: 0.05, region: 0.05, steps: 3000 }, start);
+    const controlled = simulateOgyControl(
+      henonParam,
+      spec,
+      { nominalParameter: A0, maxDelta: 0.05, region: 0.05, steps: 3000 },
+      start
+    );
     expect(controlled.captured).toBe(true);
     expect(controlled.settledDeviation).toBeLessThan(1e-6); // driven onto the UPO
     expect(controlled.maxControl).toBeGreaterThan(0); // control actually acted
     expect(controlled.maxControl).toBeLessThanOrEqual(0.05); // within authority
 
-    const free = simulateOgyControl(henonParam, spec, { nominalParameter: A0, maxDelta: 0, region: 0.05, steps: 3000 }, start);
+    const free = simulateOgyControl(
+      henonParam,
+      spec,
+      { nominalParameter: A0, maxDelta: 0, region: 0.05, steps: 3000 },
+      start
+    );
     expect(free.captured).toBe(false); // no control ⇒ repelled along the unstable manifold
   });
 
   test('ogyAnalyze rejects non-saddle fixed points', () => {
     // Both eigenvalues stable.
     expect(() =>
-      ogyAnalyze({ fixedPoint: [0, 0], jacobian: [[0.5, 0], [0, 0.3]], parameterSensitivity: [1, 0] })
+      ogyAnalyze({
+        fixedPoint: [0, 0],
+        jacobian: [
+          [0.5, 0],
+          [0, 0.3]
+        ],
+        parameterSensitivity: [1, 0]
+      })
     ).toThrow(/saddle/);
     // Complex eigenvalues (rotation).
     expect(() =>
-      ogyAnalyze({ fixedPoint: [0, 0], jacobian: [[0, 1], [-1, 0]], parameterSensitivity: [1, 0] })
+      ogyAnalyze({
+        fixedPoint: [0, 0],
+        jacobian: [
+          [0, 1],
+          [-1, 0]
+        ],
+        parameterSensitivity: [1, 0]
+      })
     ).toThrow(/saddle/);
   });
 });

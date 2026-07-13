@@ -60,7 +60,7 @@ export function orderedTrailPoints(buffer: Float32Array, nextIndex: number, fill
   const capacity = Math.floor(buffer.length / 2);
   const count = Math.max(0, Math.min(capacity, Math.floor(filled)));
   if (count === 0 || capacity === 0) return new Float32Array(0);
-  const start = ((Math.floor(nextIndex) - count) % capacity + capacity) % capacity;
+  const start = (((Math.floor(nextIndex) - count) % capacity) + capacity) % capacity;
   const out = new Float32Array(count * 2);
   for (let i = 0; i < count; i += 1) {
     const source = (start + i) % capacity;

@@ -96,15 +96,21 @@ export function buildLab3dTimingCard(): HTMLElement {
     ['demo', 'Demo mode: wall-clock realtime'],
     ['research', 'Research mode: deterministic fixed quantum']
   ]);
-  const timingStepInput = researchInput('lab3dResearchStep', 'number', '0.0166667', 's per rendered frame in research mode');
+  const timingStepInput = researchInput(
+    'lab3dResearchStep',
+    'number',
+    '0.0166667',
+    's per rendered frame in research mode'
+  );
   const timingReadout = html('div', { id: 'lab3dTimingReadout', className: 'research-summary', text: '' });
   const syncTiming = (): void => {
     lab3d.timingMode = normalizeLab3dTimingMode(timingModeSelect.value);
     lab3d.researchStep = normalizeLab3dResearchStep(Number(timingStepInput.value), clampNumber);
     lab3d.lastFrame = 0;
-    timingReadout.textContent = lab3d.timingMode === 'research'
-      ? `Research mode active: every render tick advances exactly ${lab3d.researchStep.toFixed(6)} s, independent of browser frame pacing.`
-      : 'Demo mode active: simulations follow wall-clock time with a 50 ms catch-up clamp.';
+    timingReadout.textContent =
+      lab3d.timingMode === 'research'
+        ? `Research mode active: every render tick advances exactly ${lab3d.researchStep.toFixed(6)} s, independent of browser frame pacing.`
+        : 'Demo mode active: simulations follow wall-clock time with a 50 ms catch-up clamp.';
   };
   timingModeSelect.addEventListener('change', syncTiming);
   timingStepInput.addEventListener('change', syncTiming);

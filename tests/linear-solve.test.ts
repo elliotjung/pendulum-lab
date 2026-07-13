@@ -3,10 +3,7 @@ import { solveLinearInPlace } from '../src/physics/linearSolve';
 
 describe('linear solver diagnostics', () => {
   test('solves a well-conditioned system and reports residual diagnostics when requested', () => {
-    const a = new Float64Array([
-      3, 1,
-      1, 2
-    ]);
+    const a = new Float64Array([3, 1, 1, 2]);
     const b = new Float64Array([5, 5]);
 
     const result = solveLinearInPlace(a, b, 2, { diagnostics: true });
@@ -25,14 +22,7 @@ describe('linear solver diagnostics', () => {
   });
 
   test('keeps the hot path residual-free unless diagnostics are requested', () => {
-    const result = solveLinearInPlace(
-      new Float64Array([
-        2, 0,
-        0, 4
-      ]),
-      new Float64Array([2, 8]),
-      2
-    );
+    const result = solveLinearInPlace(new Float64Array([2, 0, 0, 4]), new Float64Array([2, 8]), 2);
 
     expect(result.ok).toBe(true);
     expect(result.residualNorm).toBeUndefined();
@@ -41,14 +31,7 @@ describe('linear solver diagnostics', () => {
 
   test('returns structured singular-matrix diagnostics instead of fabricating a fallback solution', () => {
     const b = new Float64Array([3, 6]);
-    const result = solveLinearInPlace(
-      new Float64Array([
-        1, 2,
-        2, 4
-      ]),
-      b,
-      2
-    );
+    const result = solveLinearInPlace(new Float64Array([1, 2, 2, 4]), b, 2);
 
     expect(result.ok).toBe(false);
     expect(result.reason).toBe('singular-matrix');
@@ -60,15 +43,7 @@ describe('linear solver diagnostics', () => {
 
   test('can fail fast at the solver boundary for research-only call sites', () => {
     expect(() =>
-      solveLinearInPlace(
-        new Float64Array([
-          1, 2,
-          2, 4
-        ]),
-        new Float64Array([3, 6]),
-        2,
-        { fallbackPolicy: 'throw' }
-      )
+      solveLinearInPlace(new Float64Array([1, 2, 2, 4]), new Float64Array([3, 6]), 2, { fallbackPolicy: 'throw' })
     ).toThrow(/linear solve failed/);
   });
 });

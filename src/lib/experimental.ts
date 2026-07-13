@@ -11,10 +11,30 @@
  * STM/QR pipeline for planar chains up to eight links.
  */
 
-export { runComputeKernel, runDoublePendulumEnsemble, ensembleGrid, ensembleStatistics, webgpuEnsembleStatistics, compareEnsembleStatistics } from '../runtime/gpuEnsemble';
-export type { EnsembleOptions, EnsembleResult, EnsembleStatistics, EnsembleStatisticsComparison, EnsembleStatisticsTolerances } from '../runtime/gpuEnsemble';
-export { promotedDoublePendulumLyapunovSpectrum, webgpuDoublePendulumLyapunovSpectrumCandidate } from '../runtime/gpuLyapunov';
-export type { WebgpuLyapunovSpectrumCandidate, WebgpuLyapunovSpectrumOptions, WebgpuLyapunovSpectrumPromotion } from '../runtime/gpuLyapunov';
+export {
+  runComputeKernel,
+  runDoublePendulumEnsemble,
+  ensembleGrid,
+  ensembleStatistics,
+  webgpuEnsembleStatistics,
+  compareEnsembleStatistics
+} from '../runtime/gpuEnsemble';
+export type {
+  EnsembleOptions,
+  EnsembleResult,
+  EnsembleStatistics,
+  EnsembleStatisticsComparison,
+  EnsembleStatisticsTolerances
+} from '../runtime/gpuEnsemble';
+export {
+  promotedDoublePendulumLyapunovSpectrum,
+  webgpuDoublePendulumLyapunovSpectrumCandidate
+} from '../runtime/gpuLyapunov';
+export type {
+  WebgpuLyapunovSpectrumCandidate,
+  WebgpuLyapunovSpectrumOptions,
+  WebgpuLyapunovSpectrumPromotion
+} from '../runtime/gpuLyapunov';
 export {
   promotedDoublePendulumClv,
   promotedDoublePendulumVariationalFtleField,
@@ -29,7 +49,12 @@ export type {
   WebgpuFtleFieldOptions,
   WebgpuFtleFieldPromotion
 } from '../runtime/gpuChaosPromotion';
-export { buildNChainJacobianTape, nChainVariationalCpuOracle, promotedNChainVariational, webgpuNChainVariationalCandidate } from '../runtime/gpuNChainVariational';
+export {
+  buildNChainJacobianTape,
+  nChainVariationalCpuOracle,
+  promotedNChainVariational,
+  webgpuNChainVariationalCandidate
+} from '../runtime/gpuNChainVariational';
 export type {
   NChainVariationalComparison,
   NChainVariationalOptions,

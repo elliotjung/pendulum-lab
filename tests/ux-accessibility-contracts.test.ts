@@ -31,7 +31,9 @@ describe('UX and accessibility contracts', () => {
     const model = normalizeEnergyBenchmark(energyBenchmarkReport);
     expect(model.series).toHaveLength(14);
     expect(model.steps).toBe(100_000);
-    expect(model.series.every((series) => series.time.length === series.drift.length && series.time.length > 100)).toBe(true);
+    expect(model.series.every((series) => series.time.length === series.drift.length && series.time.length > 100)).toBe(
+      true
+    );
     expect(model.series.find((series) => series.id === 'yoshida4')?.maxRelDrift).toBeGreaterThan(0);
   });
 

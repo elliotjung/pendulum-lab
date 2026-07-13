@@ -148,8 +148,16 @@ export function recurrenceQuantification(series: readonly number[], options: Rqa
 
   const { points, count } = embed(series, m, tau);
   const empty: RqaResult = {
-    recurrenceRate: 0, determinism: 0, laminarity: 0, longestDiagonal: 0, divergence: 0,
-    meanDiagonal: 0, entropy: 0, trappingTime: 0, epsilon: 0, embeddedLength: count
+    recurrenceRate: 0,
+    determinism: 0,
+    laminarity: 0,
+    longestDiagonal: 0,
+    divergence: 0,
+    meanDiagonal: 0,
+    entropy: 0,
+    trappingTime: 0,
+    epsilon: 0,
+    embeddedLength: count
   };
   if (count < 2) return empty;
 

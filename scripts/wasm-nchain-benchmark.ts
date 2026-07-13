@@ -157,7 +157,8 @@ async function main(): Promise<void> {
   const candidate: NChainTapeCandidate | undefined = available
     ? async (parameters, state, damping, settings) => {
         const result = await buildNChainJacobianTapeWasm(parameters, state, damping, settings);
-        if (result.backend !== 'wasm-simd') throw new Error(`WASM N-chain candidate unexpectedly fell back: ${result.caveat}`);
+        if (result.backend !== 'wasm-simd')
+          throw new Error(`WASM N-chain candidate unexpectedly fell back: ${result.caveat}`);
         return { backend: result.backend, tape: result.tape };
       }
     : undefined;
@@ -165,7 +166,9 @@ async function main(): Promise<void> {
   await mkdir('reports', { recursive: true });
   await writeFile('reports/wasm-nchain-baseline.json', `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   for (const entry of report.cases) {
-    console.log(`N=${entry.workload.links}: CPU median ${entry.cpuMedianMs.toFixed(2)} ms, ${(entry.cpuTapeValuesPerSecond / 1e6).toFixed(2)}M tape values/s`);
+    console.log(
+      `N=${entry.workload.links}: CPU median ${entry.cpuMedianMs.toFixed(2)} ms, ${(entry.cpuTapeValuesPerSecond / 1e6).toFixed(2)}M tape values/s`
+    );
   }
   console.log(`reports/wasm-nchain-baseline.json written; candidateBackend=${available ? 'wasm-simd' : 'not-built'}`);
 }

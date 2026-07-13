@@ -56,7 +56,8 @@ function renderJob(message: Extract<LabSidePlotWorkerMessage, { kind: 'render' }
       renderEnergyPlot(ctx, rect, message.payload.energy);
       break;
     case 'lyap': {
-      const history = message.payload.history.length > 1 ? Array.from(message.payload.history) : [0, message.payload.value];
+      const history =
+        message.payload.history.length > 1 ? Array.from(message.payload.history) : [0, message.payload.value];
       renderLyapunovConvergence(ctx, rect, history);
       break;
     }

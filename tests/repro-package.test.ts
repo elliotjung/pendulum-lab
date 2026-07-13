@@ -18,7 +18,11 @@ const RUN: ReproRun = {
   seed: 42
 };
 
-const fixedOpts = { libraryVersion: '10.10.0', generatedAt: '2026-06-09T00:00:00.000Z', includeLyapunov: false } as const;
+const fixedOpts = {
+  libraryVersion: '10.10.0',
+  generatedAt: '2026-06-09T00:00:00.000Z',
+  includeLyapunov: false
+} as const;
 
 describe('canonical hashing', () => {
   test('canonicalJson is independent of key insertion order', () => {
@@ -32,7 +36,14 @@ describe('canonical hashing', () => {
 
   test('hashRunInputs is stable across rebuilds and ignores object key order', () => {
     const a = hashRunInputs(RUN);
-    const reordered: ReproRun = { state0: [0.5, 0.3, 0, 0], dt: 0.01, steps: 200, seed: 42, method: 'rk4', spec: RUN.spec };
+    const reordered: ReproRun = {
+      state0: [0.5, 0.3, 0, 0],
+      dt: 0.01,
+      steps: 200,
+      seed: 42,
+      method: 'rk4',
+      spec: RUN.spec
+    };
     expect(hashRunInputs(reordered)).toBe(a);
   });
 });

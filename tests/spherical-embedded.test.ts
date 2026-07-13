@@ -82,7 +82,11 @@ describe('embedded spherical pendulum — atlas chart that covers the poles', ()
   });
 
   test('damping dissipates energy and Lz monotonically', () => {
-    const damped = new EmbeddedSphericalPendulum({ l: 1, g: 9.81, damping: 0.3 }, angleToEmbedded([1.1, 0, 0.0, 1.0]), 0.002);
+    const damped = new EmbeddedSphericalPendulum(
+      { l: 1, g: 9.81, damping: 0.3 },
+      angleToEmbedded([1.1, 0, 0.0, 1.0]),
+      0.002
+    );
     let prevEnergy = damped.diagnostics().energy;
     for (let i = 0; i < 200; i += 1) {
       damped.step(0.01);
@@ -91,6 +95,8 @@ describe('embedded spherical pendulum — atlas chart that covers the poles', ()
       prevEnergy = energy;
     }
     // |Lz| has decayed from its initial value.
-    expect(Math.abs(damped.diagnostics().lz)).toBeLessThan(Math.abs(sphericalEmbeddedLz(angleToEmbedded([1.1, 0, 0.0, 1.0]), params)));
+    expect(Math.abs(damped.diagnostics().lz)).toBeLessThan(
+      Math.abs(sphericalEmbeddedLz(angleToEmbedded([1.1, 0, 0.0, 1.0]), params))
+    );
   });
 });

@@ -3,8 +3,16 @@ import { ONBOARDING_PD_MISSION, TOUR_STEPS, TOUR_STORAGE_KEY } from '../src/app/
 
 describe('onboarding tour steps', () => {
   it('walks the core surfaces and a measurement mission in teaching order', () => {
-    expect(TOUR_STEPS.map((step) => step.target)).toEqual(['#main', '.presets', '.rail-menu', '[data-workflow-tab="lyap"]', '.audience-select']);
-    expect(TOUR_STEPS.find((step) => step.kind === 'mission')?.en.body).toContain(String(ONBOARDING_PD_MISSION.literatureValue));
+    expect(TOUR_STEPS.map((step) => step.target)).toEqual([
+      '#main',
+      '.presets',
+      '.rail-menu',
+      '[data-workflow-tab="lyap"]',
+      '.audience-select'
+    ]);
+    expect(TOUR_STEPS.find((step) => step.kind === 'mission')?.en.body).toContain(
+      String(ONBOARDING_PD_MISSION.literatureValue)
+    );
   });
 
   it('provides complete bilingual copy for every step', () => {

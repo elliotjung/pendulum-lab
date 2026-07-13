@@ -144,7 +144,11 @@ export function rotateSphericalChainState(state: ArrayLike<number>, n: number, a
 }
 
 /** Total angular momentum Σ mᵢ rᵢ × vᵢ projected onto the unit axis. */
-export function sphericalChainAngularMomentum(state: ArrayLike<number>, params: SphericalChainParams, axis: Vec3): number {
+export function sphericalChainAngularMomentum(
+  state: ArrayLike<number>,
+  params: SphericalChainParams,
+  axis: Vec3
+): number {
   const positions = sphericalChainPositions(state, params);
   const velocities = sphericalChainVelocities(state, params);
   let lx = 0;
@@ -162,7 +166,10 @@ export function sphericalChainAngularMomentum(state: ArrayLike<number>, params: 
 }
 
 /** Planar chain kinematics: positions/velocities from absolute angles. */
-function planarChainKinematics(state: ArrayLike<number>, params: ChainParameters): { x: number[]; y: number[]; vx: number[]; vy: number[] } {
+function planarChainKinematics(
+  state: ArrayLike<number>,
+  params: ChainParameters
+): { x: number[]; y: number[]; vx: number[]; vy: number[] } {
   const n = chainLength(params);
   const x: number[] = [];
   const y: number[] = [];
@@ -262,7 +269,8 @@ function runCandidates(
     conserved: results.filter((result) => result.conserved).map((result) => result.name),
     horizon,
     dt,
-    method: 'Noether detection: central-difference Hamiltonian invariance under each group action + momentum drift along an RK4 trajectory; the two verdicts are cross-checked',
+    method:
+      'Noether detection: central-difference Hamiltonian invariance under each group action + momentum drift along an RK4 trajectory; the two verdicts are cross-checked',
     caveat
   };
 }
@@ -326,9 +334,10 @@ export function detectSphericalChainConservedQuantities(
     symmetryResidual: 0,
     symmetric: params.damping === 0,
     evaluate: (state) => sphericalChainEnergy(state, params).total,
-    symmetryDetail: params.damping === 0
-      ? 'autonomous Lagrangian system (no explicit t)'
-      : `autonomous but dissipative (γ=${params.damping}): the Noether charge decays`
+    symmetryDetail:
+      params.damping === 0
+        ? 'autonomous Lagrangian system (no explicit t)'
+        : `autonomous but dissipative (γ=${params.damping}): the Noether charge decays`
   };
 
   const workspace = createSphericalChainWorkspace(n);
@@ -393,9 +402,10 @@ export function detectPlanarChainConservedQuantities(
       symmetryResidual: 0,
       symmetric: gamma === 0,
       evaluate: (state) => energyChain(state, params).total,
-      symmetryDetail: gamma === 0
-        ? 'autonomous Lagrangian system (no explicit t)'
-        : `autonomous but dissipative (γ=${gamma}): the Noether charge decays`
+      symmetryDetail:
+        gamma === 0
+          ? 'autonomous Lagrangian system (no explicit t)'
+          : `autonomous but dissipative (γ=${gamma}): the Noether charge decays`
     },
     {
       name: 'angular-momentum-planar',
@@ -440,7 +450,12 @@ export function detectConservedQuantities(
     );
   }
   if (spec.kind === 'chain') {
-    return detectPlanarChainConservedQuantities({ masses: spec.masses, lengths: spec.lengths, g: spec.g }, 0, state0, options);
+    return detectPlanarChainConservedQuantities(
+      { masses: spec.masses, lengths: spec.lengths, g: spec.g },
+      0,
+      state0,
+      options
+    );
   }
   throw new Error(`detectConservedQuantities: unsupported kind '${spec.kind}' (supported: spherical-chain, chain)`);
 }

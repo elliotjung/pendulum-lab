@@ -23,7 +23,11 @@ export interface SpringPendulumParameters {
 
 const R_FLOOR = 1e-9;
 
-export function rhsSpring(state: ArrayLike<number>, parameters: SpringPendulumParameters, out: StateVector): StateVector {
+export function rhsSpring(
+  state: ArrayLike<number>,
+  parameters: SpringPendulumParameters,
+  out: StateVector
+): StateVector {
   const r = Number(state[0] ?? 0);
   const theta = Number(state[1] ?? 0);
   const rDot = Number(state[2] ?? 0);

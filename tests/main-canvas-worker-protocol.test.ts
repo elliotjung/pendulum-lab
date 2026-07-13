@@ -15,14 +15,26 @@ describe('main trajectory OffscreenCanvas protocol', () => {
   });
 
   it('round-trips bob positions through a transferable Float32 payload', () => {
-    const packed = packBobPositions([{ x: 1.25, y: -2.5 }, { x: 3, y: 4 }]);
+    const packed = packBobPositions([
+      { x: 1.25, y: -2.5 },
+      { x: 3, y: 4 }
+    ]);
     expect(packed).toBeInstanceOf(Float32Array);
-    expect(unpackBobPositions(packed)).toEqual([{ x: 1.25, y: -2.5 }, { x: 3, y: 4 }]);
+    expect(unpackBobPositions(packed)).toEqual([
+      { x: 1.25, y: -2.5 },
+      { x: 3, y: 4 }
+    ]);
   });
 
   it('round-trips projected ensemble tips', () => {
-    const packed = packPixelPoints([{ x: 100, y: 220 }, { x: 9.5, y: 11.25 }]);
-    expect(unpackPixelPoints(packed)).toEqual([{ x: 100, y: 220 }, { x: 9.5, y: 11.25 }]);
+    const packed = packPixelPoints([
+      { x: 100, y: 220 },
+      { x: 9.5, y: 11.25 }
+    ]);
+    expect(unpackPixelPoints(packed)).toEqual([
+      { x: 100, y: 220 },
+      { x: 9.5, y: 11.25 }
+    ]);
   });
 
   it('leaves synchronous transfer failures on the Canvas2D path', () => {
@@ -32,7 +44,9 @@ describe('main trajectory OffscreenCanvas protocol', () => {
     Object.defineProperty(globalThis, 'OffscreenCanvas', { configurable: true, value: class {} });
     const terminate = vi.fn();
     const canvas = {
-      transferControlToOffscreen: () => { throw new Error('already has a context'); },
+      transferControlToOffscreen: () => {
+        throw new Error('already has a context');
+      },
       cloneNode: () => ({}),
       isConnected: true
     } as unknown as HTMLCanvasElement;

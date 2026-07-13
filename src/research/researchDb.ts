@@ -24,7 +24,12 @@ export type ResearchDbStoreName = (typeof RESEARCH_DB_STORES)[number];
 
 /** User-created, potentially large stores eligible for age-based cleanup. */
 export const RESEARCH_DB_CONTENT_STORES: readonly ResearchDbStoreName[] = [
-  'experiments', 'runLog', 'parameterStudies', 'studyResults', 'figures', 'bundles'
+  'experiments',
+  'runLog',
+  'parameterStudies',
+  'studyResults',
+  'figures',
+  'bundles'
 ];
 
 export interface ResearchDbRecord {
@@ -120,7 +125,10 @@ export class ResearchDb {
     });
   }
 
-  private async store(name: ResearchDbStoreName, mode: IDBTransactionMode): Promise<{ store: IDBObjectStore; done: Promise<void> }> {
+  private async store(
+    name: ResearchDbStoreName,
+    mode: IDBTransactionMode
+  ): Promise<{ store: IDBObjectStore; done: Promise<void> }> {
     await this.open();
     if (!this.db) throw new Error('IndexedDB unavailable');
     const tx = this.db.transaction(name, mode);
@@ -289,7 +297,8 @@ export function validateResearchDbArchive(value: unknown): { ok: boolean; proble
   const problems: string[] = [];
   if (typeof value !== 'object' || value === null) return { ok: false, problems: ['archive is not an object'] };
   const archive = value as Partial<ResearchDbArchive>;
-  if (archive.schemaVersion !== RESEARCH_DB_SCHEMA_VERSION) problems.push(`unexpected schemaVersion ${String(archive.schemaVersion)}`);
+  if (archive.schemaVersion !== RESEARCH_DB_SCHEMA_VERSION)
+    problems.push(`unexpected schemaVersion ${String(archive.schemaVersion)}`);
   if (typeof archive.stores !== 'object' || archive.stores === null) {
     problems.push('missing stores');
     return { ok: false, problems };
@@ -335,24 +344,38 @@ export async function migrateFromLocalStorageV2(
     parsed = JSON.parse(rawPayload);
   } catch (error) {
     await db.put('settings', MIGRATION_FLAG_ID, { at: new Date().toISOString(), source: 'corrupted' });
-    return { migrated: false, entries: 0, reason: `corrupted localStorage payload (${error instanceof Error ? error.message : 'parse error'})` };
+    return {
+      migrated: false,
+      entries: 0,
+      reason: `corrupted localStorage payload (${error instanceof Error ? error.message : 'parse error'})`
+    };
   }
   const source = (typeof parsed === 'object' && parsed !== null ? parsed : {}) as Record<string, unknown>;
   let entries = 0;
   const experiments = Array.isArray(source.experiments) ? source.experiments : [];
   if (experiments.length > 0) {
-    await db.putMany('experiments', experiments.map((experiment, index) => ({
-      id: typeof (experiment as { id?: unknown })?.id === 'string' ? (experiment as { id: string }).id : `migrated-exp-${index}`,
-      payload: experiment
-    })));
+    await db.putMany(
+      'experiments',
+      experiments.map((experiment, index) => ({
+        id:
+          typeof (experiment as { id?: unknown })?.id === 'string'
+            ? (experiment as { id: string }).id
+            : `migrated-exp-${index}`,
+        payload: experiment
+      }))
+    );
     entries += experiments.length;
   }
   const runLog = Array.isArray(source.runLog) ? source.runLog : [];
   if (runLog.length > 0) {
-    await db.putMany('runLog', runLog.map((entry, index) => ({
-      id: typeof (entry as { id?: unknown })?.id === 'string' ? (entry as { id: string }).id : `migrated-run-${index}`,
-      payload: entry
-    })));
+    await db.putMany(
+      'runLog',
+      runLog.map((entry, index) => ({
+        id:
+          typeof (entry as { id?: unknown })?.id === 'string' ? (entry as { id: string }).id : `migrated-run-${index}`,
+        payload: entry
+      }))
+    );
     entries += runLog.length;
   }
   if (source.parameterStudy && typeof source.parameterStudy === 'object') {
@@ -369,5 +392,9 @@ export async function migrateFromLocalStorageV2(
     entries += source.comparisonRows.length;
   }
   await db.put('settings', MIGRATION_FLAG_ID, { at: new Date().toISOString(), source: 'localStorage-v2', entries });
-  return { migrated: entries > 0, entries, reason: entries > 0 ? 'migrated localStorage v2 payload' : 'empty localStorage payload' };
+  return {
+    migrated: entries > 0,
+    entries,
+    reason: entries > 0 ? 'migrated localStorage v2 payload' : 'empty localStorage payload'
+  };
 }

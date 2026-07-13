@@ -70,7 +70,13 @@ test('Trust Inspector stays inside a narrow viewport and remains scrollable', as
   const geometry = await page.locator('#trustDrawer').evaluate((element) => {
     const rect = element.getBoundingClientRect();
     const body = element.querySelector<HTMLElement>('.trust-drawer-body');
-    return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, overflowY: body ? getComputedStyle(body).overflowY : '' };
+    return {
+      left: rect.left,
+      right: rect.right,
+      top: rect.top,
+      bottom: rect.bottom,
+      overflowY: body ? getComputedStyle(body).overflowY : ''
+    };
   });
   expect(geometry.left).toBeGreaterThanOrEqual(0);
   expect(geometry.right).toBeLessThanOrEqual(390);

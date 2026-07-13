@@ -60,9 +60,15 @@ export function superpackSection(key: string, title: string, lines: string[]): v
 }
 
 export async function runWadaConvergencePanel(): Promise<void> {
-  superpackSection('wada', 'Wada Resolution Convergence', ['Computing flip basins at 3 resolutions on the chaos worker…']);
+  superpackSection('wada', 'Wada Resolution Convergence', [
+    'Computing flip basins at 3 resolutions on the chaos worker…'
+  ]);
   try {
-    const response = await superpackClient().wadaConvergence(doubleSpecFromCurrent(), { resolutions: [30, 45, 60], maxTime: 12, dt: 0.015 });
+    const response = await superpackClient().wadaConvergence(doubleSpecFromCurrent(), {
+      resolutions: [30, 45, 60],
+      maxTime: 12,
+      dt: 0.015
+    });
     const result = response.result;
     superpackSection('wada', `Wada Resolution Convergence — ${result.verdict.toUpperCase()}`, [
       `Wada fraction by resolution: ${result.resolutions.map((n, i) => `${n}px=${(result.wadaFractions[i] ?? 0).toFixed(3)}`).join(', ')}`,
@@ -73,9 +79,15 @@ export async function runWadaConvergencePanel(): Promise<void> {
       `Caveat: ${result.caveat}`,
       `Reproducibility hash: ${result.reproducibilityHash}; grid hashes: ${result.gridHashes.join(', ')}`
     ]);
-    logResearchRun('probe', 'Wada convergence', `${result.verdict}; fractions ${result.wadaFractions.map((f) => f.toFixed(2)).join('/')}`);
+    logResearchRun(
+      'probe',
+      'Wada convergence',
+      `${result.verdict}; fractions ${result.wadaFractions.map((f) => f.toFixed(2)).join('/')}`
+    );
   } catch (error) {
-    superpackSection('wada', 'Wada Resolution Convergence — FAILED', [String(error instanceof Error ? error.message : error)]);
+    superpackSection('wada', 'Wada Resolution Convergence — FAILED', [
+      String(error instanceof Error ? error.message : error)
+    ]);
   }
 }
 
@@ -96,9 +108,15 @@ export async function runRecurrenceNetworkPanel(): Promise<void> {
       `Caveat: ${metrics.caveat}`,
       `Reproducibility hash: ${hashText(JSON.stringify({ hash: snapshot.hash, samples: 240, epsilon: rqa.epsilon }))}`
     ]);
-    logResearchRun('probe', 'Recurrence network', `density ${metrics.density.toFixed(3)}, transitivity ${metrics.transitivity.toFixed(3)}`);
+    logResearchRun(
+      'probe',
+      'Recurrence network',
+      `density ${metrics.density.toFixed(3)}, transitivity ${metrics.transitivity.toFixed(3)}`
+    );
   } catch (error) {
-    superpackSection('network', 'Recurrence Network — FAILED', [String(error instanceof Error ? error.message : error)]);
+    superpackSection('network', 'Recurrence Network — FAILED', [
+      String(error instanceof Error ? error.message : error)
+    ]);
   }
 }
 
@@ -118,7 +136,9 @@ export async function runFtleRidgePanel(): Promise<void> {
           for (let x = 0; x < field.width; x += 1) {
             const value = field.values[y * field.width + x] ?? field.min;
             const shade = Math.round(((value - field.min) / span) * 255);
-            ctx.fillStyle = ridges.mask[y * field.width + x] ? '#ff3355' : `rgb(${shade},${shade},${Math.min(255, shade + 40)})`;
+            ctx.fillStyle = ridges.mask[y * field.width + x]
+              ? '#ff3355'
+              : `rgb(${shade},${shade},${Math.min(255, shade + 40)})`;
             ctx.fillRect(x * cellW, y * cellH, Math.ceil(cellW), Math.ceil(cellH));
           }
         }
@@ -131,28 +151,47 @@ export async function runFtleRidgePanel(): Promise<void> {
       `Caveat: ${ridges.caveat}`,
       `Reproducibility hash: ${hashText(JSON.stringify({ n: field.width, p: ridges.percentile, spec: doubleSpecFromCurrent() }))}`
     ]);
-    logResearchRun('probe', 'FTLE ridges', `${ridges.ridgeCells} ridge cells (${(ridges.ridgeFraction * 100).toFixed(1)}%)`);
+    logResearchRun(
+      'probe',
+      'FTLE ridges',
+      `${ridges.ridgeCells} ridge cells (${(ridges.ridgeFraction * 100).toFixed(1)}%)`
+    );
   } catch (error) {
-    superpackSection('ridges', 'FTLE Ridge Extraction — FAILED', [String(error instanceof Error ? error.message : error)]);
+    superpackSection('ridges', 'FTLE Ridge Extraction — FAILED', [
+      String(error instanceof Error ? error.message : error)
+    ]);
   }
 }
 
 export async function runBifurcationDetectPanel(): Promise<void> {
-  superpackSection('bifurcations', 'Automated Bifurcation Detection', ['Sweeping the driven pendulum bifurcation diagram…']);
+  superpackSection('bifurcations', 'Automated Bifurcation Detection', [
+    'Sweeping the driven pendulum bifurcation diagram…'
+  ]);
   try {
     const base = orbitBaseFromControls();
     const from = Math.max(0.6, base.driveAmplitude);
     const to = Math.max(from + 0.4, numberFrom('rwOrbitSweepTo', 1.2) + 0.3);
     const amplitudes = Array.from({ length: 25 }, (_, i) => from + ((to - from) * i) / 24);
     const response = await superpackClient().bifurcation(
-      { kind: 'driven', g: base.g, length: base.length, damping: base.damping, driveAmplitude: from, driveFrequency: base.driveFrequency },
+      {
+        kind: 'driven',
+        g: base.g,
+        length: base.length,
+        damping: base.damping,
+        driveAmplitude: from,
+        driveFrequency: base.driveFrequency
+      },
       amplitudes,
       [0.3, 0, 0],
       { dt: 0.01, maxTime: 240, transientCrossings: 30, maxPointsPerParam: 60 }
     );
     const detection = detectBifurcations(response.columns, { tolerance: 1e-3, chaosCountThreshold: 24 });
-    const eventLines = detection.events.slice(0, 8).map((event) =>
-      `${event.type} in A∈(${event.previousParam.toFixed(3)}, ${event.param.toFixed(3)}]: ${event.fromCount} -> ${event.toCount} branches`);
+    const eventLines = detection.events
+      .slice(0, 8)
+      .map(
+        (event) =>
+          `${event.type} in A∈(${event.previousParam.toFixed(3)}, ${event.param.toFixed(3)}]: ${event.fromCount} -> ${event.toCount} branches`
+      );
     superpackSection('bifurcations', `Automated Bifurcation Detection — ${detection.events.length} event(s)`, [
       ...(eventLines.length > 0 ? eventLines : ['No attractor-count changes detected in the swept range.']),
       `Chaotic columns: ${detection.chaoticColumns}/${detection.params.length}`,
@@ -160,9 +199,15 @@ export async function runBifurcationDetectPanel(): Promise<void> {
       `Caveat: ${detection.caveat}`,
       `Reproducibility hash: ${hashText(JSON.stringify({ from, to, base }))}`
     ]);
-    logResearchRun('probe', 'Bifurcation detection', `${detection.events.length} events, ${detection.chaoticColumns} chaotic columns`);
+    logResearchRun(
+      'probe',
+      'Bifurcation detection',
+      `${detection.events.length} events, ${detection.chaoticColumns} chaotic columns`
+    );
   } catch (error) {
-    superpackSection('bifurcations', 'Automated Bifurcation Detection — FAILED', [String(error instanceof Error ? error.message : error)]);
+    superpackSection('bifurcations', 'Automated Bifurcation Detection — FAILED', [
+      String(error instanceof Error ? error.message : error)
+    ]);
   }
 }
 
@@ -181,13 +226,17 @@ export function runFixedPointPanel(): void {
         end: to,
         step: Math.max(1e-3, Math.abs(to - base.driveAmplitude) / 40) * Math.sign(to - base.driveAmplitude || 1)
       });
-      const nsScan = detectNeimarkSacker(branch.branch.map((point) => ({ param: point.parameter, multipliers: point.multipliers })));
+      const nsScan = detectNeimarkSacker(
+        branch.branch.map((point) => ({ param: point.parameter, multipliers: point.multipliers }))
+      );
       superpackSection('fixedpoint', `Poincaré Fixed Point — ${classification.classification.toUpperCase()}`, [
         orbit.converged
           ? `Fixed point (θ, ω) = (${orbit.orbit[0].toFixed(6)}, ${orbit.orbit[1].toFixed(6)}), residual ${orbit.residual.toExponential(2)} in ${orbit.iterations} Newton steps`
           : `Newton did not converge (residual ${orbit.residual.toExponential(2)})`,
         `Classification: ${classification.classification} (${classification.stable ? 'stable' : 'not asymptotically stable'}); ${classification.detail}`,
-        classification.rotationNumber !== null ? `Rotation number ${classification.rotationNumber.toFixed(4)}` : 'Non-rotational (real multipliers)',
+        classification.rotationNumber !== null
+          ? `Rotation number ${classification.rotationNumber.toFixed(4)}`
+          : 'Non-rotational (real multipliers)',
         nsScan.points.length > 0
           ? `Neimark–Sacker: ${nsScan.points.map((point) => `A≈${point.paramCritical.toFixed(4)} (rot ${point.rotationNumber.toFixed(3)}${point.strongResonance ? ', STRONG RESONANCE' : ''}, ${point.direction})`).join('; ')}`
           : `Neimark–Sacker: no complex-pair unit-circle crossing along A∈[${base.driveAmplitude}, ${to}]`,
@@ -195,19 +244,34 @@ export function runFixedPointPanel(): void {
         `Caveat: ${nsScan.caveat}`,
         `Reproducibility hash: ${hashText(JSON.stringify({ base, to }))}`
       ]);
-      logResearchRun('probe', 'Fixed point classification', `${classification.classification}; NS points: ${nsScan.points.length}`);
+      logResearchRun(
+        'probe',
+        'Fixed point classification',
+        `${classification.classification}; NS points: ${nsScan.points.length}`
+      );
     } catch (error) {
-      superpackSection('fixedpoint', 'Poincaré Fixed Point — FAILED', [String(error instanceof Error ? error.message : error)]);
+      superpackSection('fixedpoint', 'Poincaré Fixed Point — FAILED', [
+        String(error instanceof Error ? error.message : error)
+      ]);
     }
   }, 30);
 }
 
 export async function runCodimTwoPanel(): Promise<void> {
-  superpackSection('codim2', 'Codim-2 Regime Map', ['Scanning the (drive amplitude, damping) plane on the chaos worker…']);
+  superpackSection('codim2', 'Codim-2 Regime Map', [
+    'Scanning the (drive amplitude, damping) plane on the chaos worker…'
+  ]);
   try {
     const base = orbitBaseFromControls();
     const response = await superpackClient().codimTwo(
-      { kind: 'driven', g: base.g, length: base.length, damping: base.damping, driveAmplitude: base.driveAmplitude, driveFrequency: base.driveFrequency },
+      {
+        kind: 'driven',
+        g: base.g,
+        length: base.length,
+        damping: base.damping,
+        driveAmplitude: base.driveAmplitude,
+        driveFrequency: base.driveFrequency
+      },
       [0.3, 0, 0],
       [0.2, 1.6],
       [0.05, 0.7],
@@ -242,8 +306,10 @@ export async function runCodimTwoPanel(): Promise<void> {
         // maps through the cell-centre lattice (same convention vertically).
         const xLo = result.xValues[0] ?? 0;
         const xHi = result.xValues[n - 1] ?? 1;
-        const px = (amplitude: number): number => ((amplitude - xLo) / Math.max(xHi - xLo, 1e-12)) * (n - 1) * cellW + cellW / 2;
-        const py = (gamma: number): number => canvas.height - (((gamma - gammaLo) / Math.max(gammaHi - gammaLo, 1e-12)) * (n - 1) * cellH + cellH / 2);
+        const px = (amplitude: number): number =>
+          ((amplitude - xLo) / Math.max(xHi - xLo, 1e-12)) * (n - 1) * cellW + cellW / 2;
+        const py = (gamma: number): number =>
+          canvas.height - (((gamma - gammaLo) / Math.max(gammaHi - gammaLo, 1e-12)) * (n - 1) * cellH + cellH / 2);
         ctx.save();
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 2;
@@ -267,7 +333,11 @@ export async function runCodimTwoPanel(): Promise<void> {
         ctx.restore();
         ctx.fillStyle = '#ffffff';
         ctx.font = '10px system-ui';
-        ctx.fillText('x: drive amplitude, y: damping — red chaotic, blue regular, dashed white: Melnikov A_c(γ)', 6, 12);
+        ctx.fillText(
+          'x: drive amplitude, y: damping — red chaotic, blue regular, dashed white: Melnikov A_c(γ)',
+          6,
+          12
+        );
       }
     }
     const melnikovLo = melnikovCurve[0];
@@ -282,7 +352,11 @@ export async function runCodimTwoPanel(): Promise<void> {
       `Caveat: ${result.caveat} Melnikov curve is perturbative (small δ, f) — treat it as a heuristic away from small damping/drive.`,
       `Reproducibility hash: ${result.reproducibilityHash}`
     ]);
-    logResearchRun('probe', 'Codim-2 map', `${(result.chaoticFraction * 100).toFixed(1)}% chaotic, ${result.boundaryCells} boundary cells`);
+    logResearchRun(
+      'probe',
+      'Codim-2 map',
+      `${(result.chaoticFraction * 100).toFixed(1)}% chaotic, ${result.boundaryCells} boundary cells`
+    );
   } catch (error) {
     superpackSection('codim2', 'Codim-2 Regime Map — FAILED', [String(error instanceof Error ? error.message : error)]);
   }
@@ -325,28 +399,40 @@ export async function runSobolPanel(): Promise<void> {
         samples: 16,
         onProgress: (done, total) => {
           if (done % 8 === 0 || done === total) {
-            superpackSection('sobol', 'Sobol Sensitivity of λ_max', [`Evaluating λ_max ${done}/${total} (Saltelli radial design)…`]);
+            superpackSection('sobol', 'Sobol Sensitivity of λ_max', [
+              `Evaluating λ_max ${done}/${total} (Saltelli radial design)…`
+            ]);
           }
         }
       }
     );
     const fmt = (value: number): string => (Number.isFinite(value) ? value.toFixed(3) : 'n/a');
     superpackSection('sobol', 'Sobol Sensitivity of λ_max (A × γ)', [
-      ...result.variables.map((name, i) =>
-        `${name}: S=${fmt(result.firstOrder[i]!)} (first-order), S_T=${fmt(result.total[i]!)} (total; S_T−S = interaction share)`),
+      ...result.variables.map(
+        (name, i) =>
+          `${name}: S=${fmt(result.firstOrder[i]!)} (first-order), S_T=${fmt(result.total[i]!)} (total; S_T−S = interaction share)`
+      ),
       `Output: λ_max over A∈[0.2, 1.6], γ∈[0.05, 0.7]; mean ${result.mean.toFixed(4)} /s, variance ${result.variance.toFixed(5)}`,
       `Method: ${result.method}; per point ${steps} Benettin steps at dt=${dt} (ω=${base.driveFrequency})`,
       `Caveat: ${result.caveat}${result.nonFiniteOutputs > 0 ? ` ${result.nonFiniteOutputs} non-finite λ evaluations excluded.` : ''}`,
       `Reproducibility hash: ${hashText(JSON.stringify({ variables, steps, dt, base, samples: result.samples }))}`
     ]);
-    logResearchRun('probe', 'Sobol sensitivity', result.variables.map((name, i) => `${name}: S=${fmt(result.firstOrder[i]!)}, ST=${fmt(result.total[i]!)}`).join('; '));
+    logResearchRun(
+      'probe',
+      'Sobol sensitivity',
+      result.variables
+        .map((name, i) => `${name}: S=${fmt(result.firstOrder[i]!)}, ST=${fmt(result.total[i]!)}`)
+        .join('; ')
+    );
   } catch (error) {
     superpackSection('sobol', 'Sobol Sensitivity — FAILED', [String(error instanceof Error ? error.message : error)]);
   }
 }
 
 export function runShadowingPanel(): void {
-  superpackSection('shadowing', 'Shadowing Reliability', ['Comparing production integrator against the GBS reference…']);
+  superpackSection('shadowing', 'Shadowing Reliability', [
+    'Comparing production integrator against the GBS reference…'
+  ]);
   window.setTimeout(() => {
     try {
       const snapshot = currentSnapshot();
@@ -373,7 +459,9 @@ export function runShadowingPanel(): void {
       ]);
       logResearchRun('probe', 'Shadowing score', `${(score * 100).toFixed(0)}% over ${T}s`);
     } catch (error) {
-      superpackSection('shadowing', 'Shadowing Reliability — FAILED', [String(error instanceof Error ? error.message : error)]);
+      superpackSection('shadowing', 'Shadowing Reliability — FAILED', [
+        String(error instanceof Error ? error.message : error)
+      ]);
     }
   }, 30);
 }
@@ -383,16 +471,26 @@ export function runMelnikovPanel(): void {
     const base = orbitBaseFromControls();
     const verdict = melnikovVerdict(base);
     const valid = verdict.delta < 0.5 && verdict.f < 1.5;
-    superpackSection('melnikov', `Melnikov Threshold — ${verdict.predictsHomoclinicTangle ? 'TANGLE PREDICTED' : 'below threshold'}`, [
-      `Critical amplitude A_c = ${verdict.criticalAmplitude.toFixed(4)}; current A = ${base.driveAmplitude} (ratio ${verdict.amplitudeRatio.toFixed(3)})`,
-      `Scaled parameters: δ=${verdict.delta.toFixed(4)}, f=${verdict.f.toFixed(4)}, Ω=${verdict.Omega.toFixed(4)} (ω0=${verdict.omega0.toFixed(4)})`,
-      `Validity: perturbative Melnikov theory ${valid ? 'applicable (small δ, f)' : 'STRAINED — δ or f is not small; treat the threshold as heuristic only'}`,
-      'Method: first-order Melnikov function along the undamped separatrix of the driven pendulum; simple zeros ⇒ transverse homoclinic intersection',
-      'Caveat: predicts the onset of homoclinic chaos (transient tangles), not necessarily a strange attractor; valid for the single driven pendulum only',
-      `Reproducibility hash: ${hashText(JSON.stringify(base))}`
-    ]);
-    logResearchRun('probe', 'Melnikov threshold', `A_c=${verdict.criticalAmplitude.toFixed(4)}, ratio ${verdict.amplitudeRatio.toFixed(2)}`);
+    superpackSection(
+      'melnikov',
+      `Melnikov Threshold — ${verdict.predictsHomoclinicTangle ? 'TANGLE PREDICTED' : 'below threshold'}`,
+      [
+        `Critical amplitude A_c = ${verdict.criticalAmplitude.toFixed(4)}; current A = ${base.driveAmplitude} (ratio ${verdict.amplitudeRatio.toFixed(3)})`,
+        `Scaled parameters: δ=${verdict.delta.toFixed(4)}, f=${verdict.f.toFixed(4)}, Ω=${verdict.Omega.toFixed(4)} (ω0=${verdict.omega0.toFixed(4)})`,
+        `Validity: perturbative Melnikov theory ${valid ? 'applicable (small δ, f)' : 'STRAINED — δ or f is not small; treat the threshold as heuristic only'}`,
+        'Method: first-order Melnikov function along the undamped separatrix of the driven pendulum; simple zeros ⇒ transverse homoclinic intersection',
+        'Caveat: predicts the onset of homoclinic chaos (transient tangles), not necessarily a strange attractor; valid for the single driven pendulum only',
+        `Reproducibility hash: ${hashText(JSON.stringify(base))}`
+      ]
+    );
+    logResearchRun(
+      'probe',
+      'Melnikov threshold',
+      `A_c=${verdict.criticalAmplitude.toFixed(4)}, ratio ${verdict.amplitudeRatio.toFixed(2)}`
+    );
   } catch (error) {
-    superpackSection('melnikov', 'Melnikov Threshold — FAILED', [String(error instanceof Error ? error.message : error)]);
+    superpackSection('melnikov', 'Melnikov Threshold — FAILED', [
+      String(error instanceof Error ? error.message : error)
+    ]);
   }
 }

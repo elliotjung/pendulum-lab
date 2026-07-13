@@ -31,9 +31,11 @@ export function mainCanvasWorkerRequested(search = typeof location === 'undefine
 }
 
 export function mainCanvasWorkerSupported(canvas: HTMLCanvasElement): boolean {
-  return typeof Worker !== 'undefined'
-    && typeof OffscreenCanvas !== 'undefined'
-    && typeof canvas.transferControlToOffscreen === 'function';
+  return (
+    typeof Worker !== 'undefined' &&
+    typeof OffscreenCanvas !== 'undefined' &&
+    typeof canvas.transferControlToOffscreen === 'function'
+  );
 }
 
 function defaultWorker(): MainCanvasWorkerLike {

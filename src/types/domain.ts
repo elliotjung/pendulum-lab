@@ -1,4 +1,5 @@
-export type SystemType = 'double' | 'triple' | 'chain' | 'spherical' | 'spherical-chain' | 'rope' | 'spring' | 'driven' | 'double-string';
+export type SystemType =
+  'double' | 'triple' | 'chain' | 'spherical' | 'spherical-chain' | 'rope' | 'spring' | 'driven' | 'double-string';
 export type RunMode = 'demo' | 'education' | 'research' | 'benchmark' | 'performance' | 'recovery';
 export type IntegratorId =
   | 'euler'

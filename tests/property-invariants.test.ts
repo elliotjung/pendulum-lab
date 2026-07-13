@@ -216,14 +216,8 @@ describe('property: physical dissipation and rotational symmetry', () => {
       fc.double({ min: -1.5, max: 1.5, noNaN: true })
     );
     const sphericalParametersArb: fc.Arbitrary<SphericalChainParams> = fc.record({
-      masses: fc.tuple(
-        fc.double({ min: 0.4, max: 3, noNaN: true }),
-        fc.double({ min: 0.4, max: 3, noNaN: true })
-      ),
-      lengths: fc.tuple(
-        fc.double({ min: 0.4, max: 2.5, noNaN: true }),
-        fc.double({ min: 0.4, max: 2.5, noNaN: true })
-      ),
+      masses: fc.tuple(fc.double({ min: 0.4, max: 3, noNaN: true }), fc.double({ min: 0.4, max: 3, noNaN: true })),
+      lengths: fc.tuple(fc.double({ min: 0.4, max: 2.5, noNaN: true }), fc.double({ min: 0.4, max: 2.5, noNaN: true })),
       g: fc.double({ min: 1, max: 20, noNaN: true }),
       damping: fc.constant(0)
     });

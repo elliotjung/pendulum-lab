@@ -81,12 +81,15 @@ function validateInputs(parameters: ChainParameters, state0: ArrayLike<number>, 
   validateChainParameters(parameters);
   const links = parameters.masses.length;
   const dimension = links * 2;
-  if (links > MAX_LINKS) throw new Error(`N-chain WebGPU scope is limited to ${MAX_LINKS} links (${MAX_DIMENSION} state dimensions)`);
-  if (state0.length !== dimension) throw new Error(`N-chain state length ${state0.length} does not match 2N=${dimension}`);
+  if (links > MAX_LINKS)
+    throw new Error(`N-chain WebGPU scope is limited to ${MAX_LINKS} links (${MAX_DIMENSION} state dimensions)`);
+  if (state0.length !== dimension)
+    throw new Error(`N-chain state length ${state0.length} does not match 2N=${dimension}`);
   if (!(settings.dt > 0) || settings.renormEvery <= 0 || settings.forwardTransient < 0 || settings.window <= 0) {
     throw new Error('N-chain variational settings require dt>0, renormEvery>0, forwardTransient>=0, and window>0');
   }
-  if (settings.window > MAX_WINDOW) throw new Error(`N-chain WebGPU window exceeds the validated ceiling ${MAX_WINDOW}`);
+  if (settings.window > MAX_WINDOW)
+    throw new Error(`N-chain WebGPU window exceeds the validated ceiling ${MAX_WINDOW}`);
   if (settings.backwardTransient < 0 || settings.backwardTransient >= settings.window) {
     throw new Error('N-chain backwardTransient must be in [0, window)');
   }
@@ -135,19 +138,22 @@ function tangentStep(matrix: Float64Array, jacobian: Float64Array, dimension: nu
   for (let row = 0; row < dimension; row += 1) {
     for (let col = 0; col < dimension; col += 1) {
       let value = 0;
-      for (let inner = 0; inner < dimension; inner += 1) value += (jacobian[row * dimension + inner] ?? 0) * (matrix[inner * dimension + col] ?? 0);
+      for (let inner = 0; inner < dimension; inner += 1)
+        value += (jacobian[row * dimension + inner] ?? 0) * (matrix[inner * dimension + col] ?? 0);
       first[row * dimension + col] = value;
     }
   }
   for (let row = 0; row < dimension; row += 1) {
     for (let col = 0; col < dimension; col += 1) {
       let value = 0;
-      for (let inner = 0; inner < dimension; inner += 1) value += (jacobian[row * dimension + inner] ?? 0) * (first[inner * dimension + col] ?? 0);
+      for (let inner = 0; inner < dimension; inner += 1)
+        value += (jacobian[row * dimension + inner] ?? 0) * (first[inner * dimension + col] ?? 0);
       second[row * dimension + col] = value;
     }
   }
   const halfDtSquared = 0.5 * dt * dt;
-  for (let i = 0; i < matrix.length; i += 1) matrix[i] = (matrix[i] ?? 0) + dt * (first[i] ?? 0) + halfDtSquared * (second[i] ?? 0);
+  for (let i = 0; i < matrix.length; i += 1)
+    matrix[i] = (matrix[i] ?? 0) + dt * (first[i] ?? 0) + halfDtSquared * (second[i] ?? 0);
 }
 
 function qrInPlace(matrix: Float64Array, dimension: number): Float64Array {
@@ -155,16 +161,20 @@ function qrInPlace(matrix: Float64Array, dimension: number): Float64Array {
   for (let col = 0; col < dimension; col += 1) {
     for (let previous = 0; previous < col; previous += 1) {
       let dot = 0;
-      for (let row = 0; row < dimension; row += 1) dot += (matrix[row * dimension + col] ?? 0) * (matrix[row * dimension + previous] ?? 0);
+      for (let row = 0; row < dimension; row += 1)
+        dot += (matrix[row * dimension + col] ?? 0) * (matrix[row * dimension + previous] ?? 0);
       factor[previous * dimension + col] = dot;
-      for (let row = 0; row < dimension; row += 1) matrix[row * dimension + col] = (matrix[row * dimension + col] ?? 0) - dot * (matrix[row * dimension + previous] ?? 0);
+      for (let row = 0; row < dimension; row += 1)
+        matrix[row * dimension + col] =
+          (matrix[row * dimension + col] ?? 0) - dot * (matrix[row * dimension + previous] ?? 0);
     }
     let normSquared = 0;
     for (let row = 0; row < dimension; row += 1) normSquared += (matrix[row * dimension + col] ?? 0) ** 2;
     const norm = Math.sqrt(normSquared);
     factor[col * dimension + col] = norm;
     const inverse = norm > 1e-20 ? 1 / norm : 0;
-    for (let row = 0; row < dimension; row += 1) matrix[row * dimension + col] = (matrix[row * dimension + col] ?? 0) * inverse;
+    for (let row = 0; row < dimension; row += 1)
+      matrix[row * dimension + col] = (matrix[row * dimension + col] ?? 0) * inverse;
   }
   return factor;
 }
@@ -174,7 +184,8 @@ function normalizeColumns(matrix: Float64Array, dimension: number): void {
     let normSquared = 0;
     for (let row = 0; row < dimension; row += 1) normSquared += (matrix[row * dimension + col] ?? 0) ** 2;
     const inverse = normSquared > 0 ? 1 / Math.sqrt(normSquared) : 0;
-    for (let row = 0; row < dimension; row += 1) matrix[row * dimension + col] = (matrix[row * dimension + col] ?? 0) * inverse;
+    for (let row = 0; row < dimension; row += 1)
+      matrix[row * dimension + col] = (matrix[row * dimension + col] ?? 0) * inverse;
   }
 }
 
@@ -183,7 +194,8 @@ function solveUpper(factor: Float64Array, coefficients: Float64Array, dimension:
   for (let col = 0; col < dimension; col += 1) {
     for (let row = dimension - 1; row >= 0; row -= 1) {
       let value = coefficients[row * dimension + col] ?? 0;
-      for (let inner = row + 1; inner < dimension; inner += 1) value -= (factor[row * dimension + inner] ?? 0) * (solved[inner * dimension + col] ?? 0);
+      for (let inner = row + 1; inner < dimension; inner += 1)
+        value -= (factor[row * dimension + inner] ?? 0) * (solved[inner * dimension + col] ?? 0);
       const diagonal = factor[row * dimension + row] ?? 0;
       solved[row * dimension + col] = Math.abs(diagonal) > 1e-20 ? value / diagonal : 0;
     }
@@ -197,14 +209,16 @@ function clvVectors(frame: Float64Array, coefficients: Float64Array, dimension: 
   for (let row = 0; row < dimension; row += 1) {
     for (let col = 0; col < dimension; col += 1) {
       let value = 0;
-      for (let inner = 0; inner < dimension; inner += 1) value += (frame[row * dimension + inner] ?? 0) * (coefficients[inner * dimension + col] ?? 0);
+      for (let inner = 0; inner < dimension; inner += 1)
+        value += (frame[row * dimension + inner] ?? 0) * (coefficients[inner * dimension + col] ?? 0);
       rowMajor[row * dimension + col] = value;
     }
   }
   normalizeColumns(rowMajor, dimension);
   const columnPacked = new Float64Array(frame.length);
   for (let col = 0; col < dimension; col += 1) {
-    for (let row = 0; row < dimension; row += 1) columnPacked[col * dimension + row] = rowMajor[row * dimension + col] ?? 0;
+    for (let row = 0; row < dimension; row += 1)
+      columnPacked[col * dimension + row] = rowMajor[row * dimension + col] ?? 0;
   }
   return columnPacked;
 }
@@ -218,7 +232,8 @@ function hyperbolicityAngle(vectors: Float64Array, dimension: number, exponents:
     for (let contracting = 0; contracting < dimension; contracting += 1) {
       if ((exponents[contracting] ?? 0) >= -zeroTolerance) continue;
       let dot = 0;
-      for (let row = 0; row < dimension; row += 1) dot += (vectors[expanding * dimension + row] ?? 0) * (vectors[contracting * dimension + row] ?? 0);
+      for (let row = 0; row < dimension; row += 1)
+        dot += (vectors[expanding * dimension + row] ?? 0) * (vectors[contracting * dimension + row] ?? 0);
       minimum = Math.min(minimum, Math.acos(Math.min(1, Math.abs(dot))));
       found = true;
     }
@@ -231,7 +246,8 @@ function largestSingularFtle(stm: Float64Array, dimension: number, horizon: numb
   for (let row = 0; row < dimension; row += 1) {
     for (let col = 0; col < dimension; col += 1) {
       let value = 0;
-      for (let inner = 0; inner < dimension; inner += 1) value += (stm[inner * dimension + row] ?? 0) * (stm[inner * dimension + col] ?? 0);
+      for (let inner = 0; inner < dimension; inner += 1)
+        value += (stm[inner * dimension + row] ?? 0) * (stm[inner * dimension + col] ?? 0);
       cauchyGreen[row * dimension + col] = value;
     }
   }
@@ -241,7 +257,8 @@ function largestSingularFtle(stm: Float64Array, dimension: number, horizon: numb
     const next = new Float64Array(dimension);
     let normSquared = 0;
     for (let row = 0; row < dimension; row += 1) {
-      for (let col = 0; col < dimension; col += 1) next[row] = (next[row] ?? 0) + (cauchyGreen[row * dimension + col] ?? 0) * (vector[col] ?? 0);
+      for (let col = 0; col < dimension; col += 1)
+        next[row] = (next[row] ?? 0) + (cauchyGreen[row * dimension + col] ?? 0) * (vector[col] ?? 0);
       normSquared += (next[row] ?? 0) ** 2;
     }
     const inverse = normSquared > 0 ? 1 / Math.sqrt(normSquared) : 0;
@@ -251,10 +268,11 @@ function largestSingularFtle(stm: Float64Array, dimension: number, horizon: numb
   let eigenvalue = 0;
   for (let row = 0; row < dimension; row += 1) {
     let value = 0;
-    for (let col = 0; col < dimension; col += 1) value += (cauchyGreen[row * dimension + col] ?? 0) * (vector[col] ?? 0);
+    for (let col = 0; col < dimension; col += 1)
+      value += (cauchyGreen[row * dimension + col] ?? 0) * (vector[col] ?? 0);
     eigenvalue += (vector[row] ?? 0) * value;
   }
-  return 0.5 * Math.log(Math.max(eigenvalue, 1e-20)) / horizon;
+  return (0.5 * Math.log(Math.max(eigenvalue, 1e-20))) / horizon;
 }
 
 /** CPU f64 oracle for the exact Jacobian-tape contract consumed by WebGPU. */
@@ -298,7 +316,8 @@ function evaluateTapeCpu(tape: Float64Array, links: number, settings: ResolvedSe
     }
     factors.push(factor);
     frames.push(frame.slice());
-    for (let col = 0; col < dimension; col += 1) exponentSums[col] = (exponentSums[col] ?? 0) + Math.log(Math.max(factor[col * dimension + col] ?? 0, 1e-20));
+    for (let col = 0; col < dimension; col += 1)
+      exponentSums[col] = (exponentSums[col] ?? 0) + Math.log(Math.max(factor[col * dimension + col] ?? 0, 1e-20));
   }
   const horizon = settings.window * settings.renormEvery * settings.dt;
   const exponents = exponentSums.map((value) => value / horizon);
@@ -353,9 +372,22 @@ export async function webgpuNChainVariationalCandidate(
   const io = new Float32Array(factorsOffset + settings.window * matrixSize);
   for (let i = 0; i < tape.length; i += 1) io[jacobianOffset + i] = tape[i] ?? 0;
   const uniform = new Float32Array([
-    dimension, settings.renormEvery, settings.forwardTransient, settings.window,
-    settings.backwardTransient, settings.dt, jacobianOffset, framesOffset,
-    factorsOffset, OUTPUT_VECTOR_OFFSET, 0, 0, 0, 0, 0, 0
+    dimension,
+    settings.renormEvery,
+    settings.forwardTransient,
+    settings.window,
+    settings.backwardTransient,
+    settings.dt,
+    jacobianOffset,
+    framesOffset,
+    factorsOffset,
+    OUTPUT_VECTOR_OFFSET,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
   ]);
   const started = typeof performance === 'undefined' ? Date.now() : performance.now();
   const reduced = await runComputeKernel(WGSL_NCHAIN_VARIATIONAL_KERNEL, uniform, io, 256);
@@ -388,7 +420,8 @@ export async function webgpuNChainVariationalCandidate(
         settings
       }
     },
-    caveat: 'Hybrid N-chain WebGPU candidate: the CPU f64 reference trajectory supplies a central-difference Jacobian tape; WebGPU f32 performs tiled STM propagation, QR tape, Ginelli backward solve, and the variational FTLE singular-value estimate.'
+    caveat:
+      'Hybrid N-chain WebGPU candidate: the CPU f64 reference trajectory supplies a central-difference Jacobian tape; WebGPU f32 performs tiled STM propagation, QR tape, Ginelli backward solve, and the variational FTLE singular-value estimate.'
   };
 }
 
@@ -407,7 +440,8 @@ export async function promotedNChainVariational(
       cpuOracle,
       gpuCandidate: null,
       comparison: null,
-      caveat: 'CPU f64 N-chain variational result returned because WebGPU was unavailable, disabled, or outside the validated N<=8 scope.'
+      caveat:
+        'CPU f64 N-chain variational result returned because WebGPU was unavailable, disabled, or outside the validated N<=8 scope.'
     };
   }
   const clv = compareClvAcceleration(gpuCandidate.result.clv, cpuOracle.clv, {
@@ -425,7 +459,8 @@ export async function promotedNChainVariational(
       cpuOracle,
       gpuCandidate,
       comparison,
-      caveat: 'CPU f64 N-chain variational result returned because the WebGPU f32 candidate failed the same-tape oracle gate.'
+      caveat:
+        'CPU f64 N-chain variational result returned because the WebGPU f32 candidate failed the same-tape oracle gate.'
     };
   }
   return {
@@ -434,6 +469,7 @@ export async function promotedNChainVariational(
     cpuOracle,
     gpuCandidate,
     comparison,
-    caveat: 'N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64.'
+    caveat:
+      'N-chain WebGPU STM/QR/CLV/FTLE result promoted only after same-run CPU f64 Jacobian-tape comparison. Nonlinear trajectory integration and Jacobian construction remain CPU f64.'
   };
 }

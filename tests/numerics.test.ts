@@ -11,14 +11,14 @@ import {
   gaussLegendre6Step,
   rk4Step
 } from '../src/physics/integrators';
-import {
-  dormandPrince54Step,
-  adaptiveStep,
-  integrateAdaptive,
-  richardsonStep
-} from '../src/physics/adaptive';
+import { dormandPrince54Step, adaptiveStep, integrateAdaptive, richardsonStep } from '../src/physics/adaptive';
 
-type Stepper = (state: Float64Array, dt: number, rhs: (s: Float64Array, o: Float64Array) => void, out: Float64Array) => Float64Array;
+type Stepper = (
+  state: Float64Array,
+  dt: number,
+  rhs: (s: Float64Array, o: Float64Array) => void,
+  out: Float64Array
+) => Float64Array;
 
 // Harmonic oscillator y = [x, v], x' = v, v' = -x. Exact: x = cos t, v = -sin t.
 function oscillator(state: Float64Array, out: Float64Array): void {

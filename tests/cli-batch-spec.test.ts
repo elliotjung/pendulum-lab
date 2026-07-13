@@ -8,11 +8,21 @@ const spec: CliBatchSpec = {
   jobs: [
     {
       name: 'lyap-baseline',
-      request: { kind: 'lyapunov', spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, state0: [2, 2.5, 0, 0], settings: { steps: 500 } } as Omit<ChaosRequest, 'id'>
+      request: {
+        kind: 'lyapunov',
+        spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
+        state0: [2, 2.5, 0, 0],
+        settings: { steps: 500 }
+      } as Omit<ChaosRequest, 'id'>
     },
     {
       name: 'rqa-baseline',
-      request: { kind: 'rqa', spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 }, state0: [2, 2.5, 0, 0], settings: { samples: 60, transientSteps: 100 } } as Omit<ChaosRequest, 'id'>
+      request: {
+        kind: 'rqa',
+        spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
+        state0: [2, 2.5, 0, 0],
+        settings: { samples: 60, transientSteps: 100 }
+      } as Omit<ChaosRequest, 'id'>
     }
   ]
 };

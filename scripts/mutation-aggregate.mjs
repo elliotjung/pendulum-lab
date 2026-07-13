@@ -118,16 +118,21 @@ for (const reportPath of reports) {
         });
       }
     }
-    files.push({ reportPath: normalized(reportPath), filePath: normalized(filePath), counts: Object.fromEntries([...localCounts].sort()) });
+    files.push({
+      reportPath: normalized(reportPath),
+      filePath: normalized(filePath),
+      counts: Object.fromEntries([...localCounts].sort())
+    });
   }
 }
 
-survivors.sort((a, b) =>
-  a.filePath.localeCompare(b.filePath) ||
-  a.line - b.line ||
-  a.column - b.column ||
-  a.mutatorName.localeCompare(b.mutatorName) ||
-  a.id.localeCompare(b.id)
+survivors.sort(
+  (a, b) =>
+    a.filePath.localeCompare(b.filePath) ||
+    a.line - b.line ||
+    a.column - b.column ||
+    a.mutatorName.localeCompare(b.mutatorName) ||
+    a.id.localeCompare(b.id)
 );
 
 const survivorGroups = new Map();
@@ -146,7 +151,9 @@ for (const survivor of survivors) {
 }
 const triageGroups = [...survivorGroups.values()]
   .map((group) => ({ ...group, lines: group.lines.sort((a, b) => a - b) }))
-  .sort((a, b) => b.count - a.count || a.filePath.localeCompare(b.filePath) || a.mutatorName.localeCompare(b.mutatorName));
+  .sort(
+    (a, b) => b.count - a.count || a.filePath.localeCompare(b.filePath) || a.mutatorName.localeCompare(b.mutatorName)
+  );
 
 const mutationScore = total > 0 ? (100 * killedLike) / total : 0;
 const coveredScore = coveredTotal > 0 ? (100 * coveredKilledLike) / coveredTotal : 0;
@@ -172,22 +179,25 @@ const summary = {
 
 mkdirSync(outDir, { recursive: true });
 writeFileSync(path.join(outDir, 'mutation-aggregate.json'), JSON.stringify(summary, null, 2) + '\n');
-writeFileSync(path.join(outDir, 'mutation-aggregate.md'), [
-  '# Mutation Aggregate',
-  '',
-  'Generated: ' + generatedAt,
-  'Status: ' + status,
-  'Reports: ' + reports.length,
-  'Total score: ' + summary.mutationScore + '%',
-  'Covered score: ' + summary.coveredMutationScore + '%',
-  'Quality band: ' + status,
-  'Regression floor: ' + thresholds.break + '% (' + (gatePassed ? 'passed' : 'failed') + ')',
-  '',
-  '```json',
-  JSON.stringify(summary.statusCounts, null, 2),
-  '```',
-  ''
-].join('\n'));
+writeFileSync(
+  path.join(outDir, 'mutation-aggregate.md'),
+  [
+    '# Mutation Aggregate',
+    '',
+    'Generated: ' + generatedAt,
+    'Status: ' + status,
+    'Reports: ' + reports.length,
+    'Total score: ' + summary.mutationScore + '%',
+    'Covered score: ' + summary.coveredMutationScore + '%',
+    'Quality band: ' + status,
+    'Regression floor: ' + thresholds.break + '% (' + (gatePassed ? 'passed' : 'failed') + ')',
+    '',
+    '```json',
+    JSON.stringify(summary.statusCounts, null, 2),
+    '```',
+    ''
+  ].join('\n')
+);
 
 const triage = {
   schemaVersion: 'pendulum-mutation-survivor-triage/v1',
@@ -207,14 +217,26 @@ function csvCell(value) {
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 const csvColumns = [
-  'filePath', 'line', 'column', 'endLine', 'endColumn', 'mutatorName', 'id',
-  'reviewClassification', 'suggestedCategory', 'suggestionBasis', 'replacement',
-  'description', 'coveredBy', 'reportPath'
+  'filePath',
+  'line',
+  'column',
+  'endLine',
+  'endColumn',
+  'mutatorName',
+  'id',
+  'reviewClassification',
+  'suggestedCategory',
+  'suggestionBasis',
+  'replacement',
+  'description',
+  'coveredBy',
+  'reportPath'
 ];
-const csv = [
-  csvColumns.join(','),
-  ...survivors.map((survivor) => csvColumns.map((column) => csvCell(survivor[column])).join(','))
-].join('\n') + '\n';
+const csv =
+  [
+    csvColumns.join(','),
+    ...survivors.map((survivor) => csvColumns.map((column) => csvCell(survivor[column])).join(','))
+  ].join('\n') + '\n';
 writeFileSync(path.join(outDir, 'mutation-survivor-triage.csv'), csv);
 
 const markdownGroups = triageGroups.slice(0, 100).map((group) => {
@@ -223,20 +245,37 @@ const markdownGroups = triageGroups.slice(0, 100).map((group) => {
   const lines = group.lines.slice(0, 12).join(', ') + (group.lines.length > 12 ? ', ...' : '');
   return `| \`${file}\` | ${mutator} | ${group.suggestedCategory} | ${group.count} | ${lines || '-'} |`;
 });
-writeFileSync(path.join(outDir, 'mutation-survivor-triage.md'), [
-  '# Mutation Survivor Triage',
-  '',
-  `Survivors awaiting review: ${survivors.length}.`,
-  '',
-  '> Every row remains `unclassified`. Suggested categories are candidates for review, not automatic claims of equivalence, missing coverage, or weak assertions.',
-  '',
-  '| File | Mutator | Suggested candidate | Count | Lines |',
-  '| --- | --- | --- | ---: | --- |',
-  ...markdownGroups,
-  '',
-  triageGroups.length > markdownGroups.length ? `The table shows the largest ${markdownGroups.length} groups; use the JSON or CSV for all survivors.` : 'The JSON and CSV contain one row per survivor.',
-  ''
-].join('\n'));
+writeFileSync(
+  path.join(outDir, 'mutation-survivor-triage.md'),
+  [
+    '# Mutation Survivor Triage',
+    '',
+    `Survivors awaiting review: ${survivors.length}.`,
+    '',
+    '> Every row remains `unclassified`. Suggested categories are candidates for review, not automatic claims of equivalence, missing coverage, or weak assertions.',
+    '',
+    '| File | Mutator | Suggested candidate | Count | Lines |',
+    '| --- | --- | --- | ---: | --- |',
+    ...markdownGroups,
+    '',
+    triageGroups.length > markdownGroups.length
+      ? `The table shows the largest ${markdownGroups.length} groups; use the JSON or CSV for all survivors.`
+      : 'The JSON and CSV contain one row per survivor.',
+    ''
+  ].join('\n')
+);
 
-console.log('Mutation aggregate: ' + summary.mutationScore + '% total (' + status + ' band), ' + summary.coveredMutationScore + '% covered across ' + reports.length + ' shard reports; ' + survivors.length + ' survivors written to triage JSON/CSV/MD.');
+console.log(
+  'Mutation aggregate: ' +
+    summary.mutationScore +
+    '% total (' +
+    status +
+    ' band), ' +
+    summary.coveredMutationScore +
+    '% covered across ' +
+    reports.length +
+    ' shard reports; ' +
+    survivors.length +
+    ' survivors written to triage JSON/CSV/MD.'
+);
 if (!gatePassed) process.exit(1);

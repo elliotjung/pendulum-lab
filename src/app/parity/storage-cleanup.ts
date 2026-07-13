@@ -13,7 +13,10 @@ export function researchCleanupCutoff(days: number, nowMs: number = Date.now()):
 }
 
 function cleanupAgeDays(): number {
-  const value = Number.parseInt((document.getElementById('rwDbCleanupAge') as HTMLSelectElement | null)?.value ?? '90', 10);
+  const value = Number.parseInt(
+    (document.getElementById('rwDbCleanupAge') as HTMLSelectElement | null)?.value ?? '90',
+    10
+  );
   return Number.isFinite(value) ? value : 90;
 }
 
@@ -25,9 +28,10 @@ export function previewResearchDbCleanup(controller: ResearchStorageCleanupContr
     try {
       const days = cleanupAgeDays();
       const preview = await controller.countOlderThan(researchCleanupCutoff(days));
-      output.textContent = preview.total === 0
-        ? `No research records are older than ${days} days.`
-        : `${preview.total} research record(s) older than ${days} days are eligible. Settings and recent work are protected.`;
+      output.textContent =
+        preview.total === 0
+          ? `No research records are older than ${days} days.`
+          : `${preview.total} research record(s) older than ${days} days are eligible. Settings and recent work are protected.`;
     } catch (error) {
       output.textContent = `Cleanup preview unavailable: ${error instanceof Error ? error.message : String(error)}`;
     }
@@ -45,7 +49,12 @@ export function cleanupResearchDbByAge(controller: ResearchStorageCleanupControl
         previewResearchDbCleanup(controller);
         return;
       }
-      if (!window.confirm(`Delete ${preview.total} research record(s) last updated more than ${days} days ago? Recent records and settings will be kept.`)) return;
+      if (
+        !window.confirm(
+          `Delete ${preview.total} research record(s) last updated more than ${days} days ago? Recent records and settings will be kept.`
+        )
+      )
+        return;
       const deleted = await controller.deleteOlderThan(cutoff);
       controller.afterDelete(cutoff, deleted.total, days);
       controller.toast(`Deleted ${deleted.total} old research record(s)`);

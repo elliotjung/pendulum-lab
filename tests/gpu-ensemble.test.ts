@@ -50,11 +50,15 @@ describe('ensemble integrator (WebGPU with CPU fallback)', () => {
   });
 
   it('forceCpu honours the A/B flag and grid builder covers corners', async () => {
-    const result = await runDoublePendulumEnsemble(params, ensembleGrid(2, [-3, 3]), { steps: 10, dt: 0.01, forceCpu: true });
+    const result = await runDoublePendulumEnsemble(params, ensembleGrid(2, [-3, 3]), {
+      steps: 10,
+      dt: 0.01,
+      forceCpu: true
+    });
     expect(result.backend).toBe('cpu');
     const grid = ensembleGrid(3, [-3, 3]);
     expect(grid[0]).toBe(-3);
-    expect(grid[(8 * 4)]).toBe(3); // last cell θ1
-    expect(grid[(8 * 4) + 1]).toBe(3); // last cell θ2
+    expect(grid[8 * 4]).toBe(3); // last cell θ1
+    expect(grid[8 * 4 + 1]).toBe(3); // last cell θ2
   });
 });

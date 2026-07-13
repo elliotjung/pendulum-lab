@@ -18,7 +18,10 @@ async function auditCurrentSurface(page: import('@playwright/test').Page): Promi
     .analyze();
   return results.violations
     .filter((violation) => violation.impact === 'critical' || violation.impact === 'serious')
-    .map((violation) => `${violation.id} (${violation.impact}): ${violation.nodes.length} node(s) — e.g. ${violation.nodes[0]?.target.join(' ')}`);
+    .map(
+      (violation) =>
+        `${violation.id} (${violation.impact}): ${violation.nodes.length} node(s) — e.g. ${violation.nodes[0]?.target.join(' ')}`
+    );
 }
 
 test('axe: default lab surface has no critical/serious violations', async ({ page }) => {

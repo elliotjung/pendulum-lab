@@ -443,7 +443,8 @@ function solveTridiagonal(diag: Float64Array, off: Float64Array, rhs: Float64Arr
 export function relaxFrenkelKontorovaKink(coupling: number, options: RelaxKinkOptions = {}): RelaxedKinkResult {
   if (!(coupling > 0)) throw new Error('relaxFrenkelKontorovaKink: coupling K must be > 0.');
   const sites = options.sites ?? 81;
-  if (!Number.isInteger(sites) || sites < 5) throw new Error('relaxFrenkelKontorovaKink: sites must be an integer ≥ 5.');
+  if (!Number.isInteger(sites) || sites < 5)
+    throw new Error('relaxFrenkelKontorovaKink: sites must be an integer ≥ 5.');
   const maxIterations = options.maxIterations ?? 200;
   const tol = options.tolerance ?? 1e-11;
   const center = (sites - 1) / 2 + (options.centerOffset ?? 0);

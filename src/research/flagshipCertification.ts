@@ -80,10 +80,13 @@ function finiteNumber(value: unknown): value is number {
 export function flagshipCertifiedRows(report: FlagshipPaperStudyReport): FlagshipCertifiedRow[] {
   const dtGamma = report.dtSensitivity?.gamma;
   const dtRatioUncertainty = finiteNumber(report.dtSensitivity?.absDelta)
-    ? Math.abs(report.dtSensitivity!.absDelta!) / Math.max(1e-12, report.measurements.find((row) => row.gamma === dtGamma)?.Ac ?? 1)
+    ? Math.abs(report.dtSensitivity!.absDelta!) /
+      Math.max(1e-12, report.measurements.find((row) => row.gamma === dtGamma)?.Ac ?? 1)
     : 0;
   return report.measurements
-    .filter((row) => finiteNumber(row.gamma) && finiteNumber(row.Ac) && finiteNumber(row.Apd) && finiteNumber(row.ratio))
+    .filter(
+      (row) => finiteNumber(row.gamma) && finiteNumber(row.Ac) && finiteNumber(row.Apd) && finiteNumber(row.ratio)
+    )
     .map((row) => {
       const bracket = row.attractorBracket;
       const onsetUncertainty = bracket ? Math.abs(bracket[1] - bracket[0]) / 2 : Math.max(1e-8, row.Ac * 1e-6);
@@ -121,7 +124,8 @@ export function estimateFlagshipCrossing(rows: FlagshipCertifiedRow[]): Flagship
       const t = (1 - a.ratio) / (b.ratio - a.ratio);
       const gamma = a.gamma + t * (b.gamma - a.gamma);
       const slope = Math.abs((b.ratio - a.ratio) / (b.gamma - a.gamma));
-      const gammaUncertainty = slope > 0 ? Math.max(a.ratioUncertainty, b.ratioUncertainty) / slope : (b.gamma - a.gamma) / 2;
+      const gammaUncertainty =
+        slope > 0 ? Math.max(a.ratioUncertainty, b.ratioUncertainty) / slope : (b.gamma - a.gamma) / 2;
       return {
         gamma,
         lower: Math.max(a.gamma, gamma - gammaUncertainty),
@@ -155,7 +159,10 @@ function interpolate(rows: FlagshipCertifiedRow[], gamma: number): { ratio: numb
   return { ratio: rows[0]!.ratio, ratioUncertainty: rows[0]!.ratioUncertainty };
 }
 
-export function refinedFlagshipGrid(rows: FlagshipCertifiedRow[], step = 0.01): Array<{ gamma: number; ratio: number; ratioUncertainty: number }> {
+export function refinedFlagshipGrid(
+  rows: FlagshipCertifiedRow[],
+  step = 0.01
+): Array<{ gamma: number; ratio: number; ratioUncertainty: number }> {
   if (rows.length === 0) return [];
   const start = rows[0]!.gamma;
   const end = rows[rows.length - 1]!.gamma;
@@ -181,13 +188,20 @@ export function buildFlagshipFigureSvg(certification: Pick<FlagshipCertification
   const x = (gamma: number): number => margin.left + ((gamma - minGamma) / (maxGamma - minGamma)) * plotW;
   const y = (ratio: number): number => margin.top + (1 - (ratio - minRatio) / (maxRatio - minRatio)) * plotH;
   const polyline = rows.map((row) => `${x(row.gamma).toFixed(2)},${y(row.ratio).toFixed(2)}`).join(' ');
-  const errorBars = rows.map((row) => {
-    const x0 = x(row.gamma);
-    const y1 = y(row.ratio - row.ratioUncertainty);
-    const y2 = y(row.ratio + row.ratioUncertainty);
-    return `<line x1="${x0.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x0.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#345" stroke-width="1"/><line x1="${(x0 - 4).toFixed(2)}" y1="${y1.toFixed(2)}" x2="${(x0 + 4).toFixed(2)}" y2="${y1.toFixed(2)}" stroke="#345" stroke-width="1"/><line x1="${(x0 - 4).toFixed(2)}" y1="${y2.toFixed(2)}" x2="${(x0 + 4).toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#345" stroke-width="1"/>`;
-  }).join('');
-  const points = rows.map((row) => `<circle cx="${x(row.gamma).toFixed(2)}" cy="${y(row.ratio).toFixed(2)}" r="4.2" fill="#0f766e" stroke="#063" stroke-width="1"/>`).join('');
+  const errorBars = rows
+    .map((row) => {
+      const x0 = x(row.gamma);
+      const y1 = y(row.ratio - row.ratioUncertainty);
+      const y2 = y(row.ratio + row.ratioUncertainty);
+      return `<line x1="${x0.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x0.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#345" stroke-width="1"/><line x1="${(x0 - 4).toFixed(2)}" y1="${y1.toFixed(2)}" x2="${(x0 + 4).toFixed(2)}" y2="${y1.toFixed(2)}" stroke="#345" stroke-width="1"/><line x1="${(x0 - 4).toFixed(2)}" y1="${y2.toFixed(2)}" x2="${(x0 + 4).toFixed(2)}" y2="${y2.toFixed(2)}" stroke="#345" stroke-width="1"/>`;
+    })
+    .join('');
+  const points = rows
+    .map(
+      (row) =>
+        `<circle cx="${x(row.gamma).toFixed(2)}" cy="${y(row.ratio).toFixed(2)}" r="4.2" fill="#0f766e" stroke="#063" stroke-width="1"/>`
+    )
+    .join('');
   const crossing = certification.crossing
     ? `<line x1="${x(certification.crossing.gamma).toFixed(2)}" y1="${margin.top}" x2="${x(certification.crossing.gamma).toFixed(2)}" y2="${height - margin.bottom}" stroke="#b45309" stroke-width="2" stroke-dasharray="6 5"/><text x="${(x(certification.crossing.gamma) + 8).toFixed(2)}" y="${margin.top + 18}" font-size="13" fill="#7c2d12">gamma ~= ${certification.crossing.gamma.toFixed(3)}</text>`
     : '';

@@ -135,7 +135,8 @@ function buildReservoir(spec: FullEsnSpec, rng: () => number): { reservoir: numb
   for (let i = 0; i < n; i += 1) rows.push(w.slice(i * n, i * n + n));
   let radius = 0;
   for (const lambda of eigenvaluesGeneral(rows)) radius = Math.max(radius, complexAbs(lambda));
-  if (radius === 0) throw new Error('trainEsn: reservoir matrix is nilpotent (radius 0); raise connectivity or reservoirSize.');
+  if (radius === 0)
+    throw new Error('trainEsn: reservoir matrix is nilpotent (radius 0); raise connectivity or reservoirSize.');
   const scale = spec.spectralRadius / radius;
   for (let k = 0; k < w.length; k += 1) w[k] = (w[k] ?? 0) * scale;
   return { reservoir: w, measured: spec.spectralRadius };
@@ -239,9 +240,13 @@ export function trainEsn(
       rhs[p] = r;
     }
     const gramCopy = Float64Array.from(gram);
-    const result = solveCholeskyInPlace(gramCopy, rhs, featureDim, factorScratch, { fallbackPolicy: 'return-diagnostics' });
+    const result = solveCholeskyInPlace(gramCopy, rhs, featureDim, factorScratch, {
+      fallbackPolicy: 'return-diagnostics'
+    });
     if (!result.ok) {
-      throw new Error(`trainEsn: readout normal equations not positive-definite (${result.reason}); raise the ridge term.`);
+      throw new Error(
+        `trainEsn: readout normal equations not positive-definite (${result.reason}); raise the ridge term.`
+      );
     }
     for (let p = 0; p < featureDim; p += 1) readout[j * featureDim + p] = rhs[p] ?? 0;
 
@@ -325,7 +330,10 @@ export function predictEsnFree(esn: TrainedEsn, warmup: readonly (readonly numbe
 }
 
 /** Build autonomous next-step targets: targets[t] = series[t+1], inputs[t] = series[t]. */
-export function buildNextStepTargets(series: readonly (readonly number[])[]): { inputs: number[][]; targets: number[][] } {
+export function buildNextStepTargets(series: readonly (readonly number[])[]): {
+  inputs: number[][];
+  targets: number[][];
+} {
   if (series.length < 2) throw new Error('buildNextStepTargets: need at least two samples.');
   const inputs: number[][] = [];
   const targets: number[][] = [];
@@ -337,7 +345,10 @@ export function buildNextStepTargets(series: readonly (readonly number[])[]): { 
 }
 
 /** Normalised RMSE √(Σ‖pred−true‖² / Σ‖true−mean‖²) between two equal-length series. */
-export function predictionNrmse(predicted: readonly (readonly number[])[], truth: readonly (readonly number[])[]): number {
+export function predictionNrmse(
+  predicted: readonly (readonly number[])[],
+  truth: readonly (readonly number[])[]
+): number {
   if (predicted.length !== truth.length) throw new Error('predictionNrmse: length mismatch.');
   if (predicted.length === 0) throw new Error('predictionNrmse: empty series.');
   const d = truth[0]!.length;

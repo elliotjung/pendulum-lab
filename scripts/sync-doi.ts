@@ -1,9 +1,15 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-const report = JSON.parse(await readFile('reports/zenodo-deposition.json', 'utf8')) as { doi?: string | null; status?: string; recordId?: number | null };
+const report = JSON.parse(await readFile('reports/zenodo-deposition.json', 'utf8')) as {
+  doi?: string | null;
+  status?: string;
+  recordId?: number | null;
+};
 const doi = String(report.doi ?? '').trim();
 if (!/^10\.\d{4,9}\/zenodo\.\d+$/i.test(doi)) {
-  throw new Error('No valid production Zenodo DOI is present in reports/zenodo-deposition.json; citation files were not changed.');
+  throw new Error(
+    'No valid production Zenodo DOI is present in reports/zenodo-deposition.json; citation files were not changed.'
+  );
 }
 
 const badge = `[![DOI](https://zenodo.org/badge/DOI/${encodeURIComponent(doi)}.svg)](https://doi.org/${doi})`;
@@ -16,7 +22,8 @@ await writeFile('README.md', readme, 'utf8');
 let citation = await readFile('CITATION.cff', 'utf8');
 citation = citation.replace(/\nidentifiers:\n(?:  -.*\n(?:    .*\n)*)+/g, '\n');
 const identifierBlock = `identifiers:\n  - type: doi\n    value: "${doi}"\n    description: "Archived software release"\n`;
-if (/^license:/m.test(citation)) citation = citation.replace(/^license:.*$/m, (line) => `${line}\n${identifierBlock.trimEnd()}`);
+if (/^license:/m.test(citation))
+  citation = citation.replace(/^license:.*$/m, (line) => `${line}\n${identifierBlock.trimEnd()}`);
 else citation += `\n${identifierBlock}`;
 await writeFile('CITATION.cff', citation, 'utf8');
 

@@ -4,8 +4,21 @@ import { createChainJacobianWorkspace, jacobianChain, jacobianDriven } from './j
 import { analyzeSpectrumConsistency } from './spectrumConsistency';
 import { chainLength } from './nPendulum';
 import type { Jacobian, StateVector } from './types';
-import { chainParams, createExpansionSystem, drivenParams, expansionModelDefinition, finiteParam, numberAt } from './expandedModels-factory';
-import type { ExpansionLyapunovProfile, ExpansionLyapunovTimelinePoint, ExpansionModelId, ExpansionParameterMap, ExpansionSuiteConfig } from './expandedModels-types';
+import {
+  chainParams,
+  createExpansionSystem,
+  drivenParams,
+  expansionModelDefinition,
+  finiteParam,
+  numberAt
+} from './expandedModels-factory';
+import type {
+  ExpansionLyapunovProfile,
+  ExpansionLyapunovTimelinePoint,
+  ExpansionModelId,
+  ExpansionParameterMap,
+  ExpansionSuiteConfig
+} from './expandedModels-types';
 
 function cloneState(state: ArrayLike<number>): Float64Array {
   return Float64Array.from(Array.from({ length: state.length }, (_, i) => numberAt(state, i)));
@@ -174,7 +187,7 @@ export function expansionLyapunovProfile(
       // largest running exponents (which converge onto spectrum[0]/spectrum[1]).
       const running = accum.map((value) => (value ?? 0) / elapsed).sort((a, b) => b - a);
       const leading = running[0] ?? 0;
-      const secondary = k > 1 ? running[1] ?? 0 : 0;
+      const secondary = k > 1 ? (running[1] ?? 0) : 0;
       if (Number.isFinite(leading) && Number.isFinite(secondary)) {
         timeline.push({ time: rounded(elapsed, 4), leading: rounded(leading, 6), secondary: rounded(secondary, 6) });
       }

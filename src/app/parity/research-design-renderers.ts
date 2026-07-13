@@ -34,14 +34,16 @@ export function designSummaryText(design: DesignStudyState): string {
 }
 
 export function designTableRows(design: DesignStudyState): string[][] {
-  return design.points.slice(0, 40).map((point) => [
-    point.origin,
-    design.variables.map((variable) => `${variable.key}=${(point.values[variable.key] ?? 0).toFixed(3)}`).join(' '),
-    point.results ? point.results.lambdaMax.toFixed(4) : '-',
-    point.results ? `+/-${point.results.lambdaBlockStdError.toFixed(4)}` : '-',
-    point.results ? point.results.ftle.toFixed(3) : '-',
-    point.error ?? ''
-  ]);
+  return design.points
+    .slice(0, 40)
+    .map((point) => [
+      point.origin,
+      design.variables.map((variable) => `${variable.key}=${(point.values[variable.key] ?? 0).toFixed(3)}`).join(' '),
+      point.results ? point.results.lambdaMax.toFixed(4) : '-',
+      point.results ? `+/-${point.results.lambdaBlockStdError.toFixed(4)}` : '-',
+      point.results ? point.results.ftle.toFixed(3) : '-',
+      point.error ?? ''
+    ]);
 }
 
 export function drawDesignPreview(design: DesignStudyState): void {
@@ -116,5 +118,10 @@ export function renderDesignStudyState(design: DesignStudyState | null): void {
   summary.textContent = designSummaryText(design);
   drawDesignPreview(design);
   drawDesignHeatmap(design);
-  renderResearchTable('rwDesignResults', ['origin', 'point', 'lambda max', 'SE', 'FTLE', 'error'], designTableRows(design), 'Design points appear here.');
+  renderResearchTable(
+    'rwDesignResults',
+    ['origin', 'point', 'lambda max', 'SE', 'FTLE', 'error'],
+    designTableRows(design),
+    'Design points appear here.'
+  );
 }

@@ -6,7 +6,13 @@
 import { RopePendulum } from '../../physics/rope';
 import { clampNumber } from './storage-sync';
 import { $, append, button, html, numberFrom, setText } from './shared';
-import { researchActions, researchCard, researchFormRow, researchInput, researchSelect } from './research-ui-components';
+import {
+  researchActions,
+  researchCard,
+  researchFormRow,
+  researchInput,
+  researchSelect
+} from './research-ui-components';
 import { lab3d, lab3dEnsureLoop, registerLab3dFrameHook } from './lab3d-render-loop';
 
 export function lab3dRopeParams(): { l: number; g: number; damping: number } {
@@ -65,7 +71,7 @@ export function renderRopeSim(): void {
   ctx.beginPath();
   if (snapshot.phase === 'slack' && lab3d.ropeStyle === 'rope') {
     const r = Math.hypot(snapshot.x, snapshot.y);
-    const sagDepth = Math.max(0, (l - r)) * 0.6 * scale;
+    const sagDepth = Math.max(0, l - r) * 0.6 * scale;
     ctx.moveTo(cx, cy);
     ctx.quadraticCurveTo((cx + bx) / 2, Math.max(cy, by) + sagDepth, bx, by);
   } else {
@@ -89,14 +95,17 @@ export function renderRopeReadout(): void {
   const snapshot = lab3d.rope.snapshot();
   const warning = lab3d.rope.warning();
   const captures = lab3d.rope.events.filter((event) => event.type === 'capture').length;
-  setText('r3Readout', [
-    `phase=${snapshot.phase.toUpperCase()} (${lab3d.ropeStyle} rendering)`,
-    `tension T/m=${snapshot.tension.toFixed(3)} N/kg`,
-    `θ=${snapshot.theta.toFixed(3)} rad, ω=${snapshot.omega.toFixed(3)} rad/s`,
-    `E/m=${snapshot.energy.toFixed(4)} J/kg, constraint err=${snapshot.constraintError.toExponential(2)}`,
-    `events: ${lab3d.rope.events.length} (${captures} captures)`,
-    `method: RK4 hybrid taut/slack, substep<=2ms, capture removes radial velocity (inelastic)`
-  ].join(' | '));
+  setText(
+    'r3Readout',
+    [
+      `phase=${snapshot.phase.toUpperCase()} (${lab3d.ropeStyle} rendering)`,
+      `tension T/m=${snapshot.tension.toFixed(3)} N/kg`,
+      `θ=${snapshot.theta.toFixed(3)} rad, ω=${snapshot.omega.toFixed(3)} rad/s`,
+      `E/m=${snapshot.energy.toFixed(4)} J/kg, constraint err=${snapshot.constraintError.toExponential(2)}`,
+      `events: ${lab3d.rope.events.length} (${captures} captures)`,
+      `method: RK4 hybrid taut/slack, substep<=2ms, capture removes radial velocity (inelastic)`
+    ].join(' | ')
+  );
   const warningNode = $('r3Warning');
   if (warningNode) {
     warningNode.textContent = warning ?? '';
@@ -124,7 +133,10 @@ export function buildRopeCard(): HTMLElement {
   ropeCanvas.height = 360;
   ropeCanvas.style.width = '100%';
   ropeCanvas.style.maxWidth = '480px';
-  const ropeStyleSelect = researchSelect('r3Style', [['rope', 'rope / string (taut + slack)'], ['rod', 'rigid wire / rod rendering']]);
+  const ropeStyleSelect = researchSelect('r3Style', [
+    ['rope', 'rope / string (taut + slack)'],
+    ['rod', 'rigid wire / rod rendering']
+  ]);
   ropeStyleSelect.addEventListener('change', () => {
     lab3d.ropeStyle = ropeStyleSelect.value === 'rod' ? 'rod' : 'rope';
     renderRopeSim();
@@ -139,11 +151,16 @@ export function buildRopeCard(): HTMLElement {
     researchFormRow('Gravity', researchInput('r3Gravity', 'number', '9.81', 'm/s²')),
     researchFormRow('Damping', researchInput('r3Damping', 'number', '0', '1/s')),
     researchActions(
-      button('r3Run', 'Run', () => {
-        if (!lab3d.rope) resetRopeSim();
-        lab3d.ropeRunning = true;
-        lab3dEnsureLoop();
-      }, 'primary'),
+      button(
+        'r3Run',
+        'Run',
+        () => {
+          if (!lab3d.rope) resetRopeSim();
+          lab3d.ropeRunning = true;
+          lab3dEnsureLoop();
+        },
+        'primary'
+      ),
       button('r3Pause', 'Pause', () => {
         lab3d.ropeRunning = false;
       }),
@@ -154,7 +171,11 @@ export function buildRopeCard(): HTMLElement {
     ),
     ropeCanvas,
     html('div', { id: 'r3Warning', className: 'research-summary', text: '' }),
-    html('div', { id: 'r3Readout', className: 'research-summary', text: 'Reset to initialise the rope pendulum. The string goes SLACK when tension would be negative; capture at |r|=l is inelastic.' })
+    html('div', {
+      id: 'r3Readout',
+      className: 'research-summary',
+      text: 'Reset to initialise the rope pendulum. The string goes SLACK when tension would be negative; capture at |r|=l is inelastic.'
+    })
   );
   return ropeCard;
 }

@@ -16,8 +16,12 @@ test('student startup defers research and mounts one analysis controller on dema
   expect(startup.elements).toBeLessThan(1_800);
 
   await openModernTab(page, 'lyap', '#tab-lyap');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { lyapunov?: unknown } }).__modernTabs?.lyapunov));
-  const controllers = await page.evaluate(() => Object.keys((window as unknown as { __modernTabs?: object }).__modernTabs ?? {}));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { lyapunov?: unknown } }).__modernTabs?.lyapunov)
+  );
+  const controllers = await page.evaluate(() =>
+    Object.keys((window as unknown as { __modernTabs?: object }).__modernTabs ?? {})
+  );
   expect(controllers).toEqual(['lyapunov']);
 });
 

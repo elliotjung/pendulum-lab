@@ -21,7 +21,12 @@ const metadata = JSON.parse(await readFile('.zenodo.json', 'utf8')) as Record<st
 const reportPath = 'reports/zenodo-deposition.json';
 
 async function exists(path: string): Promise<boolean> {
-  try { await access(path); return true; } catch { return false; }
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function request(path: string, init: RequestInit = {}): Promise<Response> {
@@ -33,7 +38,8 @@ async function request(path: string, init: RequestInit = {}): Promise<Response> 
       ...init.headers
     }
   });
-  if (!response.ok) throw new Error(`${init.method ?? 'GET'} ${path}: HTTP ${response.status} ${await response.text()}`);
+  if (!response.ok)
+    throw new Error(`${init.method ?? 'GET'} ${path}: HTTP ${response.status} ${await response.text()}`);
   return response;
 }
 
@@ -52,8 +58,9 @@ if (!token) {
   process.exitCode = 2;
 } else {
   const draftResponse = await request('/api/deposit/depositions', { method: 'POST', body: '{}' });
-  let deposition = await draftResponse.json() as ZenodoDeposition;
-  if (!deposition.id || !deposition.links?.bucket) throw new Error('Zenodo did not return a deposition id and upload bucket');
+  let deposition = (await draftResponse.json()) as ZenodoDeposition;
+  if (!deposition.id || !deposition.links?.bucket)
+    throw new Error('Zenodo did not return a deposition id and upload bucket');
 
   const packageCandidates = [
     `${packageInfo.name.replace(/^@/, '').replaceAll('/', '-')}-${packageInfo.version}.tgz`,
@@ -78,12 +85,19 @@ if (!token) {
   const description = `${String(metadata.description ?? '')}\n\nVersion ${packageInfo.version}. Reviewer dashboard: https://elliotjung.github.io/pendulum-lab/reviewer.html`;
   const update = await request(`/api/deposit/depositions/${deposition.id}`, {
     method: 'PUT',
-    body: JSON.stringify({ metadata: { ...metadata, description, version: packageInfo.version, publication_date: new Date().toISOString().slice(0, 10) } })
+    body: JSON.stringify({
+      metadata: {
+        ...metadata,
+        description,
+        version: packageInfo.version,
+        publication_date: new Date().toISOString().slice(0, 10)
+      }
+    })
   });
-  deposition = await update.json() as ZenodoDeposition;
+  deposition = (await update.json()) as ZenodoDeposition;
   if (publish) {
     const published = await request(`/api/deposit/depositions/${deposition.id}/actions/publish`, { method: 'POST' });
-    deposition = await published.json() as ZenodoDeposition;
+    deposition = (await published.json()) as ZenodoDeposition;
   }
   const doi = deposition.doi ?? deposition.metadata?.doi ?? deposition.metadata?.prereserve_doi?.doi ?? null;
   const report = {
@@ -97,7 +111,9 @@ if (!token) {
     doi,
     uploaded,
     links: deposition.links ?? {},
-    caveat: publish ? 'The production DOI is authoritative only after the public record resolves.' : 'Draft only; run with --publish for an irreversible public release.'
+    caveat: publish
+      ? 'The production DOI is authoritative only after the public record resolves.'
+      : 'Draft only; run with --publish for an irreversible public release.'
   };
   await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   console.log(JSON.stringify(report, null, 2));

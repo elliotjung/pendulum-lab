@@ -21,14 +21,18 @@ export interface LibraryFilter {
   favoritesOnly: boolean;
 }
 
-export function filterExperiments<T extends LibraryExperimentView>(experiments: readonly T[], filter: LibraryFilter): T[] {
+export function filterExperiments<T extends LibraryExperimentView>(
+  experiments: readonly T[],
+  filter: LibraryFilter
+): T[] {
   const query = filter.query.trim().toLowerCase();
   const tag = filter.tag.trim().toLowerCase();
   return experiments.filter((experiment) => {
     if (filter.favoritesOnly && !experiment.favorite) return false;
     if (tag && !experiment.tags.some((candidate) => candidate.toLowerCase().includes(tag))) return false;
     if (!query) return true;
-    const haystack = `${experiment.name} ${experiment.notes} ${experiment.tags.join(' ')} ${experiment.citation?.doi ?? ''} ${experiment.citation?.reference ?? ''}`.toLowerCase();
+    const haystack =
+      `${experiment.name} ${experiment.notes} ${experiment.tags.join(' ')} ${experiment.citation?.doi ?? ''} ${experiment.citation?.reference ?? ''}`.toLowerCase();
     return haystack.includes(query);
   });
 }
@@ -55,7 +59,10 @@ function flatten(value: unknown, prefix: string, out: Map<string, string>, depth
     }
     return;
   }
-  out.set(prefix, typeof value === 'number' && Number.isFinite(value) ? Number(value.toPrecision(10)).toString() : String(value));
+  out.set(
+    prefix,
+    typeof value === 'number' && Number.isFinite(value) ? Number(value.toPrecision(10)).toString() : String(value)
+  );
 }
 
 /** Field-level diff of two snapshot-like objects; only changed fields are returned. */
@@ -100,10 +107,12 @@ export function qualityBadges(input: BadgeInput): QualityBadge[] {
   const validated = /pass/i.test(input.validationStatus);
   if (input.hasSnapshotHash) badges.push('reproducible');
   if (validated) badges.push('validated');
-  if ((input.lambdaMax !== null && input.lambdaMax > 0) || (input.drift !== null && Math.abs(input.drift) > 1e-2)) badges.push('unstable');
+  if ((input.lambdaMax !== null && input.lambdaMax > 0) || (input.drift !== null && Math.abs(input.drift) > 1e-2))
+    badges.push('unstable');
   const incomplete = !validated || !input.hasNotes;
   if (incomplete) badges.push('incomplete');
-  if (input.hasSnapshotHash && validated && input.hasNotes && input.hasTags && input.qualityScore >= 70) badges.push('export-ready');
+  if (input.hasSnapshotHash && validated && input.hasNotes && input.hasTags && input.qualityScore >= 70)
+    badges.push('export-ready');
   return badges;
 }
 
@@ -129,12 +138,17 @@ export function timelineGroups(experiments: readonly LibraryExperimentView[]): T
 }
 
 /** Fork helper: deep-copies an experiment with a new identity and lineage note. */
-export function forkExperimentData<T extends LibraryExperimentView & { snapshot: unknown }>(experiment: T, newId: string, now: string): T {
+export function forkExperimentData<T extends LibraryExperimentView & { snapshot: unknown }>(
+  experiment: T,
+  newId: string,
+  now: string
+): T {
   const copy = JSON.parse(JSON.stringify(experiment)) as T;
   copy.id = newId;
   copy.name = `${experiment.name} (fork)`;
   copy.createdAt = now;
-  copy.notes = `${experiment.notes ? `${experiment.notes}\n` : ''}Forked from ${experiment.id} (${experiment.name}).`.trim();
+  copy.notes =
+    `${experiment.notes ? `${experiment.notes}\n` : ''}Forked from ${experiment.id} (${experiment.name}).`.trim();
   return copy;
 }
 

@@ -81,16 +81,27 @@ function decorateFrames(): void {
 
 /** path data per glyph, drawn in a 24×24 viewBox with stroke:currentColor. */
 const ICON_PATHS: Record<string, readonly string[]> = {
-  '⚛': ['M12 12h.01', 'M12 5c6 0 9 3.2 9 7s-3 7-9 7-9-3.2-9-7 3-7 9-7z', 'M8.5 6.2c-3.6 4.6-3.6 7 0 11.6M15.5 6.2c3.6 4.6 3.6 7 0 11.6'],
+  '⚛': [
+    'M12 12h.01',
+    'M12 5c6 0 9 3.2 9 7s-3 7-9 7-9-3.2-9-7 3-7 9-7z',
+    'M8.5 6.2c-3.6 4.6-3.6 7 0 11.6M15.5 6.2c3.6 4.6 3.6 7 0 11.6'
+  ],
   '⚖': ['M12 4v16M7 20h10', 'M5 8h14', 'M7 8l-2.5 5a2.6 2.6 0 0 0 5 0L7 8zM17 8l-2.5 5a2.6 2.6 0 0 0 5 0L17 8z'],
   '🎨': ['M4 6.5h10v6H4z', 'M14 9.5h3l3 3v5h-6z', 'M7 12.5v5M4 17.5h9'],
   '∫': ['M9 20c3 1.2 4-.8 4-3V7c0-2.2 1-4.2 4-3', 'M8 12h8'],
-  '👥': ['M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', 'M3.5 19c.6-3.2 2.7-5 5.5-5s4.9 1.8 5.5 5', 'M15.5 5.4a3 3 0 0 1 0 5.2M17.5 14.3c1.6.8 2.6 2.3 3 4.7'],
+  '👥': [
+    'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+    'M3.5 19c.6-3.2 2.7-5 5.5-5s4.9 1.8 5.5 5',
+    'M15.5 5.4a3 3 0 0 1 0 5.2M17.5 14.3c1.6.8 2.6 2.3 3 4.7'
+  ],
   '♪': ['M9 17.5V5.5l9-2v12', 'M9 17.5a2.5 2 0 1 1-5 0 2.5 2 0 0 1 5 0zM18 15.5a2.5 2 0 1 1-5 0 2.5 2 0 0 1 5 0z'],
   '⬇': ['M12 4v9M8 9.5l4 4 4-4', 'M4 15.5v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3'],
   '📊': ['M4 19h16', 'M6.5 16v-5M11 16V6M15.5 16V9', 'M19.5 16V12'],
-  '⌨': ['M3.5 7h17a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 15.5v-7A1.5 1.5 0 0 1 3.5 7z', 'M6 10.5h.01M9.5 10.5h.01M13 10.5h.01M16.5 10.5h.01M7.5 13.5h9'],
-  'λ': ['M6 19L13 5c1.2-2.4 3-2 4 0', 'M10.5 10.5L15 19'],
+  '⌨': [
+    'M3.5 7h17a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 15.5v-7A1.5 1.5 0 0 1 3.5 7z',
+    'M6 10.5h.01M9.5 10.5h.01M13 10.5h.01M16.5 10.5h.01M7.5 13.5h9'
+  ],
+  λ: ['M6 19L13 5c1.2-2.4 3-2 4 0', 'M10.5 10.5L15 19'],
   '▦': ['M6 5v14M12 5v14M18 5v14', 'M5 6h14M5 12h14M5 18h14'],
   '∿': ['M3 12c2.4-6 4.8-6 7.2 0s4.8 6 7.2 0', 'M20.5 10.5l.9 1.4-1.6.5'],
   '⤳': ['M4 17c5 0 5-9 12-9', 'M13.5 6.5L17 8l-2 3'],
@@ -104,7 +115,11 @@ const ICON_PATHS: Record<string, readonly string[]> = {
   '▨': ['M6 6h4.5v4.5H6zM13.5 6H18v4.5h-4.5zM6 13.5h4.5V18H6zM13.5 13.5H18V18h-4.5z'],
   '⩜': ['M3.5 15c4-5 9-5 17-1', 'M3.5 10c4.5-3.6 9.5-3.6 17 .5', 'M3.5 19.5c5-2 10-2 17 0'],
   '∑': ['M17 6.5V5H7l6 7-6 7h10v-1.5'],
-  '⊶': ['M6 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0', 'M18 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0', 'M8.5 12h7']
+  '⊶': [
+    'M6 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0',
+    'M18 12m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0-5 0',
+    'M8.5 12h7'
+  ]
 };
 
 function buildIcon(paths: readonly string[]): SVGSVGElement {
@@ -224,10 +239,13 @@ function installParticleField(): void {
       p.x += p.vx * dt * 2;
       p.y += p.vy * dt * 2;
       p.phase += 0.02 * p.twinkle * dt;
-      if (p.y < -6) { p.y = height + 6; p.x = Math.random() * width; }
+      if (p.y < -6) {
+        p.y = height + 6;
+        p.x = Math.random() * width;
+      }
       if (p.x < -6) p.x = width + 6;
       else if (p.x > width + 6) p.x = -6;
-      const alpha = 0.10 + 0.16 * (0.5 + 0.5 * Math.sin(p.phase));
+      const alpha = 0.1 + 0.16 * (0.5 + 0.5 * Math.sin(p.phase));
       const size = p.radius * 7;
       ctx.globalAlpha = alpha;
       const sprite = sprites[p.sprite];
@@ -290,15 +308,19 @@ function installCursorGlow(): void {
   let pending = 0;
   let x = -400;
   let y = -400;
-  document.addEventListener('pointermove', (event) => {
-    x = event.clientX;
-    y = event.clientY;
-    if (pending) return;
-    pending = window.requestAnimationFrame(() => {
-      pending = 0;
-      glow.style.transform = `translate3d(${x - 210}px, ${y - 210}px, 0)`;
-    });
-  }, { passive: true });
+  document.addEventListener(
+    'pointermove',
+    (event) => {
+      x = event.clientX;
+      y = event.clientY;
+      if (pending) return;
+      pending = window.requestAnimationFrame(() => {
+        pending = 0;
+        glow.style.transform = `translate3d(${x - 210}px, ${y - 210}px, 0)`;
+      });
+    },
+    { passive: true }
+  );
 }
 
 /* ---------------------------------------------------------------------------

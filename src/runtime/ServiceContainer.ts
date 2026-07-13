@@ -38,7 +38,10 @@ export class ServiceContainer<M extends object = Record<string, unknown>> {
     factory: ServiceFactory<ServiceContainer<M>, M[K]>,
     options: { singleton?: boolean } = {}
   ): this {
-    this.registrations.set(token, { factory: factory as ServiceFactory<ServiceContainer<M>, unknown>, singleton: options.singleton ?? true });
+    this.registrations.set(token, {
+      factory: factory as ServiceFactory<ServiceContainer<M>, unknown>,
+      singleton: options.singleton ?? true
+    });
     // A fresh registration invalidates any previously cached singleton.
     this.instances.delete(token);
     return this;

@@ -82,11 +82,30 @@ export interface PendulumLegacyApp {
 
 export interface PendulumLegacyPhysics {
   rhs2(state: Float64Array | number[], parameters: PendulumParameters, gamma: number, out: Float64Array): Float64Array;
-  rhs3(state: Float64Array | number[], parameters: Required<PendulumParameters>, gamma: number, out: Float64Array): Float64Array;
+  rhs3(
+    state: Float64Array | number[],
+    parameters: Required<PendulumParameters>,
+    gamma: number,
+    out: Float64Array
+  ): Float64Array;
   energy2(state: Float64Array | number[], parameters: PendulumParameters): EnergyBreakdown;
   energy3(state: Float64Array | number[], parameters: Required<PendulumParameters>): EnergyBreakdown;
-  step(method: IntegratorId, state: Float64Array, dt: number, rhs: (s: Float64Array, out: Float64Array) => void, n: number, out: Float64Array, options?: { tolerance?: number }): unknown;
-  rk4step(state: Float64Array, dt: number, rhs: (s: Float64Array, out: Float64Array) => void, n: number, out: Float64Array): Float64Array;
+  step(
+    method: IntegratorId,
+    state: Float64Array,
+    dt: number,
+    rhs: (s: Float64Array, out: Float64Array) => void,
+    n: number,
+    out: Float64Array,
+    options?: { tolerance?: number }
+  ): unknown;
+  rk4step(
+    state: Float64Array,
+    dt: number,
+    rhs: (s: Float64Array, out: Float64Array) => void,
+    n: number,
+    out: Float64Array
+  ): Float64Array;
 }
 
 export interface PendulumLegacyValidation {

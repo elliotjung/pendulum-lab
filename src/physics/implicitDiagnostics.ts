@@ -23,10 +23,7 @@ export interface NewtonStepRecord {
   stepNorm: number;
 }
 
-export type ImplicitMidpointFailureReason =
-  | 'non-finite-input'
-  | 'singular-newton-matrix'
-  | 'max-iterations';
+export type ImplicitMidpointFailureReason = 'non-finite-input' | 'singular-newton-matrix' | 'max-iterations';
 
 export interface ImplicitMidpointReport {
   /** Whether the residual fell below tolerance within the iteration budget. */

@@ -17,21 +17,35 @@ import {
 const SELECT_ID = 'navLocale';
 
 const CONTROL_LABELS_KO: Record<string, string> = {
-  speed: '속도', timeMode: '시간 진행', sysType: '진자 종류', seed: '시드',
-  th1: 'θ₁ 초기각 (rad)', th2: 'θ₂ 초기각 (rad)', th3: 'θ₃ 초기각 (rad)',
-  iw1: 'ω₁ 초기 각속도', iw2: 'ω₂ 초기 각속도', iw3: 'ω₃ 초기 각속도',
-  g: '중력가속도 g (m/s²)', gamma: '감쇠 γ', trailMode: '궤적 색상',
-  phaseAxis: '위상 축', method: '적분기', dt: '시간 간격 dt (s)', tol: '허용오차',
-  spf: '프레임당 스텝', qualityMode: '품질 모드', audioVol: '음량'
+  speed: '속도',
+  timeMode: '시간 진행',
+  sysType: '진자 종류',
+  seed: '시드',
+  th1: 'θ₁ 초기각 (rad)',
+  th2: 'θ₂ 초기각 (rad)',
+  th3: 'θ₃ 초기각 (rad)',
+  iw1: 'ω₁ 초기 각속도',
+  iw2: 'ω₂ 초기 각속도',
+  iw3: 'ω₃ 초기 각속도',
+  g: '중력가속도 g (m/s²)',
+  gamma: '감쇠 γ',
+  trailMode: '궤적 색상',
+  phaseAxis: '위상 축',
+  method: '적분기',
+  dt: '시간 간격 dt (s)',
+  tol: '허용오차',
+  spf: '프레임당 스텝',
+  qualityMode: '품질 모드',
+  audioVol: '음량'
 };
 
 const STRUCTURAL_TEXT_KO: Record<string, string> = {
-  'Simulation': '시뮬레이션',
+  Simulation: '시뮬레이션',
   'System & Initial Conditions': '시스템과 초기조건',
   'Physical Parameters': '물리 매개변수',
-  'Visualization': '시각화',
+  Visualization: '시각화',
   'Numerical Methods': '수치해석 방법',
-  'Ensemble': '앙상블',
+  Ensemble: '앙상블',
   'Audio Sonification': '소리 변환',
   'Export & Record': '내보내기와 기록',
   'Live Diagnostics': '실시간 진단',
@@ -54,7 +68,9 @@ function localizeText(element: HTMLElement | null, koreanText: string, korean: b
 
 function replaceTrailingText(element: HTMLElement | null, text: string): void {
   if (!element) return;
-  const trailing = Array.from(element.childNodes).reverse().find((node) => node.nodeType === Node.TEXT_NODE);
+  const trailing = Array.from(element.childNodes)
+    .reverse()
+    .find((node) => node.nodeType === Node.TEXT_NODE);
   if (trailing) trailing.textContent = ` ${text}`;
   else element.append(document.createTextNode(` ${text}`));
 }
@@ -62,9 +78,12 @@ function replaceTrailingText(element: HTMLElement | null, text: string): void {
 /** Apply visible localization and stable selectors to the already-mounted shell. */
 export function applyStructuralLocale(): void {
   if (typeof document === 'undefined') return;
-  const korean = normalizeNavLocale(document.getElementById(SELECT_ID) instanceof HTMLSelectElement
-    ? (document.getElementById(SELECT_ID) as HTMLSelectElement).value
-    : storedNavLocale()) === 'ko';
+  const korean =
+    normalizeNavLocale(
+      document.getElementById(SELECT_ID) instanceof HTMLSelectElement
+        ? (document.getElementById(SELECT_ID) as HTMLSelectElement).value
+        : storedNavLocale()
+    ) === 'ko';
   document.documentElement.lang = korean ? 'ko' : 'en';
 
   for (const [id, text] of Object.entries(CONTROL_LABELS_KO)) {
@@ -83,7 +102,9 @@ export function applyStructuralLocale(): void {
     mode.dataset.testid = 'audience-mode';
     mode.setAttribute('aria-label', korean ? '사용자 모드' : 'Audience mode');
     const labels = korean ? ['초보', '학생', '연구'] : ['Beginner', 'Student', 'Research'];
-    Array.from(mode.options).forEach((option, index) => { option.textContent = labels[index] ?? option.textContent; });
+    Array.from(mode.options).forEach((option, index) => {
+      option.textContent = labels[index] ?? option.textContent;
+    });
   }
   localizeText(document.querySelector<HTMLElement>('label[for="audienceMode"]'), '모드', korean);
   localizeText(document.querySelector<HTMLElement>('label[for="navLocale"]'), '언어', korean);
@@ -146,7 +167,10 @@ export function installLocaleSelect(refresh: () => void): void {
   const select = document.createElement('select');
   select.id = SELECT_ID;
   select.setAttribute('aria-label', 'Menu guide language');
-  for (const [value, text] of [['en', 'English'], ['ko', '한국어']] as const) {
+  for (const [value, text] of [
+    ['en', 'English'],
+    ['ko', '한국어']
+  ] as const) {
     const option = document.createElement('option');
     option.value = value;
     option.textContent = text;

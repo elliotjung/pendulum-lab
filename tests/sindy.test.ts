@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildFeatureLibrary, finiteDifferenceDerivatives, identifyDynamics, type SindyResult } from '../src/research/sindy';
+import {
+  buildFeatureLibrary,
+  finiteDifferenceDerivatives,
+  identifyDynamics,
+  type SindyResult
+} from '../src/research/sindy';
 import { mulberry32 } from '../src/physics/variational';
 import { rhsDuffing, type DuffingParameters } from '../src/physics/duffing';
 import { rk4Step } from '../src/physics/integrators';
@@ -61,7 +66,13 @@ describe('SINDy identification — exact derivatives recover the governing equat
   });
 
   it("recovers the engine's autonomous Duffing coefficients from rhsDuffing samples", () => {
-    const params: DuffingParameters = { damping: 0.3, linearStiffness: -1, cubicStiffness: 1, driveAmplitude: 0, driveFrequency: 1.2 };
+    const params: DuffingParameters = {
+      damping: 0.3,
+      linearStiffness: -1,
+      cubicStiffness: 1,
+      driveAmplitude: 0,
+      driveFrequency: 1.2
+    };
     const rng = mulberry32(0xd00f);
     const states: number[][] = [];
     const derivatives: number[][] = [];
@@ -101,7 +112,12 @@ describe('SINDy identification — exact derivatives recover the governing equat
       states.push([th, om]);
       derivatives.push([om, -(g / l) * Math.sin(th)]);
     }
-    const result = identifyDynamics(states, derivatives, { polynomialDegree: 1, includeTrig: true }, { threshold: 0.2 });
+    const result = identifyDynamics(
+      states,
+      derivatives,
+      { polynomialDegree: 1, includeTrig: true },
+      { threshold: 0.2 }
+    );
 
     expect(activeTermNames(result, 0)).toEqual(['x1']);
     expect(activeTermNames(result, 1)).toEqual(['sin(x0)']);
@@ -156,14 +172,42 @@ describe('SINDy with finite-differenced derivatives (realistic pipeline)', () =>
 describe('SINDy input validation', () => {
   it('rejects empty, mismatched, or ragged input', () => {
     expect(() => identifyDynamics([], [], { polynomialDegree: 1 }, { threshold: 0.1 })).toThrow(/empty/);
-    expect(() => identifyDynamics([[1, 2]], [[1, 2], [3, 4]], { polynomialDegree: 1 }, { threshold: 0.1 })).toThrow(/same number/);
-    expect(() => identifyDynamics([[1, 2], [3]], [[1, 2], [3, 4]], { polynomialDegree: 1 }, { threshold: 0.1 })).toThrow(/rectangular/);
+    expect(() =>
+      identifyDynamics(
+        [[1, 2]],
+        [
+          [1, 2],
+          [3, 4]
+        ],
+        { polynomialDegree: 1 },
+        { threshold: 0.1 }
+      )
+    ).toThrow(/same number/);
+    expect(() =>
+      identifyDynamics(
+        [[1, 2], [3]],
+        [
+          [1, 2],
+          [3, 4]
+        ],
+        { polynomialDegree: 1 },
+        { threshold: 0.1 }
+      )
+    ).toThrow(/rectangular/);
   });
 
   it('reports a rank-deficient library rather than returning a bogus fit', () => {
     // 2 samples but a degree-3 library (10 terms) ⇒ ΘᵀΘ is singular.
-    const states = [[0.1, 0.2], [0.3, 0.4]];
-    const derivatives = [[0.2, -0.1], [0.4, -0.3]];
-    expect(() => identifyDynamics(states, derivatives, { polynomialDegree: 3 }, { threshold: 0.01 })).toThrow(/rank-deficient|positive-definite/);
+    const states = [
+      [0.1, 0.2],
+      [0.3, 0.4]
+    ];
+    const derivatives = [
+      [0.2, -0.1],
+      [0.4, -0.3]
+    ];
+    expect(() => identifyDynamics(states, derivatives, { polynomialDegree: 3 }, { threshold: 0.01 })).toThrow(
+      /rank-deficient|positive-definite/
+    );
   });
 });

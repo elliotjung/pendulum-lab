@@ -20,7 +20,11 @@ test('modern Sweep tab paints a chaos map and exports', async ({ page }) => {
     (document.getElementById('sweepT') as HTMLInputElement).value = '5';
   });
   await page.evaluate(() => document.getElementById('sweepStart')?.click());
-  await page.waitForFunction(() => (document.getElementById('sweepStatus')?.textContent ?? '').includes('done'), undefined, { timeout: 30000 });
+  await page.waitForFunction(
+    () => (document.getElementById('sweepStatus')?.textContent ?? '').includes('done'),
+    undefined,
+    { timeout: 30000 }
+  );
 
   // The chaos map canvas is non-blank.
   expect(await page.evaluate(canvasSum, 'sweepCanvas')).toBeGreaterThan(0);
@@ -44,7 +48,11 @@ test('modern Compare tab overlays integrators and benchmarks', async ({ page }) 
 
   // Benchmark fills the per-method fields.
   await page.evaluate(() => document.getElementById('cmpBenchBtn')?.click());
-  await page.waitForFunction(() => (document.getElementById('bRK4')?.textContent ?? '').includes('steps/ms'), undefined, { timeout: 20000 });
+  await page.waitForFunction(
+    () => (document.getElementById('bRK4')?.textContent ?? '').includes('steps/ms'),
+    undefined,
+    { timeout: 20000 }
+  );
   await expect(page.locator('#bEuler')).toContainText('steps/ms');
 
   await page.evaluate(() => document.getElementById('cmpStop')?.click());

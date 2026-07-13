@@ -40,7 +40,7 @@ if (process.argv.includes('--write')) {
   if (JSON.stringify(committed) !== JSON.stringify(next)) {
     console.error(
       'standalone-sync check FAILED: generated hashes differ from standalone-manifest.json.\n' +
-      'Run `npm run build:standalone && npm run standalone:manifest`, review the release artifact, and commit the compact manifest.'
+        'Run `npm run build:standalone && npm run standalone:manifest`, review the release artifact, and commit the compact manifest.'
     );
     process.exit(1);
   }

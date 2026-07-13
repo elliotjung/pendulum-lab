@@ -27,14 +27,21 @@ export class JobCancelledError extends Error {
 }
 
 export class JobTimeoutError extends Error {
-  constructor(public readonly checkpoint: JobCheckpointState, elapsedMs: number) {
+  constructor(
+    public readonly checkpoint: JobCheckpointState,
+    elapsedMs: number
+  ) {
     super(`job timed out after ${Math.round(elapsedMs)}ms`);
     this.name = 'JobTimeoutError';
   }
 }
 
 export class JobFailedError extends Error {
-  constructor(message: string, public readonly phase: string, public readonly checkpoint: JobCheckpointState) {
+  constructor(
+    message: string,
+    public readonly phase: string,
+    public readonly checkpoint: JobCheckpointState
+  ) {
     super(message);
     this.name = 'JobFailedError';
   }
@@ -79,7 +86,8 @@ export function chaosWorkerTransportFactory(): JobTransportFactory {
     }
     worker.addEventListener('message', (event: MessageEvent<unknown>) => {
       const data = event.data as JobEventMessage;
-      if (typeof data === 'object' && data !== null && (data as { protocol?: unknown }).protocol === JOB_PROTOCOL_V2) onEvent(data);
+      if (typeof data === 'object' && data !== null && (data as { protocol?: unknown }).protocol === JOB_PROTOCOL_V2)
+        onEvent(data);
     });
     return {
       send: (message) => worker.postMessage(message),
@@ -133,7 +141,9 @@ export interface JobPoolOptions {
   maxQueued?: number;
 }
 
-export function defaultJobPoolSize(concurrency = typeof navigator === 'undefined' ? 1 : navigator.hardwareConcurrency): number {
+export function defaultJobPoolSize(
+  concurrency = typeof navigator === 'undefined' ? 1 : navigator.hardwareConcurrency
+): number {
   if (!Number.isFinite(concurrency) || concurrency <= 2) return 1;
   return Math.min(4, Math.max(1, Math.floor(concurrency / 2)));
 }
@@ -147,30 +157,46 @@ function estimateChaosWorkUnits(request: ChaosRequest): number | undefined {
     case 'bifurcation':
       return request.amplitudes.length * Math.max(1, Math.round(request.settings.maxTime / request.settings.dt));
     case 'zeroOne':
-      return (request.settings?.transientSteps ?? 2_000) + (request.settings?.samples ?? 3_000) * (request.settings?.sampleEvery ?? 30);
+      return (
+        (request.settings?.transientSteps ?? 2_000) +
+        (request.settings?.samples ?? 3_000) * (request.settings?.sampleEvery ?? 30)
+      );
     case 'clv':
-      return ((request.settings?.forwardTransient ?? 200) + (request.settings?.window ?? 400) + (request.settings?.backwardTransient ?? 200))
-        * (request.settings?.renormEvery ?? 10)
-        * (request.count ?? request.state0.length);
+      return (
+        ((request.settings?.forwardTransient ?? 200) +
+          (request.settings?.window ?? 400) +
+          (request.settings?.backwardTransient ?? 200)) *
+        (request.settings?.renormEvery ?? 10) *
+        (request.count ?? request.state0.length)
+      );
     case 'basin': {
       const n = request.settings?.n ?? 60;
       return n * n * Math.max(1, Math.round((request.settings?.maxTime ?? 20) / (request.settings?.dt ?? 0.01)));
     }
     case 'rqa': {
       const samples = request.settings?.samples ?? 360;
-      return (request.settings?.transientSteps ?? 2_000) + samples * (request.settings?.sampleEvery ?? 20) + samples * samples;
+      return (
+        (request.settings?.transientSteps ?? 2_000) +
+        samples * (request.settings?.sampleEvery ?? 20) +
+        samples * samples
+      );
     }
     case 'ftle': {
       const n = request.settings?.n ?? 60;
       return n * n * Math.max(1, Math.round((request.settings?.totalTime ?? 3) / (request.settings?.dt ?? 0.01)));
     }
     case 'studyPoint':
-      return (request.settings?.lyapunov?.steps ?? 8_000)
-        + ((request.settings?.rqa?.samples ?? 360) ** 2)
-        + Math.max(1, Math.round((request.settings?.ftleHorizon ?? 5) / (request.settings?.ftleDt ?? 0.01)));
+      return (
+        (request.settings?.lyapunov?.steps ?? 8_000) +
+        (request.settings?.rqa?.samples ?? 360) ** 2 +
+        Math.max(1, Math.round((request.settings?.ftleHorizon ?? 5) / (request.settings?.ftleDt ?? 0.01)))
+      );
     case 'wadaConvergence':
-      return (request.settings?.resolutions ?? [40, 60, 90])
-        .reduce((sum, n) => sum + n * n * Math.max(1, Math.round((request.settings?.maxTime ?? 20) / (request.settings?.dt ?? 0.01))), 0);
+      return (request.settings?.resolutions ?? [40, 60, 90]).reduce(
+        (sum, n) =>
+          sum + n * n * Math.max(1, Math.round((request.settings?.maxTime ?? 20) / (request.settings?.dt ?? 0.01))),
+        0
+      );
     case 'codim2': {
       const n = request.settings?.n ?? 12;
       return n * n * (request.settings?.steps ?? 4_000);
@@ -187,7 +213,10 @@ export class JobClient {
   private readonly poolSize: number;
   private readonly maxQueued: number;
 
-  constructor(private readonly factory: JobTransportFactory = chaosWorkerTransportFactory(), options: JobPoolOptions = {}) {
+  constructor(
+    private readonly factory: JobTransportFactory = chaosWorkerTransportFactory(),
+    options: JobPoolOptions = {}
+  ) {
     this.poolSize = Math.max(1, Math.min(8, options.poolSize ?? defaultJobPoolSize()));
     this.maxQueued = options.maxQueued ?? 256;
   }
@@ -278,7 +307,10 @@ export class JobClient {
   }
 
   /** Submit with automatic retries on failure/timeout, resuming from the last checkpoint. */
-  async submitWithRetry(request: ChaosRequest, options: JobSubmitOptions & { attempts?: number } = {}): Promise<ChaosResponse> {
+  async submitWithRetry(
+    request: ChaosRequest,
+    options: JobSubmitOptions & { attempts?: number } = {}
+  ): Promise<ChaosResponse> {
     const attempts = Math.max(1, options.attempts ?? 2);
     let lastError: Error = new Error('no attempts made');
     let checkpoint: JobCheckpointState | undefined = options.checkpoint;
@@ -346,7 +378,11 @@ export class JobClient {
         this.workers[index] = { transport: this.factory((event) => this.onEvent(index, event)), busyJobId: null };
       }
     }
-    this.settle(job, 'timed-out', new JobTimeoutError(job.checkpoint ?? { completedPhases: [], partial: {} }, job.message.timeoutMs ?? 0));
+    this.settle(
+      job,
+      'timed-out',
+      new JobTimeoutError(job.checkpoint ?? { completedPhases: [], partial: {} }, job.message.timeoutMs ?? 0)
+    );
     this.assignWork();
   }
 

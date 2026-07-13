@@ -32,10 +32,14 @@ test('side-panel and accordion arrows do not restart the live lab simulation', a
   await page.waitForFunction(() => Boolean((window as unknown as { __modernLab?: unknown }).__modernLab));
   await page.waitForTimeout(250);
 
-  const beforePanelToggle = await page.evaluate(() => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number });
+  const beforePanelToggle = await page.evaluate(
+    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
+  );
   await page.locator('#panelToggle').click();
   await page.waitForTimeout(180);
-  const afterPanelToggle = await page.evaluate(() => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number });
+  const afterPanelToggle = await page.evaluate(
+    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
+  );
   expect(afterPanelToggle.time).toBeGreaterThan(beforePanelToggle.time);
   expect(afterPanelToggle.trailPoints).toBeGreaterThanOrEqual(beforePanelToggle.trailPoints);
 
@@ -44,10 +48,14 @@ test('side-panel and accordion arrows do not restart the live lab simulation', a
   await page.waitForTimeout(120);
 
   const firstSummary = page.locator('#tab-lab .controls details.acc > summary').first();
-  const beforeAccordionToggle = await page.evaluate(() => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number });
+  const beforeAccordionToggle = await page.evaluate(
+    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
+  );
   await firstSummary.click();
   await page.waitForTimeout(180);
-  const afterAccordionToggle = await page.evaluate(() => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number });
+  const afterAccordionToggle = await page.evaluate(
+    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
+  );
   expect(afterAccordionToggle.time).toBeGreaterThan(beforeAccordionToggle.time);
   expect(afterAccordionToggle.trailPoints).toBeGreaterThanOrEqual(beforeAccordionToggle.trailPoints);
 });

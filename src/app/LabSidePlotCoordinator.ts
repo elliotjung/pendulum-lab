@@ -86,7 +86,8 @@ export class LabSidePlotCoordinator {
   private drawOnMain(payload: LabSidePlotPayload): void {
     if (payload.plot === 'energy') {
       const energy = ctxOf('energy');
-      if (energy) renderEnergyPlot(energy.ctx, { x: 0, y: 0, width: energy.width, height: energy.height }, payload.energy);
+      if (energy)
+        renderEnergyPlot(energy.ctx, { x: 0, y: 0, width: energy.width, height: energy.height }, payload.energy);
       return;
     }
     if (payload.plot === 'lyap') {
@@ -99,7 +100,12 @@ export class LabSidePlotCoordinator {
     }
     if (payload.plot === 'phase') {
       const phase = ctxOf('phase');
-      if (phase) renderPhasePortrait(phase.ctx, { x: 0, y: 0, width: phase.width, height: phase.height }, phaseSamples(payload.theta, payload.omega));
+      if (phase)
+        renderPhasePortrait(
+          phase.ctx,
+          { x: 0, y: 0, width: phase.width, height: phase.height },
+          phaseSamples(payload.theta, payload.omega)
+        );
       return;
     }
     if (payload.plot === 'poincare') {

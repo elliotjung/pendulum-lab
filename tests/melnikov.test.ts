@@ -98,7 +98,9 @@ describe('Duffing double-well Melnikov threshold', () => {
 
   test('reduces to the Guckenheimer–Holmes closed form at α = −1, β = 1', () => {
     const gc = melnikovCriticalAmplitudeDuffing(duffing);
-    const textbook = ((2 * Math.SQRT2) / 3) * (duffing.damping * Math.cosh((Math.PI * duffing.driveFrequency) / 2)) / (Math.PI * duffing.driveFrequency);
+    const textbook =
+      (((2 * Math.SQRT2) / 3) * (duffing.damping * Math.cosh((Math.PI * duffing.driveFrequency) / 2))) /
+      (Math.PI * duffing.driveFrequency);
     expect(gc).toBeCloseTo(textbook, 12);
   });
 

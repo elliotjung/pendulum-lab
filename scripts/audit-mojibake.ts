@@ -28,10 +28,7 @@ const IGNORED_DIRS = new Set([
   'test-results'
 ]);
 
-const IGNORED_FILES = new Set([
-  'reports/mojibake-audit.json',
-  'reports/mojibake-audit.md'
-]);
+const IGNORED_FILES = new Set(['reports/mojibake-audit.json', 'reports/mojibake-audit.md']);
 
 const TEXT_EXTENSIONS = new Set([
   '.css',
@@ -48,15 +45,7 @@ const TEXT_EXTENSIONS = new Set([
   '.yaml'
 ]);
 
-const DISPLAY_TEXT_EXTENSIONS = new Set([
-  '.css',
-  '.html',
-  '.json',
-  '.md',
-  '.txt',
-  '.yml',
-  '.yaml'
-]);
+const DISPLAY_TEXT_EXTENSIONS = new Set(['.css', '.html', '.json', '.md', '.txt', '.yml', '.yaml']);
 
 const KNOWN_MOJIBAKE_TOKENS = [
   '\uCA0C',
@@ -86,7 +75,11 @@ const SUSPICIOUS_PATTERNS: { label: string; regex: RegExp }[] = [
   { label: 'stray-cp1252-latin1', regex: /\u00C2[\u0080-\u00BF]?/g },
   { label: 'cp1252-punctuation', regex: /\u00E2[\u0080-\u2122]{1,2}/g },
   { label: 'emoji-mojibake', regex: /\u00F0\u0178[\u0080-\u00BF]?/g },
-  { label: 'known-korean-mojibake-fragments', regex: /[\uCA0C\uCC55\uD69E\uBBB6\uBD55\uBC1A\uBC23\uBC04\uBC2A\uBC33\uBC20\uBC06\uAC4E\uBB56\uBBCA\uBBCB\u7F50\u6B3E\u8CAB]/g },
+  {
+    label: 'known-korean-mojibake-fragments',
+    regex:
+      /[\uCA0C\uCC55\uD69E\uBBB6\uBD55\uBC1A\uBC23\uBC04\uBC2A\uBC33\uBC20\uBC06\uAC4E\uBB56\uBBCA\uBBCB\u7F50\u6B3E\u8CAB]/g
+  },
   { label: 'known-rendered-mojibake-token', regex: new RegExp(KNOWN_MOJIBAKE_TOKENS.map(escapeRegExp).join('|'), 'g') }
 ];
 
@@ -118,12 +111,12 @@ function lineLooksLikeCode(relativePath: string, lineText: string): boolean {
   if (normalized.endsWith('package-lock.json')) return true;
   const trimmed = lineText.trim();
   return (
-    trimmed.startsWith('http://')
-    || trimmed.startsWith('https://')
-    || trimmed.includes('${')
-    || trimmed.includes('=>')
-    || /\b(?:const|let|var|return|if|for|while|switch|case|type|interface|export|import)\b/.test(trimmed)
-    || ((trimmed.includes('??') || trimmed.includes('?.')) && /[`=;(){}[\]]/.test(trimmed))
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.includes('${') ||
+    trimmed.includes('=>') ||
+    /\b(?:const|let|var|return|if|for|while|switch|case|type|interface|export|import)\b/.test(trimmed) ||
+    ((trimmed.includes('??') || trimmed.includes('?.')) && /[`=;(){}[\]]/.test(trimmed))
   );
 }
 
@@ -194,7 +187,10 @@ const md = [
   '',
   '| File | Line | Pattern | Excerpt |',
   '| --- | ---: | --- | --- |',
-  ...findings.map((finding) => `| \`${finding.path}\` | ${finding.line} | \`${finding.pattern.replace(/\|/g, '\\|')}\` | ${finding.excerpt.replace(/\|/g, '\\|')} |`)
+  ...findings.map(
+    (finding) =>
+      `| \`${finding.path}\` | ${finding.line} | \`${finding.pattern.replace(/\|/g, '\\|')}\` | ${finding.excerpt.replace(/\|/g, '\\|')} |`
+  )
 ].join('\n');
 
 writeFileSync(REPORT_MD, `${md}\n`);

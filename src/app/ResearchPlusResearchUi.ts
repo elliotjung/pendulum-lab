@@ -35,12 +35,23 @@ function canvas(id: string, testId: string, label: string): HTMLCanvasElement {
 }
 
 function card(testId: string, title: string, description: string): HTMLElement {
-  const section = node('section', { class: 'research-card', 'data-testid': testId, 'aria-labelledby': `${testId}-title` });
+  const section = node('section', {
+    class: 'research-card',
+    'data-testid': testId,
+    'aria-labelledby': `${testId}-title`
+  });
   section.append(node('h3', { id: `${testId}-title` }, title), node('p', { class: 'xs-11' }, description));
   return section;
 }
 
-function numberControl(id: string, labelText: string, value: string, min: string, max: string, step: string): HTMLLabelElement {
+function numberControl(
+  id: string,
+  labelText: string,
+  value: string,
+  min: string,
+  max: string,
+  step: string
+): HTMLLabelElement {
   const label = node('label', { for: id }, labelText);
   label.append(node('input', { id, type: 'number', value, min, max, step, 'aria-label': labelText }));
   return label;
@@ -84,7 +95,8 @@ function installMagneticCard(root: HTMLElement): void {
     }, 0);
   });
   exportButton.addEventListener('click', () => {
-    if (latest) downloadText('magnetic-pendulum-three-magnet-basin.csv', magneticBasinCsv(latest), 'text/csv;charset=utf-8');
+    if (latest)
+      downloadText('magnetic-pendulum-three-magnet-basin.csv', magneticBasinCsv(latest), 'text/csv;charset=utf-8');
   });
   section.append(plot, run, exportButton, output);
   root.append(section);
@@ -128,8 +140,15 @@ function installSynchronizationCard(root: HTMLElement): void {
   );
   const controls = node('div', { class: 'row' });
   const modeLabel = node('label', { for: 'rpSyncMode' }, 'Network mode');
-  const mode = node('select', { id: 'rpSyncMode', 'aria-label': 'Synchronization network mode', 'data-testid': 'research-sync-mode' });
-  mode.append(node('option', { value: 'mean-field' }, 'Mean-field transition'), node('option', { value: 'chimera-seed' }, 'Non-local chimera seed'));
+  const mode = node('select', {
+    id: 'rpSyncMode',
+    'aria-label': 'Synchronization network mode',
+    'data-testid': 'research-sync-mode'
+  });
+  mode.append(
+    node('option', { value: 'mean-field' }, 'Mean-field transition'),
+    node('option', { value: 'chimera-seed' }, 'Non-local chimera seed')
+  );
   modeLabel.append(mode);
   controls.append(modeLabel, numberControl('rpSyncCoupling', 'Coupling K', '1.4', '0', '4', '0.1'));
   const plot = canvas('rpSyncCanvas', 'research-sync-canvas', 'Kuramoto global order parameter over time');

@@ -88,7 +88,8 @@ export interface DispersionSample {
 /** Sample both branches over k ∈ [0, π/a] on `samples` points — a k-ω band plot. */
 export function diatomicDispersionCurve(p: DiatomicChainParams, samples = 64): DispersionSample[] {
   validate(p);
-  if (!Number.isInteger(samples) || samples < 2) throw new Error('diatomicDispersionCurve: samples must be an integer ≥ 2');
+  if (!Number.isInteger(samples) || samples < 2)
+    throw new Error('diatomicDispersionCurve: samples must be an integer ≥ 2');
   const kMax = Math.PI / p.latticeConstant;
   const out: DispersionSample[] = [];
   for (let i = 0; i < samples; i += 1) {
@@ -114,7 +115,12 @@ export function acousticSoundSpeed(p: DiatomicChainParams): number {
 }
 
 /** Central-difference group velocity dω/dk of one branch at wavevector k. */
-export function diatomicGroupVelocity(k: number, p: DiatomicChainParams, branch: 'acoustic' | 'optical', h = 1e-6): number {
+export function diatomicGroupVelocity(
+  k: number,
+  p: DiatomicChainParams,
+  branch: 'acoustic' | 'optical',
+  h = 1e-6
+): number {
   const plus = diatomicDispersion(k + h, p)[branch];
   const minus = diatomicDispersion(k - h, p)[branch];
   return (plus - minus) / (2 * h);

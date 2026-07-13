@@ -36,7 +36,10 @@ describe('ResearchDb (IndexedDB store)', () => {
     expect((await db.get('settings', 'k'))?.payload).toEqual({ v: 2 });
     await db.delete('settings', 'k');
     expect(await db.get('settings', 'k')).toBeUndefined();
-    await db.putMany('runLog', [{ id: 'a', payload: 1 }, { id: 'b', payload: 2 }]);
+    await db.putMany('runLog', [
+      { id: 'a', payload: 1 },
+      { id: 'b', payload: 2 }
+    ]);
     expect(await db.count('runLog')).toBe(2);
     await db.clear('runLog');
     expect(await db.count('runLog')).toBe(0);
@@ -145,7 +148,10 @@ describe('ResearchDb (IndexedDB store)', () => {
 describe('localStorage v2 -> IndexedDB migration', () => {
   const v2Payload = JSON.stringify({
     schemaVersion: 'pendulum-research-workbench/v2',
-    experiments: [{ id: 'exp-a', name: 'A' }, { id: 'exp-b', name: 'B' }],
+    experiments: [
+      { id: 'exp-a', name: 'A' },
+      { id: 'exp-b', name: 'B' }
+    ],
     runLog: [{ id: 'run-a', type: 'export' }],
     parameterStudy: { id: 'study-a', variable: 'theta1' },
     batchCheckpoint: { id: 'batch-a', status: 'complete' },

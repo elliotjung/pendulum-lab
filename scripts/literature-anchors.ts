@@ -45,9 +45,14 @@ async function main(): Promise<void> {
   }
   lines.push('');
   await mkdir('reports', { recursive: true });
-  await writeFile('reports/literature-anchors.json', JSON.stringify({ generatedAt: new Date().toISOString(), ...report }, null, 2), 'utf8');
+  await writeFile(
+    'reports/literature-anchors.json',
+    JSON.stringify({ generatedAt: new Date().toISOString(), ...report }, null, 2),
+    'utf8'
+  );
   await writeFile('reports/literature-anchors.md', lines.join('\n'), 'utf8');
-  for (const a of report.anchors) console.log(`${a.pass ? 'PASS' : 'FAIL'} ${a.id}: computed ${fmt(a.computed)} vs published ${fmt(a.published)}`);
+  for (const a of report.anchors)
+    console.log(`${a.pass ? 'PASS' : 'FAIL'} ${a.id}: computed ${fmt(a.computed)} vs published ${fmt(a.published)}`);
   for (const c of report.checks) console.log(`${c.pass ? 'PASS' : 'FAIL'} ${c.id}: ${c.detail}`);
   if (!report.allPass) process.exitCode = 1;
 }

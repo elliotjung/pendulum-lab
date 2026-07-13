@@ -81,7 +81,9 @@ export function energyKapitza(state: ArrayLike<number>, parameters: KapitzaParam
 export function kapitzaEffectivePotential(theta: number, parameters: KapitzaParameters): number {
   const { g, length, driveAmplitude, driveFrequency } = parameters;
   const aOmega = driveAmplitude * driveFrequency;
-  return -(g / length) * Math.cos(theta) + (aOmega * aOmega) / (4 * length * length) * Math.sin(theta) * Math.sin(theta);
+  return (
+    -(g / length) * Math.cos(theta) + ((aOmega * aOmega) / (4 * length * length)) * Math.sin(theta) * Math.sin(theta)
+  );
 }
 
 /** True iff the inverted equilibrium θ = π is dynamically stable: a² Ω² > 2 g l. */

@@ -8,7 +8,8 @@ import {
 
 describe('CSS coverage audit', () => {
   it('extracts top-level and conditional selectors but not at-rule declarations', () => {
-    const css = '.used { color: red; } @media (min-width: 1px) { .nested, .pair { display: grid; } } @font-face { font-family: x; }';
+    const css =
+      '.used { color: red; } @media (min-width: 1px) { .nested, .pair { display: grid; } } @font-face { font-family: x; }';
     expect(extractStyleRuleRanges(css).map((rule) => rule.selector)).toEqual(['.used', '.nested, .pair']);
   });
 
@@ -18,7 +19,13 @@ describe('CSS coverage audit', () => {
   });
 
   it('merges overlapping precise-coverage byte ranges', () => {
-    expect(mergeRanges([{ start: 4, end: 10 }, { start: 0, end: 5 }, { start: 20, end: 21 }])).toEqual([
+    expect(
+      mergeRanges([
+        { start: 4, end: 10 },
+        { start: 0, end: 5 },
+        { start: 20, end: 21 }
+      ])
+    ).toEqual([
       { start: 0, end: 10 },
       { start: 20, end: 21 }
     ]);

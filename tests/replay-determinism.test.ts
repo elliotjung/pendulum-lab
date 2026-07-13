@@ -11,7 +11,9 @@ function replay(): string {
     rk4Step(state, 0.0015, rhs, out);
     state.set(out);
   }
-  return Array.from(state).map((value) => value.toPrecision(16)).join('|');
+  return Array.from(state)
+    .map((value) => value.toPrecision(16))
+    .join('|');
 }
 
 describe('replay determinism', () => {

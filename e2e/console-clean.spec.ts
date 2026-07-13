@@ -23,6 +23,8 @@ test('app opens with no console errors and the workbench renders without horizon
   expect(consoleErrors).toEqual([]);
 
   // The Research Workbench introduces no horizontal page overflow.
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
   expect(overflow).toBeLessThanOrEqual(2);
 });

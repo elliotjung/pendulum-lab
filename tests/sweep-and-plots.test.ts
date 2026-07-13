@@ -62,10 +62,15 @@ describe('sweepColor', () => {
 describe('renderMultiLine', () => {
   it('draws one stroked path per series with a log y-axis', () => {
     const ctx = stubCtx();
-    renderMultiLine(ctx, RECT, [
-      { color: '#18d4f8', values: [1e-6, 1e-5, 1e-4, 1e-3] },
-      { color: '#ff7a2c', values: [1e-3, 1e-2, 1e-1, 1] }
-    ], { log: true });
+    renderMultiLine(
+      ctx,
+      RECT,
+      [
+        { color: '#18d4f8', values: [1e-6, 1e-5, 1e-4, 1e-3] },
+        { color: '#ff7a2c', values: [1e-3, 1e-2, 1e-1, 1] }
+      ],
+      { log: true }
+    );
     expect(ctx.calls.fillRect).toBeGreaterThanOrEqual(1); // background
     expect(ctx.calls.stroke).toBeGreaterThanOrEqual(2); // two series
   });

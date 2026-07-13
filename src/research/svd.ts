@@ -26,7 +26,12 @@ export interface SymmetricEigenResult {
  * Cyclic Jacobi eigendecomposition of a symmetric n×n matrix (row-major). The
  * input is not modified. Eigenpairs are returned sorted by descending eigenvalue.
  */
-export function jacobiEigenSymmetric(input: readonly number[], n: number, maxSweeps = 100, tolerance = 1e-15): SymmetricEigenResult {
+export function jacobiEigenSymmetric(
+  input: readonly number[],
+  n: number,
+  maxSweeps = 100,
+  tolerance = 1e-15
+): SymmetricEigenResult {
   if (n < 1) throw new Error('jacobiEigenSymmetric: n must be ≥ 1.');
   const a = Float64Array.from(input);
   const v = new Float64Array(n * n);
@@ -105,7 +110,12 @@ export interface SvdResult {
  * matrix. Singular values below `tolerance`·σ_max (or beyond `maxRank`) are
  * dropped. Returns U (rows×rank), σ (rank), V (cols×rank) with M ≈ U Σ Vᵀ.
  */
-export function thinSvd(matrix: readonly number[], rows: number, cols: number, options: { maxRank?: number; tolerance?: number } = {}): SvdResult {
+export function thinSvd(
+  matrix: readonly number[],
+  rows: number,
+  cols: number,
+  options: { maxRank?: number; tolerance?: number } = {}
+): SvdResult {
   if (rows < 1 || cols < 1) throw new Error('thinSvd: rows and cols must be ≥ 1.');
   if (matrix.length < rows * cols) throw new Error('thinSvd: matrix shorter than rows·cols.');
   const tol = options.tolerance ?? 1e-12;
@@ -130,7 +140,7 @@ export function thinSvd(matrix: readonly number[], rows: number, cols: number, o
 
   const { values, vectors } = jacobiEigenSymmetric(gram, small);
   const sigmaMax = Math.sqrt(Math.max(values[0] ?? 0, 0));
-  const cutoff = (sigmaMax > 0 ? tol * sigmaMax : 0);
+  const cutoff = sigmaMax > 0 ? tol * sigmaMax : 0;
 
   const singularValues: number[] = [];
   const baseVectors: number[][] = []; // the computed-side singular vectors (columns)

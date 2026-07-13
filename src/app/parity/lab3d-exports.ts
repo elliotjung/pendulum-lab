@@ -28,15 +28,31 @@ export function exportDoubleStringTrajectoryCsv(): void {
   for (let i = 0; i < steps; i += 1) {
     sim.step(sample);
     const s = sim.snapshot();
-    rows.push([
-      s.time.toPrecision(8), s.phase, s.theta1.toPrecision(8), s.theta2.toPrecision(8),
-      s.omega1.toPrecision(8), s.omega2.toPrecision(8), s.x1.toPrecision(8), s.y1.toPrecision(8),
-      s.x2.toPrecision(8), s.y2.toPrecision(8), s.tension1.toPrecision(6), s.tension2.toPrecision(6),
-      s.energy.toPrecision(10)
-    ].join(','));
+    rows.push(
+      [
+        s.time.toPrecision(8),
+        s.phase,
+        s.theta1.toPrecision(8),
+        s.theta2.toPrecision(8),
+        s.omega1.toPrecision(8),
+        s.omega2.toPrecision(8),
+        s.x1.toPrecision(8),
+        s.y1.toPrecision(8),
+        s.x2.toPrecision(8),
+        s.y2.toPrecision(8),
+        s.tension1.toPrecision(6),
+        s.tension2.toPrecision(6),
+        s.energy.toPrecision(10)
+      ].join(',')
+    );
   }
   downloadBytes('pendulum_double_string_trajectory.csv', textToBytes(rows.join('\n')), 'text/csv');
-  logResearchRun('export', 'Double-string trajectory CSV', `${steps} samples over ${horizon}s with phase + tension columns; ${sim.events.length} hybrid events`, 'pendulum_double_string_trajectory.csv');
+  logResearchRun(
+    'export',
+    'Double-string trajectory CSV',
+    `${steps} samples over ${horizon}s with phase + tension columns; ${sim.events.length} hybrid events`,
+    'pendulum_double_string_trajectory.csv'
+  );
   toast('Double-string trajectory CSV exported');
 }
 
@@ -59,7 +75,12 @@ export function exportDoubleStringSnapshot(): void {
     reproducibilityHash: hashText(JSON.stringify({ spec: doubleStringSpec(), snapshot }))
   };
   downloadJson('pendulum_double_string_diagnostics.json', payload);
-  logResearchRun('export', 'Double-string snapshot', `phase=${snapshot.phase}, ${lab3d.doubleString.events.length} hybrid events, E=${snapshot.energy.toFixed(4)} J`, 'pendulum_double_string_snapshot.png');
+  logResearchRun(
+    'export',
+    'Double-string snapshot',
+    `phase=${snapshot.phase}, ${lab3d.doubleString.events.length} hybrid events, E=${snapshot.energy.toFixed(4)} J`,
+    'pendulum_double_string_snapshot.png'
+  );
   toast('Double-string snapshot exported (PNG + JSON)');
 }
 
@@ -74,7 +95,17 @@ export function exportChainTrajectoryCsv(): void {
     dt,
     method: lab3dChainMethod()
   });
-  const header = ['time', ...Array.from({ length: n }, (_, k) => [`theta${k + 1}`, `phi${k + 1}`, `thetaDot${k + 1}`, `phiDot${k + 1}`]).flat(), 'energy', 'lz'];
+  const header = [
+    'time',
+    ...Array.from({ length: n }, (_, k) => [
+      `theta${k + 1}`,
+      `phi${k + 1}`,
+      `thetaDot${k + 1}`,
+      `phiDot${k + 1}`
+    ]).flat(),
+    'energy',
+    'lz'
+  ];
   const rows: string[] = [header.join(',')];
   const steps = Math.round(horizon / (dt * sampleEvery));
   for (let i = 0; i < steps; i += 1) {
@@ -90,7 +121,12 @@ export function exportChainTrajectoryCsv(): void {
   }
   const csv = rows.join('\n');
   downloadBytes(`pendulum_spherical_chain_n${n}_trajectory.csv`, textToBytes(csv), 'text/csv');
-  logResearchRun('export', `3D chain trajectory CSV (N=${n})`, `${steps} samples over ${horizon}s, dt=${dt}, method=${lab3dChainMethod()}`, `pendulum_spherical_chain_n${n}_trajectory.csv`);
+  logResearchRun(
+    'export',
+    `3D chain trajectory CSV (N=${n})`,
+    `${steps} samples over ${horizon}s, dt=${dt}, method=${lab3dChainMethod()}`,
+    `pendulum_spherical_chain_n${n}_trajectory.csv`
+  );
   toast('Chain trajectory CSV exported');
 }
 
@@ -111,13 +147,20 @@ export function exportChainSnapshot(): void {
     state: Array.from(lab3d.chain.current()),
     diagnostics: diag,
     camera: lab3d.chainCamera.state(),
-    reproducibilityHash: hashText(JSON.stringify({ spec: chainSpec(), state: Array.from(lab3d.chain.current()), dt: diag.dt, method: diag.method }))
+    reproducibilityHash: hashText(
+      JSON.stringify({ spec: chainSpec(), state: Array.from(lab3d.chain.current()), dt: diag.dt, method: diag.method })
+    )
   };
   downloadJson('pendulum_spherical_chain_diagnostics.json', payload);
   attachBadge('d3Readout', 'publication-ready', 'Snapshot ships spec, state, dt, method and a reproducibility hash.', {
     title: '3D Chain Snapshot Trust',
     source: '3D Lab -> exportChainSnapshot',
-    parameters: { system: payload.system, dt: diag.dt, method: diag.method, chainLinks: lab3d.chain.params.masses.length },
+    parameters: {
+      system: payload.system,
+      dt: diag.dt,
+      method: diag.method,
+      chainLinks: lab3d.chain.params.masses.length
+    },
     uncertainty: `energyDrift=${diag.energyDrift.toExponential(3)}, lzDrift=${diag.lzDrift.toExponential(3)}.`,
     externalValidation: 'Snapshot JSON includes spec, state, diagnostics, camera, and reproducibility hash.',
     reproduce: 'Re-import the JSON state/spec and rerun the spherical-chain diagnostics.',
@@ -125,7 +168,12 @@ export function exportChainSnapshot(): void {
     artifact: 'pendulum_spherical_chain_diagnostics.json',
     hash: payload.reproducibilityHash
   });
-  logResearchRun('export', `3D chain snapshot (N=${lab3d.chain.params.masses.length})`, `E drift ${diag.energyDrift.toExponential(2)}, Lz drift ${diag.lzDrift.toExponential(2)}, method=${diag.method}`, 'pendulum_spherical_chain_snapshot.png');
+  logResearchRun(
+    'export',
+    `3D chain snapshot (N=${lab3d.chain.params.masses.length})`,
+    `E drift ${diag.energyDrift.toExponential(2)}, Lz drift ${diag.lzDrift.toExponential(2)}, method=${diag.method}`,
+    'pendulum_spherical_chain_snapshot.png'
+  );
   toast('Chain snapshot exported (PNG + JSON)');
 }
 
@@ -147,9 +195,16 @@ export function exportSphereSnapshot(): void {
     diagnostics: diag,
     camera: lab3d.camera.state(),
     poincarePoints: lab3d.spherePoincare.length,
-    reproducibilityHash: hashText(JSON.stringify({ params: lab3d.sphere.params, state: lab3d.sphere.current(), dt: diag.dt }))
+    reproducibilityHash: hashText(
+      JSON.stringify({ params: lab3d.sphere.params, state: lab3d.sphere.current(), dt: diag.dt })
+    )
   };
   downloadJson('pendulum_3d_diagnostics.json', payload);
-  logResearchRun('export', '3D diagnostic snapshot', `spherical pendulum, E drift ${diag.energyDrift.toExponential(2)}, Lz drift ${diag.lzDrift.toExponential(2)}`, 'pendulum_3d_snapshot.png');
+  logResearchRun(
+    'export',
+    '3D diagnostic snapshot',
+    `spherical pendulum, E drift ${diag.energyDrift.toExponential(2)}, Lz drift ${diag.lzDrift.toExponential(2)}`,
+    'pendulum_3d_snapshot.png'
+  );
   toast('3D snapshot exported (PNG + JSON)');
 }

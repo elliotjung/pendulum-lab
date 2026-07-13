@@ -74,7 +74,10 @@ describe('VideoMarkerCaptureController', () => {
     const observation = controller.observation();
     expect(observation.times[0]).toBe(0);
     expect(observation.times[1]).toBeCloseTo(0.016, 12);
-    expect(observation.angles).toEqual([[0, 0], [0, 0]]);
+    expect(observation.angles).toEqual([
+      [0, 0],
+      [0, 0]
+    ]);
     expect(controller.observationCsv()).toContain('time,theta1,theta2');
 
     controller.stop();
@@ -88,13 +91,19 @@ describe('VideoMarkerCaptureController', () => {
     const insecureController = new VideoMarkerCaptureController({
       video: insecure.video,
       canvas: { width: 1, height: 1, getContext: () => null } as unknown as HTMLCanvasElement,
-      tracking: { pivot: { x: 0, y: 0 }, first: { red: 1, green: 1, blue: 1, tolerance: 1 }, second: { red: 2, green: 2, blue: 2, tolerance: 1 } },
+      tracking: {
+        pivot: { x: 0, y: 0 },
+        first: { red: 1, green: 1, blue: 1, tolerance: 1 },
+        second: { red: 2, green: 2, blue: 2, tolerance: 1 }
+      },
       dependencies: { ...insecure.dependencies, secureContext: false }
     });
     expect(await insecureController.start()).toBe(false);
     expect(insecureController.state).toBe('unsupported');
 
-    const denied = fixture(async () => { throw new DOMException('no', 'NotAllowedError'); });
+    const denied = fixture(async () => {
+      throw new DOMException('no', 'NotAllowedError');
+    });
     expect(await denied.controller.start()).toBe(false);
     expect(denied.controller.state).toBe('denied');
   });

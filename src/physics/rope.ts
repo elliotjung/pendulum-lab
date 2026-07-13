@@ -75,7 +75,11 @@ export class RopePendulum {
   private time = 0;
   readonly events: RopeEvent[] = [];
 
-  constructor(readonly params: RopeParams, theta0: number, omega0 = 0) {
+  constructor(
+    readonly params: RopeParams,
+    theta0: number,
+    omega0 = 0
+  ) {
     this.theta = theta0;
     this.omega = omega0;
     // A string cannot support negative tension even at t = 0.
@@ -123,7 +127,8 @@ export class RopePendulum {
   warning(): string | null {
     if (this.phase === 'slack') return 'String is SLACK — bob in free flight; constraint inactive.';
     const tension = this.tautTension();
-    if (tension < 0.05 * this.params.g) return `Tension near zero (${tension.toFixed(3)} N/kg) — string about to go slack.`;
+    if (tension < 0.05 * this.params.g)
+      return `Tension near zero (${tension.toFixed(3)} N/kg) — string about to go slack.`;
     return null;
   }
 
@@ -189,13 +194,29 @@ export class RopePendulum {
   }
 
   /** Pure slack-phase (linear-drag projectile) RK4 advance by h. */
-  private advanceSlack(x: number, y: number, vx: number, vy: number, h: number): { x: number; y: number; vx: number; vy: number } {
+  private advanceSlack(
+    x: number,
+    y: number,
+    vx: number,
+    vy: number,
+    h: number
+  ): { x: number; y: number; vx: number; vy: number } {
     const { g, damping } = this.params;
     const ax = (v: number): number => -damping * v;
     const ay = (v: number): number => -g - damping * v;
     const k1 = { x: vx, y: vy, vx: ax(vx), vy: ay(vy) };
-    const k2 = { x: vx + (h / 2) * k1.vx, y: vy + (h / 2) * k1.vy, vx: ax(vx + (h / 2) * k1.vx), vy: ay(vy + (h / 2) * k1.vy) };
-    const k3 = { x: vx + (h / 2) * k2.vx, y: vy + (h / 2) * k2.vy, vx: ax(vx + (h / 2) * k2.vx), vy: ay(vy + (h / 2) * k2.vy) };
+    const k2 = {
+      x: vx + (h / 2) * k1.vx,
+      y: vy + (h / 2) * k1.vy,
+      vx: ax(vx + (h / 2) * k1.vx),
+      vy: ay(vy + (h / 2) * k1.vy)
+    };
+    const k3 = {
+      x: vx + (h / 2) * k2.vx,
+      y: vy + (h / 2) * k2.vy,
+      vx: ax(vx + (h / 2) * k2.vx),
+      vy: ay(vy + (h / 2) * k2.vy)
+    };
     const k4 = { x: vx + h * k3.vx, y: vy + h * k3.vy, vx: ax(vx + h * k3.vx), vy: ay(vy + h * k3.vy) };
     return {
       x: x + (h / 6) * (k1.x + 2 * k2.x + 2 * k3.x + k4.x),

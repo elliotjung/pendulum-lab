@@ -1,9 +1,5 @@
 import { continueNeimarkSackerTorus } from './neimarkSacker';
-import type {
-  PlanarMapSystem,
-  InvariantTorusOptions,
-  InvariantTorusPoint
-} from './neimarkSacker';
+import type { PlanarMapSystem, InvariantTorusOptions, InvariantTorusPoint } from './neimarkSacker';
 
 /**
  * Arnold tongues and phase-locking — the rotation-number structure that the
@@ -219,7 +215,8 @@ export function scanModeLocking(
     tongues: tongues.filter((t) => t.sampleCount >= 1),
     monotone: maxDecrease <= monotoneTolerance,
     maxDecrease,
-    method: 'direct rotation-number measurement (lift winding) across the parameter; maximal runs locked to a target rational p/q within tolerance are Arnold tongues',
+    method:
+      'direct rotation-number measurement (lift winding) across the parameter; maximal runs locked to a target rational p/q within tolerance are Arnold tongues',
     caveat:
       'Tongue widths are resolved only to the scan granularity, and high-q tongues are exponentially narrow (easily stepped over). Rotation-number averaging assumes an orientation-preserving (degree-one) circle map; above criticality (K > 1 for the sine map) the map folds and ρ is not single-valued.'
   };

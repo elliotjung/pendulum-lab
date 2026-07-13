@@ -69,10 +69,17 @@ function solveLinear(A: number[][], b: number[]): number[] | null {
     let best = Math.abs(M[col]![col] ?? 0);
     for (let r = col + 1; r < m; r += 1) {
       const v = Math.abs(M[r]![col] ?? 0);
-      if (v > best) { best = v; pivot = r; }
+      if (v > best) {
+        best = v;
+        pivot = r;
+      }
     }
     if (best < 1e-300) return null;
-    if (pivot !== col) { const t = M[col]!; M[col] = M[pivot]!; M[pivot] = t; }
+    if (pivot !== col) {
+      const t = M[col]!;
+      M[col] = M[pivot]!;
+      M[pivot] = t;
+    }
     const diag = M[col]![col] ?? 0;
     for (let r = col + 1; r < m; r += 1) {
       const f = (M[r]![col] ?? 0) / diag;
@@ -94,8 +101,10 @@ function jacobians(system: ArclengthSystem, x: number[], lambda: number, h: numb
   const n = system.dimension;
   const gx: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0));
   for (let j = 0; j < n; j += 1) {
-    const xp = [...x]; xp[j] = (xp[j] ?? 0) + h;
-    const xm = [...x]; xm[j] = (xm[j] ?? 0) - h;
+    const xp = [...x];
+    xp[j] = (xp[j] ?? 0) + h;
+    const xm = [...x];
+    xm[j] = (xm[j] ?? 0) - h;
     const rp = system.residual(xp, lambda);
     const rm = system.residual(xm, lambda);
     for (let i = 0; i < n; i += 1) gx[i]![j] = ((rp[i] ?? 0) - (rm[i] ?? 0)) / (2 * h);
@@ -134,7 +143,8 @@ export function continueArclength(system: ArclengthSystem, options: ArclengthOpt
 
   // Initial tangent: force τ_λ = +1, solve Gx·τ_x = −Gλ, normalize, apply direction.
   const { gx: gx0, gl: gl0 } = jacobians(system, options.x0, options.lambda0, h);
-  const initRow = new Array<number>(n + 1).fill(0); initRow[n] = 1;
+  const initRow = new Array<number>(n + 1).fill(0);
+  initRow[n] = 1;
   const tau0 = solveLinear(augmented(gx0, gl0, initRow), [...new Array<number>(n).fill(0), 1]);
   if (!tau0) return { branch: [], folds: [] };
   const tn0 = norm(tau0);
@@ -158,9 +168,15 @@ export function continueArclength(system: ArclengthSystem, options: ArclengthOpt
       let nConstraint = -options.ds;
       for (let i = 0; i <= n; i += 1) nConstraint += (tauPrev[i] ?? 0) * ((zc[i] ?? 0) - (zPrev[i] ?? 0));
       const res = [...g, nConstraint];
-      if (norm(res) < tol) { converged = true; break; }
+      if (norm(res) < tol) {
+        converged = true;
+        break;
+      }
       const { gx, gl } = jacobians(system, xc, lc, h);
-      const delta = solveLinear(augmented(gx, gl, tauPrev), res.map((v) => -v));
+      const delta = solveLinear(
+        augmented(gx, gl, tauPrev),
+        res.map((v) => -v)
+      );
       if (!delta) break;
       zc = zc.map((v, i) => v + (delta[i] ?? 0));
     }

@@ -13,7 +13,11 @@ import { energyDouble } from '../physics/energy';
 import { rk4Step } from '../physics/integrators';
 import { clearChildren } from './domTakeover';
 import energyBenchmarkReport from '../../reports/energy-benchmark.json';
-import { normalizeEnergyBenchmark, renderEnergyBenchmarkCanvas, renderEnergyBenchmarkLegend } from './energyBenchmarkView';
+import {
+  normalizeEnergyBenchmark,
+  renderEnergyBenchmarkCanvas,
+  renderEnergyBenchmarkLegend
+} from './energyBenchmarkView';
 
 /**
  * Modern port of the Validation tab. It takes over the tab's buttons (cloning to
@@ -61,7 +65,10 @@ export class ValidationTab extends TabController {
     renderEnergyBenchmarkCanvas(canvas, model);
     renderEnergyBenchmarkLegend(legend, model);
     const date = model.generatedAt ? new Date(model.generatedAt).toLocaleDateString() : 'unknown date';
-    this.dom.setText('energyBenchmarkStatus', `${model.series.length} committed benchmark:energy curves · ${model.steps.toLocaleString()} steps at dt=${model.dt} · generated ${date}.`);
+    this.dom.setText(
+      'energyBenchmarkStatus',
+      `${model.series.length} committed benchmark:energy curves · ${model.steps.toLocaleString()} steps at dt=${model.dt} · generated ${date}.`
+    );
   }
 
   private render(cases: ValidationCaseResult[], elapsedMs: number): void {
@@ -78,15 +85,21 @@ export class ValidationTab extends TabController {
     this.badge(
       'testPassed',
       classifyValidation(passed, failed),
-      failed > 0 ? `${failed} validation case(s) failed — see the table.` : `${passed} independent checks passed (analytic limits, reversibility, dt-halving, replay hash).`,
+      failed > 0
+        ? `${failed} validation case(s) failed — see the table.`
+        : `${passed} independent checks passed (analytic limits, reversibility, dt-halving, replay hash).`,
       {
         title: 'Validation suite summary',
         source: 'Validation tab → src/validation/*',
         parameters: { passed, failed, elapsedMs: elapsedMs.toFixed(0) },
         uncertainty: 'Each row reports its own measured value and threshold; this badge summarizes pass/fail status.',
-        externalValidation: 'Includes analytic limits, replay determinism, dt-halving convergence, and reference-suite checks.',
+        externalValidation:
+          'Includes analytic limits, replay determinism, dt-halving convergence, and reference-suite checks.',
         reproduce: 'npm run validate:reference && npm test -- tests/reference-validation.test.ts',
-        caveat: failed > 0 ? 'At least one validation case failed; do not quote dependent outputs until the row is resolved.' : 'Browser stress check is shorter than the full headless validation ladder.',
+        caveat:
+          failed > 0
+            ? 'At least one validation case failed; do not quote dependent outputs until the row is resolved.'
+            : 'Browser stress check is shorter than the full headless validation ladder.',
         artifact: 'reports/validation-reference.json'
       }
     );
@@ -125,10 +138,18 @@ export class ValidationTab extends TabController {
 
   protected bind(): void {
     this.renderEnergyBenchmark();
-    this.dom.takeOver('runValidation')?.addEventListener('click', () => this.timed(() => runAllValidationChecks().value ?? []));
-    this.dom.takeOver('runDeterminism')?.addEventListener('click', () => this.timed(() => [runReplayDeterminismCheck()]));
+    this.dom
+      .takeOver('runValidation')
+      ?.addEventListener('click', () => this.timed(() => runAllValidationChecks().value ?? []));
+    this.dom
+      .takeOver('runDeterminism')
+      ?.addEventListener('click', () => this.timed(() => [runReplayDeterminismCheck()]));
     this.dom.takeOver('runConvergence')?.addEventListener('click', () => this.timed(() => this.convergenceCases()));
-    this.dom.takeOver('runReplay')?.addEventListener('click', () => this.timed(() => [runReplayDeterminismCheck(), runEnergyDriftCheck()]));
-    this.dom.takeOver('runStress')?.addEventListener('click', () => this.timed(() => [runStressCheck(), runDtHalvingCheck()]));
+    this.dom
+      .takeOver('runReplay')
+      ?.addEventListener('click', () => this.timed(() => [runReplayDeterminismCheck(), runEnergyDriftCheck()]));
+    this.dom
+      .takeOver('runStress')
+      ?.addEventListener('click', () => this.timed(() => [runStressCheck(), runDtHalvingCheck()]));
   }
 }

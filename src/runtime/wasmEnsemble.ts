@@ -153,7 +153,18 @@ export async function runDoublePendulumEnsembleWasm(
       statesCapacity = bytes;
     }
     new Float64Array(kernel.memory.buffer, statesPtr, n * 4).set(states);
-    kernel.stepEnsembleRk4(statesPtr, n, options.steps, options.dt, params.m1, params.m2, params.l1, params.l2, params.g, damping);
+    kernel.stepEnsembleRk4(
+      statesPtr,
+      n,
+      options.steps,
+      options.dt,
+      params.m1,
+      params.m2,
+      params.l1,
+      params.l2,
+      params.g,
+      damping
+    );
     // The buffer reference may have been invalidated by memory growth inside
     // alloc, so re-view before reading back.
     states.set(new Float64Array(kernel.memory.buffer, statesPtr, n * 4));

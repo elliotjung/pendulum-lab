@@ -44,7 +44,8 @@ function validateNetwork(parameters: KuramotoNetworkParameters, stateLength: num
   if (parameters.adjacency) {
     for (let i = 0; i < n * n; i += 1) {
       const weight = Number(parameters.adjacency[i] ?? NaN);
-      if (!Number.isFinite(weight) || weight < 0) throw new Error(`Kuramoto adjacency[${i}] must be finite and non-negative.`);
+      if (!Number.isFinite(weight) || weight < 0)
+        throw new Error(`Kuramoto adjacency[${i}] must be finite and non-negative.`);
     }
   }
   return n;
@@ -70,8 +71,9 @@ export function rhsKuramoto(
       interaction += weight * Math.sin(Number(phases[j] ?? 0) - thetaI - alpha);
       weightSum += weight;
     }
-    out[i] = Number(parameters.naturalFrequencies[i] ?? 0) +
-      (weightSum > 0 ? parameters.coupling * interaction / weightSum : 0);
+    out[i] =
+      Number(parameters.naturalFrequencies[i] ?? 0) +
+      (weightSum > 0 ? (parameters.coupling * interaction) / weightSum : 0);
   }
   return out;
 }
@@ -110,7 +112,8 @@ export function kuramotoLocalOrderParameters(
     let weightSum = 0;
     for (let j = 0; j < n; j += 1) {
       const weight = Number(adjacency[i * n + j] ?? NaN);
-      if (!Number.isFinite(weight) || weight < 0) throw new Error(`local-order adjacency[${i},${j}] must be finite and non-negative.`);
+      if (!Number.isFinite(weight) || weight < 0)
+        throw new Error(`local-order adjacency[${i},${j}] must be finite and non-negative.`);
       if (weight === 0) continue;
       const theta = Number(phases[j] ?? 0);
       real += weight * Math.cos(theta);
@@ -122,7 +125,12 @@ export function kuramotoLocalOrderParameters(
     } else {
       real /= weightSum;
       imaginary /= weightSum;
-      result.push({ magnitude: Math.min(1, Math.hypot(real, imaginary)), phase: Math.atan2(imaginary, real), real, imaginary });
+      result.push({
+        magnitude: Math.min(1, Math.hypot(real, imaginary)),
+        phase: Math.atan2(imaginary, real),
+        real,
+        imaginary
+      });
     }
   }
   return result;
@@ -184,13 +192,18 @@ export function rhsHuygensPhasePair(
   parameters: HuygensPhasePairParameters,
   out: StateVector
 ): StateVector {
-  if (phases.length !== 2 || out.length < 2) throw new Error('rhsHuygensPhasePair requires two phases and a length-2 output.');
-  return rhsKuramoto(phases, {
-    naturalFrequencies: parameters.frequencies,
-    coupling: parameters.coupling,
-    ...(parameters.phaseLag === undefined ? {} : { phaseLag: parameters.phaseLag }),
-    adjacency: [0, 1, 1, 0]
-  }, out);
+  if (phases.length !== 2 || out.length < 2)
+    throw new Error('rhsHuygensPhasePair requires two phases and a length-2 output.');
+  return rhsKuramoto(
+    phases,
+    {
+      naturalFrequencies: parameters.frequencies,
+      coupling: parameters.coupling,
+      ...(parameters.phaseLag === undefined ? {} : { phaseLag: parameters.phaseLag }),
+      adjacency: [0, 1, 1, 0]
+    },
+    out
+  );
 }
 
 /** Stable locked phase difference theta_2-theta_1 for the zero-lag Huygens pair. */

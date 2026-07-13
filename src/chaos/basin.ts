@@ -158,7 +158,12 @@ export interface BoxCountingResult {
  * one set cell are counted; the dimension is the least-squares slope of
  * log N(ε) against log(1/ε).
  */
-export function boxCountingDimension(mask: Uint8Array, width: number, height: number, scales?: number[]): BoxCountingResult {
+export function boxCountingDimension(
+  mask: Uint8Array,
+  width: number,
+  height: number,
+  scales?: number[]
+): BoxCountingResult {
   const usedScales = scales ?? defaultScales(Math.min(width, height));
   const points: { epsilon: number; count: number }[] = [];
   for (const epsilon of usedScales) {
@@ -219,7 +224,9 @@ export function boxCountingDimension(mask: Uint8Array, width: number, height: nu
 
 /** Two-sided 97.5% Student-t quantile for small degrees of freedom (≈1.96 beyond the table). */
 function tQuantile975(dof: number): number {
-  const table = [12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 2.16, 2.145, 2.131];
+  const table = [
+    12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 2.16, 2.145, 2.131
+  ];
   if (dof < 1) return 0;
   return dof <= table.length ? table[dof - 1]! : 1.96 + 4.4 / dof;
 }

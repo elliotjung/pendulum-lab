@@ -5,7 +5,12 @@ import { rhsTriple } from './triple';
 import { step } from './integrators';
 import type { Derivative, PhysicsAdapter, StateVector, StepOptions } from './types';
 
-function rhsTripleFallback(state: StateVector, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector {
+function rhsTripleFallback(
+  state: StateVector,
+  parameters: PendulumParameters,
+  gamma: number,
+  out: StateVector
+): StateVector {
   const required = {
     m1: parameters.m1,
     m2: parameters.m2,
@@ -19,17 +24,34 @@ function rhsTripleFallback(state: StateVector, parameters: PendulumParameters, g
 }
 
 export const physicsAdapter: PhysicsAdapter = Object.freeze({
-  derivative(system: SystemType, state: StateVector, parameters: PendulumParameters, gamma: number, out: StateVector): StateVector {
+  derivative(
+    system: SystemType,
+    state: StateVector,
+    parameters: PendulumParameters,
+    gamma: number,
+    out: StateVector
+  ): StateVector {
     if (system === 'triple') return rhsTripleFallback(state, parameters, gamma, out);
     if (system === 'double') return rhsDouble(state, parameters, gamma, out);
-    throw new Error(`physicsAdapter.derivative: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`);
+    throw new Error(
+      `physicsAdapter.derivative: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`
+    );
   },
   energy(system: SystemType, state: StateVector, parameters: PendulumParameters) {
     if (system === 'triple') return energyTriple(state, parameters);
     if (system === 'double') return energyDouble(state, parameters);
-    throw new Error(`physicsAdapter.energy: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`);
+    throw new Error(
+      `physicsAdapter.energy: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`
+    );
   },
-  step(method: import('../types/domain').IntegratorId, state: StateVector, dt: number, rhs: Derivative, out: StateVector, options?: StepOptions) {
+  step(
+    method: import('../types/domain').IntegratorId,
+    state: StateVector,
+    dt: number,
+    rhs: Derivative,
+    out: StateVector,
+    options?: StepOptions
+  ) {
     return step(method, state, dt, rhs, out, options);
   }
 });
@@ -38,7 +60,14 @@ export { energyDouble, energyTriple, relativeEnergyDrift } from './energy';
 export { integratorRegistry } from './integrators';
 export { rhsDouble } from './double';
 export { rhsTriple } from './triple';
-export { rhsChain, energyChain, chainLength, chainMassMatrixDiagnostics, createChainWorkspace, validateChainParameters } from './nPendulum';
+export {
+  rhsChain,
+  energyChain,
+  chainLength,
+  chainMassMatrixDiagnostics,
+  createChainWorkspace,
+  validateChainParameters
+} from './nPendulum';
 export type { ChainParameters, ChainWorkspace } from './nPendulum';
 export {
   SphericalChain,
@@ -52,9 +81,26 @@ export {
   sphericalChainLength,
   validateSphericalChainParams
 } from './sphericalChain';
-export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from './sphericalChain';
-export { assertLinearSolve, choleskyFactor, choleskySolveFactored, solveCholeskyInPlace, solveLinearInPlace } from './linearSolve';
-export type { CholeskyFactorResult, LinearSolveFailureReason, LinearSolveFallbackPolicy, LinearSolveOptions, LinearSolveResult } from './linearSolve';
+export type {
+  SphericalChainParams,
+  SphericalChainDiagnostics,
+  SphericalChainOptions,
+  SphericalChainWorkspace
+} from './sphericalChain';
+export {
+  assertLinearSolve,
+  choleskyFactor,
+  choleskySolveFactored,
+  solveCholeskyInPlace,
+  solveLinearInPlace
+} from './linearSolve';
+export type {
+  CholeskyFactorResult,
+  LinearSolveFailureReason,
+  LinearSolveFallbackPolicy,
+  LinearSolveOptions,
+  LinearSolveResult
+} from './linearSolve';
 export {
   jacobianChain,
   jacobianDriven,
@@ -63,7 +109,21 @@ export {
   createSphericalChainJacobianWorkspace
 } from './jacobians';
 export type { ChainJacobianWorkspace, SphericalChainJacobianWorkspace } from './jacobians';
-export { DualArena, dAdd, dAddScaled, dClampAbsMin, dConst, dCos, dDot3, dMul, dNeg, dScale, dSin, dSub, dVar } from './autodiff';
+export {
+  DualArena,
+  dAdd,
+  dAddScaled,
+  dClampAbsMin,
+  dConst,
+  dCos,
+  dDot3,
+  dMul,
+  dNeg,
+  dScale,
+  dSin,
+  dSub,
+  dVar
+} from './autodiff';
 export type { DualScalar } from './autodiff';
 export {
   MASS_MATRIX_SINGULARITY_THRESHOLD,
@@ -81,7 +141,11 @@ export {
   rotateSphericalChainState,
   sphericalChainAngularMomentum
 } from './conservedQuantities';
-export type { ConservedQuantityCandidate, ConservedQuantityOptions, ConservedQuantityReport } from './conservedQuantities';
+export type {
+  ConservedQuantityCandidate,
+  ConservedQuantityOptions,
+  ConservedQuantityReport
+} from './conservedQuantities';
 export { rhsDriven, energyDriven, DAMPED_DRIVEN_CHAOS_PRESET } from './driven';
 export type { DrivenParameters } from './driven';
 export { rhsSpring, energySpring } from './spring';
@@ -107,7 +171,14 @@ export {
   magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from './magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from './magneticPendulum';
+export type {
+  MagneticPendulumParameters,
+  MagnetSpec,
+  MagneticSettleResult,
+  MagneticSettleOptions,
+  MagneticBasinGridOptions,
+  MagneticBasinGrid
+} from './magneticPendulum';
 export {
   kramersRateOverdamped,
   kramersMeanFirstPassage,
@@ -195,7 +266,13 @@ export {
   huygensLockedPhaseDifference
 } from './kuramoto';
 export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from './kuramoto';
-export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from './friction';
+export {
+  smoothFrictionSign,
+  coulombFrictionForce,
+  stribeckFrictionMagnitude,
+  stribeckFrictionForce,
+  applyStribeckFriction
+} from './friction';
 export type { RegularizedCoulombFriction, StribeckFrictionParameters } from './friction';
 export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from './pyragasDde';
 export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from './pyragasDde';
@@ -244,12 +321,7 @@ export type {
   EventSolveOptions,
   EventSolveResult
 } from './events';
-export type {
-  EmbeddedStepResult,
-  AdaptiveControllerOptions,
-  AdaptiveStepOutcome,
-  FixedStepper
-} from './adaptive';
+export type { EmbeddedStepResult, AdaptiveControllerOptions, AdaptiveStepOutcome, FixedStepper } from './adaptive';
 export type { Derivative, IntegratorMeta, PhysicsAdapter, StateVector, StepOptions } from './types';
 export {
   DEFAULT_EXPANSION_METHODS,

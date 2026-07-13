@@ -96,10 +96,14 @@ export function evaluatePerformanceBudget(input: PerfBudgetInput): PerformanceBu
     ok: input.physicsMsPerFrame === null || input.physicsMsPerFrame <= 8
   });
   const heapMb = input.usedHeapBytes === null ? null : input.usedHeapBytes / 1024 / 1024;
-  const heapFraction = input.usedHeapBytes !== null && input.heapLimitBytes ? input.usedHeapBytes / input.heapLimitBytes : null;
+  const heapFraction =
+    input.usedHeapBytes !== null && input.heapLimitBytes ? input.usedHeapBytes / input.heapLimitBytes : null;
   rows.push({
     metric: 'js heap',
-    value: heapMb === null ? 'n/a (Chromium only)' : `${heapMb.toFixed(0)} MiB${heapFraction !== null ? ` (${(heapFraction * 100).toFixed(0)}% of limit)` : ''}`,
+    value:
+      heapMb === null
+        ? 'n/a (Chromium only)'
+        : `${heapMb.toFixed(0)} MiB${heapFraction !== null ? ` (${(heapFraction * 100).toFixed(0)}% of limit)` : ''}`,
     budget: '<= 70% of limit',
     ok: heapFraction === null || heapFraction <= 0.7
   });

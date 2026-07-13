@@ -75,7 +75,8 @@ export function validateCliBatchSpec(value: unknown): { ok: boolean; problems: s
     else if (names.has(job.name)) problems.push(`duplicate job name ${job.name}`);
     else names.add(job.name);
     const kind = (job?.request as { kind?: unknown } | undefined)?.kind;
-    if (typeof kind !== 'string' || !KNOWN_KINDS.has(kind)) problems.push(`job ${String(job?.name ?? index)} has unknown kind ${String(kind)}`);
+    if (typeof kind !== 'string' || !KNOWN_KINDS.has(kind))
+      problems.push(`job ${String(job?.name ?? index)} has unknown kind ${String(kind)}`);
   });
   return { ok: problems.length === 0, problems, spec: problems.length === 0 ? (value as CliBatchSpec) : null };
 }

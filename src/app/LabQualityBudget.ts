@@ -1,8 +1,4 @@
-import {
-  getCanvasDprCap,
-  recordCanvasQualityEvent,
-  setCanvasDprCap
-} from './canvasQuality';
+import { getCanvasDprCap, recordCanvasQualityEvent, setCanvasDprCap } from './canvasQuality';
 import { pageDom as dom } from './DomBinder';
 
 export type QualityMode = 'performance' | 'balanced' | 'cinematic';
@@ -28,9 +24,33 @@ interface QualityMetrics {
 }
 
 const QUALITY_PROFILES: Record<QualityMode, QualityProfile> = {
-  performance: { dprCap: 1, trailCap: 720, poincareCap: 1500, sideInterval: 3, ensembleCap: 24, glow: false, className: 'quality-performance' },
-  balanced: { dprCap: 1.5, trailCap: 1200, poincareCap: 4000, sideInterval: 2, ensembleCap: 60, glow: true, className: 'quality-balanced' },
-  cinematic: { dprCap: 2, trailCap: 3000, poincareCap: 9000, sideInterval: 1, ensembleCap: 200, glow: true, className: 'quality-cinematic' }
+  performance: {
+    dprCap: 1,
+    trailCap: 720,
+    poincareCap: 1500,
+    sideInterval: 3,
+    ensembleCap: 24,
+    glow: false,
+    className: 'quality-performance'
+  },
+  balanced: {
+    dprCap: 1.5,
+    trailCap: 1200,
+    poincareCap: 4000,
+    sideInterval: 2,
+    ensembleCap: 60,
+    glow: true,
+    className: 'quality-balanced'
+  },
+  cinematic: {
+    dprCap: 2,
+    trailCap: 3000,
+    poincareCap: 9000,
+    sideInterval: 1,
+    ensembleCap: 200,
+    glow: true,
+    className: 'quality-cinematic'
+  }
 };
 
 /**
@@ -125,14 +145,24 @@ export class LabQualityBudget {
     if (physicsOver) {
       if (stepsPerFrame > 1) stepsPerFrame = Math.max(1, Math.floor(stepsPerFrame * 0.82));
       this.trailScale = Math.max(0.55, this.trailScale * 0.9);
-      this.note(`physics ${physicsMs.toFixed(1)} ms; spf ${stepsPerFrame}/${requestedStepsPerFrame}`, metrics, stepsPerFrame);
+      this.note(
+        `physics ${physicsMs.toFixed(1)} ms; spf ${stepsPerFrame}/${requestedStepsPerFrame}`,
+        metrics,
+        stepsPerFrame
+      );
       return stepsPerFrame;
     }
 
     if (renderOver) {
       this.trailScale = Math.max(0.5, this.trailScale * 0.85);
-      if (this.currentMode !== 'performance') this.setMode('performance', 'auto', `render ${renderMs.toFixed(1)} ms; quality downgraded`);
-      else this.note(`render ${renderMs.toFixed(1)} ms; trail ${Math.round(this.trailScale * 100)}%`, metrics, stepsPerFrame);
+      if (this.currentMode !== 'performance')
+        this.setMode('performance', 'auto', `render ${renderMs.toFixed(1)} ms; quality downgraded`);
+      else
+        this.note(
+          `render ${renderMs.toFixed(1)} ms; trail ${Math.round(this.trailScale * 100)}%`,
+          metrics,
+          stepsPerFrame
+        );
       return stepsPerFrame;
     }
 
@@ -143,7 +173,8 @@ export class LabQualityBudget {
     }
 
     if ((fps > 0 && fps < 45) || renderMs > 12) {
-      if (this.currentMode === 'cinematic') this.setMode('balanced', 'auto', `balanced after ${renderMs.toFixed(1)} ms render`);
+      if (this.currentMode === 'cinematic')
+        this.setMode('balanced', 'auto', `balanced after ${renderMs.toFixed(1)} ms render`);
       return stepsPerFrame;
     }
 

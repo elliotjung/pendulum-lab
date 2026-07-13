@@ -54,7 +54,8 @@ export function cyclicOrbitDistance(a: readonly (readonly number[])[], b: readon
   let best = Infinity;
   for (let shift = 0; shift < b.length; shift += 1) {
     let distance = 0;
-    for (let i = 0; i < a.length; i += 1) distance = Math.max(distance, pointDistance(a[i]!, b[(i + shift) % b.length]!));
+    for (let i = 0; i < a.length; i += 1)
+      distance = Math.max(distance, pointDistance(a[i]!, b[(i + shift) % b.length]!));
     best = Math.min(best, distance);
   }
   return best;
@@ -85,7 +86,9 @@ function canonicalRotation(points: readonly (readonly number[])[], tolerance: nu
   let best = points.map((point) => Array.from(point));
   let bestKey = best.map(token).join('|');
   for (let shift = 1; shift < points.length; shift += 1) {
-    const rotated = Array.from({ length: points.length }, (_, index) => Array.from(points[(index + shift) % points.length]!));
+    const rotated = Array.from({ length: points.length }, (_, index) =>
+      Array.from(points[(index + shift) % points.length]!)
+    );
     const key = rotated.map(token).join('|');
     if (key < bestKey) {
       best = rotated;
@@ -109,7 +112,7 @@ function multiply(a: readonly number[], b: readonly number[], n: number): number
 
 function monodromyForMap(map: MapFn, points: readonly (readonly number[])[], jacobianStep: number): number[] {
   const n = points[0]!.length;
-  let monodromy: number[] = Array.from({ length: n * n }, (_, index) => Math.floor(index / n) === index % n ? 1 : 0);
+  let monodromy: number[] = Array.from({ length: n * n }, (_, index) => (Math.floor(index / n) === index % n ? 1 : 0));
   for (const point of points) {
     const jacobian = mapJacobianFD(map, point, jacobianStep).flat();
     monodromy = multiply(jacobian, monodromy, n);
@@ -118,8 +121,9 @@ function monodromyForMap(map: MapFn, points: readonly (readonly number[])[], jac
 }
 
 function stabilityDenominator(monodromy: readonly number[], dimension: number): number {
-  const identityMinus = Float64Array.from(monodromy, (value, index) =>
-    (Math.floor(index / dimension) === index % dimension ? 1 : 0) - value
+  const identityMinus = Float64Array.from(
+    monodromy,
+    (value, index) => (Math.floor(index / dimension) === index % dimension ? 1 : 0) - value
   );
   return Math.abs(determinant(identityMinus, dimension));
 }
@@ -136,12 +140,14 @@ export function buildPeriodicOrbitDatabase(
 ): PeriodicOrbitDatabase {
   if (seeds.length === 0) throw new Error('periodic-orbit database requires at least one seed.');
   const dimension = seeds[0]!.length;
-  if (dimension === 0 || seeds.some((seed) => seed.length !== dimension)) throw new Error('periodic-orbit seeds must have one common positive dimension.');
+  if (dimension === 0 || seeds.some((seed) => seed.length !== dimension))
+    throw new Error('periodic-orbit seeds must have one common positive dimension.');
   if (periods.length === 0 || periods.some((period) => !Number.isInteger(period) || period < 1)) {
     throw new Error('periodic-orbit periods must be positive integers.');
   }
   const tolerance = options.tolerance ?? 1e-8;
-  if (!(tolerance > 0) || !Number.isFinite(tolerance)) throw new Error('periodic-orbit tolerance must be positive and finite.');
+  if (!(tolerance > 0) || !Number.isFinite(tolerance))
+    throw new Error('periodic-orbit tolerance must be positive and finite.');
   const jacobianStep = options.jacobianStep ?? 1e-7;
   const records: PeriodicOrbitRecord[] = [];
   let unconverged = 0;
@@ -164,7 +170,8 @@ export function buildPeriodicOrbitDatabase(
       }
       const period = primitivePeriod(sampled, tolerance);
       const points = canonicalRotation(sampled.slice(0, period), tolerance);
-      if (records.some((record) => record.period === period && cyclicOrbitDistance(record.points, points) <= tolerance)) continue;
+      if (records.some((record) => record.period === period && cyclicOrbitDistance(record.points, points) <= tolerance))
+        continue;
       const monodromy = monodromyForMap(map, points, jacobianStep);
       const key = points.map((point) => point.map((value) => Math.round(value / tolerance)).join(',')).join('|');
       records.push({
@@ -223,7 +230,8 @@ export function cycleExpansionObservable(
 ): CycleExpansionObservableResult {
   if (records.length === 0) throw new Error('cycleExpansionObservable requires at least one prime orbit.');
   const maxPeriod = options.maxPeriod ?? Math.max(...records.map((record) => record.period));
-  if (!Number.isInteger(maxPeriod) || maxPeriod < 1) throw new Error('cycle-expansion maxPeriod must be a positive integer.');
+  if (!Number.isInteger(maxPeriod) || maxPeriod < 1)
+    throw new Error('cycle-expansion maxPeriod must be a positive integer.');
   const decayRate = options.decayRate ?? 0;
   const floor = options.marginalFloor ?? 1e-10;
   const primeCycles: Array<{ id: string; period: number; average: number; weight: number }> = [];
@@ -235,7 +243,8 @@ export function cycleExpansionObservable(
     const weight = Math.exp(-decayRate * record.period) / record.stabilityDeterminant;
     primeCycles.push({ id: record.id, period: record.period, average, weight });
   }
-  if (primeCycles.length === 0) throw new Error('cycleExpansionObservable found no non-marginal orbit inside maxPeriod.');
+  if (primeCycles.length === 0)
+    throw new Error('cycleExpansionObservable found no non-marginal orbit inside maxPeriod.');
   let coefficients = new Array<number>(maxPeriod + 1).fill(0);
   let derivatives = new Array<number>(maxPeriod + 1).fill(0);
   coefficients[0] = 1;
@@ -244,7 +253,8 @@ export function cycleExpansionObservable(
     const nextDerivative = derivatives.slice();
     for (let order = cycle.period; order <= maxPeriod; order += 1) {
       next[order] = (next[order] ?? 0) - cycle.weight * (coefficients[order - cycle.period] ?? 0);
-      nextDerivative[order] = (nextDerivative[order] ?? 0) -
+      nextDerivative[order] =
+        (nextDerivative[order] ?? 0) -
         cycle.weight * (derivatives[order - cycle.period] ?? 0) -
         cycle.weight * cycle.period * cycle.average * (coefficients[order - cycle.period] ?? 0);
     }
@@ -261,6 +271,7 @@ export function cycleExpansionObservable(
     observableDerivativeCoefficients: derivatives,
     primeCycles,
     maxPeriod,
-    caveat: 'Finite prime-cycle truncation: inspect coefficient decay and max-period stability. The weightedAverage is the leading prime-weight approximation; full cycle-expansion curvature corrections are represented by the returned Euler-product coefficients, not silently folded into that scalar.'
+    caveat:
+      'Finite prime-cycle truncation: inspect coefficient decay and max-period stability. The weightedAverage is the leading prime-weight approximation; full cycle-expansion curvature corrections are represented by the returned Euler-product coefficients, not silently folded into that scalar.'
   };
 }

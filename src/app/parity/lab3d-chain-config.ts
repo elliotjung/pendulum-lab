@@ -24,7 +24,7 @@ export function normalizeLab3dChainN(value: number, clampNumber: ClampNumber): n
 }
 
 export function normalizeLab3dChainMethod(value: string): IntegratorId {
-  return (LAB3D_CHAIN_METHODS as readonly string[]).includes(value) ? value as IntegratorId : 'rk4';
+  return (LAB3D_CHAIN_METHODS as readonly string[]).includes(value) ? (value as IntegratorId) : 'rk4';
 }
 
 export function buildLab3dChainParams(input: Lab3dChainInput): SphericalChainParams {

@@ -118,9 +118,13 @@ export class ExpansionLabTab extends TabController {
     this.dom.onInput('expSweepValue', () => this.syncNumberLabels());
     this.dom.onInput('expGhost', () => this.syncNumberLabels());
     this.dom.onInput('expBifColumns', () => this.syncNumberLabels());
-    this.dom.onClick('expRun', () => {
-      void this.runExclusive(() => this.runSuite(), 'expStatus');
-    }, { takeOver: true });
+    this.dom.onClick(
+      'expRun',
+      () => {
+        void this.runExclusive(() => this.runSuite(), 'expStatus');
+      },
+      { takeOver: true }
+    );
     this.dom.onClick('expSave', () => this.saveLatest(), { takeOver: true });
     this.dom.onClick('expExport', () => this.exportLatest(), { takeOver: true });
     this.dom.onClick('expShare', () => this.shareLatest(), { takeOver: true });
@@ -164,16 +168,22 @@ export class ExpansionLabTab extends TabController {
   private ensurePanel(): void {
     if (document.getElementById('tab-expansion')) return;
     const panel = el('div', { id: 'tab-expansion', className: 'tabpanel expansion-lab-tab', role: 'tabpanel' });
-    const stateGrid = el('div', { className: 'exp-state-grid' },
+    const stateGrid = el(
+      'div',
+      { className: 'exp-state-grid' },
       this.statePill('Worker', 'expWorkerMode', 'idle'),
       this.statePill('Hash', 'expHash', '-'),
       this.statePill('Best', 'expBest', '-')
     );
-    const topLine = el('div', { className: 'exp-topline' },
+    const topLine = el(
+      'div',
+      { className: 'exp-topline' },
       el('div', {}, el('h2', { text: 'Expansion Lab' }), el('div', { id: 'expModelSummary', className: 'exp-sub' })),
       stateGrid
     );
-    const canvasGrid = el('div', { className: 'exp-canvas-grid' },
+    const canvasGrid = el(
+      'div',
+      { className: 'exp-canvas-grid' },
       this.canvasFigure('expReplayCanvas', 520, 320, 'Replay snapshot'),
       this.canvasFigure('expHeatmapCanvas', 360, 320, 'Phase heatmap'),
       this.canvasFigure('expGhostCanvas', 360, 220, 'Ghost divergence'),
@@ -185,9 +195,15 @@ export class ExpansionLabTab extends TabController {
     emptyCell.colSpan = 6;
     emptyRow.append(emptyCell);
     tableBody.append(emptyRow);
-    const table = el('table', { className: 'exp-table', ariaLabel: 'Integrator comparison' },
-      el('thead', {},
-        el('tr', {},
+    const table = el(
+      'table',
+      { className: 'exp-table', ariaLabel: 'Integrator comparison' },
+      el(
+        'thead',
+        {},
+        el(
+          'tr',
+          {},
           textCell('Method', 'th'),
           textCell('Stable', 'th'),
           textCell('Energy drift', 'th'),
@@ -198,7 +214,9 @@ export class ExpansionLabTab extends TabController {
       ),
       tableBody
     );
-    const shell = el('section', { className: 'exp-shell' },
+    const shell = el(
+      'section',
+      { className: 'exp-shell' },
       topLine,
       canvasGrid,
       el('div', { id: 'expLyapReadout', className: 'exp-lyap', role: 'status' }),
@@ -208,9 +226,13 @@ export class ExpansionLabTab extends TabController {
       el('div', { id: 'expHistory', className: 'exp-history' })
     );
     const left = el('div', { className: 'left-col' }, shell);
-    const sticky = el('div', { className: 'ctrl-sticky' },
+    const sticky = el(
+      'div',
+      { className: 'ctrl-sticky' },
       el('div', { className: 'ctrl-sticky-title', text: 'Expansion Controls' }),
-      el('div', { className: 'btnrow' },
+      el(
+        'div',
+        { className: 'btnrow' },
         buttonEl('expRun', 'Run', 'primary'),
         buttonEl('expSave', 'Save'),
         buttonEl('expExport', 'Export'),
@@ -221,20 +243,43 @@ export class ExpansionLabTab extends TabController {
       ),
       el('div', { id: 'expStatus', className: 'exp-status', text: 'ready' })
     );
-    const controls = el('aside', { className: 'controls exp-controls' },
+    const controls = el(
+      'aside',
+      { className: 'controls exp-controls' },
       sticky,
-      this.detailsSection('M', 'Model',
+      this.detailsSection(
+        'M',
+        'Model',
         this.controlRow('Preset', el('select', { id: 'expPreset' })),
         this.controlRow('Model', el('select', { id: 'expModel' })),
         this.controlRow('dt', inputEl('expDt', { type: 'number', min: '0.001', max: '0.05', step: '0.001' }), 'expDtV'),
-        this.controlRow('Horizon', inputEl('expHorizon', { type: 'number', min: '2', max: '60', step: '1' }), 'expHorizonV'),
-        this.controlRow('Parameter', inputEl('expSweepValue', { type: 'number', step: '0.01' }), 'expSweepValueV', 'expSweepLabel')
+        this.controlRow(
+          'Horizon',
+          inputEl('expHorizon', { type: 'number', min: '2', max: '60', step: '1' }),
+          'expHorizonV'
+        ),
+        this.controlRow(
+          'Parameter',
+          inputEl('expSweepValue', { type: 'number', step: '0.01' }),
+          'expSweepValueV',
+          'expSweepLabel'
+        )
       ),
       this.detailsSection('∫', 'Integrators', el('div', { id: 'expMethodGrid', className: 'exp-method-grid' })),
-      this.detailsSection('V', 'Visual Analysis',
+      this.detailsSection(
+        'V',
+        'Visual Analysis',
         this.controlRow('QR spectrum', inputEl('expIncludeLyap', { type: 'checkbox' })),
-        this.controlRow('Ghost eps', inputEl('expGhost', { type: 'number', min: '0.000001', max: '0.01', step: '0.00001', value: '0.00001' }), 'expGhostV'),
-        this.controlRow('Bif cols', inputEl('expBifColumns', { type: 'number', min: '4', max: '32', step: '1', value: '12' }), 'expBifColumnsV'),
+        this.controlRow(
+          'Ghost eps',
+          inputEl('expGhost', { type: 'number', min: '0.000001', max: '0.01', step: '0.00001', value: '0.00001' }),
+          'expGhostV'
+        ),
+        this.controlRow(
+          'Bif cols',
+          inputEl('expBifColumns', { type: 'number', min: '4', max: '32', step: '1', value: '12' }),
+          'expBifColumnsV'
+        ),
         buttonEl('expClearHistory', 'Clear History')
       )
     );
@@ -255,7 +300,9 @@ export class ExpansionLabTab extends TabController {
     const details = el('details', { className: 'acc' });
     details.open = true;
     details.append(
-      el('summary', {},
+      el(
+        'summary',
+        {},
         el('span', { className: 'acc-icon', text: icon }),
         el('span', { className: 'acc-label', text: label }),
         el('span', { className: 'acc-arrow', text: '›' })
@@ -319,14 +366,18 @@ export class ExpansionLabTab extends TabController {
     this.dom.setValue('expHorizon', definition.defaultHorizon);
     const sweepInput = this.dom.el<HTMLInputElement>('expSweepValue');
     if (sweepInput) {
-      const value = definition.defaultParameters[definition.sweep.parameter] ?? (definition.sweep.min + definition.sweep.max) / 2;
+      const value =
+        definition.defaultParameters[definition.sweep.parameter] ?? (definition.sweep.min + definition.sweep.max) / 2;
       sweepInput.min = String(definition.sweep.min);
       sweepInput.max = String(definition.sweep.max);
       sweepInput.step = String(Math.max(0.001, Math.abs(definition.sweep.max - definition.sweep.min) / 100));
       sweepInput.value = String(value);
     }
     this.dom.setText('expSweepLabel', definition.sweep.label);
-    this.dom.setText('expModelSummary', `${definition.family} · dim ${definition.dimension} · ${definition.conservative ? 'conservative shell' : 'driven/dissipative energy flow'}`);
+    this.dom.setText(
+      'expModelSummary',
+      `${definition.family} · dim ${definition.dimension} · ${definition.conservative ? 'conservative shell' : 'driven/dissipative energy flow'}`
+    );
     this.renderModelDoc(definition);
     this.syncNumberLabels();
   }
@@ -356,7 +407,10 @@ export class ExpansionLabTab extends TabController {
     if (preset) this.dom.setValue('expPreset', preset.id);
     this.dom.setValue('expDt', config.dt ?? definition.defaultDt);
     this.dom.setValue('expHorizon', config.horizon ?? definition.defaultHorizon);
-    const sweepValue = config.parameterOverrides?.[definition.sweep.parameter] ?? definition.defaultParameters[definition.sweep.parameter] ?? 0;
+    const sweepValue =
+      config.parameterOverrides?.[definition.sweep.parameter] ??
+      definition.defaultParameters[definition.sweep.parameter] ??
+      0;
     this.dom.setValue('expSweepValue', sweepValue);
     if (config.ghostEpsilon !== undefined) this.dom.setValue('expGhost', config.ghostEpsilon);
     if (config.bifurcationColumns !== undefined) this.dom.setValue('expBifColumns', config.bifurcationColumns);
@@ -387,11 +441,13 @@ export class ExpansionLabTab extends TabController {
 
   private currentModel(): ExpansionModelId {
     const raw = this.dom.str('expModel', 'driven');
-    return EXPANSION_MODEL_DEFINITIONS.some((model) => model.id === raw) ? raw as ExpansionModelId : 'driven';
+    return EXPANSION_MODEL_DEFINITIONS.some((model) => model.id === raw) ? (raw as ExpansionModelId) : 'driven';
   }
 
   private selectedMethods(): IntegratorId[] {
-    const selected = this.dom.all<HTMLInputElement>('input[data-exp-method]:checked').map((input) => input.value as IntegratorId);
+    const selected = this.dom
+      .all<HTMLInputElement>('input[data-exp-method]:checked')
+      .map((input) => input.value as IntegratorId);
     return selected.length > 0 ? selected : [...DEFAULT_EXPANSION_METHODS];
   }
 
@@ -401,7 +457,12 @@ export class ExpansionLabTab extends TabController {
     return {
       model,
       methods: this.selectedMethods(),
-      parameterOverrides: { [definition.sweep.parameter]: this.dom.num('expSweepValue', definition.defaultParameters[definition.sweep.parameter] ?? 0) },
+      parameterOverrides: {
+        [definition.sweep.parameter]: this.dom.num(
+          'expSweepValue',
+          definition.defaultParameters[definition.sweep.parameter] ?? 0
+        )
+      },
       dt: this.dom.num('expDt', definition.defaultDt),
       horizon: this.dom.num('expHorizon', definition.defaultHorizon),
       ghostEpsilon: this.dom.num('expGhost', 1e-5),
@@ -422,8 +483,14 @@ export class ExpansionLabTab extends TabController {
     this.renderResult(result);
   }
 
-  private async runJob(config: ExpansionSuiteConfig): Promise<{ result: ExpansionSuiteResult; worker: boolean; elapsedMs: number; fallbackReason?: string }> {
-    const outcome = await runExpansionWorkerJob({ kind: 'suite', config, includeLyapunov: this.dom.bool('expIncludeLyap') });
+  private async runJob(
+    config: ExpansionSuiteConfig
+  ): Promise<{ result: ExpansionSuiteResult; worker: boolean; elapsedMs: number; fallbackReason?: string }> {
+    const outcome = await runExpansionWorkerJob({
+      kind: 'suite',
+      config,
+      includeLyapunov: this.dom.bool('expIncludeLyap')
+    });
     if (outcome.result.kind !== 'suite') throw new Error('expansion worker returned an unexpected job result');
     return {
       result: outcome.result.result,
@@ -459,15 +526,22 @@ export class ExpansionLabTab extends TabController {
     box.replaceChildren(
       el('div', { className: 'exp-doc-title', text: 'Lyapunov spectrum — variational equation + Gram–Schmidt (QR)' }),
       el('p', { className: 'exp-lyap-spectrum', text: `λ = [ ${spectrum} ]` }),
-      el('p', {},
+      el(
+        'p',
+        {},
         el('strong', { text: `λ₁ = ${fmt(profile.leadingExponent, 4)} ± ${fmt(leadingSe, 4)}` }),
-        document.createTextNode(`   ·   Σλ = ${fmt(profile.sum, 4)}   ·   D_KY = ${fmt(profile.kaplanYorkeDimension, 3)}   ·   `),
+        document.createTextNode(
+          `   ·   Σλ = ${fmt(profile.sum, 4)}   ·   D_KY = ${fmt(profile.kaplanYorkeDimension, 3)}   ·   `
+        ),
         el('span', {
           className: consistency.symplectic ? 'exp-lyap-ok' : 'exp-lyap-warn',
           text: `${verdict} (pair err ${fmt(consistency.pairingError, 4)})`
         })
       ),
-      el('p', { className: 'exp-sub', text: `${profile.spectrum.length} finite-time exponents (± block-bootstrap SE), every direction reorthonormalized every ${profile.settings.renormEvery} steps, ${profile.settings.jacobian} Jacobian — the research-grade estimate the single-perturbation ghost divergence above only approximates for λ₁.` })
+      el('p', {
+        className: 'exp-sub',
+        text: `${profile.spectrum.length} finite-time exponents (± block-bootstrap SE), every direction reorthonormalized every ${profile.settings.renormEvery} steps, ${profile.settings.jacobian} Jacobian — the research-grade estimate the single-perturbation ghost divergence above only approximates for λ₁.`
+      })
     );
   }
 
@@ -556,7 +630,8 @@ export class ExpansionLabTab extends TabController {
     ctx.beginPath();
     frames.forEach((frame, index) => {
       const x = (index / (frames.length - 1)) * canvas.width;
-      const y = canvas.height - (Math.log10(frame.divergence + 1e-12) / Math.log10(max + 1e-12)) * (canvas.height - 16) - 8;
+      const y =
+        canvas.height - (Math.log10(frame.divergence + 1e-12) / Math.log10(max + 1e-12)) * (canvas.height - 16) - 8;
       if (index === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
@@ -592,7 +667,13 @@ export class ExpansionLabTab extends TabController {
     ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
   }
 
-  private drawTinyChain(ctx: CanvasRenderingContext2D, points: readonly ExpansionPoint[], x: number, y: number, color: string): void {
+  private drawTinyChain(
+    ctx: CanvasRenderingContext2D,
+    points: readonly ExpansionPoint[],
+    x: number,
+    y: number,
+    color: string
+  ): void {
     ctx.save();
     ctx.translate(x, y);
     ctx.strokeStyle = color;
@@ -611,7 +692,10 @@ export class ExpansionLabTab extends TabController {
     ctx.restore();
   }
 
-  private bounds(points: readonly ExpansionPoint[], pad = 0.1): { xMin: number; xMax: number; yMin: number; yMax: number } {
+  private bounds(
+    points: readonly ExpansionPoint[],
+    pad = 0.1
+  ): { xMin: number; xMax: number; yMin: number; yMax: number } {
     let xMin = -1;
     let xMax = 1;
     let yMin = -1;
@@ -633,8 +717,9 @@ export class ExpansionLabTab extends TabController {
     try {
       const parsed = JSON.parse(window.localStorage?.getItem(HISTORY_KEY) ?? '[]') as unknown;
       if (!Array.isArray(parsed)) return [];
-      return parsed.filter((entry): entry is ExpansionHistoryEntry =>
-        typeof entry === 'object' && entry !== null && typeof (entry as { hash?: unknown }).hash === 'string'
+      return parsed.filter(
+        (entry): entry is ExpansionHistoryEntry =>
+          typeof entry === 'object' && entry !== null && typeof (entry as { hash?: unknown }).hash === 'string'
       );
     } catch {
       return [];
@@ -718,12 +803,18 @@ export class ExpansionLabTab extends TabController {
 
   private runGoldenChecks(): void {
     const checks = runGoldenExpansionChecks();
-    this.renderBatchLike('Golden checks', checks.map((check) => ({
-      label: check.label,
-      status: check.ok ? 'ok' : 'fail',
-      detail: `${check.hash} · best ${check.bestMethod} · shell ${fmt(check.energyShellSpan, 3)} · ${check.reason}`
-    })));
-    this.dom.setText('expStatus', checks.every((check) => check.ok) ? 'golden checks passed' : 'golden checks need review');
+    this.renderBatchLike(
+      'Golden checks',
+      checks.map((check) => ({
+        label: check.label,
+        status: check.ok ? 'ok' : 'fail',
+        detail: `${check.hash} · best ${check.bestMethod} · shell ${fmt(check.energyShellSpan, 3)} · ${check.reason}`
+      }))
+    );
+    this.dom.setText(
+      'expStatus',
+      checks.every((check) => check.ok) ? 'golden checks passed' : 'golden checks need review'
+    );
   }
 
   private runBatchQueue(): void {
@@ -734,11 +825,14 @@ export class ExpansionLabTab extends TabController {
   }
 
   private renderBatchResults(batch: readonly BatchExperimentResult[]): void {
-    this.renderBatchLike('Batch queue', batch.map((item) => ({
-      label: item.label,
-      status: item.result.summary.bestMethod,
-      detail: `${item.result.manifest.hash} · score ${fmt(item.result.summary.bestScore, 1)} · stable ${item.result.summary.stableMethods}/${item.result.rows.length}`
-    })));
+    this.renderBatchLike(
+      'Batch queue',
+      batch.map((item) => ({
+        label: item.label,
+        status: item.result.summary.bestMethod,
+        detail: `${item.result.manifest.hash} · score ${fmt(item.result.summary.bestScore, 1)} · stable ${item.result.summary.stableMethods}/${item.result.rows.length}`
+      }))
+    );
   }
 
   private renderBatchLike(title: string, rows: readonly { label: string; status: string; detail: string }[]): void {
@@ -746,11 +840,15 @@ export class ExpansionLabTab extends TabController {
     if (!box) return;
     box.replaceChildren(el('div', { className: 'exp-doc-title', text: title }));
     for (const row of rows) {
-      box.append(el('div', { className: 'exp-batch-row' },
-        el('strong', { text: row.label }),
-        el('span', { text: row.status }),
-        el('em', { text: row.detail })
-      ));
+      box.append(
+        el(
+          'div',
+          { className: 'exp-batch-row' },
+          el('strong', { text: row.label }),
+          el('span', { text: row.status }),
+          el('em', { text: row.detail })
+        )
+      );
     }
   }
 

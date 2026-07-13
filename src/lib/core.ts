@@ -11,27 +11,75 @@
  */
 
 // Shared domain types
-export type { EnergyBreakdown, PendulumParameters, SystemType, IntegratorId, RunMode, RuntimeSnapshot } from '../types/domain';
+export type {
+  EnergyBreakdown,
+  PendulumParameters,
+  SystemType,
+  IntegratorId,
+  RunMode,
+  RuntimeSnapshot
+} from '../types/domain';
 
 // Physics primitives
 export * from '../physics/types';
 export * from '../physics/integrators';
 export { rhsDouble } from '../physics/double';
 export { energyDouble } from '../physics/energy';
-export { rhsChain, energyChain, chainMassMatrix, chainMassMatrixDiagnostics, createChainWorkspace, validateChainParameters } from '../physics/nPendulum';
+export {
+  rhsChain,
+  energyChain,
+  chainMassMatrix,
+  chainMassMatrixDiagnostics,
+  createChainWorkspace,
+  validateChainParameters
+} from '../physics/nPendulum';
 export type { ChainParameters, ChainWorkspace } from '../physics/nPendulum';
-export { assertLinearSolve, choleskyFactor, choleskySolveFactored, solveCholeskyInPlace, solveLinearInPlace } from '../physics/linearSolve';
-export type { CholeskyFactorResult, LinearSolveFailureReason, LinearSolveFallbackPolicy, LinearSolveOptions, LinearSolveResult } from '../physics/linearSolve';
+export {
+  assertLinearSolve,
+  choleskyFactor,
+  choleskySolveFactored,
+  solveCholeskyInPlace,
+  solveLinearInPlace
+} from '../physics/linearSolve';
+export type {
+  CholeskyFactorResult,
+  LinearSolveFailureReason,
+  LinearSolveFallbackPolicy,
+  LinearSolveOptions,
+  LinearSolveResult
+} from '../physics/linearSolve';
 export { buildRhs, buildJacobian, dampingConventionFor } from '../physics/systemSpec';
 export type { SystemSpec } from '../physics/systemSpec';
 // Stochastic (Langevin) dynamics — seeded, so deterministic for a given seed.
-export { gaussianSampler, eulerMaruyamaStep, milsteinStep, stochasticHeunStratonovichStep, commutativeMilsteinStep, runLangevinEnsemble, buildBrownianGrid, runAdaptiveLangevinPath, fixedGridLangevinPath } from '../physics/stochastic';
+export {
+  gaussianSampler,
+  eulerMaruyamaStep,
+  milsteinStep,
+  stochasticHeunStratonovichStep,
+  commutativeMilsteinStep,
+  runLangevinEnsemble,
+  buildBrownianGrid,
+  runAdaptiveLangevinPath,
+  fixedGridLangevinPath
+} from '../physics/stochastic';
 export { commutativityDefect } from '../physics/noiseCommutativity';
 // Quantum chaos & Hamiltonian maps (frontier physics): the Chirikov standard map
 // and its quantisation, the quantum kicked rotor (dynamical localization).
 export { fftInPlace, ifftInPlace } from '../physics/fft';
-export { STANDARD_MAP_KC, standardMapStep, standardMapEnsembleEnergy, standardMapDiffusionRate } from '../physics/standardMap';
-export { createQkrPlan, createQkrState, qkrStep, qkrNorm, qkrMeanSquareMomentum, runQuantumKickedRotor } from '../physics/quantumKickedRotor';
+export {
+  STANDARD_MAP_KC,
+  standardMapStep,
+  standardMapEnsembleEnergy,
+  standardMapDiffusionRate
+} from '../physics/standardMap';
+export {
+  createQkrPlan,
+  createQkrState,
+  qkrStep,
+  qkrNorm,
+  qkrMeanSquareMomentum,
+  runQuantumKickedRotor
+} from '../physics/quantumKickedRotor';
 export type { QuantumKickedRotorParams, QkrPlan, QkrState, QkrRun } from '../physics/quantumKickedRotor';
 export type {
   GaussianSampler,
@@ -90,15 +138,32 @@ export {
   huygensLockedPhaseDifference
 } from '../physics/kuramoto';
 export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from '../physics/kuramoto';
-export { smoothFrictionSign, coulombFrictionForce, stribeckFrictionMagnitude, stribeckFrictionForce, applyStribeckFriction } from '../physics/friction';
+export {
+  smoothFrictionSign,
+  coulombFrictionForce,
+  stribeckFrictionMagnitude,
+  stribeckFrictionForce,
+  applyStribeckFriction
+} from '../physics/friction';
 export type { RegularizedCoulombFriction, StribeckFrictionParameters } from '../physics/friction';
 export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from '../physics/pyragasDde';
-export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from '../physics/pyragasDde';
+export type {
+  PyragasPendulumParameters,
+  PyragasHistory,
+  PyragasDdeOptions,
+  PyragasDdeResult
+} from '../physics/pyragasDde';
 // Stochastic resonance (noise-enhanced weak-signal detection).
 export { stochasticResonanceResponse, stochasticResonanceCurve } from '../physics/stochasticResonance';
 export type { BistableSrParameters, SrResponse } from '../physics/stochasticResonance';
 // Canonical nonlinear oscillators: forced double-well, self-sustained, parametric, fractal-basin.
-export { rhsDuffing, energyDuffing, duffingPotential, duffingDoubleWell, DUFFING_CHAOS_PRESET } from '../physics/duffing';
+export {
+  rhsDuffing,
+  energyDuffing,
+  duffingPotential,
+  duffingDoubleWell,
+  DUFFING_CHAOS_PRESET
+} from '../physics/duffing';
 export type { DuffingParameters, DuffingDoubleWell } from '../physics/duffing';
 export { rhsVanDerPol, energyVanDerPol, vanDerPolPeriodEstimate } from '../physics/vanDerPol';
 export type { VanDerPolParameters } from '../physics/vanDerPol';
@@ -119,7 +184,14 @@ export {
   magneticPendulumBasinGrid,
   THREE_MAGNET_PRESET
 } from '../physics/magneticPendulum';
-export type { MagneticPendulumParameters, MagnetSpec, MagneticSettleResult, MagneticSettleOptions, MagneticBasinGridOptions, MagneticBasinGrid } from '../physics/magneticPendulum';
+export type {
+  MagneticPendulumParameters,
+  MagnetSpec,
+  MagneticSettleResult,
+  MagneticSettleOptions,
+  MagneticBasinGridOptions,
+  MagneticBasinGrid
+} from '../physics/magneticPendulum';
 // Noise-activated (Kramers) escape + reliability MTTF analog.
 export {
   kramersRateOverdamped,
@@ -137,10 +209,19 @@ export {
   acousticSoundSpeed,
   diatomicGroupVelocity
 } from '../physics/latticeDispersion';
-export type { DiatomicChainParams, DispersionBranches, DiatomicBandGap, DispersionSample } from '../physics/latticeDispersion';
+export type {
+  DiatomicChainParams,
+  DispersionBranches,
+  DiatomicBandGap,
+  DispersionSample
+} from '../physics/latticeDispersion';
 // Newton-instrumented implicit midpoint (convergence history + conditioning).
 export { implicitMidpointNewton } from '../physics/implicitDiagnostics';
-export type { ImplicitMidpointReport, NewtonStepRecord, ImplicitMidpointNewtonOptions } from '../physics/implicitDiagnostics';
+export type {
+  ImplicitMidpointReport,
+  NewtonStepRecord,
+  ImplicitMidpointNewtonOptions
+} from '../physics/implicitDiagnostics';
 // Continuum sine-Gordon field: topological solitons (kink/breather), the
 // nonlinear continuum limit of the coupled-pendulum lattice + the discrete
 // Frenkel–Kontorova Peierls–Nabarro depinning barrier.
@@ -195,8 +276,20 @@ export type { FputParameters, FputVerletScratch, FputRecurrenceResult } from '..
 // Non-rigid and 3D systems
 export { RopePendulum } from '../physics/rope';
 export type { RopeParams, RopePhase, RopeStateSnapshot, RopeEvent } from '../physics/rope';
-export { DoubleStringPendulum, doubleStringEnergy, doubleStringEnergyFromTautState, doubleStringTautFraction, doubleStringTensions } from '../physics/doubleString';
-export type { DoubleStringEvent, DoubleStringParams, DoubleStringPhase, DoubleStringSnapshot, TautFractionResult } from '../physics/doubleString';
+export {
+  DoubleStringPendulum,
+  doubleStringEnergy,
+  doubleStringEnergyFromTautState,
+  doubleStringTautFraction,
+  doubleStringTensions
+} from '../physics/doubleString';
+export type {
+  DoubleStringEvent,
+  DoubleStringParams,
+  DoubleStringPhase,
+  DoubleStringSnapshot,
+  TautFractionResult
+} from '../physics/doubleString';
 export {
   SphericalPendulum,
   sphericalRhs,
@@ -228,7 +321,12 @@ export {
   sphericalChainVelocities,
   validateSphericalChainParams
 } from '../physics/sphericalChain';
-export type { SphericalChainParams, SphericalChainDiagnostics, SphericalChainOptions, SphericalChainWorkspace } from '../physics/sphericalChain';
+export type {
+  SphericalChainParams,
+  SphericalChainDiagnostics,
+  SphericalChainOptions,
+  SphericalChainWorkspace
+} from '../physics/sphericalChain';
 export {
   EmbeddedSphericalChain,
   createEmbeddedChainWorkspace,
@@ -240,7 +338,12 @@ export {
   angleChainToEmbedded,
   embeddedChainToAngle
 } from '../physics/sphericalEmbeddedChain';
-export type { EmbeddedChainParams, EmbeddedChainState, EmbeddedChainDiagnostics, EmbeddedChainWorkspace } from '../physics/sphericalEmbeddedChain';
+export type {
+  EmbeddedChainParams,
+  EmbeddedChainState,
+  EmbeddedChainDiagnostics,
+  EmbeddedChainWorkspace
+} from '../physics/sphericalEmbeddedChain';
 export {
   detectConservedQuantities,
   detectPlanarChainConservedQuantities,
@@ -249,4 +352,8 @@ export {
   rotateSphericalChainState,
   sphericalChainAngularMomentum
 } from '../physics/conservedQuantities';
-export type { ConservedQuantityCandidate, ConservedQuantityOptions, ConservedQuantityReport } from '../physics/conservedQuantities';
+export type {
+  ConservedQuantityCandidate,
+  ConservedQuantityOptions,
+  ConservedQuantityReport
+} from '../physics/conservedQuantities';

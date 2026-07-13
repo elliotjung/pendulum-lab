@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  mathieuFloquet,
-  mathieuStabilityDiagram,
-  mathieuTongueTips
-} from '../src/chaos/mathieuStability';
+import { mathieuFloquet, mathieuStabilityDiagram, mathieuTongueTips } from '../src/chaos/mathieuStability';
 
 describe('Mathieu Floquet stability', () => {
   it('is Hamiltonian: det M = 1 across the parameter plane', () => {

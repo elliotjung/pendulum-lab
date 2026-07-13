@@ -21,7 +21,7 @@ const QUARTIC = { wellFrequency: Math.SQRT2, barrierFrequency: 1, barrierHeight:
 describe('analytic Kramers rate', () => {
   test('overdamped rate matches (ω₀ω_b/2π)·exp(-ΔU/D) for the quartic well', () => {
     const D = 0.125;
-    const expected = (Math.SQRT2 * 1) / (2 * Math.PI) * Math.exp(-0.25 / D);
+    const expected = ((Math.SQRT2 * 1) / (2 * Math.PI)) * Math.exp(-0.25 / D);
     expect(kramersRateOverdamped({ ...QUARTIC, diffusion: D })).toBeCloseTo(expected, 12);
     expect(kramersMeanFirstPassage({ ...QUARTIC, diffusion: D })).toBeCloseTo(1 / expected, 8);
   });

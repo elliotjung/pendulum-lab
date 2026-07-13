@@ -3,16 +3,24 @@ import { expect, test } from '@playwright/test';
 test('Trust Inspector opens from result badges and exposes reproducibility fields', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: unknown }).__modernTabs));
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: { switchTo?: unknown } }).__modernShell?.switchTo));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernShell?: { switchTo?: unknown } }).__modernShell?.switchTo)
+  );
 
   await page.evaluate(() => {
     (window as unknown as { __modernShell: { switchTo(name: string): void } }).__modernShell.switchTo('validate');
   });
   await page.waitForFunction(() => document.getElementById('tab-validate')?.classList.contains('active'));
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation));
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { validation?: unknown } }).__modernTabs?.validation)
+  );
   await expect(page.locator('#tab-validate')).toBeVisible();
   await page.evaluate(() => document.getElementById('runValidation')?.click());
-  await page.waitForFunction(() => (document.getElementById('validateResults')?.childElementCount ?? 0) >= 5, undefined, { timeout: 15000 });
+  await page.waitForFunction(
+    () => (document.getElementById('validateResults')?.childElementCount ?? 0) >= 5,
+    undefined,
+    { timeout: 15000 }
+  );
 
   const badge = page.locator('.rb-badge').first();
   await expect(badge).toBeVisible();

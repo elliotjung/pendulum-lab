@@ -35,7 +35,7 @@ export const DOUBLE_STRING_PRESETS: Record<string, DoubleStringPreset> = {
   'gentle-swing': { label: 'Gentle swing (stays taut)', theta1: 0.7, theta2: 0.4, omega1: 0.2, omega2: -0.1 },
   'chaotic-taut': { label: 'Chaotic but taut', theta1: 2.0, theta2: 2.4, omega1: 0, omega2: 0 },
   'slack-cascade': { label: 'Near-inverted fold (slack + recapture)', theta1: 2.5, theta2: -2.5, omega1: 0, omega2: 0 },
-  'whirling': { label: 'Fast whirl (centripetally taut)', theta1: 3.0, theta2: 3.0, omega1: 0, omega2: 8 }
+  whirling: { label: 'Fast whirl (centripetally taut)', theta1: 3.0, theta2: 3.0, omega1: 0, omega2: 8 }
 };
 
 /**

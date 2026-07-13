@@ -45,7 +45,7 @@ async function collectFiles(dir: string): Promise<string[]> {
   const files: string[] = [];
   for (const entry of entries) {
     const path = join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...await collectFiles(path));
+    if (entry.isDirectory()) files.push(...(await collectFiles(path)));
     else if (/\.(js|ts|html|css)$/.test(entry.name)) files.push(path);
   }
   return files;
@@ -56,9 +56,11 @@ function countMatches(text: string, pattern: RegExp): number {
 }
 
 function cspContent(text: string): string {
-  return /http-equiv=["']Content-Security-Policy["'][^>]*content="([^"]*)"/i.exec(text)?.[1]
-    ?? /http-equiv=["']Content-Security-Policy["'][^>]*content='([^']*)'/i.exec(text)?.[1]
-    ?? '';
+  return (
+    /http-equiv=["']Content-Security-Policy["'][^>]*content="([^"]*)"/i.exec(text)?.[1] ??
+    /http-equiv=["']Content-Security-Policy["'][^>]*content='([^']*)'/i.exec(text)?.[1] ??
+    ''
+  );
 }
 
 function hasInlineScriptTag(text: string): boolean {
@@ -127,7 +129,8 @@ for (const file of rootFiles) {
   const text = await readFile(file, 'utf8');
   const fileCounts = sourceCounts(text);
   const csp = cspContent(text);
-  fileCounts.servedHtmlUnsafeInlineScript = /script-src[^;]*'unsafe-inline'/.test(csp) || hasInlineScriptTag(text) ? 1 : 0;
+  fileCounts.servedHtmlUnsafeInlineScript =
+    /script-src[^;]*'unsafe-inline'/.test(csp) || hasInlineScriptTag(text) ? 1 : 0;
   fileCounts.servedHtmlUnsafeInlineStyle = /style-src[^;]*'unsafe-inline'/.test(csp) ? 1 : 0;
   files[file] = fileCounts;
   addCounts(counts, fileCounts);
@@ -137,14 +140,17 @@ for (const file of standaloneFiles) {
   const text = await readFile(file, 'utf8');
   const fileCounts = emptyCounts();
   const csp = cspContent(text);
-  fileCounts.standalonePortableInlineScript = /script-src[^;]*'unsafe-inline'/.test(csp) || hasInlineScriptTag(text) ? 1 : 0;
+  fileCounts.standalonePortableInlineScript =
+    /script-src[^;]*'unsafe-inline'/.test(csp) || hasInlineScriptTag(text) ? 1 : 0;
   fileCounts.standalonePortableBlobWorker = /worker-src[^;]*\bblob:/.test(csp) ? 1 : 0;
   files[file] = fileCounts;
   addCounts(counts, fileCounts);
 }
 
 if (counts.servedHtmlUnsafeInlineScript > 0) {
-  console.error('Served app shell allows inline scripts; keep app.html/Vite CSP strict and reserve inline script for standalone index.html only.');
+  console.error(
+    'Served app shell allows inline scripts; keep app.html/Vite CSP strict and reserve inline script for standalone index.html only.'
+  );
 }
 if (counts.servedHtmlUnsafeInlineStyle > 0) {
   console.error('Served app shell allows inline styles; keep app.html/Vite CSP strict and move styles to CSS files.');
@@ -152,7 +158,10 @@ if (counts.servedHtmlUnsafeInlineStyle > 0) {
 
 let baseline: { counts: Counts; weightedScore: number } | null = null;
 try {
-  baseline = JSON.parse(await readFile('reports/legacy-risk-baseline.json', 'utf8')) as { counts: Counts; weightedScore: number };
+  baseline = JSON.parse(await readFile('reports/legacy-risk-baseline.json', 'utf8')) as {
+    counts: Counts;
+    weightedScore: number;
+  };
 } catch {
   baseline = null;
 }

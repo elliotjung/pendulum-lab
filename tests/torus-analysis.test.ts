@@ -94,7 +94,10 @@ describe('Lyapunov spectrum on the invariant torus (item 6 — self-consistency 
   test('the delayed-logistic torus is neutral on-circle and attracting transverse', () => {
     const a = 2.02;
     const center = (a - 1) / a;
-    const result = torusLyapunovSpectrum(delayedLogistic, a, [center + 0.12, center], { iterations: 40000, transient: 5000 });
+    const result = torusLyapunovSpectrum(delayedLogistic, a, [center + 0.12, center], {
+      iterations: 40000,
+      transient: 5000
+    });
     // Largest exponent ≈ 0 (quasi-periodic, NOT chaotic): the self-consistency gate.
     expect(Math.abs(result.largest)).toBeLessThan(1e-3);
     expect(result.largest).toBeLessThan(1e-4);

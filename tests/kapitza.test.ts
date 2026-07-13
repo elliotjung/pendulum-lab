@@ -76,7 +76,9 @@ describe('Kapitza — effective potential & criterion', () => {
     const p = KAPITZA_INVERTED_PRESET;
     const h = 1e-4;
     const curvature =
-      (kapitzaEffectivePotential(Math.PI + h, p) - 2 * kapitzaEffectivePotential(Math.PI, p) + kapitzaEffectivePotential(Math.PI - h, p)) /
+      (kapitzaEffectivePotential(Math.PI + h, p) -
+        2 * kapitzaEffectivePotential(Math.PI, p) +
+        kapitzaEffectivePotential(Math.PI - h, p)) /
       (h * h);
     expect(curvature).toBeGreaterThan(0); // local min => stable
     // Analytic curvature (a²Ω²)/(2l²) - g/l.

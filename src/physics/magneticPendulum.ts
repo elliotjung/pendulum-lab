@@ -48,7 +48,11 @@ export const THREE_MAGNET_PRESET: MagneticPendulumParameters = Object.freeze({
   height: 0.25
 });
 
-export function rhsMagneticPendulum(state: ArrayLike<number>, parameters: MagneticPendulumParameters, out: StateVector): StateVector {
+export function rhsMagneticPendulum(
+  state: ArrayLike<number>,
+  parameters: MagneticPendulumParameters,
+  out: StateVector
+): StateVector {
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -78,7 +82,10 @@ export function rhsMagneticPendulum(state: ArrayLike<number>, parameters: Magnet
  * drag (dE/dt = -γ(ẋ² + ẏ²) ≤ 0), so it is monotone non-increasing when γ ≥ 0.
  * PE here bundles the harmonic restoring well and the attractive magnet wells.
  */
-export function magneticPendulumEnergy(state: ArrayLike<number>, parameters: MagneticPendulumParameters): EnergyBreakdown {
+export function magneticPendulumEnergy(
+  state: ArrayLike<number>,
+  parameters: MagneticPendulumParameters
+): EnergyBreakdown {
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -208,9 +215,10 @@ export function magneticPendulumBasinGrid(
 ): MagneticBasinGrid {
   const n = options.n ?? 80;
   if (!Number.isInteger(n) || n < 2) throw new Error('magneticPendulumBasinGrid: n must be an integer >= 2.');
-  const xRange = options.xRange ?? [-2, 2] as const;
-  const yRange = options.yRange ?? [-2, 2] as const;
-  if (!(xRange[1] > xRange[0]) || !(yRange[1] > yRange[0])) throw new Error('magneticPendulumBasinGrid: ranges must be increasing.');
+  const xRange = options.xRange ?? ([-2, 2] as const);
+  const yRange = options.yRange ?? ([-2, 2] as const);
+  if (!(xRange[1] > xRange[0]) || !(yRange[1] > yRange[0]))
+    throw new Error('magneticPendulumBasinGrid: ranges must be increasing.');
   const labels = new Int32Array(n * n);
   const converged = new Uint8Array(n * n);
   let convergedCount = 0;

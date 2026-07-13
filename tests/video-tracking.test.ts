@@ -64,6 +64,8 @@ describe('webcam colour-marker tracking core', () => {
   it('fails closed when a marker is missing', () => {
     const empty = new Uint8ClampedArray(WIDTH * HEIGHT * 4);
     expect(trackDoublePendulumFrame({ width: WIDTH, height: HEIGHT, data: empty }, spec)).toBeNull();
-    expect(() => trackDoublePendulumRecording([{ width: WIDTH, height: HEIGHT, data: empty }], [0], spec)).toThrow(/frame 0/);
+    expect(() => trackDoublePendulumRecording([{ width: WIDTH, height: HEIGHT, data: empty }], [0], spec)).toThrow(
+      /frame 0/
+    );
   });
 });

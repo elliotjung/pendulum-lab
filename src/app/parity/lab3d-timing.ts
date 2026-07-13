@@ -34,8 +34,7 @@ export function resolveLab3dStepTiming(input: Lab3dStepTimingInput): Lab3dStepTi
   if (input.mode === 'research') {
     return { elapsed: step, nextLastFrame: input.timestamp, deterministic: true };
   }
-  const elapsed = input.lastFrame > 0
-    ? input.clampNumber((input.timestamp - input.lastFrame) / 1000, 0.016, 0, 0.05)
-    : 0.016;
+  const elapsed =
+    input.lastFrame > 0 ? input.clampNumber((input.timestamp - input.lastFrame) / 1000, 0.016, 0, 0.05) : 0.016;
   return { elapsed, nextLastFrame: input.timestamp, deterministic: false };
 }

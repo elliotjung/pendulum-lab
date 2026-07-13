@@ -15,7 +15,12 @@ export interface LyapunovPlotOptions {
   timePerSample?: number;
 }
 
-export function renderLyapunovConvergence(ctx: Ctx2D, rect: Rect, convergence: readonly number[], options: LyapunovPlotOptions = {}): void {
+export function renderLyapunovConvergence(
+  ctx: Ctx2D,
+  rect: Rect,
+  convergence: readonly number[],
+  options: LyapunovPlotOptions = {}
+): void {
   const theme = options.theme ?? DARK_THEME;
   const inner = innerRect(rect, DEFAULT_PADDING);
   const n = convergence.length;

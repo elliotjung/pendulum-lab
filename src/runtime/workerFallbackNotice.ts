@@ -39,8 +39,10 @@ export function workerFallbackMessage(detail: WorkerFallbackNoticeDetail): strin
 function jobSizeWarning(estimatedWorkUnits?: number, jobLabel?: string): string | undefined {
   if (estimatedWorkUnits === undefined) return undefined;
   const label = jobLabel ? `${jobLabel} job` : 'job';
-  if (estimatedWorkUnits >= 1_000_000) return `Large ${label} (${estimatedWorkUnits.toLocaleString()} work units) may block rendering; reduce resolution/horizon or use the dev server.`;
-  if (estimatedWorkUnits >= 100_000) return `${label} is running on the main thread (${estimatedWorkUnits.toLocaleString()} work units); expect visible UI stalls on slower devices.`;
+  if (estimatedWorkUnits >= 1_000_000)
+    return `Large ${label} (${estimatedWorkUnits.toLocaleString()} work units) may block rendering; reduce resolution/horizon or use the dev server.`;
+  if (estimatedWorkUnits >= 100_000)
+    return `${label} is running on the main thread (${estimatedWorkUnits.toLocaleString()} work units); expect visible UI stalls on slower devices.`;
   return undefined;
 }
 

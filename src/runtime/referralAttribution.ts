@@ -20,7 +20,10 @@ function clean(value: string | null): string | undefined {
 }
 
 /** Parse bounded first-party UTM labels without sending a network event. */
-export function parseReferralAttribution(url: string, capturedAt: string = new Date().toISOString()): ReferralAttribution | null {
+export function parseReferralAttribution(
+  url: string,
+  capturedAt: string = new Date().toISOString()
+): ReferralAttribution | null {
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -39,7 +42,11 @@ export function parseReferralAttribution(url: string, capturedAt: string = new D
 }
 
 /** Keep the first referral only for this browser session; no cookie is set. */
-export function captureReferralAttribution(url: string, storage: SessionStoreLike, capturedAt?: string): ReferralAttribution | null {
+export function captureReferralAttribution(
+  url: string,
+  storage: SessionStoreLike,
+  capturedAt?: string
+): ReferralAttribution | null {
   const existing = storage.getItem(REFERRAL_SESSION_KEY);
   if (existing) {
     try {

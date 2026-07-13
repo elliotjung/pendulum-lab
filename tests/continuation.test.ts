@@ -22,7 +22,9 @@ describe('classifyBifurcation', () => {
   });
   test('a complex pair on the unit circle is Neimark–Sacker', () => {
     const t = 0.6;
-    expect(classifyBifurcation([m(1.01 * Math.cos(t), 1.01 * Math.sin(t)), m(1.01 * Math.cos(t), -1.01 * Math.sin(t))])).toBe('neimark-sacker');
+    expect(
+      classifyBifurcation([m(1.01 * Math.cos(t), 1.01 * Math.sin(t)), m(1.01 * Math.cos(t), -1.01 * Math.sin(t))])
+    ).toBe('neimark-sacker');
   });
 });
 

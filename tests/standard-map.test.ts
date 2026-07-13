@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { STANDARD_MAP_KC, standardMapDiffusionRate, standardMapEnsembleEnergy, standardMapStep } from '../src/physics/standardMap';
+import {
+  STANDARD_MAP_KC,
+  standardMapDiffusionRate,
+  standardMapEnsembleEnergy,
+  standardMapStep
+} from '../src/physics/standardMap';
 
 describe('Chirikov standard map', () => {
   it('iterates p_{n+1}=p+K sinθ, θ_{n+1}=θ+p_{n+1} (mod 2π)', () => {

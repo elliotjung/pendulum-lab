@@ -40,6 +40,8 @@ describe('Research+ extended experiment view models', () => {
     expect(csv.split('\n')).toHaveLength(5);
     expect(csv).toContain('-1.000000000,-2.000000000,0,1');
     expect(magneticBasinFingerprint(grid)).toMatch(/^[0-9a-f]{8}$/);
-    expect(magneticBasinFingerprint({ ...grid, converged: Uint8Array.of(1, 1, 1, 1) })).not.toBe(magneticBasinFingerprint(grid));
+    expect(magneticBasinFingerprint({ ...grid, converged: Uint8Array.of(1, 1, 1, 1) })).not.toBe(
+      magneticBasinFingerprint(grid)
+    );
   });
 });

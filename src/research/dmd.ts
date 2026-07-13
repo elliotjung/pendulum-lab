@@ -68,7 +68,11 @@ function rectangular(rows: readonly number[][], what: string): number {
 }
 
 /** Discrete eigenvalues of an operator and their continuous images μ = ln(λ)/dt. */
-function spectrumOf(operator: readonly number[], dim: number, dt: number): Pick<DmdResult, 'discreteEigenvalues' | 'continuousEigenvalues' | 'growthRates' | 'angularFrequencies'> {
+function spectrumOf(
+  operator: readonly number[],
+  dim: number,
+  dt: number
+): Pick<DmdResult, 'discreteEigenvalues' | 'continuousEigenvalues' | 'growthRates' | 'angularFrequencies'> {
   const discreteEigenvalues = matrixEigenvalues(operator, dim);
   const continuousEigenvalues = discreteEigenvalues.map((lam) => {
     const log = complexLog(lam);
@@ -89,7 +93,13 @@ function spectrumOf(operator: readonly number[], dim: number, dt: number): Pick<
  * dynamic modes) — it recovers the dominant eigenvalues where the full operator
  * would be singular.
  */
-function truncatedDmd(snapshots: readonly number[][], dt: number, n: number, pairs: number, requestedRank: number): DmdResult {
+function truncatedDmd(
+  snapshots: readonly number[][],
+  dt: number,
+  n: number,
+  pairs: number,
+  requestedRank: number
+): DmdResult {
   const x1 = new Array<number>(n * pairs).fill(0);
   const x2 = new Array<number>(n * pairs).fill(0);
   for (let i = 0; i < n; i += 1) {
@@ -155,7 +165,11 @@ function truncatedDmd(snapshots: readonly number[][], dt: number, n: number, pai
  * (`snapshots[t]` is the observable vector at time t·dt). Returns the one-step
  * operator and its discrete/continuous spectrum.
  */
-export function dynamicModeDecomposition(snapshots: readonly number[][], dt: number, options: { ridge?: number; rank?: number } = {}): DmdResult {
+export function dynamicModeDecomposition(
+  snapshots: readonly number[][],
+  dt: number,
+  options: { ridge?: number; rank?: number } = {}
+): DmdResult {
   if (snapshots.length < 2) throw new Error('DMD: need at least two snapshots.');
   const n = rectangular(snapshots, 'snapshots');
   if (!(dt > 0)) throw new Error('DMD: dt must be positive.');

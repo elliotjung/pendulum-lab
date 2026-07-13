@@ -10,16 +10,20 @@ import type { StateVector, StepDiagnostics } from '../src/physics/types';
  * with the production fixed-point stepper where both converge.
  */
 
-const harmonicRhs = (omega: number) => (s: StateVector, out: StateVector): void => {
-  out[0] = s[1]!;
-  out[1] = -omega * omega * s[0]!;
-};
-const harmonicJac = (omega: number) => (_s: StateVector, jac: Float64Array): void => {
-  jac[0] = 0;
-  jac[1] = 1;
-  jac[2] = -omega * omega;
-  jac[3] = 0;
-};
+const harmonicRhs =
+  (omega: number) =>
+  (s: StateVector, out: StateVector): void => {
+    out[0] = s[1]!;
+    out[1] = -omega * omega * s[0]!;
+  };
+const harmonicJac =
+  (omega: number) =>
+  (_s: StateVector, jac: Float64Array): void => {
+    jac[0] = 0;
+    jac[1] = 1;
+    jac[2] = -omega * omega;
+    jac[3] = 0;
+  };
 
 /** Exact implicit-midpoint step for y' = A y: y₁ = (I-½dtA)⁻¹(I+½dtA)y₀. */
 function harmonicExact(y0: readonly number[], dt: number, omega: number): [number, number] {

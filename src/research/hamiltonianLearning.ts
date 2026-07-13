@@ -162,7 +162,8 @@ function buildTerms(spec: HamiltonianLibrarySpec): HamiltonianTerm[] {
     terms.push({ name: polyName(exponents, n), kind: 'poly', exponents });
   }
   for (const c of spec.trigCoordinates ?? []) {
-    if (!Number.isInteger(c) || c < 0 || c >= n) throw new Error(`learnHamiltonian: trig coordinate ${c} out of range.`);
+    if (!Number.isInteger(c) || c < 0 || c >= n)
+      throw new Error(`learnHamiltonian: trig coordinate ${c} out of range.`);
     terms.push({ name: `cos(q${c})`, kind: 'cos', coordinate: c });
     terms.push({ name: `sin(q${c})`, kind: 'sin', coordinate: c });
   }
@@ -171,7 +172,8 @@ function buildTerms(spec: HamiltonianLibrarySpec): HamiltonianTerm[] {
 }
 
 function rectangular(rows: readonly (readonly number[])[], what: string, dim: number): void {
-  for (const row of rows) if (row.length !== dim) throw new Error(`learnHamiltonian: every ${what} row must have length ${dim}.`);
+  for (const row of rows)
+    if (row.length !== dim) throw new Error(`learnHamiltonian: every ${what} row must have length ${dim}.`);
 }
 
 /**
@@ -287,7 +289,8 @@ export function learnHamiltonian(
 /** Evaluate the learned Hamiltonian H(q, p) (up to its unobservable constant). */
 export function evaluateHamiltonian(model: HamiltonianModel, q: readonly number[], p: readonly number[]): number {
   const n = model.degreesOfFreedom;
-  if (q.length !== n || p.length !== n) throw new Error('evaluateHamiltonian: q and p must have length degreesOfFreedom.');
+  if (q.length !== n || p.length !== n)
+    throw new Error('evaluateHamiltonian: q and p must have length degreesOfFreedom.');
   const x = new Array<number>(2 * n).fill(0);
   for (let v = 0; v < n; v += 1) {
     x[v] = q[v] ?? 0;
@@ -309,7 +312,8 @@ export function hamiltonianVectorField(
   p: readonly number[]
 ): { qDot: number[]; pDot: number[] } {
   const n = model.degreesOfFreedom;
-  if (q.length !== n || p.length !== n) throw new Error('hamiltonianVectorField: q and p must have length degreesOfFreedom.');
+  if (q.length !== n || p.length !== n)
+    throw new Error('hamiltonianVectorField: q and p must have length degreesOfFreedom.');
   const x = new Array<number>(2 * n).fill(0);
   for (let v = 0; v < n; v += 1) {
     x[v] = q[v] ?? 0;
@@ -334,7 +338,7 @@ export function hamiltonianVectorField(
 /** Coefficient of a named term in the model (0 if absent) — convenience for tests/inspection. */
 export function hamiltonianCoefficient(model: HamiltonianModel, termName: string): number {
   const idx = model.terms.findIndex((t) => t.name === termName);
-  return idx < 0 ? 0 : model.coefficients[idx] ?? 0;
+  return idx < 0 ? 0 : (model.coefficients[idx] ?? 0);
 }
 
 /**

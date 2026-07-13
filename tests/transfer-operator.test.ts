@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { invariantMeasure, transferOperatorInvariantDensity, ulamTransitionMatrix1D } from '../src/chaos/transferOperator';
+import {
+  invariantMeasure,
+  transferOperatorInvariantDensity,
+  ulamTransitionMatrix1D
+} from '../src/chaos/transferOperator';
 
 describe('Ulam transition matrix', () => {
   it('is row-stochastic and reduces to the identity for the identity map', () => {

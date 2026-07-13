@@ -14,18 +14,20 @@ export interface EnergyBenchmarkViewModel {
 }
 
 function finiteArray(value: unknown): number[] {
-  return Array.isArray(value) ? value.filter((item): item is number => typeof item === 'number' && Number.isFinite(item)) : [];
+  return Array.isArray(value)
+    ? value.filter((item): item is number => typeof item === 'number' && Number.isFinite(item))
+    : [];
 }
 
 /** Sanitize the committed benchmark report before handing it to the canvas. */
 export function normalizeEnergyBenchmark(value: unknown): EnergyBenchmarkViewModel {
-  const report = typeof value === 'object' && value !== null ? value as Record<string, unknown> : {};
+  const report = typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
   const rows = Array.isArray(report.rows) ? report.rows : [];
   const series: EnergyBenchmarkSeries[] = [];
   for (const candidate of rows) {
     if (typeof candidate !== 'object' || candidate === null) continue;
     const row = candidate as Record<string, unknown>;
-    const curve = typeof row.curve === 'object' && row.curve !== null ? row.curve as Record<string, unknown> : {};
+    const curve = typeof row.curve === 'object' && row.curve !== null ? (row.curve as Record<string, unknown>) : {};
     const time = finiteArray(curve.time);
     const drift = finiteArray(curve.relDrift ?? curve.drift);
     const length = Math.min(time.length, drift.length);
@@ -33,7 +35,8 @@ export function normalizeEnergyBenchmark(value: unknown): EnergyBenchmarkViewMod
     series.push({
       id: row.id,
       name: typeof row.name === 'string' ? row.name : row.id,
-      maxRelDrift: typeof row.maxRelDrift === 'number' && Number.isFinite(row.maxRelDrift) ? row.maxRelDrift : Math.max(...drift),
+      maxRelDrift:
+        typeof row.maxRelDrift === 'number' && Number.isFinite(row.maxRelDrift) ? row.maxRelDrift : Math.max(...drift),
       time: time.slice(0, length),
       drift: drift.slice(0, length).map((entry) => Math.max(1e-18, Math.abs(entry)))
     });
@@ -68,23 +71,29 @@ export function renderEnergyBenchmarkCanvas(canvas: HTMLCanvasElement, model: En
   const maxLog = Math.ceil(Math.min(2, Math.max(...logs)));
   const span = Math.max(1, maxLog - minLog);
   const x = (time: number): number => left + (time / (maxTime || 1)) * plotWidth;
-  const y = (drift: number): number => top + (maxLog - Math.log10(Math.max(1e-18, drift))) / span * plotHeight;
+  const y = (drift: number): number => top + ((maxLog - Math.log10(Math.max(1e-18, drift))) / span) * plotHeight;
 
   context.font = '11px ui-monospace, monospace';
   context.lineWidth = 1;
   for (let power = minLog; power <= maxLog; power += 2) {
-    const py = top + (maxLog - power) / span * plotHeight;
+    const py = top + ((maxLog - power) / span) * plotHeight;
     context.strokeStyle = 'rgba(160,190,220,.14)';
-    context.beginPath(); context.moveTo(left, py); context.lineTo(width - right, py); context.stroke();
+    context.beginPath();
+    context.moveTo(left, py);
+    context.lineTo(width - right, py);
+    context.stroke();
     context.fillStyle = '#91a4bb';
     context.textAlign = 'right';
     context.fillText(`10^${power}`, left - 8, py + 4);
   }
   for (let fraction = 0; fraction <= 4; fraction += 1) {
-    const time = maxTime * fraction / 4;
+    const time = (maxTime * fraction) / 4;
     const px = x(time);
     context.strokeStyle = 'rgba(160,190,220,.1)';
-    context.beginPath(); context.moveTo(px, top); context.lineTo(px, top + plotHeight); context.stroke();
+    context.beginPath();
+    context.moveTo(px, top);
+    context.lineTo(px, top + plotHeight);
+    context.stroke();
     context.fillStyle = '#91a4bb';
     context.textAlign = 'center';
     context.fillText(`${time.toFixed(0)} s`, px, height - 25);
@@ -100,12 +109,13 @@ export function renderEnergyBenchmarkCanvas(canvas: HTMLCanvasElement, model: En
   model.series.forEach((series, index) => {
     context.strokeStyle = COLORS[index % COLORS.length]!;
     context.lineWidth = index < 8 ? 1.6 : 1;
-    context.globalAlpha = index < 8 ? .95 : .48;
+    context.globalAlpha = index < 8 ? 0.95 : 0.48;
     context.beginPath();
     series.time.forEach((time, pointIndex) => {
       const px = x(time);
       const py = y(series.drift[pointIndex] ?? 1e-18);
-      if (pointIndex === 0) context.moveTo(px, py); else context.lineTo(px, py);
+      if (pointIndex === 0) context.moveTo(px, py);
+      else context.lineTo(px, py);
     });
     context.stroke();
   });

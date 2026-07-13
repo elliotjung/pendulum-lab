@@ -162,7 +162,12 @@ fn main(@builtin(local_invocation_id) lid: vec3<u32>) {
 }
 `;
 
-function cpuEnsemble(params: PendulumParameters, damping: number, initial: ArrayLike<number>, options: EnsembleOptions): Float64Array {
+function cpuEnsemble(
+  params: PendulumParameters,
+  damping: number,
+  initial: ArrayLike<number>,
+  options: EnsembleOptions
+): Float64Array {
   const n = Math.floor(initial.length / 4);
   const out = new Float64Array(initial.length);
   out.set(Array.from(initial));
@@ -200,7 +205,10 @@ interface GPUDeviceLike {
   createComputePipeline(desc: unknown): GPUPipelineLike;
   createBindGroup(desc: unknown): unknown;
   createCommandEncoder(): GPUEncoderLike;
-  queue: { submit(buffers: unknown[]): void; writeBuffer(buffer: GPUBufferLike, offset: number, data: ArrayBufferView): void };
+  queue: {
+    submit(buffers: unknown[]): void;
+    writeBuffer(buffer: GPUBufferLike, offset: number, data: ArrayBufferView): void;
+  };
 }
 
 interface GPUBufferLike {
@@ -214,7 +222,12 @@ interface GPUPipelineLike {
 }
 
 interface GPUEncoderLike {
-  beginComputePass(): { setPipeline(p: unknown): void; setBindGroup(i: number, g: unknown): void; dispatchWorkgroups(x: number): void; end(): void };
+  beginComputePass(): {
+    setPipeline(p: unknown): void;
+    setBindGroup(i: number, g: unknown): void;
+    dispatchWorkgroups(x: number): void;
+    end(): void;
+  };
   copyBufferToBuffer(src: GPUBufferLike, so: number, dst: GPUBufferLike, doff: number, size: number): void;
   finish(): unknown;
 }
@@ -229,7 +242,12 @@ const GPU_MAP_READ = 0x1;
  * device errors, so callers can fall back to their CPU path. Shared by the
  * ensemble integrator and the basin/sweep field kernels (`gpuFields.ts`).
  */
-export async function runComputeKernel(code: string, uniformData: Float32Array, io: Float32Array, threads: number): Promise<Float32Array | null> {
+export async function runComputeKernel(
+  code: string,
+  uniformData: Float32Array,
+  io: Float32Array,
+  threads: number
+): Promise<Float32Array | null> {
   if (typeof navigator === 'undefined') return null;
   const gpu = (navigator as unknown as { gpu?: GpuLike }).gpu;
   if (!gpu) return null;
@@ -244,7 +262,10 @@ export async function runComputeKernel(code: string, uniformData: Float32Array, 
     });
     device.queue.writeBuffer(ioBuffer, 0, io);
 
-    const uniformBuffer = device.createBuffer({ size: uniformData.byteLength, usage: GPU_BUFFER_USAGE.UNIFORM | GPU_BUFFER_USAGE.COPY_DST });
+    const uniformBuffer = device.createBuffer({
+      size: uniformData.byteLength,
+      usage: GPU_BUFFER_USAGE.UNIFORM | GPU_BUFFER_USAGE.COPY_DST
+    });
     device.queue.writeBuffer(uniformBuffer, 0, uniformData);
 
     const module = device.createShaderModule({ code });
@@ -257,7 +278,10 @@ export async function runComputeKernel(code: string, uniformData: Float32Array, 
       ]
     });
 
-    const readBuffer = device.createBuffer({ size: io.byteLength, usage: GPU_BUFFER_USAGE.MAP_READ | GPU_BUFFER_USAGE.COPY_DST });
+    const readBuffer = device.createBuffer({
+      size: io.byteLength,
+      usage: GPU_BUFFER_USAGE.MAP_READ | GPU_BUFFER_USAGE.COPY_DST
+    });
     const encoder = device.createCommandEncoder();
     const pass = encoder.beginComputePass();
     pass.setPipeline(pipeline);
@@ -284,7 +308,16 @@ async function webgpuEnsemble(
   const n = Math.floor(initial.length / 4);
   const stateData = new Float32Array(initial.length);
   stateData.set(Array.from(initial));
-  const uniformData = new Float32Array([params.m1, params.m2, params.l1, params.l2, params.g, damping, options.dt, options.steps]);
+  const uniformData = new Float32Array([
+    params.m1,
+    params.m2,
+    params.l1,
+    params.l2,
+    params.g,
+    damping,
+    options.dt,
+    options.steps
+  ]);
   const result = await runComputeKernel(WGSL_KERNEL, uniformData, stateData, n);
   return result ? new Float64Array(result) : null;
 }
@@ -313,9 +346,10 @@ export async function runDoublePendulumEnsemble(
     steps: options.steps,
     dt: options.dt,
     elapsedMs: elapsed,
-    caveat: backend === 'webgpu'
-      ? 'WebGPU kernel integrates in f32: per-trajectory round-off grows at the Lyapunov rate, so consume ensemble statistics, not individual trajectories.'
-      : 'CPU fallback in f64 (WebGPU unavailable or disabled).'
+    caveat:
+      backend === 'webgpu'
+        ? 'WebGPU kernel integrates in f32: per-trajectory round-off grows at the Lyapunov rate, so consume ensemble statistics, not individual trajectories.'
+        : 'CPU fallback in f64 (WebGPU unavailable or disabled).'
   };
 }
 
@@ -426,12 +460,13 @@ export function compareEnsembleStatistics(
   const rmsSpreadAbsDiff = Math.abs(candidate.rmsSpread - reference.rmsSpread);
   const flipFractionAbsDiff = Math.abs(candidate.flipFraction - reference.flipFraction);
   const nMatches = candidate.n === reference.n;
-  const passed = nMatches
-    && maxMeanAbsDiff <= resolved.mean
-    && maxVarianceAbsDiff <= resolved.variance
-    && maxCovarianceAbsDiff <= resolved.covariance
-    && rmsSpreadAbsDiff <= resolved.rmsSpread
-    && flipFractionAbsDiff <= resolved.flipFraction;
+  const passed =
+    nMatches &&
+    maxMeanAbsDiff <= resolved.mean &&
+    maxVarianceAbsDiff <= resolved.variance &&
+    maxCovarianceAbsDiff <= resolved.covariance &&
+    rmsSpreadAbsDiff <= resolved.rmsSpread &&
+    flipFractionAbsDiff <= resolved.flipFraction;
   return {
     passed,
     nMatches,
@@ -441,7 +476,8 @@ export function compareEnsembleStatistics(
     maxCovarianceAbsDiff,
     rmsSpreadAbsDiff,
     flipFractionAbsDiff,
-    caveat: 'This validates ensemble reduction statistics only; trajectory integration and chaotic divergence still require their own CPU probe gates.'
+    caveat:
+      'This validates ensemble reduction statistics only; trajectory integration and chaotic divergence still require their own CPU probe gates.'
   };
 }
 
@@ -473,7 +509,9 @@ export async function webgpuEnsembleStatistics(states: Float64Array): Promise<En
     }
     variance[a] = covariance[a * 4 + a] ?? 0;
   }
-  const rmsSpread = Math.sqrt(Math.max(0, (variance[0] ?? 0) + (variance[1] ?? 0) + (variance[2] ?? 0) + (variance[3] ?? 0)));
+  const rmsSpread = Math.sqrt(
+    Math.max(0, (variance[0] ?? 0) + (variance[1] ?? 0) + (variance[2] ?? 0) + (variance[3] ?? 0))
+  );
   const flipFraction = (reduced[outputOffset + 21] ?? 0) / n;
   return { n, mean, variance, covariance, rmsSpread, flipFraction };
 }

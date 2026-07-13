@@ -11,7 +11,9 @@ function motionEvent(timestamp: number, betaDegreesPerSecond: number, y = 1, z =
 
 function fixture(permission: 'granted' | 'denied' = 'granted', secureContext = true) {
   let listener: ((event: DeviceMotionEvent) => void) | null = null;
-  const addListener = vi.fn((next: (event: DeviceMotionEvent) => void) => { listener = next; });
+  const addListener = vi.fn((next: (event: DeviceMotionEvent) => void) => {
+    listener = next;
+  });
   const removeListener = vi.fn();
   const eventType = class {} as unknown as ImuMotionCaptureDependencies['deviceMotionEvent'];
   Object.assign(eventType!, { requestPermission: vi.fn(async () => permission) });
@@ -39,7 +41,7 @@ describe('ImuMotionCaptureController', () => {
     expect(series).toHaveLength(2);
     expect(series[1]!.timestamp).toBeCloseTo(0.1, 12);
     expect(series[1]!.angle).toBeCloseTo(0, 12);
-    expect(series[1]!.angularAcceleration).toBeCloseTo((10 * Math.PI / 180) / 0.1, 12);
+    expect(series[1]!.angularAcceleration).toBeCloseTo((10 * Math.PI) / 180 / 0.1, 12);
     expect(controller.exportCsv()).toContain('angular_acceleration');
 
     controller.stop();

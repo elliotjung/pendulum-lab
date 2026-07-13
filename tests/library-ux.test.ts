@@ -9,21 +9,43 @@ import {
 } from '../src/research/libraryUx';
 
 const experiments = [
-  { id: 'a', name: 'Baseline RK4', notes: 'clean run', tags: ['baseline', 'rk4'], favorite: true, createdAt: '2026-06-09T10:00:00Z' },
+  {
+    id: 'a',
+    name: 'Baseline RK4',
+    notes: 'clean run',
+    tags: ['baseline', 'rk4'],
+    favorite: true,
+    createdAt: '2026-06-09T10:00:00Z'
+  },
   { id: 'b', name: 'Chaotic sweep', notes: 'lambda positive', tags: ['chaos'], createdAt: '2026-06-09T12:00:00Z' },
-  { id: 'c', name: 'Damped study', notes: 'see DOI', tags: ['damping'], createdAt: '2026-06-10T09:00:00Z', citation: { doi: '10.1234/xyz', reference: 'Foo 2026' } }
+  {
+    id: 'c',
+    name: 'Damped study',
+    notes: 'see DOI',
+    tags: ['damping'],
+    createdAt: '2026-06-10T09:00:00Z',
+    citation: { doi: '10.1234/xyz', reference: 'Foo 2026' }
+  }
 ];
 
 describe('library filtering', () => {
   it('searches across name, notes, tags, and DOI', () => {
-    expect(filterExperiments(experiments, { query: 'rk4', tag: '', favoritesOnly: false }).map((e) => e.id)).toEqual(['a']);
-    expect(filterExperiments(experiments, { query: 'lambda', tag: '', favoritesOnly: false }).map((e) => e.id)).toEqual(['b']);
-    expect(filterExperiments(experiments, { query: '10.1234', tag: '', favoritesOnly: false }).map((e) => e.id)).toEqual(['c']);
+    expect(filterExperiments(experiments, { query: 'rk4', tag: '', favoritesOnly: false }).map((e) => e.id)).toEqual([
+      'a'
+    ]);
+    expect(filterExperiments(experiments, { query: 'lambda', tag: '', favoritesOnly: false }).map((e) => e.id)).toEqual(
+      ['b']
+    );
+    expect(
+      filterExperiments(experiments, { query: '10.1234', tag: '', favoritesOnly: false }).map((e) => e.id)
+    ).toEqual(['c']);
     expect(filterExperiments(experiments, { query: '', tag: '', favoritesOnly: false })).toHaveLength(3);
   });
 
   it('filters by tag and favorites', () => {
-    expect(filterExperiments(experiments, { query: '', tag: 'chaos', favoritesOnly: false }).map((e) => e.id)).toEqual(['b']);
+    expect(filterExperiments(experiments, { query: '', tag: 'chaos', favoritesOnly: false }).map((e) => e.id)).toEqual([
+      'b'
+    ]);
     expect(filterExperiments(experiments, { query: '', tag: '', favoritesOnly: true }).map((e) => e.id)).toEqual(['a']);
     expect(filterExperiments(experiments, { query: 'sweep', tag: 'baseline', favoritesOnly: false })).toHaveLength(0);
   });

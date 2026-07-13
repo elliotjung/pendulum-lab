@@ -78,12 +78,20 @@ export function rk4Step(state: StateVector, dt: number, rhs: Derivative, out: St
   addScaled(tmp, state, dt, k3, n);
   rhs(tmp, k4);
   for (let i = 0; i < n; i += 1) {
-    out[i] = Number(state[i] ?? 0) + (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
+    out[i] =
+      Number(state[i] ?? 0) +
+      (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
   }
   return out;
 }
 
-export function implicitMidpointStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function implicitMidpointStep(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   if (options.jacobian) {
     const newtonOptions: { tolerance?: number; maxIterations: number } = { maxIterations: 25 };
     if (options.tolerance !== undefined) newtonOptions.tolerance = options.tolerance;
@@ -278,7 +286,13 @@ const RKF_B4 = [25 / 216, 0, 1408 / 2565, 2197 / 4104, -1 / 5, 0];
  * and reports the infinity-norm difference against the embedded 4th-order
  * solution through `options.previousError` for adaptive step-size control.
  */
-export function rkf45Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function rkf45Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 6 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -339,46 +353,43 @@ const DOP853_A: readonly (readonly number[])[] = [
   [0.037037037037037035, 0, 0, 0.17082860872947386, 0.12546768756682242],
   [0.037109375, 0, 0, 0.17025221101954405, 0.06021653898045596, -0.017578125],
   [0.03709200011850479, 0, 0, 0.17038392571223998, 0.10726203044637328, -0.015319437748624402, 0.008273789163814023],
-  [0.6241109587160757, 0, 0, -3.3608926294469414, -0.868219346841726, 27.59209969944671, 20.154067550477894, -43.48988418106996],
-  [0.47766253643826434, 0, 0, -2.4881146199716677, -0.590290826836843, 21.230051448181193, 15.279233632882423, -33.28821096898486, -0.020331201708508627],
-  [-0.9371424300859873, 0, 0, 5.186372428844064, 1.0914373489967295, -8.149787010746927, -18.52006565999696, 22.739487099350505, 2.4936055526796523, -3.0467644718982196],
-  [2.273310147516538, 0, 0, -10.53449546673725, -2.0008720582248625, -17.9589318631188, 27.94888452941996, -2.8589982771350235, -8.87285693353063, 12.360567175794303, 0.6433927460157636]
+  [
+    0.6241109587160757, 0, 0, -3.3608926294469414, -0.868219346841726, 27.59209969944671, 20.154067550477894,
+    -43.48988418106996
+  ],
+  [
+    0.47766253643826434, 0, 0, -2.4881146199716677, -0.590290826836843, 21.230051448181193, 15.279233632882423,
+    -33.28821096898486, -0.020331201708508627
+  ],
+  [
+    -0.9371424300859873, 0, 0, 5.186372428844064, 1.0914373489967295, -8.149787010746927, -18.52006565999696,
+    22.739487099350505, 2.4936055526796523, -3.0467644718982196
+  ],
+  [
+    2.273310147516538, 0, 0, -10.53449546673725, -2.0008720582248625, -17.9589318631188, 27.94888452941996,
+    -2.8589982771350235, -8.87285693353063, 12.360567175794303, 0.6433927460157636
+  ]
 ];
 
 const DOP853_B = [
-  0.054293734116568765,
-  0,
-  0,
-  0,
-  0,
-  4.450312892752409,
-  1.8915178993145003,
-  -5.801203960010585,
-  0.3111643669578199,
-  -0.1521609496625161,
-  0.20136540080403034,
-  0.04471061572777259
+  0.054293734116568765, 0, 0, 0, 0, 4.450312892752409, 1.8915178993145003, -5.801203960010585, 0.3111643669578199,
+  -0.1521609496625161, 0.20136540080403034, 0.04471061572777259
 ] as const;
 
 const DOP853_E5 = [
-  0.01312004499419488,
-  0,
-  0,
-  0,
-  0,
-  -1.2251564463762044,
-  -0.4957589496572502,
-  1.6643771824549864,
-  -0.35032884874997366,
-  0.3341791187130175,
-  0.08192320648511571,
-  -0.022355307863886294,
-  0
+  0.01312004499419488, 0, 0, 0, 0, -1.2251564463762044, -0.4957589496572502, 1.6643771824549864, -0.35032884874997366,
+  0.3341791187130175, 0.08192320648511571, -0.022355307863886294, 0
 ] as const;
 
 void DOP853_C;
 
-export function dop853Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function dop853Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   const n = state.length;
   const k: StateVector[] = Array.from({ length: 13 }, () => new Float64Array(n));
   const tmp = new Float64Array(n);
@@ -477,15 +488,34 @@ const GL6_A: readonly (readonly number[])[] = [
 ];
 const GL6_B = [5 / 18, 4 / 9, 5 / 18];
 
-export function gaussLegendre4Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function gaussLegendre4Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   return gaussLegendreStep(GL4_A, GL4_B, state, dt, rhs, out, options);
 }
 
-export function gaussLegendre6Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function gaussLegendre6Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   return gaussLegendreStep(GL6_A, GL6_B, state, dt, rhs, out, options);
 }
 
-export function step(method: IntegratorId, state: StateVector, dt: number, rhs: Derivative, out: StateVector, options: StepOptions = {}): StateVector {
+export function step(
+  method: IntegratorId,
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  options: StepOptions = {}
+): StateVector {
   switch (method) {
     case 'euler':
       return eulerStep(state, dt, rhs, out);

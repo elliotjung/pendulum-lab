@@ -31,7 +31,10 @@ describe('versioned experiment share hashes', () => {
   it('sanitizes untrusted numeric ranges, method names, and tab names', () => {
     const unsafe = {
       ...setup,
-      method: 'eval-javascript', tab: 'not-a-tab', dt: -1, damping: 999,
+      method: 'eval-javascript',
+      tab: 'not-a-tab',
+      dt: -1,
+      damping: 999,
       initial: { theta: [Infinity, -999, 1], omega: ['bad', 200, 0] }
     } as unknown as SharedExperimentV1;
     const parsed = decodeSharedExperiment(encodeSharedExperiment(unsafe));

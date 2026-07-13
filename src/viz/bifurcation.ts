@@ -33,7 +33,12 @@ function quantileExtent(values: number[], q: number): [number, number] {
   return lo === hi ? [lo - 1, hi + 1] : [lo, hi];
 }
 
-export function renderBifurcation(ctx: Ctx2D, rect: Rect, columns: readonly BifurcationColumnData[], options: BifurcationPlotOptions = {}): void {
+export function renderBifurcation(
+  ctx: Ctx2D,
+  rect: Rect,
+  columns: readonly BifurcationColumnData[],
+  options: BifurcationPlotOptions = {}
+): void {
   const theme = options.theme ?? DARK_THEME;
   const inner = innerRect(rect, DEFAULT_PADDING);
 

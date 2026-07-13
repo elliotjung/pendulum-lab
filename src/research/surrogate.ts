@@ -117,7 +117,9 @@ function basisRow(
   multiIndices: number[][],
   maxDegree: number
 ): number[] {
-  const perVariable = variables.map((variable, j) => legendreNormalized(toUnitInterval(inputs[j]!, variable), maxDegree));
+  const perVariable = variables.map((variable, j) =>
+    legendreNormalized(toUnitInterval(inputs[j]!, variable), maxDegree)
+  );
   return multiIndices.map((alpha) => {
     let product = 1;
     for (let j = 0; j < alpha.length; j += 1) product *= perVariable[j]![alpha[j]!]!;
@@ -168,7 +170,9 @@ export function fitPolynomialChaos(
 
   const solve = solveLinearInPlace(normal, rhs, terms, { fallbackPolicy: 'return-diagnostics' });
   if (!solve.ok) {
-    throw new Error(`fitPolynomialChaos: regression matrix is singular (${solve.reason ?? 'unknown'}); add samples or lower the degree.`);
+    throw new Error(
+      `fitPolynomialChaos: regression matrix is singular (${solve.reason ?? 'unknown'}); add samples or lower the degree.`
+    );
   }
   const coefficients = Array.from(rhs.subarray(0, terms));
 

@@ -27,7 +27,10 @@ describe('N-chain WASM SIMD benchmark contract', () => {
       backend: 'wasm-simd',
       tape: buildNChainJacobianTape(parameters, state, damping, settings)
     });
-    const result = await benchmarkNChainTapeCase({ links: 2, damping: 0.01, dt: 0.002, steps: 1, rounds: 1 }, candidate);
+    const result = await benchmarkNChainTapeCase(
+      { links: 2, damping: 0.01, dt: 0.002, steps: 1, rounds: 1 },
+      candidate
+    );
     expect(result.candidateBackend).toBe('wasm-simd');
     expect(result.maxAbsError).toBe(0);
     expect(result.candidateTimesMs).toHaveLength(1);

@@ -27,7 +27,10 @@ export class DualArena {
   private readonly slots: DualScalar[];
   private next = 0;
 
-  constructor(readonly nv: number, capacity: number) {
+  constructor(
+    readonly nv: number,
+    capacity: number
+  ) {
     const stride = nv + 1;
     const buffer = new Float64Array(stride * capacity);
     this.slots = Array.from({ length: capacity }, (_, i) => buffer.subarray(i * stride, (i + 1) * stride));
@@ -133,7 +136,12 @@ export function dClampAbsMin(out: DualScalar, a: DualScalar, eps: number): DualS
 }
 
 /** Dot product of two dual 3-vectors: out ← Σ aᵢ·bᵢ. */
-export function dDot3(out: DualScalar, a: readonly DualScalar[], b: readonly DualScalar[], tmp: DualScalar): DualScalar {
+export function dDot3(
+  out: DualScalar,
+  a: readonly DualScalar[],
+  b: readonly DualScalar[],
+  tmp: DualScalar
+): DualScalar {
   dMul(out, a[0]!, b[0]!);
   dAdd(out, out, dMul(tmp, a[1]!, b[1]!));
   dAdd(out, out, dMul(tmp, a[2]!, b[2]!));

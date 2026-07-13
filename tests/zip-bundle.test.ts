@@ -21,7 +21,10 @@ describe('zip research bundle core', () => {
   it('round-trips a multi-file archive through build + parse', () => {
     const entries = [
       { path: 'manifest/submission.json', data: textToBytes('{"a":1}') },
-      { path: 'figures/figure-01-main.png', data: new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 1, 2, 250]) },
+      {
+        path: 'figures/figure-01-main.png',
+        data: new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 1, 2, 250])
+      },
       { path: 'paper/methods.md', data: textToBytes('# Methods\nutf-8 ok: λ θ φ') }
     ];
     const zip = buildZip(entries, new Date('2026-06-10T12:00:00'));
@@ -42,7 +45,9 @@ describe('zip research bundle core', () => {
   });
 
   it('rejects bytes with no central directory', () => {
-    expect(() => parseZip(textToBytes('this is not a zip file at all, definitely'))).toThrow(/end-of-central-directory/);
+    expect(() => parseZip(textToBytes('this is not a zip file at all, definitely'))).toThrow(
+      /end-of-central-directory/
+    );
   });
 
   it('decodes base64 and data URLs to binary', () => {
