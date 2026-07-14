@@ -3,8 +3,8 @@
   "artifacts": [
     {
       "path": "standalone/chaos.worker.js",
-      "bytes": 64512,
-      "sha256": "63c1ed66827780d3a1e5276b8be28df7a1ad4d406b30c3653b01bc7f6fd6165b"
+      "bytes": 87572,
+      "sha256": "0341dc259bef8c8ea3a70df3bf36750d48b51ef543d4a28f8090e4af7f2cd41f"
     },
     {
       "path": "standalone/expansion.worker.js",
@@ -13,8 +13,8 @@
     },
     {
       "path": "standalone/index.html",
-      "bytes": 1024210,
-      "sha256": "650d3721eb6c3eac9fc7c9e80ca84a540367e2cd287d2b8a526df68de8a38b77"
+      "bytes": 1067270,
+      "sha256": "fa44ba13ddad266698f6504c65d0e762165dc89b09c44cc507e0edeea009ca78"
     },
     {
       "path": "standalone/labSidePlots.worker.js",

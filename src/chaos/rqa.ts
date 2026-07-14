@@ -25,6 +25,8 @@
  * which is the recommended, scale-free way to compare different signals.
  */
 
+import { checkedWorkProduct, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
+
 export interface RqaOptions {
   /** Embedding dimension m. Default 1 (raw series). */
   dimension?: number;
@@ -40,6 +42,79 @@ export interface RqaOptions {
   vMin?: number;
   /** Theiler window: exclude |i−j| ≤ theiler from diagonal statistics (LOI bias). Default 1. */
   theiler?: number;
+}
+
+interface NormalizedRqaOptions {
+  dimension: number;
+  delay: number;
+  epsilon: number | undefined;
+  targetRecurrenceRate: number;
+  lMin: number;
+  vMin: number;
+  theiler: number;
+}
+
+function safeIntegerOption(name: string, value: number, minimum: number): number {
+  if (!Number.isSafeInteger(value) || value < minimum) {
+    throw new RangeError(`${name} must be a safe integer greater than or equal to ${minimum}`);
+  }
+  return value;
+}
+
+function normalizeOptions(options: RqaOptions): NormalizedRqaOptions {
+  const dimension = safeIntegerOption('dimension', options.dimension ?? 1, 1);
+  const delay = safeIntegerOption('delay', options.delay ?? 1, 1);
+  const lMin = safeIntegerOption('lMin', options.lMin ?? 2, 1);
+  const vMin = safeIntegerOption('vMin', options.vMin ?? 2, 1);
+  const theiler = safeIntegerOption('theiler', options.theiler ?? 1, 0);
+  const epsilon = options.epsilon;
+  if (epsilon !== undefined && (!Number.isFinite(epsilon) || epsilon < 0)) {
+    throw new RangeError('epsilon must be finite and non-negative');
+  }
+  const targetRecurrenceRate = options.targetRecurrenceRate ?? 0.1;
+  if (!Number.isFinite(targetRecurrenceRate) || targetRecurrenceRate <= 0 || targetRecurrenceRate >= 1) {
+    throw new RangeError('targetRecurrenceRate must be finite and in (0,1)');
+  }
+  return { dimension, delay, epsilon, targetRecurrenceRate, lMin, vMin, theiler };
+}
+
+function validateSeries(series: readonly number[]): void {
+  for (let i = 0; i < series.length; i += 1) {
+    if (!Number.isFinite(series[i])) throw new TypeError(`series[${i}] must be finite`);
+  }
+}
+
+/**
+ * Preflight the dense O(N^2) recurrence calculation before allocating its
+ * embedding, pair-distance list, or recurrence matrix.
+ */
+function assertDenseRqaBudget(seriesLength: number, m: number, tau: number): number {
+  const lagSpan = (m - 1) * tau;
+  // JavaScript arrays are much shorter than MAX_SAFE_INTEGER, so an unsafe lag
+  // product necessarily means the requested embedding contains no points.
+  const count = !Number.isSafeInteger(lagSpan) || lagSpan >= seriesLength ? 0 : seriesLength - lagSpan;
+  if (count > NUMERICAL_WORK_BUDGETS.rqa.maxEmbeddedPoints) {
+    throw new RangeError(`RQA: embedded point count must not exceed ${NUMERICAL_WORK_BUDGETS.rqa.maxEmbeddedPoints}.`);
+  }
+  const embeddingCells = checkedWorkProduct([count, m], 'RQA');
+  if (embeddingCells > NUMERICAL_WORK_BUDGETS.rqa.maxEmbeddingCells) {
+    throw new RangeError(
+      `RQA: embedding exceeds the ${NUMERICAL_WORK_BUDGETS.rqa.maxEmbeddingCells}-cell memory budget.`
+    );
+  }
+  const denseCells = checkedWorkProduct([count, count], 'RQA');
+  if (denseCells > NUMERICAL_WORK_BUDGETS.rqa.maxDenseMatrixCells) {
+    throw new RangeError(
+      `RQA: recurrence matrix exceeds the ${NUMERICAL_WORK_BUDGETS.rqa.maxDenseMatrixCells}-cell memory budget.`
+    );
+  }
+  const distanceWork = checkedWorkProduct([denseCells, m], 'RQA');
+  if (distanceWork > NUMERICAL_WORK_BUDGETS.rqa.maxDistanceComponentEvaluations) {
+    throw new RangeError(
+      `RQA: distance scan exceeds the ${NUMERICAL_WORK_BUDGETS.rqa.maxDistanceComponentEvaluations}-component work budget.`
+    );
+  }
+  return count;
 }
 
 export interface RqaResult {
@@ -116,11 +191,14 @@ export interface RecurrenceMatrix {
  * threshold (and hence the matrix) is identical to what the quantification used.
  */
 export function recurrenceMatrix(series: readonly number[], options: RqaOptions = {}): RecurrenceMatrix {
-  const m = Math.max(1, Math.floor(options.dimension ?? 1));
-  const tau = Math.max(1, Math.floor(options.delay ?? 1));
+  const normalized = normalizeOptions(options);
+  assertDenseRqaBudget(series.length, normalized.dimension, normalized.delay);
+  validateSeries(series);
+  const m = normalized.dimension;
+  const tau = normalized.delay;
   const { points, count } = embed(series, m, tau);
   if (count < 1) return { matrix: new Uint8Array(0), size: 0, epsilon: 0 };
-  const epsilon = options.epsilon ?? thresholdForRate(points, count, m, options.targetRecurrenceRate ?? 0.1);
+  const epsilon = normalized.epsilon ?? thresholdForRate(points, count, m, normalized.targetRecurrenceRate);
   const matrix = new Uint8Array(count * count);
   for (let i = 0; i < count; i += 1) {
     matrix[i * count + i] = 1;
@@ -140,11 +218,14 @@ export function recurrenceMatrix(series: readonly number[], options: RqaOptions 
  * statistics to be meaningful.
  */
 export function recurrenceQuantification(series: readonly number[], options: RqaOptions = {}): RqaResult {
-  const m = Math.max(1, Math.floor(options.dimension ?? 1));
-  const tau = Math.max(1, Math.floor(options.delay ?? 1));
-  const lMin = Math.max(1, Math.floor(options.lMin ?? 2));
-  const vMin = Math.max(1, Math.floor(options.vMin ?? 2));
-  const theiler = Math.max(0, Math.floor(options.theiler ?? 1));
+  const normalized = normalizeOptions(options);
+  assertDenseRqaBudget(series.length, normalized.dimension, normalized.delay);
+  validateSeries(series);
+  const m = normalized.dimension;
+  const tau = normalized.delay;
+  const lMin = normalized.lMin;
+  const vMin = normalized.vMin;
+  const theiler = normalized.theiler;
 
   const { points, count } = embed(series, m, tau);
   const empty: RqaResult = {
@@ -161,7 +242,7 @@ export function recurrenceQuantification(series: readonly number[], options: Rqa
   };
   if (count < 2) return empty;
 
-  const epsilon = options.epsilon ?? thresholdForRate(points, count, m, options.targetRecurrenceRate ?? 0.1);
+  const epsilon = normalized.epsilon ?? thresholdForRate(points, count, m, normalized.targetRecurrenceRate);
 
   // Recurrence matrix (symmetric); store densely for the line scans.
   const R = new Uint8Array(count * count);
@@ -295,11 +376,26 @@ export interface RqaUncertainty {
  * than the estimate itself.
  */
 export function rqaBlockUncertainty(series: readonly number[], options: RqaOptions = {}, blocks = 4): RqaUncertainty {
-  const k = Math.max(2, Math.floor(blocks));
+  const normalized = normalizeOptions(options);
+  validateSeries(series);
+  const k = safeIntegerOption('blocks', blocks, 2);
+  if (k > NUMERICAL_WORK_BUDGETS.rqa.maxUncertaintyBlocks) {
+    throw new RangeError(`blocks must not exceed ${NUMERICAL_WORK_BUDGETS.rqa.maxUncertaintyBlocks}`);
+  }
   const blockLength = Math.floor(series.length / k);
+  const minimumBlockLength = (normalized.dimension - 1) * normalized.delay + 2;
+  if (blockLength < minimumBlockLength) {
+    throw new RangeError(
+      `series is too short for ${k} non-empty RQA blocks with dimension ${normalized.dimension} and delay ${normalized.delay}`
+    );
+  }
+  const remainder = series.length % k;
   const blockResults: RqaResult[] = [];
+  let start = 0;
   for (let b = 0; b < k; b += 1) {
-    const slice = series.slice(b * blockLength, (b + 1) * blockLength);
+    const length = blockLength + (b < remainder ? 1 : 0);
+    const slice = series.slice(start, start + length);
+    start += length;
     blockResults.push(recurrenceQuantification(slice, options));
   }
   const summarize = (pick: (r: RqaResult) => number): RqaMeasureUncertainty => {

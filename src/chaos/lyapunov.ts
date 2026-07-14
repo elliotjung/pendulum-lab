@@ -3,6 +3,7 @@ import type { IntegratorId } from '../types/domain';
 import { rk4Step, step } from '../physics/integrators';
 import { gramSchmidt, makeVariationalRhs, mulberry32, seedTangentFrame } from './variational';
 import { analyzeSpectrumConsistency, type SpectrumConsistency } from './spectrumConsistency';
+import { assertUsableIntegrationStep, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /** Per-step integrator used to advance a (possibly augmented) trajectory. */
 type Stepper = (state: StateVector, dt: number, rhs: Derivative, out: StateVector) => void;
@@ -201,8 +202,8 @@ const DEFAULTS = {
   seed: 0x9e37
 };
 
-function resolve(partial: Partial<LyapunovSettings>): LyapunovSettings {
-  return {
+function resolve(partial: Partial<LyapunovSettings>, caller: string): LyapunovSettings {
+  const settings: LyapunovSettings = {
     dt: partial.dt ?? DEFAULTS.dt,
     steps: partial.steps ?? DEFAULTS.steps,
     renormEvery: partial.renormEvery ?? DEFAULTS.renormEvery,
@@ -210,6 +211,93 @@ function resolve(partial: Partial<LyapunovSettings>): LyapunovSettings {
     seed: partial.seed ?? DEFAULTS.seed,
     ...(partial.method ? { method: partial.method } : {})
   };
+  if (!(settings.dt > 0) || !Number.isFinite(settings.dt)) {
+    throw new Error(`${caller}: dt must be positive and finite.`);
+  }
+  assertUsableIntegrationStep(settings.dt, caller);
+  if (!Number.isSafeInteger(settings.steps) || settings.steps < 1) {
+    throw new Error(`${caller}: steps must be a positive integer.`);
+  }
+  if (settings.steps > NUMERICAL_WORK_BUDGETS.lyapunov.maxMeasurementSteps) {
+    throw new Error(`${caller}: steps must not exceed ${NUMERICAL_WORK_BUDGETS.lyapunov.maxMeasurementSteps}.`);
+  }
+  if (!Number.isSafeInteger(settings.renormEvery) || settings.renormEvery < 1) {
+    throw new Error(`${caller}: renormEvery must be a positive integer.`);
+  }
+  if (settings.renormEvery > NUMERICAL_WORK_BUDGETS.lyapunov.maxRenormalizationSteps) {
+    throw new Error(
+      `${caller}: renormEvery must not exceed ${NUMERICAL_WORK_BUDGETS.lyapunov.maxRenormalizationSteps}.`
+    );
+  }
+  if (settings.renormEvery > settings.steps) {
+    throw new Error(`${caller}: renormEvery must not exceed steps.`);
+  }
+  if (!Number.isSafeInteger(settings.transientSteps) || settings.transientSteps < 0) {
+    throw new Error(`${caller}: transientSteps must be a non-negative integer.`);
+  }
+  if (settings.transientSteps > NUMERICAL_WORK_BUDGETS.lyapunov.maxTransientSteps) {
+    throw new Error(`${caller}: transientSteps must not exceed ${NUMERICAL_WORK_BUDGETS.lyapunov.maxTransientSteps}.`);
+  }
+  if (settings.steps + settings.transientSteps > NUMERICAL_WORK_BUDGETS.lyapunov.maxTotalSteps) {
+    throw new Error(
+      `${caller}: steps plus transientSteps must not exceed ${NUMERICAL_WORK_BUDGETS.lyapunov.maxTotalSteps}.`
+    );
+  }
+  const measurementTime = settings.steps * settings.dt;
+  const totalTime = (settings.steps + settings.transientSteps) * settings.dt;
+  if (!(measurementTime > 0) || !Number.isFinite(measurementTime) || !Number.isFinite(totalTime)) {
+    throw new Error(`${caller}: dt and step counts must define a positive, finite integration horizon.`);
+  }
+  if (!Number.isFinite(settings.seed)) throw new Error(`${caller}: seed must be finite.`);
+  return settings;
+}
+
+function validateInitialState(state0: ArrayLike<number>, caller: string): void {
+  if (!Number.isInteger(state0.length) || state0.length < 1) {
+    throw new Error(`${caller}: state0 must contain at least one component.`);
+  }
+  for (let i = 0; i < state0.length; i += 1) {
+    if (!Number.isFinite(Number(state0[i]))) {
+      throw new Error(`${caller}: state0 components must be finite.`);
+    }
+  }
+}
+
+function assertFiniteValues(values: ArrayLike<number>, count: number, caller: string, label: string): void {
+  for (let i = 0; i < count; i += 1) {
+    if (!Number.isFinite(Number(values[i]))) {
+      throw new Error(`${caller}: ${label} contains a non-finite value.`);
+    }
+  }
+}
+
+function checkedDerivative(rhs: Derivative, dimension: number, caller: string, label: string): Derivative {
+  return (state, out): void => {
+    assertFiniteValues(state, dimension, caller, `${label} input`);
+    rhs(state, out);
+    assertFiniteValues(out, dimension, caller, `${label} output`);
+  };
+}
+
+function checkedJacobian(jacobian: Jacobian, dimension: number, caller: string): Jacobian {
+  return (state, out): void => {
+    assertFiniteValues(state, dimension, caller, 'Jacobian state');
+    jacobian(state, out);
+    assertFiniteValues(out, dimension * dimension, caller, 'Jacobian output');
+  };
+}
+
+function advanceFinite(
+  stepper: Stepper,
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  caller: string,
+  label: string
+): void {
+  stepper(state, dt, rhs, out);
+  assertFiniteValues(out, out.length, caller, label);
 }
 
 /**
@@ -223,9 +311,12 @@ export function maximalLyapunov(
   rhs: Derivative,
   options: Partial<LyapunovSettings> = {}
 ): MaximalLyapunovResult {
-  const settings = resolve(options);
+  const caller = 'maximalLyapunov';
+  validateInitialState(state0, caller);
+  const settings = resolve(options, caller);
   const stepper = makeStepper(settings.method);
   const n = state0.length;
+  const finiteRhs = checkedDerivative(rhs, n, caller, 'RHS');
   const d0 = 1e-8;
 
   const ref = new Float64Array(n);
@@ -234,7 +325,7 @@ export function maximalLyapunov(
 
   // Run the reference through the transient before attaching the shadow.
   for (let i = 0; i < settings.transientSteps; i += 1) {
-    stepper(ref, settings.dt, rhs, refOut);
+    advanceFinite(stepper, ref, settings.dt, finiteRhs, refOut, caller, 'reference state');
     ref.set(refOut);
   }
 
@@ -256,28 +347,41 @@ export function maximalLyapunov(
   let elapsed = 0;
   const convergence: number[] = [];
   const localExponents: number[] = [];
-  const intervalTime = settings.renormEvery * settings.dt;
-  const renormIntervals = Math.floor(settings.steps / settings.renormEvery);
-  for (let interval = 0; interval < renormIntervals; interval += 1) {
-    for (let s = 0; s < settings.renormEvery; s += 1) {
-      stepper(ref, settings.dt, rhs, refOut);
+  let completedSteps = 0;
+  while (completedSteps < settings.steps) {
+    const blockSteps = Math.min(settings.renormEvery, settings.steps - completedSteps);
+    const intervalTime = blockSteps * settings.dt;
+    for (let s = 0; s < blockSteps; s += 1) {
+      advanceFinite(stepper, ref, settings.dt, finiteRhs, refOut, caller, 'reference state');
       ref.set(refOut);
-      stepper(shadow, settings.dt, rhs, shadowOut);
+      advanceFinite(stepper, shadow, settings.dt, finiteRhs, shadowOut, caller, 'shadow state');
       shadow.set(shadowOut);
     }
+    completedSteps += blockSteps;
     let d = 0;
     for (let i = 0; i < n; i += 1) d += (Number(shadow[i] ?? 0) - Number(ref[i] ?? 0)) ** 2;
     d = Math.sqrt(d);
-    if (d > 0) {
-      logSum += Math.log(d / d0);
-      elapsed += intervalTime;
-      convergence.push(logSum / elapsed);
-      localExponents.push(Math.log(d / d0) / intervalTime);
-      // Rescale shadow back to separation d0 along the current direction.
-      const scale = d0 / d;
-      for (let i = 0; i < n; i += 1)
-        shadow[i] = Number(ref[i] ?? 0) + scale * (Number(shadow[i] ?? 0) - Number(ref[i] ?? 0));
+    if (!(d > 0) || !Number.isFinite(d)) {
+      throw new Error(`${caller}: trajectory separation is non-finite or collapsed to zero.`);
     }
+    const growth = Math.log(d / d0);
+    const localExponent = growth / intervalTime;
+    if (!Number.isFinite(growth) || !Number.isFinite(localExponent)) {
+      throw new Error(`${caller}: separation growth produced a non-finite exponent.`);
+    }
+    logSum += growth;
+    elapsed += intervalTime;
+    const runningExponent = logSum / elapsed;
+    if (!Number.isFinite(logSum) || !Number.isFinite(runningExponent)) {
+      throw new Error(`${caller}: accumulated Lyapunov estimate became non-finite.`);
+    }
+    convergence.push(runningExponent);
+    localExponents.push(localExponent);
+    // Rescale shadow back to separation d0 along the current direction.
+    const scale = d0 / d;
+    for (let i = 0; i < n; i += 1)
+      shadow[i] = Number(ref[i] ?? 0) + scale * (Number(shadow[i] ?? 0) - Number(ref[i] ?? 0));
+    assertFiniteValues(shadow, n, caller, 'renormalized shadow state');
   }
 
   const lambdaMax = elapsed > 0 ? logSum / elapsed : 0;
@@ -304,11 +408,19 @@ export function lyapunovSpectrum(
   options: Partial<LyapunovSettings> = {},
   jacobian?: Jacobian
 ): LyapunovSpectrumResult {
-  const settings = resolve(options);
+  const caller = 'lyapunovSpectrum';
+  validateInitialState(state0, caller);
+  if (!Number.isInteger(count) || count < 1) {
+    throw new Error(`${caller}: count must be a positive integer.`);
+  }
+  const settings = resolve(options, caller);
   const stepper = makeStepper(settings.method);
   const n = state0.length;
   const k = Math.min(count, n);
-  const varRhs = makeVariationalRhs(rhs, n, k, jacobian);
+  const finiteRhs = checkedDerivative(rhs, n, caller, 'RHS');
+  const finiteJacobian = jacobian ? checkedJacobian(jacobian, n, caller) : undefined;
+  const rawVarRhs = makeVariationalRhs(finiteRhs, n, k, finiteJacobian);
+  const varRhs = checkedDerivative(rawVarRhs, n * (k + 1), caller, 'variational RHS');
 
   const aug = new Float64Array(n * (k + 1));
   const augOut = new Float64Array(aug.length);
@@ -318,31 +430,43 @@ export function lyapunovSpectrum(
   for (let i = 0; i < n; i += 1) refState[i] = Number(state0[i] ?? 0);
   const refOut = new Float64Array(n);
   for (let i = 0; i < settings.transientSteps; i += 1) {
-    stepper(refState, settings.dt, rhs, refOut);
+    advanceFinite(stepper, refState, settings.dt, finiteRhs, refOut, caller, 'reference state');
     refState.set(refOut);
   }
   aug.set(refState, 0);
   seedTangentFrame(aug, n, k, settings.seed);
+  assertFiniteValues(aug, aug.length, caller, 'seeded tangent frame');
 
   const views: StateVector[] = [];
   for (let j = 0; j < k; j += 1) views.push(aug.subarray(n + j * n, n + (j + 1) * n));
 
   const accum = new Array<number>(k).fill(0);
   const localSeries: number[][] = Array.from({ length: k }, () => []);
-  const intervalTime = settings.renormEvery * settings.dt;
   let elapsed = 0;
-  const renormIntervals = Math.floor(settings.steps / settings.renormEvery);
-  for (let interval = 0; interval < renormIntervals; interval += 1) {
-    for (let s = 0; s < settings.renormEvery; s += 1) {
-      stepper(aug, settings.dt, varRhs, augOut);
+  let completedSteps = 0;
+  while (completedSteps < settings.steps) {
+    const blockSteps = Math.min(settings.renormEvery, settings.steps - completedSteps);
+    const intervalTime = blockSteps * settings.dt;
+    for (let s = 0; s < blockSteps; s += 1) {
+      advanceFinite(stepper, aug, settings.dt, varRhs, augOut, caller, 'state/tangent output');
       aug.set(augOut);
     }
+    completedSteps += blockSteps;
     const norms = gramSchmidt(views, n);
     for (let j = 0; j < k; j += 1) {
-      const growth = Math.log(norms[j] ?? 1);
+      const norm = norms[j] ?? Number.NaN;
+      if (!(norm > 0) || !Number.isFinite(norm)) {
+        throw new Error(`${caller}: QR output is non-finite or rank-deficient.`);
+      }
+      const growth = Math.log(norm);
+      if (!Number.isFinite(growth)) throw new Error(`${caller}: QR growth is non-finite.`);
+      const localExponent = growth / intervalTime;
+      if (!Number.isFinite(localExponent)) throw new Error(`${caller}: local tangent exponent is non-finite.`);
       accum[j] = (accum[j] ?? 0) + growth;
-      localSeries[j]!.push(growth / intervalTime);
+      if (!Number.isFinite(accum[j])) throw new Error(`${caller}: accumulated tangent growth is non-finite.`);
+      localSeries[j]!.push(localExponent);
     }
+    assertFiniteValues(aug, aug.length, caller, 'orthonormalized state/tangent frame');
     elapsed += intervalTime;
   }
 

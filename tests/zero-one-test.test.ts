@@ -11,6 +11,13 @@ import { mulberry32 } from '../src/chaos/variational';
  */
 
 describe('0–1 test on synthetic signals', () => {
+  test('rejects empty, too-short, and non-finite series', () => {
+    expect(() => zeroOneTest([])).toThrow(/at least/);
+    expect(() => zeroOneTest(new Array<number>(19).fill(0))).toThrow(/at least/);
+    expect(() => zeroOneTest([...new Array<number>(19).fill(0), Number.NaN])).toThrow(/finite/);
+    expect(() => zeroOneTest([...new Array<number>(19).fill(0), Number.POSITIVE_INFINITY])).toThrow(/finite/);
+  });
+
   test('a purely periodic signal is classified as regular (K ≈ 0)', () => {
     const series = Array.from({ length: 2000 }, (_, j) => Math.sin(0.4 * j) + 0.5 * Math.cos(0.13 * j));
     const { K } = zeroOneTest(series);
@@ -29,6 +36,7 @@ describe('0–1 test on synthetic signals', () => {
     const a = zeroOneTest(series, { seed: 7 });
     const b = zeroOneTest(series, { seed: 7 });
     expect(a.K).toBe(b.K);
+    expect(a.kValues.every((value) => value >= -1 && value <= 1)).toBe(true);
   });
 });
 

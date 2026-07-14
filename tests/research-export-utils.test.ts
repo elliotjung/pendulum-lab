@@ -18,4 +18,23 @@ describe('research export utilities', () => {
     expect(csvCell('a"b')).toBe('"a""b"');
     expect(csvCell('a\nb')).toBe('"a\nb"');
   });
+
+  test.each([
+    '=2+3',
+    '+cmd',
+    '-10+20',
+    '@SUM(A1:A2)',
+    '  =HYPERLINK("https://example.test")',
+    '\t@payload',
+    '\n=payload'
+  ])('csvCell neutralizes spreadsheet formula input %j', (value) => {
+    const cell = csvCell(value);
+    const decoded = cell.startsWith('"') ? cell.slice(1, -1).replace(/""/g, '"') : cell;
+    expect(decoded).toBe(`'${value}`);
+  });
+
+  test('csvCell leaves ordinary signed numeric values unchanged', () => {
+    expect(csvCell(-1.25)).toBe('-1.25');
+    expect(csvCell('1e-9')).toBe('1e-9');
+  });
 });

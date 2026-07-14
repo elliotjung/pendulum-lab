@@ -14,7 +14,7 @@ import { presentLabChrome } from './LabChromePresenter';
 import { RenderScheduler } from './RenderScheduler';
 import { SimulationClock, type SimulationTimingMode } from './SimulationClock';
 import { LabRecording } from './LabRecording';
-import { LabControls, readLabConfig } from './LabControls';
+import { LabControls, readLabConfig, readLabStepsPerFrame } from './LabControls';
 import { compactViewport, LabQualityBudget, type QualityMode } from './LabQualityBudget';
 import { webGLTrailRequested } from '../render/webglTrailRenderer';
 import {
@@ -22,6 +22,10 @@ import {
   tryCreateMainCanvasWorkerClient,
   type MainCanvasWorkerClient
 } from './MainCanvasWorkerClient';
+import type { RuntimeSnapshot } from '../types/domain';
+import { stateStore } from '../state/StateStore';
+import { legacyApp } from '../runtime/legacyCompat';
+import { canonicalLabSnapshot, labConfigFromSnapshot } from './LabSnapshotRestore';
 
 /**
  * Full modern Lab tab: the simulation/render loop plus every side plot
@@ -117,9 +121,9 @@ export class LabApp {
   }
 
   /** (Re)build the simulation and clear all derived histories. */
-  private build(): void {
-    const config = this.readConfig();
-    this.requestedSpf = Math.max(1, Math.round(dom.num('spf', 6)));
+  private build(restored?: RuntimeSnapshot): void {
+    const config: LabConfig = restored ? labConfigFromSnapshot(restored) : this.readConfig();
+    this.requestedSpf = restored ? restored.stepsPerFrame : readLabStepsPerFrame();
     this.spf = this.requestedSpf;
     this.phaseAxis = dom.str('phaseAxis', '1');
     this.quality.setMode(this.quality.readMode(), 'silent');
@@ -128,6 +132,11 @@ export class LabApp {
     this.poincare.setCapacity(this.quality.effectivePoincareCap());
 
     this.sim = new LabSimulation(config);
+    if (restored) this.sim.time = restored.simTime;
+    this.lastTime = restored?.simTime ?? 0;
+    this.lastDrift = 0;
+    this.lastPhysicsMs = 0;
+    this.lastAdvancedSteps = 0;
     const dim = config.system === 'triple' ? 6 : 4;
     const rhs = (s: Float64Array, o: Float64Array) =>
       physicsAdapter.derivative(config.system, s, config.parameters, config.gamma, o);
@@ -542,6 +551,15 @@ export class LabApp {
     }
   }
 
+  /** Continue from a saved session only when store and interactive-Lab contracts agree. */
+  restoreSnapshot(snapshot: RuntimeSnapshot): void {
+    this.build(canonicalLabSnapshot(snapshot));
+    if (!this.running) {
+      this.running = true;
+      this.rafId = requestAnimationFrame(this.loop);
+    }
+  }
+
   /** Replace the initial angles (used by drag-to-set) and restart. */
   setAngles(angles: number[]): void {
     const ids = this.sim.config.system === 'triple' ? ['th1', 'th2', 'th3'] : ['th1', 'th2'];
@@ -559,6 +577,7 @@ export class LabApp {
     const cfg = () => this.sim.config;
     this.controls.wire({
       reset: () => this.reset(),
+      restoreSnapshot: (snapshot) => this.restoreSnapshot(snapshot),
       applyQualityMode: () => this.quality.setMode(this.quality.readMode(), 'manual'),
       trimEnsembleToQuality: () => this.ensemble.trimToCap(this.quality.profile().ensembleCap),
       clearTrail: () => {
@@ -579,9 +598,18 @@ export class LabApp {
       exportPoincare: () => downloadText('pendulum_modern_poincare.csv', poincareCsv(this.poincare.list()), 'text/csv'),
       exportJson: () => {
         const snap = this.sim.snapshot();
+        const seed = dom.num('seed', Number.NaN);
         downloadText(
           'pendulum_modern_run.json',
-          JSON.stringify(runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift), null, 2),
+          JSON.stringify(
+            runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift, {
+              mode: legacyApp()?.runMode ?? stateStore.snapshot().mode,
+              stepsPerFrame: this.requestedSpf,
+              seed: Number.isFinite(seed) ? seed : null
+            }),
+            null,
+            2
+          ),
           'application/json'
         );
       },

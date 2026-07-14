@@ -1,5 +1,6 @@
 import type { Derivative, StateVector } from '../physics/types';
 import { detectEvents, type CrossingDirection, type EventFunction } from '../physics/events';
+import { checkedWorkProduct, integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /**
  * Poincare-section sampling and parameter-sweep bifurcation diagrams, both
@@ -93,7 +94,7 @@ export function poincareSection(state0: ArrayLike<number>, rhs: Derivative, opti
       dt: options.dt ?? 1e-3,
       maxTime: options.maxTime,
       rootTol: options.rootTol ?? 1e-9,
-      maxEvents: Number.isFinite(maxPoints) ? transient + maxPoints : Infinity
+      ...(Number.isFinite(maxPoints) ? { maxEvents: transient + maxPoints } : {})
     }
   );
   const kept = result.events.slice(transient);
@@ -146,6 +147,26 @@ export interface BifurcationColumn<P> {
  * chaotic window yields a broad scatter — the classic bifurcation picture.
  */
 export function bifurcationDiagram<P>(options: BifurcationOptions<P>): BifurcationColumn<P>[] {
+  const parameterCount = options.parameters.length;
+  const budget = NUMERICAL_WORK_BUDGETS.bifurcation;
+  if (!Number.isSafeInteger(parameterCount) || parameterCount > budget.maxParameters) {
+    throw new RangeError(`bifurcationDiagram: parameter count exceeds ${budget.maxParameters}.`);
+  }
+  const transientCrossings = options.transientCrossings ?? 0;
+  const maxPointsPerParam = options.maxPointsPerParam ?? 200;
+  if (!Number.isSafeInteger(transientCrossings) || transientCrossings < 0) {
+    throw new RangeError('bifurcationDiagram: transientCrossings must be a non-negative safe integer.');
+  }
+  if (!Number.isSafeInteger(maxPointsPerParam) || maxPointsPerParam < 0) {
+    throw new RangeError('bifurcationDiagram: maxPointsPerParam must be a non-negative safe integer.');
+  }
+  const stepsPerParameter = integrationStepCount(options.maxTime, options.dt ?? 1e-3, 'bifurcationDiagram');
+  const sweepSteps = checkedWorkProduct([parameterCount, stepsPerParameter], 'bifurcationDiagram');
+  if (sweepSteps > budget.maxSweepIntegrationSteps) {
+    throw new RangeError(
+      `bifurcationDiagram: sweep work exceeds ${budget.maxSweepIntegrationSteps} integration steps.`
+    );
+  }
   const columns: BifurcationColumn<P>[] = [];
   for (const param of options.parameters) {
     const section = poincareSection(options.makeState0(param), options.makeRhs(param), {
@@ -153,8 +174,8 @@ export function bifurcationDiagram<P>(options: BifurcationOptions<P>): Bifurcati
       direction: options.direction ?? 'both',
       dt: options.dt ?? 1e-3,
       maxTime: options.maxTime,
-      transientCrossings: options.transientCrossings ?? 0,
-      maxPoints: options.maxPointsPerParam ?? 200
+      transientCrossings,
+      maxPoints: maxPointsPerParam
     });
     columns.push({ param, values: section.points.map(options.observable) });
   }

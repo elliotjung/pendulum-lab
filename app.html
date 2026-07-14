@@ -251,33 +251,33 @@
               <div class="acc-sub">Initial Angles</div>
               <div class="row">
                 <label class="has-tip" data-tip="Initial angle of arm 1 in radians (−π to π)" for="th1">θ₁ (rad)</label>
-                <input id="th1" type="range" min="-3.14159" max="3.14159" step="0.001" value="2.0">
+                <input id="th1" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="2.0">
                 <span class="val" id="th1V">2.000</span>
               </div>
               <div class="row">
                 <label class="has-tip" data-tip="Initial angle of arm 2 in radians (−π to π)" for="th2">θ₂ (rad)</label>
-                <input id="th2" type="range" min="-3.14159" max="3.14159" step="0.001" value="2.5">
+                <input id="th2" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="2.5">
                 <span class="val" id="th2V">2.500</span>
               </div>
               <div class="row" data-tri>
                 <label for="th3">θ₃ (rad)</label>
-                <input id="th3" type="range" min="-3.14159" max="3.14159" step="0.001" value="1.0">
+                <input id="th3" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="1.0">
                 <span class="val" id="th3V">1.000</span>
               </div>
               <div class="acc-sub">Initial Velocities</div>
               <div class="row">
                 <label for="iw1">ω₁ (rad/s)</label>
-                <input id="iw1" type="range" min="-12" max="12" step="0.1" value="0">
+                <input id="iw1" type="range" min="-64" max="64" step="0.1" value="0">
                 <span class="val" id="iw1V">0.0</span>
               </div>
               <div class="row">
                 <label for="iw2">ω₂ (rad/s)</label>
-                <input id="iw2" type="range" min="-12" max="12" step="0.1" value="0">
+                <input id="iw2" type="range" min="-64" max="64" step="0.1" value="0">
                 <span class="val" id="iw2V">0.0</span>
               </div>
               <div class="row" data-tri>
                 <label for="iw3">ω₃ (rad/s)</label>
-                <input id="iw3" type="range" min="-12" max="12" step="0.1" value="0">
+                <input id="iw3" type="range" min="-64" max="64" step="0.1" value="0">
                 <span class="val" id="iw3V">0.0</span>
               </div>
             </div>
@@ -306,7 +306,7 @@
               </div>
               <div class="row">
                 <label class="has-tip" data-tip="Linear damping γ. Any γ&gt;0 makes the system dissipative — energy conservation diagnostics become interpretive." for="gamma">γ damping</label>
-                <input id="gamma" type="range" min="0" max="2" step="0.01" value="0">
+                <input id="gamma" type="range" min="0" max="10" step="0.01" value="0">
                 <span class="val" id="gammaV">0.00</span>
               </div>
             </div>
@@ -369,6 +369,8 @@
                   <option value="hmidpoint">Canonical implicit midpoint — conditional symplectic</option>
                   <option value="leapfrog">Leapfrog KDK — pseudo-symplectic θ/ω</option>
                   <option value="yoshida4">Yoshida4 — pseudo-symplectic θ/ω</option>
+                  <option value="yoshida6">Yoshida6 — high-order composition</option>
+                  <option value="yoshida8">Yoshida8 — high-order composition</option>
                   <option value="gauss2">Implicit midpoint θ/ω</option>
                   <option value="bdf2">TR-BDF2 — stiff L-stable</option>
                   <option value="symplectic">Symplectic Euler — separable approximation</option>
@@ -378,12 +380,12 @@
               </div>
               <div class="row">
                 <label class="has-tip" data-tip="Timestep dt. Smaller dt = higher accuracy, higher CPU cost." for="dt">dt (s)</label>
-                <input id="dt" type="range" min="0.0005" max="0.01" step="0.0005" value="0.003">
+                <input id="dt" type="range" min="0.0001" max="0.05" step="0.0001" value="0.003">
                 <span class="val" id="dtV">0.0030</span>
               </div>
               <div class="row">
                 <label for="tol">tol (adaptive/implicit)</label>
-                <input id="tol" type="range" min="-9" max="-3" step="0.5" value="-6">
+                <input id="tol" type="range" min="-12" max="-3" step="0.5" value="-6">
                 <span class="val" id="tolV">1.0e-6</span>
               </div>
               <div class="row">

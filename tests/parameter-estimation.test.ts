@@ -168,6 +168,32 @@ describe('fitDoublePendulum (inverse problem)', () => {
   const times = Array.from({ length: 41 }, (_, i) => i * 0.05); // 0 .. 2.0 s
   const dt = 1e-3;
 
+  const fitAtTimes = (sampleTimes: readonly number[], sampleDt: number = dt): void => {
+    fitDoublePendulum(
+      { times: sampleTimes, angles: sampleTimes.map(() => [initialState[0], initialState[1]] as const) },
+      {
+        initialState,
+        base,
+        gamma: 0,
+        estimate: ['g'],
+        initialGuess: [9],
+        dt: sampleDt
+      }
+    );
+  };
+
+  it.each([0, -1e-3, Number.NaN, Infinity])('rejects invalid forward-model dt=%s', (invalidDt) => {
+    expect(() => fitAtTimes([0, 0.1], invalidDt)).toThrow(/dt must be positive and finite/);
+  });
+
+  it('rejects non-finite, negative, duplicate, and decreasing observation timestamps', () => {
+    expect(() => fitAtTimes([0, Number.NaN])).toThrow(/observation times must be finite/);
+    expect(() => fitAtTimes([0, Infinity])).toThrow(/observation times must be finite/);
+    expect(() => fitAtTimes([-0.1, 0])).toThrow(/observation times must be non-negative/);
+    expect(() => fitAtTimes([0, 0.1, 0.1])).toThrow(/observation times must be strictly increasing/);
+    expect(() => fitAtTimes([0, 0.2, 0.1])).toThrow(/observation times must be strictly increasing/);
+  });
+
   it('recovers a single unknown (g) from a noise-free trajectory to high accuracy', () => {
     const angles = referenceAngles(base, 0, initialState, times, dt);
     const observation: DoublePendulumObservation = { times, angles };

@@ -1,6 +1,7 @@
 import type { PendulumParameters } from '../types/domain';
 import { rhsDouble } from '../physics/double';
 import { rk4Step } from '../physics/integrators';
+import { checkedWorkProduct, integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /**
  * Basin/exit-set diagnostics for the double pendulum: the basin entropy of
@@ -247,6 +248,10 @@ export interface FlipBasinOptions {
   maxTime?: number;
 }
 
+// This routine is synchronous and performs O(n² maxTime/dt) RK4 steps. Keep
+// malformed worker/UI input from allocating an enormous grid or monopolising
+// the main thread indefinitely while retaining ample headroom above the
+// platform's normal 40–90 cell research grids.
 /**
  * Classify a grid of initial angles (θ₁, θ₂), both rods released from rest, by
  * which rod first flips over the top (|θ| exceeds π): label 0 = first rod flips
@@ -259,7 +264,34 @@ export function doublePendulumFlipBasin(params: PendulumParameters, options: Fli
   const [lo, hi] = options.range ?? [-3, 3];
   const dt = options.dt ?? 0.01;
   const maxTime = options.maxTime ?? 20;
-  const maxSteps = Math.round(maxTime / dt);
+  if (!Number.isSafeInteger(n) || n < 2 || n > NUMERICAL_WORK_BUDGETS.flipBasin.maxResolution) {
+    throw new Error(
+      `doublePendulumFlipBasin: n must be an integer between 2 and ${NUMERICAL_WORK_BUDGETS.flipBasin.maxResolution}.`
+    );
+  }
+  if (!(dt > 0) || !Number.isFinite(dt)) {
+    throw new Error('doublePendulumFlipBasin: dt must be positive and finite.');
+  }
+  if (maxTime < 0 || !Number.isFinite(maxTime)) {
+    throw new Error('doublePendulumFlipBasin: maxTime must be finite and non-negative.');
+  }
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || !(hi > lo) || !Number.isFinite(hi - lo)) {
+    throw new Error('doublePendulumFlipBasin: range endpoints must be finite and strictly increasing.');
+  }
+  const integrationSteps = integrationStepCount(maxTime, dt, 'doublePendulumFlipBasin');
+  if (integrationSteps > NUMERICAL_WORK_BUDGETS.flipBasin.maxStepsPerCell) {
+    throw new Error(
+      `doublePendulumFlipBasin: maxTime/dt must not exceed ${NUMERICAL_WORK_BUDGETS.flipBasin.maxStepsPerCell} steps per cell.`
+    );
+  }
+  const totalWork = checkedWorkProduct([n, n, integrationSteps], 'doublePendulumFlipBasin');
+  if (totalWork > NUMERICAL_WORK_BUDGETS.flipBasin.maxGridTrajectorySteps) {
+    throw new Error(
+      `doublePendulumFlipBasin: requested grid exceeds the ${NUMERICAL_WORK_BUDGETS.flipBasin.maxGridTrajectorySteps}-step work budget.`
+    );
+  }
+  const fullSteps = Math.floor(maxTime / dt);
+  const remainder = maxTime - fullSteps * dt;
   const labels = new Int32Array(n * n);
   const rhs = (s: Float64Array, o: Float64Array): void => {
     rhsDouble(s, params, 0, o);
@@ -267,6 +299,14 @@ export function doublePendulumFlipBasin(params: PendulumParameters, options: Fli
 
   const current = new Float64Array(4);
   const next = new Float64Array(4);
+  const advanceAndClassify = (stepDt: number): number => {
+    rk4Step(current, stepDt, rhs, next);
+    current.set(next);
+    const flip1 = Math.abs(current[0]!) > Math.PI;
+    const flip2 = Math.abs(current[1]!) > Math.PI;
+    if (!flip1 && !flip2) return 2;
+    return flip1 && (!flip2 || Math.abs(current[0]!) >= Math.abs(current[1]!)) ? 0 : 1;
+  };
   for (let iy = 0; iy < n; iy += 1) {
     const theta2 = lo + ((hi - lo) * iy) / (n - 1);
     for (let ix = 0; ix < n; ix += 1) {
@@ -276,16 +316,12 @@ export function doublePendulumFlipBasin(params: PendulumParameters, options: Fli
       current[2] = 0;
       current[3] = 0;
       let label = 2;
-      for (let step = 0; step < maxSteps; step += 1) {
-        rk4Step(current, dt, rhs, next);
-        current.set(next);
-        const flip1 = Math.abs(current[0]!) > Math.PI;
-        const flip2 = Math.abs(current[1]!) > Math.PI;
-        if (flip1 || flip2) {
-          label = flip1 && (!flip2 || Math.abs(current[0]!) >= Math.abs(current[1]!)) ? 0 : 1;
-          break;
-        }
+      for (let step = 0; step < fullSteps; step += 1) {
+        label = advanceAndClassify(dt);
+        if (label !== 2) break;
       }
+      // Integrate the exact tail rather than rounding maxTime/dt up or down.
+      if (label === 2 && remainder > 0) label = advanceAndClassify(remainder);
       labels[iy * n + ix] = label;
     }
   }

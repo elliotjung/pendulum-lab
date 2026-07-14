@@ -1,6 +1,7 @@
 import type { PendulumParameters } from '../types/domain';
 import { doublePendulumFlipBasin, wadaCandidate, type LabelGrid } from './basin';
 import { hashText } from '../research/researchExportUtils';
+import { checkedWorkProduct, integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /**
  * Wada-property resolution-convergence analysis.
@@ -169,13 +170,35 @@ export function wadaResolutionConvergence(
   params: PendulumParameters,
   options: WadaConvergenceOptions = {}
 ): WadaConvergenceResult {
-  const resolutions = (options.resolutions ?? [40, 60, 90])
-    .map((n) => Math.max(16, Math.min(240, Math.round(n))))
-    .sort((a, b) => a - b)
-    .filter((n, index, all) => all.indexOf(n) === index);
+  const requestedResolutions = options.resolutions ?? [40, 60, 90];
+  const budget = NUMERICAL_WORK_BUDGETS.wada;
+  if (
+    !Array.isArray(requestedResolutions) ||
+    requestedResolutions.length < 1 ||
+    requestedResolutions.length > budget.maxResolutions
+  ) {
+    throw new RangeError(`wadaResolutionConvergence: resolutions must contain 1..${budget.maxResolutions} entries.`);
+  }
+  if (requestedResolutions.some((n) => !Number.isSafeInteger(n) || n < 16 || n > 240)) {
+    throw new RangeError('wadaResolutionConvergence: each resolution must be a safe integer in [16, 240].');
+  }
+  const resolutions = [...requestedResolutions].sort((a, b) => a - b);
+  if (new Set(resolutions).size !== resolutions.length) {
+    throw new RangeError('wadaResolutionConvergence: resolutions must be unique.');
+  }
   const dt = options.dt ?? 0.01;
   const maxTime = options.maxTime ?? 20;
   const range = options.range ?? [-3, 3];
+  const stepsPerCell = integrationStepCount(maxTime, dt, 'wadaResolutionConvergence');
+  let totalSteps = 0;
+  for (const n of resolutions) {
+    totalSteps += checkedWorkProduct([n, n, stepsPerCell], 'wadaResolutionConvergence');
+    if (!Number.isSafeInteger(totalSteps) || totalSteps > budget.maxGridTrajectorySteps) {
+      throw new RangeError(
+        `wadaResolutionConvergence: aggregate grid work exceeds ${budget.maxGridTrajectorySteps} trajectory steps.`
+      );
+    }
+  }
   const grids = resolutions.map((n) => doublePendulumFlipBasin(params, { n, dt, maxTime, range }));
   return wadaConvergenceFromGrids(grids, resolutions, options, { dt, maxTime, range });
 }

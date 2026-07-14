@@ -31,4 +31,29 @@ describe('import/export round-trip and security guards', () => {
     expect(result.ok).toBe(false);
     expect(result.problems.join(' ')).toContain('exceeds');
   });
+
+  test('constructor validates initial overrides through the same strict state contract', () => {
+    expect(() => new StateStore({ schemaVersion: 'pendulum-session/v999-ts' })).toThrow(/newer/);
+    expect(() => new StateStore({ tolerance: Number.NaN })).toThrow(/tolerance/);
+    expect(() => new StateStore({ stepsPerFrame: -1 })).toThrow(/stepsPerFrame/);
+    expect(() => new StateStore({ simTime: -0.1 })).toThrow(/simTime/);
+  });
+
+  test('triple sessions require finite positive third-link parameters', () => {
+    expect(
+      StateStore.validate({
+        ...new StateStore().snapshot(),
+        systemType: 'triple',
+        state: [0, 0, 0, 0, 0, 0]
+      }).ok
+    ).toBe(false);
+    expect(
+      StateStore.validate({
+        ...new StateStore().snapshot(),
+        systemType: 'triple',
+        parameters: { m1: 1, m2: 1, m3: -1, l1: 1, l2: 1, l3: Number.POSITIVE_INFINITY, g: 9.81 },
+        state: [0, 0, 0, 0, 0, 0]
+      }).ok
+    ).toBe(false);
+  });
 });

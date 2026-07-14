@@ -29,6 +29,9 @@ import {
   type FtleFieldOptions
 } from '../chaos';
 import { buildRhs, buildJacobian, type SystemSpec } from '../physics/systemSpec';
+import { boundedAngularObservable } from './angularObservable';
+import { safeErrorMessage, safeRequestId } from './protocolSafety';
+import { validateChaosRequestPayload } from './chaosRequestValidation';
 
 /**
  * Typed, data-only message protocol for the chaos worker. Requests describe the
@@ -230,9 +233,9 @@ export interface ZeroOneResponse {
   id: string;
   kind: 'zeroOne';
   ok: true;
-  /** Median asymptotic growth rate K ∈ [0,1]: ≈1 chaotic, ≈0 regular. */
+  /** Median finite-sample correlation K in [-1,1]: near 1 chaotic, near 0 regular. */
   K: number;
-  /** Per-frequency growth rates K_c. */
+  /** Per-frequency finite-sample correlations K_c in [-1,1]. */
   kValues: number[];
   /** The translation-variable trajectory (p_c, q_c) for the median frequency: bounded ⇒ regular, Brownian ⇒ chaotic. */
   pPath: number[];
@@ -375,6 +378,18 @@ export type ChaosResponse =
 
 const wrapPi = (x: number): number => Math.atan2(Math.sin(x), Math.cos(x));
 
+function rqaOptionsFromSettings(settings: RqaJobSettings): RqaOptions {
+  return {
+    dimension: settings.dimension ?? 2,
+    delay: settings.delay ?? 5,
+    targetRecurrenceRate: settings.targetRecurrenceRate ?? 0.1,
+    ...(settings.epsilon === undefined ? {} : { epsilon: settings.epsilon }),
+    ...(settings.lMin === undefined ? {} : { lMin: settings.lMin }),
+    ...(settings.vMin === undefined ? {} : { vMin: settings.vMin }),
+    ...(settings.theiler === undefined ? {} : { theiler: settings.theiler })
+  };
+}
+
 function runLyapunov(req: LyapunovRequest): LyapunovResponse {
   const rhs = buildRhs(req.spec);
   const result = maximalLyapunov(new Float64Array(req.state0), rhs, req.settings ?? {});
@@ -472,14 +487,14 @@ function decimate(values: readonly number[], maxLen: number): number[] {
 function runZeroOne(req: ZeroOneRequest): ZeroOneResponse {
   const rhs = buildRhs(req.spec);
   const s = req.settings ?? {};
-  // A bounded scalar observable: cos(θ₁) is bounded for every system (so an
-  // unbounded whirling angle cannot spuriously inflate the displacement growth).
+  // A bounded angular observable prevents an unbounded whirling angle from
+  // spuriously inflating displacement growth. Spring uses θ at state index 1.
   const series = sampleObservable(rhs, req.state0, {
     dt: s.dt ?? 0.01,
     sampleEvery: s.sampleEvery ?? 30,
     samples: s.samples ?? 3000,
     transientSteps: s.transientSteps ?? 2000,
-    observable: (state) => Math.cos(state[0] ?? 0)
+    observable: boundedAngularObservable(req.spec)
   });
   const result = zeroOneTest(series);
   const medIdx = medianIndex(result.kValues);
@@ -543,23 +558,15 @@ function runBasin(req: BasinRequest): BasinResponse {
 function runRqa(req: RqaRequest): RqaResponse {
   const rhs = buildRhs(req.spec);
   const s = req.settings ?? {};
-  // Bounded observable cos(θ₁); RQA is O(N²) so the series is kept short.
+  // Bounded angular observable; RQA is O(N²) so the series is kept short.
   const series = sampleObservable(rhs, req.state0, {
     dt: s.dt ?? 0.01,
     sampleEvery: s.sampleEvery ?? 20,
     samples: s.samples ?? 360,
     transientSteps: s.transientSteps ?? 2000,
-    observable: (state) => Math.cos(state[0] ?? 0)
+    observable: boundedAngularObservable(req.spec)
   });
-  const rqaOptions: RqaOptions = {
-    dimension: s.dimension ?? 2,
-    delay: s.delay ?? 5,
-    targetRecurrenceRate: s.targetRecurrenceRate ?? 0.1,
-    ...(s.epsilon === undefined ? {} : { epsilon: s.epsilon }),
-    ...(s.lMin === undefined ? {} : { lMin: s.lMin }),
-    ...(s.vMin === undefined ? {} : { vMin: s.vMin }),
-    ...(s.theiler === undefined ? {} : { theiler: s.theiler })
-  };
+  const rqaOptions = rqaOptionsFromSettings(s);
   const r = recurrenceQuantification(series, rqaOptions);
   // Same series + options ⇒ identical embedding/threshold, so the plot matches.
   const mat = recurrenceMatrix(series, rqaOptions);
@@ -620,13 +627,9 @@ function runStudyPoint(req: StudyPointRequest): StudyPointResponse {
     sampleEvery: rq.sampleEvery ?? 20,
     samples: rq.samples ?? 360,
     transientSteps: rq.transientSteps ?? 2000,
-    observable: (state) => Math.cos(state[0] ?? 0)
+    observable: boundedAngularObservable(req.spec)
   });
-  const rqa = recurrenceQuantification(series, {
-    dimension: rq.dimension ?? 2,
-    delay: rq.delay ?? 5,
-    targetRecurrenceRate: rq.targetRecurrenceRate ?? 0.1
-  });
+  const rqa = recurrenceQuantification(series, rqaOptionsFromSettings(rq));
 
   const horizon = s.ftleHorizon ?? 5;
   const ftle = finiteTimeLyapunov(req.state0, rhs, horizon, { dt: s.ftleDt ?? 0.01 }, jacobian);
@@ -667,9 +670,16 @@ function runCodimTwo(req: CodimTwoRequest): CodimTwoResponse {
   return { id: req.id, kind: 'codim2', ok: true, result };
 }
 
-/** Execute a chaos job, converting any thrown error into an error response. */
-export function runChaosJob(req: ChaosRequest): ChaosResponse {
+/** Execute a chaos job, converting malformed input or computation failures into an error response. */
+export function runChaosJob(input: unknown): ChaosResponse {
+  const id = safeRequestId(input);
   try {
+    if (input === null || typeof input !== 'object') throw new TypeError('request must be an object');
+    const req = input as ChaosRequest;
+    if (typeof req.id !== 'string' || req.id.length === 0) throw new TypeError('request id must be a non-empty string');
+    if (typeof req.kind !== 'string') throw new TypeError('request kind must be a string');
+    const requestKind: string = req.kind;
+    validateChaosRequestPayload(req);
     if (req.kind === 'lyapunov') return runLyapunov(req);
     if (req.kind === 'bifurcation') return runBifurcation(req);
     if (req.kind === 'lyapunovSpectrum') return runLyapunovSpectrum(req);
@@ -681,9 +691,8 @@ export function runChaosJob(req: ChaosRequest): ChaosResponse {
     if (req.kind === 'studyPoint') return runStudyPoint(req);
     if (req.kind === 'wadaConvergence') return runWadaConvergence(req);
     if (req.kind === 'codim2') return runCodimTwo(req);
-    const exhaustive: never = req;
-    return { id: (req as ChaosRequest).id, ok: false, error: `unknown request: ${JSON.stringify(exhaustive)}` };
+    return { id, ok: false, error: `unknown request kind: ${requestKind}` };
   } catch (err) {
-    return { id: req.id, ok: false, error: err instanceof Error ? err.message : String(err) };
+    return { id, ok: false, error: safeErrorMessage(err) };
   }
 }

@@ -2,7 +2,7 @@
 
 Pendulum Lab is a framework-free, dependency-free TypeScript engine for nonlinear
 pendulum dynamics, chaos analysis, and reproducible numerical experiments. Every
-layer is unit-tested (1090 tests across 175 files, synced from `reports/vitest-results.json`) and the build, typecheck, and Playwright
+layer is unit-tested (1233 tests across 183 files, synced from `reports/vitest-results.json`) and the build, typecheck, and Playwright
 specs are green.
 
 ## Layers

@@ -1,4 +1,5 @@
 import { takeOverElement } from './domTakeover';
+import { commitLabControls } from './controlCommit';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -53,6 +54,46 @@ const TAB_KEYS: Record<string, string> = {
   '9': 'architecture',
   '0': 'research'
 };
+
+const INTERACTIVE_SHORTCUT_TARGET = [
+  'a[href]',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  'summary',
+  '[contenteditable]:not([contenteditable="false"])',
+  '[role="button"]',
+  '[role="checkbox"]',
+  '[role="combobox"]',
+  '[role="link"]',
+  '[role="menuitem"]',
+  '[role="option"]',
+  '[role="radio"]',
+  '[role="slider"]',
+  '[role="spinbutton"]',
+  '[role="switch"]',
+  '[role="tab"]',
+  '[role="textbox"]'
+].join(',');
+
+type ShortcutGuardEvent = Pick<
+  KeyboardEvent,
+  'altKey' | 'ctrlKey' | 'defaultPrevented' | 'isComposing' | 'metaKey' | 'target'
+>;
+
+interface ClosestTarget {
+  closest?(selector: string): unknown;
+  parentElement?: ClosestTarget | null;
+}
+
+/** True when a global shell shortcut must leave the keystroke to the page/widget. */
+export function shouldIgnoreShellShortcut(event: ShortcutGuardEvent): boolean {
+  if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return true;
+  const target = event.target as (EventTarget & ClosestTarget) | null;
+  const candidate = typeof target?.closest === 'function' ? target : target?.parentElement;
+  return typeof candidate?.closest === 'function' && Boolean(candidate.closest(INTERACTIVE_SHORTCUT_TARGET));
+}
 
 function compactRail(): boolean {
   return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
@@ -189,23 +230,26 @@ export class Shell {
     void tabName;
   }
 
-  private setSlider(id: string, value: number): void {
+  private setSlider(id: string, value: number, changed: Set<string>): void {
     const el = document.getElementById(id) as HTMLInputElement | null;
     if (!el) return;
-    el.value = String(value);
+    const next = String(value);
+    if (el.value !== next) changed.add(id);
+    el.value = next;
     const span = document.getElementById(`${id}V`);
     const fmt = SLIDERS[id];
     if (span && fmt) span.textContent = fmt(el.value);
-    el.dispatchEvent(new Event('change', { bubbles: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
-  applyPreset(name: string): void {
+  private applyPresetValues(name: string, changed: Set<string>): boolean {
     const p = PRESETS[name];
-    if (!p) return;
+    if (!p) return false;
     const sel = document.getElementById('sysType') as HTMLSelectElement | null;
     if (sel) {
-      sel.value = p.sysType ?? 'double';
-      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      const next = p.sysType ?? 'double';
+      if (sel.value !== next) changed.add('sysType');
+      sel.value = next;
     }
     const entries: Array<[string, number | undefined]> = [
       ['th1', p.th1],
@@ -223,7 +267,13 @@ export class Shell {
       ['g', p.g],
       ['gamma', p.gamma ?? 0]
     ];
-    for (const [id, v] of entries) if (v !== undefined) this.setSlider(id, v);
+    for (const [id, v] of entries) if (v !== undefined) this.setSlider(id, v, changed);
+    return true;
+  }
+
+  applyPreset(name: string): void {
+    const changed = new Set<string>();
+    if (this.applyPresetValues(name, changed)) commitLabControls('preset', changed);
   }
 
   private bindRailSections(): void {
@@ -335,9 +385,7 @@ export class Shell {
 
   private bindKeyboard(): void {
     document.addEventListener('keydown', (e) => {
-      const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA'))
-        return;
+      if (shouldIgnoreShellShortcut(e)) return;
       if (TAB_KEYS[e.key]) {
         this.switchTo(TAB_KEYS[e.key]!);
         return;
@@ -373,13 +421,16 @@ export class Shell {
   }
 
   private applyUrlDeepLink(): void {
+    const changed = new Set<string>();
+    let hasControlOverride = false;
     const preset = urlParam('preset');
-    if (preset && PRESETS[preset]) this.applyPreset(preset);
+    if (preset && PRESETS[preset]) hasControlOverride = this.applyPresetValues(preset, changed);
     const sysType = urlParam('sysType') ?? urlParam('system');
     const systemSelect = document.getElementById('sysType') as HTMLSelectElement | null;
     if (sysType && systemSelect && Array.from(systemSelect.options).some((option) => option.value === sysType)) {
+      if (systemSelect.value !== sysType) changed.add('sysType');
       systemSelect.value = sysType;
-      systemSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      hasControlOverride = true;
     }
     for (const id of [
       'th1',
@@ -403,8 +454,12 @@ export class Shell {
       const value = urlParam(id);
       if (value === null) continue;
       const numeric = Number.parseFloat(value);
-      if (Number.isFinite(numeric)) this.setSlider(id, numeric);
+      if (Number.isFinite(numeric)) {
+        this.setSlider(id, numeric, changed);
+        hasControlOverride = true;
+      }
     }
+    if (hasControlOverride) commitLabControls('deep-link', changed);
     const tab = urlParam('tab');
     if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
   }

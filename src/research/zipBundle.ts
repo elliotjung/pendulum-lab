@@ -87,6 +87,10 @@ export function dataUrlToBytes(dataUrl: string): Uint8Array {
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
+const MAX_ZIP_ENTRIES = 1_024;
+const MAX_ZIP_ARCHIVE_BYTES = 256 * 1024 * 1024;
+const MAX_ZIP_ENTRY_BYTES = 128 * 1024 * 1024;
+const MAX_ZIP_PATH_BYTES = 1_024;
 
 export function textToBytes(text: string): Uint8Array {
   return encoder.encode(text);
@@ -94,6 +98,34 @@ export function textToBytes(text: string): Uint8Array {
 
 export function bytesToText(bytes: Uint8Array): string {
   return decoder.decode(bytes);
+}
+
+function safeZipPath(path: string): string {
+  const normalized = path.replace(/\\/g, '/');
+  const segments = normalized.split('/');
+  if (
+    normalized.length === 0 ||
+    normalized.startsWith('/') ||
+    /^[A-Za-z]:/.test(normalized) ||
+    /[\u0000-\u001f\u007f]/.test(normalized) ||
+    segments.some((segment) => segment === '' || segment === '.' || segment === '..')
+  ) {
+    throw new Error(`zip: unsafe entry path ${JSON.stringify(path)}`);
+  }
+  if (textToBytes(normalized).length > MAX_ZIP_PATH_BYTES) throw new Error('zip: entry path exceeds byte budget');
+  return normalized;
+}
+
+function requireRange(bytes: Uint8Array, offset: number, length: number, label: string): void {
+  if (
+    !Number.isSafeInteger(offset) ||
+    !Number.isSafeInteger(length) ||
+    offset < 0 ||
+    length < 0 ||
+    offset + length > bytes.length
+  ) {
+    throw new Error(`zip: truncated ${label}`);
+  }
 }
 
 function dosDateTime(date: Date): { time: number; dosDate: number } {
@@ -142,12 +174,28 @@ class ByteWriter {
  * a research bundle whose largest members are already-compressed PNGs).
  */
 export function buildZip(entries: ZipEntryInput[], timestamp: Date = new Date()): Uint8Array {
+  if (entries.length > MAX_ZIP_ENTRIES) throw new Error(`zip: entry count exceeds ${MAX_ZIP_ENTRIES}`);
   const { time, dosDate } = dosDateTime(timestamp);
   const writer = new ByteWriter();
   const central: { name: Uint8Array; crc: number; size: number; offset: number }[] = [];
+  const paths = new Set<string>();
+  // Each STORE entry contributes one 30-byte local header, one 46-byte
+  // central-directory header, and its UTF-8 name in both records. Include the
+  // final 22-byte EOCD record so an archive accepted here is always within the
+  // parser's whole-file budget, metadata included.
+  let projectedArchiveBytes = 22;
 
   for (const entry of entries) {
-    const name = textToBytes(entry.path.replace(/\\/g, '/'));
+    const path = safeZipPath(entry.path);
+    const pathKey = path.toLocaleLowerCase('en-US');
+    if (paths.has(pathKey)) throw new Error(`zip: duplicate entry path ${path}`);
+    paths.add(pathKey);
+    if (entry.data.length > MAX_ZIP_ENTRY_BYTES) throw new Error(`zip: entry ${path} exceeds byte budget`);
+    const name = textToBytes(path);
+    projectedArchiveBytes += 76 + name.length * 2 + entry.data.length;
+    if (projectedArchiveBytes > MAX_ZIP_ARCHIVE_BYTES) {
+      throw new Error('zip: archive including metadata exceeds byte budget');
+    }
     const crc = crc32(entry.data);
     const offset = writer.length;
     writer.u32(0x04034b50);
@@ -197,6 +245,9 @@ export function buildZip(entries: ZipEntryInput[], timestamp: Date = new Date())
   writer.u32(centralSize);
   writer.u32(centralOffset);
   writer.u16(0);
+  if (writer.length !== projectedArchiveBytes || writer.length > MAX_ZIP_ARCHIVE_BYTES) {
+    throw new Error('zip: archive including metadata exceeds byte budget');
+  }
   return writer.concat();
 }
 
@@ -214,37 +265,92 @@ function readU32(bytes: Uint8Array, offset: number): number {
  * so tests validate archive integrity, not just presence.
  */
 export function parseZip(bytes: Uint8Array): ZipEntryParsed[] {
+  if (bytes.length > MAX_ZIP_ARCHIVE_BYTES) throw new Error('zip: archive exceeds byte budget');
   let eocd = -1;
   for (let i = bytes.length - 22; i >= 0; i -= 1) {
-    if (readU32(bytes, i) === 0x06054b50) {
+    // A ZIP comment may itself contain the EOCD byte sequence. It is only a
+    // record candidate when its declared comment occupies exactly the
+    // remaining bytes in the file.
+    if (readU32(bytes, i) === 0x06054b50 && i + 22 + readU16(bytes, i + 20) === bytes.length) {
       eocd = i;
       break;
     }
   }
   if (eocd < 0) throw new Error('zip: end-of-central-directory record not found');
+  requireRange(bytes, eocd, 22, 'end-of-central-directory record');
+  const commentLength = readU16(bytes, eocd + 20);
+  requireRange(bytes, eocd + 22, commentLength, 'end-of-central-directory comment');
+  if (eocd + 22 + commentLength !== bytes.length) throw new Error('zip: trailing or truncated end record');
+  if (readU16(bytes, eocd + 4) !== 0 || readU16(bytes, eocd + 6) !== 0) {
+    throw new Error('zip: multi-disk archives are unsupported');
+  }
   const count = readU16(bytes, eocd + 10);
+  if (count > MAX_ZIP_ENTRIES) throw new Error(`zip: entry count exceeds ${MAX_ZIP_ENTRIES}`);
+  if (readU16(bytes, eocd + 8) !== count) throw new Error('zip: inconsistent central-directory entry count');
+  const centralSize = readU32(bytes, eocd + 12);
   let cursor = readU32(bytes, eocd + 16);
+  const centralEnd = cursor + centralSize;
+  requireRange(bytes, cursor, centralSize, 'central directory');
+  if (centralEnd > eocd) throw new Error('zip: central directory overlaps end record');
   const entries: ZipEntryParsed[] = [];
+  const paths = new Set<string>();
+  let totalDataBytes = 0;
   for (let i = 0; i < count; i += 1) {
+    requireRange(bytes, cursor, 46, `central directory header ${i}`);
     if (readU32(bytes, cursor) !== 0x02014b50) throw new Error(`zip: bad central directory signature at entry ${i}`);
+    const flags = readU16(bytes, cursor + 8);
     const method = readU16(bytes, cursor + 10);
     const crc = readU32(bytes, cursor + 16);
+    const compressedSize = readU32(bytes, cursor + 20);
     const size = readU32(bytes, cursor + 24);
     const nameLength = readU16(bytes, cursor + 28);
     const extraLength = readU16(bytes, cursor + 30);
     const commentLength = readU16(bytes, cursor + 32);
+    const externalAttributes = readU32(bytes, cursor + 38);
     const localOffset = readU32(bytes, cursor + 42);
-    const path = bytesToText(bytes.slice(cursor + 46, cursor + 46 + nameLength));
+    requireRange(bytes, cursor + 46, nameLength + extraLength + commentLength, `central directory entry ${i}`);
+    const path = safeZipPath(bytesToText(bytes.slice(cursor + 46, cursor + 46 + nameLength)));
+    const pathKey = path.toLocaleLowerCase('en-US');
+    if (paths.has(pathKey)) throw new Error(`zip: duplicate entry path ${path}`);
+    paths.add(pathKey);
+    if ((flags & 0x0009) !== 0) throw new Error(`zip: encrypted or deferred entry rejected: ${path}`);
     if (method !== 0) throw new Error(`zip: entry ${path} uses unsupported method ${method}`);
+    if (compressedSize !== size) throw new Error(`zip: STORE entry ${path} has inconsistent sizes`);
+    if (size > MAX_ZIP_ENTRY_BYTES) throw new Error(`zip: entry ${path} exceeds byte budget`);
+    totalDataBytes += size;
+    if (totalDataBytes > MAX_ZIP_ARCHIVE_BYTES) throw new Error('zip: aggregate entry data exceeds byte budget');
+    if (((externalAttributes >>> 16) & 0o170000) === 0o120000)
+      throw new Error(`zip: symbolic link entry rejected: ${path}`);
+    requireRange(bytes, localOffset, 30, `local header for ${path}`);
     if (readU32(bytes, localOffset) !== 0x04034b50) throw new Error(`zip: bad local header for ${path}`);
+    const localFlags = readU16(bytes, localOffset + 6);
+    const localMethod = readU16(bytes, localOffset + 8);
+    const localCrc = readU32(bytes, localOffset + 14);
+    const localCompressedSize = readU32(bytes, localOffset + 18);
+    const localSize = readU32(bytes, localOffset + 22);
+    if (
+      localFlags !== flags ||
+      localMethod !== method ||
+      localCrc !== crc ||
+      localCompressedSize !== compressedSize ||
+      localSize !== size
+    ) {
+      throw new Error(`zip: local and central metadata differ for ${path}`);
+    }
     const localNameLength = readU16(bytes, localOffset + 26);
     const localExtraLength = readU16(bytes, localOffset + 28);
+    requireRange(bytes, localOffset + 30, localNameLength + localExtraLength, `local entry metadata for ${path}`);
+    const localPath = safeZipPath(bytesToText(bytes.slice(localOffset + 30, localOffset + 30 + localNameLength)));
+    if (localPath !== path) throw new Error(`zip: local and central paths differ for ${path}`);
     const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+    requireRange(bytes, dataStart, size, `entry data for ${path}`);
+    if (dataStart + size > cursor) throw new Error(`zip: entry data overlaps central directory for ${path}`);
     const data = bytes.slice(dataStart, dataStart + size);
     if (crc32(data) !== crc) throw new Error(`zip: CRC mismatch for ${path}`);
     entries.push({ path, data, crc32: crc });
     cursor += 46 + nameLength + extraLength + commentLength;
   }
+  if (cursor !== centralEnd) throw new Error('zip: central directory size mismatch');
   return entries;
 }
 

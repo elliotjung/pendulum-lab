@@ -25,6 +25,19 @@ describe('Lab side-plot transferable payloads', () => {
     expect(transfers.every((buffer) => buffer instanceof ArrayBuffer)).toBe(true);
   });
 
+  it('deduplicates views that share one transferable buffer', () => {
+    const shared = new Float32Array(6);
+    const payload: LabSidePlotPayload = {
+      plot: 'energy',
+      energy: {
+        time: shared.subarray(0, 2),
+        total: shared.subarray(2, 4),
+        drift: shared.subarray(4, 6)
+      }
+    };
+    expect(sidePlotTransferables(payload)).toEqual([shared.buffer]);
+  });
+
   it('converts packed point pairs back to plot points', () => {
     expect(pairsToPoints(Float32Array.from([1, 2, 3, 4]))).toEqual([
       { x: 1, y: 2 },

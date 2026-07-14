@@ -16,8 +16,21 @@ export interface WorkerStepResult {
   fallbackReason?: string;
 }
 
+export class WorkerBridgeTerminatedError extends Error {
+  constructor() {
+    super('worker bridge was terminated');
+    this.name = 'WorkerBridgeTerminatedError';
+  }
+}
+
+interface PendingWorkerStep {
+  cleanup: () => void;
+  reject: (reason: Error) => void;
+}
+
 export class WorkerBridge {
   private worker: Worker | null = null;
+  private readonly pending = new Map<string, PendingWorkerStep>();
 
   constructor(private readonly url = new URL('../workers/physics.worker.ts', import.meta.url)) {}
 
@@ -42,6 +55,7 @@ export class WorkerBridge {
   }
 
   async step(request: WorkerStepRequest): Promise<WorkerStepResult> {
+    this.validateRequest(request);
     if (!this.available()) {
       notifyWorkerFallback('physics-worker', 'worker unavailable');
       return this.fallbackStep(request);
@@ -60,20 +74,28 @@ export class WorkerBridge {
           globalThis.clearTimeout(timeout);
           worker.removeEventListener('message', onMessage);
           worker.removeEventListener('error', onError);
+          this.pending.delete(id);
         };
         const onError = (event: ErrorEvent) => {
           cleanup();
           reject(event.error instanceof Error ? event.error : new Error(event.message));
         };
         const onMessage = (event: MessageEvent<{ id: string; state: number[]; elapsedMs: number }>) => {
-          if (event.data.id !== id) return;
-          cleanup();
-          const latencyMs = performance.now() - started;
-          eventBus.emit('worker:latency', { latencyMs });
-          resolve({ state: event.data.state, elapsedMs: event.data.elapsedMs, fallback: false });
+          try {
+            if (event.data?.id !== id) return;
+            this.validateResult(event.data, request.state.length);
+            cleanup();
+            const latencyMs = performance.now() - started;
+            eventBus.emit('worker:latency', { latencyMs });
+            resolve({ state: event.data.state, elapsedMs: event.data.elapsedMs, fallback: false });
+          } catch (error) {
+            cleanup();
+            reject(error instanceof Error ? error : new Error(String(error)));
+          }
         };
         worker.addEventListener('message', onMessage);
         worker.addEventListener('error', onError);
+        this.pending.set(id, { cleanup, reject });
         try {
           worker.postMessage({ ...request, id });
         } catch (error) {
@@ -82,6 +104,7 @@ export class WorkerBridge {
         }
       });
     } catch (error) {
+      if (error instanceof WorkerBridgeTerminatedError) throw error;
       this.terminate();
       const detail = notifyWorkerFallback('physics-worker', error, { once: false });
       const fallback = this.fallbackStep(request);
@@ -90,8 +113,52 @@ export class WorkerBridge {
   }
 
   terminate(): void {
+    const terminationError = new WorkerBridgeTerminatedError();
+    for (const pending of [...this.pending.values()]) {
+      pending.cleanup();
+      pending.reject(terminationError);
+    }
+    this.pending.clear();
     this.worker?.terminate();
     this.worker = null;
+  }
+
+  private validateRequest(request: WorkerStepRequest): void {
+    if (!Array.isArray(request.state) || request.state.length !== 2) {
+      throw new RangeError('worker step state must contain exactly 2 harmonic-oscillator values');
+    }
+    for (let index = 0; index < request.state.length; index += 1) {
+      if (!Object.hasOwn(request.state, index) || !Number.isFinite(request.state[index])) {
+        throw new RangeError('worker step state must be dense and finite');
+      }
+    }
+    if (!Number.isFinite(request.dt) || request.dt <= 0 || request.dt > 1) {
+      throw new RangeError('worker step dt must be finite and in (0, 1]');
+    }
+    if (!Number.isSafeInteger(request.steps) || request.steps < 1 || request.steps > 100_000) {
+      throw new RangeError('worker step count must be a safe integer in [1, 100000]');
+    }
+    if (request.method !== 'rk4' && request.method !== 'rk2' && request.method !== 'euler') {
+      throw new RangeError('worker step method is unsupported');
+    }
+    const stageMultiplier = request.method === 'rk4' ? 4 : request.method === 'rk2' ? 2 : 1;
+    if (request.state.length * request.steps * stageMultiplier > 10_000_000) {
+      throw new RangeError('worker step aggregate component work exceeds 10000000 stage-components');
+    }
+  }
+
+  private validateResult(result: { state: number[]; elapsedMs: number }, expectedLength: number): void {
+    if (!Array.isArray(result.state) || result.state.length !== expectedLength) {
+      throw new Error('worker step returned a state with the wrong dimension');
+    }
+    for (let index = 0; index < result.state.length; index += 1) {
+      if (!Object.hasOwn(result.state, index) || !Number.isFinite(result.state[index])) {
+        throw new Error('worker step returned a sparse or non-finite state');
+      }
+    }
+    if (!Number.isFinite(result.elapsedMs) || result.elapsedMs < 0) {
+      throw new Error('worker step returned an invalid elapsed time');
+    }
   }
 
   private fallbackStep(request: WorkerStepRequest): WorkerStepResult {
@@ -103,11 +170,13 @@ export class WorkerBridge {
       o[0] = s[1] ?? 0;
       o[1] = -(s[0] ?? 0);
     };
-    for (let i = 0; i < Math.max(1, request.steps); i += 1) {
+    for (let i = 0; i < request.steps; i += 1) {
       step(state, request.dt, rhs, out);
       state.set(out);
     }
-    return { state: Array.from(state), elapsedMs: performance.now() - started, fallback: true };
+    const result = { state: Array.from(state), elapsedMs: performance.now() - started };
+    this.validateResult(result, request.state.length);
+    return { ...result, fallback: true };
   }
 }
 

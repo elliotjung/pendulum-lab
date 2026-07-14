@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T14:09:00.645Z",
+  "generatedAt": "2026-07-14T06:15:05.705Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -126,6 +126,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\CompareTab.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\controlCommit.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -486,6 +498,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\LabSimulation.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\LabSnapshotRestore.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -1290,6 +1314,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\browser\\installJsonImportGuard.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\browser\\savedRunImport.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -3209,6 +3245,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\runtime\\retryableLazy.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\runtime\\ServiceContainer.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -3413,7 +3461,31 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\validation\\numericalBudgets.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\validation\\referenceSuite.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\validation\\sessionConstraints.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -3581,6 +3653,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\workers\\angularObservable.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\workers\\chaos.worker.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -3594,6 +3678,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\workers\\chaosProtocol.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\workers\\chaosRequestValidation.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -3666,6 +3762,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\workers\\physics.worker.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\workers\\protocolSafety.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

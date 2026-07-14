@@ -24,6 +24,15 @@ describe('largestSingularValue', () => {
   test('nilpotent [[0,2],[0,0]] has singular values {2,0}', () => {
     expect(largestSingularValue(Float64Array.of(0, 2, 0, 0), 2)).toBeCloseTo(2, 9);
   });
+  test('finds a dominant direction orthogonal to the legacy all-ones power-iteration seed', () => {
+    // The dominant right singular vector of this rank-one matrix is [1,-1].
+    // A power iteration seeded with [1,1] returns zero instead of sigma_max=2.
+    expect(largestSingularValue(Float64Array.of(1, -1, -1, 1), 2)).toBeCloseTo(2, 12);
+  });
+  test('scales safely for finite matrices whose unscaled Gram matrix would overflow', () => {
+    const sigma = largestSingularValue(Float64Array.of(1e200, 0, 0, 5e199), 2);
+    expect(sigma / 1e200).toBeCloseTo(1, 12);
+  });
 });
 
 describe('determinant', () => {
@@ -57,6 +66,25 @@ describe('FTLE on a linear system matches exp(A T) exactly', () => {
     expect(stm[3]!).toBeCloseTo(Math.exp(A[1]! * T), 5); // e^{-0.6}
     expect(Math.abs(stm[1]!)).toBeLessThan(1e-6);
     expect(Math.abs(stm[2]!)).toBeLessThan(1e-6);
+  });
+
+  test('uses a shortened final step to land on a non-integral requested horizon', () => {
+    const rate = 0.2;
+    const scalarRhs = (s: Float64Array, o: Float64Array): void => {
+      o[0] = rate * (s[0] ?? 0);
+    };
+    const scalarJacobian = (_s: Float64Array, j: Float64Array): void => {
+      j[0] = rate;
+    };
+    const { stm } = flowMapGradient([1], scalarRhs, 1, { dt: 0.6 }, scalarJacobian);
+    expect(stm[0]!).toBeCloseTo(Math.exp(rate), 6);
+    // The legacy rounded-step implementation integrated 1.2 seconds here.
+    expect(Math.abs(stm[0]! - Math.exp(rate * 1.2))).toBeGreaterThan(0.03);
+  });
+
+  test('a zero horizon returns the identity flow map without taking a step', () => {
+    const { stm } = flowMapGradient([1, 1], rhs, 0, { dt: 0.3 }, jacobian);
+    expect(Array.from(stm)).toEqual([1, 0, 0, 1]);
   });
 
   test('FTLE equals the dominant rate 0.5 and det equals e^{(0.5−0.3)T}', () => {

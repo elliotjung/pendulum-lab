@@ -1,5 +1,6 @@
 import type { LabConfig } from './LabSimulation';
 import type { Point2D } from '../viz/poincare';
+import type { RunMode, RuntimeSnapshot } from '../types/domain';
 
 /**
  * Pure builders for the Lab data exports (trajectory CSV, Poincaré CSV, run
@@ -29,6 +30,7 @@ export function poincareCsv(points: readonly Point2D[]): string {
 }
 
 export interface RunExport {
+  /** Stable legacy run-envelope version retained for existing consumers. */
   schemaVersion: 2;
   generator: string;
   system: LabConfig['system'];
@@ -41,6 +43,24 @@ export interface RunExport {
   simTime: number;
   energy: number;
   drift: number;
+  /** Exact, directly restorable session state added without breaking v2 readers. */
+  runtimeSnapshot: RuntimeSnapshot;
+}
+
+export interface RunExportOptions {
+  mode?: RunMode;
+  stepsPerFrame?: number;
+  seed?: number | null;
+  hash?: string;
+}
+
+function stateHash(state: ArrayLike<number>): string {
+  let hash = 2166136261 >>> 0;
+  for (let i = 0; i < state.length; i += 1) {
+    hash ^= Math.trunc(Number(state[i] ?? 0) * 1e9);
+    hash = Math.imul(hash, 16777619) >>> 0;
+  }
+  return hash.toString(16).padStart(8, '0');
 }
 
 /** Reproducible run JSON for the modern Lab. */
@@ -49,8 +69,30 @@ export function runJson(
   finalState: readonly number[],
   simTime: number,
   energy: number,
-  drift: number
+  drift: number,
+  options: RunExportOptions = {}
 ): RunExport {
+  const state = Array.from(finalState);
+  const stepsPerFrame =
+    Number.isSafeInteger(options.stepsPerFrame) && Number(options.stepsPerFrame) >= 1
+      ? Number(options.stepsPerFrame)
+      : 6;
+  const seed = Number.isSafeInteger(options.seed) ? Number(options.seed) : null;
+  const runtimeSnapshot: RuntimeSnapshot = {
+    schemaVersion: 'pendulum-session/v10-ts',
+    systemType: config.system,
+    method: config.method,
+    mode: options.mode ?? 'demo',
+    dt: config.dt,
+    tolerance: config.tolerance ?? 1e-7,
+    stepsPerFrame,
+    damping: config.gamma,
+    parameters: { ...config.parameters },
+    state,
+    simTime,
+    seed,
+    hash: options.hash ?? stateHash(state)
+  };
   return {
     schemaVersion: 2,
     generator: 'pendulum-lab-modern-lab',
@@ -58,12 +100,13 @@ export function runJson(
     method: config.method,
     dt: config.dt,
     gamma: config.gamma,
-    parameters: config.parameters,
+    parameters: { ...config.parameters },
     initialState: [...config.initialState],
-    finalState: [...finalState],
+    finalState: [...state],
     simTime,
     energy,
-    drift
+    drift,
+    runtimeSnapshot
   };
 }
 
@@ -73,7 +116,9 @@ export function downloadText(filename: string, text: string, type = 'text/plain'
   const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
   triggerDownload(filename, url);
-  URL.revokeObjectURL(url);
+  // Revoking in the same task can cancel downloads in Safari/WebKit. One
+  // second keeps the URL short-lived while allowing navigation to consume it.
+  globalThis.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /** Trigger a browser download from a data URL (used for canvas PNG export). */

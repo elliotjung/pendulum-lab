@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   notifyWorkerFallback,
   resetWorkerFallbackNoticesForTests,
@@ -6,7 +6,7 @@ import {
   WORKER_FALLBACK_EVENT,
   type WorkerFallbackNoticeDetail
 } from '../src/runtime/workerFallbackNotice';
-import { WorkerBridge } from '../src/runtime/WorkerBridge';
+import { WorkerBridge, WorkerBridgeTerminatedError } from '../src/runtime/WorkerBridge';
 
 const globalWindow = globalThis as typeof globalThis & { window?: Window };
 
@@ -97,6 +97,79 @@ describe('worker fallback notice', () => {
       expect(result.state).toHaveLength(2);
       expect(result.state.every(Number.isFinite)).toBe(true);
       expect(events.at(-1)?.detail.scope).toBe('physics-worker');
+    } finally {
+      if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
+      else Reflect.deleteProperty(globalThis, 'Worker');
+    }
+  });
+
+  test.each([
+    { state: [], dt: 0.01, steps: 1, method: 'rk4' },
+    { state: [1], dt: 0.01, steps: 1, method: 'rk4' },
+    { state: [1, 0, 0], dt: 0.01, steps: 1, method: 'rk4' },
+    { state: [Number.NaN, 0], dt: 0.01, steps: 1, method: 'rk4' },
+    { state: [1, 0], dt: 0, steps: 1, method: 'rk4' },
+    { state: [1, 0], dt: Number.MIN_VALUE, steps: 100_001, method: 'rk4' },
+    { state: [1, 0], dt: 0.01, steps: Number.MAX_SAFE_INTEGER, method: 'rk4' },
+    { state: new Array(4_096).fill(0), dt: 0.001, steps: 100_000, method: 'rk4' },
+    { state: new Array(2), dt: 0.01, steps: 1, method: 'rk4' },
+    { state: [1, 0], dt: 0.01, steps: 1, method: 'unknown' }
+  ])('WorkerBridge rejects malformed or unbounded work before starting a worker', async (request) => {
+    const bridge = new WorkerBridge();
+    await expect(bridge.step(request as Parameters<WorkerBridge['step']>[0])).rejects.toThrow(/worker step/);
+  });
+
+  test('rejects a public termination immediately instead of timing out into fallback', async () => {
+    const { events } = installFakeWindow('http:');
+    class SilentWorker {
+      readonly terminate = vi.fn();
+      addEventListener(): void {}
+      removeEventListener(): void {}
+      postMessage(): void {}
+    }
+    const originalWorker = Object.getOwnPropertyDescriptor(globalThis, 'Worker');
+    Object.defineProperty(globalThis, 'Worker', { configurable: true, value: SilentWorker });
+    try {
+      const bridge = new WorkerBridge();
+      expect(bridge.start(), events.at(-1)?.detail.reason).toBe(true);
+      const pending = bridge.step({ state: [1, 0], dt: 0.01, steps: 1, method: 'rk4' });
+      await Promise.resolve();
+      bridge.terminate();
+      await expect(pending).rejects.toBeInstanceOf(WorkerBridgeTerminatedError);
+    } finally {
+      if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
+      else Reflect.deleteProperty(globalThis, 'Worker');
+    }
+  });
+
+  test('never accepts a malformed matching worker response', async () => {
+    const { events } = installFakeWindow('http:');
+    class MalformedWorker {
+      private readonly messages = new Set<(event: MessageEvent) => void>();
+      readonly terminate = vi.fn();
+      addEventListener(type: string, listener: EventListener): void {
+        if (type === 'message') this.messages.add(listener as (event: MessageEvent) => void);
+      }
+      removeEventListener(type: string, listener: EventListener): void {
+        if (type === 'message') this.messages.delete(listener as (event: MessageEvent) => void);
+      }
+      postMessage(request: { id: string }): void {
+        queueMicrotask(() => {
+          for (const listener of this.messages) {
+            listener(new MessageEvent('message', { data: { id: request.id, state: [Number.NaN, 0], elapsedMs: 1 } }));
+          }
+        });
+      }
+    }
+    const originalWorker = Object.getOwnPropertyDescriptor(globalThis, 'Worker');
+    Object.defineProperty(globalThis, 'Worker', { configurable: true, value: MalformedWorker });
+    try {
+      const bridge = new WorkerBridge();
+      expect(bridge.start(), events.at(-1)?.detail.reason).toBe(true);
+      const result = await bridge.step({ state: [1, 0], dt: 0.01, steps: 1, method: 'rk4' });
+      expect(result.fallback).toBe(true);
+      expect(result.state.every(Number.isFinite)).toBe(true);
+      expect(result.fallbackReason).toMatch(/sparse or non-finite state/);
     } finally {
       if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
       else Reflect.deleteProperty(globalThis, 'Worker');

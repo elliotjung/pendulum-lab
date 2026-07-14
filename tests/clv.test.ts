@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { covariantLyapunovVectors, lyapunovSpectrum } from '../src/chaos/index';
 import { rhsDouble } from '../src/physics/double';
 import { buildJacobian } from '../src/physics/systemSpec';
+import { runChaosJob } from '../src/workers/chaosProtocol';
 
 /**
  * The decisive CLV correctness test uses a linear system whose covariant vectors
@@ -98,5 +99,43 @@ describe('CLV on the double pendulum cross-checks the Lyapunov spectrum', () => 
     // directions stay measurably apart on average.
     expect(clv.minHyperbolicityAngle).toBeGreaterThan(0);
     expect(clv.meanHyperbolicityAngle).toBeGreaterThan(0);
+  });
+});
+
+describe('CLV public work and allocation guards', () => {
+  const rhs = (state: Float64Array, out: Float64Array): void => {
+    for (let i = 0; i < state.length; i += 1) out[i] = -(state[i] ?? 0);
+  };
+
+  test.each([
+    { count: 0, options: {} },
+    { count: 3, options: {} },
+    { count: 1, options: { dt: Number.MIN_VALUE } },
+    { count: 1, options: { renormEvery: 0 } },
+    { count: 1, options: { renormEvery: Number.MAX_SAFE_INTEGER } },
+    { count: 1, options: { forwardTransient: -1 } },
+    { count: 1, options: { window: 0 } },
+    { count: 1, options: { window: Number.POSITIVE_INFINITY } },
+    { count: 1, options: { window: 10, backwardTransient: 10 } },
+    { count: 1, options: { seed: 1.5 } }
+  ])('rejects malformed or unbounded settings %#', ({ count, options }) => {
+    expect(() => covariantLyapunovVectors([1, 0], rhs, count, options)).toThrow(/covariantLyapunovVectors/);
+  });
+
+  test('rejects non-finite and oversized state allocations', () => {
+    expect(() => covariantLyapunovVectors([1, Number.NaN], rhs, 1)).toThrow(/state must be finite/);
+    expect(() => covariantLyapunovVectors(new Array(65).fill(0), rhs, 1)).toThrow(/state dimension/);
+  });
+
+  test('worker protocol converts an infinite CLV window into an error response without entering the loop', () => {
+    const response = runChaosJob({
+      id: 'bad-clv',
+      kind: 'clv',
+      spec: { kind: 'driven', g: 9.81, length: 1, damping: 0.1, driveAmplitude: 1, driveFrequency: 1 },
+      state0: [0, 0, 0],
+      settings: { window: Number.POSITIVE_INFINITY }
+    });
+    expect(response.ok).toBe(false);
+    if (!response.ok) expect(response.error).toMatch(/window/);
   });
 });

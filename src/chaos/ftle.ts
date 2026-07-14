@@ -2,7 +2,9 @@ import type { Derivative, Jacobian } from '../physics/types';
 import type { PendulumParameters } from '../types/domain';
 import { rk4Step } from '../physics/integrators';
 import { rhsDouble, jacobianDouble } from '../physics/double';
+import { jacobiEigenSymmetric } from '../research/svd';
 import { makeVariationalRhs } from './variational';
+import { checkedWorkProduct, integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /**
  * Finite-Time Lyapunov Exponents (FTLE) and the flow-map gradient.
@@ -49,7 +51,30 @@ export function flowMapGradient(
 ): FlowMapGradient {
   const n = state0.length;
   const dt = options.dt ?? 0.01;
-  const steps = Math.max(1, Math.round(totalTime / dt));
+  if (!Number.isInteger(n) || n < 1) throw new Error('flowMapGradient: state0 must contain at least one component.');
+  if (n > NUMERICAL_WORK_BUDGETS.ftle.maxStateDimension) {
+    throw new Error(
+      `flowMapGradient: state dimension must not exceed ${NUMERICAL_WORK_BUDGETS.ftle.maxStateDimension}.`
+    );
+  }
+  for (let i = 0; i < n; i += 1) {
+    if (!Number.isFinite(Number(state0[i]))) {
+      throw new Error('flowMapGradient: state0 components must be finite.');
+    }
+  }
+  if (!Number.isFinite(totalTime) || totalTime < 0) {
+    throw new Error('flowMapGradient: totalTime must be finite and non-negative.');
+  }
+  if (!(dt > 0) || !Number.isFinite(dt)) {
+    throw new Error('flowMapGradient: dt must be positive and finite.');
+  }
+  const plannedSteps = integrationStepCount(totalTime, dt, 'flowMapGradient');
+  if (plannedSteps > NUMERICAL_WORK_BUDGETS.ftle.maxStepsPerTrajectory) {
+    throw new Error(
+      `flowMapGradient: totalTime/dt must not exceed ${NUMERICAL_WORK_BUDGETS.ftle.maxStepsPerTrajectory} integration steps.`
+    );
+  }
+  const fullSteps = Math.floor(totalTime / dt);
   const varRhs = makeVariationalRhs(rhs, n, n, jacobian);
 
   const aug = new Float64Array(n * (n + 1));
@@ -58,8 +83,15 @@ export function flowMapGradient(
   // Identity seed: deviation j = e_j, so the evolved frame is exactly M.
   for (let j = 0; j < n; j += 1) aug[n + j * n + j] = 1;
 
-  for (let s = 0; s < steps; s += 1) {
+  for (let s = 0; s < fullSteps; s += 1) {
     rk4Step(aug, dt, varRhs, augOut);
+    aug.set(augOut);
+  }
+  // A final shortened step makes the propagated horizon exactly `totalTime`;
+  // rounding the step count would otherwise integrate too far or stop early.
+  const remainder = totalTime - fullSteps * dt;
+  if (remainder > 0) {
+    rk4Step(aug, remainder, varRhs, augOut);
     aug.set(augOut);
   }
 
@@ -71,38 +103,41 @@ export function flowMapGradient(
 }
 
 /**
- * Largest singular value of an n×n row-major matrix via power iteration on MᵀM
- * (symmetric PSD, so power iteration converges to its largest eigenvalue; the
- * singular value is its square root).
+ * Largest singular value of an n×n row-major matrix from the largest eigenvalue
+ * of the scaled Gram matrix MᵀM. A cyclic Jacobi eigensolve is used instead of
+ * a single fixed-start power iteration: the latter can return the wrong singular
+ * value when its start vector is orthogonal to the dominant right singular
+ * vector. Scaling before forming the Gram matrix avoids avoidable overflow and
+ * underflow for very large or small finite entries.
  */
 export function largestSingularValue(M: Float64Array, n: number, iterations = 200): number {
-  let v = new Float64Array(n);
-  for (let i = 0; i < n; i += 1) v[i] = 1 / Math.sqrt(n);
-  const mv = new Float64Array(n);
-  let lambda = 0;
-  for (let it = 0; it < iterations; it += 1) {
-    // mv = M v
-    for (let i = 0; i < n; i += 1) {
-      let s = 0;
-      for (let j = 0; j < n; j += 1) s += (M[i * n + j] ?? 0) * (v[j] ?? 0);
-      mv[i] = s;
-    }
-    // u = Mᵀ mv  (= MᵀM v)
-    const u = new Float64Array(n);
-    for (let j = 0; j < n; j += 1) {
-      let s = 0;
-      for (let i = 0; i < n; i += 1) s += (M[i * n + j] ?? 0) * (mv[i] ?? 0);
-      u[j] = s;
-    }
-    let norm = 0;
-    for (let i = 0; i < n; i += 1) norm += (u[i] ?? 0) ** 2;
-    norm = Math.sqrt(norm);
-    if (norm === 0) return 0;
-    for (let i = 0; i < n; i += 1) u[i] = (u[i] ?? 0) / norm;
-    lambda = norm; // |MᵀM v| → λ_max(MᵀM) as v → top eigenvector
-    v = u;
+  if (!Number.isInteger(n) || n < 1) throw new Error('largestSingularValue: n must be a positive integer.');
+  if (M.length < n * n) throw new Error('largestSingularValue: matrix is shorter than n*n.');
+  if (!Number.isInteger(iterations) || iterations < 1) {
+    throw new Error('largestSingularValue: iterations must be a positive integer.');
   }
-  return Math.sqrt(Math.max(0, lambda));
+
+  let scale = 0;
+  for (let i = 0; i < n * n; i += 1) {
+    const value = M[i] ?? 0;
+    if (!Number.isFinite(value)) throw new Error('largestSingularValue: matrix entries must be finite.');
+    scale = Math.max(scale, Math.abs(value));
+  }
+  if (scale === 0) return 0;
+
+  const gram = new Array<number>(n * n).fill(0);
+  for (let i = 0; i < n; i += 1) {
+    for (let j = i; j < n; j += 1) {
+      let sum = 0;
+      for (let row = 0; row < n; row += 1) {
+        sum += ((M[row * n + i] ?? 0) / scale) * ((M[row * n + j] ?? 0) / scale);
+      }
+      gram[i * n + j] = sum;
+      gram[j * n + i] = sum;
+    }
+  }
+  const { values } = jacobiEigenSymmetric(gram, n, iterations, Number.EPSILON * n);
+  return scale * Math.sqrt(Math.max(0, values[0] ?? 0));
 }
 
 /** Determinant of an n×n row-major matrix via Gaussian elimination with partial pivoting. */
@@ -181,6 +216,32 @@ export function doublePendulumFtleField(params: PendulumParameters, options: Ftl
   const [lo, hi] = options.range ?? [-3, 3];
   const totalTime = options.totalTime ?? 3;
   const dt = options.dt ?? 0.01;
+  if (!Number.isSafeInteger(n) || n < 2 || n > NUMERICAL_WORK_BUDGETS.ftle.maxGridResolution) {
+    throw new Error(
+      `doublePendulumFtleField: n must be an integer between 2 and ${NUMERICAL_WORK_BUDGETS.ftle.maxGridResolution}.`
+    );
+  }
+  if (!Number.isFinite(lo) || !Number.isFinite(hi) || !(hi > lo) || !Number.isFinite(hi - lo)) {
+    throw new Error('doublePendulumFtleField: range endpoints must be finite and strictly increasing.');
+  }
+  if (!Number.isFinite(totalTime) || totalTime < 0) {
+    throw new Error('doublePendulumFtleField: totalTime must be finite and non-negative.');
+  }
+  if (!(dt > 0) || !Number.isFinite(dt)) {
+    throw new Error('doublePendulumFtleField: dt must be positive and finite.');
+  }
+  const stepsPerTrajectory = integrationStepCount(totalTime, dt, 'doublePendulumFtleField');
+  if (stepsPerTrajectory > NUMERICAL_WORK_BUDGETS.ftle.maxStepsPerTrajectory) {
+    throw new Error(
+      `doublePendulumFtleField: totalTime/dt must not exceed ${NUMERICAL_WORK_BUDGETS.ftle.maxStepsPerTrajectory} integration steps.`
+    );
+  }
+  const totalWork = checkedWorkProduct([n, n, stepsPerTrajectory], 'doublePendulumFtleField');
+  if (totalWork > NUMERICAL_WORK_BUDGETS.ftle.maxGridTrajectorySteps) {
+    throw new Error(
+      `doublePendulumFtleField: requested grid exceeds the ${NUMERICAL_WORK_BUDGETS.ftle.maxGridTrajectorySteps}-step work budget.`
+    );
+  }
   const rhs: Derivative = (s, o) => {
     rhsDouble(s, params, 0, o);
   };

@@ -1,7 +1,9 @@
-import type { IntegratorId, SystemType } from '../types/domain';
+import type { IntegratorId, RuntimeSnapshot, SystemType } from '../types/domain';
 import type { Point2D } from '../viz/poincare';
 import type { LabConfig } from './LabSimulation';
 import { pageDom as dom } from './DomBinder';
+import { LAB_CONTROLS_COMMITTED_EVENT, type LabControlCommitDetail } from './controlCommit';
+import { LAB_CONTROL_BOUNDS, LAB_INTEGRATOR_IDS, inBounds } from '../validation/sessionConstraints';
 
 interface Size2D {
   width: number;
@@ -18,6 +20,7 @@ interface DragBindings {
 
 export interface LabControlBindings {
   reset(): void;
+  restoreSnapshot(snapshot: RuntimeSnapshot): void;
   applyQualityMode(): void;
   trimEnsembleToQuality(): void;
   clearTrail(): void;
@@ -62,35 +65,66 @@ const REBUILD_CONTROL_IDS = [
   'seed'
 ] as const;
 
+const labIntegratorIds = new Set<string>(LAB_INTEGRATOR_IDS);
+
+function boundedControl(id: string, fallback: number, bounds: { min: number; max: number }): number {
+  const raw = dom.num(id, fallback);
+  const value = inBounds(raw, bounds) ? raw : Math.min(bounds.max, Math.max(bounds.min, fallback));
+  if (raw !== value) dom.setValue(id, value);
+  return value;
+}
+
+export function readLabStepsPerFrame(): number {
+  const value = boundedControl('spf', 6, LAB_CONTROL_BOUNDS.stepsPerFrame);
+  const integer = Math.round(value);
+  if (integer !== value) dom.setValue('spf', integer);
+  return integer;
+}
+
 export function readLabConfig(): LabConfig {
-  const system: SystemType = dom.str('sysType', 'double') === 'triple' ? 'triple' : 'double';
+  const rawSystem = dom.str('sysType', 'double');
+  const system: SystemType = rawSystem === 'triple' ? 'triple' : 'double';
+  if (rawSystem !== system) dom.setValue('sysType', system);
+  const rawMethod = dom.str('method', 'rk4');
+  const canonicalMethod = rawMethod === 'verlet' ? 'leapfrog' : rawMethod;
+  const method = labIntegratorIds.has(canonicalMethod) ? (canonicalMethod as IntegratorId) : 'rk4';
+  if (rawMethod !== method) dom.setValue('method', method);
   const parameters = {
-    m1: dom.num('m1', 1),
-    m2: dom.num('m2', 1),
-    m3: dom.num('m3', 1),
-    l1: dom.num('l1', 1.2),
-    l2: dom.num('l2', 1.0),
-    l3: dom.num('l3', 0.8),
-    g: dom.num('g', 9.81)
+    m1: boundedControl('m1', 1, LAB_CONTROL_BOUNDS.mass),
+    m2: boundedControl('m2', 1, LAB_CONTROL_BOUNDS.mass),
+    m3: boundedControl('m3', 1, LAB_CONTROL_BOUNDS.mass),
+    l1: boundedControl('l1', 1.2, LAB_CONTROL_BOUNDS.length),
+    l2: boundedControl('l2', 1.0, LAB_CONTROL_BOUNDS.length),
+    l3: boundedControl('l3', 0.8, LAB_CONTROL_BOUNDS.length),
+    g: boundedControl('g', 9.81, LAB_CONTROL_BOUNDS.gravity)
   };
   const initialState =
     system === 'triple'
       ? [
-          dom.num('th1', 2),
-          dom.num('th2', 2.5),
-          dom.num('th3', 1),
-          dom.num('iw1', 0),
-          dom.num('iw2', 0),
-          dom.num('iw3', 0)
+          boundedControl('th1', 2, LAB_CONTROL_BOUNDS.angle),
+          boundedControl('th2', 2.5, LAB_CONTROL_BOUNDS.angle),
+          boundedControl('th3', 1, LAB_CONTROL_BOUNDS.angle),
+          boundedControl('iw1', 0, LAB_CONTROL_BOUNDS.angularVelocity),
+          boundedControl('iw2', 0, LAB_CONTROL_BOUNDS.angularVelocity),
+          boundedControl('iw3', 0, LAB_CONTROL_BOUNDS.angularVelocity)
         ]
-      : [dom.num('th1', 2), dom.num('th2', 2.5), dom.num('iw1', 0), dom.num('iw2', 0)];
+      : [
+          boundedControl('th1', 2, LAB_CONTROL_BOUNDS.angle),
+          boundedControl('th2', 2.5, LAB_CONTROL_BOUNDS.angle),
+          boundedControl('iw1', 0, LAB_CONTROL_BOUNDS.angularVelocity),
+          boundedControl('iw2', 0, LAB_CONTROL_BOUNDS.angularVelocity)
+        ];
+  const toleranceExponent = boundedControl('tol', -6, {
+    min: Math.log10(LAB_CONTROL_BOUNDS.tolerance.min),
+    max: Math.log10(LAB_CONTROL_BOUNDS.tolerance.max)
+  });
   return {
     system,
     parameters,
-    gamma: dom.num('gamma', 0),
-    method: dom.str('method', 'rk4') as IntegratorId,
-    dt: dom.num('dt', 0.003),
-    tolerance: 10 ** dom.num('tol', -6),
+    gamma: boundedControl('gamma', 0, LAB_CONTROL_BOUNDS.damping),
+    method,
+    dt: boundedControl('dt', 0.003, LAB_CONTROL_BOUNDS.dt),
+    tolerance: 10 ** toleranceExponent,
     initialState
   };
 }
@@ -104,14 +138,16 @@ export class LabControls {
     this.wired = true;
 
     for (const id of REBUILD_CONTROL_IDS) dom.el(id)?.addEventListener('change', () => actions.reset());
+    document.addEventListener(LAB_CONTROLS_COMMITTED_EVENT, (event) => {
+      const detail = (event as CustomEvent<LabControlCommitDetail>).detail;
+      if (detail?.source === 'saved-run-import' && detail.snapshot) actions.restoreSnapshot(detail.snapshot);
+      else actions.reset();
+    });
     dom.el('qualityMode')?.addEventListener('change', () => {
       actions.applyQualityMode();
       actions.trimEnsembleToQuality();
     });
 
-    dom
-      .all('[data-preset]')
-      .forEach((btn) => btn.addEventListener('click', () => setTimeout(() => actions.reset(), 0)));
     dom.el('resetBtn')?.addEventListener('click', () => actions.reset());
     dom.el('clearTrailBtn')?.addEventListener('click', () => actions.clearTrail());
     dom.el('clearPoincBtn')?.addEventListener('click', () => actions.clearPoincare());

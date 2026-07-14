@@ -1,6 +1,11 @@
 import type { Derivative, StateVector } from '../physics/types';
 import { rk4Step } from '../physics/integrators';
 import { mulberry32 } from './variational';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
 
 /**
  * Gottwald–Melbourne "0–1 test for chaos" (2004, with the 2009 modified
@@ -16,9 +21,10 @@ import { mulberry32 } from './variational';
  * For a random frequency c, drive the translation variables
  *     p_c(n) = Σ_{j≤n} φ(j) cos(jc),  q_c(n) = Σ_{j≤n} φ(j) sin(jc),
  * whose mean-square displacement grows linearly for chaotic φ (Brownian-like)
- * and stays bounded for regular φ. The asymptotic growth rate K_c ∈ [0,1] is
+ * and stays bounded for regular φ. The finite-sample correlation K_c is in
+ * [-1,1] (with values near 0 indicating regular motion and near 1 chaos) and is
  * obtained from the correlation of the (oscillation-corrected) displacement with
- * time, and the reported K is the median over many c. K ≈ 0 ⇒ regular,
+ * time. The reported K is the median over many c. K ≈ 0 ⇒ regular,
  * K ≈ 1 ⇒ chaotic.
  */
 
@@ -34,9 +40,9 @@ export interface ZeroOneOptions {
 }
 
 export interface ZeroOneResult {
-  /** Median growth rate K ∈ [0,1]: ≈1 chaotic, ≈0 regular. */
+  /** Median finite-sample correlation K in [-1,1]: near 1 chaotic, near 0 regular. */
   K: number;
-  /** Per-frequency growth rates K_c (one per sampled c). */
+  /** Per-frequency correlations K_c in [-1,1] (one per sampled c). */
   kValues: number[];
   /** The frequencies c the test was run at, aligned with `kValues`. */
   cValues: number[];
@@ -69,8 +75,11 @@ function correlation(x: readonly number[], y: readonly number[]): number {
     syy += dy * dy;
   }
   const denom = Math.sqrt(sxx * syy);
-  return denom > 0 ? sxy / denom : 0;
+  return denom > 0 ? Math.max(-1, Math.min(1, sxy / denom)) : 0;
 }
+
+/** Smallest series that supplies at least two default displacement lags. */
+export const MIN_ZERO_ONE_SAMPLES = 20;
 
 function median(values: readonly number[]): number {
   if (values.length === 0) return 0;
@@ -117,10 +126,35 @@ function bootstrapMedian(
  */
 export function zeroOneTest(series: readonly number[], options: ZeroOneOptions = {}): ZeroOneResult {
   const N = series.length;
+  if (!Number.isSafeInteger(N) || N < MIN_ZERO_ONE_SAMPLES) {
+    throw new RangeError(`series must contain at least ${MIN_ZERO_ONE_SAMPLES} samples`);
+  }
+  for (let i = 0; i < N; i += 1) {
+    if (!Number.isFinite(series[i])) throw new TypeError(`series[${i}] must be finite`);
+  }
   const cSamples = options.cSamples ?? 100;
+  if (!Number.isSafeInteger(cSamples) || cSamples < 1) {
+    throw new RangeError('cSamples must be a positive safe integer');
+  }
   const [cMin, cMax] = options.cRange ?? [Math.PI / 5, (4 * Math.PI) / 5];
-  const ncut = Math.max(1, Math.floor(N * (options.ncutFraction ?? 0.1)));
-  const rng = mulberry32(options.seed ?? 0x0101);
+  if (!Number.isFinite(cMin) || !Number.isFinite(cMax) || cMin >= cMax) {
+    throw new RangeError('cRange must contain two finite, strictly increasing values');
+  }
+  const cSpan = cMax - cMin;
+  if (!(cSpan > 0) || !Number.isFinite(cSpan)) {
+    throw new RangeError('cRange span must be positive and finite');
+  }
+  const ncutFraction = options.ncutFraction ?? 0.1;
+  if (!Number.isFinite(ncutFraction) || ncutFraction <= 0 || ncutFraction >= 1) {
+    throw new RangeError('ncutFraction must be finite and in (0,1)');
+  }
+  const ncut = Math.floor(N * ncutFraction);
+  if (ncut < 2 || ncut >= N) {
+    throw new RangeError('series and ncutFraction must provide at least two displacement lags');
+  }
+  const seed = options.seed ?? 0x0101;
+  if (!Number.isFinite(seed)) throw new RangeError('seed must be finite');
+  const rng = mulberry32(seed);
 
   // Mean of the observable, used for the 2009 oscillation correction.
   let phiMean = 0;
@@ -134,7 +168,11 @@ export function zeroOneTest(series: readonly number[], options: ZeroOneOptions =
   for (let n = 1; n <= ncut; n += 1) lags.push(n);
 
   for (let ci = 0; ci < cSamples; ci += 1) {
-    const c = cMin + (cMax - cMin) * rng();
+    const c = cMin + cSpan * rng();
+    if (!Number.isFinite(c)) throw new RangeError('generated 0-1 test frequency must be finite');
+    if (!Number.isFinite(N * c)) {
+      throw new RangeError('generated 0-1 test frequency must keep every sampled phase finite');
+    }
     const cosC = Math.cos(c);
 
     // Cumulative translation variables P[k], Q[k] for k = 0..N (P[0] = 0).
@@ -166,7 +204,7 @@ export function zeroOneTest(series: readonly number[], options: ZeroOneOptions =
     cValues.push(c);
   }
 
-  const boot = bootstrapMedian(kValues, (options.seed ?? 0x0101) ^ 0x9e3779b9);
+  const boot = bootstrapMedian(kValues, seed ^ 0x9e3779b9);
   return { K: median(kValues), kValues, cValues, kStdError: boot.stdError, kCi95: boot.ci95 };
 }
 
@@ -187,6 +225,49 @@ export function sampleObservable(
   }
 ): number[] {
   const n = state0.length;
+  const transientSteps = options.transientSteps ?? 0;
+  if (!Number.isSafeInteger(n) || n < 1) {
+    throw new Error('sampleObservable: state0 must contain at least one component.');
+  }
+  for (let i = 0; i < n; i += 1) {
+    if (!Number.isFinite(Number(state0[i]))) {
+      throw new Error('sampleObservable: state0 components must be finite.');
+    }
+  }
+  if (!(options.dt > 0) || !Number.isFinite(options.dt)) {
+    throw new Error('sampleObservable: dt must be positive and finite.');
+  }
+  assertUsableIntegrationStep(options.dt, 'sampleObservable');
+  if (!Number.isSafeInteger(options.sampleEvery) || options.sampleEvery < 1) {
+    throw new Error('sampleObservable: sampleEvery must be a positive integer.');
+  }
+  if (options.sampleEvery > NUMERICAL_WORK_BUDGETS.observableSampling.maxSampleStride) {
+    throw new Error(
+      `sampleObservable: sampleEvery must not exceed ${NUMERICAL_WORK_BUDGETS.observableSampling.maxSampleStride}.`
+    );
+  }
+  if (!Number.isSafeInteger(options.samples) || options.samples < 1) {
+    throw new Error('sampleObservable: samples must be a positive integer.');
+  }
+  if (options.samples > NUMERICAL_WORK_BUDGETS.observableSampling.maxSamples) {
+    throw new Error(
+      `sampleObservable: samples must not exceed ${NUMERICAL_WORK_BUDGETS.observableSampling.maxSamples}.`
+    );
+  }
+  if (!Number.isSafeInteger(transientSteps) || transientSteps < 0) {
+    throw new Error('sampleObservable: transientSteps must be a non-negative integer.');
+  }
+  if (transientSteps > NUMERICAL_WORK_BUDGETS.observableSampling.maxTransientSteps) {
+    throw new Error(
+      `sampleObservable: transientSteps must not exceed ${NUMERICAL_WORK_BUDGETS.observableSampling.maxTransientSteps}.`
+    );
+  }
+  const sampledSteps = checkedWorkProduct([options.samples, options.sampleEvery], 'sampleObservable');
+  if (sampledSteps + transientSteps > NUMERICAL_WORK_BUDGETS.observableSampling.maxTotalSteps) {
+    throw new Error(
+      `sampleObservable: requested integration exceeds the ${NUMERICAL_WORK_BUDGETS.observableSampling.maxTotalSteps}-step work budget.`
+    );
+  }
   let current = new Float64Array(n);
   let next = new Float64Array(n);
   for (let i = 0; i < n; i += 1) current[i] = Number(state0[i] ?? 0);
@@ -199,12 +280,14 @@ export function sampleObservable(
     next = swap;
   };
 
-  for (let i = 0; i < (options.transientSteps ?? 0); i += 1) advance();
+  for (let i = 0; i < transientSteps; i += 1) advance();
 
   const series: number[] = [];
   for (let s = 0; s < options.samples; s += 1) {
     for (let i = 0; i < options.sampleEvery; i += 1) advance();
-    series.push(observable(current));
+    const value = observable(current);
+    if (!Number.isFinite(value)) throw new Error('sampleObservable: observable must remain finite.');
+    series.push(value);
   }
   return series;
 }

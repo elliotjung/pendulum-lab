@@ -4,6 +4,7 @@ import { eventBus } from './runtime/EventBus';
 import { stateStore } from './state/StateStore';
 import { physicsAdapter } from './physics';
 import { installJsonImportGuard } from './browser/installJsonImportGuard';
+import { installSavedRunImport } from './browser/savedRunImport';
 import { runAllValidationChecks } from './validation/validationSuite';
 import { installPerformanceProbe } from './render/performance';
 import { installAccessibilityEnhancements } from './ui/accessibility';
@@ -35,6 +36,7 @@ import { installExperimentShare } from './app/experimentShare';
 import { installShortcutHelp } from './app/shortcutHelp';
 import { APP_VERSION } from './runtime/version';
 import { captureReferralAttribution } from './runtime/referralAttribution';
+import { createRetryableLazy } from './runtime/retryableLazy';
 
 function showToast(message: string, timeout = 2200): void {
   if (typeof window.toast === 'function') {
@@ -129,6 +131,7 @@ function bootCoreRuntime(): void {
 function bootSafety(): void {
   installPwa();
   installJsonImportGuard();
+  installSavedRunImport();
   installPerformanceProbe();
   installAccessibilityEnhancements();
   // The Trust & Diagnostics drawer must exist before the parity layer mounts
@@ -157,11 +160,10 @@ async function bootResearch(): Promise<void> {
 }
 
 const RESEARCH_SURFACE_TABS = new Set(['architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs']);
-let researchBoot: Promise<void> | null = null;
+const researchBoot = createRetryableLazy(bootResearch);
 
 function ensureResearch(tabAfterInstall?: string): Promise<void> {
-  researchBoot ??= bootResearch();
-  return researchBoot.then(() => {
+  return researchBoot.load().then(() => {
     // The research layer registers extra rail entries lazily; redecorate them
     // after mounting so Korean labels and stable data-testid selectors cover
     // dynamic navigation just like the static shell.
@@ -175,14 +177,20 @@ function ensureResearch(tabAfterInstall?: string): Promise<void> {
   });
 }
 
+function reportResearchBootFailure(error: unknown): void {
+  console.error('Pendulum Lab research tools failed to load.', error);
+  showToast('Research tools could not load. Activate the tab again to retry.', 4200);
+}
+
 function armResearchOnDemand(): void {
   document.addEventListener(AUDIENCE_MODE_CHANGED_EVENT, (event) => {
     const mode = (event as CustomEvent<{ mode?: string }>).detail?.mode;
-    if (mode === 'research') void ensureResearch();
+    if (mode === 'research') void ensureResearch().catch(reportResearchBootFailure);
   });
   document.addEventListener(TAB_ACTIVATED_EVENT, (event) => {
     const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
-    if (tab && RESEARCH_SURFACE_TABS.has(tab) && researchBoot === null) void ensureResearch(tab);
+    if (tab && RESEARCH_SURFACE_TABS.has(tab) && !researchBoot.isStarted())
+      void ensureResearch(tab).catch(reportResearchBootFailure);
   });
   // Rail action buttons (the always-visible palette launcher, Floquet probe,
   // manifest/report exports) are bound by the lazily-loaded parity layer. A
@@ -193,9 +201,11 @@ function armResearchOnDemand(): void {
     const target = event.target instanceof Element ? event.target : null;
     const btn = target?.closest<HTMLElement>('.dev-tool-btn[data-rail-action]');
     if (!btn || btn.dataset.parityBound === 'true') return;
-    void ensureResearch().then(() => {
-      if (btn.dataset.parityBound === 'true') btn.click();
-    });
+    void ensureResearch()
+      .then(() => {
+        if (btn.dataset.parityBound === 'true') btn.click();
+      })
+      .catch(reportResearchBootFailure);
   });
   // The Ctrl+K binding itself also lives in that lazy chunk, so a keystroke
   // landing before it installs (fresh session, or any mode that has not
@@ -207,9 +217,11 @@ function armResearchOnDemand(): void {
     if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
     if (document.getElementById('rgv8Cmd')) return; // the parity listener owns it now
     event.preventDefault();
-    void ensureResearch().then(async () => {
-      (await import('./app/FeatureParityLayer')).showCommandPalette();
-    });
+    void ensureResearch()
+      .then(async () => {
+        (await import('./app/FeatureParityLayer')).showCommandPalette();
+      })
+      .catch(reportResearchBootFailure);
   });
 }
 
@@ -244,17 +256,37 @@ async function boot(): Promise<void> {
   await bootSimulation();
   armResearchOnDemand();
   bootShell();
-  if (hasExplicitAudienceMode() && currentAudienceMode() === 'research') void ensureResearch();
+  if (hasExplicitAudienceMode() && currentAudienceMode() === 'research')
+    void ensureResearch().catch(reportResearchBootFailure);
+}
+
+function reportBootFailure(error: unknown): void {
+  console.error('Pendulum Lab failed to start.', error);
+  const existing = document.getElementById('bootFailure');
+  const dialog = existing?.tagName === 'DIALOG' ? (existing as HTMLDialogElement) : document.createElement('dialog');
+  dialog.id = 'bootFailure';
+  dialog.setAttribute('aria-labelledby', 'bootFailureTitle');
+  const message = document.createElement('p');
+  message.id = 'bootFailureTitle';
+  message.textContent = 'Pendulum Lab could not finish starting.';
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.textContent = 'Reload and retry';
+  retry.addEventListener('click', () => window.location.reload());
+  dialog.replaceChildren(message, retry);
+  if (!dialog.isConnected) document.body.appendChild(dialog);
+  if (!dialog.open) {
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  }
+}
+
+function startBoot(): void {
+  void boot().catch(reportBootFailure);
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener(
-    'DOMContentLoaded',
-    () => {
-      void boot();
-    },
-    { once: true }
-  );
+  document.addEventListener('DOMContentLoaded', startBoot, { once: true });
 } else {
-  void boot();
+  startBoot();
 }

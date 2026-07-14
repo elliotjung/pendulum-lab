@@ -45,6 +45,34 @@ describe('event detection on the harmonic oscillator', () => {
     expect(result.events.length).toBe(2);
     expect(result.finalTime).toBeLessThan(10);
   });
+
+  test('chooses the earliest refined crossing, independent of event-spec order', () => {
+    const uniformMotion = (_state: Float64Array, out: Float64Array): void => {
+      out[0] = 1;
+    };
+    const result = detectEvents(
+      new Float64Array([0]),
+      uniformMotion,
+      [
+        { g: (s) => (s[0] ?? 0) - 0.8, label: 'later' },
+        { g: (s) => (s[0] ?? 0) - 0.2, label: 'earlier' }
+      ],
+      { dt: 1, maxTime: 1, maxEvents: 1, rootTol: 1e-12 }
+    );
+    expect(result.events).toHaveLength(1);
+    expect(result.events[0]?.label).toBe('earlier');
+    expect(result.events[0]?.time).toBeCloseTo(0.2, 10);
+    // A terminal event ends at its refined crossing, not at the enclosing
+    // integration step's endpoint (which would be t=1, x=1).
+    expect(result.finalTime).toBeCloseTo(0.2, 10);
+    expect(result.finalState[0]).toBeCloseTo(0.2, 10);
+  });
+
+  test.each([0, -0.1, Number.NaN, Infinity])('rejects invalid dt=%s before integration', (dt) => {
+    expect(() =>
+      detectEvents(new Float64Array([1, 0]), oscillator, [{ g: (s) => s[0] ?? 0 }], { dt, maxTime: 1 })
+    ).toThrow(/dt must be positive and finite/);
+  });
 });
 
 describe('Poincare section of the double pendulum', () => {

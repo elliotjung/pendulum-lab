@@ -40,6 +40,36 @@ describe('maximal Lyapunov exponent (Benettin)', () => {
   });
 });
 
+describe('Lyapunov input validation', () => {
+  const shortRun = { steps: 10, renormEvery: 1, transientSteps: 0 } as const;
+
+  test('rejects a zero/non-integer renormalization interval instead of hanging or returning an empty estimate', () => {
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, renormEvery: 0 })).toThrow(
+      /renormEvery must be a positive integer/
+    );
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, renormEvery: 1.5 })).toThrow(
+      /renormEvery must be a positive integer/
+    );
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, renormEvery: 11 })).toThrow(
+      /renormEvery must not exceed steps/
+    );
+  });
+
+  test('rejects non-finite or structurally invalid numeric settings and states', () => {
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, dt: Number.NaN })).toThrow(
+      /dt must be positive and finite/
+    );
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, steps: Infinity })).toThrow(
+      /steps must be a positive integer/
+    );
+    expect(() => maximalLyapunov([1, 0], oscillator, { ...shortRun, transientSteps: -1 })).toThrow(
+      /transientSteps must be a non-negative integer/
+    );
+    expect(() => maximalLyapunov([Number.NaN, 0], oscillator, shortRun)).toThrow(/state0 components must be finite/);
+    expect(() => lyapunovSpectrum([1, 0], oscillator, 0, shortRun)).toThrow(/count must be a positive integer/);
+  });
+});
+
 describe('full Lyapunov spectrum', () => {
   test('chaotic double pendulum: positive leader, Hamiltonian pairing, sum ~ 0', () => {
     const result = lyapunovSpectrum(new Float64Array([2.0, 2.0, 0, 0]), doublePendulum, 4, { steps: 18_000 });

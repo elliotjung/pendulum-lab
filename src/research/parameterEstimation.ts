@@ -32,6 +32,7 @@ import { rk4Step } from '../physics/integrators';
 import { solveLinearInPlace } from '../physics/linearSolve';
 import type { StateVector } from '../physics/types';
 import type { PendulumParameters } from '../types/domain';
+import { integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /** A residual function maps a parameter vector to the vector of residuals. */
 export type ResidualFunction = (parameters: readonly number[]) => number[];
@@ -132,6 +133,12 @@ function clampToBounds(
   }
 }
 
+function requireFiniteNonNegativeOption(name: string, value: number): void {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`levenbergMarquardt: ${name} must be finite and non-negative.`);
+  }
+}
+
 /**
  * Levenberg–Marquardt least-squares fit of `residual` starting from
  * `initialParameters`. The forward model lives entirely inside `residual`; this
@@ -152,6 +159,37 @@ export function levenbergMarquardt(
   const lambdaDown = options.lambdaDown ?? 10;
   const maxLambda = options.maxLambda ?? 1e12;
   const relStep = options.finiteDiffStep ?? 1e-6;
+  const initialLambda = options.initialLambda ?? 1e-3;
+
+  if (!Number.isSafeInteger(maxIterations) || maxIterations < 1) {
+    throw new Error('levenbergMarquardt: maxIterations must be a positive safe integer.');
+  }
+  if (maxIterations > NUMERICAL_WORK_BUDGETS.parameterEstimation.maxOptimizerIterations) {
+    throw new Error(
+      `levenbergMarquardt: maxIterations must not exceed ${NUMERICAL_WORK_BUDGETS.parameterEstimation.maxOptimizerIterations}.`
+    );
+  }
+  requireFiniteNonNegativeOption('costTolerance', costTolerance);
+  if (costTolerance >= 1) {
+    throw new Error('levenbergMarquardt: costTolerance must be less than 1.');
+  }
+  requireFiniteNonNegativeOption('stepTolerance', stepTolerance);
+  requireFiniteNonNegativeOption('gradientTolerance', gradientTolerance);
+  if (!(initialLambda > 0) || !Number.isFinite(initialLambda)) {
+    throw new Error('levenbergMarquardt: initialLambda must be positive and finite.');
+  }
+  if (!(lambdaUp > 1) || !Number.isFinite(lambdaUp)) {
+    throw new Error('levenbergMarquardt: lambdaUp must be finite and greater than 1.');
+  }
+  if (!(lambdaDown > 1) || !Number.isFinite(lambdaDown)) {
+    throw new Error('levenbergMarquardt: lambdaDown must be finite and greater than 1.');
+  }
+  if (!(maxLambda > 0) || !Number.isFinite(maxLambda) || maxLambda < initialLambda) {
+    throw new Error('levenbergMarquardt: maxLambda must be finite and at least initialLambda.');
+  }
+  if (!(relStep > 0) || !Number.isFinite(relStep) || !(relStep * relStep > 0)) {
+    throw new Error('levenbergMarquardt: finiteDiffStep must be positive, finite, and representable.');
+  }
 
   const n = initialParameters.length;
   if (n === 0) throw new Error('levenbergMarquardt: need at least one parameter to estimate.');
@@ -166,7 +204,7 @@ export function levenbergMarquardt(
   if (!r.every(Number.isFinite)) throw new Error('levenbergMarquardt: residual is non-finite at the initial guess.');
 
   let cost = 0.5 * sumSquares(r);
-  let lambda = options.initialLambda ?? 1e-3;
+  let lambda = initialLambda;
 
   // Scratch for the n×n normal-equation system (reused each iteration).
   const jtj = new Float64Array(n * n);
@@ -225,7 +263,12 @@ export function levenbergMarquardt(
     // Inner loop: grow λ until a step reduces the cost (or λ overflows).
     let stepAccepted = false;
     let stepInfNorm = 0;
-    while (lambda <= maxLambda) {
+    let dampingAttempts = 0;
+    while (
+      lambda <= maxLambda &&
+      dampingAttempts < NUMERICAL_WORK_BUDGETS.parameterEstimation.maxDampingAttemptsPerIteration
+    ) {
+      dampingAttempts += 1;
       // (JᵀJ + λ·diag(JᵀJ)) δ = −Jᵀr.
       for (let a = 0; a < n; a += 1) {
         for (let b = 0; b < n; b += 1) damped[a * n + b] = jtj[a * n + b]!;
@@ -417,7 +460,7 @@ function simulateDoubleAngles(
     const span = target - t;
     if (span < 0) throw new Error('simulateDoubleAngles: observation times must be non-decreasing.');
     if (span > 0) {
-      const steps = Math.max(1, Math.ceil(span / dt - 1e-9));
+      const steps = integrationStepCount(span, dt, 'simulateDoubleAngles');
       const h = span / steps;
       for (let k = 0; k < steps; k += 1) {
         rk4Step(state, h, rhs, out);
@@ -448,6 +491,31 @@ export function fitDoublePendulum(
     throw new Error('fitDoublePendulum: estimate and initialGuess length mismatch.');
   }
   const dt = spec.dt ?? 2e-3;
+  if (!(dt > 0) || !Number.isFinite(dt)) {
+    throw new Error('fitDoublePendulum: dt must be positive and finite.');
+  }
+  let forwardSteps = 0;
+  let previousTime = 0;
+  for (let i = 0; i < times.length; i += 1) {
+    const time = times[i]!;
+    if (!Number.isFinite(time)) {
+      throw new Error('fitDoublePendulum: observation times must be finite.');
+    }
+    if (time < 0) {
+      throw new Error('fitDoublePendulum: observation times must be non-negative.');
+    }
+    if (i > 0 && time <= times[i - 1]!) {
+      throw new Error('fitDoublePendulum: observation times must be strictly increasing.');
+    }
+    const spanSteps = integrationStepCount(time - previousTime, dt, 'fitDoublePendulum');
+    if (forwardSteps > NUMERICAL_WORK_BUDGETS.parameterEstimation.maxForwardStepsPerEvaluation - spanSteps) {
+      throw new Error(
+        `fitDoublePendulum: observation span exceeds the ${NUMERICAL_WORK_BUDGETS.parameterEstimation.maxForwardStepsPerEvaluation}-step forward-model budget.`
+      );
+    }
+    forwardSteps += spanSteps;
+    previousTime = time;
+  }
   const withInitialAngles = spec.estimateInitialAngles === true;
 
   const buildParameters = (values: readonly number[]): PendulumParameters => {

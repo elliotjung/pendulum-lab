@@ -1,6 +1,11 @@
 import type { Derivative, Jacobian, StateVector } from '../physics/types';
 import { rk4Step } from '../physics/integrators';
 import { makeVariationalRhs, seedTangentFrame } from './variational';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
 
 /**
  * Covariant Lyapunov vectors (CLVs) via the Ginelli algorithm
@@ -74,6 +79,62 @@ function resolve(partial: Partial<ClvSettings>): ClvSettings {
     backwardTransient: partial.backwardTransient ?? DEFAULTS.backwardTransient,
     seed: partial.seed ?? DEFAULTS.seed
   };
+}
+
+function validateClvRequest(state0: ArrayLike<number>, count: number, settings: ClvSettings): void {
+  const budget = NUMERICAL_WORK_BUDGETS.clv;
+  const n = state0.length;
+  if (!Number.isSafeInteger(n) || n < 1 || n > budget.maxStateDimension) {
+    throw new RangeError(`covariantLyapunovVectors: state dimension must be in [1, ${budget.maxStateDimension}].`);
+  }
+  for (let i = 0; i < n; i += 1) {
+    if (!Number.isFinite(Number(state0[i]))) throw new RangeError('covariantLyapunovVectors: state must be finite.');
+  }
+  if (!Number.isSafeInteger(count) || count < 1 || count > n) {
+    throw new RangeError(
+      'covariantLyapunovVectors: count must be a positive safe integer no larger than the state dimension.'
+    );
+  }
+  assertUsableIntegrationStep(settings.dt, 'covariantLyapunovVectors');
+  if (!Number.isSafeInteger(settings.renormEvery) || settings.renormEvery < 1) {
+    throw new RangeError('covariantLyapunovVectors: renormEvery must be a positive safe integer.');
+  }
+  if (!Number.isSafeInteger(settings.forwardTransient) || settings.forwardTransient < 0) {
+    throw new RangeError('covariantLyapunovVectors: forwardTransient must be a non-negative safe integer.');
+  }
+  if (!Number.isSafeInteger(settings.window) || settings.window < 1) {
+    throw new RangeError('covariantLyapunovVectors: window must be a positive safe integer.');
+  }
+  if (
+    !Number.isSafeInteger(settings.backwardTransient) ||
+    settings.backwardTransient < 0 ||
+    settings.backwardTransient >= settings.window
+  ) {
+    throw new RangeError('covariantLyapunovVectors: backwardTransient must be a safe integer in [0, window).');
+  }
+  if (!Number.isSafeInteger(settings.seed))
+    throw new RangeError('covariantLyapunovVectors: seed must be a safe integer.');
+
+  const intervals = settings.forwardTransient + settings.window;
+  if (!Number.isSafeInteger(intervals)) throw new RangeError('covariantLyapunovVectors: interval count is unsafe.');
+  const totalSteps = checkedWorkProduct([intervals, settings.renormEvery], 'covariantLyapunovVectors');
+  if (totalSteps > budget.maxTotalIntegrationSteps) {
+    throw new RangeError(
+      `covariantLyapunovVectors: integration work exceeds ${budget.maxTotalIntegrationSteps} steps.`
+    );
+  }
+  if (!Number.isFinite(settings.renormEvery * settings.dt)) {
+    throw new RangeError('covariantLyapunovVectors: renormalization interval must be finite.');
+  }
+  const frameCells = checkedWorkProduct([settings.window + 1, count, n], 'covariantLyapunovVectors');
+  const factorCells = checkedWorkProduct([settings.window, count, count], 'covariantLyapunovVectors');
+  const vectorCells = checkedWorkProduct([settings.window, count, n], 'covariantLyapunovVectors');
+  const storedCells = frameCells + factorCells + vectorCells;
+  if (!Number.isSafeInteger(storedCells) || storedCells > budget.maxStoredFloat64Cells) {
+    throw new RangeError(
+      `covariantLyapunovVectors: storage work exceeds ${budget.maxStoredFloat64Cells} float64 cells.`
+    );
+  }
 }
 
 /**
@@ -168,8 +229,9 @@ export function covariantLyapunovVectors(
   jacobian?: Jacobian
 ): ClvResult {
   const settings = resolve(options);
+  validateClvRequest(state0, count, settings);
   const n = state0.length;
-  const k = Math.min(count, n);
+  const k = count;
   const varRhs = makeVariationalRhs(rhs, n, k, jacobian);
   const intervalTime = settings.renormEvery * settings.dt;
 

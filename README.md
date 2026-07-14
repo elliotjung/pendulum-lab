@@ -44,7 +44,7 @@ double-click it (no server), or generate the same artifact locally with
 ```bash
 npm install
 npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 1090 unit tests
+npm test           # 1233 unit tests
 npm run evidence:summary # sync README/landing evidence numbers from reports
 npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
 npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
@@ -147,7 +147,7 @@ Final publication checklist:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `standalone/index.html` (opens via `file://`; Git tracks only its SHA-256 manifest) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1090 tests across 175 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1233 tests across 183 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

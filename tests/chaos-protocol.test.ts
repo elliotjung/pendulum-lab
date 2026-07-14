@@ -77,4 +77,56 @@ describe('runChaosJob (pure handler shared by worker and fallback)', () => {
     expect(res.ok).toBe(false);
     if (!res.ok) expect(res.error.length).toBeGreaterThan(0);
   });
+
+  test('null, primitive, id-less, and cyclic malformed requests are catch-safe', () => {
+    const cyclic: Record<string, unknown> = { id: 'cycle', kind: 'nope' };
+    cyclic.self = cyclic;
+    for (const malformed of [null, undefined, 42, {}, cyclic]) {
+      expect(() => runChaosJob(malformed)).not.toThrow();
+      const result = runChaosJob(malformed);
+      expect(result.ok).toBe(false);
+    }
+    expect(runChaosJob(null)).toMatchObject({ id: 'unknown', ok: false });
+    expect(runChaosJob(cyclic)).toMatchObject({ id: 'cycle', ok: false });
+  });
+
+  test('study-point jobs pass all RQA line options through', () => {
+    const res = runChaosJob({
+      id: 'rqa-options',
+      kind: 'studyPoint',
+      spec: DRIVEN,
+      state0: [0.2, 0, 0],
+      settings: {
+        lyapunov: { dt: 0.01, steps: 20, renormEvery: 2, transientSteps: 0 },
+        rqa: {
+          dt: 0.01,
+          sampleEvery: 1,
+          samples: 40,
+          transientSteps: 0,
+          dimension: 1,
+          delay: 1,
+          epsilon: 1e6,
+          lMin: 1000,
+          vMin: 1000,
+          theiler: 0
+        },
+        ftleHorizon: 0.02,
+        ftleDt: 0.01
+      }
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok && res.kind === 'studyPoint') expect(res.rqaDeterminism).toBe(0);
+  });
+
+  test('RQA uses the spring angular coordinate rather than radial extension', () => {
+    const res = runChaosJob({
+      id: 'spring-observable',
+      kind: 'rqa',
+      spec: { kind: 'spring', mass: 1, stiffness: 1, restLength: 1, g: 0 },
+      state0: [1.5, 0, 0, 0],
+      settings: { dt: 0.01, sampleEvery: 1, samples: 40, transientSteps: 0, dimension: 1, delay: 1 }
+    });
+    expect(res.ok).toBe(true);
+    if (res.ok && res.kind === 'rqa') expect(res.recurrenceRate).toBe(1);
+  });
 });

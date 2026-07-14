@@ -1,6 +1,11 @@
 import { maximalLyapunov } from './lyapunov';
 import { buildRhs, type SystemSpec } from '../physics/systemSpec';
 import { hashText } from '../research/researchExportUtils';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
 
 /**
  * Two-parameter (codimension-2 style) regime diagram: classify each cell of an
@@ -58,10 +63,39 @@ export function codimTwoDiagram(
   yRange: [number, number],
   options: CodimTwoOptions = {}
 ): CodimTwoResult {
-  const n = Math.max(4, Math.min(40, Math.round(options.n ?? 12)));
-  const steps = Math.max(500, Math.round(options.steps ?? 4000));
+  const n = options.n ?? 12;
+  const steps = options.steps ?? 4000;
   const dt = options.dt ?? 0.01;
   const neutralBand = options.neutralBand ?? 5e-3;
+  const budget = NUMERICAL_WORK_BUDGETS.codimTwo;
+  if (!Number.isSafeInteger(n) || n < 4 || n > budget.maxResolution) {
+    throw new RangeError(`codimTwoDiagram: n must be a safe integer in [4, ${budget.maxResolution}].`);
+  }
+  if (!Number.isSafeInteger(steps) || steps < 500) {
+    throw new RangeError('codimTwoDiagram: steps must be a safe integer of at least 500.');
+  }
+  assertUsableIntegrationStep(dt, 'codimTwoDiagram');
+  if (!Number.isFinite(neutralBand) || neutralBand < 0) {
+    throw new RangeError('codimTwoDiagram: neutralBand must be finite and non-negative.');
+  }
+  for (const [label, range] of [
+    ['xRange', xRange],
+    ['yRange', yRange]
+  ] as const) {
+    if (!range.every(Number.isFinite) || range[0] >= range[1]) {
+      throw new RangeError(`codimTwoDiagram: ${label} must be finite and strictly increasing.`);
+    }
+  }
+  if (state0.length < 1 || state0.length > 128) {
+    throw new RangeError('codimTwoDiagram: state0 must contain 1..128 finite values.');
+  }
+  for (let index = 0; index < state0.length; index += 1) {
+    if (!Number.isFinite(state0[index])) throw new RangeError('codimTwoDiagram: state0 must contain finite values.');
+  }
+  const gridSteps = checkedWorkProduct([n, n, steps], 'codimTwoDiagram');
+  if (gridSteps > budget.maxGridIntegrationSteps) {
+    throw new RangeError(`codimTwoDiagram: grid work exceeds ${budget.maxGridIntegrationSteps} integration steps.`);
+  }
   const xValues = Array.from({ length: n }, (_, i) => xRange[0] + ((xRange[1] - xRange[0]) * i) / (n - 1));
   const yValues = Array.from({ length: n }, (_, j) => yRange[0] + ((yRange[1] - yRange[0]) * j) / (n - 1));
   const cells: CodimTwoCell[] = [];

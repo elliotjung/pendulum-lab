@@ -38,6 +38,74 @@ import { notifyWorkerFallback } from './workerFallbackNotice';
 
 export type WorkerFactory = () => Worker | null;
 
+/** Default deadline for a single legacy chaos-worker request (10 minutes). */
+export const DEFAULT_CHAOS_REQUEST_TIMEOUT_MS = 10 * 60 * 1_000;
+
+export interface ChaosClientOptions {
+  /** Default deadline for each request. Must be a finite, positive number. */
+  requestTimeoutMs?: number;
+}
+
+export interface ChaosRequestOptions {
+  /** Override the client's default deadline for this request. */
+  timeoutMs?: number;
+}
+
+export class ChaosRequestTimeoutError extends Error {
+  constructor(
+    public readonly requestId: string,
+    public readonly requestKind: ChaosRequest['kind'],
+    public readonly timeoutMs: number
+  ) {
+    super(`chaos request ${requestKind} (${requestId}) timed out after ${Math.round(timeoutMs)}ms`);
+    this.name = 'ChaosRequestTimeoutError';
+  }
+}
+
+export class ChaosRequestIdCollisionError extends Error {
+  constructor(public readonly requestId: string) {
+    super(`chaos request id collision: ${requestId}`);
+    this.name = 'ChaosRequestIdCollisionError';
+  }
+}
+
+export class ChaosClientDisposedError extends Error {
+  constructor() {
+    super('chaos client was terminated before the request completed');
+    this.name = 'ChaosClientDisposedError';
+  }
+}
+
+export class ChaosWorkerResetError extends Error {
+  constructor(public readonly timedOutRequestId: string) {
+    super(`chaos worker was reset after request ${timedOutRequestId} timed out`);
+    this.name = 'ChaosWorkerResetError';
+  }
+}
+
+interface PendingRequest {
+  resolve: (response: ChaosResponse) => void;
+  reject: (error: Error) => void;
+  timeoutTimer: ReturnType<typeof setTimeout>;
+  fallbackTimer: ReturnType<typeof setTimeout> | null;
+}
+
+function validateTimeout(timeoutMs: number): number {
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) {
+    throw new RangeError('chaos request timeout must be a finite, positive number');
+  }
+  return timeoutMs;
+}
+
+function toError(value: unknown, fallbackMessage: string): Error {
+  if (value instanceof Error) return value;
+  try {
+    return new Error(String(value));
+  } catch {
+    return new Error(fallbackMessage);
+  }
+}
+
 function defaultWorkerFactory(): Worker | null {
   if (typeof Worker === 'undefined') {
     notifyWorkerFallback('chaos-worker', 'worker unavailable');
@@ -63,8 +131,29 @@ function nextId(): string {
 export class ChaosClient {
   private worker: Worker | null = null;
   private started = false;
+  private readonly pending = new Map<string, PendingRequest>();
+  private readonly defaultTimeoutMs: number;
 
-  constructor(private readonly factory: WorkerFactory = defaultWorkerFactory) {}
+  private readonly onWorkerMessage = (event: MessageEvent<ChaosResponse>): void => {
+    const response = event.data;
+    if (typeof response !== 'object' || response === null || typeof response.id !== 'string') return;
+    const pending = this.takePending(response.id);
+    if (!pending) return;
+    if (response.ok) pending.resolve(response);
+    else pending.reject(new Error(response.error));
+  };
+
+  private readonly onWorkerError = (event: ErrorEvent): void => {
+    const error = event.error instanceof Error ? event.error : new Error(event.message || 'chaos worker failed');
+    this.failWorker(error);
+  };
+
+  constructor(
+    private readonly factory: WorkerFactory = defaultWorkerFactory,
+    options: ChaosClientOptions = {}
+  ) {
+    this.defaultTimeoutMs = validateTimeout(options.requestTimeoutMs ?? DEFAULT_CHAOS_REQUEST_TIMEOUT_MS);
+  }
 
   /** True if a worker was successfully created; false means the fallback path. */
   usesWorker(): boolean {
@@ -75,51 +164,125 @@ export class ChaosClient {
   private ensureWorker(): void {
     if (this.started) return;
     this.started = true;
-    this.worker = this.factory();
+    try {
+      const worker = this.factory();
+      if (!worker) return;
+      this.worker = worker;
+      worker.addEventListener('message', this.onWorkerMessage as EventListener);
+      worker.addEventListener('error', this.onWorkerError as EventListener);
+    } catch (error) {
+      this.detachWorkerSafely();
+      notifyWorkerFallback('chaos-worker', error);
+    }
   }
 
-  private run<R extends ChaosResponse>(request: ChaosRequest): Promise<R> {
+  private run<R extends ChaosResponse>(request: ChaosRequest, options: ChaosRequestOptions = {}): Promise<R> {
+    const requestId = request.id;
+    const requestKind = request.kind;
+    if (this.pending.has(requestId)) return Promise.reject(new ChaosRequestIdCollisionError(requestId));
+    let timeoutMs: number;
+    try {
+      timeoutMs = validateTimeout(options.timeoutMs ?? this.defaultTimeoutMs);
+    } catch (error) {
+      return Promise.reject(toError(error, 'invalid chaos request timeout'));
+    }
     this.ensureWorker();
     const worker = this.worker;
-    if (!worker) {
-      notifyWorkerFallback('chaos-worker', 'worker unavailable');
-      // Fallback: defer so the caller's "Computing…" UI can paint first.
-      return new Promise<R>((resolve, reject) => {
-        setTimeout(() => {
-          const response = runChaosJob(request);
-          finish(response, resolve, reject);
-        }, 0);
-      });
-    }
-    return new Promise<R>((resolve, reject) => {
-      const onMessage = (event: MessageEvent<ChaosResponse>) => {
-        if (event.data.id !== request.id) return;
-        cleanup();
-        finish(event.data, resolve, reject);
+    const result = new Promise<R>((resolve, reject) => {
+      const pending: PendingRequest = {
+        resolve: (response) => resolve(response as R),
+        reject,
+        timeoutTimer: setTimeout(() => {
+          const expired = this.takePending(requestId);
+          if (!expired) return;
+          expired.reject(new ChaosRequestTimeoutError(requestId, requestKind, timeoutMs));
+          if (this.worker) {
+            this.detachWorkerSafely();
+            this.rejectAllPending(new ChaosWorkerResetError(requestId));
+          }
+        }, timeoutMs),
+        fallbackTimer: null
       };
-      const onError = (event: ErrorEvent) => {
-        cleanup();
-        reject(event.error instanceof Error ? event.error : new Error(event.message));
-      };
-      const cleanup = () => {
-        worker.removeEventListener('message', onMessage as EventListener);
-        worker.removeEventListener('error', onError as EventListener);
-      };
-      worker.addEventListener('message', onMessage as EventListener);
-      worker.addEventListener('error', onError as EventListener);
-      worker.postMessage(request);
+      this.pending.set(requestId, pending);
     });
 
-    function finish(response: ChaosResponse, resolve: (r: R) => void, reject: (e: Error) => void): void {
-      if (response.ok) resolve(response as R);
-      else reject(new Error(response.error));
+    if (!worker) {
+      notifyWorkerFallback('chaos-worker', 'worker unavailable');
+      // Defer so the caller's computing UI can paint before the synchronous fallback starts.
+      const pending = this.pending.get(requestId);
+      if (pending) {
+        pending.fallbackTimer = setTimeout(() => {
+          const active = this.pending.get(requestId);
+          if (!active) return;
+          active.fallbackTimer = null;
+          try {
+            const response = runChaosJob(request);
+            const settled = this.takePending(requestId);
+            if (!settled) return;
+            if (response.ok) settled.resolve(response);
+            else settled.reject(new Error(response.error));
+          } catch (error) {
+            this.takePending(requestId)?.reject(toError(error, 'chaos fallback failed'));
+          }
+        }, 0);
+      }
+      return result;
     }
+
+    try {
+      worker.postMessage(request);
+    } catch (error) {
+      this.failWorker(toError(error, 'failed to post chaos request'));
+    }
+    return result;
+  }
+
+  private takePending(id: string): PendingRequest | undefined {
+    const pending = this.pending.get(id);
+    if (!pending) return undefined;
+    this.pending.delete(id);
+    clearTimeout(pending.timeoutTimer);
+    if (pending.fallbackTimer !== null) clearTimeout(pending.fallbackTimer);
+    pending.fallbackTimer = null;
+    return pending;
+  }
+
+  private rejectAllPending(error: Error): void {
+    for (const id of [...this.pending.keys()]) this.takePending(id)?.reject(error);
+  }
+
+  private detachWorkerSafely(): void {
+    const worker = this.worker;
+    this.worker = null;
+    this.started = false;
+    if (!worker) return;
+    try {
+      worker.removeEventListener('message', this.onWorkerMessage as EventListener);
+    } catch {
+      // Continue cleanup even if a non-standard Worker rejects listener removal.
+    }
+    try {
+      worker.removeEventListener('error', this.onWorkerError as EventListener);
+    } catch {
+      // Continue cleanup even if a non-standard Worker rejects listener removal.
+    }
+    try {
+      worker.terminate();
+    } catch {
+      // A broken Worker implementation must not prevent promise/timer cleanup.
+    }
+  }
+
+  private failWorker(error: Error): void {
+    this.detachWorkerSafely();
+    this.rejectAllPending(error);
   }
 
   lyapunov(
     spec: SystemSpec,
     state0: ArrayLike<number>,
-    settings?: Partial<LyapunovSettings>
+    settings?: Partial<LyapunovSettings>,
+    requestOptions?: ChaosRequestOptions
   ): Promise<LyapunovResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -128,14 +291,15 @@ export class ChaosClient {
       state0: Array.from(state0),
       ...(settings ? { settings } : {})
     };
-    return this.run<LyapunovResponse>(request);
+    return this.run<LyapunovResponse>(request, requestOptions);
   }
 
   lyapunovSpectrum(
     spec: SystemSpec,
     state0: ArrayLike<number>,
     count?: number,
-    settings?: Partial<LyapunovSettings>
+    settings?: Partial<LyapunovSettings>,
+    requestOptions?: ChaosRequestOptions
   ): Promise<LyapunovSpectrumResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -145,14 +309,15 @@ export class ChaosClient {
       ...(count === undefined ? {} : { count }),
       ...(settings ? { settings } : {})
     };
-    return this.run<LyapunovSpectrumResponse>(request);
+    return this.run<LyapunovSpectrumResponse>(request, requestOptions);
   }
 
   bifurcation(
     base: Extract<SystemSpec, { kind: 'driven' }>,
     amplitudes: number[],
     state0: ArrayLike<number>,
-    settings: BifurcationJobSettings
+    settings: BifurcationJobSettings,
+    requestOptions?: ChaosRequestOptions
   ): Promise<BifurcationResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -162,11 +327,16 @@ export class ChaosClient {
       state0: Array.from(state0),
       settings
     };
-    return this.run<BifurcationResponse>(request);
+    return this.run<BifurcationResponse>(request, requestOptions);
   }
 
   /** 0–1 test for chaos on a bounded observable of the system (independent of the Lyapunov machinery). */
-  zeroOne(spec: SystemSpec, state0: ArrayLike<number>, settings?: ZeroOneJobSettings): Promise<ZeroOneResponse> {
+  zeroOne(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    settings?: ZeroOneJobSettings,
+    requestOptions?: ChaosRequestOptions
+  ): Promise<ZeroOneResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'zeroOne',
@@ -174,7 +344,7 @@ export class ChaosClient {
       state0: Array.from(state0),
       ...(settings ? { settings } : {})
     };
-    return this.run<ZeroOneResponse>(request);
+    return this.run<ZeroOneResponse>(request, requestOptions);
   }
 
   /** Covariant Lyapunov vectors (Ginelli) + hyperbolicity angle. */
@@ -182,7 +352,8 @@ export class ChaosClient {
     spec: SystemSpec,
     state0: ArrayLike<number>,
     count?: number,
-    settings?: Partial<ClvSettings>
+    settings?: Partial<ClvSettings>,
+    requestOptions?: ChaosRequestOptions
   ): Promise<ClvResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -192,22 +363,31 @@ export class ChaosClient {
       ...(count === undefined ? {} : { count }),
       ...(settings ? { settings } : {})
     };
-    return this.run<ClvResponse>(request);
+    return this.run<ClvResponse>(request, requestOptions);
   }
 
   /** Double-pendulum flip basin + basin entropy + box-counting dimension. */
-  basin(spec: Extract<SystemSpec, { kind: 'double' }>, settings?: FlipBasinOptions): Promise<BasinResponse> {
+  basin(
+    spec: Extract<SystemSpec, { kind: 'double' }>,
+    settings?: FlipBasinOptions,
+    requestOptions?: ChaosRequestOptions
+  ): Promise<BasinResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'basin',
       spec,
       ...(settings ? { settings } : {})
     };
-    return this.run<BasinResponse>(request);
+    return this.run<BasinResponse>(request, requestOptions);
   }
 
   /** Recurrence Quantification Analysis on a bounded observable of the system. */
-  rqa(spec: SystemSpec, state0: ArrayLike<number>, settings?: RqaJobSettings): Promise<RqaResponse> {
+  rqa(
+    spec: SystemSpec,
+    state0: ArrayLike<number>,
+    settings?: RqaJobSettings,
+    requestOptions?: ChaosRequestOptions
+  ): Promise<RqaResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'rqa',
@@ -215,25 +395,30 @@ export class ChaosClient {
       state0: Array.from(state0),
       ...(settings ? { settings } : {})
     };
-    return this.run<RqaResponse>(request);
+    return this.run<RqaResponse>(request, requestOptions);
   }
 
   /** Finite-time Lyapunov exponent field of the double pendulum over its (θ₁,θ₂) section. */
-  ftle(spec: Extract<SystemSpec, { kind: 'double' }>, settings?: FtleFieldOptions): Promise<FtleResponse> {
+  ftle(
+    spec: Extract<SystemSpec, { kind: 'double' }>,
+    settings?: FtleFieldOptions,
+    requestOptions?: ChaosRequestOptions
+  ): Promise<FtleResponse> {
     const request: ChaosRequest = {
       id: nextId(),
       kind: 'ftle',
       spec,
       ...(settings ? { settings } : {})
     };
-    return this.run<FtleResponse>(request);
+    return this.run<FtleResponse>(request, requestOptions);
   }
 
   /** One parameter-study point: maximal λ (+SE), RQA DET/DIV, and per-point FTLE in a single job. */
   studyPoint(
     spec: SystemSpec,
     state0: ArrayLike<number>,
-    settings?: StudyPointJobSettings
+    settings?: StudyPointJobSettings,
+    requestOptions?: ChaosRequestOptions
   ): Promise<StudyPointResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -242,13 +427,14 @@ export class ChaosClient {
       state0: Array.from(state0),
       ...(settings ? { settings } : {})
     };
-    return this.run<StudyPointResponse>(request);
+    return this.run<StudyPointResponse>(request, requestOptions);
   }
 
   /** Multi-resolution Wada convergence analysis on the flip basin. */
   wadaConvergence(
     spec: Extract<SystemSpec, { kind: 'double' }>,
-    settings?: WadaConvergenceOptions
+    settings?: WadaConvergenceOptions,
+    requestOptions?: ChaosRequestOptions
   ): Promise<WadaConvergenceResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -256,7 +442,7 @@ export class ChaosClient {
       spec,
       ...(settings ? { settings } : {})
     };
-    return this.run<WadaConvergenceResponse>(request);
+    return this.run<WadaConvergenceResponse>(request, requestOptions);
   }
 
   /** Two-parameter (drive amplitude × damping) λ-sign regime diagram. */
@@ -265,7 +451,8 @@ export class ChaosClient {
     state0: ArrayLike<number>,
     xRange: [number, number],
     yRange: [number, number],
-    settings?: CodimTwoOptions
+    settings?: CodimTwoOptions,
+    requestOptions?: ChaosRequestOptions
   ): Promise<CodimTwoResponse> {
     const request: ChaosRequest = {
       id: nextId(),
@@ -276,12 +463,16 @@ export class ChaosClient {
       yRange,
       ...(settings ? { settings } : {})
     };
-    return this.run<CodimTwoResponse>(request);
+    return this.run<CodimTwoResponse>(request, requestOptions);
   }
 
   terminate(): void {
-    this.worker?.terminate();
-    this.worker = null;
-    this.started = false;
+    this.detachWorkerSafely();
+    this.rejectAllPending(new ChaosClientDisposedError());
+  }
+
+  /** Release worker resources. A later request lazily creates a fresh worker. */
+  dispose(): void {
+    this.terminate();
   }
 }

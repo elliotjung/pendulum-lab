@@ -34,8 +34,12 @@ export type LabSidePlotWorkerResponse =
 
 export function sidePlotTransferables(payload: LabSidePlotPayload): Transferable[] {
   const buffers: ArrayBuffer[] = [];
+  const seen = new Set<ArrayBuffer>();
   const add = (view: Float32Array): void => {
-    if (view.buffer instanceof ArrayBuffer) buffers.push(view.buffer);
+    if (view.buffer instanceof ArrayBuffer && !seen.has(view.buffer)) {
+      seen.add(view.buffer);
+      buffers.push(view.buffer);
+    }
   };
 
   switch (payload.plot) {

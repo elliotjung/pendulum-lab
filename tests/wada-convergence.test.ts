@@ -111,9 +111,25 @@ describe('wadaResolutionConvergence (end-to-end on real flip basins)', () => {
     expect(['stable-wada-evidence', 'stable-non-wada', 'unstable', 'insufficient-data']).toContain(result.verdict);
   }, 30_000);
 
-  it('sanitises silly resolutions (dedupe, sort, clamp)', () => {
+  it('rejects out-of-range, non-integer, duplicate, and empty resolution lists', () => {
     const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
-    const result = wadaResolutionConvergence(params, { resolutions: [30, 18, 18, 4], maxTime: 2, dt: 0.05 });
-    expect(result.resolutions).toEqual([16, 18, 30]); // 4 clamped to 16, deduped, ascending
+    expect(() => wadaResolutionConvergence(params, { resolutions: [30, 18, 18, 4], maxTime: 2, dt: 0.05 })).toThrow(
+      /safe integer in \[16, 240\]/
+    );
+    expect(() => wadaResolutionConvergence(params, { resolutions: [24.5, 30], maxTime: 2, dt: 0.05 })).toThrow(
+      /safe integer in \[16, 240\]/
+    );
+    expect(() => wadaResolutionConvergence(params, { resolutions: [18, 30, 18], maxTime: 2, dt: 0.05 })).toThrow(
+      /must be unique/
+    );
+    expect(() => wadaResolutionConvergence(params, { resolutions: [], maxTime: 2, dt: 0.05 })).toThrow(
+      /must contain 1\.\./
+    );
+  });
+
+  it('accepts unsorted valid resolutions and reports them in ascending order', () => {
+    const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
+    const result = wadaResolutionConvergence(params, { resolutions: [30, 18], maxTime: 2, dt: 0.05 });
+    expect(result.resolutions).toEqual([18, 30]);
   }, 30_000);
 });

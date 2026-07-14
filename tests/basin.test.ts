@@ -80,11 +80,27 @@ describe('boxCountingDimension', () => {
 });
 
 describe('double-pendulum flip basin (classic fractal)', () => {
-  test('produces a valid label grid whose flip boundary is fractal (Sbb > ln 2)', () => {
-    const grid = doublePendulumFlipBasin(
-      { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
-      { n: 48, range: [-3, 3], dt: 0.01, maxTime: 12 }
+  const params = { m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 };
+
+  test('rejects degenerate grids and unbounded work requests before allocating or integrating', () => {
+    expect(() => doublePendulumFlipBasin(params, { n: 1, maxTime: 0 })).toThrow(/n must be an integer between 2/);
+    expect(() => doublePendulumFlipBasin(params, { n: 513, maxTime: 0 })).toThrow(/n must be an integer between 2/);
+    expect(() => doublePendulumFlipBasin(params, { n: 2, dt: 0, maxTime: 0 })).toThrow(
+      /dt must be positive and finite/
     );
+    expect(() => doublePendulumFlipBasin(params, { n: 2, dt: 1e-9, maxTime: 1 })).toThrow(/steps per cell/);
+  });
+
+  test('rejects non-finite time controls and malformed angle ranges', () => {
+    expect(() => doublePendulumFlipBasin(params, { maxTime: Infinity })).toThrow(
+      /maxTime must be finite and non-negative/
+    );
+    expect(() => doublePendulumFlipBasin(params, { range: [1, 1] })).toThrow(/finite and strictly increasing/);
+    expect(() => doublePendulumFlipBasin(params, { range: [0, Infinity] })).toThrow(/finite and strictly increasing/);
+  });
+
+  test('produces a valid label grid whose flip boundary is fractal (Sbb > ln 2)', () => {
+    const grid = doublePendulumFlipBasin(params, { n: 48, range: [-3, 3], dt: 0.01, maxTime: 12 });
     expect(grid.width).toBe(48);
     for (const label of grid.labels) expect(label === 0 || label === 1 || label === 2).toBe(true);
 

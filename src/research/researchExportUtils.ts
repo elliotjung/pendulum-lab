@@ -21,5 +21,10 @@ export function dataUrlByteEstimate(dataUrl: string): number {
 
 export function csvCell(value: unknown): string {
   const text = String(value ?? '');
-  return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  // Spreadsheet applications can interpret cells beginning with these
+  // characters as formulas. Prefix a literal apostrophe before RFC 4180
+  // quoting so exported, user-influenced labels stay data when opened in a
+  // spreadsheet while ordinary numeric research columns remain unchanged.
+  const literal = typeof value !== 'number' && /^[\t\r\n ]*[=+\-@]/.test(text) ? `'${text}` : text;
+  return /[",\n\r]/.test(literal) ? `"${literal.replace(/"/g, '""')}"` : literal;
 }

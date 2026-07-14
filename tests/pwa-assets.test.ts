@@ -25,6 +25,11 @@ describe('PWA assets', () => {
     expect(source).toContain("const VERSION = 'pendulum-lab-v10.36.0'");
     expect(source).toContain('url.origin !== self.location.origin');
     expect(source).toContain("caches.match('./index.html')");
+    expect(source).toContain('event.waitUntil(settle(cacheUpdate');
+    expect(source).toContain('if (!response.ok) return');
+    expect(source).toContain('const RUNTIME_CACHE_LIMIT = 96');
+    expect(source).toContain('cache.keys()');
+    expect(source).toContain('cache.delete(request)');
   });
 
   test('Cloudflare mirror opts into the isolation headers required by SAB', async () => {

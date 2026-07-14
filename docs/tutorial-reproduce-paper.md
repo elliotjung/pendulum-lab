@@ -18,7 +18,7 @@ Optional cross-checks: `python` with `scipy` (`validate:cross`) and `sympy`
 ## 1. Establish trust: run the validation ladder
 
 ```bash
-npm test                      # 1090 unit tests (physics, chaos, research tooling)
+npm test                      # 1233 unit tests (physics, chaos, research tooling)
 npm run validate:reference    # every integrator at its theoretical order
 npm run validate:literature   # elliptic period, normal modes, Melnikov A_c, A_PD
 npm run validate:sympy        # symbolic second reference (needs python+sympy)

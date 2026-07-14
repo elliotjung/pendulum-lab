@@ -2,6 +2,60 @@
 
 ## Unreleased
 
+### Boundary-hardening pass: numerical budgets, session contracts, worker lifecycle (additive; suite 1090 -> 1233)
+
+- **Numerical work budgets with explicit contracts**: every chaos-diagnostic
+  entry point (Lyapunov, FTLE, basin and Wada convergence, CLV, RQA, 0-1 test,
+  codimension-two scans, Poincaré sections, event detection, parameter
+  estimation) now validates `dt`, step counts, horizons, and state finiteness
+  up front and rejects out-of-budget requests with typed `RangeError`s instead
+  of silently clamping, spinning forever, or exhausting memory. The shared
+  ceilings live in `src/validation/numericalBudgets.ts` and are pinned by
+  `tests/numerical-budget-guards.test.ts`.
+- **FTLE horizons integrate the exact residual time** (no more full-`dt`
+  rounding for `T < dt`), and the maximal singular value of the state-transition
+  matrix comes from a scaled symmetric Jacobi eigensolver, so near-orthogonal
+  power-iteration seeds and overflow/underflow in `MᵀM` can no longer bias
+  exponents.
+- **Event detection is time-ordered and exact at the cap**: multiple crossings
+  inside one step are refined then sorted by time (not registration order), and
+  hitting `maxEvents` returns the last refined crossing state instead of the
+  enclosing step end.
+- **Session import is a checked boundary**: `validateLabSnapshot` plus a
+  declarative `LAB_CONTROL_BOUNDS` map guarantee imported research state is
+  interactively representable; control writes are planned, read back, and
+  rolled back atomically (`src/app/controlCommit.ts`); adopted runtime fields
+  (run mode, simTime, seed, steps-per-frame) stay in sync so an imported
+  session replays the same run. Saved-run JSON import gets a guarded UI entry
+  point (`src/browser/savedRunImport.ts`).
+- **Worker lifecycle without orphans**: `ChaosClient` enforces per-request
+  deadlines with typed timeout/reset/collision/disposed errors, tears down
+  listeners and timers atomically, and lazily restarts after failure;
+  `WorkerBridge` validates state size, finiteness, `dt`, step counts, and the
+  integrator allowlist identically on the worker and fallback paths, and the
+  fallback no longer "corrects" zero-step requests into one-step successes.
+- **Research bundle and CSV export safety**: the STORE-only ZIP path rejects
+  path traversal, duplicate and case-colliding names, symlink metadata,
+  encrypted or truncated entries, EOCD/central-directory mismatches, and
+  oversized archives on both build and parse; CSV export neutralizes formula
+  prefixes even behind leading whitespace while preserving real numbers.
+- **The service worker is executed under test, not just grepped**: a VM-based
+  CacheStorage harness drives install/activate/fetch and pins
+  clone-before-consume ordering, scoped cache cleanup, the 96-entry runtime
+  eviction, `no-store`/`private` and cache-bypass semantics, offline fallback,
+  and foreign-cache preservation (`tests/service-worker-behavior.test.ts`).
+- **Interactive bounds now match research bounds**: θ sliders carry full
+  double-precision π limits, ω reaches ±64 rad/s, γ reaches 10, `dt` spans
+  1e-4..0.05, tolerance reaches 1e-12, and Yoshida-6/8 integrators are
+  selectable — with markup-parity tests so DOM ranges can never silently clamp
+  a headless-valid snapshot again.
+- **Boot resilience**: research-chunk load failures surface a toast and retry
+  on the next activation (`src/runtime/retryableLazy.ts`), and fatal boot
+  errors render an accessible dialog instead of a blank page.
+- Suite grows 1090 -> 1233 tests across 183 files; the evidence summary,
+  bundle budgets, legacy-risk scan, world-class scorecard, and standalone
+  manifest are regenerated from this tree.
+
 ### Porcelain Daylight: a complete system light theme
 
 - **The light theme is now whole.** The old light block lived in `css/09`

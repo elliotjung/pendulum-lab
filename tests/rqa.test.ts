@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { recurrenceQuantification, sampleObservable } from '../src/chaos/index';
+import { recurrenceMatrix, recurrenceQuantification, rqaBlockUncertainty, sampleObservable } from '../src/chaos/index';
 import { mulberry32 } from '../src/chaos/variational';
 import { rhsDouble } from '../src/physics/double';
 
@@ -19,6 +19,29 @@ describe('RQA on synthetic signals', () => {
   // The sine period is ≈ 2π/0.3 ≈ 20.9 samples; τ ≈ a quarter period unfolds it
   // into a clean limit cycle so the recurrence plot is long unbroken diagonals.
   const embedding = { dimension: 2, delay: 5, targetRecurrenceRate: 0.1 } as const;
+
+  test('rejects malformed embedding and threshold options instead of silently clamping them', () => {
+    const invalidOptions = [
+      { dimension: 0 },
+      { dimension: 1.5 },
+      { delay: 0 },
+      { delay: Number.POSITIVE_INFINITY },
+      { epsilon: -1 },
+      { epsilon: Number.NaN },
+      { targetRecurrenceRate: 0 },
+      { targetRecurrenceRate: 1 }
+    ];
+    for (const options of invalidOptions) {
+      expect(() => recurrenceQuantification(sine, options)).toThrow();
+      expect(() => recurrenceMatrix(sine, options)).toThrow();
+    }
+  });
+
+  test('rejects invalid or embedding-empty uncertainty blocks', () => {
+    expect(() => rqaBlockUncertainty(sine, embedding, 1)).toThrow(/blocks/);
+    expect(() => rqaBlockUncertainty([1, 2, 3], {}, 4)).toThrow(/too short/);
+    expect(() => rqaBlockUncertainty(sine.slice(0, 20), embedding, 4)).toThrow(/too short/);
+  });
 
   test('a pure sine is highly deterministic with long diagonal lines', () => {
     const r = recurrenceQuantification(sine, embedding);

@@ -331,7 +331,7 @@ describe('property: session import/export round-trip', () => {
           const parsed = parseStrictJsonImport(JSON.stringify(snapshot));
           expect(parsed.ok).toBe(true);
           expect(parsed.value?.state).toEqual(snapshot.state);
-          expect(parsed.value?.method).toBe(method);
+          expect(parsed.value?.method).toBe(snapshot.method);
           expect(parsed.value?.dt).toBe(dt);
           expect(parsed.value?.simTime).toBe(simTime);
           expect(parsed.value?.seed).toBe(seed);
