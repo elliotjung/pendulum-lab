@@ -11,7 +11,7 @@ deployed the same commit to Pages.
 1. The simulator tag starts `.github/workflows/release.yml`.
 2. CI runs `verify`, builds the hosted and standalone apps, checks committed
    standalone/WASM synchronization, runs the real `file://` smoke, builds the
-   library/docs/reviewer package, and enforces the bundle budget.
+   library/documents/reviewer package, and enforces the bundle budget.
 3. CI packs and attests the npm tarball and SBOM. A draft GitHub Release receives
    those files plus a directly downloadable standalone HTML, a full standalone
    ZIP, and the English/Korean one-page PDFs.

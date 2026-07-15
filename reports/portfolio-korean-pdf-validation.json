@@ -2,7 +2,7 @@
   "schemaVersion": "pendulum-portfolio-pdf-validation/v1",
   "generatedAt": "2026-07-13T03:08:56.301Z",
   "status": "passed",
-  "sourcePath": "docs/portfolio-korean.md",
+  "sourcePath": "documents/portfolio-korean.md",
   "outputPath": "reports/portfolio-korean.pdf",
   "htmlPath": "tmp/pdfs/portfolio-korean.html",
   "renderer": {

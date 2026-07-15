@@ -7,7 +7,7 @@ export default tseslint.config(
       'dist/**',
       'dist-lib/**',
       'standalone/**',
-      'docs/api/**',
+      'documents/api/**',
       'reports/**',
       'node_modules/**',
       '*.worker.js'

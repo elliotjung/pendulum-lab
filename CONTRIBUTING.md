@@ -28,9 +28,9 @@ or property test and identify an analytic, independent, or literature oracle.
 
 Bug reports should include the exact reproduction command and attach the
 machine-readable report JSON when one is produced. Do not hand-edit generated
-evidence. See [the artifact policy](docs/artifact-policy.md),
-[testing strategy](docs/testing-strategy.md), and
-[API stability policy](docs/api-overview.md).
+evidence. See [the artifact policy](documents/artifact-policy.md),
+[testing strategy](documents/testing-strategy.md), and
+[API stability policy](documents/api-overview.md).
 
 Contributions are accepted under the repository's [MIT License](LICENSE) and
 must follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities

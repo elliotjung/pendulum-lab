@@ -19,7 +19,7 @@ The flagship result is the **Melnikov threshold vs period-doubling onset gap
 map**: at `omega = 2/3`, the measured ratio `A_PD/A_c` closes and reverses near
 `gamma ~= 0.69`, separating homoclinic-tangle onset from the attractor cascade
 with Floquet, literature, 0-1-test, and reproducibility evidence. See
-[`docs/flagship-result.md`](docs/flagship-result.md) and generate the outside
+[`documents/flagship-result.md`](documents/flagship-result.md) and generate the outside
 review package with `npm run reviewer:kit`.
 
 The public reviewer surface is `reviewer.html` (deployed at
@@ -63,12 +63,12 @@ Stable subpaths are `core`, `analysis`, `research`, `browser`, `worker`, and
 `node`; `experimental` is explicitly allowed to change in minor releases.
 
 For the two-repo publish path, use
-[`docs/cross-project-release.md`](docs/cross-project-release.md): sim verify →
+[`documents/cross-project-release.md`](documents/cross-project-release.md): sim verify →
 standalone build → landing evidence sync → landing smoke → tag/release.
 
 ## Documentation map
 
-Start with [`docs/README.md`](docs/README.md). It groups the architecture,
+Start with [`documents/README.md`](documents/README.md). It groups the architecture,
 API, numerics, validation, reviewer, release, and portfolio documents so the
 current source of truth is easy to find without scanning the whole repository.
 
@@ -85,20 +85,20 @@ UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 | 4 | Period-doubling onset matches literature | Floquet multiplier −1 crossing on the stroboscopic map | driven pendulum γ=0.5, ω=2/3; A_PD measured 1.0664 vs published 1.0663 | `npm run validate:literature` | `reports/literature-anchors.json` | onset localized to continuation tolerance 1e-10 |
 | 5 | Melnikov chaos threshold A_c = (4γ/πω)cosh(πω/2) | analytic Melnikov integral, pinned by quadrature + 0–1 test | ω=2/3, γ sweep; dt=1e-3 RK4 | `npm run paper:study` | `reports/paper-study.json` | perturbative — first-order in (A, γ) |
 | 6 | A_PD/A_c ratio reverses at γ ≈ 0.69 | claims 4+5 swept over γ | γ grid in `scripts/paper-study.ts` | `npm run paper:study && npm run paper:build` | `paper/index.html`, `paper/paper.pdf` | finite γ grid; refine grid to sharpen the crossing |
-| 7 | Spherical N-chain conserves E and L_z in 3D chaos | manipulator-form EOM (`docs/derivations.md` §3) | N=2/3, dt=1e-3 RK4, drift <1e-7 over test horizons | `npm test` (`spherical-chain`, `chain-validation-hardening`) | `reports/vitest-results.json` | chart limit at poles: L_z≠0 grazes fail loudly (documented) |
+| 7 | Spherical N-chain conserves E and L_z in 3D chaos | manipulator-form EOM (`documents/derivations.md` §3) | N=2/3, dt=1e-3 RK4, drift <1e-7 over test horizons | `npm test` (`spherical-chain`, `chain-validation-hardening`) | `reports/vitest-results.json` | chart limit at poles: L_z≠0 grazes fail loudly (documented) |
 | 8 | N≥4 mass matrix is symmetric positive definite | suffix-mass closed form + Cholesky | seeded random states, planar N=4/6, spherical N=3 | `npm test` (`chain-validation-hardening`) | same | PD away from chart-regularised poles |
 | 9 | Lab Poincaré crossings sit on the section, not the step grid | event refinement: RK4 sub-step + secant root-find | analytic-crossing fixture, dt=0.05 | `npm test` (`poincare-event-refinement`) | same | refined point accurate to ~1e-7 at 50 ms steps |
 | 10 | Exported ZIP bundles are integrity-verifiable | SHA-256 per file (WebCrypto, FIPS-vector tested) | any Research-tab ZIP export | `npm run test:e2e` (`research-bundle-zip`) | `manifest/checksums.json` in any bundle | crc32+fnv kept for legacy v1 readers |
 
-Full equations and derivations: [`docs/derivations.md`](docs/derivations.md) ·
-limitations: [`docs/known-limitations.md`](docs/known-limitations.md) ·
-API stability / SemVer policy: [`docs/api-overview.md`](docs/api-overview.md) ·
+Full equations and derivations: [`documents/derivations.md`](documents/derivations.md) ·
+limitations: [`documents/known-limitations.md`](documents/known-limitations.md) ·
+API stability / SemVer policy: [`documents/api-overview.md`](documents/api-overview.md) ·
 reproducing the external (SciPy/SymPy) checks:
-[`docs/reproducibility.md`](docs/reproducibility.md).
+[`documents/reproducibility.md`](documents/reproducibility.md).
 Step-by-step paper reproduction:
-[`docs/tutorial-reproduce-paper.md`](docs/tutorial-reproduce-paper.md).
+[`documents/tutorial-reproduce-paper.md`](documents/tutorial-reproduce-paper.md).
 Final publication checklist:
-[`docs/public-release-routine.md`](docs/public-release-routine.md).
+[`documents/public-release-routine.md`](documents/public-release-routine.md).
 
 ## What's inside (short version)
 
@@ -169,7 +169,7 @@ Final publication checklist:
 `src/runtime` DI/event/command/worker clients · `src/app` UI layer
 (`parity/` research & governance modules) · `src/lib.ts` headless core entry ·
 `tests/` + `e2e/` suites · `scripts/` validation & report generators ·
-`docs/` architecture, numerics, derivations, security, limitations,
+`documents/` architecture, numerics, derivations, security, limitations,
 schema migrations, TCAD mapping, Korean portfolio summary · `paper/` mini-paper.
 
 ## Scientific limitations
@@ -179,7 +179,7 @@ residuals. With damping, energy decrease is physics plus numerical error — not
 a conservation diagnostic. All chaos diagnostics are finite-time estimates
 (badged as such in the UI) and need full parameter disclosure for research
 use. The spherical (θ, φ) chart degenerates at the poles; the app surfaces
-this limit instead of hiding it (see `docs/derivations.md` §3).
+this limit instead of hiding it (see `documents/derivations.md` §3).
 
 ## Why this matters
 
@@ -187,9 +187,9 @@ Chaotic pendulum simulation is a compact proving ground for the habits that
 matter in semiconductor/device-physics work: mesh/step convergence, analytic
 Jacobians, stiff implicit stepping, branch continuation, and
 simulator-to-simulator benchmarking. The capability-by-capability mapping is
-in [`docs/device-simulation-mapping.md`](docs/device-simulation-mapping.md);
+in [`documents/device-simulation-mapping.md`](documents/device-simulation-mapping.md);
 a Korean portfolio summary is in
-[`docs/portfolio-korean.md`](docs/portfolio-korean.md).
+[`documents/portfolio-korean.md`](documents/portfolio-korean.md).
 
 ## Portfolio context
 
@@ -198,8 +198,8 @@ TCAD simulation roles. The project demonstrates the same validation habits
 used in professional EDA tools — convergence orders, analytic Jacobians,
 external cross-validation, and branch-continuation — scaled to a dynamical
 system compact enough for a single developer to make every claim auditable.
-See [`docs/portfolio-korean.md`](docs/portfolio-korean.md) for the Korean
-summary and [`docs/device-simulation-mapping.md`](docs/device-simulation-mapping.md)
+See [`documents/portfolio-korean.md`](documents/portfolio-korean.md) for the Korean
+summary and [`documents/device-simulation-mapping.md`](documents/device-simulation-mapping.md)
 for the explicit TCAD capability mapping.
 
 ## License and citation

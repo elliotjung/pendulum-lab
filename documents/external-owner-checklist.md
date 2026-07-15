@@ -37,7 +37,7 @@ dist.integrity` resolves, and `npm run release:status` reports the new scoped
 - [ ] Sign in at <https://jsr.io/new>, claim/confirm scope `@elliotjung`, create
       package `pendulum-lab`, and link it to `elliotjung/pendulum-lab` in package
       settings. JSR's official flow is
-      <https://jsr.io/docs/publishing-packages>.
+      <https://jsr.io/documents/publishing-packages>.
 - [ ] Run `npm run jsr:check`; review every included source file and fix slow
       types or portability errors rather than bypassing them.
 - [ ] Dispatch `.github/workflows/publish-jsr.yml` with `dry_run=true`. For the
@@ -141,7 +141,7 @@ account is optional rather than a publication blocker.
       recovery after closing dialogs. Test both browse and focus modes where
       relevant.
 - [ ] Log exact steps, expected/actual speech, severity, workaround, and issue
-      link in a dated `docs/accessibility-manual-validation.md` entry. Never write
+      link in a dated `documents/accessibility-manual-validation.md` entry. Never write
       "screen-reader verified" from axe results alone.
 
 ### Mid-range Android field profile - device owner
@@ -156,7 +156,7 @@ account is optional rather than a publication blocker.
       report median plus range, not the best run.
 - [ ] Capture `performance.memory` only when supported; otherwise use trace,
       frame timing, long-task count, dropped-frame observation, battery/thermal
-      notes, and screenshot/video evidence. Compare against `docs/performance.md`
+      notes, and screenshot/video evidence. Compare against `documents/performance.md`
       budgets without inventing unsupported metrics.
 - [ ] Evidence: anonymized raw trace, environment JSON, summary table, release
       commit, observed limitations, and follow-up issue links committed under an
@@ -165,7 +165,7 @@ account is optional rather than a publication blocker.
 ### NVIDIA/AMD guest evidence - maintainer plus device owner
 
 - [ ] Follow the registration, isolation, artifact acceptance, and mandatory
-      revocation procedure in `docs/hardware-validation.md`.
+      revocation procedure in `documents/hardware-validation.md`.
 - [ ] Evidence is complete only when the artifact hash is recorded and the
       ephemeral runner and temporary OS account are both removed.
 

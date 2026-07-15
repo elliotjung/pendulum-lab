@@ -11,7 +11,7 @@ playwright-report/
 .vite/
 *.log
 dist-lib/
-docs/api/
+documents/api/
 .stryker-tmp/
 reports/mutation/
 desktop.ini

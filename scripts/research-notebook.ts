@@ -404,7 +404,7 @@ ${orderRows}
 <tr><th>Case</th><th>Horizon</th><th>Max ‖Δ‖∞</th><th>Bound</th><th>Verdict</th></tr>
 ${crossRows}
 </table>
-<p>For the chaotic case the divergence is the shared tolerance floor amplified by e<sup>λ₁t</sup> — the expected signature of two correct implementations of the same chaotic flow. A 31-digit double-double reference additionally measures the float64 predictability horizon itself (~1e-14 at t = 2 s growing to decorrelation by t ≈ 20 s; see <code>docs/known-limitations.md</code>).</p>
+<p>For the chaotic case the divergence is the shared tolerance floor amplified by e<sup>λ₁t</sup> — the expected signature of two correct implementations of the same chaotic flow. A 31-digit double-double reference additionally measures the float64 predictability horizon itself (~1e-14 at t = 2 s growing to decorrelation by t ≈ 20 s; see <code>documents/known-limitations.md</code>).</p>
 
 <h2>5. Figures</h2>
 ${figureHtml}

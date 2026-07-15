@@ -78,5 +78,5 @@ npm run validate:literature
 
 ## Reviewer Kit
 
-See `docs/reviewer-kit.md` and the generated
+See `documents/reviewer-kit.md` and the generated
 `reports/reviewer-kit-manifest.md`.

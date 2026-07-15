@@ -34,7 +34,7 @@ exists.
 
 Remaining steps (external accounts; cannot be automated from this repo):
 
-1. Zenodo DOI first (see `docs/RELEASING.md` / `npm run zenodo:draft`) so the
+1. Zenodo DOI first (see `documents/RELEASING.md` / `npm run zenodo:draft`) so the
    preprint can cite the archived software version.
 2. Convert to arXiv-accepted source. arXiv does not ingest HTML: either
    (a) submit `paper.pdf` alone (allowed for nlin), or (b) port the generated

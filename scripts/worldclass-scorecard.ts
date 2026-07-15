@@ -166,15 +166,15 @@ const has = {
     mutationAggregate.gatePassed === true &&
     typeof mutationAggregate.mutationScore === 'number' &&
     mutationAggregate.mutationScore >= (mutationAggregate.thresholds?.break ?? 60),
-  flagshipDoc: await exists('docs/flagship-result.md'),
+  flagshipDoc: await exists('documents/flagship-result.md'),
   flagshipCertification: await exists('reports/flagship-certification.json'),
   flagshipFigure: await exists('reports/flagship-figure1.svg'),
   flagshipExternalCheck: await exists('reports/flagship-external-check.json'),
-  reviewerKitDoc: await exists('docs/reviewer-kit.md'),
+  reviewerKitDoc: await exists('documents/reviewer-kit.md'),
   reviewerKitManifest: await exists('reports/reviewer-kit-manifest.json'),
   reviewerKitManifestMd: await exists('reports/reviewer-kit-manifest.md'),
   reviewerKitScript: await exists('scripts/reviewer-kit.ts'),
-  releasePackagingDoc: await exists('docs/release-packaging.md'),
+  releasePackagingDoc: await exists('documents/release-packaging.md'),
   releaseReadiness: await exists('reports/release-readiness.json'),
   releaseOnePagePdf: await exists('reports/release-one-page.pdf'),
   walkthroughGif: await exists('reports/walkthrough-30s.gif'),
@@ -221,9 +221,9 @@ const has = {
   mojibakeAudit: await exists('reports/mojibake-audit.md'),
   validation: await exists('reports/validation-report.md'),
   reference: await exists('reports/validation-reference.md'),
-  architecture: await exists('docs/architecture.md'),
-  numerics: await exists('docs/numerics.md'),
-  limitations: await exists('docs/known-limitations.md'),
+  architecture: await exists('documents/architecture.md'),
+  numerics: await exists('documents/numerics.md'),
+  limitations: await exists('documents/known-limitations.md'),
   ci: await exists('.github/workflows/ci.yml'),
   mainWorkflow: await exists('.github/workflows/main.yml'),
   nightlyWorkflow: await exists('.github/workflows/nightly.yml'),
@@ -236,7 +236,7 @@ const has = {
   distIndex: await exists('dist/index.html'),
   license: await exists('LICENSE'),
   citation: await exists('CITATION.cff'),
-  typedocIndex: await exists('docs/api/index.html'),
+  typedocIndex: await exists('documents/api/index.html'),
   index: (await exists('app.html')) && (await exists('standalone-manifest.json')),
   coverageScopeBaseline: await exists('config/coverage-scope-baseline.json'),
   bundleBudget: await exists('scripts/bundle-budget.ts'),
@@ -757,7 +757,7 @@ const items: ScorecardItem[] = [
       has.license ? 'LICENSE exists' : 'LICENSE missing',
       has.citation ? 'CITATION.cff exists' : 'CITATION.cff missing',
       has.typedocIndex
-        ? 'TypeDoc API docs exist at docs/api/index.html'
+        ? 'TypeDoc API docs exist at documents/api/index.html'
         : 'TypeDoc API docs missing; run npm run docs:api'
     ],
     remaining: [

@@ -17,5 +17,5 @@ before a fix is available. An initial acknowledgement is targeted within seven
 days, followed by a severity assessment and coordinated disclosure timeline.
 
 For the application's implemented hardening model, see
-[docs/security.md](docs/security.md). That design document complements rather
+[documents/security.md](documents/security.md). That design document complements rather
 than replaces this reporting policy.

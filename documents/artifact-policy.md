@@ -22,17 +22,17 @@ or durable evidence for a README claim.
 - `paper/index.html` and `paper/paper.pdf` are tracked portfolio artifacts and
   should be regenerated through `npm run paper:build`.
 - `reports/portfolio-korean.pdf` and its validation JSON are tracked submission
-  artifacts generated from `docs/portfolio-korean.md` by
+  artifacts generated from `documents/portfolio-korean.md` by
   `npm run release:package`. Poppler page PNGs are temporary visual-review files
   under `tmp/pdfs/` and are not committed.
-- Portfolio summaries under `docs/` may be tracked when they are intended for
+- Portfolio summaries under `documents/` may be tracked when they are intended for
   review outside the dev server.
-- External reference claims should cite `docs/reference-manifest.md`, including
+- External reference claims should cite `documents/reference-manifest.md`, including
   runtime pins, dependency pins, and source-file checksums.
 
 ## Ignored Build Output
 
-- `dist/`, `standalone/`, `dist-lib/`, `docs/api/`, `reports/playwright/`,
+- `dist/`, `standalone/`, `dist-lib/`, `documents/api/`, `reports/playwright/`,
   `reports/coverage/`, `reports/mutation/`, `test-results/`, and
   `reports/vitest-results.json` are transient outputs.
 - Visual-regression snapshots should be committed only after an intentional

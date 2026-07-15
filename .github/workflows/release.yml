@@ -112,7 +112,7 @@ jobs:
             dist/
             standalone/
             dist-lib/
-            docs/api/
+            documents/api/
             reports/worldclass-scorecard.md
             reports/release-readiness.*
             reports/release-one-page.pdf

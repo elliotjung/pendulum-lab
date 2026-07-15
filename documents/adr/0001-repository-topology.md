@@ -49,7 +49,7 @@ together *structurally* rather than by checklist:
 ## Consequences
 
 - Cross-repo evidence flow is automated; the manual step in
-  `docs/cross-project-release.md` becomes a fallback, not the mechanism.
+  `documents/cross-project-release.md` becomes a fallback, not the mechanism.
 - The landing repo needs the `LANDING_DISPATCH_TOKEN` secret in this repo
   (already required by the release workflow) and grants its own
   `contents: write` to the sync workflow.

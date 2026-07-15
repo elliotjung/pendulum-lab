@@ -58,7 +58,7 @@
       "path": "reports/portfolio-korean.pdf",
       "required": true,
       "available": true,
-      "note": "Korean portfolio PDF is generated from docs/portfolio-korean.md with Playwright Chromium."
+      "note": "Korean portfolio PDF is generated from documents/portfolio-korean.md with Playwright Chromium."
     },
     {
       "id": "portfolio-korean-pdf-validation",

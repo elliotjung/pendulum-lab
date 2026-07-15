@@ -42,7 +42,7 @@
   시뮬레이션의 시간 적분 안정성
 - 차트 특이점(구면 극점)의 명시적 한계 표시 → 모델 유효 범위의 정직한 문서화
 - 독립 참조 구현과의 교차 검증, 재현 해시 → 시뮬레이션 결과의 신뢰성 평가
-  (`docs/device-simulation-mapping.md`에 항목별 대응 정리)
+  (`documents/device-simulation-mapping.md`에 항목별 대응 정리)
 
 ## 기술 스택과 아키텍처
 
@@ -72,8 +72,8 @@ GitHub Release에서 `pendulum-lab-standalone-v*.html`을 내려받아 더블클
 
 | 문서 | 내용 |
 |---|---|
-| `docs/derivations.md` | 모든 운동방정식의 수학적 유도 |
-| `docs/tutorial-reproduce-paper.md` | 논문 결과 재현 튜토리얼 |
-| `docs/schema-migrations.md` | 스키마 정책 + 아카이브 호환성 매트릭스 |
-| `docs/device-simulation-mapping.md` | 반도체 TCAD 개념 대응표 |
-| `docs/numerics.md`, `docs/known-limitations.md` | 수치해석 상세, 한계 명시 |
+| `documents/derivations.md` | 모든 운동방정식의 수학적 유도 |
+| `documents/tutorial-reproduce-paper.md` | 논문 결과 재현 튜토리얼 |
+| `documents/schema-migrations.md` | 스키마 정책 + 아카이브 호환성 매트릭스 |
+| `documents/device-simulation-mapping.md` | 반도체 TCAD 개념 대응표 |
+| `documents/numerics.md`, `documents/known-limitations.md` | 수치해석 상세, 한계 명시 |

@@ -300,7 +300,7 @@ const artifactSpecs = [
     'portfolio-korean-pdf',
     'reports/portfolio-korean.pdf',
     true,
-    'Korean portfolio PDF is generated from docs/portfolio-korean.md with Playwright Chromium.'
+    'Korean portfolio PDF is generated from documents/portfolio-korean.md with Playwright Chromium.'
   ],
   [
     'portfolio-korean-pdf-validation',

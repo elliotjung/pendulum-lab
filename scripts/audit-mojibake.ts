@@ -19,7 +19,7 @@ const IGNORED_DIRS = new Set([
   'coverage',
   'dist',
   'dist-lib',
-  'docs/api',
+  'documents/api',
   'node_modules',
   'reports/coverage',
   'reports/mutation',

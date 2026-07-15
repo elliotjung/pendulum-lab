@@ -89,7 +89,7 @@ coverage explicit.
 
 ## Release Packaging
 
-The external publication wrapper lives in `docs/release-packaging.md`. Run:
+The external publication wrapper lives in `documents/release-packaging.md`. Run:
 
 ```bash
 npm run release:package

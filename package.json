@@ -78,7 +78,7 @@
     "README.md",
     "LICENSE",
     "CITATION.cff",
-    "docs/api-overview.md"
+    "documents/api-overview.md"
   ],
   "sideEffects": false,
   "overrides": {

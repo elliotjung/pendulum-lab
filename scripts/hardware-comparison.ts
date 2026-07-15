@@ -21,7 +21,7 @@
  * Outputs: reports/hardware-comparison.json + .md
  *
  * Run: npm run compare:hardware
- * Chapter: docs/hardware-validation.md
+ * Chapter: documents/hardware-validation.md
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { parseObservedDoublePendulumCsv } from '../src/research/experimentalDataImport';
@@ -143,7 +143,7 @@ async function main(): Promise<void> {
     initialAnglesFirstSample: [theta10, theta20],
     honesty:
       meta.provenance?.realFootage === false
-        ? 'Dataset is a synthetic camera emulation (seeded, reproducible); the pipeline is real-data-ready — see docs/hardware-validation.md for the capture protocol.'
+        ? 'Dataset is a synthetic camera emulation (seeded, reproducible); the pipeline is real-data-ready — see documents/hardware-validation.md for the capture protocol.'
         : 'Dataset provenance as recorded in the sidecar metadata.'
   };
 
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
     'npm run compare:hardware',
     '```',
     '',
-    'Chapter: `docs/hardware-validation.md`.',
+    'Chapter: `documents/hardware-validation.md`.',
     ''
   ];
   await writeFile('reports/hardware-comparison.md', `${md.join('\n')}\n`, 'utf8');

@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+### Documentation home renamed `docs/` -> `documents/` (no behaviour change)
+
+- **Folder rename**: the entire `docs/` tree moved to `documents/` via
+  `git mv` (history preserved). Every active reference was updated in lockstep
+  so no link or tool path dangles: `README.md`, `CONTRIBUTING.md`, `SECURITY.md`,
+  `ROADMAP.md`, the cross-linking documents themselves, `typedoc.json`
+  (`out` + `readme`), `jsr.json`/`package.json` publish manifests,
+  `eslint.config.js`, `.gitignore`, `.prettierignore`, the release workflow's
+  API-docs artifact path, and the `scripts/*` that read or write documents
+  (`sync-test-counts`, `sync-doi`, `worldclass-scorecard`, `portfolio-korean-pdf`,
+  `hardware-comparison`, `audit-mojibake`). The generated `documents/api/`
+  TypeDoc output stays gitignored.
+- **Cross-repo link**: the companion `pendulum-landing` page (EN + KO) and its
+  docs were repointed to `.../blob/master/documents/...` so the "Read the TCAD
+  mapping" link keeps resolving after deploy.
+- **Historical entries preserved**: older CHANGELOG entries keep their original
+  `docs/...` paths as an append-only record of the tree at that time.
+- **Verified**: `tsc --noEmit`, `eslint`, `npm run build`, and `docs:sync`
+  (test-count writer) all pass against the new paths; no source/runtime code
+  referenced the documentation directory.
+
 ### Boundary-hardening pass: numerical budgets, session contracts, worker lifecycle (additive; suite 1090 -> 1233)
 
 - **Numerical work budgets with explicit contracts**: every chaos-diagnostic

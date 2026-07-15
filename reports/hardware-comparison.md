@@ -21,5 +21,5 @@ npm run fixture:hardware   # regenerate the seeded fixture (or drop in a real tr
 npm run compare:hardware
 ```
 
-Chapter: `docs/hardware-validation.md`.
+Chapter: `documents/hardware-validation.md`.
 

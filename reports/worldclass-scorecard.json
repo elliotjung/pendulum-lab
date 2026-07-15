@@ -4233,7 +4233,7 @@
         "dist/index.html exists for Pages artifact deployment",
         "LICENSE exists",
         "CITATION.cff exists",
-        "TypeDoc API docs exist at docs/api/index.html"
+        "TypeDoc API docs exist at documents/api/index.html"
       ],
       "remaining": [
         "External npm publication and Zenodo DOI are tracked separately in reports/publication-status.json"

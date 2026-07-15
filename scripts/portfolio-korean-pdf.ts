@@ -273,7 +273,7 @@ async function removeOldPreviews(directory: string): Promise<void> {
 }
 
 export async function generateKoreanPortfolioPdf(options: KoreanPortfolioPdfOptions = {}): Promise<void> {
-  const sourcePath = resolve(options.sourcePath ?? 'docs/portfolio-korean.md');
+  const sourcePath = resolve(options.sourcePath ?? 'documents/portfolio-korean.md');
   const outputPath = resolve(options.outputPath ?? 'reports/portfolio-korean.pdf');
   const validationPath = resolve(options.validationPath ?? 'reports/portfolio-korean-pdf-validation.json');
   const previewDirectory = resolve(options.previewDirectory ?? 'tmp/pdfs');

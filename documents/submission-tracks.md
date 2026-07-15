@@ -85,7 +85,7 @@ Historical news posts prove only that a program existed in that year.
   the student problem, user testing, privacy/offline design, and measurable
   educational outcome.
 - **Package:** 60-120 second captioned demo; `reports/portfolio-korean.pdf`;
-  standalone `index.html`; curriculum map `docs/curriculum-mapping-ko.md`;
+  standalone `index.html`; curriculum map `documents/curriculum-mapping-ko.md`;
   privacy/security note; before/after user feedback; technical appendix linking
   the same reviewer evidence.
 - **Owner gate:** confirm that the current call accepts high-school entrants,
@@ -104,7 +104,7 @@ Historical news posts prove only that a program existed in that year.
 | `reviewer.html`                         | live evidence console        | judge follow-up              | "verify it yourself" CTA     |
 | standalone `index.html` / release asset | optional demo                | offline judging fallback     | main interactive deliverable |
 | `reports/portfolio-korean.pdf`          | author profile appendix      | student contribution summary | primary Korean portfolio     |
-| `docs/curriculum-mapping-ko.md`         | outreach note                | broader impact               | teacher adoption case        |
+| `documents/curriculum-mapping-ko.md`         | outreach note                | broader impact               | teacher adoption case        |
 
 ## Submission freeze checklist
 

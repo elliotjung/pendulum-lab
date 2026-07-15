@@ -12,7 +12,7 @@
  * exists so the theory-vs-measurement pipeline (import → angle extraction →
  * Levenberg–Marquardt parameter recovery → residual report) is executable and
  * regression-tested end-to-end today; swap in a real tracked CSV with the same
- * schema to make the chapter fully experimental (docs/hardware-validation.md).
+ * schema to make the chapter fully experimental (documents/hardware-validation.md).
  *
  * Deterministic: seeded mulberry32 PRNG + fixed-step RK4, so the committed
  * fixture is exactly reproducible with `npm run fixture:hardware`.

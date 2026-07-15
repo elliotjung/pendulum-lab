@@ -1,12 +1,12 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src/lib.ts"],
-  "out": "docs/api",
+  "out": "documents/api",
   "name": "Pendulum Lab Core API",
   "includeVersion": false,
   "excludePrivate": true,
   "excludeInternal": true,
-  "readme": "docs/api-overview.md",
+  "readme": "documents/api-overview.md",
   "skipErrorChecking": true,
   "logLevel": "Warn"
 }

@@ -107,5 +107,5 @@
     0.42427231273777355,
     -0.621509730393088
   ],
-  "honesty": "Dataset is a synthetic camera emulation (seeded, reproducible); the pipeline is real-data-ready — see docs/hardware-validation.md for the capture protocol."
+  "honesty": "Dataset is a synthetic camera emulation (seeded, reproducible); the pipeline is real-data-ready — see documents/hardware-validation.md for the capture protocol."
 }

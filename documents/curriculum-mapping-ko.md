@@ -33,7 +33,7 @@ AP 열은 College Board의 현행
    주장-증거-추론(CER)을 제출한다.
 
 교사는 앱의 교육 카드(`src/app/educationCards.ts`),
-`docs/tutorial-reproduce-paper.md`,
-`docs/known-limitations.md`를 함께 제공하고, 결과 배지의 신뢰 수준을 학생이
+`documents/tutorial-reproduce-paper.md`,
+`documents/known-limitations.md`를 함께 제공하고, 결과 배지의 신뢰 수준을 학생이
 직접 해석하게 합니다. 접근성 대안으로 키보드 조작, 표/CSV, 정적 SVG/PDF를
 허용하며 캔버스의 색이나 애니메이션만 평가하지 않습니다.

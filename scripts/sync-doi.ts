@@ -27,18 +27,18 @@ if (/^license:/m.test(citation))
 else citation += `\n${identifierBlock}`;
 await writeFile('CITATION.cff', citation, 'utf8');
 
-let releaseDoc = await readFile('docs/release-packaging.md', 'utf8');
+let releaseDoc = await readFile('documents/release-packaging.md', 'utf8');
 const doiLine = `Archived release DOI: [${doi}](https://doi.org/${doi})`;
 releaseDoc = releaseDoc.replace(/^Archived release DOI:.*$/m, doiLine);
 if (!releaseDoc.includes(doiLine)) releaseDoc = `${releaseDoc.trimEnd()}\n\n${doiLine}\n`;
-await writeFile('docs/release-packaging.md', releaseDoc, 'utf8');
+await writeFile('documents/release-packaging.md', releaseDoc, 'utf8');
 
 const sync = {
   schemaVersion: 'pendulum-doi-sync/v1',
   generatedAt: new Date().toISOString(),
   doi,
   recordId: report.recordId ?? null,
-  files: ['README.md', 'CITATION.cff', 'docs/release-packaging.md'],
+  files: ['README.md', 'CITATION.cff', 'documents/release-packaging.md'],
   status: 'synced'
 };
 await writeFile('reports/doi-sync.json', `${JSON.stringify(sync, null, 2)}\n`, 'utf8');

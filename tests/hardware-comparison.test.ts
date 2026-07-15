@@ -5,7 +5,7 @@ import { fitDoublePendulum } from '../src/research/parameterEstimation';
 
 /**
  * End-to-end regression for the theory-vs-hardware lane
- * (docs/hardware-validation.md): the committed tracker fixture — a seeded
+ * (documents/hardware-validation.md): the committed tracker fixture — a seeded
  * synthetic camera emulation with pixel projection and sub-pixel noise — must
  * round-trip through import → angle extraction → LM fit and recover the
  * ground-truth parameters within tight relative error, at the injected noise

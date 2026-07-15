@@ -115,24 +115,24 @@ const replacements: Replacement[] = [
     replace: ({ totalTests }) => `$1${totalTests}$2`
   },
   {
-    file: 'docs/engine-overview.md',
+    file: 'documents/engine-overview.md',
     pattern: /layer is unit-tested \([^)]*\) and the build, typecheck, and Playwright/,
     replace: ({ totalTests, testFiles }) =>
       `layer is unit-tested (${totalTests} tests across ${testFiles} files, synced from \`reports/vitest-results.json\`) and the build, typecheck, and Playwright`
   },
   {
-    file: 'docs/tutorial-reproduce-paper.md',
+    file: 'documents/tutorial-reproduce-paper.md',
     pattern: /npm test\s+# [^\n]+/,
     replace: ({ totalTests }) =>
       `npm test                      # ${totalTests} unit tests (physics, chaos, research tooling)`
   },
   {
-    file: 'docs/portfolio-korean.md',
+    file: 'documents/portfolio-korean.md',
     pattern: /^  - .*Playwright E2E\(Chromium\/Firefox\/WebKit\/모바일\)$/m,
     replace: ({ totalTests }) => `  - 단위 테스트 ${totalTests}개, Playwright E2E(Chromium/Firefox/WebKit/모바일)`
   },
   {
-    file: 'docs/api-overview.md',
+    file: 'documents/api-overview.md',
     pattern: /\| Surface \| Status in [^|]+ \| Migration target \| Earliest removal \|/,
     replace: ({ version }) => `| Surface | Status in ${version} | Migration target | Earliest removal |`
   }

@@ -12,7 +12,7 @@ Status: **ready-for-owner-publish**
 | yes | yes | `.github/workflows/publish-npm.yml` | Manual npm workflow uses OIDC trusted publishing and automatic provenance. |
 | yes | yes | `.github/workflows/release.yml` | Release workflow emits SLSA/in-toto provenance plus a CycloneDX SBOM attestation. |
 | yes | yes | `paper/paper.pdf` | Flagship paper PDF exists. |
-| yes | yes | `reports/portfolio-korean.pdf` | Korean portfolio PDF is generated from docs/portfolio-korean.md with Playwright Chromium. |
+| yes | yes | `reports/portfolio-korean.pdf` | Korean portfolio PDF is generated from documents/portfolio-korean.md with Playwright Chromium. |
 | yes | yes | `reports/portfolio-korean-pdf-validation.json` | Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed. |
 | yes | yes | `reports/reviewer-kit-manifest.json` | Reviewer kit manifest exists. |
 | no | yes | `reports/webgpu-hardware-validation.md` | Real WebGPU adapter validation report exists when run on a hardware target. |

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-cli-batch/v1",
-  "description": "Example committed study: baseline Lyapunov + RQA + multi-resolution Wada convergence, reproducible from this one file via `npm run research -- batch --spec docs/examples/study-spec-example.json`.",
+  "description": "Example committed study: baseline Lyapunov + RQA + multi-resolution Wada convergence, reproducible from this one file via `npm run research -- batch --spec documents/examples/study-spec-example.json`.",
   "jobs": [
     {
       "name": "lyapunov-chaotic-baseline",

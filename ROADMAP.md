@@ -16,7 +16,7 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
 
 ## Certified Chaotic Dynamics Workbench
 
-- **Flagship crown:** the outward-facing research thesis is now the Melnikov threshold vs period-doubling onset gap map. The contract lives in `src/research/certifiedWorkbench.ts`, with the paper-facing narrative in `docs/flagship-result.md`.
+- **Flagship crown:** the outward-facing research thesis is now the Melnikov threshold vs period-doubling onset gap map. The contract lives in `src/research/certifiedWorkbench.ts`, with the paper-facing narrative in `documents/flagship-result.md`.
 - **Trust Inspector:** result badges now open a provenance panel with source, parameters, uncertainty, external validation, reproduce command, caveat, artifact, and hash fields. Keep extending this to every new quoted number before adding new visual surfaces.
 - **Research workspace UX:** the Research tab has a Certified Workspace card with persisted workspace profiles plus a Project -> Sessions -> Runs -> Artifacts storage model, density preference, export/import, reviewer-kit handoff, and run-log entries for workspace events.
 - **GPU/scale validation:** `npm run validate:gpu-scale` pins CPU reference behavior, mock WebGPU accept/fallback behavior, an executable CLV/full-spectrum/FTLE acceleration contract, and an ensemble f32-candidate reduction oracle. PR and mainline CI run this contract; `.github/workflows/webgpu-hardware.yml` is the opt-in self-hosted hardware lane for actual WebGPU reduction vs CPU-oracle checks.
@@ -26,7 +26,7 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   the Zenodo↔GitHub account link, an external credential) and enable the
   external npm publish target (the OIDC trusted-publishing workflow
   `publish-npm.yml` is ready; the remaining step is configuring the trusted
-  publisher on npmjs.com — see `docs/RELEASING.md`).
+  publisher on npmjs.com — see `documents/RELEASING.md`).
   - **Done (2026-07-10):** the hardware WebGPU lane has real evidence — the
     full ladder (reductions, full spectrum, CLV, variational FTLE, N-chain
     STM/QR) passed on a physical Intel Xe-2LPG adapter and the four
@@ -162,7 +162,7 @@ The migration is finished: the legacy `js/` runtime (≈8,080 lines) is removed 
   `pendulum-lab:research-workbench-changed`; the Research tab installs a render bridge for that
   event. Remaining extraction candidates: run-log renderer (`renderResearchRunLog`, ~80 lines),
   design-study state, workspace/session controller, and batch-runner orchestration.
-  The split boundary is now documented in `docs/architecture.md` so the next
+  The split boundary is now documented in `documents/architecture.md` so the next
   extraction keeps state/storage code in `src/app/parity/storage-sync.ts` and
   pure research helpers in `src/research`.
   - **Deferred deliberately:** the remaining `research-workbench.ts` extractions
