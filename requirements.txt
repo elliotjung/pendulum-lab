@@ -14,5 +14,5 @@
 # requirements.txt is the human-maintained input. requirements.lock is the
 # transitive, hash-locked CI/container environment generated with pip-compile.
 numpy==1.26.4
-scipy==1.13.1
+scipy==1.18.0
 sympy==1.12
