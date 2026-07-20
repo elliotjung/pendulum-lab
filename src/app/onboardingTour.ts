@@ -66,7 +66,7 @@ export const TOUR_STEPS: readonly TourStep[] = [
     }
   },
   {
-    target: '[data-workflow-tab="lyap"]',
+    target: '[data-workflow-tab="bifurc"]',
     kind: 'mission',
     en: {
       title: 'Mission: find A_PD',
@@ -95,7 +95,7 @@ const ROOT_ID = 'onboardingTour';
 
 function tourCss(): string {
   return `
-#${ROOT_ID}{position:fixed;inset:0;z-index:11500;pointer-events:none}
+#${ROOT_ID}{position:fixed;inset:0;z-index:11500;pointer-events:auto}
 .tour-ring{position:fixed;border-radius:14px;pointer-events:none;border:1.5px solid rgba(30,227,255,.9);box-shadow:0 0 0 9999px rgba(3,5,12,.62),0 0 34px -4px rgba(30,227,255,.8),inset 0 0 18px -6px rgba(30,227,255,.55);transition:top .34s cubic-bezier(.2,.7,.2,1),left .34s cubic-bezier(.2,.7,.2,1),width .34s cubic-bezier(.2,.7,.2,1),height .34s cubic-bezier(.2,.7,.2,1)}
 .tour-card{position:fixed;max-width:300px;pointer-events:auto;padding:15px 16px;border-radius:12px;border:1px solid transparent;background:linear-gradient(172deg,rgba(10,15,30,.98),rgba(6,9,19,.99)) padding-box,linear-gradient(165deg,rgba(30,227,255,.65),rgba(255,255,255,.09) 30%,rgba(157,120,255,.55)) border-box;box-shadow:0 18px 50px -18px rgba(0,0,0,.85),0 0 44px -14px rgba(30,227,255,.6);transition:top .34s cubic-bezier(.2,.7,.2,1),left .34s cubic-bezier(.2,.7,.2,1)}
 .tour-step-tag{font:800 8.5px/1 var(--font-mono,monospace);letter-spacing:2.4px;text-transform:uppercase;color:var(--cyan,#1ee3ff);margin-bottom:7px}
@@ -151,13 +151,17 @@ function buildDom(onSkip: () => void, onNext: () => void): TourDom {
   const card = document.createElement('div');
   card.className = 'tour-card';
   card.setAttribute('role', 'dialog');
-  card.setAttribute('aria-label', 'Quick tour');
+  card.setAttribute('aria-modal', 'true');
   const tag = document.createElement('div');
   tag.className = 'tour-step-tag';
   const title = document.createElement('div');
   title.className = 'tour-title';
+  title.id = 'onboardingTourTitle';
   const body = document.createElement('div');
   body.className = 'tour-body';
+  body.id = 'onboardingTourDescription';
+  card.setAttribute('aria-labelledby', title.id);
+  card.setAttribute('aria-describedby', body.id);
   const foot = document.createElement('div');
   foot.className = 'tour-foot';
   const dotsWrap = document.createElement('div');
@@ -243,35 +247,76 @@ function placeStep(dom: TourDom, index: number): boolean {
 function startTour(): void {
   let index = 0;
   let dom: TourDom | null = null;
+  const invoker = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  const appShell = document.querySelector<HTMLElement>('.app-shell');
+  const wasInert = appShell?.inert ?? false;
+  let targetObserver: ResizeObserver | null = null;
   const finish = (): void => {
     markTourDone();
     window.removeEventListener('resize', onResize);
+    window.removeEventListener('scroll', onResize, true);
     document.removeEventListener('keydown', onKey, true);
+    targetObserver?.disconnect();
+    if (appShell) appShell.inert = wasInert;
     dom?.root.remove();
     dom = null;
+    if (invoker?.isConnected) queueMicrotask(() => invoker.focus());
+  };
+  const placeNextAvailable = (): boolean => {
+    if (!dom) return false;
+    while (index < TOUR_STEPS.length) {
+      if (placeStep(dom, index)) {
+        targetObserver?.disconnect();
+        const target = document.querySelector<HTMLElement>(TOUR_STEPS[index]?.target ?? '');
+        if (target && 'ResizeObserver' in window) {
+          targetObserver = new ResizeObserver(onResize);
+          targetObserver.observe(target);
+        }
+        return true;
+      }
+      index += 1;
+    }
+    return false;
   };
   const advance = (): void => {
     index += 1;
-    if (index >= TOUR_STEPS.length || !dom || !placeStep(dom, index)) finish();
-    else dom.next.focus();
+    if (index >= TOUR_STEPS.length || !placeNextAvailable()) finish();
+    else dom?.next.focus();
   };
   const onResize = (): void => {
     if (dom) placeStep(dom, index);
   };
   const onKey = (event: KeyboardEvent): void => {
     if (event.key === 'Escape') {
+      event.preventDefault();
       event.stopPropagation();
       finish();
+      return;
+    }
+    if (event.key === 'Tab' && dom) {
+      const focusable = Array.from(dom.card.querySelectorAll<HTMLButtonElement>('button:not([disabled])'));
+      const first = focusable.at(0);
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
   };
   dom = buildDom(finish, advance);
-  if (!placeStep(dom, index)) {
+  if (!placeNextAvailable()) {
     // Nothing sensible to point at (unexpected layout) — bow out silently.
     dom.root.remove();
     markTourDone();
     return;
   }
+  if (appShell) appShell.inert = true;
   window.addEventListener('resize', onResize);
+  window.addEventListener('scroll', onResize, true);
   document.addEventListener('keydown', onKey, true);
   dom.next.focus();
 }

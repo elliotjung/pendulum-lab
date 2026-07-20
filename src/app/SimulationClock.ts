@@ -18,6 +18,13 @@ export interface SimulationFrameResult {
 
 export type SimulationTimingMode = 'deterministic' | 'wall-clock';
 
+const MAX_FRAME_STEPS = 1_000_000;
+
+function finiteNonNegative(name: string, value: number): number {
+  if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be finite and non-negative`);
+  return value;
+}
+
 export class SimulationClock {
   private lastWallClockMs: number | null = null;
   private wallClockRemainderSec = 0;
@@ -40,8 +47,15 @@ export class SimulationClock {
   }): SimulationFrameResult {
     const started = now();
     const mode = options.mode ?? 'deterministic';
+    if (mode !== 'deterministic' && mode !== 'wall-clock') throw new RangeError('timing mode is unsupported');
+    const requestedSteps = finiteNonNegative('stepsPerFrame', options.stepsPerFrame);
+    if (requestedSteps > MAX_FRAME_STEPS) {
+      throw new RangeError(`stepsPerFrame must be at most ${MAX_FRAME_STEPS}`);
+    }
     const stepsAdvanced =
-      mode === 'wall-clock' ? this.wallClockSteps(options) : Math.max(0, Math.round(options.stepsPerFrame));
+      mode === 'wall-clock'
+        ? this.wallClockSteps({ ...options, stepsPerFrame: requestedSteps })
+        : Math.round(requestedSteps);
     for (let step = 0; step < stepsAdvanced; step += 1) {
       options.sim.step(1);
       options.onStep(options.sim.stateView());
@@ -69,11 +83,15 @@ export class SimulationClock {
     speedMultiplier?: number;
     maxWallClockSteps?: number;
   }): number {
-    const timestampMs = options.timestampMs ?? now();
+    const timestampMs = finiteNonNegative('timestampMs', options.timestampMs ?? now());
     const dt = Math.max(Number.EPSILON, options.sim.config.dt);
-    const speed = Math.max(0, options.speedMultiplier ?? 1);
-    const maxSteps = Math.max(1, Math.round(options.maxWallClockSteps ?? 180));
-    const fallbackElapsedSec = Math.max(0, options.stepsPerFrame) * dt;
+    const speed = finiteNonNegative('speedMultiplier', options.speedMultiplier ?? 1);
+    const requestedMaxSteps = options.maxWallClockSteps ?? 180;
+    if (!Number.isSafeInteger(requestedMaxSteps) || requestedMaxSteps < 1 || requestedMaxSteps > MAX_FRAME_STEPS) {
+      throw new RangeError(`maxWallClockSteps must be a safe integer in [1, ${MAX_FRAME_STEPS}]`);
+    }
+    const maxSteps = requestedMaxSteps;
+    const fallbackElapsedSec = options.stepsPerFrame * dt;
     const elapsedSec =
       this.lastWallClockMs === null
         ? fallbackElapsedSec

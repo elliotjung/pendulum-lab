@@ -29,7 +29,7 @@ import {
   hasExplicitAudienceMode,
   installAudienceMode
 } from './app/audienceMode';
-import { TAB_ACTIVATED_EVENT } from './app/Shell';
+import { isShellShortcutTarget, TAB_ACTIVATED_EVENT } from './app/Shell';
 import { applyStructuralLocale, initNavLocale, installLocaleSelect } from './app/uiLocale';
 import { installOnboardingTour } from './app/onboardingTour';
 import { installExperimentShare } from './app/experimentShare';
@@ -52,12 +52,75 @@ function showToast(message: string, timeout = 2200): void {
 
 function installPwa(): void {
   if (!('serviceWorker' in navigator)) return;
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
   if (location.protocol === 'file:') return;
+  const loopback =
+    location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '[::1]';
+  if (!window.isSecureContext && !loopback) return;
   const scope = new URL('./', location.href).pathname;
-  void navigator.serviceWorker.register(new URL('./sw.js', location.href), { scope }).catch((error: unknown) => {
-    console.warn('Pendulum Lab service worker registration failed; online mode remains available.', error);
+  let reloading = false;
+  let hadController = Boolean(navigator.serviceWorker.controller);
+  const showUpdate = (registration: ServiceWorkerRegistration): void => {
+    if (!registration.waiting || document.getElementById('pwaUpdateBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'pwaUpdateBanner';
+    banner.className = 'pwa-update-banner';
+    banner.setAttribute('role', 'status');
+    const copy = document.createElement('span');
+    copy.textContent =
+      document.documentElement.lang === 'ko' ? '새 버전을 사용할 수 있습니다.' : 'A new version is ready.';
+    const update = document.createElement('button');
+    update.type = 'button';
+    update.textContent = document.documentElement.lang === 'ko' ? '지금 업데이트' : 'Update now';
+    update.addEventListener('click', () => registration.waiting?.postMessage({ type: 'SKIP_WAITING' }));
+    const dismiss = document.createElement('button');
+    dismiss.type = 'button';
+    dismiss.className = 'pwa-update-dismiss';
+    dismiss.setAttribute(
+      'aria-label',
+      document.documentElement.lang === 'ko' ? '업데이트 알림 닫기' : 'Dismiss update'
+    );
+    dismiss.textContent = '×';
+    dismiss.addEventListener('click', () => banner.remove());
+    banner.append(copy, update, dismiss);
+    document.body.append(banner);
+  };
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    // `clients.claim()` also emits controllerchange on the first install.
+    // That transition should never tear down a user's first session; reload
+    // only when an already-controlled page accepts an explicit update.
+    if (!hadController) {
+      hadController = true;
+      return;
+    }
+    if (reloading) return;
+    reloading = true;
+    location.reload();
   });
+  window.addEventListener('offline', () =>
+    showToast(document.documentElement.lang === 'ko' ? '오프라인 모드입니다.' : 'You are offline.')
+  );
+  window.addEventListener('online', () =>
+    showToast(document.documentElement.lang === 'ko' ? '다시 온라인 상태입니다.' : 'Back online.')
+  );
+  void navigator.serviceWorker
+    .register(new URL('./sw.js', location.href), { scope })
+    .then((registration) => {
+      showUpdate(registration);
+      registration.addEventListener('updatefound', () => {
+        const installing = registration.installing;
+        installing?.addEventListener('statechange', () => {
+          if (installing.state === 'installed' && navigator.serviceWorker.controller) showUpdate(registration);
+        });
+      });
+    })
+    .catch((error: unknown) => {
+      console.warn('Pendulum Lab service worker registration failed; online mode remains available.', error);
+      showToast(
+        document.documentElement.lang === 'ko'
+          ? '오프라인 기능을 시작하지 못했습니다.'
+          : 'Offline support is unavailable.'
+      );
+    });
 }
 
 function installIndexCommands(): void {
@@ -215,6 +278,7 @@ function armResearchOnDemand(): void {
   // layer, and open the palette directly.
   document.addEventListener('keydown', (event) => {
     if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
+    if (event.defaultPrevented || event.isComposing || isShellShortcutTarget(event.target)) return;
     if (document.getElementById('rgv8Cmd')) return; // the parity listener owns it now
     event.preventDefault();
     void ensureResearch()

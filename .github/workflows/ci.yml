@@ -14,9 +14,10 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 75
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -35,6 +36,12 @@ jobs:
       - run: npm run reviewer:kit
       # Full PR gate: policy lint, typecheck, unit JSON report, synced docs.
       - run: npm run verify
+      - name: Reject unexpected tracked rewrites from verification
+        shell: bash
+        run: |
+          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
+          git restore --worktree -- reports/vitest-results.json
+          git diff --exit-code
       # Keep the served-app CSP / no-legacy-risk contract from regressing on PRs.
       - run: npm run audit:legacy
       - run: npm run audit:mojibake:strict
@@ -42,6 +49,9 @@ jobs:
       # that catches newly added source files missing from the v8 coverage map.
       - run: npm run test:coverage
       - run: npm run build
+      # Public-package declarations and all library entry points are a PR gate,
+      # not a release-only surprise.
+      - run: npm run build:lib
       - run: npm run build:standalone
       # The compact committed manifest pins the release-only standalone bytes.
       - run: npm run check:standalone-sync
@@ -50,17 +60,22 @@ jobs:
       - run: npm run budget
       - run: npx playwright install --with-deps chromium
       - run: npm run smoke
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
       - run: npx playwright test e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/ui-polish.spec.ts --project=chromium
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
 
   node-compatibility:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
         node-version: [24, 26]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
@@ -77,10 +92,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -101,10 +116,22 @@ jobs:
           (cd /tmp/baseline && npx vite preview --host 127.0.0.1 --port 4173 &)
           npx vite preview --host 127.0.0.1 --port 4174 &
           ORIGINAL_URL=http://127.0.0.1:4173/ CANDIDATE_URL=http://127.0.0.1:4174/ npm run benchmark
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: benchmark-compare-report
           path: |
             reports/benchmark-report.json
             reports/benchmark-report.md
+
+  docker-reproducibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Build the digest-pinned non-root validation image
+        run: docker build --pull=false --tag pendulum-lab-validation:${{ github.sha }} .
+      - name: Prove the container executes as the unprivileged node user
+        run: |
+          test "$(docker run --rm pendulum-lab-validation:${{ github.sha }} id -u)" = "1000"
+          docker run --rm pendulum-lab-validation:${{ github.sha }} npm run typecheck

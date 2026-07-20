@@ -70,10 +70,15 @@ export function installTrustDrawer(): void {
     });
     // Roving-tabindex arrow navigation across the section tabs.
     tab.addEventListener('keydown', (event) => {
-      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
-      const step = event.key === 'ArrowRight' ? 1 : -1;
-      const next = tabs[(index + step + tabs.length) % tabs.length];
+      const nextIndex =
+        event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? tabs.length - 1
+            : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      const next = tabs[nextIndex];
       next?.focus();
       const name = next?.dataset.trustTab as TrustSection | undefined;
       if (name) selectSection(name);

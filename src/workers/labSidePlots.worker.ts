@@ -2,7 +2,13 @@ import { renderEnergyPlot, renderLyapunovConvergence, renderPoincareSection } fr
 import { magnitudeSpectrum } from '../app/fft';
 import { renderPhasePortrait, renderSpectrum, type PhaseSample } from '../app/labPlots';
 import type { Ctx2D, Rect } from '../viz/types';
-import { pairsToPoints, type LabSidePlotId, type LabSidePlotWorkerMessage } from '../app/LabSidePlotProtocol';
+import {
+  isLabSidePlotWorkerMessage,
+  pairsToPoints,
+  type LabSidePlotId,
+  type LabSidePlotWorkerMessage,
+  type LabSidePlotWorkerResponse
+} from '../app/LabSidePlotProtocol';
 
 interface PlotTarget {
   canvas: OffscreenCanvas;
@@ -14,14 +20,29 @@ const pending = new Map<LabSidePlotId, Extract<LabSidePlotWorkerMessage, { kind:
 const priorities: Record<LabSidePlotId, number> = { energy: 1, lyap: 2, phase: 3, poincare: 4, fft: 5 };
 let drainQueued = false;
 
-self.addEventListener('message', (event: MessageEvent<LabSidePlotWorkerMessage>) => {
+self.addEventListener('message', (event: MessageEvent<unknown>) => {
+  if (!isLabSidePlotWorkerMessage(event.data)) {
+    post({ kind: 'error', detail: 'side-plot worker received a malformed message' });
+    return;
+  }
   const message = event.data;
   if (message.kind === 'canvas') {
-    const ctx = message.canvas.getContext('2d');
-    if (ctx) targets.set(message.plot, { canvas: message.canvas, ctx });
+    try {
+      const ctx = message.canvas.getContext('2d');
+      if (!ctx) throw new Error('could not acquire a 2D context');
+      targets.set(message.plot, { canvas: message.canvas, ctx });
+      post({ kind: 'ready', plot: message.plot });
+    } catch (error) {
+      post({
+        kind: 'error',
+        plot: message.plot,
+        detail: error instanceof Error ? error.message : 'side-plot canvas initialization failed'
+      });
+    }
     return;
   }
 
+  if (pending.has(message.plot)) post({ kind: 'dropped', plot: message.plot });
   pending.set(message.plot, message);
   if (!drainQueued) {
     drainQueued = true;
@@ -41,7 +62,17 @@ function drainLatestJobs(): void {
   drainQueued = false;
   const jobs = Array.from(pending.values()).sort((a, b) => priorities[b.plot] - priorities[a.plot]);
   pending.clear();
-  for (const job of jobs) renderJob(job);
+  for (const job of jobs) {
+    try {
+      renderJob(job);
+    } catch (error) {
+      post({
+        kind: 'error',
+        plot: job.plot,
+        detail: error instanceof Error ? error.message : 'side-plot rendering failed'
+      });
+    }
+  }
 }
 
 function renderJob(message: Extract<LabSidePlotWorkerMessage, { kind: 'render' }>): void {
@@ -80,7 +111,11 @@ function renderJob(message: Extract<LabSidePlotWorkerMessage, { kind: 'render' }
       break;
     }
   }
-  self.postMessage({ kind: 'rendered', plot: message.plot, elapsedMs: now() - started });
+  post({ kind: 'rendered', plot: message.plot, elapsedMs: now() - started });
+}
+
+function post(response: LabSidePlotWorkerResponse): void {
+  self.postMessage(response);
 }
 
 function phaseSamples(theta: Float32Array, omega: Float32Array): PhaseSample[] {

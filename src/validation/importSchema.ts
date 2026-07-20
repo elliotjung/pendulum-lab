@@ -13,6 +13,123 @@ interface JsonNode {
   depth: number;
 }
 
+type JsonScanFrame =
+  | { kind: 'object'; state: 'keyOrEnd' | 'colon' | 'value' | 'commaOrEnd'; keys: Set<string> }
+  | { kind: 'array'; state: 'valueOrEnd' | 'commaOrEnd' };
+
+/** Detect duplicate decoded object keys before JSON.parse can overwrite them. */
+function duplicateJsonKey(text: string): string | null {
+  const stack: JsonScanFrame[] = [];
+  let rootConsumed = false;
+  let index = 0;
+  const whitespace = (): void => {
+    while (/\s/.test(text[index] ?? '')) index += 1;
+  };
+  const stringToken = (): string | null => {
+    const start = index++;
+    let escaped = false;
+    while (index < text.length) {
+      const character = text[index++]!;
+      if (character === '"' && !escaped) {
+        try {
+          return JSON.parse(text.slice(start, index)) as string;
+        } catch {
+          return null;
+        }
+      }
+      if (character === '\\' && !escaped) escaped = true;
+      else escaped = false;
+    }
+    return null;
+  };
+  const consumeParentValue = (): boolean => {
+    const parent = stack.at(-1);
+    if (!parent) {
+      if (rootConsumed) return false;
+      rootConsumed = true;
+      return true;
+    }
+    if (parent.kind === 'object' && parent.state === 'value') {
+      parent.state = 'commaOrEnd';
+      return true;
+    }
+    if (parent.kind === 'array' && parent.state === 'valueOrEnd') {
+      parent.state = 'commaOrEnd';
+      return true;
+    }
+    return false;
+  };
+  const consumeValue = (): boolean => {
+    whitespace();
+    const character = text[index];
+    if (!consumeParentValue() || character === undefined) return false;
+    if (character === '{') {
+      index += 1;
+      stack.push({ kind: 'object', state: 'keyOrEnd', keys: new Set() });
+      return stack.length <= MAX_JSON_DEPTH + 1;
+    }
+    if (character === '[') {
+      index += 1;
+      stack.push({ kind: 'array', state: 'valueOrEnd' });
+      return stack.length <= MAX_JSON_DEPTH + 1;
+    }
+    if (character === '"') return stringToken() !== null;
+    const start = index;
+    while (index < text.length && !/[\s,\]}]/.test(text[index]!)) index += 1;
+    return index > start;
+  };
+
+  while (index < text.length) {
+    whitespace();
+    if (index >= text.length) break;
+    const frame = stack.at(-1);
+    if (!frame) {
+      if (!consumeValue()) return null;
+      continue;
+    }
+    const character = text[index];
+    if (frame.kind === 'object') {
+      if (frame.state === 'keyOrEnd') {
+        if (character === '}') {
+          index += 1;
+          stack.pop();
+          continue;
+        }
+        if (character !== '"') return null;
+        const key = stringToken();
+        if (key === null) return null;
+        if (frame.keys.has(key)) return key;
+        frame.keys.add(key);
+        frame.state = 'colon';
+      } else if (frame.state === 'colon') {
+        if (character !== ':') return null;
+        index += 1;
+        frame.state = 'value';
+      } else if (frame.state === 'value') {
+        if (!consumeValue()) return null;
+      } else if (character === ',') {
+        index += 1;
+        frame.state = 'keyOrEnd';
+      } else if (character === '}') {
+        index += 1;
+        stack.pop();
+      } else return null;
+    } else if (frame.state === 'valueOrEnd') {
+      if (character === ']') {
+        index += 1;
+        stack.pop();
+      } else if (!consumeValue()) return null;
+    } else if (character === ',') {
+      index += 1;
+      frame.state = 'valueOrEnd';
+    } else if (character === ']') {
+      index += 1;
+      stack.pop();
+    } else return null;
+  }
+  return null;
+}
+
 function asLegacyRunSnapshot(value: unknown): unknown {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
   const run = value as Record<string, unknown>;
@@ -76,6 +193,8 @@ export function parseStrictJsonImport(text: string): ImportValidationResult<Runt
   if (text.length > MAX_JSON_BYTES || utf8Encoder.encode(text).byteLength > MAX_JSON_BYTES) {
     return { ok: false, problems: ['JSON import exceeds 5 MB in UTF-8'] };
   }
+  const duplicateKey = duplicateJsonKey(text);
+  if (duplicateKey !== null) return { ok: false, problems: [`duplicate JSON key is not allowed: ${duplicateKey}`] };
   let parsed: unknown;
   try {
     parsed = JSON.parse(text) as unknown;

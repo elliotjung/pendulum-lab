@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T06:15:05.705Z",
+  "generatedAt": "2026-07-15T22:41:02.806Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -42,6 +42,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\audienceModePolicy.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\audienceModeStyles.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -461,6 +473,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\LabRenderHelpers.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\LabSidePlotCoordinator.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -629,6 +653,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\parity\\governance-elements.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\parity\\governance-ui.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -762,6 +798,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\parity\\paper-figure-capture.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\parityDownload.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -3209,6 +3257,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\runtime\\JobClientTransport.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\runtime\\legacyCompat.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -3725,7 +3785,43 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\workers\\JobEngine.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\workers\\jobProtocol.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\workers\\jobProtocolTypes.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\workers\\jobProtocolValidation.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

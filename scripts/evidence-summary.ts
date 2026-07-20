@@ -15,6 +15,10 @@ const sourceReports = {
   energyBenchmark: 'reports/energy-benchmark.json'
 };
 
+const checkOnly = process.argv.includes('--check');
+const evidencePath = 'reports/evidence-summary.json';
+const volatileEvidenceKeys = new Set(['generatedAt', 'sourceCommit', 'dirtyWorktree', 'expiresAt']);
+
 async function readJson(path: string): Promise<unknown> {
   return JSON.parse(await readFile(path, 'utf8')) as unknown;
 }
@@ -59,12 +63,43 @@ const summary = buildEvidenceSummary({
   }
 });
 
-await writeJson('reports/evidence-summary.json', summary);
+if (checkOnly) {
+  const committed = await readJson(evidencePath);
+  const comparable = structuredClone(summary) as unknown;
+  preserveVolatileEvidence(comparable, committed);
+  if (JSON.stringify(comparable) !== JSON.stringify(committed)) {
+    throw new Error(
+      'Committed evidence is stale. Run `npm run evidence:refresh`, review the scientific diff, and commit it.'
+    );
+  }
+  console.log('Evidence summary is synchronized (volatile timestamps and commit coordinates ignored).');
+} else {
+  await writeJson(evidencePath, summary);
+}
 
 const landingSummaryPath = resolve('..', 'landing page', 'pendulum-landing', 'assets', 'evidence-summary.json');
-if (await exists(dirname(landingSummaryPath))) {
-  await writeJson(landingSummaryPath, summary);
-  console.log(`Wrote reports/evidence-summary.json and ${landingSummaryPath}`);
-} else {
-  console.log('Wrote reports/evidence-summary.json');
+// Cross-repository writes are opt-in. `npm run verify` must be hermetic even
+// when a sibling landing checkout happens to exist on a developer machine.
+// The authenticated dispatch workflows own normal evidence synchronization.
+if (!checkOnly) {
+  if (process.env.PENDULUM_SYNC_LANDING === '1' && (await exists(dirname(landingSummaryPath)))) {
+    await writeJson(landingSummaryPath, summary);
+    console.log(`Wrote reports/evidence-summary.json and ${landingSummaryPath}`);
+  } else {
+    console.log('Wrote reports/evidence-summary.json');
+  }
+}
+
+function preserveVolatileEvidence(candidate: unknown, committed: unknown): void {
+  if (!candidate || !committed || typeof candidate !== 'object' || typeof committed !== 'object') return;
+  const target = candidate as Record<string, unknown>;
+  const source = committed as Record<string, unknown>;
+  for (const key of Object.keys(target)) {
+    if (!(key in source)) continue;
+    if (volatileEvidenceKeys.has(key)) {
+      target[key] = source[key];
+    } else {
+      preserveVolatileEvidence(target[key], source[key]);
+    }
+  }
 }

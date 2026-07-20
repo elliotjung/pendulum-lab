@@ -24,7 +24,7 @@ function finite(value: unknown): value is number {
 
 function plainObject(value: unknown): value is Record<string, unknown> {
   try {
-    if (Object.prototype.toString.call(value) !== '[object Object]') return false;
+    if (typeof value !== 'object' || value === null) return false;
     const prototype = Object.getPrototypeOf(value) as object | null;
     return prototype === Object.prototype || prototype === null;
   } catch {
@@ -32,16 +32,85 @@ function plainObject(value: unknown): value is Record<string, unknown> {
   }
 }
 
-function sanitizeParameters(value: unknown, problems: string[]): PendulumParameters | undefined {
-  const initialProblemCount = problems.length;
+/**
+ * Copy own data properties without evaluating accessors. Import validation is
+ * a trust boundary: a caller may pass a programmatic object rather than JSON,
+ * so reading `value.key` directly could execute arbitrary getter code.
+ */
+function ownDataRecord(
+  value: unknown,
+  label: string,
+  problems: string[],
+  allowedKeys?: ReadonlySet<string>
+): Record<string, unknown> | undefined {
   if (!plainObject(value)) {
-    problems.push('parameters must be a plain object');
+    problems.push(`${label} must be a plain object`);
     return undefined;
   }
-  for (const key of ['__proto__', 'constructor', 'prototype']) {
-    if (Object.hasOwn(value, key)) problems.push(`parameters cannot contain ${key}`);
+  let descriptors: Record<string, PropertyDescriptor>;
+  try {
+    descriptors = Object.getOwnPropertyDescriptors(value);
+  } catch {
+    problems.push(`${label} properties could not be inspected safely`);
+    return undefined;
   }
-  const p = value as Record<string, unknown>;
+  const copy: Record<string, unknown> = Object.create(null) as Record<string, unknown>;
+  for (const [key, descriptor] of Object.entries(descriptors)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      problems.push(`${label} cannot contain ${key}`);
+      continue;
+    }
+    if (allowedKeys && !allowedKeys.has(key)) {
+      problems.push(`${label}.${key} is not part of the supported schema`);
+      continue;
+    }
+    if ('get' in descriptor || 'set' in descriptor) {
+      problems.push(`${label}.${key} must be an own data property`);
+      continue;
+    }
+    copy[key] = descriptor.value;
+  }
+  return copy;
+}
+
+function ownArrayData(
+  value: unknown,
+  expectedLength: number,
+  label: string,
+  problems: string[]
+): unknown[] | undefined {
+  if (!Array.isArray(value)) {
+    problems.push(`${label} must have length ${expectedLength}`);
+    return undefined;
+  }
+  let descriptors: Record<string, PropertyDescriptor>;
+  try {
+    descriptors = Object.getOwnPropertyDescriptors(value);
+  } catch {
+    problems.push(`${label} elements could not be inspected safely`);
+    return undefined;
+  }
+  const length = descriptors.length?.value;
+  if (length !== expectedLength) {
+    problems.push(`${label} must have length ${expectedLength}`);
+    return undefined;
+  }
+  const copy: unknown[] = [];
+  for (let index = 0; index < expectedLength; index += 1) {
+    const descriptor = descriptors[String(index)];
+    if (!descriptor || 'get' in descriptor || 'set' in descriptor) {
+      problems.push(`${label}[${index}] must be an own data property`);
+      continue;
+    }
+    copy.push(descriptor.value);
+  }
+  return copy.length === expectedLength ? copy : undefined;
+}
+
+function sanitizeParameters(value: unknown, problems: string[]): PendulumParameters | undefined {
+  const initialProblemCount = problems.length;
+  const p = ownDataRecord(value, 'parameters', problems, new Set(['m1', 'm2', 'm3', 'l1', 'l2', 'l3', 'g']));
+  if (!p) return undefined;
   for (const key of ['m1', 'm2'] as const) {
     if (!finite(p[key]) || !inBounds(p[key], SESSION_SAFETY_BOUNDS.mass)) {
       problems.push(`${key} is outside solver-safe mass bounds`);
@@ -76,14 +145,12 @@ function sanitizeParameters(value: unknown, problems: string[]): PendulumParamet
 
 function sanitizeState(value: unknown, systemType: unknown, problems: string[]): number[] | undefined {
   const expectedLength = systemType === 'triple' ? 6 : 4;
-  if (!Array.isArray(value) || value.length !== expectedLength) {
-    problems.push(`state must have length ${expectedLength}`);
-    return undefined;
-  }
+  const source = ownArrayData(value, expectedLength, 'state', problems);
+  if (!source) return undefined;
   const angleCount = systemType === 'triple' ? 3 : 2;
   const state: number[] = [];
-  for (let index = 0; index < value.length; index += 1) {
-    const component = value[index];
+  for (let index = 0; index < source.length; index += 1) {
+    const component = source[index];
     if (!finite(component)) {
       problems.push(`state[${index}] must be finite`);
       continue;
@@ -220,11 +287,27 @@ export class StateStore {
 
   static validate(value: unknown): ImportValidationResult<RuntimeSnapshot> {
     const problems: string[] = [];
-    if (!plainObject(value)) return { ok: false, problems: ['snapshot must be a plain object'] };
-    for (const key of ['__proto__', 'constructor', 'prototype']) {
-      if (Object.hasOwn(value, key)) problems.push(`snapshot cannot contain ${key}`);
-    }
-    const v = value as Record<string, unknown>;
+    const v = ownDataRecord(
+      value,
+      'snapshot',
+      problems,
+      new Set([
+        'schemaVersion',
+        'systemType',
+        'method',
+        'mode',
+        'dt',
+        'tolerance',
+        'stepsPerFrame',
+        'damping',
+        'parameters',
+        'state',
+        'simTime',
+        'seed',
+        'hash'
+      ])
+    );
+    if (!v) return { ok: false, problems };
     const validatedSchemaVersion = sanitizeSchemaVersion(v.schemaVersion, problems);
     const systemType = v.systemType;
     const method = v.method;

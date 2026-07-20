@@ -10,19 +10,14 @@ test('rail palette launcher opens the command palette', async ({ page }) => {
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
   const launcher = page.locator('.rail-palette-launcher');
-  const width = page.viewportSize()?.width ?? 1280;
-  if (width <= 560) {
-    // The bottom-bar rail has no room for the launcher; the palette stays
-    // reachable via Ctrl+K and the Export menu.
-    await expect(launcher).toBeHidden();
-    return;
-  }
   await expect(launcher).toBeVisible();
   await expect(launcher).toHaveAttribute('title', /Ctrl\+K/);
   await launcher.click();
   await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
   await expect(page.locator('#rgv7Palette')).not.toHaveClass(/show/);
+  await expect(page.locator('#rgv8CmdInput')).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(launcher).toBeFocused();
 });
 
 test('command palette uses one modal and closes from search actions', async ({ page }) => {
@@ -39,6 +34,8 @@ test('command palette uses one modal and closes from search actions', async ({ p
 
   await page.locator('#rgv8CmdInput').fill('research');
   await expect(page.locator('#rgv8CmdList [data-command-id]')).not.toHaveCount(0);
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('#rgv8CmdList [aria-selected="true"]')).toHaveCount(1);
   await page.keyboard.press('Enter');
   await expect(page.locator('#rgv8Cmd')).not.toHaveClass(/show/);
   await expect(page.locator('.rail-section.open')).toHaveCount(0);
@@ -105,7 +102,8 @@ test('rail search and mode controls do not overlap', async ({ page }) => {
 
   expect(layout.searchAudienceOverlap).toBe(false);
   expect(layout.modeGuideOverlap).toBe(false);
-  expect(layout.searchInsideRail).toBe(true);
+  if ((page.viewportSize()?.width ?? 1280) > 560) expect(layout.searchInsideRail).toBe(true);
+  else expect(layout.searchInsideRail).toBe(false); // floating above the bottom rail on touch screens
   expect(layout.audienceInsideRail).toBe(true);
 });
 
@@ -133,6 +131,11 @@ test('the guide locale switch rewrites descriptions, hints, and tooltips in Kore
     'title',
     /Simulation Lab — 실시간/
   );
+  await page.keyboard.press('Control+K');
+  await expect(page.locator('#rgv8CmdTitle')).toHaveText('명령 검색');
+  await page.locator('#rgv8CmdInput').fill('연구');
+  await expect(page.locator('#rgv8CmdList .rgv8-cmd-copy strong').first()).toContainText(/연구|논문|매개변수/);
+  await page.keyboard.press('Escape');
 
   // Persists across reloads, and English restores cleanly.
   await page.reload();
@@ -178,8 +181,8 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
-  // Real sessions get the chooser first; dismissing it hands over to the tour.
-  await page.locator('.audience-chooser-close').click();
+  // A returning visitor with a saved mode lands directly in the workspace;
+  // the first unfinished tour then starts without an every-launch blocker.
   const card = page.locator('#onboardingTour .tour-card');
   await expect(card).toBeVisible();
   await expect(card).toContainText('The live pendulum');
@@ -196,10 +199,10 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
   await card.getByRole('button', { name: 'Start exploring' }).click();
   await expect(page.locator('#onboardingTour')).toHaveCount(0);
 
-  // Done flag persists: the next launch shows the chooser but no tour.
+  // Done flag persists and the saved mode also avoids an every-launch chooser.
   await page.reload();
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await page.locator('.audience-chooser-close').click();
+  await expect(page.locator('#audienceModeChooser')).toHaveCount(0);
   await page.waitForTimeout(1400);
   await expect(page.locator('#onboardingTour')).toHaveCount(0);
 });

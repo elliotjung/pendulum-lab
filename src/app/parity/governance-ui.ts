@@ -43,6 +43,7 @@ import { $ } from './shared';
 import { showCommandPalette } from './command-palette';
 import { trustSection, type TrustSection } from '../trustDrawer';
 import { registerGovernanceCommands } from './governance-commands';
+import { bulletList, figCard, metric, paragraph, selectRow } from './governance-elements';
 
 /**
  * Mount a trust/governance card into its Trust & Diagnostics drawer section,
@@ -56,6 +57,7 @@ function mountTrustCard(section: TrustSection, node: HTMLElement, fallback: () =
 }
 
 export { hideCommandPalette, installCommandPalettes, renderCommandList, showCommandPalette } from './command-palette';
+export { bulletList, figCard, metric, paragraph, selectRow };
 
 export function installExtraTabs(): void {
   const nav = document.querySelector('.tabs');
@@ -249,16 +251,6 @@ export function installDocsTab(): void {
   panel.append(layout);
 }
 
-export function paragraph(text: string): HTMLParagraphElement {
-  return html('p', { text });
-}
-
-export function bulletList(items: string[]): HTMLUListElement {
-  const list = html('ul');
-  for (const item of items) list.append(html('li', { text: item }));
-  return list;
-}
-
 export function methodTable(): HTMLTableElement {
   const table = html('table', { className: 'rg-table' });
   const head = html('tr');
@@ -334,12 +326,6 @@ export function installStablePanel(): void {
     if (anchor?.parentNode) anchor.parentNode.insertBefore(panel, anchor.nextSibling);
     else document.body.prepend(panel);
   });
-}
-
-export function metric(id: string, label: string, value = '-'): HTMLDivElement {
-  const node = html('div', { id, className: 'si-metric' });
-  append(node, html('b', { text: label }), html('span', { text: value }));
-  return node;
 }
 
 export function installStableHelp(): void {
@@ -639,14 +625,6 @@ export function installLabLeftPanels(): void {
   }
 }
 
-export function selectRow(id: string, label: string, values: string[]): HTMLDivElement {
-  const node = html('div', { className: 'ri-row' });
-  const select = html('select', { id });
-  for (const value of values) select.append(html('option', { value, text: value }));
-  append(node, html('label', { text: label }), select);
-  return node;
-}
-
 export function installOnboarding(): void {
   if ($('rgv8Overlay')) return;
   const overlay = html('div', {
@@ -838,12 +816,6 @@ export function showFeaturePanel(): void {
   document.body.append(panel);
 }
 
-export function figCard(title: string, detail: string): HTMLElement {
-  const node = html('div', { className: 'fig-card' });
-  append(node, html('b', { text: title }), html('br'), html('span', { text: detail }));
-  return node;
-}
-
 export function featureInventory(): HTMLElement {
   const list = html('div', { className: 'fig-grid' });
   [
@@ -972,7 +944,17 @@ export function installModeSelectAnchors(): void {
 
 export function installLegacyValidationIdAnchors(): void {
   for (const id of LEGACY_VALIDATION_IDS) {
-    if (!$(id)) document.body.append(html('div', { id, className: 'v10-sr', text: 'covered by modular validation' }));
+    if (!$(id)) {
+      const anchor = html('div', { id, className: 'v10-sr' });
+      anchor.setAttribute('aria-hidden', 'true');
+      anchor.inert = true;
+      document.body.append(anchor);
+    }
   }
-  if (!$('fault-')) document.body.append(html('div', { id: 'fault-', className: 'v10-sr' }));
+  if (!$('fault-')) {
+    const anchor = html('div', { id: 'fault-', className: 'v10-sr' });
+    anchor.setAttribute('aria-hidden', 'true');
+    anchor.inert = true;
+    document.body.append(anchor);
+  }
 }

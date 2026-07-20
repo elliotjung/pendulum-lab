@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 
 /**
@@ -25,9 +28,31 @@ function serveAppShellAtRoot(): Plugin {
   };
 }
 
+/** Stamp the public service-worker template with the exact emitted bundle. */
+function stampServiceWorkerRevision(): Plugin {
+  let revision = 'development';
+  return {
+    name: 'stamp-service-worker-revision',
+    apply: 'build',
+    generateBundle(_options, bundle) {
+      const hash = createHash('sha256');
+      for (const file of Object.values(bundle).sort((a, b) => a.fileName.localeCompare(b.fileName))) {
+        hash.update(file.fileName);
+        hash.update(file.type === 'chunk' ? file.code : typeof file.source === 'string' ? file.source : file.source);
+      }
+      revision = hash.digest('hex').slice(0, 16);
+    },
+    async writeBundle(options) {
+      const outputDirectory = resolve(process.cwd(), options.dir ?? 'dist');
+      const template = await readFile(resolve(process.cwd(), 'public/sw.js'), 'utf8');
+      await writeFile(resolve(outputDirectory, 'sw.js'), template.replaceAll('__BUILD_REVISION__', revision), 'utf8');
+    }
+  };
+}
+
 export default defineConfig({
   appType: 'mpa',
-  plugins: [serveAppShellAtRoot()],
+  plugins: [serveAppShellAtRoot(), stampServiceWorkerRevision()],
   // Relative asset URLs so the production build works when served from any path
   // (e.g. a GitHub Pages project site under /repo/, or a plain static server),
   // not only from the web root.
@@ -43,7 +68,7 @@ export default defineConfig({
         "style-src 'self'",
         "img-src 'self' data: blob:",
         "worker-src 'self'",
-        "connect-src 'self' ws:",
+        "connect-src 'self' ws://127.0.0.1:* ws://localhost:*",
         "object-src 'none'",
         "base-uri 'self'",
         "frame-ancestors 'none'"
@@ -51,8 +76,8 @@ export default defineConfig({
     }
   },
   build: {
-    sourcemap: true,
-    modulePreload: false,
+    sourcemap: false,
+    modulePreload: { polyfill: true },
     target: 'es2022',
     rollupOptions: {
       input: {

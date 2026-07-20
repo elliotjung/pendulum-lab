@@ -3,6 +3,10 @@ export type EventHandler<T = unknown> = (payload: T) => void;
 export class EventBus<Events extends object = Record<string, unknown>> {
   private readonly listeners = new Map<keyof Events, Set<EventHandler>>();
 
+  constructor(
+    private readonly reportHandlerError: (type: keyof Events, error: unknown) => void = defaultEventErrorReporter
+  ) {}
+
   on<K extends keyof Events>(type: K, handler: EventHandler<Events[K]>): () => void {
     const bucket = this.listeners.get(type) ?? new Set<EventHandler>();
     bucket.add(handler as EventHandler);
@@ -15,14 +19,22 @@ export class EventBus<Events extends object = Record<string, unknown>> {
   }
 
   emit<K extends keyof Events>(type: K, payload: Events[K]): void {
-    for (const handler of this.listeners.get(type) ?? []) {
-      handler(payload);
+    for (const handler of [...(this.listeners.get(type) ?? [])]) {
+      try {
+        handler(payload);
+      } catch (error: unknown) {
+        this.reportHandlerError(type, error);
+      }
     }
   }
 
   clear(): void {
     this.listeners.clear();
   }
+}
+
+function defaultEventErrorReporter(type: PropertyKey, error: unknown): void {
+  console.error(`Pendulum event handler failed for ${String(type)}`, error);
 }
 
 export interface PendulumEvents {

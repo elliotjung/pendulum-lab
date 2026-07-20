@@ -6,7 +6,7 @@ import { LyapunovEstimator } from './LyapunovEstimator';
 import { downloadDataUrl, downloadText, poincareCsv, runJson, trajectoryCsv } from './labExport';
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
-import { canvasQualityDiagnostics, configureCanvas2D, type ManagedCanvas2D } from './canvasQuality';
+import { canvasQualityDiagnostics } from './canvasQuality';
 import { DiagnosticsScheduler } from './DiagnosticsScheduler';
 import { LabSidePlotCoordinator } from './LabSidePlotCoordinator';
 import { LabEnsembleController } from './LabEnsembleController';
@@ -26,6 +26,7 @@ import type { RuntimeSnapshot } from '../types/domain';
 import { stateStore } from '../state/StateStore';
 import { legacyApp } from '../runtime/legacyCompat';
 import { canonicalLabSnapshot, labConfigFromSnapshot } from './LabSnapshotRestore';
+import { bobsFromState, mainCanvasContext } from './LabRenderHelpers';
 
 /**
  * Full modern Lab tab: the simulation/render loop plus every side plot
@@ -40,16 +41,6 @@ import { canonicalLabSnapshot, labConfigFromSnapshot } from './LabSnapshotRestor
  * (worker payloads + fallback drawing), `LabEnsembleController` (perturbed
  * copies), and `presentLabChrome` (header/diagnostics DOM writes).
  */
-
-function mainCtx(): ManagedCanvas2D | null {
-  const canvas = dom.el<HTMLCanvasElement>('main');
-  if (!canvas) return null;
-  try {
-    return configureCanvas2D(canvas);
-  } catch {
-    return null;
-  }
-}
 
 const SIDE_PLOT_COUNT = 5;
 
@@ -137,16 +128,17 @@ export class LabApp {
     this.lastDrift = 0;
     this.lastPhysicsMs = 0;
     this.lastAdvancedSteps = 0;
-    const dim = config.system === 'triple' ? 6 : 4;
+    const activeConfig = this.sim.config;
+    const dim = activeConfig.system === 'triple' ? 6 : 4;
     const rhs = (s: Float64Array, o: Float64Array) =>
-      physicsAdapter.derivative(config.system, s, config.parameters, config.gamma, o);
+      physicsAdapter.derivative(activeConfig.system, s, activeConfig.parameters, activeConfig.gamma, o);
     this.rhs = rhs;
-    this.lyap = new LyapunovEstimator(rhs, dim, config.dt);
-    this.lyap.reset(config.initialState);
+    this.lyap = new LyapunovEstimator(rhs, dim, activeConfig.dt);
+    this.lyap.reset(activeConfig.initialState);
     this.poincare.clear();
     // Event-refined section crossings: root-found on the flow itself rather
     // than linearly interpolated between steps.
-    this.poincare.setRefiner(rhs, config.dt);
+    this.poincare.setRefiner(rhs, activeConfig.dt);
     this.phaseIndex = 0;
     this.phaseCount = 0;
     this.theta1Frames = [];
@@ -156,7 +148,13 @@ export class LabApp {
     this.simulationClock.reset();
     this.quality.resetTrailScale();
     this.diagnosticsScheduler.reset();
-    this.ensemble.build(config, dim, dom.num('ensN', 0), this.quality.profile().ensembleCap, dom.num('ensEps', -4));
+    this.ensemble.build(
+      activeConfig,
+      dim,
+      dom.num('ensN', 0),
+      this.quality.profile().ensembleCap,
+      dom.num('ensEps', -4)
+    );
 
     this.configureMainSurface();
     this.frameCount = 0;
@@ -302,7 +300,7 @@ export class LabApp {
 
   private ensureRenderer(): LabRenderer | null {
     if (this.mainCanvasWorker?.isActive()) return null;
-    const main = mainCtx();
+    const main = mainCanvasContext();
     if (!main) return null;
     const size = this.renderer?.size();
     if (!this.renderer) {
@@ -338,7 +336,7 @@ export class LabApp {
     }
 
     this.mainCanvasWorker = null;
-    const main = mainCtx();
+    const main = mainCanvasContext();
     this.renderer = main ? new LabRenderer(main.ctx, { width: main.width, height: main.height }) : null;
     this.renderer?.clear();
   }
@@ -399,7 +397,7 @@ export class LabApp {
   private renderScrubFrame(): void {
     const frameRec = this.recording.at(this.scrubIndex);
     if (!frameRec) return;
-    const bobs = this.bobsFromState(frameRec.state);
+    const bobs = bobsFromState(this.sim.config, frameRec.state);
     if (this.mainCanvasWorker?.isActive()) {
       this.mainCanvasWorker.draw({
         bobs,
@@ -409,27 +407,6 @@ export class LabApp {
     } else {
       this.ensureRenderer()?.draw(bobs, { skipTrail: true });
     }
-  }
-
-  /** Cartesian bob positions (metres) from a raw state, for replay rendering. */
-  private bobsFromState(state: ArrayLike<number>): BobPosition[] {
-    const { l1, l2, l3 } = this.sim.config.parameters;
-    const x1 = l1 * Math.sin(state[0]!);
-    const y1 = l1 * Math.cos(state[0]!);
-    const x2 = x1 + l2 * Math.sin(state[1]!);
-    const y2 = y1 + l2 * Math.cos(state[1]!);
-    if (this.sim.config.system === 'triple') {
-      const ell3 = l3 ?? 1;
-      return [
-        { x: x1, y: y1 },
-        { x: x2, y: y2 },
-        { x: x2 + ell3 * Math.sin(state[2]!), y: y2 + ell3 * Math.cos(state[2]!) }
-      ];
-    }
-    return [
-      { x: x1, y: y1 },
-      { x: x2, y: y2 }
-    ];
   }
 
   /** Refresh the header/diagnostics chrome from the latest frame snapshot. */
@@ -517,17 +494,30 @@ export class LabApp {
 
   private loop = (): void => {
     if (!this.running) return;
-    this.frame();
-    this.rafId = requestAnimationFrame(this.loop);
+    this.rafId = null;
+    try {
+      this.frame();
+    } catch (error) {
+      this.running = false;
+      console.error('Pendulum Lab simulation frame failed; playback was paused.', error);
+      document.dispatchEvent(new CustomEvent('pendulum:simulation-error', { detail: { error } }));
+      return;
+    }
+    this.scheduleFrame();
   };
 
+  private scheduleFrame(): void {
+    if (this.running && this.rafId === null) this.rafId = requestAnimationFrame(this.loop);
+  }
+
   start(): void {
+    if (this.running) return;
     this.build();
     this.wireControls();
     this.running = true;
     this.renderer?.clear();
     this.mainCanvasWorker?.clear();
-    this.rafId = requestAnimationFrame(this.loop);
+    this.scheduleFrame();
   }
 
   stop(): void {
@@ -547,7 +537,7 @@ export class LabApp {
     this.build();
     if (!this.running) {
       this.running = true;
-      this.rafId = requestAnimationFrame(this.loop);
+      this.scheduleFrame();
     }
   }
 
@@ -556,13 +546,14 @@ export class LabApp {
     this.build(canonicalLabSnapshot(snapshot));
     if (!this.running) {
       this.running = true;
-      this.rafId = requestAnimationFrame(this.loop);
+      this.scheduleFrame();
     }
   }
 
   /** Replace the initial angles (used by drag-to-set) and restart. */
   setAngles(angles: number[]): void {
     const ids = this.sim.config.system === 'triple' ? ['th1', 'th2', 'th3'] : ['th1', 'th2'];
+    if (angles.length < ids.length || ids.some((_, index) => !Number.isFinite(angles[index]))) return;
     ids.forEach((id, i) => {
       if (angles[i] === undefined) return;
       const el = dom.el<HTMLInputElement>(id);
@@ -587,7 +578,11 @@ export class LabApp {
       clearPoincare: () => this.poincare.clear(),
       toggleRunning: () => {
         this.running = !this.running;
-        if (this.running) this.rafId = requestAnimationFrame(this.loop);
+        if (this.running) this.scheduleFrame();
+        else if (this.rafId !== null) {
+          cancelAnimationFrame(this.rafId);
+          this.rafId = null;
+        }
       },
       exportTrajectory: () =>
         downloadText(
@@ -631,7 +626,9 @@ export class LabApp {
       drag: {
         rendererSize: () => this.renderer?.size() ?? null,
         bobPixels: () =>
-          this.renderer ? this.bobsFromState(this.sim.stateView()).map((b) => this.renderer!.toPixels(b)) : [],
+          this.renderer
+            ? bobsFromState(this.sim.config, this.sim.stateView()).map((b) => this.renderer!.toPixels(b))
+            : [],
         pivot: () => this.renderer?.pivot() ?? null,
         stateAngles: () => {
           const state = this.sim.stateView();

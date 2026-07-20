@@ -23,7 +23,7 @@
   (test-count writer) all pass against the new paths; no source/runtime code
   referenced the documentation directory.
 
-### Boundary-hardening pass: numerical budgets, session contracts, worker lifecycle (additive; suite 1090 -> 1233)
+### Boundary-hardening pass: numerical budgets, session contracts, worker lifecycle (additive; suite 1090 -> 1288)
 
 - **Numerical work budgets with explicit contracts**: every chaos-diagnostic
   entry point (Lyapunov, FTLE, basin and Wada convergence, CLV, RQA, 0-1 test,

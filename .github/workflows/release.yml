@@ -7,17 +7,24 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
-  artifact-metadata: write
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release-artifacts:
     runs-on: ubuntu-latest
+    timeout-minutes: 150
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -35,6 +42,12 @@ jobs:
             exit 1
           }
       - run: npm run verify
+      - name: Reject unexpected tracked rewrites before packaging
+        shell: bash
+        run: |
+          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
+          git restore --worktree -- reports/vitest-results.json
+          git diff --exit-code
       - run: npm run build
       - run: npm run build:standalone
       - run: npm run check:standalone-sync
@@ -54,7 +67,18 @@ jobs:
           npm pack --json > reports/npm-pack.json
           package_file="$(node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('reports/npm-pack.json')); process.stdout.write(p[0].filename)")"
           echo "PACKAGE_FILE=$package_file" >> "$GITHUB_ENV"
+          sha256sum "$package_file" > reports/npm-package.sha256
           sha256sum "$package_file" reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt > reports/release-checksums.txt
+      - name: Install the packed tarball in a clean consumer project
+        shell: bash
+        run: |
+          consumer_dir="$(mktemp -d)"
+          npm --prefix "$consumer_dir" init --yes >/dev/null
+          npm --prefix "$consumer_dir" install --ignore-scripts "$GITHUB_WORKSPACE/$PACKAGE_FILE"
+          (
+            cd "$consumer_dir"
+            node --input-type=module -e "const m=await import('@elliotjung/pendulum-lab'); if(Object.keys(m).length===0) throw new Error('package exports are empty')"
+          )
       - name: Package the double-click standalone app
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
@@ -69,11 +93,11 @@ jobs:
       - name: Generate CycloneDX SBOM
         run: npm sbom --package-lock-only --sbom-format cyclonedx > reports/sbom.cdx.json
       - name: Attest package build provenance
-        uses: actions/attest@v4
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: ${{ env.PACKAGE_FILE }}
       - name: Attest package SBOM
-        uses: actions/attest@v4
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           subject-path: ${{ env.PACKAGE_FILE }}
           sbom-path: reports/sbom.cdx.json
@@ -105,7 +129,16 @@ jobs:
             reports/release-one-page.pdf reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json \
             reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt reports/demo-narrated-ko.md \
             --clobber
-      - uses: actions/upload-artifact@v4
+      - name: Preserve the exact npm tarball consumed by the publish job
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-npm-package
+          path: |
+            *.tgz
+            reports/npm-package.sha256
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pendulum-lab-release
           path: |
@@ -190,6 +223,7 @@ jobs:
         shell: bash
         run: |
           if [ -z "$ZENODO_TOKEN" ]; then
+            printf '## Zenodo publication: pending owner action\n\n`ZENODO_TOKEN` is not configured; this optional external publication was not claimed as completed.\n' >> "$GITHUB_STEP_SUMMARY"
             echo "ZENODO_TOKEN is not configured; DOI publication remains an owner action."
             exit 0
           fi
@@ -200,19 +234,23 @@ jobs:
     needs: release-artifacts
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment: npm
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
       - name: Pin OIDC-capable npm
         run: npm install --global npm@11.5.1
-      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-npm-package
+          path: release-npm
       - name: Verify and publish the scoped npm coordinate
         shell: bash
         run: |
@@ -222,19 +260,22 @@ jobs:
             echo "@elliotjung/pendulum-lab@$version is already published" >&2
             exit 1
           }
-          npm run build:lib
-          npm publish --access public
+          package_file="$(find release-npm -maxdepth 1 -type f -name '*.tgz' -print -quit)"
+          [ -n "$package_file" ] || { echo 'release tarball is missing' >&2; exit 1; }
+          (cd release-npm && sha256sum --check reports/npm-package.sha256)
+          npm publish "$package_file" --access public
 
   jsr-publish:
     needs: release-artifacts
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: npm
@@ -252,6 +293,7 @@ jobs:
     needs: [release-artifacts, npm-publish, jsr-publish]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:

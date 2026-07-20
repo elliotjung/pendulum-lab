@@ -52,6 +52,19 @@ describe('JSON import validation', () => {
     expect(result.problems.join(' ')).toContain('prototype-pollution');
   });
 
+  test('rejects duplicate keys before JSON.parse can overwrite provenance', () => {
+    const duplicate = JSON.stringify(valid).replace('"method":"rk4"', '"method":"euler","method":"rk4"');
+    const result = parseStrictJsonImport(duplicate);
+    expect(result.ok).toBe(false);
+    expect(result.problems.join(' ')).toContain('duplicate JSON key');
+
+    const escapedDuplicate = JSON.stringify(valid).replace(
+      '"mode":"research"',
+      '"mode":"demo","m\\u006fde":"research"'
+    );
+    expect(parseStrictJsonImport(escapedDuplicate).problems.join(' ')).toContain('duplicate JSON key');
+  });
+
   test('rejects non-finite state encodings', () => {
     const result = parseStrictJsonImport(JSON.stringify({ ...valid, state: [0, null, 0, 0] }));
     expect(result.ok).toBe(false);

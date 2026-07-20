@@ -42,6 +42,8 @@ const canvasDescriptions: Record<string, string> = {
   'modern-lab-probe': 'Modern lab probe canvas.'
 };
 
+const keyboardInteractiveCanvases = new Set(['main', 'p3dCanvas']);
+
 function nearbyCaption(canvas: HTMLCanvasElement): string | null {
   const figureCaption = canvas.closest('figure')?.querySelector('figcaption')?.textContent?.trim();
   if (figureCaption) return figureCaption;
@@ -64,7 +66,8 @@ function enhanceCanvas(canvas: HTMLCanvasElement): void {
   }
   const label = labelForCanvas(canvas);
   canvas.setAttribute('role', 'img');
-  canvas.setAttribute('tabindex', canvas.getAttribute('tabindex') ?? '0');
+  if (keyboardInteractiveCanvases.has(canvas.id)) canvas.setAttribute('tabindex', '0');
+  else canvas.removeAttribute('tabindex');
   canvas.setAttribute('aria-label', label);
   if (!canvas.textContent?.trim()) {
     canvas.textContent = `${label} Use export controls for data tables and reports.`;
@@ -98,29 +101,40 @@ function enhanceButton(button: HTMLButtonElement): void {
   }
 }
 
-function enhanceElement(root: ParentNode): void {
-  if (root instanceof HTMLCanvasElement) enhanceCanvas(root);
-  if (root instanceof HTMLButtonElement) enhanceButton(root);
-  root.querySelectorAll?.('canvas').forEach((canvas) => enhanceCanvas(canvas as HTMLCanvasElement));
-  root.querySelectorAll?.('button').forEach((button) => enhanceButton(button as HTMLButtonElement));
+function enhanceTooltip(element: HTMLElement): void {
+  if (element.getAttribute('aria-label') || element.getAttribute('aria-describedby')) return;
+  const visible = element.textContent?.trim();
+  const detail = element.dataset.tip?.trim();
+  if (visible && detail) element.setAttribute('aria-label', `${visible}. ${detail}`);
 }
 
-export function installAccessibilityEnhancements(): void {
+function enhanceElement(root: ParentNode): void {
+  if (root instanceof HTMLCanvasElement && root.dataset.a11yEnhanced !== 'true') {
+    enhanceCanvas(root);
+    root.dataset.a11yEnhanced = 'true';
+  }
+  if (root instanceof HTMLButtonElement) enhanceButton(root);
+  if (root instanceof HTMLElement && root.matches('[data-tip]')) enhanceTooltip(root);
+  root.querySelectorAll?.('canvas:not([data-a11y-enhanced="true"])').forEach((canvas) => {
+    enhanceCanvas(canvas as HTMLCanvasElement);
+    (canvas as HTMLCanvasElement).dataset.a11yEnhanced = 'true';
+  });
+  root.querySelectorAll?.('button').forEach((button) => enhanceButton(button as HTMLButtonElement));
+  root.querySelectorAll<HTMLElement>('[data-tip]').forEach((element) => enhanceTooltip(element));
+}
+
+export function installAccessibilityEnhancements(): () => void {
   enhanceElement(document);
 
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
-      if (mutation.target instanceof HTMLElement) {
-        enhanceElement(mutation.target);
-        const railButton = mutation.target.closest('.rail-menu-button') as HTMLButtonElement | null;
-        if (railButton) enhanceButton(railButton);
-      }
       for (const node of mutation.addedNodes) {
         if (node instanceof HTMLElement) enhanceElement(node);
       }
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  observer.observe(document.body, { childList: true, subtree: true });
 
   document.documentElement.classList.add('focus-visible-ready');
+  return () => observer.disconnect();
 }

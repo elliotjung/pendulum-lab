@@ -94,6 +94,7 @@ describe('worker fallback notice', () => {
       const result = await bridge.step({ state: [1, 0], dt: 0.01, steps: 2, method: 'rk4' });
 
       expect(result.fallback).toBe(true);
+      expect(result.fallbackReason).toBe('worker unavailable');
       expect(result.state).toHaveLength(2);
       expect(result.state.every(Number.isFinite)).toBe(true);
       expect(events.at(-1)?.detail.scope).toBe('physics-worker');
@@ -136,6 +137,28 @@ describe('worker fallback notice', () => {
       await Promise.resolve();
       bridge.terminate();
       await expect(pending).rejects.toBeInstanceOf(WorkerBridgeTerminatedError);
+    } finally {
+      if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
+      else Reflect.deleteProperty(globalThis, 'Worker');
+    }
+  });
+
+  test('settles an aborted worker step immediately and removes its listeners', async () => {
+    class SilentWorker {
+      readonly terminate = vi.fn();
+      readonly removeEventListener = vi.fn();
+      addEventListener(): void {}
+      postMessage(): void {}
+    }
+    const originalWorker = Object.getOwnPropertyDescriptor(globalThis, 'Worker');
+    Object.defineProperty(globalThis, 'Worker', { configurable: true, value: SilentWorker });
+    try {
+      const bridge = new WorkerBridge();
+      const controller = new AbortController();
+      const pending = bridge.step({ state: [1, 0], dt: 0.01, steps: 1, method: 'rk4' }, { signal: controller.signal });
+      controller.abort();
+      await expect(pending).rejects.toThrow('worker step was aborted');
+      bridge.terminate();
     } finally {
       if (originalWorker) Object.defineProperty(globalThis, 'Worker', originalWorker);
       else Reflect.deleteProperty(globalThis, 'Worker');

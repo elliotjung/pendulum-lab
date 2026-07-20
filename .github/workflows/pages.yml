@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy verified build to GitHub Pages
 
 on:
   push:
@@ -7,42 +7,145 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  quality-gate:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    timeout-minutes: 75
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run test:coverage
-      # The build uses relative asset paths (vite base './'), so it serves
-      # correctly from the repository sub-path GitHub Pages uses.
-      - run: npm run build
-      - name: Include the longitudinal benchmark dashboard when available
+      - run: npm run audit:deps
+      - name: Verify policy, types, tests, documentation, and generated evidence
+        run: npm run verify
+      - name: Reject unexpected tracked rewrites from verification
         shell: bash
         run: |
-          mkdir -p dist/reports/benchmarks
-          for file in index.html history.json; do
-            curl --fail --silent --show-error --retry 3 \
-              -o "dist/reports/benchmarks/$file" \
-              "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/benchmark-history/$file" || rm -f "dist/reports/benchmarks/$file"
-          done
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
+          git restore --worktree -- reports/vitest-results.json
+          git diff --exit-code
+      - run: npm run audit:legacy
+      - run: npm run audit:mojibake:strict
+      - run: npm run build:lib
+      - run: npm run build:standalone
+      - run: npm run check:standalone-sync
+      - run: npm run check:wasm-sync
+      - run: npm run build
+      - run: npm run budget
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pages-production-build
+          path: dist/
+          if-no-files-found: error
+          retention-days: 2
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+
+  production-e2e:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: pages-production-build
+          path: dist
+      - run: npx playwright install --with-deps chromium
+      - name: Exercise the production bundle in Chromium
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
+          PLAYWRIGHT_PRODUCTION_GATE: '1'
+          PLAYWRIGHT_PORT: '4173'
+        run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/2
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: pages-e2e-chromium-${{ matrix.shard }}
+          path: |
+            reports/playwright/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  compatibility-e2e:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: firefox
+            browser: firefox
+            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts
+          - project: webkit
+            browser: webkit
+            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts
+          - project: mobile-chrome
+            browser: chromium
+            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/mobile-research.spec.ts e2e/axe-audit.spec.ts
+          - project: mobile-webkit
+            browser: webkit
+            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/trust-inspector.spec.ts
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: pages-production-build
+          path: dist
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Exercise the production bundle on ${{ matrix.project }}
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
+          PLAYWRIGHT_PRODUCTION_GATE: '1'
+          PLAYWRIGHT_PORT: '4173'
+        run: npx playwright test ${{ matrix.specs }} --project=${{ matrix.project }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: pages-e2e-${{ matrix.project }}
+          path: |
+            reports/playwright/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  deploy:
+    needs: [quality-gate, production-e2e, compatibility-e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the exact artifact that passed every gate
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

@@ -7,7 +7,35 @@
  * loop or allocation. Keep the limits in one place so related solvers make the
  * same promise and future increases receive an explicit review.
  */
-export const NUMERICAL_WORK_BUDGETS = Object.freeze({
+type BudgetSection<Key extends string> = Readonly<Record<Key, number>>;
+
+export interface NumericalWorkBudgets {
+  readonly events: BudgetSection<'maxIntegrationSteps' | 'maxRecordedEvents' | 'maxEventFunctionEvaluations'>;
+  readonly lyapunov: BudgetSection<
+    'maxMeasurementSteps' | 'maxTransientSteps' | 'maxRenormalizationSteps' | 'maxTotalSteps'
+  >;
+  readonly clv: BudgetSection<'maxStateDimension' | 'maxTotalIntegrationSteps' | 'maxStoredFloat64Cells'>;
+  readonly observableSampling: BudgetSection<'maxSamples' | 'maxSampleStride' | 'maxTransientSteps' | 'maxTotalSteps'>;
+  readonly rqa: BudgetSection<
+    | 'maxEmbeddedPoints'
+    | 'maxEmbeddingCells'
+    | 'maxDenseMatrixCells'
+    | 'maxDistanceComponentEvaluations'
+    | 'maxUncertaintyBlocks'
+  >;
+  readonly ftle: BudgetSection<
+    'maxStateDimension' | 'maxStepsPerTrajectory' | 'maxGridResolution' | 'maxGridTrajectorySteps'
+  >;
+  readonly flipBasin: BudgetSection<'maxResolution' | 'maxStepsPerCell' | 'maxGridTrajectorySteps'>;
+  readonly wada: BudgetSection<'maxResolutions' | 'maxGridTrajectorySteps'>;
+  readonly parameterEstimation: BudgetSection<
+    'maxForwardStepsPerEvaluation' | 'maxOptimizerIterations' | 'maxDampingAttemptsPerIteration'
+  >;
+  readonly bifurcation: BudgetSection<'maxParameters' | 'maxSweepIntegrationSteps'>;
+  readonly codimTwo: BudgetSection<'maxResolution' | 'maxGridIntegrationSteps'>;
+}
+
+export const NUMERICAL_WORK_BUDGETS: Readonly<NumericalWorkBudgets> = Object.freeze({
   events: Object.freeze({
     maxIntegrationSteps: 10_000_000,
     maxRecordedEvents: 1_000_000,
@@ -68,7 +96,7 @@ export const NUMERICAL_WORK_BUDGETS = Object.freeze({
 });
 
 /** Smallest normal float64; subnormal RK stages lose their fractional substeps. */
-export const MIN_NORMAL_INTEGRATION_STEP = 2 ** -1022;
+export const MIN_NORMAL_INTEGRATION_STEP: number = 2 ** -1022;
 
 export function assertUsableIntegrationStep(dt: number, caller: string): void {
   if (!(dt > 0) || !Number.isFinite(dt)) {

@@ -44,6 +44,76 @@ export interface LabSnapshot {
 
 const DOUBLE_DIM = 4;
 const TRIPLE_DIM = 6;
+const MAX_STEPS_PER_CALL = 1_000_000;
+const SUPPORTED_METHODS = new Set<IntegratorId>([
+  'euler',
+  'rk2',
+  'rk4',
+  'verlet',
+  'leapfrog',
+  'symplectic',
+  'yoshida4',
+  'yoshida6',
+  'yoshida8',
+  'hmidpoint',
+  'gauss2',
+  'rkf45',
+  'dopri5',
+  'dop853',
+  'gbs',
+  'bdf2'
+]);
+
+function finite(name: string, value: number): number {
+  if (!Number.isFinite(value)) throw new RangeError(`${name} must be finite`);
+  return value;
+}
+
+function positive(name: string, value: number): number {
+  finite(name, value);
+  if (value <= 0) throw new RangeError(`${name} must be greater than zero`);
+  return value;
+}
+
+function validatedConfig(config: LabConfig): LabConfig {
+  if (config.system !== 'double' && config.system !== 'triple') {
+    throw new RangeError('LabSimulation supports only double and triple pendulum systems');
+  }
+  if (!SUPPORTED_METHODS.has(config.method)) throw new RangeError('LabSimulation integrator is unsupported');
+  const dt = positive('dt', config.dt);
+  if (dt > 1) throw new RangeError('dt must be at most 1 second');
+  const gamma = finite('gamma', config.gamma);
+  if (gamma < 0) throw new RangeError('gamma must be non-negative');
+  if (config.tolerance !== undefined) positive('tolerance', config.tolerance);
+
+  const parameters: PendulumParameters = {
+    m1: positive('m1', config.parameters.m1),
+    m2: positive('m2', config.parameters.m2),
+    l1: positive('l1', config.parameters.l1),
+    l2: positive('l2', config.parameters.l2),
+    g: finite('g', config.parameters.g)
+  };
+  if (parameters.g < 0) throw new RangeError('g must be non-negative');
+  if (config.system === 'triple') {
+    parameters.m3 = positive('m3', config.parameters.m3 ?? Number.NaN);
+    parameters.l3 = positive('l3', config.parameters.l3 ?? Number.NaN);
+  }
+
+  const dim = config.system === 'triple' ? TRIPLE_DIM : DOUBLE_DIM;
+  const initialState = Array.from({ length: dim }, (_, index) => {
+    const value = config.initialState[index] ?? 0;
+    return finite(`initialState[${index}]`, value);
+  });
+  return Object.freeze({
+    ...config,
+    system: config.system,
+    method: config.method,
+    dt,
+    gamma,
+    parameters: Object.freeze(parameters),
+    initialState: Object.freeze(initialState)
+  });
+}
 
 export class LabSimulation {
   readonly config: LabConfig;
@@ -57,21 +127,31 @@ export class LabSimulation {
   private scratch: StateVector;
 
   constructor(config: LabConfig) {
-    this.config = config;
-    this.dim = config.system === 'triple' ? TRIPLE_DIM : DOUBLE_DIM;
+    this.config = validatedConfig(config);
+    this.dim = this.config.system === 'triple' ? TRIPLE_DIM : DOUBLE_DIM;
     this.state = new Float64Array(this.dim);
     this.scratch = new Float64Array(this.dim);
-    for (let i = 0; i < this.dim; i += 1) this.state[i] = config.initialState[i] ?? 0;
-    this.rhs = (s, out) => physicsAdapter.derivative(config.system, s, config.parameters, config.gamma, out);
+    for (let i = 0; i < this.dim; i += 1) this.state[i] = this.config.initialState[i] ?? 0;
+    this.rhs = (s, out) =>
+      physicsAdapter.derivative(this.config.system, s, this.config.parameters, this.config.gamma, out);
     this.initialEnergy = this.energy();
+    if (!Number.isFinite(this.initialEnergy)) throw new Error('initial energy is non-finite');
   }
 
   /** Advance `steps` fixed steps of size `config.dt`. */
   step(steps = 1): void {
+    if (!Number.isSafeInteger(steps) || steps < 0 || steps > MAX_STEPS_PER_CALL) {
+      throw new RangeError(`steps must be a safe integer in [0, ${MAX_STEPS_PER_CALL}]`);
+    }
     const { method, dt, tolerance } = this.config;
     const options = { previousError: this.residualBox, ...(tolerance === undefined ? {} : { tolerance }) };
     for (let s = 0; s < steps; s += 1) {
       physicsAdapter.step(method, this.state, dt, this.rhs, this.scratch, options);
+      for (let index = 0; index < this.dim; index += 1) {
+        if (!Number.isFinite(this.scratch[index])) {
+          throw new Error(`integrator produced a non-finite state at index ${index}`);
+        }
+      }
       // Swap in the freshly written buffer; reuse the old one as next scratch.
       const previous = this.state;
       this.state = this.scratch;

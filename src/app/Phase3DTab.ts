@@ -84,6 +84,28 @@ export class Phase3DTab extends TabController {
 
   protected bind(): void {
     const canvas = this.dom.el<HTMLCanvasElement>('p3dCanvas');
+    if (canvas) {
+      const instructions = document.createElement('span');
+      instructions.id = 'p3dKeyboardInstructions';
+      instructions.className = 'v10-sr';
+      instructions.textContent = 'Use the arrow keys to rotate the 3D view. Press Home to reset the camera.';
+      canvas.parentElement?.append(instructions);
+      canvas.setAttribute('aria-describedby', instructions.id);
+      canvas.setAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown ArrowLeft ArrowRight Home');
+      canvas.addEventListener('keydown', (event) => {
+        const step = event.shiftKey ? 0.2 : 0.08;
+        if (event.key === 'ArrowLeft') this.yaw -= step;
+        else if (event.key === 'ArrowRight') this.yaw += step;
+        else if (event.key === 'ArrowUp') this.pitch -= step;
+        else if (event.key === 'ArrowDown') this.pitch += step;
+        else if (event.key === 'Home') {
+          this.yaw = 0.6;
+          this.pitch = 0.4;
+        } else return;
+        event.preventDefault();
+        this.renderFrame();
+      });
+    }
     canvas?.addEventListener('pointerdown', (e) => {
       this.dragging = true;
       this.lastX = e.clientX;
@@ -107,6 +129,9 @@ export class Phase3DTab extends TabController {
     };
     canvas?.addEventListener('pointerup', stop);
     canvas?.addEventListener('pointercancel', stop);
+    canvas?.addEventListener('lostpointercapture', () => {
+      this.dragging = false;
+    });
 
     this.dom.el('p3dClear')?.addEventListener('click', () => {
       this.points = [];

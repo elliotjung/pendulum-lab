@@ -30,39 +30,67 @@ test('first visit offers a mode chooser with visual choices', async ({ page }) =
   await expect(page.locator('#audienceMode')).toHaveValue('student');
 });
 
-test('real (non-automated) sessions re-open the chooser on every launch', async ({ page }) => {
-  // The chooser suppresses its every-launch auto-show under automation so the
-  // rest of the suite starts on the workspace; masking navigator.webdriver
-  // exercises the path a real returning visitor takes.
+test('invalid URL and stored modes are quarantined as an unselected first visit', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'corrupt-mode');
+  });
+  await page.goto('/?audience=garbage');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await expect(page.locator('#audienceModeChooser')).toBeVisible();
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'research');
+  expect(await page.evaluate(() => window.localStorage.getItem('pendulum-lab/ui/audience-mode'))).toBeNull();
+});
+
+test('the active mode survives when browser storage is unavailable', async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (key: string, value: string): void {
+      if (key === 'pendulum-lab/ui/audience-mode') throw new DOMException('blocked', 'SecurityError');
+      original.call(this, key, value);
+    };
+  });
+  await page.goto('/?audience=beginner');
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await page.locator('#audienceMode').selectOption('student');
+  await page.locator('#navLocale').selectOption('ko');
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
+  await expect(page.locator('#audienceMode')).toHaveValue('student');
+});
+
+test('returning sessions open the saved mode and can reopen the chooser from Home', async ({ page }) => {
   await page.addInitScript(() => {
     try {
       Object.defineProperty(Object.getPrototypeOf(navigator), 'webdriver', { get: () => false });
     } catch {
       Object.defineProperty(navigator, 'webdriver', { get: () => false });
     }
-    window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'student');
-    // This test is about the chooser only; mark the onboarding tour done so it
-    // never races in after the chooser closes (masking webdriver also arms it).
-    window.localStorage.setItem('pendulum-lab/ui/tour-done', '1');
+    if (!window.sessionStorage.getItem('audience-mode-test-seeded')) {
+      window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'student');
+      // This test is about the chooser only; mark the onboarding tour done so it
+      // never races in after the chooser closes (masking webdriver also arms it).
+      window.localStorage.setItem('pendulum-lab/ui/tour-done', '1');
+      window.sessionStorage.setItem('audience-mode-test-seeded', '1');
+    }
   });
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
+  await expect(page.locator('#audienceModeChooser')).toHaveCount(0);
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
+
+  await page.locator('#railHome').click();
   await expect(page.locator('#audienceModeChooser')).toBeVisible();
   await expect(page.locator('[data-audience-choice]')).toHaveCount(3);
   await expect(page.locator('.audience-choice-current')).toHaveAttribute('data-audience-choice', 'student');
 
-  // Dismissing keeps the stored mode active.
-  await page.locator('.audience-chooser-close').click();
-  await expect(page.locator('#audienceModeChooser')).toBeHidden();
-  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
-
-  // The chooser comes back on the next launch and can switch modes.
-  await page.reload();
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await expect(page.locator('#audienceModeChooser')).toBeVisible();
   await page.locator('[data-audience-choice="research"]').click();
   await expect(page.locator('#audienceModeChooser')).toBeHidden();
+  await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'research');
+
+  // The saved choice persists without another modal interruption.
+  await page.reload();
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await expect(page.locator('#audienceModeChooser')).toHaveCount(0);
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'research');
 });
 
@@ -100,6 +128,15 @@ test('beginner mode turns the lab into a focused simulator', async ({ page }) =>
   await expect(page.locator('#v10StatusCard')).toBeHidden();
   await expect(page.locator('#tab-lab .plots-row').first()).toBeHidden();
   await expect(page.locator('#tab-lab details[data-audience-min="student"]').first()).toBeHidden();
+  await expect(page.locator('[data-workflow-tab="bifurc"]')).toBeHidden();
+  await expect(page.locator('[data-workflow-tab="research"]')).toBeHidden();
+
+  await page.evaluate(() => {
+    (window as unknown as { __modernShell?: { switchTo(tab: string): void } }).__modernShell?.switchTo('research');
+  });
+  await page.keyboard.press('0');
+  await expect(page.locator('#tab-lab')).toHaveClass(/active/);
+  await expect(page.locator('#tab-research')).not.toHaveClass(/active/);
 
   const count = await visibleInteractiveCount(page, '#tab-lab');
   expect(count).toBeLessThanOrEqual(28);

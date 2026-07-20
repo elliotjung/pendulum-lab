@@ -101,4 +101,23 @@ describe('SimulationClock', () => {
     expect(advanced).toEqual([4, 5]);
     expect(second.timingMode).toBe('wall-clock');
   });
+
+  it.each([
+    [{ stepsPerFrame: Number.NaN }, /stepsPerFrame/],
+    [{ stepsPerFrame: -1 }, /stepsPerFrame/],
+    [{ stepsPerFrame: 1, mode: 'wall-clock', timestampMs: Number.NaN }, /timestampMs/],
+    [{ stepsPerFrame: 1, mode: 'wall-clock', speedMultiplier: -1 }, /speedMultiplier/],
+    [{ stepsPerFrame: 1, mode: 'wall-clock', maxWallClockSteps: 0 }, /maxWallClockSteps/]
+  ])('rejects malformed scheduler options', (invalid, expected) => {
+    const sim = new LabSimulation(DOUBLE);
+    const clock = new SimulationClock();
+    expect(() =>
+      clock.advance({
+        sim,
+        bobsScratch: [],
+        onStep: () => {},
+        ...invalid
+      } as Parameters<SimulationClock['advance']>[0])
+    ).toThrow(expected as RegExp);
+  });
 });

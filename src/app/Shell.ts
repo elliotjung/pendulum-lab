@@ -1,5 +1,6 @@
 import { takeOverElement } from './domTakeover';
 import { commitLabControls } from './controlCommit';
+import { canAccessAudienceTab, currentAudienceMode } from './audienceMode';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -41,6 +42,7 @@ const KNOWN_TABS = [
 
 /** Fired on document whenever a tab becomes active; detail: `{ tab }`. */
 export const TAB_ACTIVATED_EVENT = 'pendulum:tab-activated';
+export const TAB_REQUESTED_EVENT = 'pendulum:tab-requested';
 const PANEL_COLLAPSED_KEY = 'pendulum-lab/ui/panel-collapsed';
 const TAB_KEYS: Record<string, string> = {
   '1': 'lab',
@@ -87,12 +89,16 @@ interface ClosestTarget {
   parentElement?: ClosestTarget | null;
 }
 
+export function isShellShortcutTarget(target: EventTarget | null): boolean {
+  const candidate = target as (EventTarget & ClosestTarget) | null;
+  const closestTarget = typeof candidate?.closest === 'function' ? candidate : candidate?.parentElement;
+  return typeof closestTarget?.closest === 'function' && Boolean(closestTarget.closest(INTERACTIVE_SHORTCUT_TARGET));
+}
+
 /** True when a global shell shortcut must leave the keystroke to the page/widget. */
 export function shouldIgnoreShellShortcut(event: ShortcutGuardEvent): boolean {
   if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return true;
-  const target = event.target as (EventTarget & ClosestTarget) | null;
-  const candidate = typeof target?.closest === 'function' ? target : target?.parentElement;
-  return typeof candidate?.closest === 'function' && Boolean(candidate.closest(INTERACTIVE_SHORTCUT_TARGET));
+  return isShellShortcutTarget(event.target);
 }
 
 function compactRail(): boolean {
@@ -193,16 +199,32 @@ const PRESETS: Record<string, Preset> = {
 export class Shell {
   /** Activate a tab by name, replicating the legacy `switchTab` exactly. */
   switchTo(name: string): void {
-    if (!KNOWN_TABS.includes(name)) return;
-    document
-      .querySelectorAll<HTMLElement>('.tab')
-      .forEach((t) => t.setAttribute('aria-selected', t.dataset.tab === name ? 'true' : 'false'));
-    document
-      .querySelectorAll<HTMLElement>('.tabpanel')
-      .forEach((p) => p.classList.toggle('active', p.id === `tab-${name}`));
+    if (!KNOWN_TABS.includes(name) || !canAccessAudienceTab(currentAudienceMode(), name)) return;
+    const targetPanel = document.getElementById(`tab-${name}`);
+    if (!targetPanel) {
+      document.dispatchEvent(new CustomEvent(TAB_REQUESTED_EVENT, { detail: { tab: name } }));
+      return;
+    }
+    const focusWasInPanel =
+      document.activeElement instanceof HTMLElement && Boolean(document.activeElement.closest('.tabpanel'));
+    document.querySelectorAll<HTMLElement>('.tab[data-tab]').forEach((tab) => {
+      const selected = tab.dataset.tab === name;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    });
+    const selectedTab = document.querySelector<HTMLElement>(`.tab[data-tab="${CSS.escape(name)}"]`);
+    document.querySelectorAll<HTMLElement>('.tabpanel').forEach((panel) => {
+      const selected = panel === targetPanel;
+      panel.classList.toggle('active', selected);
+      panel.setAttribute('aria-hidden', String(!selected));
+      panel.inert = !selected;
+    });
     const app = (window as Window & { App?: { activeTab?: string } }).App;
     if (app) app.activeTab = name;
     this.syncRailSectionForTab(name);
+    const status = document.getElementById('tabChangeStatus');
+    if (status) status.textContent = selectedTab?.getAttribute('aria-label') ?? name;
+    if (focusWasInPanel && selectedTab) queueMicrotask(() => selectedTab?.focus());
     // Lazily-mounted collaborators (analysis tab controllers) listen for this.
     document.dispatchEvent(new CustomEvent(TAB_ACTIVATED_EVENT, { detail: { tab: name } }));
   }
@@ -330,11 +352,56 @@ export class Shell {
   private bindNavigation(): void {
     document.querySelectorAll<HTMLElement>('.tab[data-tab]').forEach((btn) => {
       const clone = takeOverElement(btn);
+      const name = clone.dataset.tab;
+      if (name) {
+        clone.id = `workspace-tab-${name}`;
+        clone.setAttribute('aria-controls', `tab-${name}`);
+        clone.tabIndex = clone.getAttribute('aria-selected') === 'true' ? 0 : -1;
+        const panel = document.getElementById(`tab-${name}`);
+        if (panel) {
+          panel.setAttribute('aria-labelledby', clone.id);
+          const active = panel.classList.contains('active');
+          panel.setAttribute('aria-hidden', String(!active));
+          panel.inert = !active;
+        }
+      }
+      const tablist = clone.closest<HTMLElement>('.rail-submenu,.rail-tab-list');
+      tablist?.setAttribute('role', 'tablist');
+      tablist?.setAttribute('aria-orientation', compactRail() ? 'horizontal' : 'vertical');
       clone.addEventListener('click', () => {
         if (clone.dataset.tab) this.switchTo(clone.dataset.tab);
         if (compactRail()) this.closeRailSections();
       });
+      clone.addEventListener('keydown', (event) => {
+        if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+        const tabs = Array.from(document.querySelectorAll<HTMLElement>('.tab[data-tab]')).filter(
+          (tab) =>
+            !tab.hidden &&
+            tab.getAttribute('aria-hidden') !== 'true' &&
+            canAccessAudienceTab(currentAudienceMode(), tab.dataset.tab ?? '')
+        );
+        const index = tabs.indexOf(clone);
+        if (index < 0 || !tabs.length) return;
+        event.preventDefault();
+        const nextIndex =
+          event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? tabs.length - 1
+              : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + tabs.length) %
+                tabs.length;
+        tabs[nextIndex]?.click();
+        tabs[nextIndex]?.focus();
+      });
     });
+    if (!document.getElementById('tabChangeStatus')) {
+      const status = document.createElement('div');
+      status.id = 'tabChangeStatus';
+      status.className = 'v10-sr';
+      status.setAttribute('role', 'status');
+      status.setAttribute('aria-live', 'polite');
+      document.body.append(status);
+    }
     // Dev-hub rail actions that correspond to tabs.
     document.querySelectorAll<HTMLElement>('.dev-tool-btn[data-rail-action]').forEach((btn) => {
       const action = btn.dataset.railAction;

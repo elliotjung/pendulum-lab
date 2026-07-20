@@ -602,7 +602,7 @@
     border-color:var(--divider) !important;
     color:var(--text) !important;
   }
-  .rgv8-cmd-row:hover, .rgv8-cmd-row:focus-visible{
+  .rgv8-cmd-row:hover, .rgv8-cmd-row:focus-visible, .rgv8-cmd-row.is-active{
     border-color:rgba(8,123,154,.45) !important;
     background:rgba(8,123,154,.08) !important;
     color:var(--fg-bright) !important;

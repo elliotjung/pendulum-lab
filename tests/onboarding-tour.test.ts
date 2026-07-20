@@ -7,7 +7,7 @@ describe('onboarding tour steps', () => {
       '#main',
       '.presets',
       '.rail-menu',
-      '[data-workflow-tab="lyap"]',
+      '[data-workflow-tab="bifurc"]',
       '.audience-select'
     ]);
     expect(TOUR_STEPS.find((step) => step.kind === 'mission')?.en.body).toContain(

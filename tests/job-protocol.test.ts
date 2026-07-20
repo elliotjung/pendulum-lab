@@ -1,10 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   defaultPhaseRunner,
+  isJobEventMessage,
+  isJobInboundMessage,
   jobPhases,
   JobEngine,
   JOB_PROTOCOL_V2,
+  validateJobInboundMessage,
   type JobEventMessage,
+  type JobInboundMessage,
   type JobSubmitMessage
 } from '../src/workers/jobProtocol';
 import {
@@ -13,7 +17,8 @@ import {
   JobCancelledError,
   JobClient,
   JobFailedError,
-  JobTimeoutError
+  JobTimeoutError,
+  type JobTransportFactory
 } from '../src/runtime/JobClient';
 import type { ChaosRequest, StudyPointResponse } from '../src/workers/chaosProtocol';
 
@@ -47,6 +52,53 @@ function instrumentedRunner(options: { failPhases?: Set<string>; delayMs?: numbe
 
 const flush = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 0));
 
+const studyResponse = (id: string): StudyPointResponse => ({
+  id,
+  kind: 'studyPoint',
+  ok: true,
+  lambdaMax: 1.2,
+  lambdaBlockStdError: 0.1,
+  rqaDeterminism: 0.8,
+  rqaDivergence: 0.05,
+  ftle: 1.1,
+  ftleHorizon: 1
+});
+
+interface ManualTransportSlot {
+  emit(event: JobEventMessage): void;
+  fail(error: Error): void;
+  sent: JobInboundMessage[];
+  terminateCalls: number;
+}
+
+function manualWorkerFactory(options: { throwOnSend?: boolean; throwOnTerminate?: boolean } = {}): {
+  factory: JobTransportFactory;
+  slots: ManualTransportSlot[];
+} {
+  const slots: ManualTransportSlot[] = [];
+  const factory: JobTransportFactory = (onEvent, onFatal) => {
+    const slot: ManualTransportSlot = {
+      emit: onEvent,
+      fail: onFatal,
+      sent: [],
+      terminateCalls: 0
+    };
+    slots.push(slot);
+    return {
+      usesWorker: true,
+      send: (message) => {
+        slot.sent.push(message);
+        if (options.throwOnSend) throw new Error('postMessage exploded');
+      },
+      terminate: () => {
+        slot.terminateCalls += 1;
+        if (options.throwOnTerminate) throw new Error('terminate exploded');
+      }
+    };
+  };
+  return { factory, slots };
+}
+
 describe('jobPhases', () => {
   it('splits studyPoint into three phases and everything else into one', () => {
     expect(jobPhases(studyRequest())).toEqual(['lyapunov', 'rqa', 'ftle']);
@@ -67,6 +119,64 @@ describe('defaultJobPoolSize', () => {
     expect(defaultJobPoolSize(2)).toBe(1);
     expect(defaultJobPoolSize(6)).toBe(3);
     expect(defaultJobPoolSize(16)).toBe(4);
+  });
+});
+
+describe('job protocol runtime validation', () => {
+  it('rejects malformed pool bounds instead of allowing NaN, fractions, or unbounded queues', () => {
+    const factory = inProcessTransportFactory(instrumentedRunner().runner);
+    for (const poolSize of [Number.NaN, Number.POSITIVE_INFINITY, 0, 1.5, 9]) {
+      expect(() => new JobClient(factory, { poolSize })).toThrow(RangeError);
+    }
+    for (const maxQueued of [Number.NaN, Number.POSITIVE_INFINITY, 0, 2.5, 10_001]) {
+      expect(() => new JobClient(factory, { maxQueued })).toThrow(RangeError);
+    }
+  });
+
+  it('validates the entire submit envelope and request-specific finite work settings', () => {
+    const valid: JobSubmitMessage = {
+      protocol: JOB_PROTOCOL_V2,
+      type: 'submit',
+      jobId: 'validated',
+      priority: 0,
+      request: studyRequest('validated'),
+      timeoutMs: 50,
+      checkpointEvery: 1
+    };
+    expect(validateJobInboundMessage(valid)).toBe(valid);
+    expect(isJobInboundMessage({ ...valid, priority: Number.NaN })).toBe(false);
+    expect(isJobInboundMessage({ ...valid, timeoutMs: Number.POSITIVE_INFINITY })).toBe(false);
+    expect(isJobInboundMessage({ ...valid, checkpointEvery: 0.5 })).toBe(false);
+    expect(
+      isJobInboundMessage({
+        ...valid,
+        checkpoint: { completedPhases: ['lyapunov'], partial: { lambdaMax: 1 } }
+      })
+    ).toBe(false);
+    expect(
+      isJobInboundMessage({
+        ...valid,
+        request: {
+          ...studyRequest('bad-work'),
+          settings: { lyapunov: { steps: Number.POSITIVE_INFINITY } }
+        }
+      })
+    ).toBe(false);
+  });
+
+  it('requires finite, typed outbound events before the client can consume them', () => {
+    expect(
+      isJobEventMessage({
+        protocol: JOB_PROTOCOL_V2,
+        type: 'progress',
+        jobId: 'job',
+        phase: 'compute',
+        completedPhases: 0,
+        totalPhases: 1,
+        elapsedMs: Number.NaN
+      })
+    ).toBe(false);
+    expect(isJobEventMessage({ protocol: JOB_PROTOCOL_V2, type: 'result', jobId: 'job', response: null })).toBe(false);
   });
 });
 
@@ -196,6 +306,56 @@ describe('JobEngine protocol semantics', () => {
     expect(events.some((event) => event.type === 'result')).toBe(true);
   });
 
+  it('keeps deadline enforcement active while a job is paused', async () => {
+    const { engine, events } = collectEngine();
+    engine.handle(submitMessage('job-paused-timeout', { timeoutMs: 10 }));
+    engine.handle({ protocol: JOB_PROTOCOL_V2, type: 'pause', jobId: 'job-paused-timeout' });
+    for (let i = 0; i < 50 && !events.some((event) => event.type === 'timed-out'); i += 1) await flush();
+
+    expect(events.some((event) => event.type === 'paused')).toBe(true);
+    expect(events.some((event) => event.type === 'timed-out')).toBe(true);
+    expect(events.some((event) => event.type === 'result')).toBe(false);
+  });
+
+  it('does not overwrite an active duplicate id and releases the id after a terminal event', async () => {
+    const { calls, runner } = instrumentedRunner();
+    const { engine, events } = collectEngine(runner);
+    engine.handle(submitMessage('job-duplicate'));
+    engine.handle({
+      ...submitMessage('job-duplicate'),
+      request: studyRequest('replacement-request')
+    });
+    for (let i = 0; i < 30 && !events.some((event) => event.type === 'result'); i += 1) await flush();
+
+    expect(calls.some((call) => call.startsWith('replacement-request:'))).toBe(false);
+    expect(events.some((event) => event.type === 'status' && event.jobId === 'job-duplicate')).toBe(true);
+
+    engine.handle(submitMessage('job-duplicate'));
+    for (let i = 0; i < 30 && events.filter((event) => event.type === 'result').length < 2; i += 1) await flush();
+    expect(events.filter((event) => event.type === 'accepted' && event.jobId === 'job-duplicate')).toHaveLength(2);
+    expect(events.filter((event) => event.type === 'result' && event.jobId === 'job-duplicate')).toHaveLength(2);
+  });
+
+  it('turns malformed phase output into a terminal failure and drains the next job', async () => {
+    let first = true;
+    const runner = (_request: ChaosRequest, phase: string): Record<string, number> => {
+      if (first && phase === 'lyapunov') {
+        first = false;
+        return { lambdaMax: Number.NaN, lambdaBlockStdError: 0.1 };
+      }
+      if (phase === 'lyapunov') return { lambdaMax: 1, lambdaBlockStdError: 0.1 };
+      if (phase === 'rqa') return { rqaDeterminism: 0.8, rqaDivergence: 0.05 };
+      return { ftle: 1, ftleHorizon: 1 };
+    };
+    const { engine, events } = collectEngine(runner);
+    engine.handle(submitMessage('bad-partial'));
+    engine.handle(submitMessage('after-bad-partial'));
+    for (let i = 0; i < 50 && !events.some((event) => event.type === 'result'); i += 1) await flush();
+
+    expect(events.some((event) => event.type === 'failed' && event.jobId === 'bad-partial')).toBe(true);
+    expect(events.some((event) => event.type === 'result' && event.jobId === 'after-bad-partial')).toBe(true);
+  });
+
   it('runs higher-priority queued jobs first', async () => {
     const { calls, runner } = instrumentedRunner();
     const { engine, events } = collectEngine(runner);
@@ -304,6 +464,158 @@ describe('JobClient pool (in-process fallback)', () => {
     const handles = ['a', 'b', 'c', 'd'].map((suffix) => client.submit(studyRequest(`pool-${suffix}`)));
     const responses = await Promise.all(handles.map((handle) => handle.result));
     expect(responses.every((response) => response.ok)).toBe(true);
+    expect(client.inFlight()).toBe(0);
+    client.terminate();
+  });
+
+  it('settles and respawns a slot when postMessage throws', async () => {
+    const { factory, slots } = manualWorkerFactory({ throwOnSend: true });
+    const client = new JobClient(factory, { poolSize: 1 });
+    const handle = client.submit(studyRequest('post-message-throw'));
+
+    await expect(handle.result).rejects.toMatchObject({ name: 'JobFailedError', phase: 'transport' });
+    expect(client.inFlight()).toBe(0);
+    expect(slots).toHaveLength(2);
+    expect(slots[0]?.terminateCalls).toBe(1);
+    client.terminate();
+  });
+
+  it('settles a pending job on a worker fatal signal and uses the respawned slot', async () => {
+    const { factory, slots } = manualWorkerFactory();
+    const client = new JobClient(factory, { poolSize: 1 });
+    const first = client.submit(studyRequest('worker-fatal'));
+    slots[0]!.fail(new Error('worker error event'));
+
+    await expect(first.result).rejects.toMatchObject({ name: 'JobFailedError', phase: 'transport' });
+    expect(slots).toHaveLength(2);
+
+    const second = client.submit(studyRequest('after-worker-fatal'));
+    slots[1]!.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'result',
+      jobId: second.jobId,
+      response: studyResponse('after-worker-fatal'),
+      elapsedMs: 1
+    });
+    await expect(second.result).resolves.toMatchObject({ id: 'after-worker-fatal', ok: true });
+    client.terminate();
+  });
+
+  it('isolates progress and checkpoint callback exceptions from job settlement', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const client = new JobClient(inProcessTransportFactory(instrumentedRunner().runner), { poolSize: 1 });
+    const handle = client.submit(studyRequest('throwing-callbacks'), {
+      onProgress: () => {
+        throw new Error('progress callback exploded');
+      },
+      onCheckpoint: () => {
+        throw new Error('checkpoint callback exploded');
+      }
+    });
+
+    await expect(handle.result).resolves.toMatchObject({ id: 'throwing-callbacks', ok: true });
+    expect(consoleError).toHaveBeenCalled();
+    consoleError.mockRestore();
+    client.terminate();
+  });
+
+  it('ignores a valid event from the wrong worker and accepts only the owning slot', async () => {
+    const { factory, slots } = manualWorkerFactory();
+    const client = new JobClient(factory, { poolSize: 2 });
+    const first = client.submit(studyRequest('owner-a'));
+    const second = client.submit(studyRequest('owner-b'));
+
+    slots[0]!.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'result',
+      jobId: second.jobId,
+      response: studyResponse('owner-b'),
+      elapsedMs: 1
+    });
+    expect(client.inFlight()).toBe(2);
+
+    slots[0]!.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'result',
+      jobId: first.jobId,
+      response: studyResponse('owner-a'),
+      elapsedMs: 1
+    });
+    slots[1]!.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'result',
+      jobId: second.jobId,
+      response: studyResponse('owner-b'),
+      elapsedMs: 1
+    });
+    await expect(first.result).resolves.toMatchObject({ id: 'owner-a' });
+    await expect(second.result).resolves.toMatchObject({ id: 'owner-b' });
+    client.terminate();
+  });
+
+  it('fails and replaces a worker that emits a contextually mismatched result', async () => {
+    const { factory, slots } = manualWorkerFactory();
+    const client = new JobClient(factory, { poolSize: 1 });
+    const handle = client.submit(studyRequest('expected-response'));
+    slots[0]!.emit({
+      protocol: JOB_PROTOCOL_V2,
+      type: 'result',
+      jobId: handle.jobId,
+      response: studyResponse('different-response'),
+      elapsedMs: 1
+    });
+
+    await expect(handle.result).rejects.toMatchObject({ name: 'JobFailedError', phase: 'transport' });
+    expect(slots).toHaveLength(2);
+    client.terminate();
+  });
+
+  it('contains transport factory and terminate exceptions while cleaning every promise', async () => {
+    const throwingFactory: JobTransportFactory = () => {
+      throw new Error('factory exploded');
+    };
+    const factoryClient = new JobClient(throwingFactory, { poolSize: 1 });
+    const factoryHandle = factoryClient.submit(studyRequest('factory-throw'));
+    await expect(factoryHandle.result).rejects.toMatchObject({ name: 'JobFailedError', phase: 'transport' });
+    expect(() => factoryClient.terminate()).not.toThrow();
+
+    const { factory } = manualWorkerFactory({ throwOnTerminate: true });
+    const terminateClient = new JobClient(factory, { poolSize: 1 });
+    const terminateHandle = terminateClient.submit(studyRequest('terminate-throw'));
+    const rejected = expect(terminateHandle.result).rejects.toBeInstanceOf(JobCancelledError);
+    expect(() => terminateClient.terminate()).not.toThrow();
+    await rejected;
+    expect(terminateClient.inFlight()).toBe(0);
+  });
+
+  it('rejects unsafe request budgets before creating a transport', async () => {
+    let factoryCalls = 0;
+    const factory: JobTransportFactory = () => {
+      factoryCalls += 1;
+      throw new Error('must not be reached');
+    };
+    const client = new JobClient(factory, { poolSize: 1 });
+    const invalid = {
+      ...studyRequest('invalid-work'),
+      settings: { lyapunov: { steps: Number.NaN } }
+    } as unknown as ChaosRequest;
+    const handle = client.submit(invalid);
+
+    await expect(handle.result).rejects.toBeInstanceOf(RangeError);
+    expect(factoryCalls).toBe(0);
+    expect(client.inFlight()).toBe(0);
+  });
+
+  it('rejects large single-phase work when no Worker can keep it off the UI thread', async () => {
+    const client = new JobClient(inProcessTransportFactory(), { poolSize: 1 });
+    const handle = client.submit({
+      id: 'large-main-thread-grid',
+      kind: 'basin',
+      spec: { kind: 'double', m1: 1, m2: 1, l1: 1, l2: 1, g: 9.81 },
+      settings: { n: 20, dt: 0.001, maxTime: 1 }
+    });
+
+    await expect(handle.result).rejects.toThrow(/without Worker support/);
     expect(client.inFlight()).toBe(0);
     client.terminate();
   });

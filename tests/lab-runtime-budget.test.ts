@@ -82,6 +82,12 @@ describe('PoincareAccumulator diagnostics', () => {
     expect(acc.capacity).toBe(1);
     expect(acc.size).toBe(1);
   });
+
+  it('rejects non-finite, fractional, and unbounded retention capacities', () => {
+    for (const capacity of [Number.NaN, Number.POSITIVE_INFINITY, 1.5, 100_001]) {
+      expect(() => new PoincareAccumulator(capacity)).toThrow(RangeError);
+    }
+  });
 });
 
 describe('Canvas quality diagnostics', () => {
@@ -107,5 +113,21 @@ describe('LabRecording', () => {
       [1, [3, 4]],
       [2, [5, 6]]
     ]);
+  });
+
+  it.each([0, 1.5, Number.NaN, 1_000_001])('rejects an invalid capacity (%s)', (capacity) => {
+    expect(() => new LabRecording(capacity)).toThrow(RangeError);
+  });
+
+  it('rejects malformed frames atomically and does not expose mutable ring storage', () => {
+    const recording = new LabRecording(2);
+    recording.push(0, [1, 2]);
+    expect(() => recording.push(1, [1, Number.NaN])).toThrow(/dense and finite/);
+    expect(() => recording.push(Number.POSITIVE_INFINITY, [3, 4])).toThrow(/time/);
+    expect(recording.length).toBe(1);
+    const returned = recording.at(0)!;
+    returned.state[0] = 99;
+    expect(recording.at(0)?.state[0]).toBe(1);
+    expect(recording.at(0.5)).toBeUndefined();
   });
 });

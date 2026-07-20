@@ -1,5 +1,6 @@
 import { installAdoptedStyle } from '../ui/adoptedStyles';
 import { currentNavLocale } from './navGuide';
+import { shouldIgnoreShellShortcut } from './Shell';
 
 export interface ShortcutDefinition {
   keys: string;
@@ -37,11 +38,6 @@ function css(): string {
 .shortcut-help-list kbd{display:inline-block;min-width:36px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel-elevated);color:var(--fg-bright);font:650 11px/1 var(--font-mono);text-align:center;box-shadow:inset 0 -1px rgba(0,0,0,.25)}
 @media(max-width:480px){.shortcut-help-list{grid-template-columns:1fr;padding-inline:16px}.shortcut-help-list dt{padding-bottom:3px;border-bottom:0}.shortcut-help-list dd{padding-top:3px}.shortcut-help-head{padding-inline:16px}}
 `;
-}
-
-function inputTarget(target: EventTarget | null): boolean {
-  const element = target instanceof HTMLElement ? target : null;
-  return Boolean(element?.isContentEditable || element?.closest('input,select,textarea,[contenteditable="true"]'));
 }
 
 function buildDialog(): HTMLDialogElement {
@@ -104,7 +100,7 @@ export function installShortcutHelp(): void {
   if (typeof document === 'undefined') return;
   installAdoptedStyle(STYLE_ID, css());
   document.addEventListener('keydown', (event) => {
-    if (event.key !== '?' || inputTarget(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key !== '?' || shouldIgnoreShellShortcut(event)) return;
     event.preventDefault();
     let dialog = document.getElementById(DIALOG_ID) as HTMLDialogElement | null;
     if (dialog && !dialog.open && dialog.dataset.locale !== currentNavLocale()) {

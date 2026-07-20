@@ -1,4 +1,4 @@
-const VERSION = 'pendulum-lab-v10.36.0';
+const VERSION = 'pendulum-lab-v10.36.0-__BUILD_REVISION__';
 const SHELL_CACHE = `${VERSION}-shell`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const RUNTIME_CACHE_LIMIT = 96;
@@ -6,6 +6,7 @@ const SHELL = ['./', './index.html', './app.html', './manifest.webmanifest'];
 const CACHE_BYPASS_MODES = new Set(['no-store', 'reload', 'no-cache']);
 const STATIC_DESTINATIONS = new Set(['script', 'style', 'image', 'font', 'manifest', 'worker']);
 const STATIC_PATH = /\.(?:avif|css|gif|html?|ico|jpe?g|m?js|otf|png|svg|ttf|wasm|webmanifest|webp|woff2?)$/i;
+let trimQueue = Promise.resolve();
 
 async function trimRuntimeCache(cache) {
   const keys = await cache.keys();
@@ -16,6 +17,7 @@ async function trimRuntimeCache(cache) {
 
 async function cacheRuntimeResponse(request, response) {
   if (!response.ok) return;
+  if (response.url && new URL(response.url).origin !== self.location.origin) return;
   const cacheControl = response.headers?.get?.('cache-control') || '';
   if (/\b(?:no-store|private)\b/i.test(cacheControl)) return;
   // Clone before the first await: respondWith may start consuming the original
@@ -23,7 +25,15 @@ async function cacheRuntimeResponse(request, response) {
   const copy = response.clone();
   const cache = await caches.open(RUNTIME_CACHE);
   await cache.put(request, copy);
-  await trimRuntimeCache(cache);
+  trimQueue = trimQueue.then(() => trimRuntimeCache(cache));
+  await trimQueue;
+}
+
+function navigationCacheKey(request) {
+  const url = new URL(request.url);
+  url.search = '';
+  url.hash = '';
+  return new Request(url.href, { method: 'GET' });
 }
 
 function settle(promise, warning) {
@@ -35,21 +45,28 @@ self.addEventListener('install', (event) => {
     caches
       .open(SHELL_CACHE)
       .then((cache) => cache.addAll(SHELL))
-      .then(() => self.skipWaiting())
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') void self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key.startsWith('pendulum-lab-v') && key !== SHELL_CACHE && key !== RUNTIME_CACHE)
-            .map((key) => caches.delete(key))
-        )
-      )
+      .then((keys) => {
+        const generations = keys.filter((key) => key.startsWith('pendulum-lab-v'));
+        const roots = [...new Set(generations.map((key) => key.replace(/-(?:shell|runtime)$/, '')))];
+        const previous = roots
+          .filter((root) => root !== VERSION)
+          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+          .at(-1);
+        const keepRoots = new Set([VERSION, previous].filter(Boolean));
+        const keep = new Set(generations.filter((key) => keepRoots.has(key.replace(/-(?:shell|runtime)$/, ''))));
+        return Promise.all(generations.filter((key) => !keep.has(key)).map((key) => caches.delete(key)));
+      })
       .then(() => self.clients.claim())
   );
 });
@@ -63,10 +80,11 @@ self.addEventListener('fetch', (event) => {
   // particular, a `no-store` request must neither read nor populate our caches.
   if (CACHE_BYPASS_MODES.has(request.cache)) return;
   if (request.mode === 'navigate') {
+    const cacheKey = navigationCacheKey(request);
     const networkResponse = fetch(request);
-    const cacheUpdate = networkResponse.then((response) => cacheRuntimeResponse(request, response));
+    const cacheUpdate = networkResponse.then((response) => cacheRuntimeResponse(cacheKey, response));
     const response = networkResponse.catch(
-      async () => (await caches.match(request)) || (await caches.match('./index.html')) || Response.error()
+      async () => (await caches.match(cacheKey)) || (await caches.match('./index.html')) || Response.error()
     );
     event.respondWith(response);
     event.waitUntil(settle(cacheUpdate, 'Pendulum Lab navigation cache update failed.'));

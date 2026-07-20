@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 import { LabRenderer } from '../app/LabRenderer';
 import {
+  isMainCanvasWorkerMessage,
   unpackBobPositions,
-  type MainCanvasWorkerMessage,
   type MainCanvasWorkerResponse
 } from '../app/MainCanvasWorkerProtocol';
 import type { Ctx2D } from '../viz/types';
@@ -14,7 +14,11 @@ let logicalWidth = 1;
 let logicalHeight = 1;
 let dpr = 1;
 
-self.addEventListener('message', (event: MessageEvent<MainCanvasWorkerMessage>) => {
+self.addEventListener('message', (event: MessageEvent<unknown>) => {
+  if (!isMainCanvasWorkerMessage(event.data)) {
+    post({ kind: 'error', detail: 'main canvas worker received a malformed message' });
+    return;
+  }
   const message = event.data;
   try {
     switch (message.kind) {

@@ -20,7 +20,7 @@
   - 독립 구현(SciPy DOP853, SymPy 기호 유도, Julia Vern9)과 교차 검증
   - dt-반감 수렴 차수 측정, 시간가역성, 결정론적 재현 해시
   - N≥4 질량행렬 대칭성·양정치성, 극점 차트 한계의 명시적 계약 테스트
-  - 단위 테스트 1233개, Playwright E2E(Chromium/Firefox/WebKit/모바일)
+  - 단위 테스트 1288개, Playwright E2E(Chromium/Firefox/WebKit/모바일)
 - **재현성**: 모든 산출물에 schemaVersion + 재현 해시, ZIP 번들에 파일별
   **SHA-256 체크섬**, 산출물 계보(provenance DAG), 실행 가능한 노트북 내보내기.
 - **결과 신뢰도 배지**: 모든 수치 출력에 5단계 배지

@@ -52,6 +52,23 @@ describe('PoincareAccumulator', () => {
     expect(acc.size).toBe(1);
   });
 
+  it('uses the angle-first triple-pendulum layout for crossing direction and ω2', () => {
+    const acc = new PoincareAccumulator();
+    // [θ1, θ2, θ3, ω1, ω2, ω3]; θ3 is deliberately negative so treating it
+    // as ω1 would incorrectly discard this valid rising crossing.
+    expect(acc.push([-0.1, 1, -9, 2, 3, 4])).toBeNull();
+    const point = acc.push([0.1, 2, -8, 2, 5, 6]);
+    expect(point).toEqual({ x: 1.5, y: 4 });
+  });
+
+  it('rejects malformed odd-dimensional states without retaining a stale bracket', () => {
+    const acc = new PoincareAccumulator();
+    acc.push([-0.1, 1, 1, 3]);
+    expect(acc.push([0.1, 2, 1])).toBeNull();
+    expect(acc.push([0.1, 2, 1, 5])).toBeNull();
+    expect(acc.size).toBe(0);
+  });
+
   it('ignores falling crossings and θ̇1 ≤ 0', () => {
     const acc = new PoincareAccumulator();
     acc.push([0.1, 1.0, -0.5, 0]); // descending region
@@ -59,6 +76,13 @@ describe('PoincareAccumulator', () => {
     acc.clear();
     acc.push([-0.1, 1.0, -0.5, 0]);
     expect(acc.push([0.1, 2.0, -0.5, 0])).toBeNull(); // rising position but ω1<0
+  });
+
+  it('records equivalent 2π section crossings for rotating trajectories', () => {
+    const acc = new PoincareAccumulator();
+    acc.push([Math.PI * 2 - 0.1, 1, 2, 3]);
+    const point = acc.push([Math.PI * 2 + 0.1, 2, 2, 5]);
+    expect(point).toEqual({ x: 1.5, y: 4 });
   });
 
   it('caps the number of stored points', () => {
@@ -88,5 +112,22 @@ describe('LyapunovEstimator', () => {
     }
     expect(est.value()).toBeGreaterThan(0.1);
     expect(est.history().length).toBeGreaterThan(10);
+  });
+
+  it.each([
+    [0, 0.01, 1e-8, 10, /dimension/],
+    [4, 0, 1e-8, 10, /dt/],
+    [4, 0.01, 0, 10, /d0/],
+    [4, 0.01, 1e-8, 0, /renormEvery/]
+  ])('rejects malformed estimator settings', (dim, dt, d0, renormEvery, expected) => {
+    expect(() => new LyapunovEstimator(rhs, dim, dt, d0, renormEvery)).toThrow(expected as RegExp);
+  });
+
+  it('rejects malformed references without contaminating history', () => {
+    const est = new LyapunovEstimator(rhs, 4, 0.01);
+    expect(() => est.reset([0, 0, 0])).toThrow(/exactly 4/);
+    expect(() => est.step([0, 0, Number.NaN, 0])).toThrow(/dense and finite/);
+    expect(est.history()).toHaveLength(0);
+    expect(est.value()).toBe(0);
   });
 });

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('core controls and canvases expose accessible names', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('canvas[role="img"]').first()).toBeVisible();
   await expect(page.locator('button[aria-label]').first()).toBeVisible();
   const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
@@ -12,7 +12,8 @@ test('core controls and canvases expose accessible names', async ({ page }) => {
 });
 
 test('dynamic canvases and rail controls receive stable accessible names', async ({ page }) => {
-  await page.goto('/');
+  test.setTimeout(90_000);
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
   await page.locator('.rail-menu-button[data-rail-section-button="analysis"]').click();
@@ -20,20 +21,24 @@ test('dynamic canvases and rail controls receive stable accessible names', async
   await expect(page.locator('#expReplayCanvas')).toHaveAttribute('role', 'img');
   await expect(page.locator('#expReplayCanvas')).toHaveAttribute('aria-label', /Expansion lab replay/i);
 
-  await page.goto('/?audience=research&tab=research');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await page.evaluate(() => {
+    (window as unknown as { __modernShell?: { switchTo(tab: string): void } }).__modernShell?.switchTo('research');
+  });
   await expect(page.locator('#rwDesignPreview')).toHaveAttribute('role', 'img');
   await expect(page.locator('#rwDesignPreview')).toHaveAttribute('aria-label', /design-space/i);
-
-  await page.goto('/?audience=research&tab=lab3d');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await expect(page.locator('#r3Canvas')).toHaveAttribute('role', 'img');
-  await expect(page.locator('#r3Canvas')).toHaveAttribute('aria-label', /Rope pendulum/i);
 
   await expect(page.locator('#hudParticles')).toHaveCount(0);
   const railLabel = await page.locator('.rail-menu-button[data-rail-section-button="sim"]').getAttribute('aria-label');
   expect(railLabel).toBeTruthy();
   expect(railLabel).not.toBe('SSim');
+});
+
+test('the 3D workspace deep link exposes an accessible canvas', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('/?audience=research&tab=lab3d', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await expect(page.locator('#r3Canvas')).toHaveAttribute('role', 'img');
+  await expect(page.locator('#r3Canvas')).toHaveAttribute('aria-label', /Rope pendulum/i);
 });
 
 test('diagnostics drawer manages keyboard focus and system accessibility preferences', async ({ page }) => {

@@ -3,8 +3,8 @@ import { runInNewContext } from 'node:vm';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 
 const ORIGIN = 'https://pendulum.test';
-const SHELL_CACHE = 'pendulum-lab-v10.36.0-shell';
-const RUNTIME_CACHE = 'pendulum-lab-v10.36.0-runtime';
+const SHELL_CACHE = 'pendulum-lab-v10.36.0-__BUILD_REVISION__-shell';
+const RUNTIME_CACHE = 'pendulum-lab-v10.36.0-__BUILD_REVISION__-runtime';
 
 interface RequestLike {
   method: string;
@@ -158,6 +158,7 @@ function createHarness(
     serviceWorkerSource,
     {
       Response,
+      Request,
       URL,
       caches,
       console: { warn },
@@ -197,7 +198,7 @@ function createHarness(
 }
 
 describe('service worker behavior', () => {
-  test('install atomically precaches the shell before taking control', async () => {
+  test('install precaches the shell and waits for explicit user activation', async () => {
     const harness = createHarness();
     const event = harness.dispatch('install');
 
@@ -206,22 +207,31 @@ describe('service worker behavior', () => {
 
     const shell = await harness.caches.open(SHELL_CACHE);
     expect(shell.addAllCalls).toEqual([['./', './index.html', './app.html', './manifest.webmanifest']]);
-    expect(harness.skipWaiting).toHaveBeenCalledOnce();
+    expect(harness.skipWaiting).not.toHaveBeenCalled();
   });
 
-  test('activate removes only obsolete Pendulum Lab caches and claims clients', async () => {
+  test('activate retains the current and previous cache generations and claims clients', async () => {
     const harness = createHarness();
     await harness.caches.open(SHELL_CACHE);
     await harness.caches.open(RUNTIME_CACHE);
+    await harness.caches.open('pendulum-lab-v10.34.0-shell');
+    await harness.caches.open('pendulum-lab-v10.34.0-runtime');
     await harness.caches.open('pendulum-lab-v10.35.0-shell');
+    await harness.caches.open('pendulum-lab-v10.35.0-runtime');
     await harness.caches.open('another-application-cache');
 
     const event = harness.dispatch('activate');
     expect(event.waits).toHaveLength(1);
     await event.settle();
 
-    expect(await harness.caches.keys()).toEqual([SHELL_CACHE, RUNTIME_CACHE, 'another-application-cache']);
-    expect(harness.caches.deletedNames).toEqual(['pendulum-lab-v10.35.0-shell']);
+    expect(await harness.caches.keys()).toEqual([
+      SHELL_CACHE,
+      RUNTIME_CACHE,
+      'pendulum-lab-v10.35.0-shell',
+      'pendulum-lab-v10.35.0-runtime',
+      'another-application-cache'
+    ]);
+    expect(harness.caches.deletedNames).toEqual(['pendulum-lab-v10.34.0-shell', 'pendulum-lab-v10.34.0-runtime']);
     expect(harness.claim).toHaveBeenCalledOnce();
   });
 
@@ -242,7 +252,12 @@ describe('service worker behavior', () => {
     const runtime = await harness.caches.open(RUNTIME_CACHE);
     expect(networkResponse.cloneCalls).toBe(1);
     expect(networkResponse.clonedBeforeConsumption).toBe(true);
-    expect(runtime.putCalls).toEqual([{ request: target, response: { source: target.url, type: 'clone' } }]);
+    if (target.mode === 'navigate') {
+      expect(runtime.putCalls).toHaveLength(1);
+      expect(keyOf(runtime.putCalls[0]!.request)).toBe(new URL(target.url).origin + new URL(target.url).pathname);
+    } else {
+      expect(runtime.putCalls).toEqual([{ request: target, response: { source: target.url, type: 'clone' } }]);
+    }
   });
 
   test('does not cache a non-ok network response', async () => {

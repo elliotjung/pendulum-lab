@@ -52,7 +52,12 @@ describe('main trajectory OffscreenCanvas protocol', () => {
     } as unknown as HTMLCanvasElement;
     try {
       const client = tryCreateMainCanvasWorkerClient(canvas, {
-        createWorker: () => ({ postMessage: vi.fn(), addEventListener: vi.fn(), terminate })
+        createWorker: () => ({
+          postMessage: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          terminate
+        })
       });
       expect(client).toBeNull();
       expect(terminate).toHaveBeenCalledOnce();

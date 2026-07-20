@@ -8,6 +8,7 @@
 
 import {
   NAV_LOCALE_STORAGE_KEY,
+  currentNavLocale,
   normalizeNavLocale,
   resolveInitialNavLocale,
   setNavLocale,
@@ -101,13 +102,24 @@ export function applyStructuralLocale(): void {
   if (mode) {
     mode.dataset.testid = 'audience-mode';
     mode.setAttribute('aria-label', korean ? '사용자 모드' : 'Audience mode');
-    const labels = korean ? ['초보', '학생', '연구'] : ['Beginner', 'Student', 'Research'];
-    Array.from(mode.options).forEach((option, index) => {
-      option.textContent = labels[index] ?? option.textContent;
+    const labels: Record<string, { en: string; ko: string }> = {
+      beginner: { en: 'Beginner', ko: '초보' },
+      student: { en: 'Student', ko: '학생' },
+      research: { en: 'Research', ko: '연구' }
+    };
+    Array.from(mode.options).forEach((option) => {
+      const label = labels[option.value];
+      if (label) option.textContent = korean ? label.ko : label.en;
     });
   }
   localizeText(document.querySelector<HTMLElement>('label[for="audienceMode"]'), '모드', korean);
   localizeText(document.querySelector<HTMLElement>('label[for="navLocale"]'), '언어', korean);
+  const localeSelect = document.getElementById(SELECT_ID);
+  localeSelect?.setAttribute('aria-label', korean ? '메뉴 안내 언어' : 'Menu guide language');
+  localeSelect?.setAttribute(
+    'title',
+    korean ? '메뉴와 핵심 조절기의 표시 언어' : 'Language for menus and core controls'
+  );
 
   const trustToggle = document.getElementById('trustDrawerToggle');
   trustToggle?.setAttribute('data-testid', 'trust-inspector-toggle');
@@ -163,7 +175,7 @@ export function installLocaleSelect(refresh: () => void): void {
   if (!host) return;
   const label = document.createElement('label');
   label.htmlFor = SELECT_ID;
-  label.textContent = 'Guide';
+  label.textContent = 'Language';
   const select = document.createElement('select');
   select.id = SELECT_ID;
   select.setAttribute('aria-label', 'Menu guide language');
@@ -176,7 +188,7 @@ export function installLocaleSelect(refresh: () => void): void {
     option.textContent = text;
     select.append(option);
   }
-  select.value = storedNavLocale() ?? 'en';
+  select.value = currentNavLocale();
   select.addEventListener('change', () => {
     const locale = normalizeNavLocale(select.value);
     setNavLocale(locale);

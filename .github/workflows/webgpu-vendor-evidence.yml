@@ -9,25 +9,33 @@ on:
         type: choice
         options: [intel, nvidia, amd]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: webgpu-vendor-${{ inputs.vendor }}
+  cancel-in-progress: false
+
 jobs:
   validate-vendor:
-    runs-on: [self-hosted, webgpu, "${{ inputs.vendor }}"]
+    runs-on: [self-hosted, webgpu, '${{ inputs.vendor }}']
     timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.14.0
           cache: npm
       - run: npm ci
       - run: npx playwright install chrome
-      - name: Free Vite test port
+      - name: Require the dedicated Vite test port to be free
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           $listeners = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue
-          foreach ($listener in $listeners) {
-            Stop-Process -Id $listener.OwningProcess -Force -ErrorAction SilentlyContinue
+          if ($listeners) {
+            $owners = ($listeners | Select-Object -ExpandProperty OwningProcess -Unique) -join ', '
+            throw "Port 5173 is already owned by process(es) $owners. Refusing to terminate an unrelated self-hosted-runner process."
           }
       - run: npm run test:webgpu-hardware
         env:
@@ -35,7 +43,7 @@ jobs:
       - run: npm run benchmark:gpu-ladder
         env:
           WEBGPU_BROWSER_CHANNEL: chrome
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gpu-ladder-${{ inputs.vendor }}
           path: reports/gpu-benchmark-ladder.*

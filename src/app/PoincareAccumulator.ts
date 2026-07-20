@@ -14,10 +14,14 @@ import type { Derivative } from '../physics/types';
  *   ~1e-10 rather than O(dt²).
  *
  * Feed it the full state each integration step via `push`. State layout matches
- * the engine: [θ1, θ2, ω1, ω2, …].
+ * the engine: angles first, then angular velocities — [θ1, θ2, ω1, ω2] for a
+ * double pendulum and [θ1, θ2, θ3, ω1, ω2, ω3] for a triple pendulum.
  */
 export class PoincareAccumulator {
+  private static readonly MAX_CAPACITY = 100_000;
   private readonly points: Point2D[] = [];
+  private pointStart = 0;
+  private orderedPoints: readonly Point2D[] | null = null;
   private prev: Float64Array | null = null;
   private cap: number;
   private readonly direction: 'rising' | 'falling' | 'both';
@@ -32,8 +36,17 @@ export class PoincareAccumulator {
   private refineScratch = new Float64Array(0);
 
   constructor(cap = 4000, direction: 'rising' | 'falling' | 'both' = 'rising') {
-    this.cap = Math.max(1, cap);
+    this.cap = PoincareAccumulator.validCapacity(cap);
     this.direction = direction;
+  }
+
+  private static validCapacity(cap: number): number {
+    if (!Number.isFinite(cap) || !Number.isSafeInteger(cap) || cap > PoincareAccumulator.MAX_CAPACITY) {
+      throw new RangeError(
+        `PoincareAccumulator capacity must be a safe integer up to ${PoincareAccumulator.MAX_CAPACITY}.`
+      );
+    }
+    return Math.max(1, cap);
   }
 
   /** Number of recorded section points. */
@@ -51,8 +64,13 @@ export class PoincareAccumulator {
    * keeps everything already recorded.
    */
   setCapacity(cap: number): void {
-    this.cap = Math.max(1, Math.floor(cap));
-    if (this.points.length > this.cap) this.points.splice(0, this.points.length - this.cap);
+    const nextCapacity = PoincareAccumulator.validCapacity(cap);
+    const retained = this.list().slice(-nextCapacity);
+    this.cap = nextCapacity;
+    this.points.length = 0;
+    this.points.push(...retained);
+    this.pointStart = 0;
+    this.orderedPoints = this.points;
   }
 
   policy(): { capacity: number; direction: 'rising' | 'falling' | 'both'; refined: boolean } {
@@ -64,13 +82,16 @@ export class PoincareAccumulator {
   }
 
   list(): readonly Point2D[] {
-    return this.points;
+    if (this.pointStart === 0) return this.points;
+    this.orderedPoints ??= [...this.points.slice(this.pointStart), ...this.points.slice(0, this.pointStart)];
+    return this.orderedPoints;
   }
 
   toFloat32Pairs(): Float32Array {
-    const out = new Float32Array(this.points.length * 2);
-    for (let i = 0; i < this.points.length; i += 1) {
-      const p = this.points[i]!;
+    const points = this.list();
+    const out = new Float32Array(points.length * 2);
+    for (let i = 0; i < points.length; i += 1) {
+      const p = points[i]!;
       out[i * 2] = p.x;
       out[i * 2 + 1] = p.y;
     }
@@ -79,6 +100,8 @@ export class PoincareAccumulator {
 
   clear(): void {
     this.points.length = 0;
+    this.pointStart = 0;
+    this.orderedPoints = null;
     this.prev = null;
   }
 
@@ -129,31 +152,40 @@ export class PoincareAccumulator {
    * evaluation integrates the actual flow, so the result converges to the true
    * crossing of the numerical trajectory.
    */
-  private refineCrossing(previous: Float64Array, linearFrac: number): Point2D | null {
+  private refineCrossing(previous: Float64Array, sectionAngle: number): Point2D | null {
     const dt = this.refineDt;
     this.ensureWork(previous.length);
     const scratch = this.refineScratch;
     const thetaAt = (tau: number): number => {
-      if (tau <= 0) return previous[0]!;
+      if (tau <= 0) return previous[0]! - sectionAngle;
       this.rk4Into(previous, tau, scratch);
-      return scratch[0]!;
+      return scratch[0]! - sectionAngle;
     };
-    let tau0 = 0;
-    let f0 = previous[0]!;
-    let tau1 = Math.min(dt, Math.max(1e-12, linearFrac * dt));
-    let f1 = thetaAt(tau1);
-    for (let iter = 0; iter < 8 && Math.abs(f1) > 1e-12; iter += 1) {
-      const denom = f1 - f0;
-      if (denom === 0) break;
-      const next = Math.min(dt, Math.max(0, tau1 - f1 * ((tau1 - tau0) / denom)));
-      tau0 = tau1;
-      f0 = f1;
-      tau1 = next;
-      f1 = thetaAt(tau1);
+    let lo = 0;
+    let hi = dt;
+    let fLo = thetaAt(lo);
+    let fHi = thetaAt(hi);
+    if (!Number.isFinite(fLo) || !Number.isFinite(fHi) || fLo * fHi > 0) return null;
+    let tau = hi;
+    let residual = fHi;
+    for (let iter = 0; iter < 32; iter += 1) {
+      const secant = hi - fHi * ((hi - lo) / (fHi - fLo));
+      tau = Number.isFinite(secant) && secant > lo && secant < hi ? secant : (lo + hi) / 2;
+      residual = thetaAt(tau);
+      if (!Number.isFinite(residual)) return null;
+      if (Math.abs(residual) <= 1e-11 || hi - lo <= Math.max(1e-12, dt * 1e-10)) break;
+      if (fLo * residual <= 0) {
+        hi = tau;
+        fHi = residual;
+      } else {
+        lo = tau;
+        fLo = residual;
+      }
     }
-    if (!Number.isFinite(f1)) return null;
-    // `scratch` holds the state at tau1 (thetaAt evaluated it last).
-    return { x: scratch[1]!, y: scratch[3]! };
+    if (Math.abs(residual) > 1e-8) return null;
+    thetaAt(tau);
+    const velocityOffset = scratch.length / 2;
+    return { x: scratch[1]!, y: scratch[velocityOffset + 1]! };
   }
 
   /**
@@ -162,6 +194,10 @@ export class PoincareAccumulator {
    */
   push(state: ArrayLike<number>): Point2D | null {
     const length = state.length;
+    if (length < 4 || length % 2 !== 0) {
+      this.prev = null;
+      return null;
+    }
     if (!this.prev || this.prev.length !== length) {
       this.prev = new Float64Array(length);
       this.copyStateInto(this.prev, state);
@@ -169,12 +205,17 @@ export class PoincareAccumulator {
     }
 
     const t1 = Number(state[0] ?? 0);
-    const w1 = Number(state[2] ?? 0);
+    const velocityOffset = length / 2;
+    const w1 = Number(state[velocityOffset] ?? 0);
     const previous = this.prev;
     const t1Prev = previous[0]!;
-    // Rising crossing of θ1 = 0 (θ̇1 > 0): previous below 0, current at/above 0.
-    const rising = t1Prev < 0 && t1 >= 0 && w1 > 0;
-    const falling = t1Prev > 0 && t1 <= 0 && w1 < 0;
+    // Treat every 2π-equivalent θ1 section as the same physical crossing so
+    // rotating trajectories are not lost after their first revolution.
+    const turn = Math.PI * 2;
+    const risingSection = (Math.floor(t1Prev / turn) + 1) * turn;
+    const fallingSection = (Math.ceil(t1Prev / turn) - 1) * turn;
+    const rising = t1 > t1Prev && risingSection <= t1 && w1 > 0;
+    const falling = t1 < t1Prev && fallingSection >= t1 && w1 < 0;
     if (this.direction === 'rising' && !rising) {
       this.copyStateInto(previous, state);
       return null;
@@ -189,20 +230,26 @@ export class PoincareAccumulator {
     }
 
     // Linear interpolation factor to the zero crossing.
+    const sectionAngle = rising ? risingSection : fallingSection;
     const denom = t1 - t1Prev;
-    const frac = denom === 0 ? 0 : -t1Prev / denom;
+    const frac = denom === 0 ? 0 : (sectionAngle - t1Prev) / denom;
 
     let point: Point2D | null = null;
     if (this.refineRhs && this.refineDt > 0) {
-      point = this.refineCrossing(previous, frac);
+      point = this.refineCrossing(previous, sectionAngle);
     }
     if (!point) {
       const t2 = previous[1]! + frac * (Number(state[1] ?? 0) - previous[1]!);
-      const w2 = previous[3]! + frac * (Number(state[3] ?? 0) - previous[3]!);
+      const w2 =
+        previous[velocityOffset + 1]! + frac * (Number(state[velocityOffset + 1] ?? 0) - previous[velocityOffset + 1]!);
       point = { x: t2, y: w2 };
     }
-    this.points.push(point);
-    if (this.points.length > this.cap) this.points.splice(0, this.points.length - this.cap);
+    if (this.points.length < this.cap) this.points.push(point);
+    else {
+      this.points[this.pointStart] = point;
+      this.pointStart = (this.pointStart + 1) % this.cap;
+    }
+    this.orderedPoints = null;
     this.copyStateInto(previous, state);
     return point;
   }

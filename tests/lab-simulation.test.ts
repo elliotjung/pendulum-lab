@@ -90,4 +90,34 @@ describe('LabSimulation', () => {
     expect(Number.isFinite(snap.energy)).toBe(true);
     expect(snap.drift).toBeGreaterThanOrEqual(0);
   });
+
+  it.each([
+    [{ ...DOUBLE, dt: 0 }, /dt/],
+    [{ ...DOUBLE, gamma: Number.NaN }, /gamma/],
+    [{ ...DOUBLE, parameters: { ...DOUBLE.parameters, l1: 0 } }, /l1/],
+    [{ ...DOUBLE, initialState: [0, Number.POSITIVE_INFINITY] }, /initialState/],
+    [{ ...DOUBLE, system: 'spherical' }, /only double and triple/]
+  ])('rejects malformed runtime configuration before integration', (config, expected) => {
+    expect(() => new LabSimulation(config as LabConfig)).toThrow(expected as RegExp);
+  });
+
+  it('owns an immutable configuration snapshot', () => {
+    const source: LabConfig = {
+      ...DOUBLE,
+      parameters: { ...DOUBLE.parameters },
+      initialState: [...DOUBLE.initialState]
+    };
+    const sim = new LabSimulation(source);
+    source.parameters.l1 = 99;
+    (source.initialState as number[])[0] = 99;
+    expect(sim.config.parameters.l1).toBe(1.2);
+    expect(sim.getState()[0]).toBe(2);
+    expect(Object.isFrozen(sim.config)).toBe(true);
+    expect(Object.isFrozen(sim.config.parameters)).toBe(true);
+  });
+
+  it.each([-1, 0.5, Number.NaN, 1_000_001])('rejects an invalid step count (%s)', (steps) => {
+    const sim = new LabSimulation(DOUBLE);
+    expect(() => sim.step(steps)).toThrow(/steps/);
+  });
 });

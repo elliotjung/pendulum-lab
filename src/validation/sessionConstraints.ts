@@ -5,43 +5,66 @@ export interface NumericBounds {
   max: number;
 }
 
+function frozenBounds(min: number, max: number): Readonly<NumericBounds> {
+  return Object.freeze({ min, max });
+}
+
 /**
  * Broad, headless-session safety limits. These deliberately remain wider than
  * the interactive Lab controls: StateStore is also used by research/export
  * code, where small timesteps and non-interactive parameter ranges are valid.
  */
-export const SESSION_SAFETY_BOUNDS = Object.freeze({
-  dt: { min: 1e-12, max: 0.1 },
-  tolerance: { min: 1e-15, max: 1 },
-  stepsPerFrame: { min: 1, max: 10_000 },
-  damping: { min: 0, max: 10 },
-  simTime: { min: 0, max: 1e12 },
-  mass: { min: 1e-6, max: 1e6 },
-  length: { min: 1e-6, max: 1e6 },
-  gravity: { min: 0, max: 1e6 },
-  angularVelocity: { min: -1e6, max: 1e6 }
-} satisfies Record<string, NumericBounds>);
+export const SESSION_SAFETY_BOUNDS: Readonly<
+  Record<
+    'dt' | 'tolerance' | 'stepsPerFrame' | 'damping' | 'simTime' | 'mass' | 'length' | 'gravity' | 'angularVelocity',
+    Readonly<NumericBounds>
+  >
+> = Object.freeze({
+  dt: frozenBounds(1e-12, 0.1),
+  tolerance: frozenBounds(1e-15, 1),
+  stepsPerFrame: frozenBounds(1, 10_000),
+  damping: frozenBounds(0, 10),
+  simTime: frozenBounds(0, 1e12),
+  mass: frozenBounds(1e-6, 1e6),
+  length: frozenBounds(1e-6, 1e6),
+  gravity: frozenBounds(0, 1e6),
+  angularVelocity: frozenBounds(-1e6, 1e6)
+});
 
 /**
  * Static contract represented by app.html. Unlike the broad StateStore
  * contract, every value in this object must be representable by a visible Lab
  * control without browser range clamping.
  */
-export const LAB_CONTROL_BOUNDS = Object.freeze({
-  dt: { min: 0.0001, max: 0.05 },
-  tolerance: { min: 1e-12, max: 1e-3 },
-  stepsPerFrame: { min: 1, max: 60 },
-  damping: { min: 0, max: 10 },
-  simTime: { min: 0, max: 1e9 },
-  mass: { min: 0.1, max: 5 },
-  length: { min: 0.3, max: 2 },
-  gravity: { min: 0, max: 20 },
-  angle: { min: -Math.PI, max: Math.PI },
-  angularVelocity: { min: -64, max: 64 }
-} satisfies Record<string, NumericBounds>);
+export const LAB_CONTROL_BOUNDS: Readonly<
+  Record<
+    | 'dt'
+    | 'tolerance'
+    | 'stepsPerFrame'
+    | 'damping'
+    | 'simTime'
+    | 'mass'
+    | 'length'
+    | 'gravity'
+    | 'angle'
+    | 'angularVelocity',
+    Readonly<NumericBounds>
+  >
+> = Object.freeze({
+  dt: frozenBounds(0.0001, 0.05),
+  tolerance: frozenBounds(1e-12, 1e-3),
+  stepsPerFrame: frozenBounds(1, 60),
+  damping: frozenBounds(0, 10),
+  simTime: frozenBounds(0, 1e9),
+  mass: frozenBounds(0.1, 5),
+  length: frozenBounds(0.3, 2),
+  gravity: frozenBounds(0, 20),
+  angle: frozenBounds(-Math.PI, Math.PI),
+  angularVelocity: frozenBounds(-64, 64)
+});
 
 /** The legacy `verlet` id is accepted by StateStore and canonicalized to leapfrog. */
-export const LAB_INTEGRATOR_IDS = Object.freeze([
+export const LAB_INTEGRATOR_IDS: readonly IntegratorId[] = Object.freeze([
   'euler',
   'rk2',
   'rk4',
@@ -57,7 +80,7 @@ export const LAB_INTEGRATOR_IDS = Object.freeze([
   'dop853',
   'gbs',
   'bdf2'
-] as const satisfies readonly IntegratorId[]);
+]);
 
 const labIntegratorIds = new Set<IntegratorId>(LAB_INTEGRATOR_IDS);
 

@@ -35,6 +35,15 @@ afterEach(() => {
 });
 
 describe('session safety and interactive Lab contracts', () => {
+  it('deep-freezes every exported safety bound', () => {
+    for (const bounds of [...Object.values(SESSION_SAFETY_BOUNDS), ...Object.values(LAB_CONTROL_BOUNDS)]) {
+      expect(Object.isFrozen(bounds)).toBe(true);
+      expect(() => {
+        (bounds as { min: number }).min = Number.NEGATIVE_INFINITY;
+      }).toThrow(TypeError);
+    }
+  });
+
   it('keeps the headless StateStore contract wider than the interactive controls', () => {
     const research = StateStore.validate({
       ...BASE,
@@ -133,6 +142,8 @@ class FakeInput {
   step: string;
   private current: string;
   readonly dispatchEvent = vi.fn(() => true);
+  readonly addEventListener = vi.fn();
+  readonly dataset: Record<string, string> = {};
 
   constructor(value: string, type = 'range', min = '', max = '', step = '') {
     this.current = value;
@@ -281,7 +292,7 @@ describe('saved-run DOM application', () => {
     expect(gamma.value).toBe('0');
   });
 
-  it('projects step-snapped controls while committing the exact scientific snapshot', () => {
+  it('preserves exact imported values in range controls and the scientific snapshot', () => {
     const snapshot = {
       ...BASE,
       state: [0.123456789, -0.234567891, 0.345678912, -0.456789123]
@@ -294,8 +305,9 @@ describe('saved-run DOM application', () => {
     const result = applySnapshotControls(snapshot);
 
     expect(result.ok).toBe(true);
-    expect(Number(controls.get('th1')?.value)).not.toBe(snapshot.state[0]);
-    expect(Number(controls.get('iw1')?.value)).not.toBe(snapshot.state[2]);
+    expect(Number(controls.get('th1')?.value)).toBe(snapshot.state[0]);
+    expect(Number(controls.get('iw1')?.value)).toBe(snapshot.state[2]);
+    expect((controls.get('th1') as FakeInput).step).toBe('any');
     const commit = dispatchEvent.mock.calls.at(-1)?.[0] as CustomEvent<{ snapshot: RuntimeSnapshot }>;
     expect(commit.detail.snapshot.state).toEqual(snapshot.state);
   });

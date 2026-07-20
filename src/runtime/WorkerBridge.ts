@@ -16,6 +16,25 @@ export interface WorkerStepResult {
   fallbackReason?: string;
 }
 
+export interface WorkerStepOptions {
+  timeoutMs?: number;
+  signal?: AbortSignal;
+}
+
+export class WorkerBridgeTimeoutError extends Error {
+  constructor(public readonly timeoutMs: number) {
+    super(`worker step timed out after ${timeoutMs}ms`);
+    this.name = 'WorkerBridgeTimeoutError';
+  }
+}
+
+export class WorkerBridgeAbortError extends Error {
+  constructor() {
+    super('worker step was aborted');
+    this.name = 'WorkerBridgeAbortError';
+  }
+}
+
 export class WorkerBridgeTerminatedError extends Error {
   constructor() {
     super('worker bridge was terminated');
@@ -31,6 +50,7 @@ interface PendingWorkerStep {
 export class WorkerBridge {
   private worker: Worker | null = null;
   private readonly pending = new Map<string, PendingWorkerStep>();
+  private startFailureReason = 'worker unavailable';
 
   constructor(private readonly url = new URL('../workers/physics.worker.ts', import.meta.url)) {}
 
@@ -40,6 +60,7 @@ export class WorkerBridge {
 
   start(): boolean {
     if (!this.available()) {
+      this.startFailureReason = 'worker unavailable';
       notifyWorkerFallback('physics-worker', 'worker unavailable');
       return false;
     }
@@ -49,18 +70,25 @@ export class WorkerBridge {
       return true;
     } catch (error) {
       this.worker = null;
+      this.startFailureReason = error instanceof Error ? error.message : String(error);
       notifyWorkerFallback('physics-worker', error);
       return false;
     }
   }
 
-  async step(request: WorkerStepRequest): Promise<WorkerStepResult> {
+  async step(request: WorkerStepRequest, options: WorkerStepOptions = {}): Promise<WorkerStepResult> {
     this.validateRequest(request);
+    const snapshot: WorkerStepRequest = { ...request, state: [...request.state] };
+    const timeoutMs = options.timeoutMs ?? 2_000;
+    if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 600_000) {
+      throw new RangeError('worker step timeout must be a safe integer in [1, 600000]');
+    }
+    if (options.signal?.aborted) throw new WorkerBridgeAbortError();
     if (!this.available()) {
       notifyWorkerFallback('physics-worker', 'worker unavailable');
-      return this.fallbackStep(request);
+      return this.fallbackStep(snapshot, 'worker unavailable');
     }
-    if (!this.start() || !this.worker) return this.fallbackStep(request);
+    if (!this.start() || !this.worker) return this.fallbackStep(snapshot, this.startFailureReason);
     const started = performance.now();
     const worker = this.worker;
     try {
@@ -68,17 +96,39 @@ export class WorkerBridge {
         const id = crypto.randomUUID();
         const timeout = globalThis.setTimeout(() => {
           cleanup();
-          reject(new Error('worker step timed out'));
-        }, 2_000);
+          reject(new WorkerBridgeTimeoutError(timeoutMs));
+        }, timeoutMs);
         const cleanup = () => {
           globalThis.clearTimeout(timeout);
-          worker.removeEventListener('message', onMessage);
-          worker.removeEventListener('error', onError);
+          try {
+            worker.removeEventListener('message', onMessage);
+          } catch {
+            // Promise settlement must not depend on a Worker shim's cleanup.
+          }
+          try {
+            worker.removeEventListener('error', onError);
+          } catch {
+            // Continue cleanup.
+          }
+          try {
+            worker.removeEventListener('messageerror', onMessageError);
+          } catch {
+            // Continue cleanup.
+          }
+          options.signal?.removeEventListener('abort', onAbort);
           this.pending.delete(id);
         };
         const onError = (event: ErrorEvent) => {
           cleanup();
           reject(event.error instanceof Error ? event.error : new Error(event.message));
+        };
+        const onMessageError = () => {
+          cleanup();
+          reject(new Error('worker response could not be decoded'));
+        };
+        const onAbort = () => {
+          cleanup();
+          reject(new WorkerBridgeAbortError());
         };
         const onMessage = (event: MessageEvent<{ id: string; state: number[]; elapsedMs: number }>) => {
           try {
@@ -95,19 +145,25 @@ export class WorkerBridge {
         };
         worker.addEventListener('message', onMessage);
         worker.addEventListener('error', onError);
+        worker.addEventListener('messageerror', onMessageError);
         this.pending.set(id, { cleanup, reject });
+        options.signal?.addEventListener('abort', onAbort, { once: true });
+        if (options.signal?.aborted) {
+          onAbort();
+          return;
+        }
         try {
-          worker.postMessage({ ...request, id });
+          worker.postMessage({ ...snapshot, id });
         } catch (error) {
           cleanup();
           reject(error instanceof Error ? error : new Error(String(error)));
         }
       });
     } catch (error) {
-      if (error instanceof WorkerBridgeTerminatedError) throw error;
+      if (error instanceof WorkerBridgeTerminatedError || error instanceof WorkerBridgeAbortError) throw error;
       this.terminate();
       const detail = notifyWorkerFallback('physics-worker', error, { once: false });
-      const fallback = this.fallbackStep(request);
+      const fallback = this.fallbackStep(snapshot, detail.reason);
       return { ...fallback, fallbackReason: detail.reason };
     }
   }
@@ -119,7 +175,11 @@ export class WorkerBridge {
       pending.reject(terminationError);
     }
     this.pending.clear();
-    this.worker?.terminate();
+    try {
+      this.worker?.terminate();
+    } catch {
+      // Pending promises are already settled; a broken shim cannot block cleanup.
+    }
     this.worker = null;
   }
 
@@ -161,7 +221,7 @@ export class WorkerBridge {
     }
   }
 
-  private fallbackStep(request: WorkerStepRequest): WorkerStepResult {
+  private fallbackStep(request: WorkerStepRequest, fallbackReason?: string): WorkerStepResult {
     const started = performance.now();
     const state = new Float64Array(request.state);
     const out = new Float64Array(state.length);
@@ -176,7 +236,7 @@ export class WorkerBridge {
     }
     const result = { state: Array.from(state), elapsedMs: performance.now() - started };
     this.validateResult(result, request.state.length);
-    return { ...result, fallback: true };
+    return { ...result, fallback: true, ...(fallbackReason ? { fallbackReason } : {}) };
   }
 }
 

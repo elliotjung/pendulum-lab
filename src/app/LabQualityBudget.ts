@@ -59,12 +59,16 @@ const QUALITY_PROFILES: Record<QualityMode, QualityProfile> = {
  * phone canvas sizes while still costing memory and redraw time.
  */
 export function poincareCapForMode(mode: QualityMode, compact: boolean): number {
-  const cap = QUALITY_PROFILES[mode].poincareCap;
+  const cap = (QUALITY_PROFILES[mode] ?? QUALITY_PROFILES.balanced).poincareCap;
   return compact ? Math.min(cap, 2000) : cap;
 }
 
 export function compactViewport(): boolean {
-  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(max-width: 560px), (pointer: coarse)').matches
+  );
 }
 
 export class LabQualityBudget {
@@ -132,12 +136,26 @@ export class LabQualityBudget {
   }
 
   maybeAutoAdjust(metrics: QualityMetrics): number {
-    if (!dom.bool('autoQual', true) || metrics.sampleCount < 20) return metrics.stepsPerFrame;
+    const safeSteps =
+      Number.isFinite(metrics.stepsPerFrame) && metrics.stepsPerFrame >= 1 ? Math.round(metrics.stepsPerFrame) : 1;
+    const normalizedMetrics: QualityMetrics = {
+      sampleCount: Number.isFinite(metrics.sampleCount) && metrics.sampleCount >= 0 ? metrics.sampleCount : 0,
+      fps: Number.isFinite(metrics.fps) && metrics.fps >= 0 ? metrics.fps : 0,
+      renderMs: Number.isFinite(metrics.renderMs) && metrics.renderMs >= 0 ? metrics.renderMs : 0,
+      physicsMs: Number.isFinite(metrics.physicsMs) && metrics.physicsMs >= 0 ? metrics.physicsMs : 0,
+      sidePlotMs: Number.isFinite(metrics.sidePlotMs) && metrics.sidePlotMs >= 0 ? metrics.sidePlotMs : 0,
+      stepsPerFrame: safeSteps,
+      requestedStepsPerFrame:
+        Number.isFinite(metrics.requestedStepsPerFrame) && metrics.requestedStepsPerFrame >= 1
+          ? Math.round(metrics.requestedStepsPerFrame)
+          : safeSteps
+    };
+    if (!dom.bool('autoQual', true) || normalizedMetrics.sampleCount < 20) return normalizedMetrics.stepsPerFrame;
     this.stableFrames += 1;
-    if (this.stableFrames < 45) return metrics.stepsPerFrame;
+    if (this.stableFrames < 45) return normalizedMetrics.stepsPerFrame;
 
-    const { fps, renderMs, physicsMs, sidePlotMs, requestedStepsPerFrame } = metrics;
-    let stepsPerFrame = metrics.stepsPerFrame;
+    const { fps, renderMs, physicsMs, sidePlotMs, requestedStepsPerFrame } = normalizedMetrics;
+    let stepsPerFrame = normalizedMetrics.stepsPerFrame;
     const physicsOver = physicsMs > 10 || (fps > 0 && fps < 45 && physicsMs > 7);
     const renderOver = (fps > 0 && fps < 30) || renderMs > 20;
     const sidePlotOver = sidePlotMs > 14;
@@ -147,7 +165,7 @@ export class LabQualityBudget {
       this.trailScale = Math.max(0.55, this.trailScale * 0.9);
       this.note(
         `physics ${physicsMs.toFixed(1)} ms; spf ${stepsPerFrame}/${requestedStepsPerFrame}`,
-        metrics,
+        normalizedMetrics,
         stepsPerFrame
       );
       return stepsPerFrame;
@@ -160,7 +178,7 @@ export class LabQualityBudget {
       else
         this.note(
           `render ${renderMs.toFixed(1)} ms; trail ${Math.round(this.trailScale * 100)}%`,
-          metrics,
+          normalizedMetrics,
           stepsPerFrame
         );
       return stepsPerFrame;
@@ -168,7 +186,7 @@ export class LabQualityBudget {
 
     if (sidePlotOver) {
       this.trailScale = Math.max(0.65, this.trailScale * 0.92);
-      this.note(`side plots ${sidePlotMs.toFixed(1)} ms; cadence relaxed`, metrics, stepsPerFrame);
+      this.note(`side plots ${sidePlotMs.toFixed(1)} ms; cadence relaxed`, normalizedMetrics, stepsPerFrame);
       return stepsPerFrame;
     }
 
@@ -182,12 +200,12 @@ export class LabQualityBudget {
     if (!canUpgrade) return stepsPerFrame;
     if (stepsPerFrame < requestedStepsPerFrame) {
       stepsPerFrame += 1;
-      this.note(`headroom recovered; spf ${stepsPerFrame}/${requestedStepsPerFrame}`, metrics, stepsPerFrame);
+      this.note(`headroom recovered; spf ${stepsPerFrame}/${requestedStepsPerFrame}`, normalizedMetrics, stepsPerFrame);
       return stepsPerFrame;
     }
     if (this.trailScale < 1) {
       this.trailScale = Math.min(1, this.trailScale + 0.08);
-      this.note(`headroom recovered; trail ${Math.round(this.trailScale * 100)}%`, metrics, stepsPerFrame);
+      this.note(`headroom recovered; trail ${Math.round(this.trailScale * 100)}%`, normalizedMetrics, stepsPerFrame);
       return stepsPerFrame;
     }
     if (this.currentMode === 'performance') this.setMode('balanced', 'auto');
@@ -201,14 +219,15 @@ export class LabQualityBudget {
   }
 
   effectiveTrailLength(): number {
-    const requested = Math.max(2, Math.round(dom.num('trailLen', 1200)));
+    const raw = dom.num('trailLen', 1200);
+    const requested = Number.isFinite(raw) ? Math.max(2, Math.round(raw)) : 1200;
     const cap = this.profile().trailCap;
     const adaptive = Math.max(2, Math.round(requested * this.trailScale));
     return compactViewport() ? Math.min(adaptive, 520, cap) : Math.min(adaptive, cap);
   }
 
   sidePlotInterval(sidePlotMs: number): number {
-    const sidePlotPressure = sidePlotMs > 14 ? 2 : 1;
+    const sidePlotPressure = Number.isFinite(sidePlotMs) && sidePlotMs > 14 ? 2 : 1;
     const effective = this.profile().sideInterval * sidePlotPressure;
     return compactViewport() ? Math.max(4, effective) : effective;
   }

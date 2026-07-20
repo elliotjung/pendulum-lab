@@ -4,6 +4,7 @@ import type { StateStore } from '../state/StateStore';
 import type { ImportValidationResult, RuntimeSnapshot } from '../types/domain';
 import { MAX_JSON_BYTES, parseStrictJsonImport } from '../validation/importSchema';
 import { validateLabSnapshot } from '../validation/sessionConstraints';
+import { eventBus } from '../runtime/EventBus';
 
 type SavedRunStore = Pick<StateStore, 'applyPatch'>;
 
@@ -13,16 +14,24 @@ export function parseAndApplySavedRun(
   store: SavedRunStore = stateStore
 ): ImportValidationResult<RuntimeSnapshot> {
   const parsed = parseStrictJsonImport(text);
-  if (!parsed.ok || !parsed.value) return parsed;
+  if (!parsed.ok || !parsed.value) {
+    eventBus.emit('security:import-rejected', { problems: parsed.problems });
+    return parsed;
+  }
   const labValidation = validateLabSnapshot(parsed.value);
-  if (!labValidation.ok || !labValidation.value) return labValidation;
+  if (!labValidation.ok || !labValidation.value) {
+    eventBus.emit('security:import-rejected', { problems: labValidation.problems });
+    return labValidation;
+  }
   try {
     return { ok: true, problems: [], value: store.applyPatch(labValidation.value) };
   } catch (error) {
-    return {
+    const result: ImportValidationResult<RuntimeSnapshot> = {
       ok: false,
       problems: [`could not apply imported state: ${error instanceof Error ? error.message : String(error)}`]
     };
+    eventBus.emit('security:import-rejected', { problems: result.problems });
+    return result;
   }
 }
 
@@ -66,6 +75,7 @@ interface PlannedControlWrite {
   id: string;
   value: string;
   numericValue: number | null;
+  exactRangeProjection: boolean;
 }
 
 function planSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult<PlannedControlWrite[]> {
@@ -83,7 +93,7 @@ function planSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult
         problems.push(`Lab control #${id} has no option for ${next}`);
         continue;
       }
-      planned.push({ element, id, value: next, numericValue: null });
+      planned.push({ element, id, value: next, numericValue: null, exactRangeProjection: false });
       continue;
     }
     const numericValue = typeof value === 'number' ? value : null;
@@ -95,7 +105,14 @@ function planSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult
         continue;
       }
     }
-    planned.push({ element, id, value: next, numericValue });
+    let exactRangeProjection = false;
+    if (numericValue !== null && element.type === 'range' && element.step !== 'any') {
+      const step = element.step === '' ? 1 : Number(element.step);
+      const base = element.min === '' ? 0 : Number(element.min);
+      const units = (numericValue - base) / step;
+      exactRangeProjection = Number.isFinite(step) && step > 0 && Math.abs(units - Math.round(units)) > 1e-9;
+    }
+    planned.push({ element, id, value: next, numericValue, exactRangeProjection });
   }
   return problems.length > 0 ? { ok: false, problems } : { ok: true, problems: [], value: planned };
 }
@@ -110,32 +127,56 @@ function planSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult
 export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult<string[]> {
   const plan = planSnapshotControls(snapshot);
   if (!plan.ok || !plan.value) return { ok: false, problems: plan.problems };
-  const previous = plan.value.map(({ element }) => element.value);
+  const previous = plan.value.map(({ element }) => ({
+    value: element.value,
+    step: element instanceof HTMLInputElement ? element.step : ''
+  }));
   const rollback = (): void => {
     plan.value!.forEach(({ element }, index) => {
-      element.value = previous[index] ?? '';
+      if (element instanceof HTMLInputElement) {
+        element.step = previous[index]?.step ?? element.step;
+        delete element.dataset.importStep;
+      }
+      element.value = previous[index]?.value ?? '';
     });
   };
   const applied: string[] = [];
-  for (const { element, id, value, numericValue } of plan.value) {
-    element.value = value;
-    const isRangeProjection = element instanceof HTMLInputElement && element.type === 'range';
-    const readBackMatches =
-      numericValue === null
-        ? element.value === value
-        : element instanceof HTMLInputElement &&
-          Number.isFinite(element.valueAsNumber) &&
-          (isRangeProjection || element.valueAsNumber === numericValue);
-    if (!readBackMatches) {
-      rollback();
-      return { ok: false, problems: [`Lab control #${id} changed ${value} to ${element.value}`] };
+  try {
+    for (const { element, id, value, numericValue, exactRangeProjection } of plan.value) {
+      if (element instanceof HTMLInputElement && exactRangeProjection) {
+        element.dataset.importStep ??= element.step;
+        element.step = 'any';
+        if (element.dataset.importStepBound !== 'true') {
+          element.dataset.importStepBound = 'true';
+          element.addEventListener('change', () => {
+            const originalStep = element.dataset.importStep;
+            if (originalStep !== undefined) element.step = originalStep;
+            delete element.dataset.importStep;
+          });
+        }
+      }
+      element.value = value;
+      const readBackMatches =
+        numericValue === null
+          ? element.value === value
+          : element instanceof HTMLInputElement &&
+            Number.isFinite(element.valueAsNumber) &&
+            element.valueAsNumber === numericValue;
+      if (!readBackMatches) {
+        rollback();
+        return { ok: false, problems: [`Lab control #${id} changed ${value} to ${element.value}`] };
+      }
+      applied.push(id);
     }
-    applied.push(id);
+    for (const { element } of plan.value) element.dispatchEvent(new Event('input', { bubbles: true }));
+    commitLabControls('saved-run-import', applied, snapshot);
+  } catch (error: unknown) {
+    rollback();
+    return {
+      ok: false,
+      problems: [`Lab controls could not commit atomically: ${error instanceof Error ? error.message : String(error)}`]
+    };
   }
-  for (const { element } of plan.value) {
-    element.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-  commitLabControls('saved-run-import', applied, snapshot);
   return { ok: true, problems: [], value: applied };
 }
 
@@ -149,6 +190,11 @@ function notify(message: string, timeout = 3000): void {
   box.textContent = message;
   box.classList.add('show');
   window.setTimeout(() => box.classList.remove('show'), timeout);
+}
+
+function rejectImport(problems: string[], prefix = 'Import rejected'): void {
+  eventBus.emit('security:import-rejected', { problems });
+  notify(`${prefix}: ${problems.slice(0, 3).join('; ')}`, 4200);
 }
 
 /** Wire the saved-run file input and its button through strict import + StateStore. */
@@ -168,7 +214,7 @@ export function installSavedRunImport(inputId = 'jsonFile', buttonId = 'loadJson
     const file = input.files?.[0];
     if (!file) return;
     if (file.size > MAX_JSON_BYTES) {
-      notify('Import rejected: JSON file is too large');
+      rejectImport(['JSON file is too large']);
       input.value = '';
       return;
     }
@@ -178,17 +224,17 @@ export function installSavedRunImport(inputId = 'jsonFile', buttonId = 'loadJson
     try {
       const parsed = parseStrictJsonImport(await file.text());
       if (!parsed.ok || !parsed.value) {
-        notify(`Import rejected: ${parsed.problems.slice(0, 3).join('; ')}`, 4200);
+        rejectImport(parsed.problems);
         return;
       }
       const labValidation = validateLabSnapshot(parsed.value);
       if (!labValidation.ok || !labValidation.value) {
-        notify(`Import rejected: ${labValidation.problems.slice(0, 3).join('; ')}`, 4200);
+        rejectImport(labValidation.problems);
         return;
       }
       const controlPlan = planSnapshotControls(labValidation.value);
       if (!controlPlan.ok) {
-        notify(`Import rejected: ${controlPlan.problems.slice(0, 3).join('; ')}`, 4200);
+        rejectImport(controlPlan.problems);
         return;
       }
       const previous = stateStore.snapshot();
@@ -196,12 +242,12 @@ export function installSavedRunImport(inputId = 'jsonFile', buttonId = 'loadJson
       const controls = applySnapshotControls(appliedSnapshot);
       if (!controls.ok) {
         stateStore.applyPatch(previous);
-        notify(`Import rejected: ${controls.problems.slice(0, 3).join('; ')}`, 4200);
+        rejectImport(controls.problems);
         return;
       }
       notify(`Saved state from t=${appliedSnapshot.simTime.toFixed(3)} s loaded`);
     } catch (error) {
-      notify(`Import failed: ${error instanceof Error ? error.message : String(error)}`, 4200);
+      rejectImport([error instanceof Error ? error.message : String(error)], 'Import failed');
     } finally {
       input.disabled = false;
       if (button instanceof HTMLButtonElement) button.disabled = false;

@@ -9,7 +9,10 @@
 # reference numbers regardless of machine. Tested with CPython 3.11/3.12.
 #
 #   python -m venv .venv && . .venv/bin/activate   # (Windows: .venv\Scripts\activate)
-#   pip install -r requirements.txt
+#   pip install --require-hashes -r requirements.lock
+#
+# requirements.txt is the human-maintained input. requirements.lock is the
+# transitive, hash-locked CI/container environment generated with pip-compile.
 numpy==1.26.4
 scipy==1.13.1
 sympy==1.12

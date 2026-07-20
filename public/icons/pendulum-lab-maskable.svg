@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Pendulum Lab">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%">
+      <stop offset="0" stop-color="#142441"/>
+      <stop offset="1" stop-color="#04050d"/>
+    </radialGradient>
+    <linearGradient id="rod" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#18d4f8"/>
+      <stop offset="1" stop-color="#9d78ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="132" r="22" fill="#e7c887"/>
+  <path d="M256 154 338 266 286 384" fill="none" stroke="url(#rod)" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="338" cy="266" r="28" fill="#9d78ff" stroke="#d8ccff" stroke-width="8"/>
+  <circle cx="286" cy="384" r="36" fill="#18d4f8" stroke="#c8f8ff" stroke-width="9"/>
+</svg>

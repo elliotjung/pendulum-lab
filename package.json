@@ -160,7 +160,8 @@
     "audit:mojibake:strict": "tsx scripts/audit-mojibake.ts --fail-on-findings",
     "audit:worldclass": "tsx scripts/worldclass-scorecard.ts",
     "audit:css-coverage": "tsx scripts/css-coverage-audit.ts",
-    "evidence:summary": "tsx scripts/evidence-summary.ts",
+    "evidence:summary": "tsx scripts/evidence-summary.ts --check",
+    "evidence:refresh": "tsx scripts/evidence-summary.ts",
     "docs:sync": "npm run evidence:summary && tsx scripts/sync-test-counts.ts",
     "test:coverage": "vitest run --coverage && npm run coverage:scope && npm run coverage:badge",
     "coverage:scope": "tsx scripts/audit-coverage-scope.ts",
@@ -168,8 +169,8 @@
     "budget": "tsx scripts/bundle-budget.ts",
     "mutation": "stryker run",
     "mutation:aggregate": "node scripts/mutation-aggregate.mjs",
-    "jsr:check": "jsr publish --dry-run --allow-dirty",
-    "jsr:publish": "jsr publish --allow-dirty"
+    "jsr:check": "jsr publish --dry-run",
+    "jsr:publish": "jsr publish"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

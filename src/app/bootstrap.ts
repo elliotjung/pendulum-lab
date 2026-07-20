@@ -1,7 +1,7 @@
 import { mountModernLab, type LabHandle } from './LabController';
 import { publishDebugApi } from '../runtime/globalApi';
 import { LabApp } from './LabApp';
-import { Shell, TAB_ACTIVATED_EVENT } from './Shell';
+import { Shell, TAB_ACTIVATED_EVENT, TAB_REQUESTED_EVENT } from './Shell';
 import type { LabConfig } from './LabSimulation';
 import type { LyapunovTab } from './LyapunovTab';
 import type { ValidationTab } from './ValidationTab';
@@ -222,6 +222,19 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
   const mountForTab = (tabName: string): Promise<void[]> =>
     Promise.all(registry.filter((item) => item.tab === tabName).map((item) => item.mount()));
   const reactivating = new Set<string>();
+
+  document.addEventListener(TAB_REQUESTED_EVENT, (event) => {
+    const tabName = (event as CustomEvent<{ tab?: string }>).detail?.tab;
+    if (!tabName) return;
+    void mountForTab(tabName)
+      .then(() => {
+        (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabName);
+      })
+      .catch((error: unknown) => {
+        console.error(`Failed to mount requested analysis tab "${tabName}".`, error);
+        window.toast?.(`Could not open ${tabName}. The current workspace is still active.`, 3600);
+      });
+  });
 
   // On-demand path: every activation (rail click, keyboard, deep link,
   // programmatic switchTo) mounts that tab's controller before use.

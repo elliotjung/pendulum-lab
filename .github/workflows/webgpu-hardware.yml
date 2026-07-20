@@ -5,6 +5,13 @@ on:
   schedule:
     - cron: '41 2 * * 2'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: webgpu-hardware
+  cancel-in-progress: false
+
 jobs:
   hardware-reductions:
     # This job is intentionally pinned to an owner-provisioned runner with a real
@@ -13,19 +20,20 @@ jobs:
     runs-on: [self-hosted, webgpu]
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npx playwright install chrome
-      - name: Free Vite test port
+      - name: Require the dedicated Vite test port to be free
         shell: powershell
         run: |
           $listeners = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue
-          foreach ($listener in $listeners) {
-            Stop-Process -Id $listener.OwningProcess -Force -ErrorAction SilentlyContinue
+          if ($listeners) {
+            $owners = ($listeners | Select-Object -ExpandProperty OwningProcess -Unique) -join ', '
+            throw "Port 5173 is already owned by process(es) $owners. Refusing to terminate an unrelated self-hosted-runner process."
           }
       - run: npm run test:webgpu-hardware
         env:
@@ -37,7 +45,7 @@ jobs:
         env:
           WEBGPU_BROWSER_CHANNEL: chrome
       - run: npm run benchmark:gpu-matrix
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: webgpu-hardware-playwright-report
