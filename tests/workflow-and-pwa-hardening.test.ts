@@ -315,10 +315,17 @@ describe('secured dependency compatibility contract', () => {
     expect(lock.packages['node_modules/eslint']?.version).toBe('10.8.0');
     expect(lock.packages['node_modules/postcss']?.version).toBe('8.5.23');
     expect(lock.packages['node_modules/minimatch']?.version).toBe('10.2.5');
-    expect(lock.packages['node_modules/brace-expansion']?.version).toBe('5.0.8');
+    expect(lock.packages['node_modules/brace-expansion']?.version).toBe('5.0.9');
+    expect(lock.packages['node_modules/fast-uri']?.version).toBe('3.1.5');
+    expect(lock.packages['node_modules/nanoid']?.version).toBe('3.3.18');
+    expect(lock.packages['node_modules/undici']?.version).toBe('7.29.0');
     expect(Object.keys(lock.packages)).not.toContain('node_modules/eslint-plugin-import');
 
     expect(packageJson.overrides.sharp).toBe('0.35.3');
+    expect(packageJson.overrides['brace-expansion']).toBe('5.0.9');
+    expect(packageJson.overrides['fast-uri']).toBe('3.1.5');
+    expect(packageJson.overrides.nanoid).toBe('3.3.18');
+    expect(packageJson.overrides.undici).toBe('7.29.0');
     expect(packageJson.devDependencies.miniflare).toBe('4.20260721.0');
     expect(packageJson.devDependencies.sharp).toBe('0.35.3');
     expect(packageJson.allowScripts).toEqual({
