@@ -27,14 +27,35 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   const labBtn = page.locator('.rail-menu-button[data-rail-section-button="lab"]').first();
   if (await labBtn.isVisible()) await labBtn.click();
   await page.waitForTimeout(300);
-  await expect(page.getByRole('region', { name: 'controls' })).toHaveScreenshot('lab-controls.png', {
-    // Runtime diagnostics update every frame, and the fast rows re-create
-    // their value spans while the capture retries — masks bound to those
-    // spans silently fall off and live digits leak into the comparison
-    // (measured as an intermittent failure whose diff was only telemetry
-    // text). Mask the stable #stats container instead; the accordion frame
-    // and every label around it remain in scope.
-    mask: [page.locator('canvas'), page.locator('#stats')],
+  // The parity layer installs this floating overlay asynchronously. Wait for
+  // its completed audit result so it cannot appear midway through capture.
+  const integrityBadge = page.locator('#figBadge');
+  // Compact layouts intentionally hide the floating badge, but the completed
+  // text still provides a renderer-independent readiness signal.
+  await integrityBadge.waitFor({ state: 'attached' });
+  await expect(integrityBadge).toContainText('DOM/API checks 22/22');
+  // Keep fixed global surfaces out of this component crop. Otherwise they
+  // move through a tall mobile element screenshot as Playwright scrolls it.
+  await page.locator('.rail, #figBadge, #stats').evaluateAll((elements) => {
+    elements.forEach((element) => {
+      (element as HTMLElement).style.visibility = 'hidden';
+    });
+  });
+  const controls = page.getByRole('region', { name: 'controls' });
+  // Pin the declared default accordion state before measuring the full
+  // element. Native details layout can otherwise settle between retries.
+  await controls.locator('details.acc').evaluateAll((details) => {
+    details.forEach((detail, index) => {
+      (detail as HTMLDetailsElement).open = index < 2;
+    });
+  });
+  await expect(controls.locator('details.acc').nth(1)).toHaveJSProperty('open', true);
+  await expect(controls.locator('details.acc').nth(2)).toHaveJSProperty('open', false);
+  await page.waitForTimeout(100);
+  await expect(controls).toHaveScreenshot('lab-controls.png', {
+    // Runtime diagnostics update every frame. Their stable container remains
+    // in layout but was hidden above, avoiding locator-mask scroll side
+    // effects while keeping the accordion frame and labels in scope.
     // The mobile panel is a ~4000-CSS-px element captured at dpr 2.75; at
     // device scale its fractional top rounds differently run-to-run and the
     // whole capture ghosts by one device pixel. CSS-pixel scale removes the
@@ -65,6 +86,7 @@ test('research workbench card renders correctly', async ({ page }) => {
   });
   const card = page.locator('#researchExperimentCard');
   await expect(card).toBeVisible();
+  await expect(page.locator('#rwExperimentSummary')).toHaveText('0 experiment(s). Save current state to begin.');
   await expect(card).toHaveScreenshot('research-experiment-card.png', {
     mask: [page.locator('canvas')]
   });

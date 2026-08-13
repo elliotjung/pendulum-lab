@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openWorkspacePreferences } from './shell';
 
 async function visibleInteractiveCount(page: import('@playwright/test').Page, rootSelector: string): Promise<number> {
   return page.evaluate((selector) => {
@@ -51,6 +52,7 @@ test('the active mode survives when browser storage is unavailable', async ({ pa
   });
   await page.goto('/?audience=beginner');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
+  await openWorkspacePreferences(page);
   await page.locator('#audienceMode').selectOption('student');
   await page.locator('#navLocale').selectOption('ko');
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
@@ -119,6 +121,7 @@ test('beginner mode turns the lab into a focused simulator', async ({ page }) =>
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
+  await openWorkspacePreferences(page);
   await page.locator('#audienceMode').selectOption('beginner');
 
   await expect(page.locator('.rail-section[data-rail-section="analysis"]')).toBeHidden();
@@ -146,6 +149,7 @@ test('student mode keeps analysis and validation without research governance', a
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
 
+  await openWorkspacePreferences(page);
   await page.locator('#audienceMode').selectOption('student');
 
   await expect(page.locator('.rail-section[data-rail-section="analysis"]')).toBeVisible();

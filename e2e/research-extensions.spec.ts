@@ -10,11 +10,7 @@ import { openModernTab } from './shell';
 test('FTLE tab: LCS ridge overlay reports ridge cells alongside the field', async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto('/');
-  await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-
-  await page.locator('.rail-menu-button[data-rail-section-button="chaos"]').click();
-  await page.locator('#rail-panel-chaos .tab[data-tab="ftle"]').click();
-  await expect(page.locator('#ftleCanvas')).toBeVisible();
+  await openModernTab(page, 'ftle', '#tab-ftle');
 
   // Smaller grid keeps the worker job quick; the ridge overlay is on by default.
   await page.locator('#ftleRes').fill('40');

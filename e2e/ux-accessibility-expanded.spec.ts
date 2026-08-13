@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openModernTab, waitForModernShell } from './shell';
+import { openModernTab, openWorkspacePreferences, waitForModernShell } from './shell';
 
 test('share experiment hash restores setup, integrator, initial conditions, and tab', async ({ page }) => {
   await page.goto('/');
@@ -49,6 +49,7 @@ test('? opens an accessible shortcut guide and Escape closes it', async ({ page 
 test('Korean locale extends to stable navigation, Lab controls, and Trust Inspector labels', async ({ page }) => {
   await page.goto('/');
   await waitForModernShell(page);
+  await openWorkspacePreferences(page);
   await page.locator('#navLocale').selectOption('ko');
   await expect(page.getByTestId('nav-section-sim')).toContainText('탐색');
   await expect(page.getByTestId('nav-tab-lab')).toContainText('실험실');

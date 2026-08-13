@@ -1237,13 +1237,26 @@ canvas,
   }
 
   .plots-row {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
     grid-template-columns: minmax(0, 1fr);
+    overflow-x: visible;
+    overscroll-behavior-inline: auto;
+    scroll-snap-type: none;
+    padding-bottom: 0;
   }
 }
 
 @media (max-width: 560px) {
   .main-col {
     padding-inline: 8px;
+  }
+
+  .rail-logo {
+    display: grid;
+    flex: 0 0 38px;
+    align-self: center;
+    margin: 0;
   }
 
   .rail-palette-launcher {

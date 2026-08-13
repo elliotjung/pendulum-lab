@@ -6,11 +6,10 @@ test('research matrix compares experiments and renders diagnostic maps', async (
     localStorage.setItem('pendulum-lab/ui/audience-mode', 'research');
   });
   await page.goto('/');
+  await openModernTab(page, 'matrix', '#tab-matrix');
   await page.waitForFunction(() =>
     Boolean((window as unknown as { __modernTabs?: { matrix?: unknown } }).__modernTabs?.matrix)
   );
-
-  await openModernTab(page, 'matrix', '#tab-matrix');
   await page.locator('#matrixPreset').selectOption('cartpole-open-loop');
   await page.locator('#matrixHorizon').fill('2');
   await page.locator('#matrixGrid').fill('4');
@@ -48,11 +47,10 @@ test('golden center runs integrator threshold checks in its own tab', async ({ p
     localStorage.setItem('pendulum-lab/ui/audience-mode', 'research');
   });
   await page.goto('/');
+  await openModernTab(page, 'golden', '#tab-golden');
   await page.waitForFunction(() =>
     Boolean((window as unknown as { __modernTabs?: { golden?: unknown } }).__modernTabs?.golden)
   );
-
-  await openModernTab(page, 'golden', '#tab-golden');
   await page.evaluate(() => {
     document.querySelectorAll<HTMLInputElement>('input[data-golden-preset]').forEach((input) => {
       input.checked = input.value === 'cartpole-open-loop';

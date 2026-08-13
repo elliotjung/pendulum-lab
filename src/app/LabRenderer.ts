@@ -266,9 +266,21 @@ export class LabRenderer {
 
   private pushTrail(target: TrailBuffer, x: number, y: number, cap: number): void {
     if (target.buf.length !== cap * 2) {
-      target.buf = new Float32Array(cap * 2);
-      target.idx = 0;
-      target.filled = 0;
+      const previous = target.buf;
+      const previousCap = previous.length / 2;
+      const retained = Math.min(target.filled, cap);
+      const next = new Float32Array(cap * 2);
+      if (previousCap > 0) {
+        const start = (target.idx - retained + previousCap) % previousCap;
+        for (let i = 0; i < retained; i += 1) {
+          const source = (start + i) % previousCap;
+          next[i * 2] = previous[source * 2] ?? 0;
+          next[i * 2 + 1] = previous[source * 2 + 1] ?? 0;
+        }
+      }
+      target.buf = next;
+      target.idx = retained % cap;
+      target.filled = retained;
     }
     target.buf[target.idx * 2] = x;
     target.buf[target.idx * 2 + 1] = y;

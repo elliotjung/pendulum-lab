@@ -133,6 +133,23 @@ describe('LabRenderer', () => {
     );
     expect(renderer.trailPointCount()).toBe(4);
   });
+
+  it('preserves recent trail points when the adaptive capacity changes', () => {
+    const renderer = new LabRenderer(makeStubCtx(), { width: 400, height: 400, scale: 100 });
+    const bobs = [
+      { x: 0, y: 1.2 },
+      { x: 0.1, y: 2.2 }
+    ];
+
+    for (let i = 0; i < 6; i += 1) renderer.draw(bobs, { trailLength: 8 });
+    expect(renderer.trailPointCount()).toBe(6);
+
+    renderer.draw(bobs, { trailLength: 4 });
+    expect(renderer.trailPointCount()).toBe(4);
+
+    renderer.draw(bobs, { trailLength: 10 });
+    expect(renderer.trailPointCount()).toBe(5);
+  });
 });
 
 /** Minimal canvas double whose getContext returns our recording stub. */
