@@ -16,6 +16,23 @@ export interface NumericalWorkBudgets {
   >;
   readonly clv: BudgetSection<'maxStateDimension' | 'maxTotalIntegrationSteps' | 'maxStoredFloat64Cells'>;
   readonly observableSampling: BudgetSection<'maxSamples' | 'maxSampleStride' | 'maxTransientSteps' | 'maxTotalSteps'>;
+  readonly langevinEnsemble: BudgetSection<
+    | 'maxStateDimension'
+    | 'maxNoiseDimension'
+    | 'maxSteps'
+    | 'maxRealizations'
+    | 'maxStateUpdates'
+    | 'maxStatisticCells'
+    | 'maxMatrixScratchCells'
+    | 'maxMatrixStepOperations'
+  >;
+  readonly quarticEscape: BudgetSection<'maxSteps' | 'maxRealizations' | 'maxTotalSteps'>;
+  readonly stochasticResonance: BudgetSection<
+    'maxStepsPerResponse' | 'maxNoiseLevels' | 'maxCurveResponses' | 'maxCurveIntegrationSteps'
+  >;
+  readonly adaptiveLangevin: BudgetSection<
+    'maxStateDimension' | 'maxGridSteps' | 'maxBrownianCells' | 'maxPathStepCells' | 'maxRecordedStateCells'
+  >;
   readonly rqa: BudgetSection<
     | 'maxEmbeddedPoints'
     | 'maxEmbeddingCells'
@@ -57,6 +74,34 @@ export const NUMERICAL_WORK_BUDGETS: Readonly<NumericalWorkBudgets> = Object.fre
     maxSampleStride: 1_000_000,
     maxTransientSteps: 5_000_000,
     maxTotalSteps: 50_000_000
+  }),
+  langevinEnsemble: Object.freeze({
+    maxStateDimension: 512,
+    maxNoiseDimension: 512,
+    maxSteps: 10_000_000,
+    maxRealizations: 1_000_000,
+    maxStateUpdates: 250_000_000,
+    maxStatisticCells: 10_000_000,
+    maxMatrixScratchCells: 16_000_000,
+    maxMatrixStepOperations: 50_000_000
+  }),
+  quarticEscape: Object.freeze({
+    maxSteps: 10_000_000,
+    maxRealizations: 1_000_000,
+    maxTotalSteps: 1_000_000_000
+  }),
+  stochasticResonance: Object.freeze({
+    maxStepsPerResponse: 10_000_000,
+    maxNoiseLevels: 100_000,
+    maxCurveResponses: 100_000,
+    maxCurveIntegrationSteps: 50_000_000
+  }),
+  adaptiveLangevin: Object.freeze({
+    maxStateDimension: 512,
+    maxGridSteps: 16_777_216,
+    maxBrownianCells: 16_777_217,
+    maxPathStepCells: 100_000_000,
+    maxRecordedStateCells: 2_000_000
   }),
   rqa: Object.freeze({
     maxEmbeddedPoints: 4_000,

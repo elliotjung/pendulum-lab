@@ -31,12 +31,14 @@ describe('PWA assets', () => {
     const source = await readFile('public/sw.js', 'utf8');
     expect(source).toContain("const VERSION = 'pendulum-lab-v10.36.0-__BUILD_REVISION__'");
     expect(source).toContain('url.origin !== self.location.origin');
-    expect(source).toContain("caches.match('./index.html')");
+    expect(source).toContain("matchCurrentCaches('./index.html')");
     expect(source).toContain('event.waitUntil(settle(cacheUpdate');
-    expect(source).toContain('if (!response.ok) return');
+    expect(source).toContain('if (!response.ok || response.status !== 200) return');
     expect(source).toContain('const RUNTIME_CACHE_LIMIT = 96');
     expect(source).toContain('cache.keys()');
     expect(source).toContain('cache.delete(request)');
+    expect(source).toContain('MAX_RUNTIME_RESPONSE_BYTES');
+    expect(source).toContain('trimQueue.catch(() => undefined)');
     expect(source).toContain("event.data?.type === 'SKIP_WAITING'");
     expect(source).toContain("url.search = ''");
   });

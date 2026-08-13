@@ -1,7 +1,21 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "testRunner": "vitest",
+  "vitest": { "configFile": "vitest.mutation.config.ts", "related": true },
   "coverageAnalysis": "perTest",
+  "ignorePatterns": [
+    "/wasm/assembly/**",
+    "/tmp-trace-*/**",
+    "/dist/**",
+    "/dist-lib/**",
+    "/test-results/**",
+    "/playwright-report/**",
+    "/reports/**",
+    "/coverage/**",
+    "/standalone/**",
+    "/paper/**",
+    "/public/icons/**"
+  ],
   "mutate": [
     "src/physics/integrators.ts",
     "src/physics/linearSolve.ts",
@@ -11,6 +25,7 @@
     "src/physics/sphericalChain.ts",
     "src/physics/sphericalEmbeddedChain.ts",
     "src/physics/stochastic.ts",
+    "src/physics/stochasticSteppers.ts",
     "src/chaos/melnikov.ts",
     "src/chaos/lyapunov.ts",
     "src/chaos/rqa.ts",
@@ -35,6 +50,6 @@
   },
   "tempDirName": ".stryker-tmp",
   "dryRunTimeoutMinutes": 20,
-  "timeoutMS": 20000,
+  "timeoutMS": 30000,
   "concurrency": 2
 }

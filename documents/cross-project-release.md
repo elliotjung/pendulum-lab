@@ -66,8 +66,10 @@ be rolled back by redeploying the previous landing tag's artifact.
 ## Shared claims policy
 
 - Quality mode names remain Performance, Balanced, and Cinematic.
-- Landing evidence must originate in `reports/evidence-summary.json` and retain
-  its source commit and expiry; copied marketing numbers are not authoritative.
+- Landing evidence must originate in `reports/evidence-summary.json`, carry a
+  full source commit, report `dirtyWorktree: false`, and remain inside its
+  expiry window. Copied marketing numbers are not authoritative, and expired
+  or dirty evidence blocks dispatch and release.
 - NVIDIA/AMD claims require physical-runner artifacts. Missing adapters stay
   visibly missing.
 - Hosted security claims apply to the hosted CSP/header path, not to the relaxed

@@ -5,7 +5,7 @@
  * spotlight walks the visitor through the canvas, the presets, the rail menu,
  * and the mode selector. Runs once (persisted flag), never under automation
  * (navigator.webdriver), and is skippable at every step (button or Escape) —
- * the same gating philosophy as the hud-fx ambience layer.
+ * with motion reduced when the user requests it.
  *
  * Step copy follows the guide locale (see navGuide/uiLocale); the pure data
  * below is unit-tested in tests/onboarding-tour.test.ts.
@@ -96,15 +96,15 @@ const ROOT_ID = 'onboardingTour';
 function tourCss(): string {
   return `
 #${ROOT_ID}{position:fixed;inset:0;z-index:11500;pointer-events:auto}
-.tour-ring{position:fixed;border-radius:14px;pointer-events:none;border:1.5px solid rgba(30,227,255,.9);box-shadow:0 0 0 9999px rgba(3,5,12,.62),0 0 34px -4px rgba(30,227,255,.8),inset 0 0 18px -6px rgba(30,227,255,.55);transition:top .34s cubic-bezier(.2,.7,.2,1),left .34s cubic-bezier(.2,.7,.2,1),width .34s cubic-bezier(.2,.7,.2,1),height .34s cubic-bezier(.2,.7,.2,1)}
-.tour-card{position:fixed;max-width:300px;pointer-events:auto;padding:15px 16px;border-radius:12px;border:1px solid transparent;background:linear-gradient(172deg,rgba(10,15,30,.98),rgba(6,9,19,.99)) padding-box,linear-gradient(165deg,rgba(30,227,255,.65),rgba(255,255,255,.09) 30%,rgba(157,120,255,.55)) border-box;box-shadow:0 18px 50px -18px rgba(0,0,0,.85),0 0 44px -14px rgba(30,227,255,.6);transition:top .34s cubic-bezier(.2,.7,.2,1),left .34s cubic-bezier(.2,.7,.2,1)}
-.tour-step-tag{font:800 8.5px/1 var(--font-mono,monospace);letter-spacing:2.4px;text-transform:uppercase;color:var(--cyan,#1ee3ff);margin-bottom:7px}
-.tour-title{font:800 14px/1.25 var(--font-display,sans-serif);color:var(--fg-bright,#eef4ff);margin-bottom:6px;letter-spacing:.3px}
-.tour-body{font-size:11.5px;line-height:1.55;color:var(--text,#c7d1e6)}
+.tour-ring{position:fixed;border-radius:12px;pointer-events:none;border:2px solid var(--workbench-primary,#8b7cf6);box-shadow:0 0 0 9999px rgba(4,6,10,.72);transition:top 260ms cubic-bezier(.2,.8,.2,1),left 260ms cubic-bezier(.2,.8,.2,1),width 260ms cubic-bezier(.2,.8,.2,1),height 260ms cubic-bezier(.2,.8,.2,1)}
+.tour-card{position:fixed;max-width:300px;pointer-events:auto;padding:15px 16px;border-radius:12px;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));background:var(--workbench-elevated,#151a28);box-shadow:0 18px 44px rgba(0,0,0,.34);transition:top 260ms cubic-bezier(.2,.8,.2,1),left 260ms cubic-bezier(.2,.8,.2,1)}
+.tour-step-tag{font:600 9px/1 var(--font-mono,monospace);color:var(--workbench-live,#72d6e5);margin-bottom:7px}
+.tour-title{font:650 14px/1.25 var(--font-sans,system-ui);color:var(--workbench-text,#f1f3f8);margin-bottom:6px}
+.tour-body{font-size:11.5px;line-height:1.55;color:var(--workbench-text-secondary,#a8b0c2)}
 .tour-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
 .tour-dots{display:flex;gap:5px}
-.tour-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.16)}
-.tour-dots i.on{background:var(--cyan,#1ee3ff);box-shadow:0 0 8px rgba(30,227,255,.8)}
+.tour-dots i{width:6px;height:6px;border-radius:50%;background:var(--workbench-control,#181d2b)}
+.tour-dots i.on{background:var(--workbench-primary,#8b7cf6)}
 .tour-actions{display:flex;gap:7px}
 .tour-actions button{font-size:10.5px;padding:6px 11px;border-radius:7px}
 @media(prefers-reduced-motion:reduce){.tour-ring,.tour-card{transition:none}}

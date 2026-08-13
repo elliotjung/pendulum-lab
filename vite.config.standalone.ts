@@ -16,15 +16,17 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
  * Output: `standalone/index.html`. Run with `npm run build:standalone`.
  */
 
+export function relaxCspForFileProtocolHtml(html: string): string {
+  return html.replace(
+    /<meta\b[^>]*\bhttp-equiv\s*=\s*["']Content-Security-Policy["'][^>]*>/i,
+    `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' data: blob:">`
+  );
+}
+
 function relaxCspForFileProtocol(): Plugin {
   return {
     name: 'relax-csp-for-file-protocol',
-    transformIndexHtml(html) {
-      return html.replace(
-        /<meta http-equiv="Content-Security-Policy"[^>]*>/i,
-        `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self' data: blob:">`
-      );
-    }
+    transformIndexHtml: relaxCspForFileProtocolHtml
   };
 }
 

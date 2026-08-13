@@ -26,6 +26,7 @@ test('modern shell owns tab navigation', async ({ page }) => {
     expect(activeCount).toBe(1);
   }
 
+  await expect.poll(() => page.locator('.tabpanel[aria-busy="true"]').count()).toBe(0);
   // Ended on the lab tab: its panel is the active one.
   await expect(page.locator('#tab-lab')).toHaveClass(/active/);
   const labSelected = await page.evaluate(() =>

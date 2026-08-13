@@ -2,7 +2,14 @@ export type ParameterStudyStrategy =
   'grid' | 'random' | 'symmetric' | 'latin-hypercube' | 'edge-focus' | 'sobol' | 'chebyshev';
 
 function seedFromText(text: string): number {
-  return Math.abs(text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) || 17;
+  // FNV-1a preserves character order; the previous character sum made common
+  // anagrams (for example experiment IDs with reordered tokens) share a stream.
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0 || 17;
 }
 
 function nextUnit(seedBox: { seed: number }): number {
@@ -33,7 +40,26 @@ export function generateStudyValues(
   count: number,
   seedText: string
 ): number[] {
-  const n = Math.max(2, Math.min(64, Math.round(Number.isFinite(count) ? count : 7)));
+  const supported = new Set<ParameterStudyStrategy>([
+    'grid',
+    'random',
+    'symmetric',
+    'latin-hypercube',
+    'edge-focus',
+    'sobol',
+    'chebyshev'
+  ]);
+  if (!supported.has(strategy)) throw new RangeError(`generateStudyValues: unsupported strategy ${String(strategy)}`);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min > max || !Number.isFinite(max - min)) {
+    throw new RangeError('generateStudyValues: bounds must be finite, ordered, and have a finite span');
+  }
+  if (!Number.isFinite(count) || count <= 0) {
+    throw new RangeError('generateStudyValues: count must be positive and finite');
+  }
+  if (typeof seedText !== 'string' || seedText.length > 4_096) {
+    throw new RangeError('generateStudyValues: seed text must be a string of at most 4096 code units');
+  }
+  const n = Math.max(2, Math.min(64, Math.round(count)));
   const seedBox = { seed: seedFromText(seedText) };
   if (strategy === 'random') {
     return Array.from({ length: n }, () => scale(min, max, nextUnit(seedBox))).sort((a, b) => a - b);
@@ -59,12 +85,19 @@ export function generateStudyValues(
   if (strategy === 'symmetric') {
     const mid = (min + max) / 2;
     const span = (max - min) / 2;
-    return Array.from({ length: n }, (_, i) => {
-      if (i === 0) return mid;
-      const ring = Math.ceil(i / 2);
-      const sign = i % 2 === 0 ? 1 : -1;
-      return mid + sign * span * (ring / Math.ceil((n - 1) / 2));
-    }).sort((a, b) => a - b);
+    if (n % 2 === 1) {
+      const rings = (n - 1) / 2;
+      return [
+        mid,
+        ...Array.from({ length: rings }, (_, i) => mid - span * ((i + 1) / rings)),
+        ...Array.from({ length: rings }, (_, i) => mid + span * ((i + 1) / rings))
+      ].sort((a, b) => a - b);
+    }
+    const rings = n / 2;
+    return [
+      ...Array.from({ length: rings }, (_, i) => mid - span * ((i + 1) / rings)),
+      ...Array.from({ length: rings }, (_, i) => mid + span * ((i + 1) / rings))
+    ].sort((a, b) => a - b);
   }
   return Array.from({ length: n }, (_, i) => scale(min, max, i / Math.max(1, n - 1)));
 }

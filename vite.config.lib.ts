@@ -27,6 +27,10 @@ export default defineConfig({
       fileName: (_format, entryName) => `${entryName}.js`
     },
     rollupOptions: {
+      // Preserve conditional Node imports as native ESM externals. Rewriting
+      // them to Vite's browser-compatibility shim emits misleading warnings
+      // and makes the published Node/experimental subpaths less transparent.
+      external: [/^node:/],
       output: { exports: 'named' }
     }
   }

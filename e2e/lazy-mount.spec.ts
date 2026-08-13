@@ -26,7 +26,7 @@ test('student startup defers research and mounts one analysis controller on dema
 });
 
 test('programmatic research navigation loads the research workspace then completes navigation', async ({ page }) => {
-  await page.goto('/?audience=student');
+  await page.goto('/?audience=research');
   await openModernTab(page, 'research', '#researchWorkbench');
   await expect(page.locator('#tab-research')).toHaveClass(/active/);
 });

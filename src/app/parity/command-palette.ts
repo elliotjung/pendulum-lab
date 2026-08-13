@@ -1,5 +1,7 @@
 import { commandRegistry, type Command } from '../../runtime/CommandRegistry';
+import { installAdoptedStyle } from '../../ui/adoptedStyles';
 import { currentNavLocale } from '../navGuide';
+import { activateModalSurface, deactivateModalSurface, trapModalFocus } from '../modalSurface';
 import { $, append, button, clear, html, toast } from './shared';
 
 interface PaletteCopy {
@@ -9,6 +11,7 @@ interface PaletteCopy {
   close: string;
   inputLabel: string;
   placeholder: string;
+  clear: string;
   listLabel: string;
   empty: string;
   results: (count: number) => string;
@@ -16,10 +19,54 @@ interface PaletteCopy {
   failed: string;
 }
 
-const PALETTE_TYPING_TARGET = 'input, textarea, select, [contenteditable="true"], [role="textbox"], [role="combobox"]';
+const PALETTE_TYPING_TARGET = 'input, textarea, select, [role="textbox"], [role="combobox"]';
+const PALETTE_STYLE_ID = 'command-palette-hardening';
+
+function commandPaletteHardeningCss(): string {
+  return `
+#rgv8Cmd{box-sizing:border-box;inset:auto;left:var(--ui-viewport-offset-left,0);top:var(--ui-viewport-offset-top,0);width:var(--ui-viewport-width,100vw);height:var(--ui-viewport-height,100dvh);place-items:start center;overflow:hidden;overscroll-behavior:contain;padding:max(clamp(20px,7vh,72px),env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.rgv8-cmd-panel{width:min(760px,100%);max-height:min(calc(var(--ui-viewport-height,100dvh) - clamp(40px,14vh,144px)),620px);min-height:0;overflow:hidden;scrollbar-gutter:stable}
+.rgv8-cmd-search{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 44px;align-items:center;gap:6px;min-width:0}
+#rgv8Cmd .rgv8-cmd-search input{min-width:0;height:48px;padding-inline:13px;font-size:14px}
+.rgv8-cmd-clear{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border-radius:10px;font-size:18px;line-height:1;touch-action:manipulation}
+.rgv8-cmd-clear[hidden]{display:none!important}
+.rgv8-cmd-list{scrollbar-gutter:stable;scroll-padding-block:8px}
+.rgv8-cmd-row{min-height:50px;content-visibility:auto;contain-intrinsic-size:50px}
+.rgv8-cmd-copy strong,.rgv8-cmd-copy em{white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.rgv8-cmd-copy strong{-webkit-line-clamp:2;line-clamp:2}
+.rgv8-cmd-copy em{-webkit-line-clamp:2;line-clamp:2}
+.rgv8-cmd-row small{overflow-wrap:anywhere}
+.rgv8-cmd-empty{min-height:96px;display:grid;place-items:center}
+@media(max-width:560px){
+  #rgv8Cmd{place-items:start center;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+  .rgv8-cmd-panel{width:100%;max-height:min(calc(var(--ui-viewport-height,100dvh) - 16px),calc(100dvh - 16px));padding:12px;border-radius:12px}
+  #rgv8Cmd .rgv8-cmd-search input{font-size:16px}
+  .rgv8-cmd-title small{max-width:min(240px,calc(100vw - 120px));overflow-wrap:anywhere}
+  .rgv8-cmd-row{grid-template-columns:minmax(0,1fr);gap:5px;padding:10px;min-height:60px}
+  .rgv8-cmd-row small{max-width:100%;white-space:normal}
+}
+@media(max-height:480px){
+  #rgv8Cmd{padding-block:6px}
+  .rgv8-cmd-panel{max-height:min(calc(var(--ui-viewport-height,100dvh) - 12px),calc(100dvh - 12px));gap:6px;padding:10px}
+  .rgv8-cmd-title small,.rgv8-cmd-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){.rgv8-cmd-row{scroll-behavior:auto;transition:none}.rgv8-cmd-panel{animation:none}}
+@media(forced-colors:active){
+  #rgv8Cmd,.rgv8-cmd-panel,.rgv8-cmd-row,.rgv8-cmd-empty{forced-color-adjust:auto;background:Canvas;color:CanvasText;border-color:CanvasText;box-shadow:none}
+  .rgv8-cmd-row.is-active{outline:3px solid Highlight;outline-offset:-4px}
+}
+`;
+}
 
 function isPaletteTypingTarget(target: EventTarget | null): boolean {
-  return target instanceof Element && Boolean(target.closest(PALETTE_TYPING_TARGET));
+  if (!(target instanceof Element)) return false;
+  const editableRoot = target.closest<HTMLElement>('[contenteditable]');
+  if (editableRoot?.isContentEditable) return true;
+  return Boolean(target.closest(PALETTE_TYPING_TARGET));
+}
+
+function hasOpenNativeDialog(): boolean {
+  return document.querySelector('dialog[open]') !== null;
 }
 
 const PALETTE_COPY: Record<'en' | 'ko', PaletteCopy> = {
@@ -30,6 +77,7 @@ const PALETTE_COPY: Record<'en' | 'ko', PaletteCopy> = {
     close: 'Close',
     inputLabel: 'Search command palette',
     placeholder: 'Search commands…',
+    clear: 'Clear search',
     listLabel: 'Matching commands',
     empty: 'No matching commands',
     results: (count) => `${count} ${count === 1 ? 'command' : 'commands'}`,
@@ -43,6 +91,7 @@ const PALETTE_COPY: Record<'en' | 'ko', PaletteCopy> = {
     close: '닫기',
     inputLabel: '명령 검색',
     placeholder: '명령을 검색하세요…',
+    clear: '검색어 지우기',
     listLabel: '검색된 명령',
     empty: '일치하는 명령이 없습니다',
     results: (count) => `명령 ${count}개`,
@@ -133,7 +182,7 @@ function paletteCopy(): PaletteCopy {
 }
 
 function normalizeSearch(value: string): string {
-  return value.normalize('NFKC').toLocaleLowerCase().trim().replace(/\s+/g, ' ');
+  return value.normalize('NFKD').replace(/\p{M}/gu, '').toLocaleLowerCase().trim().replace(/\s+/g, ' ');
 }
 
 function commandSearchText(command: Command): string {
@@ -172,21 +221,32 @@ function matchingCommands(query: string): Command[] {
     .list()
     .map((command) => ({ command, score: commandScore(command, normalized) }))
     .filter(({ score }) => Number.isFinite(score))
-    .sort((a, b) => a.score - b.score || a.command.label.localeCompare(b.command.label))
+    .sort(
+      (a, b) =>
+        a.score - b.score ||
+        commandCopy(a.command).label.localeCompare(commandCopy(b.command).label, currentNavLocale())
+    )
     .slice(0, 50)
     .map(({ command }) => command);
 }
 
 function scheduleCommandRender(query: string): void {
   window.clearTimeout(paletteRenderTimer);
+  $('rgv8CmdList')?.setAttribute('aria-busy', 'true');
   paletteRenderTimer = window.setTimeout(() => renderCommandList(query), 50);
+}
+
+function flushScheduledCommandRender(input: HTMLInputElement): void {
+  if ($('rgv8CmdList')?.getAttribute('aria-busy') !== 'true') return;
+  window.clearTimeout(paletteRenderTimer);
+  renderCommandList(input.value);
 }
 
 function modernRows(): HTMLButtonElement[] {
   return Array.from(document.querySelectorAll<HTMLButtonElement>('#rgv8CmdList [data-command-id]'));
 }
 
-function updateActiveSelection(index: number, scroll = false): void {
+function updateActiveSelection(index: number, scroll = false, wrap = true): void {
   const rows = modernRows();
   const input = $('rgv8CmdInput');
   if (!rows.length) {
@@ -194,7 +254,9 @@ function updateActiveSelection(index: number, scroll = false): void {
     input?.removeAttribute('aria-activedescendant');
     return;
   }
-  commandPaletteActiveIndex = Math.max(0, Math.min(index, rows.length - 1));
+  commandPaletteActiveIndex = wrap
+    ? ((index % rows.length) + rows.length) % rows.length
+    : Math.max(0, Math.min(index, rows.length - 1));
   rows.forEach((row, rowIndex) => {
     const active = rowIndex === commandPaletteActiveIndex;
     row.classList.toggle('is-active', active);
@@ -205,13 +267,24 @@ function updateActiveSelection(index: number, scroll = false): void {
 }
 
 function executeCommand(id: string): void {
-  const returnFocus = commandPaletteReturnFocus;
+  const returnFocus = commandPaletteReturnFocus?.closest('.rail-section')
+    ? document.querySelector<HTMLElement>('.rail-palette-launcher')
+    : commandPaletteReturnFocus;
   hideCommandPalette(false);
-  void commandRegistry.run(id).catch((error: unknown) => {
-    console.error(`Command failed: ${id}`, error);
-    toast(paletteCopy().failed, 3200);
-    if (returnFocus?.isConnected) queueMicrotask(() => returnFocus.focus());
-  });
+  void commandRegistry
+    .run(id)
+    .then(() => {
+      // Commands that navigate or open a surface own focus themselves. Export
+      // and toggle commands often do not, so return to the launcher instead of
+      // leaving keyboard users on <body>.
+      if (returnFocus?.isConnected && (document.activeElement === document.body || document.activeElement === null))
+        queueMicrotask(() => returnFocus.focus());
+    })
+    .catch((error: unknown) => {
+      console.error(`Command failed: ${id}`, error);
+      toast(paletteCopy().failed, 3200);
+      if (returnFocus?.isConnected) queueMicrotask(() => returnFocus.focus());
+    });
 }
 
 function localizeCommandPalette(): void {
@@ -222,6 +295,7 @@ function localizeCommandPalette(): void {
   const subtitle = $('rgv8CmdSubtitle');
   const close = $('rgv8CmdClose');
   const input = $('rgv8CmdInput');
+  const clearButton = $('rgv8CmdClear');
   const list = $('rgv8CmdList');
   const hint = $('rgv8CmdHint');
   if (title) title.textContent = copy.title;
@@ -234,47 +308,20 @@ function localizeCommandPalette(): void {
     input.setAttribute('aria-label', copy.inputLabel);
     input.placeholder = copy.placeholder;
   }
+  clearButton?.setAttribute('aria-label', copy.clear);
+  clearButton?.setAttribute('title', copy.clear);
   list?.setAttribute('aria-label', copy.listLabel);
   if (hint) hint.textContent = copy.hint;
 }
 
 function trapPaletteFocus(event: KeyboardEvent): void {
-  if (event.key !== 'Tab') return;
   const palette = $('rgv8Cmd');
   if (!palette || palette.hasAttribute('hidden')) return;
-  const focusable = Array.from(
-    palette.querySelectorAll<HTMLElement>(
-      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    )
-  ).filter((element) => !element.hasAttribute('hidden'));
-  if (!focusable.length) return;
-  const first = focusable.at(0);
-  const last = focusable.at(-1);
-  if (!first || !last) return;
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
+  trapModalFocus(event, palette);
 }
 
 export function installCommandPalettes(): void {
-  if (!$('rgv7Palette')) {
-    const palette = html('div', { id: 'rgv7Palette', className: 'rgv7-palette v10-sr' });
-    palette.setAttribute('hidden', '');
-    palette.setAttribute('aria-hidden', 'true');
-    palette.inert = true;
-    const box = html('div', { className: 'rgv7-palette-box' });
-    const input = html('input', { id: 'rgv7CmdInput' });
-    input.tabIndex = -1;
-    const list = html('div', { id: 'rgv7CmdList', className: 'rgv7-cmd-list' });
-    input.addEventListener('input', () => scheduleCommandRender(input.value));
-    append(box, input, list);
-    palette.append(box);
-    document.body.append(palette);
-  }
+  installAdoptedStyle(PALETTE_STYLE_ID, commandPaletteHardeningCss());
   if (!$('rgv8Cmd')) {
     const box = html('div', { id: 'rgv8Cmd', className: 'rgv8-cmd-shell', role: 'dialog' });
     box.setAttribute('aria-modal', 'true');
@@ -289,14 +336,37 @@ export function installCommandPalettes(): void {
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-controls', 'rgv8CmdList');
+    input.setAttribute('aria-describedby', 'rgv8CmdStatus rgv8CmdHint');
     input.setAttribute('aria-expanded', 'true');
     input.setAttribute('autocomplete', 'off');
     input.setAttribute('spellcheck', 'false');
+    input.setAttribute('enterkeyhint', 'go');
+    input.setAttribute('inputmode', 'search');
+    const search = html('div', { className: 'rgv8-cmd-search' });
+    const clearButton = button(
+      'rgv8CmdClear',
+      '×',
+      () => {
+        input.value = '';
+        clearButton.setAttribute('hidden', '');
+        commandPaletteActiveIndex = 0;
+        renderCommandList('');
+        input.focus();
+      },
+      'rgv8-cmd-clear'
+    );
+    clearButton.setAttribute('hidden', '');
     const status = html('div', { id: 'rgv8CmdStatus', className: 'rgv8-cmd-status', role: 'status' });
     status.setAttribute('aria-live', 'polite');
     const list = html('div', { id: 'rgv8CmdList', className: 'rgv8-cmd-list', role: 'listbox' });
     const hint = html('div', { id: 'rgv8CmdHint', className: 'rgv8-cmd-hint' });
-    input.addEventListener('input', () => {
+    input.addEventListener('input', (event) => {
+      commandPaletteActiveIndex = 0;
+      clearButton.toggleAttribute('hidden', input.value.length === 0);
+      if (event instanceof InputEvent && event.isComposing) return;
+      scheduleCommandRender(input.value);
+    });
+    input.addEventListener('compositionend', () => {
       commandPaletteActiveIndex = 0;
       scheduleCommandRender(input.value);
     });
@@ -308,13 +378,19 @@ export function installCommandPalettes(): void {
         hideCommandPalette();
         return;
       }
+      if (['ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp', 'Enter'].includes(event.key)) {
+        flushScheduledCommandRender(input);
+      }
       const rows = modernRows();
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         updateActiveSelection(commandPaletteActiveIndex + (event.key === 'ArrowDown' ? 1 : -1), true);
       } else if (event.key === 'Home' || event.key === 'End') {
         event.preventDefault();
-        updateActiveSelection(event.key === 'Home' ? 0 : rows.length - 1, true);
+        updateActiveSelection(event.key === 'Home' ? 0 : rows.length - 1, true, false);
+      } else if (event.key === 'PageDown' || event.key === 'PageUp') {
+        event.preventDefault();
+        updateActiveSelection(commandPaletteActiveIndex + (event.key === 'PageDown' ? 8 : -8), true, false);
       } else if (event.key === 'Enter') {
         const active = rows[commandPaletteActiveIndex];
         if (!active) return;
@@ -326,8 +402,9 @@ export function installCommandPalettes(): void {
     box.addEventListener('click', (event) => {
       if (event.target === box) hideCommandPalette();
     });
+    append(search, input, clearButton);
     append(header, title, close);
-    append(panel, header, input, status, list, hint);
+    append(panel, header, search, status, list, hint);
     box.append(panel);
     document.body.append(box);
   }
@@ -343,15 +420,26 @@ export function installCommandPalettes(): void {
   }
   if (!commandPaletteKeyboardInstalled) {
     commandPaletteKeyboardInstalled = true;
-    document.addEventListener('keydown', (event) => {
-      if (event.defaultPrevented || event.isComposing) return;
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    // Claim Ctrl/Cmd+K during capture so shell/button handlers cannot consume
+    // the global shortcut before the palette sees it. Typing controls remain
+    // protected, except for the palette's own combobox where the key toggles it.
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.isComposing) return;
+        if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
         if (isPaletteTypingTarget(event.target) && event.target !== $('rgv8CmdInput')) return;
-        event.preventDefault();
         const open = !$('rgv8Cmd')?.hasAttribute('hidden');
+        if (!open && hasOpenNativeDialog()) return;
+        event.preventDefault();
         if (open) hideCommandPalette();
         else showCommandPalette();
-      } else if (event.key === 'Escape' && !$('rgv8Cmd')?.hasAttribute('hidden')) {
+      },
+      { capture: true }
+    );
+    document.addEventListener('keydown', (event) => {
+      if (event.defaultPrevented || event.isComposing) return;
+      if (event.key === 'Escape' && !$('rgv8Cmd')?.hasAttribute('hidden')) {
         hideCommandPalette();
       }
     });
@@ -362,13 +450,9 @@ export function renderCommandList(query: string): void {
   window.clearTimeout(paletteRenderTimer);
   const commands = matchingCommands(query);
   const copy = paletteCopy();
-  const legacyList = $('rgv7CmdList');
-  clear(legacyList);
-  // The legacy surface is hidden and inert; keep only its empty compatibility
-  // anchor instead of duplicating every modern result on each keystroke.
-
   const list = $('rgv8CmdList');
   clear(list);
+  list?.removeAttribute('aria-busy');
   if (!commands.length) {
     const empty = html('div', { className: 'rgv8-cmd-empty', text: copy.empty, role: 'status' });
     list?.append(empty);
@@ -398,7 +482,7 @@ export function renderCommandList(query: string): void {
 
 export function showCommandPalette(): void {
   const palette = $('rgv8Cmd');
-  if (!palette) return;
+  if (!palette || hasOpenNativeDialog()) return;
   const active = document.activeElement;
   if (palette.hasAttribute('hidden')) {
     commandPaletteReturnFocus = active instanceof HTMLElement && !active.closest('#rgv8Cmd') ? active : null;
@@ -410,26 +494,34 @@ export function showCommandPalette(): void {
   localizeCommandPalette();
   commandPaletteActiveIndex = 0;
   renderCommandList('');
-  $('rgv7Palette')?.classList.remove('show');
   palette.classList.add('show');
   palette.removeAttribute('hidden');
+  palette.removeAttribute('aria-hidden');
+  activateModalSurface(palette);
   document.body.classList.add('command-palette-open');
   const input = $('rgv8CmdInput');
   if (input instanceof HTMLInputElement) {
     input.value = '';
+    input.setAttribute('aria-expanded', 'true');
+    $('rgv8CmdClear')?.setAttribute('hidden', '');
     input.focus();
     input.select();
   }
 }
 
 export function hideCommandPalette(restoreFocus = true): void {
-  $('rgv7Palette')?.classList.remove('show');
+  window.clearTimeout(paletteRenderTimer);
   const palette = $('rgv8Cmd');
   const wasOpen = Boolean(palette && !palette.hasAttribute('hidden'));
   palette?.classList.remove('show');
   palette?.setAttribute('hidden', '');
+  palette?.setAttribute('aria-hidden', 'true');
+  if (palette) deactivateModalSurface(palette);
   document.body.classList.remove('command-palette-open');
-  $('rgv8CmdInput')?.removeAttribute('aria-activedescendant');
+  const input = $('rgv8CmdInput');
+  input?.removeAttribute('aria-activedescendant');
+  input?.setAttribute('aria-expanded', 'false');
+  $('rgv8CmdList')?.removeAttribute('aria-busy');
   const returnFocus = commandPaletteReturnFocus;
   commandPaletteReturnFocus = null;
   if (wasOpen && restoreFocus && returnFocus?.isConnected) queueMicrotask(() => returnFocus.focus());

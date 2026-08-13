@@ -44,6 +44,8 @@ import { showCommandPalette } from './command-palette';
 import { trustSection, type TrustSection } from '../trustDrawer';
 import { registerGovernanceCommands } from './governance-commands';
 import { bulletList, figCard, metric, paragraph, selectRow } from './governance-elements';
+import { createControlSearch, filterControls } from './control-search';
+import { showStableHelp } from './stable-help';
 
 /**
  * Mount a trust/governance card into its Trust & Diagnostics drawer section,
@@ -58,6 +60,7 @@ function mountTrustCard(section: TrustSection, node: HTMLElement, fallback: () =
 
 export { hideCommandPalette, installCommandPalettes, renderCommandList, showCommandPalette } from './command-palette';
 export { bulletList, figCard, metric, paragraph, selectRow };
+export { installStableHelp, showStableHelp } from './stable-help';
 
 export function installExtraTabs(): void {
   const nav = document.querySelector('.tabs');
@@ -104,6 +107,19 @@ export function bindRailActions(): void {
     btn.addEventListener('click', () => {
       void run();
     });
+    if (action === 'palette') {
+      btn.addEventListener('keydown', (event) => {
+        if (
+          event.defaultPrevented ||
+          event.isComposing ||
+          !(event.ctrlKey || event.metaKey) ||
+          event.key.toLowerCase() !== 'k'
+        )
+          return;
+        event.preventDefault();
+        showCommandPalette();
+      });
+    }
   });
 }
 
@@ -314,46 +330,18 @@ export function installStablePanel(): void {
   );
   append(top, titleBlock, status, actions);
   const guide = html('div', { className: 'si-guide' });
-  const searchWrap = html('div');
-  const search = html('input', { id: 'siControlSearch', className: 'si-search', ariaLabel: 'Search controls' });
-  search.placeholder = 'Search controls';
-  search.addEventListener('input', () => filterControls(search.value));
-  append(searchWrap, search, html('div', { className: 'si-small', text: 'Filter settings by label or id.' }));
-  append(guide, html('div', { id: 'siAdvice', className: 'si-note', text: 'Status: initializing' }), searchWrap);
+  append(
+    guide,
+    html('div', { id: 'siAdvice', className: 'si-note', text: 'Status: initializing' }),
+    createControlSearch()
+  );
   append(panel, top, guide);
   mountTrustCard('performance', panel, () => {
     const anchor = document.querySelector('.diag-row') ?? document.querySelector('header');
     if (anchor?.parentNode) anchor.parentNode.insertBefore(panel, anchor.nextSibling);
     else document.body.prepend(panel);
   });
-}
-
-export function installStableHelp(): void {
-  if ($('siHelpBackdrop')) return;
-  const backdrop = html('div', {
-    id: 'siHelpBackdrop',
-    className: 'si-help-backdrop',
-    role: 'dialog',
-    ariaLabel: 'Stable control help'
-  });
-  const box = html('div', { className: 'si-help' });
-  append(
-    box,
-    button('siCloseHelp', 'Close', () => backdrop.classList.remove('show'), 'si-close'),
-    html('h2', { text: 'Simulation Assistance' }),
-    paragraph(
-      'Stable Defaults keeps the current experiment readable without changing the scientific labels. Accuracy Mode tightens dt and tolerance. Performance Mode reduces rendering load first.'
-    ),
-    html('h3', { text: 'Research mode policy' }),
-    paragraph(
-      'Auto-stabilize only suggests changes when the mode is research or benchmark. It does not silently alter physics controls in those modes.'
-    )
-  );
-  backdrop.addEventListener('click', (event) => {
-    if (event.target === backdrop) backdrop.classList.remove('show');
-  });
-  backdrop.append(box);
-  document.body.append(backdrop);
+  filterControls('');
 }
 
 export function installResearchStatusCards(): void {
@@ -680,7 +668,6 @@ export function featureReport(options: { runValidation?: boolean } = {}): AuditR
     'tab-aplus',
     'tab-docs',
     'cmdPalette',
-    'rgv7Palette',
     'rgv8Cmd',
     'figBadge',
     'researchWorkbench',
@@ -738,7 +725,6 @@ export function featureDomOk(): boolean {
     'tab-aplus',
     'tab-docs',
     'cmdPalette',
-    'rgv7Palette',
     'rgv8Cmd',
     'figBadge',
     'researchWorkbench',
@@ -895,18 +881,7 @@ export function recoverSimulation(): void {
   record('manual recovery');
 }
 
-export function showStableHelp(): void {
-  installStableHelp();
-  $('siHelpBackdrop')?.classList.add('show');
-}
-
-export function filterControls(query: string): void {
-  const q = query.trim().toLowerCase();
-  document.querySelectorAll<HTMLElement>('#tab-lab .controls .row').forEach((line) => {
-    const text = line.textContent?.toLowerCase() ?? '';
-    line.classList.toggle('si-row-hidden', q.length > 0 && !text.includes(q));
-  });
-}
+export { filterControls };
 
 export function setMode(mode: RunMode): void {
   state.mode = mode;

@@ -35,6 +35,8 @@ jobs:
             exit 1
           fi
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
@@ -44,10 +46,7 @@ jobs:
       - run: npm run verify
       - name: Reject unexpected tracked rewrites from verification
         shell: bash
-        run: |
-          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
-          git restore --worktree -- reports/vitest-results.json
-          git diff --exit-code
+        run: git diff --exit-code
       - run: npm run build:lib
       - run: npm run build
       - name: Deploy the COOP/COEP-enabled mirror
@@ -62,7 +61,7 @@ jobs:
           CLOUDFLARE_MIRROR_URL: ${{ vars.CLOUDFLARE_MIRROR_URL }}
         shell: bash
         run: |
-          headers="$(curl --fail --silent --show-error --retry 5 --retry-all-errors --dump-header - --output /dev/null "$CLOUDFLARE_MIRROR_URL")"
+          headers="$(curl --fail --silent --show-error --retry 5 --retry-all-errors --connect-timeout 10 --max-time 60 --dump-header - --output /dev/null "$CLOUDFLARE_MIRROR_URL")"
           printf '%s\n' "$headers" | grep -Eiq '^cross-origin-opener-policy:[[:space:]]*same-origin'
           printf '%s\n' "$headers" | grep -Eiq '^cross-origin-embedder-policy:[[:space:]]*require-corp'
           printf '%s\n' "$headers" | grep -Eiq '^x-content-type-options:[[:space:]]*nosniff'

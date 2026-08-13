@@ -63,4 +63,48 @@ describe('stochastic resonance', () => {
     expect(a.responseAmplitude).toBe(b.responseAmplitude);
     expect(a.transitions).toBe(b.transitions);
   });
+
+  test('curve seeds wrap within uint32 without accepting invalid base seeds', () => {
+    const compact = { ...base, periods: 0.01, transientPeriods: 0, dt: 0.5, seed: 0xffff_ffff };
+    expect(() => stochasticResonanceCurve(compact, [0], 2)).not.toThrow();
+    expect(() => stochasticResonanceCurve({ ...compact, seed: 0x1_0000_0000 }, [0], 1)).toThrow(/uint32/);
+    expect(() => stochasticResonanceCurve(compact, [0], 1.5)).toThrow(/positive safe integer/);
+  });
+
+  test('rejects non-finite, subnormal, malformed, and unstable response controls', () => {
+    const valid = { ...base, periods: 0.01, transientPeriods: 0, dt: 0.5, sigma: 0 };
+    for (const override of [
+      { amplitude: Number.NaN },
+      { driveOmega: Number.POSITIVE_INFINITY },
+      { driveOmega: Number.MIN_VALUE },
+      { sigma: Number.POSITIVE_INFINITY },
+      { dt: Number.POSITIVE_INFINITY },
+      { dt: Number.MIN_VALUE },
+      { periods: Number.POSITIVE_INFINITY },
+      { transientPeriods: Number.POSITIVE_INFINITY },
+      { transientPeriods: -1 },
+      { x0: Number.NEGATIVE_INFINITY },
+      { seed: -1 },
+      { seed: 0x1_0000_0000 }
+    ])
+      expect(() => stochasticResonanceResponse({ ...valid, ...override })).toThrow();
+    expect(() => stochasticResonanceResponse({ ...valid, amplitude: Number.MAX_VALUE, x0: Number.MAX_VALUE })).toThrow(
+      /non-finite/
+    );
+  });
+
+  test('bounds direct and aggregate resonance work before entering integration loops', () => {
+    expect(() => stochasticResonanceResponse({ ...base, sigma: 0, dt: 1e-8, periods: 1 })).toThrow(/response work/);
+    expect(() => stochasticResonanceCurve(base, new Array(100_001).fill(0), 1)).toThrow(/noise-level count/);
+    expect(() => stochasticResonanceCurve(base, [0], 100_001)).toThrow(/realizations exceed/);
+    expect(() => stochasticResonanceCurve({ ...base, periods: 100 }, new Array(10).fill(0.2), 100)).toThrow(
+      /curve work/
+    );
+  });
+
+  test('rejects sparse, negative, and non-finite noise grids', () => {
+    expect(() => stochasticResonanceCurve(base, new Array<number>(1), 1)).toThrow(/present/);
+    expect(() => stochasticResonanceCurve(base, [-0.1], 1)).toThrow(/non-negative/);
+    expect(() => stochasticResonanceCurve(base, [Number.NaN], 1)).toThrow(/finite/);
+  });
 });

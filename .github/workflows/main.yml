@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
@@ -27,10 +29,7 @@ jobs:
       - run: npm run verify
       - name: Reject unexpected tracked rewrites from verification
         shell: bash
-        run: |
-          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
-          git restore --worktree -- reports/vitest-results.json
-          git diff --exit-code
+        run: git diff --exit-code
       - run: npm run test:slow
       - run: npm run test:coverage
       - run: npm run audit:legacy
@@ -96,7 +95,7 @@ jobs:
           preview_pid=$!
           trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do
-            curl --fail --silent http://127.0.0.1:4173/app.html >/dev/null && break
+            curl --fail --silent --connect-timeout 2 --max-time 5 http://127.0.0.1:4173/app.html >/dev/null && break
             [ "$attempt" -lt 30 ] || { cat /tmp/pendulum-preview.log; exit 1; }
             sleep 1
           done

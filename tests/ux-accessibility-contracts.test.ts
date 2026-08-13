@@ -46,12 +46,13 @@ describe('UX and accessibility contracts', () => {
     expect(themes).toContain('@media print');
     expect(themes).toContain('color-scheme: dark light');
     expect(themes).toContain('.trust-drawer');
-    // The system light theme must live in the LAST stylesheet: layers 01-08
-    // re-declare :root tokens unconditionally, so an earlier light block
-    // (the old css/09 arrangement) loses the cascade and goes half-dark.
+    const instrumentLink = html.indexOf('./css/03-instrument-workbench.css');
     const daylightLink = html.indexOf('./css/10-porcelain-daylight.css');
-    expect(daylightLink).toBeGreaterThan(html.indexOf('./css/08-refined-luxe.css'));
+    expect(instrumentLink).toBeGreaterThan(-1);
+    expect(daylightLink).toBeGreaterThan(instrumentLink);
     expect(daylight).toContain('@media (prefers-color-scheme: light)');
+    expect(daylight).toContain('--workbench-bg');
     expect(daylight).toContain('--bg-mesh');
+    expect(daylight.match(/!important/g) ?? []).toHaveLength(0);
   });
 });

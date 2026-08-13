@@ -18,8 +18,6 @@ import {
 } from './app/bootstrap';
 import { installTrustDrawer } from './app/trustDrawer';
 import { installUiPolish } from './app/UiPolish';
-import { installHudEffects } from './app/hudEffects';
-import { installKineticOverdrive } from './app/kineticOverdrive';
 import { installEducationCards } from './app/educationCards';
 import { publishPublicApi } from './runtime/globalApi';
 import {
@@ -29,7 +27,7 @@ import {
   hasExplicitAudienceMode,
   installAudienceMode
 } from './app/audienceMode';
-import { isShellShortcutTarget, TAB_ACTIVATED_EVENT } from './app/Shell';
+import { isTextEntryShortcutTarget, TAB_ACTIVATED_EVENT, TAB_REQUESTED_EVENT } from './app/Shell';
 import { applyStructuralLocale, initNavLocale, installLocaleSelect } from './app/uiLocale';
 import { installOnboardingTour } from './app/onboardingTour';
 import { installExperimentShare } from './app/experimentShare';
@@ -233,6 +231,8 @@ function ensureResearch(tabAfterInstall?: string): Promise<void> {
     applyAudienceMode(currentAudienceMode(), false);
     applyStructuralLocale();
     if (tabAfterInstall) {
+      const panel = document.getElementById(`tab-${tabAfterInstall}`);
+      if (!panel) throw new Error(`Research surface "${tabAfterInstall}" did not install its tab panel.`);
       (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(
         tabAfterInstall
       );
@@ -254,6 +254,14 @@ function armResearchOnDemand(): void {
     const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
     if (tab && RESEARCH_SURFACE_TABS.has(tab) && !researchBoot.isStarted())
       void ensureResearch(tab).catch(reportResearchBootFailure);
+  });
+  // Shell emits a request (rather than an activation) when a lazy tab does
+  // not have a panel yet. Always join the retryable load here, even when an
+  // audience-mode change already started it, so the requested tab is selected
+  // exactly once after installation.
+  document.addEventListener(TAB_REQUESTED_EVENT, (event) => {
+    const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
+    if (tab && RESEARCH_SURFACE_TABS.has(tab)) void ensureResearch(tab).catch(reportResearchBootFailure);
   });
   // Rail action buttons (the always-visible palette launcher, Floquet probe,
   // manifest/report exports) are bound by the lazily-loaded parity layer. A
@@ -278,7 +286,7 @@ function armResearchOnDemand(): void {
   // layer, and open the palette directly.
   document.addEventListener('keydown', (event) => {
     if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
-    if (event.defaultPrevented || event.isComposing || isShellShortcutTarget(event.target)) return;
+    if (event.defaultPrevented || event.isComposing || isTextEntryShortcutTarget(event.target)) return;
     if (document.getElementById('rgv8Cmd')) return; // the parity listener owns it now
     event.preventDefault();
     void ensureResearch()
@@ -290,9 +298,8 @@ function armResearchOnDemand(): void {
 }
 
 /**
- * Boot stage 5 — modern shell owns tab navigation, then visual-only
- * interaction polish (slider progress fill, ripples) installed last so it
- * observes the fully-built DOM.
+ * Boot stage 5 — modern shell owns tab navigation, then functional viewport,
+ * input-modality, and range-progress synchronization observes the built DOM.
  */
 function bootShell(): void {
   maybeMountModernShell();
@@ -305,8 +312,6 @@ function bootShell(): void {
   installEducationCards();
   installOnboardingTour();
   installUiPolish();
-  installHudEffects();
-  installKineticOverdrive();
 }
 
 async function boot(): Promise<void> {

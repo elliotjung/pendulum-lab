@@ -26,17 +26,18 @@ let returnFocus: HTMLElement | null = null;
 
 function css(): string {
   return `
-#${DIALOG_ID}{width:min(560px,calc(100vw - 28px));max-height:min(680px,calc(100vh - 28px));padding:0;border:1px solid var(--border-strong);border-radius:16px;color:var(--fg);background:var(--panel-solid);box-shadow:var(--shadow-lg)}
-#${DIALOG_ID}::backdrop{background:rgba(2,4,10,.76);backdrop-filter:blur(5px)}
+#${DIALOG_ID}{width:min(560px,calc(100vw - 28px));max-height:min(680px,calc(100dvh - 28px),var(--ui-viewport-height,100dvh));overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding:0;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:12px;color:var(--workbench-text-secondary,#a8b0c2);background:var(--workbench-elevated,#151a28);box-shadow:0 24px 56px rgba(0,0,0,.36)}
+#${DIALOG_ID}::backdrop{background:rgba(4,6,10,.78)}
 .shortcut-help-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 20px 14px;border-bottom:1px solid var(--divider)}
-.shortcut-help-head h2{font:750 18px/1.25 var(--font-display);color:var(--fg-bright)}
+.shortcut-help-head h2{font:650 18px/1.25 var(--font-sans,system-ui);color:var(--workbench-text,#f1f3f8)}
 .shortcut-help-head p{margin-top:5px;color:var(--muted);font-size:11.5px;line-height:1.5}
-.shortcut-help-close{min-width:34px;min-height:34px;padding:0;border-radius:8px}
+.shortcut-help-close{min-width:44px;min-height:44px;padding:0;border-radius:8px;touch-action:manipulation}
 .shortcut-help-list{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:0;padding:8px 20px 18px}
 .shortcut-help-list dt,.shortcut-help-list dd{padding:10px 4px;border-bottom:1px solid var(--divider)}
 .shortcut-help-list dt{padding-right:20px}.shortcut-help-list dd{color:var(--text);line-height:1.45}
-.shortcut-help-list kbd{display:inline-block;min-width:36px;padding:4px 7px;border:1px solid var(--border-strong);border-radius:6px;background:var(--panel-elevated);color:var(--fg-bright);font:650 11px/1 var(--font-mono);text-align:center;box-shadow:inset 0 -1px rgba(0,0,0,.25)}
-@media(max-width:480px){.shortcut-help-list{grid-template-columns:1fr;padding-inline:16px}.shortcut-help-list dt{padding-bottom:3px;border-bottom:0}.shortcut-help-list dd{padding-top:3px}.shortcut-help-head{padding-inline:16px}}
+.shortcut-help-list kbd{display:inline-block;min-width:36px;padding:4px 7px;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:5px;background:var(--workbench-control,#181d2b);color:var(--workbench-text,#f1f3f8);font:650 11px/1 var(--font-mono);text-align:center}
+@media(max-width:480px){#${DIALOG_ID}{width:calc(100vw - 20px);max-height:min(calc(100dvh - 20px),var(--ui-viewport-height,100dvh))}.shortcut-help-list{grid-template-columns:1fr;padding-inline:16px}.shortcut-help-list dt{padding-bottom:3px;border-bottom:0}.shortcut-help-list dd{padding-top:3px}.shortcut-help-head{padding-inline:16px}}
+@media(forced-colors:active){#${DIALOG_ID}{background:Canvas;color:CanvasText;border-color:CanvasText;box-shadow:none}.shortcut-help-list kbd{background:Canvas;color:CanvasText;border-color:CanvasText}}
 `;
 }
 

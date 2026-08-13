@@ -49,6 +49,14 @@ jobs:
             mutate: src/physics/sphericalEmbeddedChain.ts
           - name: stochastic
             mutate: src/physics/stochastic.ts
+          - name: stochastic-steppers-diagonal
+            mutate: src/physics/stochasticSteppers.ts:1-230
+          - name: stochastic-steppers-matrix-contracts
+            mutate: src/physics/stochasticSteppers.ts:231-386
+          - name: stochastic-steppers-heun
+            mutate: src/physics/stochasticSteppers.ts:387-541
+          - name: stochastic-steppers-milstein
+            mutate: src/physics/stochasticSteppers.ts:542-657
           - name: melnikov
             mutate: src/chaos/melnikov.ts
           - name: lyapunov

@@ -14,6 +14,7 @@ import {
   setNavLocale,
   type NavLocale
 } from './navGuide';
+import { announceUiPreference } from './modalSurface';
 
 const SELECT_ID = 'navLocale';
 
@@ -111,9 +112,17 @@ export function applyStructuralLocale(): void {
       const label = labels[option.value];
       if (label) option.textContent = korean ? label.ko : label.en;
     });
+    mode.title = korean ? '화면에 표시할 기능의 깊이를 선택합니다' : 'Choose how much interface detail is visible';
   }
   localizeText(document.querySelector<HTMLElement>('label[for="audienceMode"]'), '모드', korean);
   localizeText(document.querySelector<HTMLElement>('label[for="navLocale"]'), '언어', korean);
+  localizeText(document.getElementById('audienceModeHint'), '화면에 표시할 기능의 깊이를 조절합니다.', korean);
+  localizeText(document.getElementById('navLocaleHint'), '메뉴와 핵심 조절기의 언어를 바꿉니다.', korean);
+  const preferenceGroup = document.querySelector<HTMLElement>('.audience-select');
+  preferenceGroup?.setAttribute('aria-label', korean ? '작업공간 환경설정' : 'Workspace preferences');
+  const preferenceToggle = document.getElementById('audiencePreferencesToggle');
+  preferenceToggle?.setAttribute('aria-label', korean ? '작업공간 환경설정 열기' : 'Open workspace preferences');
+  preferenceToggle?.setAttribute('title', korean ? '모드와 언어' : 'Mode and language');
   const localeSelect = document.getElementById(SELECT_ID);
   localeSelect?.setAttribute('aria-label', korean ? '메뉴 안내 언어' : 'Menu guide language');
   localeSelect?.setAttribute(
@@ -136,6 +145,20 @@ export function applyStructuralLocale(): void {
   }
   const close = document.getElementById('trustDrawerClose');
   close?.setAttribute('aria-label', korean ? '진단 창 닫기' : 'Close the diagnostics drawer');
+
+  const panelToggle = document.getElementById('panelToggle');
+  if (panelToggle) {
+    const collapsed = document.body.classList.contains('panel-collapsed');
+    const panelLabel = collapsed
+      ? korean
+        ? '측면 패널 표시'
+        : 'Show side panel'
+      : korean
+        ? '측면 패널 숨기기'
+        : 'Hide side panel';
+    panelToggle.setAttribute('aria-label', panelLabel);
+    panelToggle.setAttribute('title', `${panelLabel} (\\)`);
+  }
 }
 
 function storedNavLocale(): NavLocale | null {
@@ -171,14 +194,20 @@ export function initNavLocale(): void {
  */
 export function installLocaleSelect(refresh: () => void): void {
   if (typeof document === 'undefined' || document.getElementById(SELECT_ID)) return;
-  const host = document.querySelector('.audience-select');
+  const host = document.querySelector('.audience-preference-fields') ?? document.querySelector('.audience-select');
   if (!host) return;
+  const field = document.createElement('div');
+  field.className = 'audience-field audience-field-locale';
   const label = document.createElement('label');
+  label.className = 'audience-field-label';
   label.htmlFor = SELECT_ID;
   label.textContent = 'Language';
   const select = document.createElement('select');
   select.id = SELECT_ID;
+  select.name = 'navigation-locale';
+  select.autocomplete = 'off';
   select.setAttribute('aria-label', 'Menu guide language');
+  select.setAttribute('aria-describedby', 'navLocaleHint');
   for (const [value, text] of [
     ['en', 'English'],
     ['ko', '한국어']
@@ -199,7 +228,14 @@ export function installLocaleSelect(refresh: () => void): void {
     }
     applyStructuralLocale();
     refresh();
+    document.dispatchEvent(new CustomEvent('pendulum:ui-locale-changed', { detail: { locale } }));
+    announceUiPreference(locale === 'ko' ? '메뉴 언어: 한국어' : 'Menu language: English');
   });
-  host.append(label, select);
+  const hint = document.createElement('span');
+  hint.id = 'navLocaleHint';
+  hint.className = 'v10-sr';
+  hint.textContent = 'Changes the language of menus and core controls.';
+  field.append(label, select, hint);
+  host.append(field);
   applyStructuralLocale();
 }

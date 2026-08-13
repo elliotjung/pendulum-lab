@@ -1,23 +1,31 @@
 name: Deploy verified build to GitHub Pages
 
 on:
-  push:
-    branches: [main, master]
-  workflow_dispatch:
+  workflow_run:
+    workflows: [Mainline Full Validation]
+    types: [completed]
 
 permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.ref }}
+  # Serialize a production branch so an older, slower validation cannot deploy
+  # after a newer commit. Checkout below remains pinned to the validated SHA.
+  group: pages-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
   quality-gate:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master')
     runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
@@ -28,10 +36,9 @@ jobs:
         run: npm run verify
       - name: Reject unexpected tracked rewrites from verification
         shell: bash
-        run: |
-          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
-          git restore --worktree -- reports/vitest-results.json
-          git diff --exit-code
+        # The JSON test report is intentionally ignored. `git diff` already
+        # limits this gate to tracked paths, so no restore is necessary.
+        run: git diff --exit-code
       - run: npm run audit:legacy
       - run: npm run audit:mojibake:strict
       - run: npm run build:lib
@@ -60,6 +67,8 @@ jobs:
         shard: [1, 2]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
@@ -108,6 +117,8 @@ jobs:
             specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/trust-inspector.spec.ts
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22

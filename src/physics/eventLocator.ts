@@ -45,8 +45,23 @@ export function refineCrossing(
 ): RefinedCrossing {
   const tol = options.tol ?? 1e-9;
   const maxIterations = options.maxIterations ?? 80;
+  if (typeof g !== 'function') throw new TypeError('refineCrossing: g must be a function');
+  if (![lo, hi, gLo, gHi].every(Number.isFinite)) {
+    throw new RangeError('refineCrossing: bracket times and endpoint values must be finite');
+  }
+  if (lo > hi) throw new RangeError('refineCrossing: bracket must satisfy lo <= hi');
+  if (!(tol > 0) || !Number.isFinite(tol)) {
+    throw new RangeError('refineCrossing: tol must be positive and finite');
+  }
+  if (!Number.isSafeInteger(maxIterations) || maxIterations < 1 || maxIterations > 10_000) {
+    throw new RangeError('refineCrossing: maxIterations must be a safe integer in [1, 10000]');
+  }
   let iterations = 0;
   if (gLo === 0) return { tBefore: lo, tAfter: lo, gBefore: 0, gAfter: 0, iterations };
+  if (gHi === 0) return { tBefore: hi, tAfter: hi, gBefore: 0, gAfter: 0, iterations };
+  if (lo === hi || gLo < 0 === gHi < 0) {
+    throw new RangeError('refineCrossing: endpoint values must bracket a sign change');
+  }
 
   while (hi - lo > tol && iterations < maxIterations) {
     iterations += 1;
@@ -56,6 +71,7 @@ export function refineCrossing(
     const guard = 0.1 * (hi - lo);
     if (!(mid > lo + guard && mid < hi - guard)) mid = 0.5 * (lo + hi);
     const gMid = g(mid);
+    if (!Number.isFinite(gMid)) throw new RangeError('refineCrossing: g returned a non-finite value');
     // An exact zero is the root — return it instead of folding it into one
     // bracket side, where a zero gLo would corrupt the subsequent sign tests.
     // (The secant step lands exactly on the root often enough to matter.)
@@ -84,6 +100,10 @@ export function locateTransition(
   g1: number,
   options: RefineOptions = {}
 ): RefinedCrossing {
+  if (!(h > 0) || !Number.isFinite(h)) throw new RangeError('locateTransition: h must be positive and finite');
+  if (!Number.isFinite(g0) || !Number.isFinite(g1)) {
+    throw new RangeError('locateTransition: endpoint values must be finite');
+  }
   if (!(g0 > 0 && g1 <= 0) && !(g0 < 0 && g1 >= 0)) {
     return { tBefore: h, tAfter: h, gBefore: g0, gAfter: g1, iterations: 0 };
   }

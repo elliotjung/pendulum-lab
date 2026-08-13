@@ -36,8 +36,8 @@ jobs:
             echo "LANDING_DISPATCH_TOKEN is required; landing evidence sync did not run." >&2
             exit 1
           fi
-          evidence_source_commit="$(node -e "const r=require('./reports/evidence-summary.json'); process.stdout.write(r.provenance.sourceCommit)")"
-          curl --fail-with-body --retry 3 \
+          evidence_source_commit="$(node -e "const r=require('./reports/evidence-summary.json'); const p=r?.provenance; const t=r?.tests; const v=p?.sourceCommit; if(t?.failed!==0) throw new Error('refusing to dispatch evidence with failed tests'); if(t?.passed!==t?.total) throw new Error('refusing to dispatch incomplete test evidence'); if(t?.success!==true) throw new Error('refusing to dispatch unsuccessful test evidence'); if(!/^[0-9a-f]{40}$/i.test(v)) throw new Error('evidence sourceCommit must be a full Git SHA'); if(p?.dirtyWorktree!==false) throw new Error('refusing to dispatch evidence generated from a dirty worktree'); const expiry=Date.parse(p?.expiresAt??''); if(!Number.isFinite(expiry)||expiry<=Date.now()) throw new Error('refusing to dispatch expired evidence'); process.stdout.write(v)")"
+          curl --fail-with-body --retry 3 --retry-all-errors --connect-timeout 10 --max-time 60 \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $LANDING_DISPATCH_TOKEN" \

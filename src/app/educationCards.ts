@@ -57,7 +57,7 @@ export const EDUCATION_CARDS: readonly EducationCardSpec[] = [
 
 function css(): string {
   return `
-.education-card{margin:0 0 12px;padding:12px 14px;border:1px solid var(--divider);border-left:2px solid var(--cyan);border-radius:8px;background:linear-gradient(90deg,rgba(30,227,255,.07),rgba(255,255,255,.02));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.education-card{margin:0 0 12px;padding:12px 14px;border:1px solid var(--workbench-border,rgba(205,214,245,.08));border-left:2px solid var(--workbench-info,#7ca8f6);border-radius:8px;background:var(--workbench-panel,#10141f);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
 .education-card strong{display:block;color:var(--fg-bright);font-size:13px;margin-bottom:3px}
 .education-card span{display:block;color:var(--text);font-size:12px;line-height:1.45}
 .education-card button{white-space:nowrap}

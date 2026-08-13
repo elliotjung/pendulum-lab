@@ -27,6 +27,8 @@ jobs:
     environment: npm
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
@@ -51,10 +53,7 @@ jobs:
       - run: npm run verify
       - name: Reject unexpected tracked rewrites from verification
         shell: bash
-        run: |
-          git diff --exit-code -- . ':(exclude)reports/vitest-results.json'
-          git restore --worktree -- reports/vitest-results.json
-          git diff --exit-code
+        run: git diff --exit-code
       - run: npm run build:lib
       - name: Publish dry-run
         if: ${{ inputs.dry_run }}

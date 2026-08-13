@@ -10,6 +10,8 @@ interface RequestLike {
   method: string;
   mode: string;
   url: string;
+  cache?: string;
+  headers?: Headers;
 }
 
 type CacheKey = string | RequestLike;
@@ -23,6 +25,8 @@ class MemoryCache {
   readonly addAllCalls: string[][] = [];
   readonly deleteCalls: string[] = [];
   readonly putCalls: Array<{ request: CacheKey; response: unknown }> = [];
+  failNextDelete = false;
+  failNextPut = false;
   private readonly entries = new Map<string, { request: CacheKey; response: unknown }>();
 
   async addAll(requests: string[]): Promise<void> {
@@ -33,6 +37,10 @@ class MemoryCache {
   }
 
   async delete(request: CacheKey): Promise<boolean> {
+    if (this.failNextDelete) {
+      this.failNextDelete = false;
+      throw new DOMException('injected delete failure', 'InvalidStateError');
+    }
     const key = keyOf(request);
     this.deleteCalls.push(key);
     return this.entries.delete(key);
@@ -47,6 +55,10 @@ class MemoryCache {
   }
 
   async put(request: CacheKey, response: unknown): Promise<void> {
+    if (this.failNextPut) {
+      this.failNextPut = false;
+      throw new DOMException('injected put failure', 'QuotaExceededError');
+    }
     this.putCalls.push({ request, response });
     this.entries.set(keyOf(request), { request, response });
   }
@@ -100,6 +112,14 @@ class TrackedResponse {
     readonly label: string,
     readonly ok = true
   ) {}
+
+  get status(): number {
+    return this.ok ? 200 : 503;
+  }
+
+  get url(): string {
+    return this.label;
+  }
 
   clone(): { source: string; type: 'clone' } {
     this.cloneCalls += 1;
@@ -271,6 +291,129 @@ describe('service worker behavior', () => {
     const runtime = await harness.caches.open(RUNTIME_CACHE);
     expect(networkResponse.cloneCalls).toBe(0);
     expect(runtime.size).toBe(0);
+  });
+
+  test.each([
+    ['partial response', new Response('partial', { status: 206 })],
+    ['no-store response', new Response('private', { headers: { 'Cache-Control': 'no-store' } })],
+    ['private response', new Response('private', { headers: { 'Cache-Control': 'private, max-age=60' } })],
+    ['Vary-star response', new Response('variant', { headers: { Vary: '*' } })],
+    ['oversized response', new Response('large', { headers: { 'Content-Length': String(25 * 1024 * 1024 + 1) } })]
+  ])('does not cache a %s', async (_label, networkResponse) => {
+    const harness = createHarness(async () => networkResponse);
+    const event = harness.dispatch('fetch', request('/assets/rejected.js'));
+    expect(await event.response).toBe(networkResponse);
+    await event.settle();
+    expect((await harness.caches.open(RUNTIME_CACHE)).size).toBe(0);
+  });
+
+  test('does not cache a response whose final URL is cross-origin', async () => {
+    const response = new TrackedResponse('https://cdn.example.test/redirected.js');
+    const harness = createHarness(async () => response);
+    const event = harness.dispatch('fetch', request('/assets/redirected.js'));
+    expect(await event.response).toBe(response);
+    await event.settle();
+    expect((await harness.caches.open(RUNTIME_CACHE)).size).toBe(0);
+  });
+
+  test('recovers after an injected cache put failure', async () => {
+    const harness = createHarness(async (target) => new TrackedResponse(target.url));
+    const runtime = await harness.caches.open(RUNTIME_CACHE);
+    runtime.failNextPut = true;
+    const failed = harness.dispatch('fetch', request('/assets/quota-failure.js'));
+    await failed.response;
+    await failed.settle();
+    expect(runtime.size).toBe(0);
+    const recoveredTarget = request('/assets/quota-recovered.js');
+    const recovered = harness.dispatch('fetch', recoveredTarget);
+    await recovered.response;
+    await recovered.settle();
+    expect(runtime.has(recoveredTarget)).toBe(true);
+  });
+
+  test('recovers a poisoned trim queue on the next cache write', async () => {
+    const harness = createHarness(async (target) => new TrackedResponse(target.url));
+    const runtime = await harness.caches.open(RUNTIME_CACHE);
+    for (let index = 0; index < 96; index += 1) {
+      await runtime.put(request(`/runtime/seed-${index}.js`), new Response(String(index)));
+    }
+    runtime.failNextDelete = true;
+    const failedTrim = harness.dispatch('fetch', request('/runtime/trim-failure.js'));
+    await failedTrim.response;
+    await failedTrim.settle();
+    expect(runtime.size).toBe(97);
+    expect(harness.warn).toHaveBeenCalledWith('Pendulum Lab runtime cache update failed.', expect.any(Error));
+
+    const recovered = harness.dispatch('fetch', request('/runtime/trim-recovered.js'));
+    await recovered.response;
+    await recovered.settle();
+    expect(runtime.size).toBe(96);
+    expect(runtime.has(request('/runtime/trim-recovered.js'))).toBe(true);
+  });
+
+  test('serves the current shell instead of a retained stale generation', async () => {
+    const harness = createHarness();
+    const target = request('/app.html');
+    const oldShell = await harness.caches.open('pendulum-lab-v10.35.0-shell');
+    const stale = new Response('stale shell');
+    await oldShell.put(target, stale);
+    const currentShell = await harness.caches.open(SHELL_CACHE);
+    const current = new Response('current shell');
+    await currentShell.put(target, current);
+
+    const event = harness.dispatch('fetch', target);
+    expect(await event.response).toBe(current);
+    expect(harness.fetch).not.toHaveBeenCalled();
+  });
+
+  test('falls back to a retained previous runtime asset during an offline worker upgrade', async () => {
+    const harness = createHarness();
+    const target = request('/assets/new-hash-cached-by-old-controller.js');
+    const previousRuntime = await harness.caches.open('pendulum-lab-v10.35.0-runtime');
+    const retainedAsset = new Response('retained new hash');
+    await previousRuntime.put(target, retainedAsset);
+
+    const event = harness.dispatch('fetch', target);
+    expect(await event.response).toBe(retainedAsset);
+    await event.settle();
+    expect(harness.fetch).not.toHaveBeenCalled();
+    expect((await harness.caches.open(RUNTIME_CACHE)).size).toBe(0);
+  });
+
+  test('falls back to the cached shell on a server-side navigation failure', async () => {
+    const harness = createHarness(async () => new TrackedResponse('server failure', false));
+    const currentShell = await harness.caches.open(SHELL_CACHE);
+    const fallback = new Response('current offline shell');
+    await currentShell.put('./index.html', fallback);
+
+    const event = harness.dispatch('fetch', request('/lab', 'navigate'));
+    expect(await event.response).toBe(fallback);
+    await event.settle();
+  });
+
+  test('prefers the current index shell over a previous generation exact navigation', async () => {
+    const harness = createHarness(async () => new TrackedResponse('server failure', false));
+    const target = request('/research-route', 'navigate');
+    const previousShell = await harness.caches.open('pendulum-lab-v10.35.0-shell');
+    const staleExact = new Response('stale exact route');
+    await previousShell.put(new URL(target.url).origin + new URL(target.url).pathname, staleExact);
+    const currentShell = await harness.caches.open(SHELL_CACHE);
+    const currentIndex = new Response('current index shell');
+    await currentShell.put('./index.html', currentIndex);
+
+    const event = harness.dispatch('fetch', target);
+    expect(await event.response).toBe(currentIndex);
+    await event.settle();
+  });
+
+  test.each([
+    { ...request('/assets/video.bin'), headers: new Headers({ Range: 'bytes=0-99' }) },
+    { ...request('/assets/private.js'), headers: new Headers({ Authorization: 'Bearer secret' }) }
+  ])('bypasses range and authorization-bearing requests %#', (target) => {
+    const harness = createHarness();
+    const event = harness.dispatch('fetch', target);
+    expect(event.response).toBeUndefined();
+    expect(event.waits).toHaveLength(0);
   });
 
   test('settles background work and serves the shell when navigation fetch fails', async () => {

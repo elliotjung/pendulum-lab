@@ -79,6 +79,9 @@ const INTERACTIVE_SHORTCUT_TARGET = [
   '[role="textbox"]'
 ].join(',');
 
+const TEXT_ENTRY_SHORTCUT_TARGET =
+  'input,select,textarea,[contenteditable]:not([contenteditable="false"]),[role="combobox"],[role="textbox"]';
+
 type ShortcutGuardEvent = Pick<
   KeyboardEvent,
   'altKey' | 'ctrlKey' | 'defaultPrevented' | 'isComposing' | 'metaKey' | 'target'
@@ -95,6 +98,13 @@ export function isShellShortcutTarget(target: EventTarget | null): boolean {
   return typeof closestTarget?.closest === 'function' && Boolean(closestTarget.closest(INTERACTIVE_SHORTCUT_TARGET));
 }
 
+/** True only for controls where Ctrl/Cmd+K may belong to text entry itself. */
+export function isTextEntryShortcutTarget(target: EventTarget | null): boolean {
+  const candidate = target as (EventTarget & ClosestTarget) | null;
+  const closestTarget = typeof candidate?.closest === 'function' ? candidate : candidate?.parentElement;
+  return typeof closestTarget?.closest === 'function' && Boolean(closestTarget.closest(TEXT_ENTRY_SHORTCUT_TARGET));
+}
+
 /** True when a global shell shortcut must leave the keystroke to the page/widget. */
 export function shouldIgnoreShellShortcut(event: ShortcutGuardEvent): boolean {
   if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return true;
@@ -102,7 +112,9 @@ export function shouldIgnoreShellShortcut(event: ShortcutGuardEvent): boolean {
 }
 
 function compactRail(): boolean {
-  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px), (pointer: coarse)').matches;
+  // Match the actual horizontal-bottom-rail CSS breakpoint. Pointer precision
+  // does not change the layout: a 768px touch tablet still has a vertical rail.
+  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px)').matches;
 }
 
 function urlParam(name: string): string | null {
@@ -300,6 +312,7 @@ export class Shell {
 
   private bindRailSections(): void {
     let closeTimer: number | null = null;
+    let suppressFocusOpen = false;
     const clearCloseTimer = (): void => {
       if (closeTimer === null) return;
       window.clearTimeout(closeTimer);
@@ -326,10 +339,24 @@ export class Shell {
         const section = btn.dataset.railSectionButton;
         if (section) this.openRailSection(section);
       };
-      btn.addEventListener('click', open);
+      btn.addEventListener('click', () => {
+        clearCloseTimer();
+        const section = btn.closest<HTMLElement>('.rail-section');
+        const name = btn.dataset.railSectionButton;
+        if (section?.classList.contains('open')) this.closeRailSections();
+        else if (name) this.openRailSection(name);
+      });
       // Keyboard path: focusing a section button opens its menu, so Tab
       // reaches the submenu entries without needing a pointer.
-      btn.addEventListener('focus', open);
+      btn.addEventListener('focus', () => {
+        // Pointer activation focuses before click. Waiting one microtask lets
+        // :focus-visible distinguish that path so a click does not immediately
+        // re-close the menu that focus just opened.
+        queueMicrotask(() => {
+          if (suppressFocusOpen) return;
+          if (btn.matches(':focus-visible')) open();
+        });
+      });
     });
     document.querySelectorAll<HTMLElement>('.rail-section[data-rail-section]').forEach((section) => {
       section.addEventListener('pointerenter', clearCloseTimer);
@@ -344,7 +371,27 @@ export class Shell {
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         clearCloseTimer();
+        const activeSection =
+          document.activeElement instanceof Element
+            ? document.activeElement.closest<HTMLElement>('.rail-section.open')
+            : null;
+        const hadOpenSection = Boolean(document.querySelector('.rail-section.open'));
         this.closeRailSections();
+        if (activeSection) {
+          event.preventDefault();
+          const menuButton = activeSection.querySelector<HTMLElement>('.rail-menu-button');
+          if (menuButton) {
+            // Returning keyboard focus to the section button must not trigger
+            // its focus-visible auto-open hook in the following microtask.
+            suppressFocusOpen = true;
+            menuButton.focus();
+            queueMicrotask(() => {
+              suppressFocusOpen = false;
+            });
+          }
+        } else if (hadOpenSection) {
+          event.preventDefault();
+        }
       }
     });
   }
@@ -374,7 +421,8 @@ export class Shell {
       });
       clone.addEventListener('keydown', (event) => {
         if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
-        const tabs = Array.from(document.querySelectorAll<HTMLElement>('.tab[data-tab]')).filter(
+        const tabScope = clone.closest<HTMLElement>('.rail-submenu,.rail-tab-list') ?? document;
+        const tabs = Array.from(tabScope.querySelectorAll<HTMLElement>('.tab[data-tab]')).filter(
           (tab) =>
             !tab.hidden &&
             tab.getAttribute('aria-hidden') !== 'true' &&
@@ -394,6 +442,16 @@ export class Shell {
         tabs[nextIndex]?.focus();
       });
     });
+    const syncTablistOrientation = (): void => {
+      const orientation = compactRail() ? 'horizontal' : 'vertical';
+      document
+        .querySelectorAll<HTMLElement>('.rail-submenu[role="tablist"],.rail-tab-list[role="tablist"]')
+        .forEach((tablist) => tablist.setAttribute('aria-orientation', orientation));
+    };
+    syncTablistOrientation();
+    window.addEventListener('resize', syncTablistOrientation, { passive: true });
+    const compactQuery = window.matchMedia?.('(max-width: 560px)');
+    compactQuery?.addEventListener?.('change', syncTablistOrientation);
     if (!document.getElementById('tabChangeStatus')) {
       const status = document.createElement('div');
       status.id = 'tabChangeStatus';
@@ -444,7 +502,8 @@ export class Shell {
         if (section && !compactRail()) this.openRailSection(section);
         const focusId = btn.dataset.workflowFocus;
         const focusTarget = focusId ? document.getElementById(focusId) : null;
-        focusTarget?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+        focusTarget?.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
         if (focusTarget instanceof HTMLElement) focusTarget.focus({ preventScroll: true });
       });
     });
@@ -537,9 +596,18 @@ export class Shell {
     document.body.classList.toggle('panel-collapsed', collapsed);
     const btn = document.getElementById('panelToggle');
     if (btn) {
+      const korean = document.documentElement.lang === 'ko';
+      const label = collapsed
+        ? korean
+          ? '측면 패널 표시'
+          : 'Show side panel'
+        : korean
+          ? '측면 패널 숨기기'
+          : 'Hide side panel';
       btn.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+      btn.setAttribute('aria-label', label);
       btn.textContent = collapsed ? '⟨' : '⟩';
-      btn.title = collapsed ? 'Show side panel (\\)' : 'Hide side panel (\\)';
+      btn.title = `${label} (\\)`;
     }
     try {
       window.localStorage?.setItem(PANEL_COLLAPSED_KEY, collapsed ? '1' : '0');

@@ -15,6 +15,7 @@
  */
 
 import { hasAdoptedStyle, installAdoptedStyle } from '../ui/adoptedStyles';
+import { activateModalSurface, deactivateModalSurface, trapModalFocus } from './modalSurface';
 
 export type ResultBadgeLevel = 'visual-only' | 'finite-time-estimate' | 'validated' | 'publication-ready' | 'caveat';
 
@@ -120,25 +121,26 @@ export function classifyExport(options: { hash?: string | null; validated?: bool
 
 const BADGE_STYLE_ID = 'result-badge-style';
 const BADGE_CSS = `
-.rb-badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font:700 8.5px/1.4 var(--font-mono,monospace);letter-spacing:0;border:1px solid;vertical-align:middle;margin-right:6px;cursor:pointer}
-.rb-badge:focus-visible{outline:2px solid rgba(24,212,248,.75);outline-offset:2px}
-.rb-visual-only{color:#8fa3c2;border-color:rgba(143,163,194,.45);background:rgba(143,163,194,.08)}
-.rb-finite-time-estimate{color:#18d4f8;border-color:rgba(24,212,248,.45);background:rgba(24,212,248,.07)}
-.rb-validated{color:#38e88c;border-color:rgba(56,232,140,.5);background:rgba(56,232,140,.07)}
-.rb-publication-ready{color:#f0c419;border-color:rgba(240,196,25,.55);background:rgba(240,196,25,.08)}
-.rb-caveat{color:#ff7a2c;border-color:rgba(255,122,44,.55);background:rgba(255,122,44,.08)}
-.trust-inspector-backdrop{position:fixed;inset:0;z-index:13000;display:grid;place-items:center;padding:18px;background:rgba(2,5,12,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.trust-inspector-panel{width:min(680px,calc(100vw - 32px));max-height:calc(100vh - 36px);overflow:auto;border:1px solid rgba(24,212,248,.34);border-radius:12px;background:rgba(7,10,20,.98);box-shadow:0 28px 90px rgba(0,0,0,.48);color:var(--text,#dfe9ff);padding:16px}
-.trust-inspector-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(143,163,194,.2);padding-bottom:10px;margin-bottom:10px}
-.trust-inspector-kicker{font:700 9px/1.2 var(--font-mono,monospace);color:var(--cyan,#18d4f8);text-transform:uppercase;letter-spacing:0;margin-bottom:5px}
-.trust-inspector-title{font:700 18px/1.25 var(--font-display,system-ui);color:var(--fg-bright,#fff)}
-.trust-inspector-close{width:32px;height:32px;border-radius:8px;padding:0}
+.rb-badge{display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:2px 7px;font:600 8.5px/1.4 var(--font-mono,monospace);letter-spacing:0;border:1px solid;vertical-align:middle;margin-right:6px;cursor:pointer;background:var(--workbench-raised,#0b0e17)}
+.rb-badge:focus-visible{outline:2px solid var(--focus,#b7afff);outline-offset:2px}
+.rb-visual-only{color:var(--workbench-text-muted,#737e92);border-color:var(--workbench-border-strong,rgba(205,214,245,.14))}
+.rb-finite-time-estimate{color:var(--workbench-live,#72d6e5);border-color:color-mix(in srgb,var(--workbench-live,#72d6e5) 44%,transparent)}
+.rb-validated{color:var(--workbench-green,#58c99b);border-color:color-mix(in srgb,var(--workbench-green,#58c99b) 44%,transparent)}
+.rb-publication-ready{color:var(--workbench-info,#7ca8f6);border-color:color-mix(in srgb,var(--workbench-info,#7ca8f6) 44%,transparent)}
+.rb-caveat{color:var(--workbench-amber,#e0ae68);border-color:color-mix(in srgb,var(--workbench-amber,#e0ae68) 44%,transparent)}
+.trust-inspector-backdrop{position:fixed;inset:0;z-index:13000;display:grid;place-items:center;overflow:hidden;overscroll-behavior:contain;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));background:rgba(4,6,10,.78)}
+.trust-inspector-panel{width:min(680px,100%);max-height:min(calc(100dvh - 36px),var(--ui-viewport-height,100dvh));overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:12px;background:var(--workbench-elevated,#151a28);box-shadow:0 24px 56px rgba(0,0,0,.36);color:var(--workbench-text-secondary,#a8b0c2);padding:16px}
+.trust-inspector-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid var(--workbench-border,rgba(205,214,245,.08));padding-bottom:10px;margin-bottom:10px}
+.trust-inspector-kicker{font:600 9px/1.2 var(--font-mono,monospace);color:var(--workbench-live,#72d6e5);margin-bottom:5px}
+.trust-inspector-title{font:650 18px/1.25 var(--font-sans,system-ui);color:var(--workbench-text,#f1f3f8)}
+.trust-inspector-close{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:8px;padding:0;touch-action:manipulation}
 .trust-inspector-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 12px;font-size:12px;line-height:1.45}
-.trust-inspector-label{font:700 10px/1.45 var(--font-mono,monospace);color:var(--muted,#8fa3c2);text-transform:uppercase}
+.trust-inspector-label{font:600 10px/1.45 var(--font-mono,monospace);color:var(--workbench-text-muted,#737e92)}
 .trust-inspector-value{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .trust-inspector-params{display:flex;flex-wrap:wrap;gap:6px}
-.trust-inspector-param{border:1px solid rgba(143,163,194,.24);border-radius:7px;padding:3px 6px;background:rgba(255,255,255,.035);font:10px/1.35 var(--font-mono,monospace)}
-@media(max-width:560px){.trust-inspector-grid{grid-template-columns:1fr}.trust-inspector-label{margin-top:6px}}
+.trust-inspector-param{border:1px solid var(--workbench-border,rgba(205,214,245,.08));border-radius:5px;padding:3px 6px;background:var(--workbench-panel,#10141f);font:10px/1.35 var(--font-mono,monospace)}
+@media(max-width:560px){.trust-inspector-backdrop{padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}.trust-inspector-panel{max-height:min(calc(100dvh - 20px),var(--ui-viewport-height,100dvh));padding:14px}.trust-inspector-grid{grid-template-columns:1fr}.trust-inspector-label{margin-top:6px}}
+@media(forced-colors:active){.trust-inspector-backdrop,.trust-inspector-panel{forced-color-adjust:auto;background:Canvas;color:CanvasText;border-color:CanvasText;box-shadow:none}}
 `;
 
 function ensureBadgeStyle(): void {
@@ -220,10 +222,23 @@ function paramsElement(params: Record<string, string>): HTMLElement {
   return wrap;
 }
 
+let inspectorReturnFocus: HTMLElement | null = null;
+
+function closeTrustInspector(backdrop: HTMLElement, restoreFocus = true): void {
+  deactivateModalSurface(backdrop);
+  backdrop.remove();
+  const target = inspectorReturnFocus;
+  inspectorReturnFocus = null;
+  if (restoreFocus && target?.isConnected) queueMicrotask(() => target.focus());
+}
+
 export function openTrustInspector(data: NormalizedTrustInspection): void {
   if (typeof document === 'undefined') return;
   ensureBadgeStyle();
-  document.querySelector('.trust-inspector-backdrop')?.remove();
+  const active = document.activeElement;
+  const previous = document.querySelector<HTMLElement>('.trust-inspector-backdrop');
+  if (previous) closeTrustInspector(previous, false);
+  inspectorReturnFocus = active instanceof HTMLElement && !previous?.contains(active) ? active : null;
   const backdrop = document.createElement('div');
   backdrop.className = 'trust-inspector-backdrop';
   backdrop.setAttribute('role', 'presentation');
@@ -242,14 +257,17 @@ export function openTrustInspector(data: NormalizedTrustInspection): void {
   kicker.textContent = data.badgeLabel;
   const title = document.createElement('div');
   title.className = 'trust-inspector-title';
+  title.id = 'trustInspectorTitle';
   title.textContent = data.title;
+  panel.removeAttribute('aria-label');
+  panel.setAttribute('aria-labelledby', title.id);
   titleBox.append(kicker, title);
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'trust-inspector-close';
   close.setAttribute('aria-label', 'Close Trust Inspector');
   close.textContent = '×';
-  close.addEventListener('click', () => backdrop.remove());
+  close.addEventListener('click', () => closeTrustInspector(backdrop));
   head.append(titleBox, close);
 
   const grid = document.createElement('div');
@@ -268,12 +286,19 @@ export function openTrustInspector(data: NormalizedTrustInspection): void {
   panel.append(head, grid);
   backdrop.append(panel);
   backdrop.addEventListener('click', (event) => {
-    if (event.target === backdrop) backdrop.remove();
+    if (event.target === backdrop) closeTrustInspector(backdrop);
   });
   backdrop.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') backdrop.remove();
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      closeTrustInspector(backdrop);
+    } else if (event.key === 'Tab') {
+      trapModalFocus(event, backdrop);
+    }
   });
   document.body.append(backdrop);
+  activateModalSurface(backdrop);
   close.focus();
 }
 
@@ -289,6 +314,7 @@ export function badgeElement(level: ResultBadgeLevel, note?: string, inspection?
   span.setAttribute('data-badge-level', level);
   span.setAttribute('role', 'button');
   span.setAttribute('tabindex', '0');
+  span.setAttribute('aria-haspopup', 'dialog');
   span.setAttribute('aria-label', `Open Trust Inspector: ${trustInspectionSummary(trust)}`);
   span.addEventListener('click', () => openTrustInspector(trust));
   span.addEventListener('keydown', (event) => {

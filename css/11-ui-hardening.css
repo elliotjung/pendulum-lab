@@ -1,0 +1,480 @@
+/* ==========================================================================
+   UI hardening layer — viewport, input, modal, touch and assistive-technology
+   contracts. This file is intentionally last in app.html.
+   ========================================================================== */
+
+:root {
+  --ui-viewport-height: 100dvh;
+  --ui-viewport-width: 100vw;
+  --ui-viewport-offset-left: 0px;
+  --ui-viewport-offset-top: 0px;
+  --ui-target: 44px;
+}
+
+/* Strict-CSP-safe geometry for runtime-created validation/probe elements. */
+.validation-result-row {
+  padding: 3px 0;
+  border-bottom: 1px solid var(--workbench-border, rgba(205, 214, 245, 0.08));
+  font-size: 10.5px;
+}
+
+.validation-result-status.is-pass {
+  color: var(--workbench-green, #58c99b);
+}
+
+.validation-result-status.is-fail {
+  color: var(--workbench-red, #ef6f7d);
+}
+
+.validation-result-meta {
+  color: var(--workbench-text-muted, #737e92);
+}
+
+#modern-lab-probe.modern-lab-probe {
+  position: fixed;
+  right: 8px;
+  bottom: 8px;
+  width: 200px;
+  height: 200px;
+  z-index: 9999;
+  border: 1px solid var(--workbench-border-strong, rgba(205, 214, 245, 0.14));
+  border-radius: 8px;
+}
+
+html {
+  scrollbar-gutter: stable;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body[data-modal-depth],
+body.command-palette-open,
+body.audience-chooser-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+[inert] {
+  pointer-events: none;
+  user-select: none;
+}
+
+button,
+select,
+input,
+textarea,
+summary,
+[role='button'],
+[role='tab'],
+[role='option'] {
+  touch-action: manipulation;
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+select,
+input[type='number'],
+input[type='text'],
+input[type='search'],
+textarea {
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+select option {
+  background: var(--workbench-panel, #10141f);
+  color: var(--workbench-text, #f1f3f8);
+}
+
+:where(button, select, input, textarea, summary, [role='button'], [role='tab'], [role='option']):focus-visible {
+  outline: 3px solid var(--focus, #b7afff);
+  outline-offset: 3px;
+}
+
+.row label,
+.acc-label,
+.tab-label,
+.tab-desc,
+.trust-drawer-tabs button,
+.audience-choice,
+.rgv8-cmd-copy,
+.si-small {
+  overflow-wrap: anywhere;
+}
+
+.pwa-update-banner {
+  /* Update actions must not cover the mode chooser or command palette. */
+  z-index: 11000;
+}
+
+.trust-drawer {
+  height: var(--ui-viewport-height, 100dvh);
+  max-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior: contain;
+}
+
+.trust-drawer-close {
+  min-width: var(--ui-target);
+  min-height: var(--ui-target);
+}
+
+.trust-drawer-tabs {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.trust-drawer-tabs [role='tab'] {
+  min-height: 36px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.trust-drawer-body {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.si-search-wrap {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.si-search-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ui-target);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.si-search,
+.si-search-clear {
+  min-height: var(--ui-target);
+}
+
+.si-search {
+  min-width: 0;
+  padding: 8px 11px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.si-search-clear {
+  width: var(--ui-target);
+  padding: 0;
+  border-radius: 9px;
+  font-size: 18px;
+}
+
+.si-search-clear[hidden] {
+  display: none !important;
+}
+
+.si-help-backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.si-help {
+  width: min(820px, 100%);
+  max-height: min(calc(100dvh - 32px), var(--ui-viewport-height, 100dvh));
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.si-help .si-close {
+  min-width: var(--ui-target);
+  min-height: var(--ui-target);
+}
+
+.audience-select {
+  container-type: inline-size;
+}
+
+body .audience-select select {
+  border-color: var(--workbench-border-strong, rgba(205, 214, 245, 0.14));
+}
+
+body .audience-select select:hover {
+  border-color: var(--workbench-border-selected, rgba(139, 124, 246, 0.55));
+}
+
+.audience-choice-grid,
+.rgv8-cmd-list {
+  min-width: 0;
+}
+
+.rail-submenu {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.rail-submenu .tab,
+.rail-submenu .dev-tool-btn.rail-action {
+  min-height: 42px;
+}
+
+.presets,
+.plots-row,
+.diag-row,
+.rail-menu {
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (hover: none) {
+  .pbtn:hover,
+  .audience-choice:hover,
+  .rail-submenu .tab:hover,
+  .rail-menu-button:hover,
+  .workflow-strip button:hover {
+    transform: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .pbtn,
+  .btnrow button,
+  .workflow-strip button,
+  .trust-toggle,
+  .trust-drawer-tabs [role='tab'],
+  .acc > summary {
+    min-height: var(--ui-target);
+  }
+
+  .row label:has(input[type='checkbox']) {
+    min-height: var(--ui-target);
+  }
+
+  .row input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .row input[type='range'] {
+    min-height: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Also catches desktop 200% zoom, where the CSS viewport halves. */
+  input[type='text'],
+  input[type='search'],
+  input[type='number'],
+  textarea,
+  .si-search,
+  #rgv8CmdInput {
+    font-size: 16px;
+  }
+
+  .main-col {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .trust-drawer {
+    width: min(100vw, var(--ui-viewport-width, 100vw));
+  }
+
+  .presets,
+  .plots-row,
+  .diag-row {
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 375px) {
+  .main-col {
+    padding-inline: 8px;
+  }
+
+  .workflow-strip {
+    gap: 5px;
+  }
+
+  .workflow-strip button {
+    padding-inline: 6px;
+  }
+
+  .scrub-row {
+    gap: 6px;
+    padding-inline: 8px;
+  }
+
+  .trust-drawer-head,
+  .trust-drawer-tabs,
+  .trust-drawer-body {
+    padding-inline: 10px;
+  }
+}
+
+@media (max-width: 320px) {
+  .audience-select {
+    gap: 3px;
+    padding-inline: 3px;
+  }
+
+  body .audience-select select {
+    padding-inline: 6px 20px;
+    font-size: 11px;
+  }
+
+  .workflow-strip small {
+    white-space: normal;
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .trust-drawer-tabs {
+    padding-bottom: 6px;
+  }
+
+  .trust-drawer-head {
+    padding-block: 7px 5px;
+  }
+
+  .si-help {
+    max-height: min(calc(100dvh - 16px), var(--ui-viewport-height, 100dvh));
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body .audience-select select {
+    color-scheme: light;
+  }
+
+  select option {
+    background: #fff;
+    color: #182e44;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #c5cada;
+    --subtle: #d8dce7;
+    --border: rgba(241, 243, 248, 0.32);
+    --border-strong: rgba(241, 243, 248, 0.58);
+    --workbench-border: var(--border);
+    --workbench-border-strong: var(--border-strong);
+  }
+
+  button,
+  input,
+  select,
+  textarea,
+  .controls,
+  .main-wrap,
+  .rail-submenu,
+  .trust-drawer {
+    border-color: var(--border-strong);
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  :root {
+    --muted: #3e4658;
+    --subtle: #2f3646;
+    --border: rgba(23, 26, 36, 0.32);
+    --border-strong: rgba(23, 26, 36, 0.58);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .rail,
+  .controls,
+  .ctrl-sticky,
+  .rail-submenu,
+  .trust-drawer,
+  .audience-chooser,
+  .audience-chooser-card,
+  #rgv8Cmd,
+  .rgv8-cmd-panel {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+}
+
+@media (forced-colors: active) {
+  :root {
+    forced-color-adjust: auto;
+  }
+
+  .rail,
+  .controls,
+  .main-wrap,
+  .rail-submenu,
+  .trust-drawer,
+  .si-help,
+  .pwa-update-banner {
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
+    box-shadow: none;
+  }
+
+  select,
+  input,
+  textarea,
+  button {
+    color: ButtonText;
+    background: ButtonFace;
+    border-color: ButtonText;
+  }
+
+  [aria-selected='true'],
+  [aria-pressed='true'],
+  .rail-section.open > .rail-menu-button {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+  }
+
+}
+
+@media print {
+  body[data-modal-depth],
+  body.command-palette-open,
+  body.audience-chooser-open {
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+  }
+
+  #audienceModeChooser,
+  #rgv8Cmd,
+  #shortcutHelpDialog,
+  .trust-inspector-backdrop,
+  .si-help-backdrop,
+  .pwa-update-banner {
+    display: none !important;
+  }
+}

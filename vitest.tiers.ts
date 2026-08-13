@@ -8,5 +8,6 @@ export const SLOW_TEST_FILES = [
   'tests/expansion-lyapunov.test.ts',
   'tests/literature-anchors.test.ts',
   'tests/mathieu-stability.test.ts',
+  'tests/stochastic-statistical-anchors.test.ts',
   'tests/stochastic.test.ts'
 ] as const;

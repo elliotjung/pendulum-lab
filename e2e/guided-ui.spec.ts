@@ -14,7 +14,7 @@ test('rail palette launcher opens the command palette', async ({ page }) => {
   await expect(launcher).toHaveAttribute('title', /Ctrl\+K/);
   await launcher.click();
   await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
-  await expect(page.locator('#rgv7Palette')).not.toHaveClass(/show/);
+  await expect(page.locator('#rgv7Palette')).toHaveCount(0);
   await expect(page.locator('#rgv8CmdInput')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(launcher).toBeFocused();
@@ -29,7 +29,7 @@ test('command palette uses one modal and closes from search actions', async ({ p
 
   await page.keyboard.press('Control+K');
   await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
-  await expect(page.locator('#rgv7Palette')).not.toHaveClass(/show/);
+  await expect(page.locator('#rgv7Palette')).toHaveCount(0);
   await expect(page.locator('.rail-section.open')).toHaveCount(0);
 
   await page.locator('#rgv8CmdInput').fill('research');
@@ -124,6 +124,8 @@ test('the guide locale switch rewrites descriptions, hints, and tooltips in Kore
   const labDesc = page.locator('#rail-panel-sim .tab[data-tab="lab"] .tab-desc');
   await expect(labDesc).toContainText('Run the live simulation');
 
+  await page.locator('#audiencePreferencesToggle').click();
+  await expect(page.locator('#navLocale')).toBeVisible();
   await page.locator('#navLocale').selectOption('ko');
   await expect(labDesc).toContainText('실시간 시뮬레이션');
   await expect(page.locator('#rail-panel-sim .rail-submenu-hint')).toContainText('진자를 돌리고');
@@ -131,7 +133,12 @@ test('the guide locale switch rewrites descriptions, hints, and tooltips in Kore
     'title',
     /Simulation Lab — 실시간/
   );
+  // Ctrl/Cmd+K deliberately stays with focused form controls. Close the
+  // preferences popover so the global shortcut is exercised from its toggle.
+  await page.locator('#audiencePreferencesToggle').click();
+  await expect(page.locator('#navLocale')).toBeHidden();
   await page.keyboard.press('Control+K');
+  await expect(page.locator('#rgv8Cmd')).toHaveClass(/show/);
   await expect(page.locator('#rgv8CmdTitle')).toHaveText('명령 검색');
   await page.locator('#rgv8CmdInput').fill('연구');
   await expect(page.locator('#rgv8CmdList .rgv8-cmd-copy strong').first()).toContainText(/연구|논문|매개변수/);
@@ -141,6 +148,8 @@ test('the guide locale switch rewrites descriptions, hints, and tooltips in Kore
   await page.reload();
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   await expect(labDesc).toContainText('실시간 시뮬레이션');
+  await page.locator('#audiencePreferencesToggle').click();
+  await expect(page.locator('#navLocale')).toBeVisible();
   await page.locator('#navLocale').selectOption('en');
   await expect(labDesc).toContainText('Run the live simulation');
 });
@@ -172,11 +181,7 @@ test('first real visit walks through the onboarding tour once', async ({ page, b
     }
     window.localStorage.setItem('pendulum-lab/ui/audience-mode', 'research');
   });
-  // Masking webdriver re-enables the hud-fx ambience (particles, cursor glow);
-  // on WebKit/Firefox software rendering those continuous animations starve the
-  // compositor and destabilize clicks. Reduced-motion keeps the tour and
-  // chooser visible while disabling ambience AND the card's position
-  // transition, so the walkthrough is stable on every engine.
+  // Reduced motion keeps the tour and chooser stable on every engine.
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));

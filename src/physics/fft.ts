@@ -10,17 +10,39 @@
  * identity to round-off. Length must be a power of two.
  */
 
-/** In-place forward FFT. `re`/`im` (power-of-two length) are overwritten. */
-export function fftInPlace(re: Float64Array, im: Float64Array): void {
+function validateComplexBuffer(re: Float64Array, im: Float64Array, caller: string): number {
   const n = re.length;
-  if (n <= 1) return;
-  if ((n & (n - 1)) !== 0) throw new Error('fftInPlace: length must be a power of two');
+  if (n !== im.length) throw new RangeError(`${caller}: real and imaginary buffers must have equal length`);
+  if (!Number.isSafeInteger(n) || n < 1 || !Number.isInteger(Math.log2(n))) {
+    throw new RangeError(`${caller}: length must be a positive power of two`);
+  }
+  if (re === im) throw new RangeError(`${caller}: real and imaginary buffers must not alias`);
+  if (
+    re.buffer === im.buffer &&
+    re.byteOffset < im.byteOffset + im.byteLength &&
+    im.byteOffset < re.byteOffset + re.byteLength
+  ) {
+    throw new RangeError(`${caller}: real and imaginary buffer views must not overlap`);
+  }
+  for (let i = 0; i < n; i += 1) {
+    if (!Number.isFinite(re[i]) || !Number.isFinite(im[i])) {
+      throw new TypeError(`${caller}: input samples must be finite`);
+    }
+  }
+  return n;
+}
+
+function fftUnchecked(re: Float64Array, im: Float64Array, n: number): void {
+  if (n === 1) return;
 
   // Bit-reversal permutation.
   for (let i = 1, j = 0; i < n; i += 1) {
-    let bit = n >> 1;
-    for (; j & bit; bit >>= 1) j ^= bit;
-    j ^= bit;
+    let bit = n / 2;
+    while (j >= bit) {
+      j -= bit;
+      bit /= 2;
+    }
+    j += bit;
     if (i < j) {
       const tr = re[i]!;
       re[i] = re[j]!;
@@ -31,7 +53,8 @@ export function fftInPlace(re: Float64Array, im: Float64Array): void {
     }
   }
 
-  for (let len = 2; len <= n; len <<= 1) {
+  // Arithmetic doubling avoids the signed-32-bit overflow semantics of `<<=`.
+  for (let len = 2; len <= n; len *= 2) {
     const ang = (-2 * Math.PI) / len;
     const wlenRe = Math.cos(ang);
     const wlenIm = Math.sin(ang);
@@ -55,12 +78,18 @@ export function fftInPlace(re: Float64Array, im: Float64Array): void {
   }
 }
 
+/** In-place forward FFT. `re`/`im` (power-of-two length) are overwritten. */
+export function fftInPlace(re: Float64Array, im: Float64Array): void {
+  fftUnchecked(re, im, validateComplexBuffer(re, im, 'fftInPlace'));
+}
+
 /** In-place inverse FFT (normalised by 1/N), via conjugation of the forward FFT. */
 export function ifftInPlace(re: Float64Array, im: Float64Array): void {
-  const n = re.length;
-  if (n <= 1) return;
+  const n = validateComplexBuffer(re, im, 'ifftInPlace');
+  if (n === 1) return;
   for (let i = 0; i < n; i += 1) im[i] = -(im[i] ?? 0);
-  fftInPlace(re, im);
+  // Validation has already scanned both buffers; avoid a second O(N) pass.
+  fftUnchecked(re, im, n);
   const inv = 1 / n;
   for (let i = 0; i < n; i += 1) {
     re[i] = (re[i] ?? 0) * inv;

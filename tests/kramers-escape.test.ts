@@ -40,6 +40,28 @@ describe('analytic Kramers rate', () => {
     );
     expect(() => kramersRateOverdamped({ ...QUARTIC, diffusion: 0 })).toThrow();
     expect(() => kramersRateOverdamped({ ...QUARTIC, barrierHeight: 0, diffusion: 0.1 })).toThrow();
+    expect(() => kramersRateOverdamped({ ...QUARTIC, wellFrequency: Number.NaN, diffusion: 0.1 })).toThrow(
+      /wellFrequency/
+    );
+    expect(() =>
+      kramersRateOverdamped({ ...QUARTIC, barrierFrequency: Number.POSITIVE_INFINITY, diffusion: 0.1 })
+    ).toThrow(/barrierFrequency/);
+    expect(
+      kramersRateOverdamped({
+        wellFrequency: Number.MAX_VALUE,
+        barrierFrequency: Number.MAX_VALUE,
+        barrierHeight: Number.MAX_VALUE,
+        diffusion: Number.MIN_VALUE
+      })
+    ).toBe(0);
+    expect(
+      kramersRateOverdamped({
+        wellFrequency: Number.MAX_VALUE,
+        barrierFrequency: Number.MAX_VALUE,
+        barrierHeight: Number.MIN_VALUE,
+        diffusion: Number.MAX_VALUE
+      })
+    ).toBe(Number.POSITIVE_INFINITY);
   });
 });
 
@@ -49,10 +71,45 @@ describe('Arrhenius MTTF (reliability analog)', () => {
     expect(arrheniusMTTF(1, 1, 0.2)).toBeGreaterThan(arrheniusMTTF(1, 1, 0.4)); // hotter ⇒ fails sooner
     expect(() => arrheniusMTTF(0, 1, 0.3)).toThrow();
     expect(() => arrheniusMTTF(1, 1, 0)).toThrow();
+    expect(() => arrheniusMTTF(1, Number.NaN, 0.3)).toThrow(/activationEnergy/);
+    expect(arrheniusMTTF(Number.MIN_VALUE, -Number.MAX_VALUE, Number.MIN_VALUE)).toBe(0);
+    expect(arrheniusMTTF(Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE)).toBe(Number.POSITIVE_INFINITY);
   });
 });
 
 describe('Monte-Carlo cross-validation', () => {
+  test('rejects non-finite work controls and seed aliases before simulation', () => {
+    const base = { sigma: 0.4, dt: 0.01, realizations: 2, seed: 1, maxSteps: 10 };
+    expect(() => simulateQuarticEscape({ ...base, sigma: Number.POSITIVE_INFINITY })).toThrow(/sigma/);
+    expect(() => simulateQuarticEscape({ ...base, dt: Number.NaN })).toThrow(/dt/);
+    expect(() => simulateQuarticEscape({ ...base, dt: Number.MIN_VALUE })).toThrow(/too small/);
+    expect(() => simulateQuarticEscape({ ...base, realizations: 1.5 })).toThrow(/realizations/);
+    expect(() => simulateQuarticEscape({ ...base, seed: 0x1_0000_0001 })).toThrow(/uint32/);
+    expect(() => simulateQuarticEscape({ ...base, maxSteps: Number.POSITIVE_INFINITY })).toThrow(/maxSteps/);
+    expect(() => simulateQuarticEscape({ ...base, threshold: Number.NaN })).toThrow(/threshold/);
+    expect(() => simulateQuarticEscape({ ...base, realizations: 1_000_000, maxSteps: 10_000_000 })).toThrow(
+      /total work/
+    );
+  });
+
+  test('treats an initial state at or beyond the barrier as a t=0 first passage', () => {
+    const result = simulateQuarticEscape({
+      sigma: 0.4,
+      dt: 0.01,
+      realizations: 3,
+      seed: 1,
+      x0: 0,
+      threshold: 0,
+      maxSteps: 10
+    });
+    expect(result).toEqual({
+      meanFirstPassage: 0,
+      rate: Number.POSITIVE_INFINITY,
+      escaped: 3,
+      realizations: 3
+    });
+  });
+
   test('recovers the activation exponent and the Kramers prefactor to within ~2×', () => {
     const sigmas = [0.4, 0.45, 0.5];
     const pts: { invD: number; lnRate: number }[] = [];

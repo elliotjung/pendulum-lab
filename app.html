@@ -1,1117 +1,1918 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<title>Pendulum Lab V10 — Nonlinear Dynamics Research Platform</title>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="Certified chaotic-dynamics workbench in the browser: 8 pendulum systems, 13 measured-order integrators, full Lyapunov/chaos diagnostics with uncertainties, and hash-verifiable research bundles."/>
-<meta name="theme-color" content="#04050d"/>
-<link rel="manifest" href="./manifest.webmanifest"/>
-<link rel="apple-touch-icon" href="./icons/pendulum-lab-192.png"/>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='5' r='2.4' fill='%2318d4f8'/%3E%3Cpath d='M16 6.5 L23 16 L19 25' stroke='%2318d4f8' stroke-width='1.4' stroke-linecap='round' opacity='.85'/%3E%3Ccircle cx='23' cy='16' r='2' fill='%239d78ff'/%3E%3Ccircle cx='19' cy='25' r='2.8' fill='%2318d4f8'/%3E%3C/svg%3E"/>
-<!-- frame-ancestors is intentionally omitted: it is ignored in a <meta> CSP and must be sent as an HTTP header (see vite.config.ts server headers / your deploy config). -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'">
-<link rel="stylesheet" href="./css/00-base.css">
-<link rel="stylesheet" href="./css/05-extracted-inline.css">
-<link rel="stylesheet" href="./css/09-accessibility-themes.css">
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pendulum Lab V10 — Nonlinear Dynamics Research Platform</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Certified chaotic-dynamics workbench in the browser: 8 pendulum systems, 15 measured-order integrators, full Lyapunov/chaos diagnostics with uncertainties, and hash-verifiable research bundles."
+    />
+    <meta name="theme-color" content="#070910" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./icons/pendulum-lab-192.png" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='5' r='2.4' fill='%2318d4f8'/%3E%3Cpath d='M16 6.5 L23 16 L19 25' stroke='%2318d4f8' stroke-width='1.4' stroke-linecap='round' opacity='.85'/%3E%3Ccircle cx='23' cy='16' r='2' fill='%239d78ff'/%3E%3Ccircle cx='19' cy='25' r='2.8' fill='%2318d4f8'/%3E%3C/svg%3E"
+    />
+    <!-- frame-ancestors is intentionally omitted: it is ignored in a <meta> CSP and must be sent as an HTTP header (see vite.config.ts server headers / your deploy config). -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <link rel="stylesheet" href="./css/00-base.css" />
+    <link rel="stylesheet" href="./css/05-extracted-inline.css" />
+    <link rel="stylesheet" href="./css/09-accessibility-themes.css" />
+  </head>
+  <body>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div id="nanOverlay" role="alert">⚠ Numerical fault — paused / report available</div>
 
-<!-- Boot / loading sequence. Decorative only (aria-hidden, pointer-events:none
-     in CSS); src/app/hudEffects.ts fades it out at boot stage 5 and a pure-CSS
-     failsafe fades it even if scripts never run. -->
-<div id="hudBoot" aria-hidden="true">
-  <div class="hud-boot-stack">
-    <div class="hud-boot-rings">
-      <span class="hud-boot-ring"></span>
-      <span class="hud-boot-ring hud-boot-ring2"></span>
-      <span class="hud-boot-ring hud-boot-ring3"></span>
-      <span class="hud-boot-core"></span>
-    </div>
-    <div class="hud-boot-title">Pendulum <b>Lab</b></div>
-    <div class="hud-boot-bar"></div>
-    <div class="hud-boot-status">Initializing systems</div>
-  </div>
-</div>
-
-<div id="toast" role="status" aria-live="polite"></div>
-<div id="nanOverlay" role="alert">⚠ Numerical fault — paused / report available</div>
-
-<div class="app-shell">
-
-  <!-- LEFT NAVIGATION RAIL -->
-  <aside class="rail" aria-label="Workspace navigation">
-    <div class="rail-logo" id="railHome" title="Return to the workspace chooser (home)" role="button" tabindex="0" aria-label="Pendulum Lab — return to the workspace chooser">
-      <svg viewBox="0 0 36 36" aria-hidden="true" focusable="false" class="pendulum-logo-svg">
-        <defs>
-          <linearGradient id="plRodGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#18d4f8"/>
-            <stop offset="0.58" stop-color="#9d78ff"/>
-            <stop offset="1" stop-color="#ff7a2c"/>
-          </linearGradient>
-        </defs>
-        <path d="M8.2 7.6c3.7-3.1 9.8-3.6 14.1-1.1" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="1.1" stroke-linecap="round"/>
-        <path d="M9.5 7.5c5.2 1.2 11.8 6.6 16.4 17.3" fill="none" stroke="rgba(24,212,248,.18)" stroke-width="1" stroke-linecap="round"/>
-        <circle cx="9.5" cy="7.5" r="2.1" fill="#eef4ff"/>
-        <path d="M9.5 7.5 17.7 17.2 27.2 27.4" fill="none" stroke="url(#plRodGrad)" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="17.7" cy="17.2" r="3.15" fill="#18d4f8" stroke="rgba(255,255,255,.72)" stroke-width=".7"/>
-        <circle cx="27.2" cy="27.4" r="3.55" fill="#ff7a2c" stroke="rgba(255,255,255,.75)" stroke-width=".75"/>
-      </svg>
-    </div>
-
-    <nav class="tabs rail-menu" role="navigation" aria-label="Workspace menu">
-      <section class="rail-section" data-rail-section="sim">
-        <button class="rail-menu-button" type="button" data-rail-section-button="sim" aria-expanded="false" aria-controls="rail-panel-sim">
-          <span class="rail-menu-icon" aria-hidden="true">S</span><span class="rail-menu-label">Sim</span>
-        </button>
-        <div class="rail-submenu" id="rail-panel-sim" aria-label="Simulation tools">
-          <button class="tab" role="tab" aria-selected="true"  data-tab="lab"      data-tip="Simulation Lab" aria-label="Simulation Lab" title="Simulation Lab"><span class="tab-icon" aria-hidden="true">L</span><span class="tab-label">Lab</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="compare"  data-tip="Integrator Comparison" aria-label="Integrator Comparison" title="Integrator Comparison"><span class="tab-icon" aria-hidden="true">C</span><span class="tab-label">Compare</span></button>
+    <div class="app-shell">
+      <!-- LEFT NAVIGATION RAIL -->
+      <aside class="rail" aria-label="Workspace navigation">
+        <div
+          class="rail-logo"
+          id="railHome"
+          title="Return to the workspace chooser (home)"
+          role="button"
+          tabindex="0"
+          aria-label="Pendulum Lab — return to the workspace chooser"
+        >
+          <svg viewBox="0 0 36 36" aria-hidden="true" focusable="false" class="pendulum-logo-svg">
+            <defs>
+              <linearGradient id="plRodGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#18d4f8" />
+                <stop offset="0.58" stop-color="#9d78ff" />
+                <stop offset="1" stop-color="#ff7a2c" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M8.2 7.6c3.7-3.1 9.8-3.6 14.1-1.1"
+              fill="none"
+              stroke="rgba(255,255,255,.38)"
+              stroke-width="1.1"
+              stroke-linecap="round"
+            />
+            <path
+              d="M9.5 7.5c5.2 1.2 11.8 6.6 16.4 17.3"
+              fill="none"
+              stroke="rgba(24,212,248,.18)"
+              stroke-width="1"
+              stroke-linecap="round"
+            />
+            <circle cx="9.5" cy="7.5" r="2.1" fill="#eef4ff" />
+            <path
+              d="M9.5 7.5 17.7 17.2 27.2 27.4"
+              fill="none"
+              stroke="url(#plRodGrad)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="17.7" cy="17.2" r="3.15" fill="#18d4f8" stroke="rgba(255,255,255,.72)" stroke-width=".7" />
+            <circle cx="27.2" cy="27.4" r="3.55" fill="#ff7a2c" stroke="rgba(255,255,255,.75)" stroke-width=".75" />
+          </svg>
         </div>
-      </section>
 
-      <section class="rail-section" data-rail-section="analysis">
-        <button class="rail-menu-button" type="button" data-rail-section-button="analysis" aria-expanded="false" aria-controls="rail-panel-analysis">
-          <span class="rail-menu-icon" aria-hidden="true">A</span><span class="rail-menu-label">Analysis</span>
-        </button>
-        <div class="rail-submenu" id="rail-panel-analysis" aria-label="Analysis tools">
-          <button class="tab" role="tab" aria-selected="false" data-tab="lyap"     data-tip="Lyapunov Spectrum" aria-label="Lyapunov Spectrum" title="Lyapunov Spectrum"><span class="tab-icon" aria-hidden="true">Ly</span><span class="tab-label">Lyap</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="sweep"    data-tip="Chaos Map (Sweep)" aria-label="Chaos Map (Sweep)" title="Chaos Map (Sweep)"><span class="tab-icon" aria-hidden="true">Sw</span><span class="tab-label">Sweep</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="bifurc"   data-tip="Bifurcation Analysis" aria-label="Bifurcation Analysis" title="Bifurcation Analysis"><span class="tab-icon" aria-hidden="true">Bf</span><span class="tab-label">Bifurc</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="phase3d"  data-tip="3D Phase Space" aria-label="3D Phase Space" title="3D Phase Space"><span class="tab-icon" aria-hidden="true">3D</span><span class="tab-label">Phase 3D</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="density"  data-tip="Density Field" aria-label="Density Field" title="Density Field"><span class="tab-icon" aria-hidden="true">Dn</span><span class="tab-label">Density</span></button>
-        </div>
-      </section>
+        <nav class="tabs rail-menu" role="navigation" aria-label="Workspace menu">
+          <section class="rail-section" data-rail-section="sim">
+            <button
+              class="rail-menu-button"
+              type="button"
+              data-rail-section-button="sim"
+              aria-expanded="false"
+              aria-controls="rail-panel-sim"
+            >
+              <span class="rail-menu-icon" aria-hidden="true">S</span><span class="rail-menu-label">Sim</span>
+            </button>
+            <div class="rail-submenu" id="rail-panel-sim" aria-label="Simulation tools">
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="true"
+                data-tab="lab"
+                data-tip="Simulation Lab"
+                aria-label="Simulation Lab"
+                title="Simulation Lab"
+              >
+                <span class="tab-icon" aria-hidden="true">L</span><span class="tab-label">Lab</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="compare"
+                data-tip="Integrator Comparison"
+                aria-label="Integrator Comparison"
+                title="Integrator Comparison"
+              >
+                <span class="tab-icon" aria-hidden="true">C</span><span class="tab-label">Compare</span>
+              </button>
+            </div>
+          </section>
 
-      <section class="rail-section" data-rail-section="chaos">
-        <button class="rail-menu-button" type="button" data-rail-section-button="chaos" aria-expanded="false" aria-controls="rail-panel-chaos">
-          <span class="rail-menu-icon" aria-hidden="true">Ch</span><span class="rail-menu-label">Chaos</span>
-        </button>
-        <div class="rail-submenu" id="rail-panel-chaos" aria-label="Chaos diagnostics">
-          <button class="tab" role="tab" aria-selected="false" data-tab="zeroone"  data-tip="0-1 Test for Chaos" aria-label="0-1 Test for Chaos" title="0-1 Test for Chaos"><span class="tab-icon" aria-hidden="true">01</span><span class="tab-label">0-1</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="clv"      data-tip="Covariant Lyapunov Vectors" aria-label="Covariant Lyapunov Vectors" title="Covariant Lyapunov Vectors"><span class="tab-icon" aria-hidden="true">CV</span><span class="tab-label">CLV</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="basin"    data-tip="Flip Basins (Fractal)" aria-label="Flip Basins (Fractal)" title="Flip Basins (Fractal)"><span class="tab-icon" aria-hidden="true">Bs</span><span class="tab-label">Basins</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="rqa"      data-tip="Recurrence Quantification" aria-label="Recurrence Quantification" title="Recurrence Quantification"><span class="tab-icon" aria-hidden="true">Rq</span><span class="tab-label">RQA</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="ftle"     data-tip="FTLE Field (LCS)" aria-label="FTLE Field" title="FTLE Field (LCS)"><span class="tab-icon" aria-hidden="true">Ft</span><span class="tab-label">FTLE</span></button>
-        </div>
-      </section>
+          <section class="rail-section" data-rail-section="analysis">
+            <button
+              class="rail-menu-button"
+              type="button"
+              data-rail-section-button="analysis"
+              aria-expanded="false"
+              aria-controls="rail-panel-analysis"
+            >
+              <span class="rail-menu-icon" aria-hidden="true">A</span><span class="rail-menu-label">Analysis</span>
+            </button>
+            <div class="rail-submenu" id="rail-panel-analysis" aria-label="Analysis tools">
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="lyap"
+                data-tip="Lyapunov Spectrum"
+                aria-label="Lyapunov Spectrum"
+                title="Lyapunov Spectrum"
+              >
+                <span class="tab-icon" aria-hidden="true">Ly</span><span class="tab-label">Lyap</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="sweep"
+                data-tip="Chaos Map (Sweep)"
+                aria-label="Chaos Map (Sweep)"
+                title="Chaos Map (Sweep)"
+              >
+                <span class="tab-icon" aria-hidden="true">Sw</span><span class="tab-label">Sweep</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="bifurc"
+                data-tip="Bifurcation Analysis"
+                aria-label="Bifurcation Analysis"
+                title="Bifurcation Analysis"
+              >
+                <span class="tab-icon" aria-hidden="true">Bf</span><span class="tab-label">Bifurc</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="phase3d"
+                data-tip="3D Phase Space"
+                aria-label="3D Phase Space"
+                title="3D Phase Space"
+              >
+                <span class="tab-icon" aria-hidden="true">3D</span><span class="tab-label">Phase 3D</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="density"
+                data-tip="Density Field"
+                aria-label="Density Field"
+                title="Density Field"
+              >
+                <span class="tab-icon" aria-hidden="true">Dn</span><span class="tab-label">Density</span>
+              </button>
+            </div>
+          </section>
 
-      <section class="rail-section" data-rail-section="check">
-        <button class="rail-menu-button" type="button" data-rail-section-button="check" aria-expanded="false" aria-controls="rail-panel-check">
-          <span class="rail-menu-icon" aria-hidden="true">V</span><span class="rail-menu-label">Check</span>
+          <section class="rail-section" data-rail-section="chaos">
+            <button
+              class="rail-menu-button"
+              type="button"
+              data-rail-section-button="chaos"
+              aria-expanded="false"
+              aria-controls="rail-panel-chaos"
+            >
+              <span class="rail-menu-icon" aria-hidden="true">Ch</span><span class="rail-menu-label">Chaos</span>
+            </button>
+            <div class="rail-submenu" id="rail-panel-chaos" aria-label="Chaos diagnostics">
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="zeroone"
+                data-tip="0-1 Test for Chaos"
+                aria-label="0-1 Test for Chaos"
+                title="0-1 Test for Chaos"
+              >
+                <span class="tab-icon" aria-hidden="true">01</span><span class="tab-label">0-1</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="clv"
+                data-tip="Covariant Lyapunov Vectors"
+                aria-label="Covariant Lyapunov Vectors"
+                title="Covariant Lyapunov Vectors"
+              >
+                <span class="tab-icon" aria-hidden="true">CV</span><span class="tab-label">CLV</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="basin"
+                data-tip="Flip Basins (Fractal)"
+                aria-label="Flip Basins (Fractal)"
+                title="Flip Basins (Fractal)"
+              >
+                <span class="tab-icon" aria-hidden="true">Bs</span><span class="tab-label">Basins</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="rqa"
+                data-tip="Recurrence Quantification"
+                aria-label="Recurrence Quantification"
+                title="Recurrence Quantification"
+              >
+                <span class="tab-icon" aria-hidden="true">Rq</span><span class="tab-label">RQA</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="ftle"
+                data-tip="FTLE Field (LCS)"
+                aria-label="FTLE Field"
+                title="FTLE Field (LCS)"
+              >
+                <span class="tab-icon" aria-hidden="true">Ft</span><span class="tab-label">FTLE</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="rail-section" data-rail-section="check">
+            <button
+              class="rail-menu-button"
+              type="button"
+              data-rail-section-button="check"
+              aria-expanded="false"
+              aria-controls="rail-panel-check"
+            >
+              <span class="rail-menu-icon" aria-hidden="true">V</span><span class="rail-menu-label">Check</span>
+            </button>
+            <div class="rail-submenu" id="rail-panel-check" aria-label="Validation and probes">
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="validate"
+                data-tip="Validation Suite"
+                aria-label="Validation Suite"
+                title="Validation Suite"
+              >
+                <span class="tab-icon" aria-hidden="true">Va</span><span class="tab-label">Validate</span>
+              </button>
+              <button
+                class="tab"
+                role="tab"
+                aria-selected="false"
+                data-tab="research"
+                data-tip="Inverse · Surrogate · Stochastic"
+                aria-label="Inverse, Surrogate and Stochastic"
+                title="Inverse · Surrogate · Stochastic"
+              >
+                <span class="tab-icon" aria-hidden="true">R+</span><span class="tab-label">Research+</span>
+              </button>
+              <button
+                class="dev-tool-btn rail-action"
+                type="button"
+                data-rail-action="floquet"
+                aria-label="Run Floquet probe"
+                title="Run Floquet probe"
+                data-tip="Run Floquet probe"
+              >
+                <span class="tab-icon" aria-hidden="true">Fl</span><span class="tab-label">Floquet</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="rail-section" data-rail-section="govern">
+            <button
+              class="rail-menu-button"
+              type="button"
+              data-rail-section-button="govern"
+              aria-expanded="false"
+              aria-controls="rail-panel-govern"
+            >
+              <span class="rail-menu-icon" aria-hidden="true">G</span><span class="rail-menu-label">Govern</span>
+            </button>
+            <div class="rail-submenu" id="rail-panel-govern" aria-label="Governance and exports">
+              <div class="rail-tab-list" id="rail-govern-tabs"></div>
+              <div class="rail-action-grid" aria-label="Governance actions">
+                <button
+                  class="dev-tool-btn rail-action"
+                  type="button"
+                  data-rail-action="manifest"
+                  aria-label="Export manifest"
+                  title="Export manifest"
+                  data-tip="Export manifest"
+                >
+                  <span class="tab-icon" aria-hidden="true">Ex</span><span class="tab-label">Manifest</span>
+                </button>
+                <button
+                  class="dev-tool-btn rail-action"
+                  type="button"
+                  data-rail-action="integrity"
+                  aria-label="Feature integrity"
+                  title="Feature integrity"
+                  data-tip="Feature integrity"
+                >
+                  <span class="tab-icon" aria-hidden="true">In</span><span class="tab-label">Integrity</span>
+                </button>
+                <button
+                  class="dev-tool-btn rail-action"
+                  type="button"
+                  data-rail-action="palette"
+                  aria-label="Command palette"
+                  title="Command palette"
+                  data-tip="Command palette"
+                >
+                  <span class="tab-icon" aria-hidden="true">Cmd</span><span class="tab-label">Palette</span>
+                </button>
+                <button
+                  class="dev-tool-btn rail-action"
+                  type="button"
+                  data-rail-action="report"
+                  aria-label="Export report"
+                  title="Export report"
+                  data-tip="Export report"
+                >
+                  <span class="tab-icon" aria-hidden="true">Rp</span><span class="tab-label">Report</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        </nav>
+
+        <!-- Always-visible command-palette launcher (bound by bindRailActions). -->
+        <button
+          class="dev-tool-btn rail-action rail-palette-launcher"
+          type="button"
+          data-rail-action="palette"
+          aria-label="Open the command palette (Ctrl+K)"
+          title="Command palette"
+        >
+          <span class="tab-icon" aria-hidden="true">⌕</span><span class="tab-label">Search</span
+          ><kbd class="rail-kbd" aria-hidden="true">Ctrl K</kbd>
         </button>
-        <div class="rail-submenu" id="rail-panel-check" aria-label="Validation and probes">
-          <button class="tab" role="tab" aria-selected="false" data-tab="validate" data-tip="Validation Suite" aria-label="Validation Suite" title="Validation Suite"><span class="tab-icon" aria-hidden="true">Va</span><span class="tab-label">Validate</span></button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="research" data-tip="Inverse · Surrogate · Stochastic" aria-label="Inverse, Surrogate and Stochastic" title="Inverse · Surrogate · Stochastic"><span class="tab-icon" aria-hidden="true">R+</span><span class="tab-label">Research+</span></button>
-          <button class="dev-tool-btn rail-action" type="button" data-rail-action="floquet" aria-label="Run Floquet probe" title="Run Floquet probe" data-tip="Run Floquet probe">
-            <span class="tab-icon" aria-hidden="true">Fl</span><span class="tab-label">Floquet</span>
+      </aside>
+
+      <!-- MAIN COLUMN -->
+      <main class="main-col">
+        <header>
+          <h1>Pendulum Lab <span class="h1-sub">by Elliot Jung</span></h1>
+          <div class="sub" aria-hidden="true"></div>
+          <span class="badge">RESEARCH</span>
+          <span id="qualBadge">HQ</span>
+          <span id="fpsBadge">— fps</span>
+          <button
+            type="button"
+            id="trustDrawerToggle"
+            class="trust-toggle"
+            aria-controls="trustDrawer"
+            aria-expanded="false"
+          >
+            <span aria-hidden="true">◈</span> Trust &amp; Diagnostics
+          </button>
+        </header>
+
+        <div class="workflow-strip" aria-label="Primary workflows">
+          <button type="button" data-workflow-tab="lab" data-workflow-focus="resetBtn">
+            <span>Run</span><small>preset + reset</small>
+          </button>
+          <button type="button" data-workflow-tab="lab" data-workflow-focus="main">
+            <span>Observe</span><small>canvas + replay</small>
+          </button>
+          <button type="button" data-workflow-tab="bifurc" data-workflow-section="analysis">
+            <span>Analyze</span><small>spectra + maps</small>
+          </button>
+          <button type="button" data-workflow-tab="research" data-workflow-section="govern">
+            <span>Export</span><small>figures + bundle</small>
           </button>
         </div>
-      </section>
 
-      <section class="rail-section" data-rail-section="govern">
-        <button class="rail-menu-button" type="button" data-rail-section-button="govern" aria-expanded="false" aria-controls="rail-panel-govern">
-          <span class="rail-menu-icon" aria-hidden="true">G</span><span class="rail-menu-label">Govern</span>
-        </button>
-        <div class="rail-submenu" id="rail-panel-govern" aria-label="Governance and exports">
-          <div class="rail-tab-list" id="rail-govern-tabs"></div>
-          <div class="rail-action-grid" aria-label="Governance actions">
-            <button class="dev-tool-btn rail-action" type="button" data-rail-action="manifest" aria-label="Export manifest" title="Export manifest" data-tip="Export manifest"><span class="tab-icon" aria-hidden="true">Ex</span><span class="tab-label">Manifest</span></button>
-            <button class="dev-tool-btn rail-action" type="button" data-rail-action="integrity" aria-label="Feature integrity" title="Feature integrity" data-tip="Feature integrity"><span class="tab-icon" aria-hidden="true">In</span><span class="tab-label">Integrity</span></button>
-            <button class="dev-tool-btn rail-action" type="button" data-rail-action="palette" aria-label="Command palette" title="Command palette" data-tip="Command palette"><span class="tab-icon" aria-hidden="true">Cmd</span><span class="tab-label">Palette</span></button>
-            <button class="dev-tool-btn rail-action" type="button" data-rail-action="report" aria-label="Export report" title="Export report" data-tip="Export report"><span class="tab-icon" aria-hidden="true">Rp</span><span class="tab-label">Report</span></button>
-          </div>
-        </div>
-      </section>
-    </nav>
-
-    <!-- Always-visible command-palette launcher (bound by bindRailActions). -->
-    <button class="dev-tool-btn rail-action rail-palette-launcher" type="button" data-rail-action="palette"
-            aria-label="Open the command palette (Ctrl+K)" title="Command palette">
-      <span class="tab-icon" aria-hidden="true">⌕</span><span class="tab-label">Search</span><kbd class="rail-kbd" aria-hidden="true">Ctrl K</kbd>
-    </button>
-
-  </aside>
-
-  <!-- MAIN COLUMN -->
-  <main class="main-col">
-
-    <header>
-      <h1>Pendulum Lab <span class="h1-sub">by Elliot Jung</span></h1>
-      <div class="sub" aria-hidden="true"></div>
-      <span class="badge">RESEARCH</span>
-      <span id="qualBadge">HQ</span>
-      <span id="fpsBadge">— fps</span>
-      <button type="button" id="trustDrawerToggle" class="trust-toggle" aria-controls="trustDrawer" aria-expanded="false">
-        <span aria-hidden="true">◈</span> Trust &amp; Diagnostics
-      </button>
-    </header>
-
-    <div class="workflow-strip" aria-label="Primary workflows">
-      <button type="button" data-workflow-tab="lab" data-workflow-focus="resetBtn">
-        <span>Run</span><small>preset + reset</small>
-      </button>
-      <button type="button" data-workflow-tab="lab" data-workflow-focus="main">
-        <span>Observe</span><small>canvas + replay</small>
-      </button>
-      <button type="button" data-workflow-tab="bifurc" data-workflow-section="analysis">
-        <span>Analyze</span><small>spectra + maps</small>
-      </button>
-      <button type="button" data-workflow-tab="research" data-workflow-section="govern">
-        <span>Export</span><small>figures + bundle</small>
-      </button>
-    </div>
-
-    <div class="presets">
-      <span title="One-click starting setups — pick one, then press Reset to replay it">Presets</span>
-      <button class="pbtn" data-preset="classic" title="Classic — the textbook double-pendulum start">Classic</button>
-      <button class="pbtn" data-preset="butterfly" title="Butterfly — tiny change, huge difference (chaos demo)">Butterfly</button>
-      <button class="pbtn" data-preset="periodic" title="Periodic — settles into a repeating rhythm">Periodic</button>
-      <button class="pbtn" data-preset="symmetric" title="Symmetric — mirror-image start, elegant motion">Symmetric</button>
-      <button class="pbtn" data-preset="whirling" title="Whirling — high energy, arms spin over the top">Whirling</button>
-      <button class="pbtn" data-preset="upright" title="Upright — balanced near the top, barely moving">Upright</button>
-      <button class="pbtn" data-preset="chaotic" title="Chaotic — maximum unpredictability">Chaotic</button>
-      <button class="pbtn" data-preset="resonance" title="Resonance — masses and lengths tuned to trade energy">Resonance</button>
-      <button class="pbtn" data-preset="triple" title="Triple ★ — three arms, even wilder dynamics">Triple ★</button>
-      <button class="pbtn" id="savePreset" title="Save the current settings as a custom preset">💾 Save</button>
-      <button class="pbtn" id="shareUrl" title="Copy a link that reproduces this exact setup">🔗 Share</button>
-    </div>
-
-    <!-- TAB: LAB -->
-    <div class="tabpanel active" id="tab-lab" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap">
-            <canvas id="main" width="680" height="520" tabindex="0" aria-label="pendulum simulation"></canvas>
-          </div>
-          <div class="canvas-label">Main view — <span id="modeLabel">running</span></div>
-          <div class="scrub-row">
-            <button id="rewindBtn" class="pbtn" aria-label="Rewind replay to the first recorded frame">⏮</button>
-            <input type="range" id="scrubber" min="0" max="0" value="0" step="1" aria-label="Replay position">
-            <span class="val xs-1" id="scrubVal">live</span>
-          </div>
-          <div class="plots-row">
-            <div class="plot-cell"><canvas id="energy" width="220" height="120"></canvas><div class="canvas-label">ΔE / E₀</div></div>
-            <div class="plot-cell"><canvas id="lyap"   width="220" height="120"></canvas><div class="canvas-label">λ (Benettin)</div></div>
-            <div class="plot-cell"><canvas id="phase"  width="220" height="120"></canvas><div class="canvas-label">Phase portrait</div></div>
-          </div>
-          <div class="plots-row">
-            <div class="plot-cell"><canvas id="poincare" width="330" height="320"></canvas><div class="canvas-label">Poincaré section (θ₁=0, θ̇₁&gt;0) — wheel/pinch zoom</div></div>
-            <div class="plot-cell"><canvas id="fft"      width="330" height="320"></canvas><div class="canvas-label">FFT spectrum (log)</div></div>
-          </div>
+        <div class="presets">
+          <span title="One-click starting setups — pick one, then press Reset to replay it">Presets</span>
+          <button class="pbtn" data-preset="classic" title="Classic — the textbook double-pendulum start">
+            Classic
+          </button>
+          <button class="pbtn" data-preset="butterfly" title="Butterfly — tiny change, huge difference (chaos demo)">
+            Butterfly
+          </button>
+          <button class="pbtn" data-preset="periodic" title="Periodic — settles into a repeating rhythm">
+            Periodic
+          </button>
+          <button class="pbtn" data-preset="symmetric" title="Symmetric — mirror-image start, elegant motion">
+            Symmetric
+          </button>
+          <button class="pbtn" data-preset="whirling" title="Whirling — high energy, arms spin over the top">
+            Whirling
+          </button>
+          <button class="pbtn" data-preset="upright" title="Upright — balanced near the top, barely moving">
+            Upright
+          </button>
+          <button class="pbtn" data-preset="chaotic" title="Chaotic — maximum unpredictability">Chaotic</button>
+          <button class="pbtn" data-preset="resonance" title="Resonance — masses and lengths tuned to trade energy">
+            Resonance
+          </button>
+          <button class="pbtn" data-preset="triple" title="Triple ★ — three arms, even wilder dynamics">
+            Triple ★
+          </button>
+          <button class="pbtn" id="savePreset" title="Save the current settings as a custom preset">💾 Save</button>
+          <button class="pbtn" id="shareUrl" title="Copy a link that reproduces this exact setup">🔗 Share</button>
         </div>
 
-        <!-- RIGHT CONTROL PANEL — ACCORDION ARCHITECTURE -->
-        <aside class="controls" role="region" aria-label="controls">
-
-          
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Simulation</div>
-            <div class="btnrow xs-2">
-              <button class="primary" id="resetBtn">↺ Reset</button>
-              <button id="pauseBtn">⏸ Pause</button>
-              <button id="clearTrailBtn">Clear Trail</button>
-              <button id="clearPoincBtn">Clear Poincaré</button>
-            </div>
-            <div class="row xs-3">
-              <label class="xs-4" for="speed">Speed</label>
-              <input id="speed" type="range" min="0.1" max="4" step="0.1" value="1.0">
-              <span class="val" id="speedV">1.0×</span>
-            </div>
-            <div class="row xs-3">
-              <label class="xs-4" for="timeMode">Timing</label>
-              <select id="timeMode" title="Deterministic keeps a fixed step count per frame; wall-clock follows real elapsed time with a catch-up cap.">
-                <option value="deterministic">Deterministic replay</option>
-                <option value="wall-clock" selected>Real-time fixed-dt</option>
-              </select>
-              <span class="val">mode</span>
-            </div>
-          </div>
-
-          
-          <details class="acc" open>
-            <summary>
-              <span class="acc-icon">⚛</span>
-              <span class="acc-label">System &amp; Initial Conditions</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="acc-sub">System</div>
-              <div class="row">
-                <label for="sysType">Type</label>
-                <select id="sysType">
-                  <option value="double">Double Pendulum</option>
-                  <option value="triple">Triple Pendulum ★</option>
-                </select>
+        <!-- TAB: LAB -->
+        <div class="tabpanel active" id="tab-lab" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap">
+                <canvas id="main" width="680" height="520" tabindex="0" aria-label="pendulum simulation"></canvas>
               </div>
-              <div class="row">
-                <label for="seed">Seed</label>
-                <input class="xs-5" id="seed" type="number" value="1">
+              <div class="canvas-label">Main view — <span id="modeLabel">running</span></div>
+              <div class="scrub-row">
+                <button id="rewindBtn" class="pbtn" aria-label="Rewind replay to the first recorded frame">⏮</button>
+                <input type="range" id="scrubber" min="0" max="0" value="0" step="1" aria-label="Replay position" />
+                <span class="val xs-1" id="scrubVal">live</span>
               </div>
-              <div class="acc-sub">Initial Angles</div>
-              <div class="row">
-                <label class="has-tip" data-tip="Initial angle of arm 1 in radians (−π to π)" for="th1">θ₁ (rad)</label>
-                <input id="th1" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="2.0">
-                <span class="val" id="th1V">2.000</span>
-              </div>
-              <div class="row">
-                <label class="has-tip" data-tip="Initial angle of arm 2 in radians (−π to π)" for="th2">θ₂ (rad)</label>
-                <input id="th2" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="2.5">
-                <span class="val" id="th2V">2.500</span>
-              </div>
-              <div class="row" data-tri>
-                <label for="th3">θ₃ (rad)</label>
-                <input id="th3" type="range" min="-3.141592653589793" max="3.141592653589793" step="0.001" value="1.0">
-                <span class="val" id="th3V">1.000</span>
-              </div>
-              <div class="acc-sub">Initial Velocities</div>
-              <div class="row">
-                <label for="iw1">ω₁ (rad/s)</label>
-                <input id="iw1" type="range" min="-64" max="64" step="0.1" value="0">
-                <span class="val" id="iw1V">0.0</span>
-              </div>
-              <div class="row">
-                <label for="iw2">ω₂ (rad/s)</label>
-                <input id="iw2" type="range" min="-64" max="64" step="0.1" value="0">
-                <span class="val" id="iw2V">0.0</span>
-              </div>
-              <div class="row" data-tri>
-                <label for="iw3">ω₃ (rad/s)</label>
-                <input id="iw3" type="range" min="-64" max="64" step="0.1" value="0">
-                <span class="val" id="iw3V">0.0</span>
-              </div>
-            </div>
-          </details>
-
-          
-          <details class="acc" open>
-            <summary>
-              <span class="acc-icon">⚖</span>
-              <span class="acc-label">Physical Parameters</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="acc-sub">Masses &amp; Lengths</div>
-              <div class="row"><label for="m1">m₁ (kg)</label><input id="m1" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m1V">1.00</span></div>
-              <div class="row"><label for="m2">m₂ (kg)</label><input id="m2" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m2V">1.00</span></div>
-              <div class="row" data-tri><label for="m3">m₃ (kg)</label><input id="m3" type="range" min="0.1" max="5" step="0.05" value="1"><span class="val" id="m3V">1.00</span></div>
-              <div class="row"><label for="l1">ℓ₁ (m)</label><input id="l1" type="range" min="0.3" max="2" step="0.01" value="1.2"><span class="val" id="l1V">1.20</span></div>
-              <div class="row"><label for="l2">ℓ₂ (m)</label><input id="l2" type="range" min="0.3" max="2" step="0.01" value="1.0"><span class="val" id="l2V">1.00</span></div>
-              <div class="row" data-tri><label for="l3">ℓ₃ (m)</label><input id="l3" type="range" min="0.3" max="2" step="0.01" value="0.8"><span class="val" id="l3V">0.80</span></div>
-              <div class="acc-sub">Environment</div>
-              <div class="row">
-                <label class="has-tip" data-tip="Gravitational acceleration. Try g=0 for microgravity!" for="g">g (m/s²)</label>
-                <input id="g" type="range" min="0" max="20" step="0.1" value="9.81">
-                <span class="val" id="gV">9.81</span>
-              </div>
-              <div class="row">
-                <label class="has-tip" data-tip="Linear damping γ. Any γ&gt;0 makes the system dissipative — energy conservation diagnostics become interpretive." for="gamma">γ damping</label>
-                <input id="gamma" type="range" min="0" max="10" step="0.01" value="0">
-                <span class="val" id="gammaV">0.00</span>
-              </div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">🎨</span>
-              <span class="acc-label">Visualization</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="row">
-                <label for="trailMode">Trail color</label>
-                <select id="trailMode">
-                  <option value="rainbow">Rainbow</option>
-                  <option value="heat">Heat</option>
-                  <option value="ice">Ice</option>
-                  <option value="plasma">Plasma</option>
-                  <option value="white">White</option>
-                  <option value="green">Phosphor</option>
-                </select>
-              </div>
-              <div class="row">
-                <label for="trailLen">Trail length <span class="cost-chip">paint</span></label>
-                <input id="trailLen" type="range" min="100" max="3000" step="50" value="1200">
-                <span class="val" id="trailLenV">1200</span>
-              </div>
-              <div class="row">
-                <label for="phaseAxis">Phase axis</label>
-                <select id="phaseAxis">
-                  <option value="1">θ₁ vs ω₁</option>
-                  <option value="2">θ₂ vs ω₂</option>
-                  <option value="both">Both</option>
-                </select>
-              </div>
-              <div class="row"><label><input id="glowMode" type="checkbox"> Glow FX <span class="cost-chip">GPU</span></label></div>
-              <div class="row"><label><input id="longExpose" type="checkbox"> Long exposure</label></div>
-              <div class="row"><label><input id="interpolateRender" type="checkbox" checked> Interpolated render</label></div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">∫</span>
-              <span class="acc-label">Numerical Methods</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="row">
-                <label class="has-tip" data-tip="Symplectic integrators preserve energy over long simulations. Adaptive/high-order methods expose residual or error metadata." for="method">Method</label>
-                <select id="method">
-                  <option value="rk4" selected>RK4 (4th order)</option>
-                  <option value="rkf45">RKF45 — embedded 5(4)</option>
-                  <option value="dopri5">Dormand-Prince 5(4)</option>
-                  <option value="dop853">DOP853 — fixed 8th-order reference</option>
-                  <option value="gbs">Gragg-Bulirsch-Stoer</option>
-                  <option value="hmidpoint">Canonical implicit midpoint — conditional symplectic</option>
-                  <option value="leapfrog">Leapfrog KDK — pseudo-symplectic θ/ω</option>
-                  <option value="yoshida4">Yoshida4 — pseudo-symplectic θ/ω</option>
-                  <option value="yoshida6">Yoshida6 — high-order composition</option>
-                  <option value="yoshida8">Yoshida8 — high-order composition</option>
-                  <option value="gauss2">Implicit midpoint θ/ω</option>
-                  <option value="bdf2">TR-BDF2 — stiff L-stable</option>
-                  <option value="symplectic">Symplectic Euler — separable approximation</option>
-                  <option value="rk2">RK2 midpoint</option>
-                  <option value="euler">Euler 1st</option>
-                </select>
-              </div>
-              <div class="row">
-                <label class="has-tip" data-tip="Timestep dt. Smaller dt = higher accuracy, higher CPU cost." for="dt">dt (s)</label>
-                <input id="dt" type="range" min="0.0001" max="0.05" step="0.0001" value="0.003">
-                <span class="val" id="dtV">0.0030</span>
-              </div>
-              <div class="row">
-                <label for="tol">tol (adaptive/implicit)</label>
-                <input id="tol" type="range" min="-12" max="-3" step="0.5" value="-6">
-                <span class="val" id="tolV">1.0e-6</span>
-              </div>
-              <div class="row">
-                <label for="spf">Steps/frame</label>
-                <input id="spf" type="range" min="1" max="60" step="1" value="6">
-                <span class="val" id="spfV">6</span>
-              </div>
-              <div class="row">
-                <label for="qualityMode">Quality mode</label>
-                <select id="qualityMode">
-                  <option value="performance">Performance</option>
-                  <option value="balanced" selected>Balanced</option>
-                  <option value="cinematic">Cinematic</option>
-                </select>
-              </div>
-              <div class="row"><label><input id="useWorker" type="checkbox" checked> Use worker pool</label></div>
-              <div class="row"><label><input id="autoQual" type="checkbox" checked> Auto-quality scaling</label></div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">👥</span>
-              <span class="acc-label">Ensemble</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <p class="xs-6">
-                Ensemble members are perturbed copies of the main trajectory. 
-                They reveal chaos: nearby trajectories diverge exponentially.
-              </p>
-              <div class="row"><label for="ensN">N copies <span class="cost-chip">CPU</span></label><input id="ensN" type="range" min="0" max="80" step="1" value="12"><span class="val" id="ensNV">12</span></div>
-              <div class="row">
-                <label class="has-tip" data-tip="Initial separation ε between ensemble members and the reference trajectory." for="ensEps">ε (rad)</label>
-                <input id="ensEps" type="range" min="-7" max="-2" step="0.1" value="-4">
-                <span class="val" id="ensEpsV">1.0e-4</span>
-              </div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">♪</span>
-              <span class="acc-label">Audio Sonification</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="row"><label><input id="audioOn" type="checkbox"> Enable audio</label></div>
-              <div class="row"><label for="audioVol">Volume</label><input id="audioVol" type="range" min="0" max="0.4" step="0.01" value="0.08"><span class="val" id="audioVolV">0.08</span></div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">⬇</span>
-              <span class="acc-label">Export &amp; Record</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="acc-sub">Data Export</div>
-              <div class="btnrow xs-7">
-                <button id="dlTrajBtn">⬇ CSV</button>
-                <button id="dlPoincBtn">⬇ Poincaré</button>
-                <button id="dlPNGBtn">⬇ PNG</button>
-                <button id="dlJsonBtn">⬇ JSON</button>
-              </div>
-              <div class="btnrow xs-7">
-                <button id="dlReportBtn">⬇ Report</button>
-                <button id="loadJsonBtn">⬆ Load</button>
-                <button id="recBtn" class="danger">● Rec</button>
-              </div>
-              <input class="xs-8" type="file" id="jsonFile" accept=".json" aria-label="Load a saved run JSON file">
-            </div>
-          </details>
-
-          
-          <details class="acc" open>
-            <summary>
-              <span class="acc-icon">📊</span>
-              <span class="acc-label">Live Diagnostics</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="stats" id="stats">
-                <div class="srow"><span class="skey">time</span><span class="sval hi" id="tStat">0.00 s</span></div>
-                <div class="srow"><span class="skey">θ₁ / ω₁</span><span class="sval" id="th1Stat">—</span></div>
-                <div class="srow"><span class="skey">θ₂ / ω₂</span><span class="sval" id="th2Stat">—</span></div>
-                <div class="srow"><span class="skey">E₀ / E</span><span class="sval" id="eStat">—</span></div>
-                <div class="srow">
-                  <span class="skey has-tip" data-tip="Energy drift relative to initial energy. Small values ≈ good conservation.">|ΔE/E₀|</span>
-                  <span class="sval" id="driftStat">—</span>
+              <div class="plots-row">
+                <div class="plot-cell">
+                  <canvas id="energy" width="220" height="120"></canvas>
+                  <div class="canvas-label">ΔE / E₀</div>
                 </div>
-                <div class="srow">
-                  <span class="skey has-tip" data-tip="Lyapunov exponent λ₁ measures sensitivity to initial conditions. Positive λ₁ indicates chaos.">λ Benettin</span>
-                  <span class="sval" id="lyapStat">—</span>
+                <div class="plot-cell">
+                  <canvas id="lyap" width="220" height="120"></canvas>
+                  <div class="canvas-label">λ (Benettin)</div>
                 </div>
-                <div class="srow"><span class="skey">verdict</span><span class="sval" id="verdict"><span class="chip">analyzing</span></span></div>
-                <div class="srow"><span class="skey">memory</span><span class="sval" id="memStat">—</span></div>
-                <div class="srow"><span class="skey">recoveries</span><span class="sval" id="nanStat">0</span></div>
+                <div class="plot-cell">
+                  <canvas id="phase" width="220" height="120"></canvas>
+                  <div class="canvas-label">Phase portrait</div>
+                </div>
               </div>
-            </div>
-          </details>
-
-          
-          <details class="acc">
-            <summary>
-              <span class="acc-icon">⌨</span>
-              <span class="acc-label">Keyboard Shortcuts</span>
-              <span class="acc-arrow">›</span>
-            </summary>
-            <div class="acc-body">
-              <div class="shorts">
-                <kbd>Space</kbd> pause &nbsp;<kbd>R</kbd> reset &nbsp;<kbd>C</kbd> trail<br>
-                <kbd>P</kbd> Poincaré &nbsp;<kbd>E</kbd> ensemble &nbsp;<kbd>←/→</kbd> scrub<br>
-                <kbd>1-8</kbd> tabs &nbsp;<kbd>?</kbd> help &nbsp;<kbd>Ctrl+K</kbd> palette
-              </div>
-            </div>
-          </details>
-
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: COMPARE -->
-    <div class="tabpanel" id="tab-compare" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap"><canvas id="cmpCanvas" width="880" height="480"></canvas></div>
-          <div class="canvas-label">RK4 (cyan) · Leapfrog (orange) · RKF45 (green) · Yoshida4 (purple)</div>
-          <div class="plots-row">
-            <div class="plot-cell"><canvas id="cmpEnergy" width="430" height="180"></canvas><div class="canvas-label">|ΔE / E₀| log₁₀</div></div>
-            <div class="plot-cell"><canvas id="cmpDiverge" width="430" height="180"></canvas><div class="canvas-label">‖Δx‖ vs RK4 (log)</div></div>
-          </div>
-          <div class="plot-cell xs-9"><canvas id="cmpBench" width="880" height="120"></canvas><div class="canvas-label">Benchmark — steps / ms</div></div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Integrator Compare</div>
-            <div class="row"><label for="cmpDt">dt</label><input id="cmpDt" type="range" min="0.001" max="0.02" step="0.001" value="0.005"><span class="val" id="cmpDtV">0.005</span></div>
-            <div class="btnrow">
-              <button id="cmpStart" class="primary">▶ Start</button>
-              <button id="cmpStop">■ Stop</button>
-              <button id="cmpBenchBtn">⚡ Benchmark</button>
-            </div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Benchmark Results</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey">RK4</span><span class="sval" id="bRK4">—</span></div>
-                <div class="srow"><span class="skey">RKF45</span><span class="sval" id="bRKF45">—</span></div>
-                <div class="srow"><span class="skey">Leapfrog</span><span class="sval" id="bLeap">—</span></div>
-                <div class="srow"><span class="skey">Yoshida4</span><span class="sval" id="bYosh">—</span></div>
-                <div class="srow"><span class="skey">Sympl. Euler</span><span class="sval" id="bSympl">—</span></div>
-                <div class="srow"><span class="skey">Gauss2</span><span class="sval" id="bGauss">—</span></div>
-                <div class="srow"><span class="skey">RK2</span><span class="sval" id="bRK2">—</span></div>
-                <div class="srow"><span class="skey">Euler</span><span class="sval" id="bEuler">—</span></div>
-              </div>
-            </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: LYAPUNOV -->
-    <div class="tabpanel" id="tab-lyap" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap"><canvas id="lyapSpecCanvas" width="880" height="440"></canvas></div>
-          <div class="canvas-label">Full Lyapunov spectrum — QR-orthonormalization (Benettin's algorithm)</div>
-          <div class="btnrow xs-9">
-            <button id="lyapStart" class="primary">▶ Start</button>
-            <button id="lyapStop">■ Stop</button>
-            <button id="lyapExport">⬇ CSV</button>
-            <span class="xs-10" id="lyapStatus"></span>
-          </div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Lyapunov Spectrum</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">λ</span><span class="acc-label">Computation Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Computes {λ₁,…,λₙ} via QR-decomposition of perturbed orthonormal basis evolved 
-                alongside the trajectory. For conservative systems, Σλᵢ ≈ 0.
-              </p>
-              <div class="row"><label for="lyapDt">Renorm Δt</label><input id="lyapDt" type="range" min="0.05" max="2" step="0.05" value="0.5"><span class="val" id="lyapDtV">0.50 s</span></div>
-              <div class="row"><label for="lyapT">Integrate T</label><input id="lyapT" type="range" min="20" max="500" step="20" value="120"><span class="val" id="lyapTV">120 s</span></div>
-              <div class="row"><label for="lyapEps">ε perturb</label><input id="lyapEps" type="range" min="-10" max="-4" step="0.5" value="-7"><span class="val" id="lyapEpsV">1.0e-7</span></div>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Spectrum Results</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats" id="lyapResults">
-                <div class="srow"><span class="skey">λ₁</span><span class="sval" id="L1">—</span></div>
-                <div class="srow"><span class="skey">λ₂</span><span class="sval" id="L2">—</span></div>
-                <div class="srow"><span class="skey">λ₃</span><span class="sval" id="L3">—</span></div>
-                <div class="srow"><span class="skey">λ₄</span><span class="sval" id="L4">—</span></div>
-                <div class="srow"><span class="skey">Σ λ</span><span class="sval" id="LSum">—</span></div>
-                <div class="srow">
-                  <span class="skey has-tip" data-tip="Kaplan-Yorke dimension estimates the fractal dimension of the attractor.">Kaplan–Yorke dim</span>
-                  <span class="sval" id="KY">—</span>
+              <div class="plots-row">
+                <div class="plot-cell">
+                  <canvas id="poincare" width="330" height="320"></canvas>
+                  <div class="canvas-label">Poincaré section (θ₁=0, θ̇₁&gt;0) — wheel/pinch zoom</div>
+                </div>
+                <div class="plot-cell">
+                  <canvas id="fft" width="330" height="320"></canvas>
+                  <div class="canvas-label">FFT spectrum (log)</div>
                 </div>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
 
-    <!-- TAB: SWEEP -->
-    <div class="tabpanel" id="tab-sweep" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="sweepCanvas" width="600" height="600"></canvas></div>
-          <div class="canvas-label">λ(θ₁, θ₂) chaos map · click to set initial conditions</div>
-          <div class="btnrow xs-9">
-            <button id="sweepStart" class="primary">▶ Start</button>
-            <button id="sweepStop">■ Cancel</button>
-            <button id="sweepExportPNG">⬇ PNG</button>
-            <button id="sweepExportCSV">⬇ CSV</button>
-            <span class="xs-10" id="sweepStatus"></span>
-          </div>
-          <div class="xs-9"><div class="xs-13"><div class="xs-14" id="sweepProgress"></div></div></div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Chaos Map Sweep</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">▦</span><span class="acc-label">Sweep Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Maps λ₁(θ₁, θ₂) across initial condition space. 
-                Poincaré sections reveal hidden periodic structure.
-              </p>
-              <div class="row"><label for="sweepRes">Resolution</label><input id="sweepRes" type="range" min="40" max="400" step="10" value="120"><span class="val" id="sweepResV">120</span></div>
-              <div class="row"><label for="sweepT">T (sim)</label><input id="sweepT" type="range" min="5" max="60" step="1" value="20"><span class="val" id="sweepTV">20 s</span></div>
-              <div class="row"><label><input id="sweepGpu" type="checkbox"> WebGPU acceleration (f32, CPU-cross-validated)</label></div>
-            </div>
-          </details>
-        </aside>
-      </div>
-    </div>
+            <!-- RIGHT CONTROL PANEL — ACCORDION ARCHITECTURE -->
+            <aside class="controls" role="region" aria-label="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Simulation</div>
+                <div class="btnrow xs-2">
+                  <button class="primary" id="resetBtn">↺ Reset</button>
+                  <button id="pauseBtn">⏸ Pause</button>
+                  <button id="clearTrailBtn">Clear Trail</button>
+                  <button id="clearPoincBtn">Clear Poincaré</button>
+                </div>
+                <div class="row xs-3">
+                  <label class="xs-4" for="speed">Speed</label>
+                  <input id="speed" type="range" min="0.1" max="4" step="0.1" value="1.0" />
+                  <span class="val" id="speedV">1.0×</span>
+                </div>
+                <div class="row xs-3">
+                  <label class="xs-4" for="timeMode">Timing</label>
+                  <select
+                    id="timeMode"
+                    title="Deterministic keeps a fixed step count per frame; wall-clock follows real elapsed time with a catch-up cap."
+                  >
+                    <option value="deterministic">Deterministic replay</option>
+                    <option value="wall-clock" selected>Real-time fixed-dt</option>
+                  </select>
+                  <span class="val">mode</span>
+                </div>
+              </div>
 
-    <!-- TAB: BIFURCATION -->
-    <div class="tabpanel" id="tab-bifurc" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-15"><canvas id="bifCanvas" width="880" height="500"></canvas></div>
-          <div class="canvas-label">Bifurcation diagram — θ₂ at Poincaré section vs g</div>
-          <div class="btnrow xs-9">
-            <button id="bifStart" class="primary">▶ Start</button>
-            <button id="bifStop">■ Cancel</button>
-            <button id="bifExport">⬇ PNG</button>
-            <span class="xs-10" id="bifStatus"></span>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">⚛</span>
+                  <span class="acc-label">System &amp; Initial Conditions</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="acc-sub">System</div>
+                  <div class="row">
+                    <label for="sysType">Type</label>
+                    <select id="sysType">
+                      <option value="double">Double Pendulum</option>
+                      <option value="triple">Triple Pendulum ★</option>
+                    </select>
+                  </div>
+                  <div class="row">
+                    <label for="seed">Seed</label>
+                    <input class="xs-5" id="seed" type="number" value="1" />
+                  </div>
+                  <div class="acc-sub">Initial Angles</div>
+                  <div class="row">
+                    <label class="has-tip" data-tip="Initial angle of arm 1 in radians (−π to π)" for="th1"
+                      >θ₁ (rad)</label
+                    >
+                    <input
+                      id="th1"
+                      type="range"
+                      min="-3.141592653589793"
+                      max="3.141592653589793"
+                      step="0.001"
+                      value="2.0"
+                    />
+                    <span class="val" id="th1V">2.000</span>
+                  </div>
+                  <div class="row">
+                    <label class="has-tip" data-tip="Initial angle of arm 2 in radians (−π to π)" for="th2"
+                      >θ₂ (rad)</label
+                    >
+                    <input
+                      id="th2"
+                      type="range"
+                      min="-3.141592653589793"
+                      max="3.141592653589793"
+                      step="0.001"
+                      value="2.5"
+                    />
+                    <span class="val" id="th2V">2.500</span>
+                  </div>
+                  <div class="row" data-tri>
+                    <label for="th3">θ₃ (rad)</label>
+                    <input
+                      id="th3"
+                      type="range"
+                      min="-3.141592653589793"
+                      max="3.141592653589793"
+                      step="0.001"
+                      value="1.0"
+                    />
+                    <span class="val" id="th3V">1.000</span>
+                  </div>
+                  <div class="acc-sub">Initial Velocities</div>
+                  <div class="row">
+                    <label for="iw1">ω₁ (rad/s)</label>
+                    <input id="iw1" type="range" min="-64" max="64" step="0.1" value="0" />
+                    <span class="val" id="iw1V">0.0</span>
+                  </div>
+                  <div class="row">
+                    <label for="iw2">ω₂ (rad/s)</label>
+                    <input id="iw2" type="range" min="-64" max="64" step="0.1" value="0" />
+                    <span class="val" id="iw2V">0.0</span>
+                  </div>
+                  <div class="row" data-tri>
+                    <label for="iw3">ω₃ (rad/s)</label>
+                    <input id="iw3" type="range" min="-64" max="64" step="0.1" value="0" />
+                    <span class="val" id="iw3V">0.0</span>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">⚖</span>
+                  <span class="acc-label">Physical Parameters</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="acc-sub">Masses &amp; Lengths</div>
+                  <div class="row">
+                    <label for="m1">m₁ (kg)</label
+                    ><input id="m1" type="range" min="0.1" max="5" step="0.05" value="1" /><span class="val" id="m1V"
+                      >1.00</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="m2">m₂ (kg)</label
+                    ><input id="m2" type="range" min="0.1" max="5" step="0.05" value="1" /><span class="val" id="m2V"
+                      >1.00</span
+                    >
+                  </div>
+                  <div class="row" data-tri>
+                    <label for="m3">m₃ (kg)</label
+                    ><input id="m3" type="range" min="0.1" max="5" step="0.05" value="1" /><span class="val" id="m3V"
+                      >1.00</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="l1">ℓ₁ (m)</label
+                    ><input id="l1" type="range" min="0.3" max="2" step="0.01" value="1.2" /><span class="val" id="l1V"
+                      >1.20</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="l2">ℓ₂ (m)</label
+                    ><input id="l2" type="range" min="0.3" max="2" step="0.01" value="1.0" /><span class="val" id="l2V"
+                      >1.00</span
+                    >
+                  </div>
+                  <div class="row" data-tri>
+                    <label for="l3">ℓ₃ (m)</label
+                    ><input id="l3" type="range" min="0.3" max="2" step="0.01" value="0.8" /><span class="val" id="l3V"
+                      >0.80</span
+                    >
+                  </div>
+                  <div class="acc-sub">Environment</div>
+                  <div class="row">
+                    <label class="has-tip" data-tip="Gravitational acceleration. Try g=0 for microgravity!" for="g"
+                      >g (m/s²)</label
+                    >
+                    <input id="g" type="range" min="0" max="20" step="0.1" value="9.81" />
+                    <span class="val" id="gV">9.81</span>
+                  </div>
+                  <div class="row">
+                    <label
+                      class="has-tip"
+                      data-tip="Linear damping γ. Any γ&gt;0 makes the system dissipative — energy conservation diagnostics become interpretive."
+                      for="gamma"
+                      >γ damping</label
+                    >
+                    <input id="gamma" type="range" min="0" max="10" step="0.01" value="0" />
+                    <span class="val" id="gammaV">0.00</span>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">🎨</span>
+                  <span class="acc-label">Visualization</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label for="trailMode">Trail color</label>
+                    <select id="trailMode">
+                      <option value="rainbow">Rainbow</option>
+                      <option value="heat">Heat</option>
+                      <option value="ice">Ice</option>
+                      <option value="plasma">Plasma</option>
+                      <option value="white">White</option>
+                      <option value="green">Phosphor</option>
+                    </select>
+                  </div>
+                  <div class="row">
+                    <label for="trailLen">Trail length <span class="cost-chip">paint</span></label>
+                    <input id="trailLen" type="range" min="100" max="3000" step="50" value="1200" />
+                    <span class="val" id="trailLenV">1200</span>
+                  </div>
+                  <div class="row">
+                    <label for="phaseAxis">Phase axis</label>
+                    <select id="phaseAxis">
+                      <option value="1">θ₁ vs ω₁</option>
+                      <option value="2">θ₂ vs ω₂</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                  <div class="row">
+                    <label><input id="glowMode" type="checkbox" /> Glow FX <span class="cost-chip">GPU</span></label>
+                  </div>
+                  <div class="row">
+                    <label><input id="longExpose" type="checkbox" /> Long exposure</label>
+                  </div>
+                  <div class="row">
+                    <label><input id="interpolateRender" type="checkbox" checked /> Interpolated render</label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">∫</span>
+                  <span class="acc-label">Numerical Methods</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label
+                      class="has-tip"
+                      data-tip="Symplectic integrators preserve energy over long simulations. Adaptive/high-order methods expose residual or error metadata."
+                      for="method"
+                      >Method</label
+                    >
+                    <select id="method">
+                      <option value="rk4" selected>RK4 (4th order)</option>
+                      <option value="rkf45">RKF45 — embedded 5(4)</option>
+                      <option value="dopri5">Dormand-Prince 5(4)</option>
+                      <option value="dop853">DOP853 — fixed 8th-order reference</option>
+                      <option value="gbs">Gragg-Bulirsch-Stoer</option>
+                      <option value="hmidpoint">Canonical implicit midpoint — conditional symplectic</option>
+                      <option value="leapfrog">Leapfrog KDK — pseudo-symplectic θ/ω</option>
+                      <option value="yoshida4">Yoshida4 — pseudo-symplectic θ/ω</option>
+                      <option value="yoshida6">Yoshida6 — high-order composition</option>
+                      <option value="yoshida8">Yoshida8 — high-order composition</option>
+                      <option value="gauss2">Implicit midpoint θ/ω</option>
+                      <option value="bdf2">TR-BDF2 — stiff L-stable</option>
+                      <option value="symplectic">Symplectic Euler — separable approximation</option>
+                      <option value="rk2">RK2 midpoint</option>
+                      <option value="euler">Euler 1st</option>
+                    </select>
+                  </div>
+                  <div class="row">
+                    <label
+                      class="has-tip"
+                      data-tip="Timestep dt. Smaller dt = higher accuracy, higher CPU cost."
+                      for="dt"
+                      >dt (s)</label
+                    >
+                    <input id="dt" type="range" min="0.0001" max="0.05" step="0.0001" value="0.003" />
+                    <span class="val" id="dtV">0.0030</span>
+                  </div>
+                  <div class="row">
+                    <label for="tol">tol (adaptive/implicit)</label>
+                    <input id="tol" type="range" min="-12" max="-3" step="0.5" value="-6" />
+                    <span class="val" id="tolV">1.0e-6</span>
+                  </div>
+                  <div class="row">
+                    <label for="spf">Steps/frame</label>
+                    <input id="spf" type="range" min="1" max="60" step="1" value="6" />
+                    <span class="val" id="spfV">6</span>
+                  </div>
+                  <div class="row">
+                    <label for="qualityMode">Quality mode</label>
+                    <select id="qualityMode">
+                      <option value="performance">Performance</option>
+                      <option value="balanced" selected>Balanced</option>
+                      <option value="cinematic">Cinematic</option>
+                    </select>
+                  </div>
+                  <div class="row">
+                    <label><input id="useWorker" type="checkbox" checked /> Use worker pool</label>
+                  </div>
+                  <div class="row">
+                    <label><input id="autoQual" type="checkbox" checked /> Auto-quality scaling</label>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">👥</span>
+                  <span class="acc-label">Ensemble</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-6">
+                    Ensemble members are perturbed copies of the main trajectory. They reveal chaos: nearby trajectories
+                    diverge exponentially.
+                  </p>
+                  <div class="row">
+                    <label for="ensN">N copies <span class="cost-chip">CPU</span></label
+                    ><input id="ensN" type="range" min="0" max="80" step="1" value="12" /><span class="val" id="ensNV"
+                      >12</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label
+                      class="has-tip"
+                      data-tip="Initial separation ε between ensemble members and the reference trajectory."
+                      for="ensEps"
+                      >ε (rad)</label
+                    >
+                    <input id="ensEps" type="range" min="-7" max="-2" step="0.1" value="-4" />
+                    <span class="val" id="ensEpsV">1.0e-4</span>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">♪</span>
+                  <span class="acc-label">Audio Sonification</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label><input id="audioOn" type="checkbox" /> Enable audio</label>
+                  </div>
+                  <div class="row">
+                    <label for="audioVol">Volume</label
+                    ><input id="audioVol" type="range" min="0" max="0.4" step="0.01" value="0.08" /><span
+                      class="val"
+                      id="audioVolV"
+                      >0.08</span
+                    >
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">⬇</span>
+                  <span class="acc-label">Export &amp; Record</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="acc-sub">Data Export</div>
+                  <div class="btnrow xs-7">
+                    <button id="dlTrajBtn">⬇ CSV</button>
+                    <button id="dlPoincBtn">⬇ Poincaré</button>
+                    <button id="dlPNGBtn">⬇ PNG</button>
+                    <button id="dlJsonBtn">⬇ JSON</button>
+                  </div>
+                  <div class="btnrow xs-7">
+                    <button id="dlReportBtn">⬇ Report</button>
+                    <button id="loadJsonBtn">⬆ Load</button>
+                    <button id="recBtn" class="danger">● Rec</button>
+                  </div>
+                  <input
+                    class="xs-8"
+                    type="file"
+                    id="jsonFile"
+                    accept=".json"
+                    aria-label="Load a saved run JSON file"
+                  />
+                </div>
+              </details>
+
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span>
+                  <span class="acc-label">Live Diagnostics</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats" id="stats">
+                    <div class="srow"><span class="skey">time</span><span class="sval hi" id="tStat">0.00 s</span></div>
+                    <div class="srow"><span class="skey">θ₁ / ω₁</span><span class="sval" id="th1Stat">—</span></div>
+                    <div class="srow"><span class="skey">θ₂ / ω₂</span><span class="sval" id="th2Stat">—</span></div>
+                    <div class="srow"><span class="skey">E₀ / E</span><span class="sval" id="eStat">—</span></div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Energy drift relative to initial energy. Small values ≈ good conservation."
+                        >|ΔE/E₀|</span
+                      >
+                      <span class="sval" id="driftStat">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Lyapunov exponent λ₁ measures sensitivity to initial conditions. Positive λ₁ indicates chaos."
+                        >λ Benettin</span
+                      >
+                      <span class="sval" id="lyapStat">—</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey">verdict</span
+                      ><span class="sval" id="verdict"><span class="chip">analyzing</span></span>
+                    </div>
+                    <div class="srow"><span class="skey">memory</span><span class="sval" id="memStat">—</span></div>
+                    <div class="srow"><span class="skey">recoveries</span><span class="sval" id="nanStat">0</span></div>
+                  </div>
+                </div>
+              </details>
+
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">⌨</span>
+                  <span class="acc-label">Keyboard Shortcuts</span>
+                  <span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="shorts">
+                    <kbd>Space</kbd> pause &nbsp;<kbd>R</kbd> reset &nbsp;<kbd>C</kbd> trail<br />
+                    <kbd>P</kbd> Poincaré &nbsp;<kbd>E</kbd> ensemble &nbsp;<kbd>←/→</kbd> scrub<br />
+                    <kbd>1-8</kbd> tabs &nbsp;<kbd>?</kbd> help &nbsp;<kbd>Ctrl+K</kbd> palette
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-          <div class="xs-9"><div class="xs-13"><div class="xs-16" id="bifProgress"></div></div></div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Bifurcation Analysis</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">∿</span><span class="acc-label">Bifurcation Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="row"><label for="bifGMin">g min</label><input id="bifGMin" type="range" min="0.1" max="10" step="0.1" value="2"><span class="val" id="bifGMinV">2.0</span></div>
-              <div class="row"><label for="bifGMax">g max</label><input id="bifGMax" type="range" min="5" max="20" step="0.5" value="12"><span class="val" id="bifGMaxV">12.0</span></div>
-              <div class="row"><label for="bifSteps">Steps</label><input id="bifSteps" type="range" min="100" max="1000" step="50" value="400"><span class="val" id="bifStepsV">400</span></div>
-              <div class="row"><label for="bifT">T (sim)</label><input id="bifT" type="range" min="20" max="200" step="10" value="60"><span class="val" id="bifTV">60 s</span></div>
+
+        <!-- TAB: COMPARE -->
+        <div class="tabpanel" id="tab-compare" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap"><canvas id="cmpCanvas" width="880" height="480"></canvas></div>
+              <div class="canvas-label">RK4 (cyan) · Leapfrog (orange) · RKF45 (green) · Yoshida4 (purple)</div>
+              <div class="plots-row">
+                <div class="plot-cell">
+                  <canvas id="cmpEnergy" width="430" height="180"></canvas>
+                  <div class="canvas-label">|ΔE / E₀| log₁₀</div>
+                </div>
+                <div class="plot-cell">
+                  <canvas id="cmpDiverge" width="430" height="180"></canvas>
+                  <div class="canvas-label">‖Δx‖ vs RK4 (log)</div>
+                </div>
+              </div>
+              <div class="plot-cell xs-9">
+                <canvas id="cmpBench" width="880" height="120"></canvas>
+                <div class="canvas-label">Benchmark — steps / ms</div>
+              </div>
             </div>
-          </details>
-          <details class="acc">
-            <summary><span class="acc-icon">⤳</span><span class="acc-label">Driven Orbit: Floquet &amp; Pitchfork</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="row"><label for="bifDrA">Drive A</label><input id="bifDrA" type="range" min="0.3" max="1.5" step="0.005" value="1.005"><span class="val" id="bifDrAV">1.005</span></div>
-              <div class="row"><label for="bifDrGamma">Damping γ</label><input id="bifDrGamma" type="range" min="0.1" max="1" step="0.05" value="0.5"><span class="val" id="bifDrGammaV">0.50</span></div>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Integrator Compare</div>
+                <div class="row">
+                  <label for="cmpDt">dt</label
+                  ><input id="cmpDt" type="range" min="0.001" max="0.02" step="0.001" value="0.005" /><span
+                    class="val"
+                    id="cmpDtV"
+                    >0.005</span
+                  >
+                </div>
+                <div class="btnrow">
+                  <button id="cmpStart" class="primary">▶ Start</button>
+                  <button id="cmpStop">■ Stop</button>
+                  <button id="cmpBenchBtn">⚡ Benchmark</button>
+                </div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Benchmark Results</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow"><span class="skey">RK4</span><span class="sval" id="bRK4">—</span></div>
+                    <div class="srow"><span class="skey">RKF45</span><span class="sval" id="bRKF45">—</span></div>
+                    <div class="srow"><span class="skey">Leapfrog</span><span class="sval" id="bLeap">—</span></div>
+                    <div class="srow"><span class="skey">Yoshida4</span><span class="sval" id="bYosh">—</span></div>
+                    <div class="srow">
+                      <span class="skey">Sympl. Euler</span><span class="sval" id="bSympl">—</span>
+                    </div>
+                    <div class="srow"><span class="skey">Gauss2</span><span class="sval" id="bGauss">—</span></div>
+                    <div class="srow"><span class="skey">RK2</span><span class="sval" id="bRK2">—</span></div>
+                    <div class="srow"><span class="skey">Euler</span><span class="sval" id="bEuler">—</span></div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: LYAPUNOV -->
+        <div class="tabpanel" id="tab-lyap" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap"><canvas id="lyapSpecCanvas" width="880" height="440"></canvas></div>
+              <div class="canvas-label">Full Lyapunov spectrum — QR-orthonormalization (Benettin's algorithm)</div>
               <div class="btnrow xs-9">
-                <button id="bifFloquet">Floquet @ A</button>
-                <button id="bifPitchfork">Find pitchfork</button>
+                <button id="lyapStart" class="primary">▶ Start</button>
+                <button id="lyapStop">■ Stop</button>
+                <button id="lyapExport">⬇ CSV</button>
+                <span class="xs-10" id="lyapStatus"></span>
               </div>
-              <span class="xs-10" id="bifDrivenStatus"></span>
-              <pre id="bifDrivenOut" class="plx-log"></pre>
             </div>
-          </details>
-          <details class="acc">
-            <summary><span class="acc-icon">◯</span><span class="acc-label">Neimark–Sacker invariant circle</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Lyapunov Spectrum</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">λ</span><span class="acc-label">Computation Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Computes {λ₁,…,λₙ} via QR-decomposition of perturbed orthonormal basis evolved alongside the
+                    trajectory. For conservative systems, Σλᵢ ≈ 0.
+                  </p>
+                  <div class="row">
+                    <label for="lyapDt">Renorm Δt</label
+                    ><input id="lyapDt" type="range" min="0.05" max="2" step="0.05" value="0.5" /><span
+                      class="val"
+                      id="lyapDtV"
+                      >0.50 s</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="lyapT">Integrate T</label
+                    ><input id="lyapT" type="range" min="20" max="500" step="20" value="120" /><span
+                      class="val"
+                      id="lyapTV"
+                      >120 s</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="lyapEps">ε perturb</label
+                    ><input id="lyapEps" type="range" min="-10" max="-4" step="0.5" value="-7" /><span
+                      class="val"
+                      id="lyapEpsV"
+                      >1.0e-7</span
+                    >
+                  </div>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Spectrum Results</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats" id="lyapResults">
+                    <div class="srow"><span class="skey">λ₁</span><span class="sval" id="L1">—</span></div>
+                    <div class="srow"><span class="skey">λ₂</span><span class="sval" id="L2">—</span></div>
+                    <div class="srow"><span class="skey">λ₃</span><span class="sval" id="L3">—</span></div>
+                    <div class="srow"><span class="skey">λ₄</span><span class="sval" id="L4">—</span></div>
+                    <div class="srow"><span class="skey">Σ λ</span><span class="sval" id="LSum">—</span></div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Kaplan-Yorke dimension estimates the fractal dimension of the attractor."
+                        >Kaplan–Yorke dim</span
+                      >
+                      <span class="sval" id="KY">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: SWEEP -->
+        <div class="tabpanel" id="tab-sweep" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="sweepCanvas" width="600" height="600"></canvas></div>
+              <div class="canvas-label">λ(θ₁, θ₂) chaos map · click to set initial conditions</div>
               <div class="btnrow xs-9">
-                <button id="bifTorus">Trace invariant circle</button>
+                <button id="sweepStart" class="primary">▶ Start</button>
+                <button id="sweepStop">■ Cancel</button>
+                <button id="sweepExportPNG">⬇ PNG</button>
+                <button id="sweepExportCSV">⬇ CSV</button>
+                <span class="xs-10" id="sweepStatus"></span>
               </div>
-              <div class="plot-cell xs-9"><canvas id="bifTorusCanvas" width="300" height="300"></canvas><div class="canvas-label">NS invariant circle — delayed-logistic map, a: 2.05 → 2.01 (onset 2)</div></div>
-              <span class="xs-10" id="bifTorusStatus"></span>
-              <pre id="bifTorusOut" class="plx-log"></pre>
-            </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: 3D PHASE -->
-    <div class="tabpanel" id="tab-phase3d" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-17"><canvas id="p3dCanvas" width="800" height="600"></canvas></div>
-          <div class="canvas-label">3D phase space (θ₁, θ₂, ω₂) — drag to rotate · scroll to zoom</div>
-          <div class="btnrow xs-9">
-            <button id="p3dClear">Clear</button>
-            <button id="p3dResetCam">Reset Camera</button>
-          </div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">3D Phase Space</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">◉</span><span class="acc-label">3D Settings</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="row"><label for="p3dN">Trail points</label><input id="p3dN" type="range" min="500" max="20000" step="500" value="5000"><span class="val" id="p3dNV">5000</span></div>
-              <div class="row"><label><input id="p3dDepthFade" type="checkbox" checked> Depth fade</label></div>
-              <div class="row"><label><input id="p3dInertia" type="checkbox" checked> Camera inertia</label></div>
-            </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: GPU DENSITY -->
-    <div class="tabpanel" id="tab-density" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="gpuCanvas" width="700" height="700"></canvas></div>
-          <div class="canvas-label">Phase density (θ₁ vs ω₁) — GPU additive blending</div>
-          <div class="btnrow xs-18">
-            <button id="gpuClear">Clear</button>
-            <span class="xs-10" id="gpuStatus">initializing…</span>
-          </div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">GPU Density Field</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">▓</span><span class="acc-label">Density Settings</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="row"><label for="gpuAlpha">Alpha</label><input id="gpuAlpha" type="range" min="0.005" max="0.15" step="0.005" value="0.04"><span class="val" id="gpuAlphaV">0.04</span></div>
-            </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: VALIDATION -->
-    <div class="tabpanel" id="tab-validate" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div>
-            <h2>Validation Suite</h2>
-            <p>Automated tests verifying determinism, energy conservation, integrator convergence, replay reproducibility, and long-run NaN resilience.</p>
-            <div class="xs-19" id="validateResults"></div>
-            <div class="btnrow xs-20">
-              <button id="runValidation" class="primary">▶ Run All Tests</button>
-              <button id="runDeterminism">Determinism</button>
-              <button id="runConvergence">Convergence</button>
-              <button id="runReplay">Replay</button>
-              <button id="runStress">Stress (10⁶ steps)</button>
-            </div>
-            <section class="energy-benchmark-view" aria-labelledby="energyBenchmarkTitle">
-              <h3 id="energyBenchmarkTitle">Long-run energy drift by integrator</h3>
-              <p id="energyBenchmarkStatus">Committed <code>benchmark:energy</code> curves; bounded oscillation explains why structure-preserving methods matter.</p>
-              <canvas id="energyBenchmarkCanvas" width="880" height="360" role="img" aria-label="Log-scale relative energy drift over time for each integrator"></canvas>
-              <div id="energyBenchmarkLegend" aria-label="Integrator curve legend"></div>
-            </section>
-          </div>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Test Status</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">✓</span><span class="acc-label">Test Results</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats" id="testStats">
-                <div class="srow"><span class="skey">passed</span><span class="sval good" id="testPassed">0</span></div>
-                <div class="srow"><span class="skey">failed</span><span class="sval bad" id="testFailed">0</span></div>
-                <div class="srow"><span class="skey">elapsed</span><span class="sval" id="testTime">—</span></div>
+              <div class="xs-9">
+                <div class="xs-13"><div class="xs-14" id="sweepProgress"></div></div>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: 0–1 TEST FOR CHAOS -->
-    <div class="tabpanel" id="tab-zeroone" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="zeroOneCanvas" width="600" height="600"></canvas></div>
-          <div class="canvas-label">0–1 test translation variables (p_c, q_c) — bounded ⇒ regular · Brownian ⇒ chaos</div>
-          <div class="btnrow xs-9">
-            <button id="zeroOneStart" class="primary">▶ Start</button>
-            <button id="zeroOneStop">■ Stop</button>
-            <button id="zeroOneExport">⬇ CSV</button>
-            <span class="xs-10" id="zeroOneStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Chaos Map Sweep</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">▦</span><span class="acc-label">Sweep Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Maps λ₁(θ₁, θ₂) across initial condition space. Poincaré sections reveal hidden periodic structure.
+                  </p>
+                  <div class="row">
+                    <label for="sweepRes">Resolution</label
+                    ><input id="sweepRes" type="range" min="40" max="400" step="10" value="120" /><span
+                      class="val"
+                      id="sweepResV"
+                      >120</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="sweepT">T (sim)</label
+                    ><input id="sweepT" type="range" min="5" max="60" step="1" value="20" /><span
+                      class="val"
+                      id="sweepTV"
+                      >20 s</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label
+                      ><input id="sweepGpu" type="checkbox" /> WebGPU acceleration (f32, CPU-cross-validated)</label
+                    >
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">0–1 Test for Chaos</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">◐</span><span class="acc-label">Test Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Gottwald–Melbourne test on the bounded observable cos(θ₁). Independent of the
-                Lyapunov/variational machinery, so K ≈ 1 (chaotic) / K ≈ 0 (regular) is a genuine
-                cross-validation, not the same computation reported twice.
-              </p>
-              <div class="row"><label for="zeroOneSamples">Samples</label><input id="zeroOneSamples" type="range" min="1000" max="6000" step="500" value="3000"><span class="val" id="zeroOneSamplesV">3000</span></div>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey has-tip" data-tip="Median asymptotic growth rate K∈[0,1]: ≈1 chaotic, ≈0 regular.">K</span><span class="sval" id="zeroOneK">—</span></div>
-                <div class="srow"><span class="skey">verdict</span><span class="sval" id="zeroOneVerdict">—</span></div>
+
+        <!-- TAB: BIFURCATION -->
+        <div class="tabpanel" id="tab-bifurc" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-15"><canvas id="bifCanvas" width="880" height="500"></canvas></div>
+              <div class="canvas-label">Bifurcation diagram — θ₂ at Poincaré section vs g</div>
+              <div class="btnrow xs-9">
+                <button id="bifStart" class="primary">▶ Start</button>
+                <button id="bifStop">■ Cancel</button>
+                <button id="bifExport">⬇ PNG</button>
+                <span class="xs-10" id="bifStatus"></span>
+              </div>
+              <div class="xs-9">
+                <div class="xs-13"><div class="xs-16" id="bifProgress"></div></div>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: COVARIANT LYAPUNOV VECTORS -->
-    <div class="tabpanel" id="tab-clv" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-15"><canvas id="clvCanvas" width="880" height="500"></canvas></div>
-          <div class="canvas-label">CLV exponents (top) and hyperbolicity-angle distribution (bottom) — Ginelli algorithm</div>
-          <div class="btnrow xs-9">
-            <button id="clvStart" class="primary">▶ Start</button>
-            <button id="clvStop">■ Stop</button>
-            <button id="clvExport">⬇ CSV</button>
-            <span class="xs-10" id="clvStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Bifurcation Analysis</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">∿</span><span class="acc-label">Bifurcation Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label for="bifGMin">g min</label
+                    ><input id="bifGMin" type="range" min="0.1" max="10" step="0.1" value="2" /><span
+                      class="val"
+                      id="bifGMinV"
+                      >2.0</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="bifGMax">g max</label
+                    ><input id="bifGMax" type="range" min="5" max="20" step="0.5" value="12" /><span
+                      class="val"
+                      id="bifGMaxV"
+                      >12.0</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="bifSteps">Steps</label
+                    ><input id="bifSteps" type="range" min="100" max="1000" step="50" value="400" /><span
+                      class="val"
+                      id="bifStepsV"
+                      >400</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="bifT">T (sim)</label
+                    ><input id="bifT" type="range" min="20" max="200" step="10" value="60" /><span
+                      class="val"
+                      id="bifTV"
+                      >60 s</span
+                    >
+                  </div>
+                </div>
+              </details>
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">⤳</span><span class="acc-label">Driven Orbit: Floquet &amp; Pitchfork</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label for="bifDrA">Drive A</label
+                    ><input id="bifDrA" type="range" min="0.3" max="1.5" step="0.005" value="1.005" /><span
+                      class="val"
+                      id="bifDrAV"
+                      >1.005</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="bifDrGamma">Damping γ</label
+                    ><input id="bifDrGamma" type="range" min="0.1" max="1" step="0.05" value="0.5" /><span
+                      class="val"
+                      id="bifDrGammaV"
+                      >0.50</span
+                    >
+                  </div>
+                  <div class="btnrow xs-9">
+                    <button id="bifFloquet">Floquet @ A</button>
+                    <button id="bifPitchfork">Find pitchfork</button>
+                  </div>
+                  <span class="xs-10" id="bifDrivenStatus"></span>
+                  <pre id="bifDrivenOut" class="plx-log"></pre>
+                </div>
+              </details>
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">◯</span><span class="acc-label">Neimark–Sacker invariant circle</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="btnrow xs-9">
+                    <button id="bifTorus">Trace invariant circle</button>
+                  </div>
+                  <div class="plot-cell xs-9">
+                    <canvas id="bifTorusCanvas" width="300" height="300"></canvas>
+                    <div class="canvas-label">NS invariant circle — delayed-logistic map, a: 2.05 → 2.01 (onset 2)</div>
+                  </div>
+                  <span class="xs-10" id="bifTorusStatus"></span>
+                  <pre id="bifTorusOut" class="plx-log"></pre>
+                </div>
+              </details>
+            </aside>
           </div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Covariant Lyapunov Vectors</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">⇌</span><span class="acc-label">About</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                The true (non-orthogonal) Oseledets stable/unstable directions — not the orthogonal
-                Gram–Schmidt frame. The hyperbolicity angle is the minimum angle between an expanding
-                and a contracting CLV; angles approaching 0 signal homoclinic tangencies.
-              </p>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey">λ₁</span><span class="sval" id="clvLambda1">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Mean minimum angle between expanding and contracting covariant vectors.">⟨angle⟩</span><span class="sval" id="clvHypMean">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Smallest expanding–contracting angle; ≈0 ⇒ near-tangency / non-hyperbolic.">min angle</span><span class="sval" id="clvHypMin">—</span></div>
+
+        <!-- TAB: 3D PHASE -->
+        <div class="tabpanel" id="tab-phase3d" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-17"><canvas id="p3dCanvas" width="800" height="600"></canvas></div>
+              <div class="canvas-label">3D phase space (θ₁, θ₂, ω₂) — drag to rotate · scroll to zoom</div>
+              <div class="btnrow xs-9">
+                <button id="p3dClear">Clear</button>
+                <button id="p3dResetCam">Reset Camera</button>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: FLIP BASINS -->
-    <div class="tabpanel" id="tab-basin" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="basinCanvas" width="600" height="600"></canvas></div>
-          <div class="canvas-label">Double-pendulum flip basin — colour = which rod flips first (fractal boundary)</div>
-          <div class="btnrow xs-9">
-            <button id="basinStart" class="primary">▶ Start</button>
-            <button id="basinStop">■ Stop</button>
-            <button id="basinExport">⬇ PNG</button>
-            <span class="xs-10" id="basinStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">3D Phase Space</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">◉</span><span class="acc-label">3D Settings</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label for="p3dN">Trail points</label
+                    ><input id="p3dN" type="range" min="500" max="20000" step="500" value="5000" /><span
+                      class="val"
+                      id="p3dNV"
+                      >5000</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label><input id="p3dDepthFade" type="checkbox" checked /> Depth fade</label>
+                  </div>
+                  <div class="row">
+                    <label><input id="p3dInertia" type="checkbox" checked /> Camera inertia</label>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Flip Basins (Fractal)</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">❋</span><span class="acc-label">Basin Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Each initial (θ₁, θ₂), released from rest, is coloured by which rod flips over the top
-                first. The Daza basin entropy (Sb, Sbb) and the Minkowski–Bouligand box-counting
-                dimension quantify the boundary — a measured fractal, not "it looks fractal".
-                Double pendulum only.
-              </p>
-              <div class="row"><label for="basinRes">Resolution</label><input id="basinRes" type="range" min="40" max="160" step="20" value="100"><span class="val" id="basinResV">100</span></div>
-              <div class="row"><label><input id="basinGpu" type="checkbox"> WebGPU acceleration (f32, CPU-cross-validated)</label></div>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey has-tip" data-tip="Daza basin entropy Sb (mean Gibbs entropy per box).">Sb</span><span class="sval" id="basinSb">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Boundary basin entropy Sbb; Sbb > ln2 is a sufficient condition for a fractal boundary.">Sbb</span><span class="sval" id="basinSbb">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Minkowski–Bouligand box-counting dimension of the flip boundary.">box-dim</span><span class="sval" id="basinDim">—</span></div>
-                <div class="srow"><span class="skey">fractal</span><span class="sval" id="basinFractal">—</span></div>
+
+        <!-- TAB: GPU DENSITY -->
+        <div class="tabpanel" id="tab-density" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="gpuCanvas" width="700" height="700"></canvas></div>
+              <div class="canvas-label">Phase density (θ₁ vs ω₁) — GPU additive blending</div>
+              <div class="btnrow xs-18">
+                <button id="gpuClear">Clear</button>
+                <span class="xs-10" id="gpuStatus">initializing…</span>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: RECURRENCE QUANTIFICATION -->
-    <div class="tabpanel" id="tab-rqa" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="rqaCanvas" width="600" height="600"></canvas></div>
-          <div class="canvas-label">Recurrence plot of cos(θ₁) — long diagonals ⇒ regular · speckled texture ⇒ chaos</div>
-          <div class="btnrow xs-9">
-            <button id="rqaStart" class="primary">▶ Start</button>
-            <button id="rqaStop">■ Stop</button>
-            <button id="rqaExport">⬇ CSV</button>
-            <span class="xs-10" id="rqaStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">GPU Density Field</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">▓</span><span class="acc-label">Density Settings</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="row">
+                    <label for="gpuAlpha">Alpha</label
+                    ><input id="gpuAlpha" type="range" min="0.005" max="0.15" step="0.005" value="0.04" /><span
+                      class="val"
+                      id="gpuAlphaV"
+                      >0.04</span
+                    >
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Recurrence Quantification</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">▨</span><span class="acc-label">Embedding</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Time-delay embeds cos(θ₁) and quantifies the recurrence plot (Marwan et al.).
-                Non-variational, so DET (structure vs noise) and DIV = 1/Lmax (a finite-size
-                λ proxy) cross-check the Lyapunov verdict. ε is fixed at a 10% recurrence rate.
-              </p>
-              <div class="row"><label for="rqaDim">Dimension m</label><input id="rqaDim" type="range" min="1" max="5" step="1" value="2"><span class="val" id="rqaDimV">2</span></div>
-              <div class="row"><label for="rqaDelay">Delay τ</label><input id="rqaDelay" type="range" min="1" max="20" step="1" value="5"><span class="val" id="rqaDelayV">5</span></div>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">RQA Measures</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey has-tip" data-tip="Recurrence rate: density of recurrence points.">RR</span><span class="sval" id="rqaRR">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Determinism: fraction of recurrence points on diagonal lines. High ⇒ deterministic.">DET</span><span class="sval" id="rqaDET">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Laminarity: fraction on vertical lines (laminar/intermittent states).">LAM</span><span class="sval" id="rqaLAM">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Longest diagonal line (excluding the line of identity).">Lmax</span><span class="sval" id="rqaLmax">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Divergence DIV = 1/Lmax — a finite-size proxy for the largest Lyapunov exponent.">DIV</span><span class="sval" id="rqaDIV">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Shannon entropy of the diagonal line-length distribution (complexity).">ENTR</span><span class="sval" id="rqaENTR">—</span></div>
+
+        <!-- TAB: VALIDATION -->
+        <div class="tabpanel" id="tab-validate" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div>
+                <h2>Validation Suite</h2>
+                <p>
+                  Automated tests verifying determinism, energy conservation, integrator convergence, replay
+                  reproducibility, and long-run NaN resilience.
+                </p>
+                <div class="xs-19" id="validateResults"></div>
+                <div class="btnrow xs-20">
+                  <button id="runValidation" class="primary">▶ Run All Tests</button>
+                  <button id="runDeterminism">Determinism</button>
+                  <button id="runConvergence">Convergence</button>
+                  <button id="runReplay">Replay</button>
+                  <button id="runStress">Stress (10⁶ steps)</button>
+                </div>
+                <section class="energy-benchmark-view" aria-labelledby="energyBenchmarkTitle">
+                  <h3 id="energyBenchmarkTitle">Long-run energy drift by integrator</h3>
+                  <p id="energyBenchmarkStatus">
+                    Committed <code>benchmark:energy</code> curves; bounded oscillation explains why
+                    structure-preserving methods matter.
+                  </p>
+                  <canvas
+                    id="energyBenchmarkCanvas"
+                    width="880"
+                    height="360"
+                    role="img"
+                    aria-label="Log-scale relative energy drift over time for each integrator"
+                  ></canvas>
+                  <div id="energyBenchmarkLegend" aria-label="Integrator curve legend"></div>
+                </section>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: FTLE FIELD -->
-    <div class="tabpanel" id="tab-ftle" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="ftleCanvas" width="600" height="600"></canvas></div>
-          <div class="canvas-label">Finite-time Lyapunov exponent σ_T(θ₁, θ₂) — bright ridges are Lagrangian Coherent Structures</div>
-          <div class="btnrow xs-9">
-            <button id="ftleStart" class="primary">▶ Start</button>
-            <button id="ftleStop">■ Stop</button>
-            <button id="ftleExport">⬇ PNG</button>
-            <span class="xs-10" id="ftleStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Test Status</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">✓</span><span class="acc-label">Test Results</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats" id="testStats">
+                    <div class="srow">
+                      <span class="skey">passed</span><span class="sval good" id="testPassed">0</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey">failed</span><span class="sval bad" id="testFailed">0</span>
+                    </div>
+                    <div class="srow"><span class="skey">elapsed</span><span class="sval" id="testTime">—</span></div>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
         </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">FTLE Field (LCS)</div>
-          </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">⩜</span><span class="acc-label">Field Parameters</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                σ_T = (1/T) ln σ_max(∂x(T)/∂x(0)) — the largest finite-time stretching rate of the
-                flow map, from the singular value of the variational state-transition matrix. Ridges
-                are Lagrangian Coherent Structures (transport barriers). Distinct from the Sweep,
-                which time-averages λ₁. Double pendulum only.
-              </p>
-              <div class="row"><label for="ftleRes">Resolution</label><input id="ftleRes" type="range" min="30" max="120" step="10" value="70"><span class="val" id="ftleResV">70</span></div>
-              <div class="row"><label for="ftleT">Horizon T</label><input id="ftleT" type="range" min="1" max="8" step="0.5" value="3"><span class="val" id="ftleTV">3.0 s</span></div>
-              <div class="row"><label><input id="ftleRidges" type="checkbox" checked> LCS ridge overlay</label></div>
-              <div class="row"><label><input id="ftleGpu" type="checkbox"> WebGPU acceleration (FD flow-map, f32)</label></div>
-            </div>
-          </details>
-          <details class="acc" open>
-            <summary><span class="acc-icon">📊</span><span class="acc-label">Field Range</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <div class="stats">
-                <div class="srow"><span class="skey has-tip" data-tip="Minimum finite-time Lyapunov exponent over the grid.">σ_T min</span><span class="sval" id="ftleMin">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Maximum finite-time Lyapunov exponent over the grid.">σ_T max</span><span class="sval" id="ftleMax">—</span></div>
-                <div class="srow"><span class="skey">horizon</span><span class="sval" id="ftleT2">—</span></div>
-                <div class="srow"><span class="skey has-tip" data-tip="Cells flagged by the percentile + transverse local-maximum ridge proxy (repelling LCS candidates).">LCS ridge cells</span><span class="sval" id="ftleRidgeInfo">—</span></div>
+
+        <!-- TAB: 0–1 TEST FOR CHAOS -->
+        <div class="tabpanel" id="tab-zeroone" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="zeroOneCanvas" width="600" height="600"></canvas></div>
+              <div class="canvas-label">
+                0–1 test translation variables (p_c, q_c) — bounded ⇒ regular · Brownian ⇒ chaos
+              </div>
+              <div class="btnrow xs-9">
+                <button id="zeroOneStart" class="primary">▶ Start</button>
+                <button id="zeroOneStop">■ Stop</button>
+                <button id="zeroOneExport">⬇ CSV</button>
+                <span class="xs-10" id="zeroOneStatus"></span>
               </div>
             </div>
-          </details>
-        </aside>
-      </div>
-    </div>
-
-    <!-- TAB: RESEARCH+ (inverse problem, PCE surrogate, stochastic ensemble) -->
-    <div class="tabpanel" id="tab-research" role="tabpanel">
-      <div class="layout">
-        <div class="left-col">
-          <div class="main-wrap xs-12"><canvas id="rpSdeCanvas" width="600" height="320"></canvas></div>
-          <div class="canvas-label">SDE ensemble: log₁₀ Var[θ₁](t) of the double pendulum under a stochastic torque</div>
-          <pre id="rpOut" class="plx-log"></pre>
-        </div>
-        <aside class="controls">
-          <div class="ctrl-sticky">
-            <div class="ctrl-sticky-title">Inverse · Surrogate · Stochastic</div>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">0–1 Test for Chaos</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">◐</span><span class="acc-label">Test Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Gottwald–Melbourne test on the bounded observable cos(θ₁). Independent of the Lyapunov/variational
+                    machinery, so K ≈ 1 (chaotic) / K ≈ 0 (regular) is a genuine cross-validation, not the same
+                    computation reported twice.
+                  </p>
+                  <div class="row">
+                    <label for="zeroOneSamples">Samples</label
+                    ><input id="zeroOneSamples" type="range" min="1000" max="6000" step="500" value="3000" /><span
+                      class="val"
+                      id="zeroOneSamplesV"
+                      >3000</span
+                    >
+                  </div>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Median asymptotic growth rate K∈[0,1]: ≈1 chaotic, ≈0 regular."
+                        >K</span
+                      ><span class="sval" id="zeroOneK">—</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey">verdict</span><span class="sval" id="zeroOneVerdict">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
           </div>
-          <details class="acc" open>
-            <summary><span class="acc-icon">∿</span><span class="acc-label">Stochastic ensemble (SDE)</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Langevin ensemble of the double pendulum with additive angular-velocity noise (a stochastic
-                torque), advanced with Euler–Maruyama and accumulated with Welford online moments.
-              </p>
-              <button id="rpSdeRun" class="primary">Run ensemble</button>
-              <span class="xs-10" id="rpSdeStatus"></span>
+        </div>
+
+        <!-- TAB: COVARIANT LYAPUNOV VECTORS -->
+        <div class="tabpanel" id="tab-clv" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-15"><canvas id="clvCanvas" width="880" height="500"></canvas></div>
+              <div class="canvas-label">
+                CLV exponents (top) and hyperbolicity-angle distribution (bottom) — Ginelli algorithm
+              </div>
+              <div class="btnrow xs-9">
+                <button id="clvStart" class="primary">▶ Start</button>
+                <button id="clvStop">■ Stop</button>
+                <button id="clvExport">⬇ CSV</button>
+                <span class="xs-10" id="clvStatus"></span>
+              </div>
             </div>
-          </details>
-          <details class="acc">
-            <summary><span class="acc-icon">⊶</span><span class="acc-label">Inverse problem (parameter fit)</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Recover g from a synthetic (θ₁, θ₂) trajectory by nonlinear least squares
-                (Levenberg–Marquardt) with the engine's own RHS in the fit loop, reporting the standard error.
-              </p>
-              <button id="rpFitRun" class="primary">Recover g</button>
-              <span class="xs-10" id="rpFitStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Covariant Lyapunov Vectors</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">⇌</span><span class="acc-label">About</span><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    The true (non-orthogonal) Oseledets stable/unstable directions — not the orthogonal Gram–Schmidt
+                    frame. The hyperbolicity angle is the minimum angle between an expanding and a contracting CLV;
+                    angles approaching 0 signal homoclinic tangencies.
+                  </p>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow"><span class="skey">λ₁</span><span class="sval" id="clvLambda1">—</span></div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Mean minimum angle between expanding and contracting covariant vectors."
+                        >⟨angle⟩</span
+                      ><span class="sval" id="clvHypMean">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Smallest expanding–contracting angle; ≈0 ⇒ near-tangency / non-hyperbolic."
+                        >min angle</span
+                      ><span class="sval" id="clvHypMin">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: FLIP BASINS -->
+        <div class="tabpanel" id="tab-basin" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="basinCanvas" width="600" height="600"></canvas></div>
+              <div class="canvas-label">
+                Double-pendulum flip basin — colour = which rod flips first (fractal boundary)
+              </div>
+              <div class="btnrow xs-9">
+                <button id="basinStart" class="primary">▶ Start</button>
+                <button id="basinStop">■ Stop</button>
+                <button id="basinExport">⬇ PNG</button>
+                <span class="xs-10" id="basinStatus"></span>
+              </div>
             </div>
-          </details>
-          <details class="acc">
-            <summary><span class="acc-icon">∑</span><span class="acc-label">PCE surrogate (Sobol)</span><span class="acc-arrow">›</span></summary>
-            <div class="acc-body">
-              <p class="xs-11">
-                Polynomial-chaos surrogate on a total-degree Legendre basis (independent uniform inputs)
-                gives an <em>analytic</em> Sobol variance decomposition of a test response.
-              </p>
-              <button id="rpPceRun" class="primary">Fit surrogate</button>
-              <span class="xs-10" id="rpPceStatus"></span>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Flip Basins (Fractal)</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">❋</span><span class="acc-label">Basin Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Each initial (θ₁, θ₂), released from rest, is coloured by which rod flips over the top first. The
+                    Daza basin entropy (Sb, Sbb) and the Minkowski–Bouligand box-counting dimension quantify the
+                    boundary — a measured fractal, not "it looks fractal". Double pendulum only.
+                  </p>
+                  <div class="row">
+                    <label for="basinRes">Resolution</label
+                    ><input id="basinRes" type="range" min="40" max="160" step="20" value="100" /><span
+                      class="val"
+                      id="basinResV"
+                      >100</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label
+                      ><input id="basinGpu" type="checkbox" /> WebGPU acceleration (f32, CPU-cross-validated)</label
+                    >
+                  </div>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Result</span><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow">
+                      <span class="skey has-tip" data-tip="Daza basin entropy Sb (mean Gibbs entropy per box).">Sb</span
+                      ><span class="sval" id="basinSb">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Boundary basin entropy Sbb; Sbb > ln2 is a sufficient condition for a fractal boundary."
+                        >Sbb</span
+                      ><span class="sval" id="basinSbb">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Minkowski–Bouligand box-counting dimension of the flip boundary."
+                        >box-dim</span
+                      ><span class="sval" id="basinDim">—</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey">fractal</span><span class="sval" id="basinFractal">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: RECURRENCE QUANTIFICATION -->
+        <div class="tabpanel" id="tab-rqa" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="rqaCanvas" width="600" height="600"></canvas></div>
+              <div class="canvas-label">
+                Recurrence plot of cos(θ₁) — long diagonals ⇒ regular · speckled texture ⇒ chaos
+              </div>
+              <div class="btnrow xs-9">
+                <button id="rqaStart" class="primary">▶ Start</button>
+                <button id="rqaStop">■ Stop</button>
+                <button id="rqaExport">⬇ CSV</button>
+                <span class="xs-10" id="rqaStatus"></span>
+              </div>
             </div>
-          </details>
-        </aside>
-      </div>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Recurrence Quantification</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">▨</span><span class="acc-label">Embedding</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Time-delay embeds cos(θ₁) and quantifies the recurrence plot (Marwan et al.). Non-variational, so
+                    DET (structure vs noise) and DIV = 1/Lmax (a finite-size λ proxy) cross-check the Lyapunov verdict.
+                    ε is fixed at a 10% recurrence rate.
+                  </p>
+                  <div class="row">
+                    <label for="rqaDim">Dimension m</label
+                    ><input id="rqaDim" type="range" min="1" max="5" step="1" value="2" /><span class="val" id="rqaDimV"
+                      >2</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="rqaDelay">Delay τ</label
+                    ><input id="rqaDelay" type="range" min="1" max="20" step="1" value="5" /><span
+                      class="val"
+                      id="rqaDelayV"
+                      >5</span
+                    >
+                  </div>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">RQA Measures</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow">
+                      <span class="skey has-tip" data-tip="Recurrence rate: density of recurrence points.">RR</span
+                      ><span class="sval" id="rqaRR">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Determinism: fraction of recurrence points on diagonal lines. High ⇒ deterministic."
+                        >DET</span
+                      ><span class="sval" id="rqaDET">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Laminarity: fraction on vertical lines (laminar/intermittent states)."
+                        >LAM</span
+                      ><span class="sval" id="rqaLAM">—</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey has-tip" data-tip="Longest diagonal line (excluding the line of identity)."
+                        >Lmax</span
+                      ><span class="sval" id="rqaLmax">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Divergence DIV = 1/Lmax — a finite-size proxy for the largest Lyapunov exponent."
+                        >DIV</span
+                      ><span class="sval" id="rqaDIV">—</span>
+                    </div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Shannon entropy of the diagonal line-length distribution (complexity)."
+                        >ENTR</span
+                      ><span class="sval" id="rqaENTR">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: FTLE FIELD -->
+        <div class="tabpanel" id="tab-ftle" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="ftleCanvas" width="600" height="600"></canvas></div>
+              <div class="canvas-label">
+                Finite-time Lyapunov exponent σ_T(θ₁, θ₂) — bright ridges are Lagrangian Coherent Structures
+              </div>
+              <div class="btnrow xs-9">
+                <button id="ftleStart" class="primary">▶ Start</button>
+                <button id="ftleStop">■ Stop</button>
+                <button id="ftleExport">⬇ PNG</button>
+                <span class="xs-10" id="ftleStatus"></span>
+              </div>
+            </div>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">FTLE Field (LCS)</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">⩜</span><span class="acc-label">Field Parameters</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    σ_T = (1/T) ln σ_max(∂x(T)/∂x(0)) — the largest finite-time stretching rate of the flow map, from
+                    the singular value of the variational state-transition matrix. Ridges are Lagrangian Coherent
+                    Structures (transport barriers). Distinct from the Sweep, which time-averages λ₁. Double pendulum
+                    only.
+                  </p>
+                  <div class="row">
+                    <label for="ftleRes">Resolution</label
+                    ><input id="ftleRes" type="range" min="30" max="120" step="10" value="70" /><span
+                      class="val"
+                      id="ftleResV"
+                      >70</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label for="ftleT">Horizon T</label
+                    ><input id="ftleT" type="range" min="1" max="8" step="0.5" value="3" /><span class="val" id="ftleTV"
+                      >3.0 s</span
+                    >
+                  </div>
+                  <div class="row">
+                    <label><input id="ftleRidges" type="checkbox" checked /> LCS ridge overlay</label>
+                  </div>
+                  <div class="row">
+                    <label><input id="ftleGpu" type="checkbox" /> WebGPU acceleration (FD flow-map, f32)</label>
+                  </div>
+                </div>
+              </details>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">📊</span><span class="acc-label">Field Range</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <div class="stats">
+                    <div class="srow">
+                      <span class="skey has-tip" data-tip="Minimum finite-time Lyapunov exponent over the grid."
+                        >σ_T min</span
+                      ><span class="sval" id="ftleMin">—</span>
+                    </div>
+                    <div class="srow">
+                      <span class="skey has-tip" data-tip="Maximum finite-time Lyapunov exponent over the grid."
+                        >σ_T max</span
+                      ><span class="sval" id="ftleMax">—</span>
+                    </div>
+                    <div class="srow"><span class="skey">horizon</span><span class="sval" id="ftleT2">—</span></div>
+                    <div class="srow">
+                      <span
+                        class="skey has-tip"
+                        data-tip="Cells flagged by the percentile + transverse local-maximum ridge proxy (repelling LCS candidates)."
+                        >LCS ridge cells</span
+                      ><span class="sval" id="ftleRidgeInfo">—</span>
+                    </div>
+                  </div>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+
+        <!-- TAB: RESEARCH+ (inverse problem, PCE surrogate, stochastic ensemble) -->
+        <div class="tabpanel" id="tab-research" role="tabpanel">
+          <div class="layout">
+            <div class="left-col">
+              <div class="main-wrap xs-12"><canvas id="rpSdeCanvas" width="600" height="320"></canvas></div>
+              <div class="canvas-label">
+                SDE ensemble: log₁₀ Var[θ₁](t) of the double pendulum under a stochastic torque
+              </div>
+              <pre id="rpOut" class="plx-log"></pre>
+            </div>
+            <aside class="controls">
+              <div class="ctrl-sticky">
+                <div class="ctrl-sticky-title">Inverse · Surrogate · Stochastic</div>
+              </div>
+              <details class="acc" open>
+                <summary>
+                  <span class="acc-icon">∿</span><span class="acc-label">Stochastic ensemble (SDE)</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Langevin ensemble of the double pendulum with additive angular-velocity noise (a stochastic torque),
+                    advanced with Euler–Maruyama and accumulated with Welford online moments.
+                  </p>
+                  <button id="rpSdeRun" class="primary">Run ensemble</button>
+                  <span class="xs-10" id="rpSdeStatus"></span>
+                </div>
+              </details>
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">⊶</span><span class="acc-label">Inverse problem (parameter fit)</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Recover g from a synthetic (θ₁, θ₂) trajectory by nonlinear least squares (Levenberg–Marquardt) with
+                    the engine's own RHS in the fit loop, reporting the standard error.
+                  </p>
+                  <button id="rpFitRun" class="primary">Recover g</button>
+                  <span class="xs-10" id="rpFitStatus"></span>
+                </div>
+              </details>
+              <details class="acc">
+                <summary>
+                  <span class="acc-icon">∑</span><span class="acc-label">PCE surrogate (Sobol)</span
+                  ><span class="acc-arrow">›</span>
+                </summary>
+                <div class="acc-body">
+                  <p class="xs-11">
+                    Polynomial-chaos surrogate on a total-degree Legendre basis (independent uniform inputs) gives an
+                    <em>analytic</em> Sobol variance decomposition of a test response.
+                  </p>
+                  <button id="rpPceRun" class="primary">Fit surrogate</button>
+                  <span class="xs-10" id="rpPceStatus"></span>
+                </div>
+              </details>
+            </aside>
+          </div>
+        </div>
+      </main>
     </div>
 
-  </main>
-</div>
-
-<!-- TRUST & DIAGNOSTICS DRAWER — one home for numerical health, validation,
+    <!-- TRUST & DIAGNOSTICS DRAWER — one home for numerical health, validation,
      provenance/governance, performance, and fault surfaces. The runtime panels
      (src/app/parity) mount into the sections below instead of stacking cards
      on the Lab screen; the header button toggles it. -->
-<aside id="trustDrawer" class="trust-drawer" hidden role="region" aria-label="Trust and diagnostics" tabindex="-1">
-  <div class="trust-drawer-head">
-    <strong class="trust-drawer-title">Trust &amp; Diagnostics</strong>
-    <button type="button" id="trustDrawerClose" class="trust-drawer-close" aria-label="Close the diagnostics drawer">✕</button>
-  </div>
-  <div class="trust-drawer-tabs" role="tablist" aria-label="Diagnostics sections">
-    <button type="button" role="tab" id="trustTabHealth" aria-selected="true" aria-controls="trustPanelHealth" data-trust-tab="health">Numerical health</button>
-    <button type="button" role="tab" id="trustTabValidation" aria-selected="false" aria-controls="trustPanelValidation" data-trust-tab="validation" tabindex="-1">Validation</button>
-    <button type="button" role="tab" id="trustTabProvenance" aria-selected="false" aria-controls="trustPanelProvenance" data-trust-tab="provenance" tabindex="-1">Provenance</button>
-    <button type="button" role="tab" id="trustTabPerformance" aria-selected="false" aria-controls="trustPanelPerformance" data-trust-tab="performance" tabindex="-1">Performance</button>
-    <button type="button" role="tab" id="trustTabFaults" aria-selected="false" aria-controls="trustPanelFaults" data-trust-tab="faults" tabindex="-1">Fault log</button>
-  </div>
-  <div class="trust-drawer-body">
-    <section id="trustPanelHealth" role="tabpanel" aria-labelledby="trustTabHealth" data-trust-panel="health"></section>
-    <section id="trustPanelValidation" role="tabpanel" aria-labelledby="trustTabValidation" data-trust-panel="validation" hidden></section>
-    <section id="trustPanelProvenance" role="tabpanel" aria-labelledby="trustTabProvenance" data-trust-panel="provenance" hidden></section>
-    <section id="trustPanelPerformance" role="tabpanel" aria-labelledby="trustTabPerformance" data-trust-panel="performance" hidden>
-      <div class="diag-row diag-row-drawer">
-        <span>sim <span class="diag-val" id="dPhys">—</span> ms</span>
-        <span>render <span class="diag-val" id="dRender">—</span> ms</span>
-        <span>worker <span class="diag-val" id="dWorker">—</span> ms</span>
-        <span>state hash <span class="diag-val" id="dHash">—</span></span>
-        <span>poincaré <span class="diag-val" id="dPoinc">0</span></span>
-        <span>quality <span class="diag-val" id="dQuality">balanced</span></span>
-        <span>reason <span class="diag-val" id="dQualityReason">startup</span></span>
-        <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
-        <span>backend <span class="diag-val" id="dBackend">—</span></span>
+    <aside id="trustDrawer" class="trust-drawer" hidden role="region" aria-label="Trust and diagnostics" tabindex="-1">
+      <div class="trust-drawer-head">
+        <strong class="trust-drawer-title">Trust &amp; Diagnostics</strong>
+        <button
+          type="button"
+          id="trustDrawerClose"
+          class="trust-drawer-close"
+          aria-label="Close the diagnostics drawer"
+        >
+          ✕
+        </button>
       </div>
-    </section>
-    <section id="trustPanelFaults" role="tabpanel" aria-labelledby="trustTabFaults" data-trust-panel="faults" hidden></section>
-  </div>
-</aside>
+      <div class="trust-drawer-tabs" role="tablist" aria-label="Diagnostics sections">
+        <button
+          type="button"
+          role="tab"
+          id="trustTabHealth"
+          aria-selected="true"
+          aria-controls="trustPanelHealth"
+          data-trust-tab="health"
+        >
+          Numerical health
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="trustTabValidation"
+          aria-selected="false"
+          aria-controls="trustPanelValidation"
+          data-trust-tab="validation"
+          tabindex="-1"
+        >
+          Validation
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="trustTabProvenance"
+          aria-selected="false"
+          aria-controls="trustPanelProvenance"
+          data-trust-tab="provenance"
+          tabindex="-1"
+        >
+          Provenance
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="trustTabPerformance"
+          aria-selected="false"
+          aria-controls="trustPanelPerformance"
+          data-trust-tab="performance"
+          tabindex="-1"
+        >
+          Performance
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="trustTabFaults"
+          aria-selected="false"
+          aria-controls="trustPanelFaults"
+          data-trust-tab="faults"
+          tabindex="-1"
+        >
+          Fault log
+        </button>
+      </div>
+      <div class="trust-drawer-body">
+        <section
+          id="trustPanelHealth"
+          role="tabpanel"
+          aria-labelledby="trustTabHealth"
+          data-trust-panel="health"
+        ></section>
+        <section
+          id="trustPanelValidation"
+          role="tabpanel"
+          aria-labelledby="trustTabValidation"
+          data-trust-panel="validation"
+          hidden
+        ></section>
+        <section
+          id="trustPanelProvenance"
+          role="tabpanel"
+          aria-labelledby="trustTabProvenance"
+          data-trust-panel="provenance"
+          hidden
+        ></section>
+        <section
+          id="trustPanelPerformance"
+          role="tabpanel"
+          aria-labelledby="trustTabPerformance"
+          data-trust-panel="performance"
+          hidden
+        >
+          <div class="diag-row diag-row-drawer">
+            <span>sim <span class="diag-val" id="dPhys">—</span> ms</span>
+            <span>render <span class="diag-val" id="dRender">—</span> ms</span>
+            <span>worker <span class="diag-val" id="dWorker">—</span> ms</span>
+            <span>state hash <span class="diag-val" id="dHash">—</span></span>
+            <span>poincaré <span class="diag-val" id="dPoinc">0</span></span>
+            <span>quality <span class="diag-val" id="dQuality">balanced</span></span>
+            <span>reason <span class="diag-val" id="dQualityReason">startup</span></span>
+            <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
+            <span>backend <span class="diag-val" id="dBackend">—</span></span>
+          </div>
+        </section>
+        <section
+          id="trustPanelFaults"
+          role="tabpanel"
+          aria-labelledby="trustTabFaults"
+          data-trust-panel="faults"
+          hidden
+        ></section>
+      </div>
+    </aside>
 
-<!-- The legacy js/ runtime has been removed; the app is fully TypeScript (src/).
-     These stylesheets still style the static shell DOM above. -->
-<link id="stable-intuitive-style" rel="stylesheet" href="./css/01-stable-intuitive-style.css">
-<link id="research-governance-v7-style" rel="stylesheet" href="./css/02-research-governance-v7-style.css">
-<!-- Liquid-glass presentation layer (loaded last so it refines the shell above). -->
-<link id="liquid-glass-style" rel="stylesheet" href="./css/03-liquid-glass.css">
-<!-- Premium finish: gradients, motion, progress-filled sliders, animated panel collapse. -->
-<link id="premium-style" rel="stylesheet" href="./css/04-premium.css">
-<!-- Futuristic HUD reskin: gradient frames, corner brackets, boot sequence, ambience. -->
-<link id="futuristic-hud-style" rel="stylesheet" href="./css/06-futuristic-hud.css">
-<!-- Kinetic overdrive: pointer-reactive telemetry, motion lines, and canvas orbit overlays. -->
-<link id="kinetic-overdrive-style" rel="stylesheet" href="./css/07-kinetic-overdrive.css">
-<!-- Refined luxe: quiet-luxury final pass — hairline frames, champagne accent, engraved type. -->
-<link id="refined-luxe-style" rel="stylesheet" href="./css/08-refined-luxe.css">
-<!-- Porcelain daylight: the complete system light theme + final shared finish (last on purpose). -->
-<link id="porcelain-daylight-style" rel="stylesheet" href="./css/10-porcelain-daylight.css">
+    <!-- Stable structure, one instrument component layer, then theme and
+     accessibility safeguards. -->
+    <link id="stable-intuitive-style" rel="stylesheet" href="./css/01-stable-intuitive-style.css" />
+    <link id="research-governance-v7-style" rel="stylesheet" href="./css/02-research-governance-v7-style.css" />
+    <link id="instrument-workbench-style" rel="stylesheet" href="./css/03-instrument-workbench.css" />
+    <!-- Optional system-light tokens follow the dark workstation layer. -->
+    <link id="porcelain-daylight-style" rel="stylesheet" href="./css/10-porcelain-daylight.css" />
+    <!-- UI hardening: viewport, touch, focus, modal and high-contrast contracts. -->
+    <link id="ui-hardening-style" rel="stylesheet" href="./css/11-ui-hardening.css" />
 
-<script type="module" src="./src/main.ts"></script>
-
-</body>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
 </html>

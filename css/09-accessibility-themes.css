@@ -1,5 +1,4 @@
-/* System light theme and a paper-first print profile. Kept last in the cascade
-   because earlier visual layers intentionally use literal translucent darks. */
+/* Shared accessibility helpers and a paper-first print profile. */
 :root { color-scheme: dark light; }
 
 .energy-benchmark-view { margin-top: 20px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--panel); }
@@ -14,11 +13,8 @@
   .trust-drawer { left:0; right:0; width:auto; max-width:100%; overflow-x:hidden; }
 }
 
-/* The system light theme lives in css/10-porcelain-daylight.css. It must load
-   *after* layers 01–08: this file sits in <head>, so any token those later
-   layers re-declare unconditionally (e.g. --bg-mesh in 04, --cyan in 06/08)
-   would override a light block written here — that ordering bug is exactly
-   what the porcelain-daylight layer replaced. */
+/* System-light tokens live in css/10-porcelain-daylight.css, after the shared
+   instrument component layer. */
 
 @media print {
   :root {
@@ -30,9 +26,9 @@
   @page { size: auto; margin: 12mm; }
   *, *::before, *::after { animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important; }
   html, body, .app-shell, .main-col { display: block; min-height: 0; background: #fff !important; color: #111 !important; }
-  .rail, #hudBoot, .kinetic-field, .workflow-strip, .presets, .controls,
+  .rail, .workflow-strip, .presets, .controls,
   .trust-toggle, .trust-drawer, #toast, #nanOverlay, .scrub-row, .btnrow,
-  .hud-corner, .hud-scan, #hudParticles, #hudCursorGlow { display: none !important; }
+  .pwa-update-banner { display: none !important; }
   header { margin: 0 0 8mm; padding: 0 0 4mm; border-bottom: 1px solid #777; }
   h1 { color: #000 !important; background: none !important; -webkit-text-fill-color: #000 !important; }
   .tabpanel { display: none !important; }

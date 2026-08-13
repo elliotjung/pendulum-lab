@@ -1,5 +1,10 @@
 import { gaussianSampler } from './stochastic';
 import { duffingDoubleWell, type DuffingParameters } from './duffing';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
 
 /**
  * Kramers escape rate — the noise-activated hopping rate of a particle out of a
@@ -34,9 +39,23 @@ export interface OverdampedRateSpec {
 /** Overdamped (Smoluchowski) Kramers escape rate r = (ω₀ ω_b)/(2π)·exp(-ΔU/D). */
 export function kramersRateOverdamped(spec: OverdampedRateSpec): number {
   const { wellFrequency, barrierFrequency, barrierHeight, diffusion } = spec;
-  if (!(diffusion > 0)) throw new Error('kramersRateOverdamped: diffusion D must be positive');
-  if (!(barrierHeight > 0)) throw new Error('kramersRateOverdamped: barrierHeight must be positive');
-  return ((wellFrequency * barrierFrequency) / (2 * Math.PI)) * Math.exp(-barrierHeight / diffusion);
+  if (!Number.isFinite(wellFrequency) || !(wellFrequency > 0)) {
+    throw new Error('kramersRateOverdamped: wellFrequency must be finite and positive');
+  }
+  if (!Number.isFinite(barrierFrequency) || !(barrierFrequency > 0)) {
+    throw new Error('kramersRateOverdamped: barrierFrequency must be finite and positive');
+  }
+  if (!Number.isFinite(diffusion) || !(diffusion > 0)) {
+    throw new Error('kramersRateOverdamped: diffusion D must be finite and positive');
+  }
+  if (!Number.isFinite(barrierHeight) || !(barrierHeight > 0)) {
+    throw new Error('kramersRateOverdamped: barrierHeight must be finite and positive');
+  }
+  // Stay in the log domain so finite extremes saturate honestly to 0/Infinity
+  // instead of producing the indeterminate arithmetic Infinity * 0 = NaN.
+  const logRate =
+    Math.log(wellFrequency) + Math.log(barrierFrequency) - Math.log(2 * Math.PI) - barrierHeight / diffusion;
+  return Math.exp(logRate);
 }
 
 /** Mean first-passage (escape) time, the reciprocal of the Kramers rate. */
@@ -69,9 +88,13 @@ export function duffingKramersRate(
  * degradation onto the same exponential law.
  */
 export function arrheniusMTTF(attemptRate: number, activationEnergy: number, kT: number): number {
-  if (!(attemptRate > 0)) throw new Error('arrheniusMTTF: attemptRate must be positive');
-  if (!(kT > 0)) throw new Error('arrheniusMTTF: kT must be positive');
-  return (1 / attemptRate) * Math.exp(activationEnergy / kT);
+  if (!Number.isFinite(attemptRate) || !(attemptRate > 0)) {
+    throw new Error('arrheniusMTTF: attemptRate must be finite and positive');
+  }
+  if (!Number.isFinite(activationEnergy)) throw new Error('arrheniusMTTF: activationEnergy must be finite');
+  if (!Number.isFinite(kT) || !(kT > 0)) throw new Error('arrheniusMTTF: kT must be finite and positive');
+  // exp(E/kT - log(r0)) avoids multiplying underflow and overflow endpoints.
+  return Math.exp(activationEnergy / kT - Math.log(attemptRate));
 }
 
 export interface QuarticEscapeSpec {
@@ -81,7 +104,7 @@ export interface QuarticEscapeSpec {
   dt: number;
   /** Independent seeded realizations to average (≥ 1). */
   realizations: number;
-  /** PRNG seed (realization r uses seed + r). */
+  /** Uint32 PRNG seed (realization r uses a wrapped derived seed). */
   seed: number;
   /** First-passage threshold; default 0 (the barrier top). */
   threshold?: number;
@@ -110,17 +133,38 @@ export interface QuarticEscapeResult {
  */
 export function simulateQuarticEscape(spec: QuarticEscapeSpec): QuarticEscapeResult {
   const { sigma, dt, realizations, seed } = spec;
-  if (!(sigma > 0)) throw new Error('simulateQuarticEscape: sigma must be positive');
-  if (!(dt > 0)) throw new Error('simulateQuarticEscape: dt must be positive');
-  if (!(realizations >= 1)) throw new Error('simulateQuarticEscape: realizations must be >= 1');
+  const budget = NUMERICAL_WORK_BUDGETS.quarticEscape;
+  if (!Number.isFinite(sigma) || !(sigma > 0))
+    throw new Error('simulateQuarticEscape: sigma must be finite and positive');
+  assertUsableIntegrationStep(dt, 'simulateQuarticEscape');
+  if (!Number.isSafeInteger(realizations) || realizations < 1 || realizations > budget.maxRealizations) {
+    throw new RangeError(
+      `simulateQuarticEscape: realizations must be a safe integer in [1, ${budget.maxRealizations}]`
+    );
+  }
+  if (!Number.isSafeInteger(seed) || seed < 0 || seed > 0xffff_ffff) {
+    throw new RangeError('simulateQuarticEscape: seed must be a uint32 integer');
+  }
   const threshold = spec.threshold ?? 0;
   const x0 = spec.x0 ?? -1;
   const maxSteps = spec.maxSteps ?? 4_000_000;
+  if (!Number.isFinite(threshold)) throw new TypeError('simulateQuarticEscape: threshold must be finite');
+  if (!Number.isFinite(x0)) throw new TypeError('simulateQuarticEscape: x0 must be finite');
+  if (!Number.isSafeInteger(maxSteps) || maxSteps < 1 || maxSteps > budget.maxSteps) {
+    throw new RangeError(`simulateQuarticEscape: maxSteps must be a safe integer in [1, ${budget.maxSteps}]`);
+  }
+  const totalStepBudget = checkedWorkProduct([realizations, maxSteps], 'simulateQuarticEscape');
+  if (totalStepBudget > budget.maxTotalSteps) {
+    throw new RangeError(`simulateQuarticEscape: total work exceeds ${budget.maxTotalSteps} integration steps`);
+  }
+  if (x0 >= threshold) {
+    return { meanFirstPassage: 0, rate: Number.POSITIVE_INFINITY, escaped: realizations, realizations };
+  }
   const sqrtDt = Math.sqrt(dt);
   let passageSum = 0;
   let escaped = 0;
   for (let r = 0; r < realizations; r += 1) {
-    const gaussian = gaussianSampler(seed + r);
+    const gaussian = gaussianSampler((seed + r) >>> 0);
     let x = x0;
     for (let i = 1; i <= maxSteps; i += 1) {
       x = x + (x - x * x * x) * dt + sigma * sqrtDt * gaussian();

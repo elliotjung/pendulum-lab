@@ -20,4 +20,8 @@ reports/paper-study-probe.json
 tmp/
 # Ad-hoc UI review captures (design passes); never release evidence.
 reports/analysis-screenshots/
+# Local trace/capture output is useful during UI review but is not a release
+# artifact. Keep it on disk without polluting evidence or commits.
+reports/ui-visual-qa-*/
+tmp-trace-*/
 .claude/

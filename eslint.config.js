@@ -1,5 +1,4 @@
 import tseslint from 'typescript-eslint';
-import importPlugin from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
@@ -23,8 +22,7 @@ export default tseslint.config(
       }
     },
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      import: importPlugin
+      '@typescript-eslint': tseslint.plugin
     },
     rules: {
       '@typescript-eslint/await-thenable': 'error',

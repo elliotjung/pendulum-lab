@@ -53,9 +53,8 @@ export function maybeMountModernLabProbe(): boolean {
   canvas.id = 'modern-lab-probe';
   canvas.width = 400;
   canvas.height = 400;
+  canvas.className = 'modern-lab-probe';
   canvas.setAttribute('aria-label', 'modern lab probe');
-  canvas.style.cssText =
-    'position:fixed;right:8px;bottom:8px;width:200px;height:200px;z-index:9999;border:1px solid #2a3340;border-radius:8px';
   document.body.appendChild(canvas);
 
   const handle = mountModernLab(canvas, PROBE_CONFIG, { stepsPerFrame: 6, trailLength: 1200 });
@@ -219,14 +218,21 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
   w.__modernTabs = tabs;
   const registry = buildTabRegistry(tabs);
 
-  const mountForTab = (tabName: string): Promise<void[]> =>
-    Promise.all(registry.filter((item) => item.tab === tabName).map((item) => item.mount()));
+  const entriesForTab = (tabName: string): typeof registry => registry.filter((item) => item.tab === tabName);
+  const mountEntries = (entries: typeof registry): Promise<void[]> => Promise.all(entries.map((item) => item.mount()));
+  const mountForTab = (tabName: string): Promise<void[]> => mountEntries(entriesForTab(tabName));
   const reactivating = new Set<string>();
+  let latestActivatedTab = activeTabName();
 
   document.addEventListener(TAB_REQUESTED_EVENT, (event) => {
     const tabName = (event as CustomEvent<{ tab?: string }>).detail?.tab;
     if (!tabName) return;
-    void mountForTab(tabName)
+    const entries = entriesForTab(tabName);
+    // Other lazy owners (notably the research/parity layer) receive the same
+    // request event. Re-dispatching an unowned tab after Promise.all([]) would
+    // create an infinite microtask loop and starve DOMContentLoaded.
+    if (!entries.length) return;
+    void mountEntries(entries)
       .then(() => {
         (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabName);
       })
@@ -241,16 +247,19 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
   document.addEventListener(TAB_ACTIVATED_EVENT, (event) => {
     const tabName = (event as CustomEvent<{ tab?: string }>).detail?.tab;
     if (tabName) {
+      latestActivatedTab = tabName;
+      const entries = entriesForTab(tabName);
+      if (!entries.length) return;
       if (reactivating.delete(tabName)) return;
       const existingPanel = document.getElementById(`tab-${tabName}`);
       existingPanel?.setAttribute('aria-busy', 'true');
       if (existingPanel) existingPanel.inert = true;
-      void mountForTab(tabName)
+      void mountEntries(entries)
         .then(() => {
           const panel = document.getElementById(`tab-${tabName}`);
           panel?.removeAttribute('aria-busy');
           if (panel) panel.inert = false;
-          if (panel && !panel.classList.contains('active')) {
+          if (panel && !panel.classList.contains('active') && latestActivatedTab === tabName) {
             reactivating.add(tabName);
             (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabName);
           }

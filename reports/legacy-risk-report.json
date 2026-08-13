@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T22:41:02.806Z",
+  "generatedAt": "2026-08-13T05:42:07.533Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -54,6 +54,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\audienceModeStyles.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\audiencePreferences.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -317,31 +329,7 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
-    "src\\app\\hudEffects.ts": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
     "src\\app\\index.ts": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
-    "src\\app\\kineticOverdrive.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -593,6 +581,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\app\\modalSurface.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\app\\navGuide.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -618,6 +618,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\parity\\command-palette.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\control-search.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -990,6 +1002,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\parity\\shared.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\parity\\stable-help.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -2585,6 +2609,18 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
+    "src\\physics\\stochasticSteppers.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
     "src\\physics\\systemSpec.ts": {
       "innerHTML": 0,
       "onclick": 0,
@@ -3917,19 +3953,7 @@
       "standalonePortableInlineScript": 0,
       "standalonePortableBlobWorker": 0
     },
-    "css\\03-liquid-glass.css": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
-    "css\\04-premium.css": {
+    "css\\03-instrument-workbench.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -3942,42 +3966,6 @@
       "standalonePortableBlobWorker": 0
     },
     "css\\05-extracted-inline.css": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
-    "css\\06-futuristic-hud.css": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
-    "css\\07-kinetic-overdrive.css": {
-      "innerHTML": 0,
-      "onclick": 0,
-      "inlineWorkerBlob": 0,
-      "evalLike": 0,
-      "dynamicScript": 0,
-      "globalRuntimeExports": 0,
-      "servedHtmlUnsafeInlineScript": 0,
-      "servedHtmlUnsafeInlineStyle": 0,
-      "standalonePortableInlineScript": 0,
-      "standalonePortableBlobWorker": 0
-    },
-    "css\\08-refined-luxe.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,
@@ -4002,6 +3990,18 @@
       "standalonePortableBlobWorker": 0
     },
     "css\\10-porcelain-daylight.css": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "css\\11-ui-hardening.css": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

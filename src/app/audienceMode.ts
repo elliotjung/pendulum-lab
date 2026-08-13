@@ -17,6 +17,8 @@ import {
 } from './navGuide';
 import { AUDIENCE_MODE_CHANGED_EVENT, normalizeAudienceMode, type AudienceMode } from './audienceModePolicy';
 import { audienceModeCss } from './audienceModeStyles';
+import { activateModalSurface, announceUiPreference, deactivateModalSurface, trapModalFocus } from './modalSurface';
+import { installAudiencePreferenceControl } from './audiencePreferences';
 
 export {
   AUDIENCE_MODE_CHANGED_EVENT,
@@ -444,10 +446,14 @@ function hideAudienceChooser(): void {
   const chooser = document.getElementById(CHOOSER_ID);
   if (!chooser || chooser.hasAttribute('hidden')) return;
   chooser.setAttribute('hidden', '');
+  chooser.setAttribute('aria-hidden', 'true');
+  deactivateModalSurface(chooser);
   document.body.classList.remove('audience-chooser-open');
   const returnFocus = audienceChooserReturnFocus;
   audienceChooserReturnFocus = null;
+  const fallback = document.getElementById('railHome');
   if (returnFocus?.isConnected) queueMicrotask(() => returnFocus.focus());
+  else if (fallback instanceof HTMLElement) queueMicrotask(() => fallback.focus());
 }
 
 /** Badge the choice matching the active mode so returning users see it. */
@@ -474,6 +480,8 @@ function localizeAudienceChooser(overlay: HTMLElement): void {
       : 'Pick the level that matches what you want to do now. You can change this anytime from the Mode selector in the sidebar.';
   }
   overlay.removeAttribute('aria-label');
+  const grid = overlay.querySelector<HTMLElement>('.audience-choice-grid');
+  grid?.setAttribute('aria-label', korean ? '사용자 모드 선택' : 'Workspace mode choices');
   close?.setAttribute('aria-label', korean ? '현재 모드를 유지하고 닫기' : 'Keep current mode and close');
   overlay.querySelectorAll<HTMLButtonElement>('[data-audience-choice]').forEach((button) => {
     const mode = normalizeAudienceMode(button.dataset.audienceChoice);
@@ -501,14 +509,16 @@ function showAudienceChooser(): void {
     const active = document.activeElement;
     audienceChooserReturnFocus = active instanceof HTMLElement && !existing.contains(active) ? active : null;
     existing.removeAttribute('hidden');
+    existing.removeAttribute('aria-hidden');
     document.body.classList.add('audience-chooser-open');
+    activateModalSurface(existing);
     localizeAudienceChooser(existing);
     markCurrentChoice(existing);
     focusCurrentAudienceChoice(existing);
     return;
   }
-  // Full-screen selection screen shown on every launch: a dimmed backdrop with
-  // a centered card so choosing a workspace is the first thing a visitor does.
+  // Full-screen selection screen shown automatically on the first visit; later
+  // launches restore the saved mode and the rail home control can reopen it.
   // The overlay element carries the chooser id; the visible panel is the card.
   const overlay = document.createElement('div');
   overlay.id = CHOOSER_ID;
@@ -550,6 +560,8 @@ function showAudienceChooser(): void {
 
   const grid = document.createElement('div');
   grid.className = 'audience-choice-grid';
+  grid.setAttribute('role', 'group');
+  grid.setAttribute('aria-label', 'Workspace mode choices');
   for (const mode of ['beginner', 'student', 'research'] as const) {
     const meta = AUDIENCE_MODES[mode];
     const button = document.createElement('button');
@@ -579,7 +591,7 @@ function showAudienceChooser(): void {
     grid.append(button);
   }
 
-  // Escape keeps the current mode; Tab stays inside the modal surface.
+  // Escape keeps the current mode; Tab and arrow keys stay inside the modal.
   overlay.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -588,17 +600,23 @@ function showAudienceChooser(): void {
       return;
     }
     if (event.key === 'Tab') {
-      const focusable = Array.from(overlay.querySelectorAll<HTMLElement>('button:not([disabled])'));
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last?.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first?.focus();
-      }
+      trapModalFocus(event, overlay);
+      return;
+    }
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) {
+      const choices = Array.from(overlay.querySelectorAll<HTMLButtonElement>('[data-audience-choice]'));
+      const active = document.activeElement instanceof Element ? document.activeElement.closest('button') : null;
+      const index = choices.indexOf(active as HTMLButtonElement);
+      if (index < 0 || !choices.length) return;
+      event.preventDefault();
+      const nextIndex =
+        event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? choices.length - 1
+            : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + choices.length) %
+              choices.length;
+      choices[nextIndex]?.focus();
     }
   });
   overlay.addEventListener('click', (event) => {
@@ -609,6 +627,7 @@ function showAudienceChooser(): void {
   overlay.append(card);
   document.body.append(overlay);
   document.body.classList.add('audience-chooser-open');
+  activateModalSurface(overlay);
   localizeAudienceChooser(overlay);
   markCurrentChoice(overlay);
   // Focus the active choice, not the first card, so focus and selection agree.
@@ -676,6 +695,8 @@ export function applyAudienceMode(mode: AudienceMode, persist = true): void {
     }
     hideAudienceChooser();
     document.dispatchEvent(new CustomEvent(AUDIENCE_MODE_CHANGED_EVENT, { detail: { mode } }));
+    const label = currentNavLocale() === 'ko' ? AUDIENCE_MODES_KO[mode].label : AUDIENCE_MODES[mode].label;
+    announceUiPreference(currentNavLocale() === 'ko' ? `사용자 모드: ${label}` : `Audience mode: ${label}`);
   }
   // If the active tab is no longer reachable in this mode, fall back to Lab.
   const active = document.querySelector<HTMLElement>('.tabpanel.active');
@@ -702,24 +723,7 @@ export function installAudienceMode(): void {
   installAdoptedStyle(STYLE_ID, audienceModeCss());
   installAudienceAnnotations();
   decorateNavigation();
-  const wrap = document.createElement('div');
-  wrap.className = 'audience-select';
-  const label = document.createElement('label');
-  label.htmlFor = 'audienceMode';
-  label.textContent = 'Mode';
-  const select = document.createElement('select');
-  select.id = 'audienceMode';
-  select.setAttribute('aria-label', 'Audience mode');
-  for (const [value, meta] of Object.entries(AUDIENCE_MODES)) {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = meta.label;
-    option.title = meta.description;
-    select.append(option);
-  }
-  select.addEventListener('change', () => applyAudienceMode(normalizeAudienceMode(select.value)));
-  wrap.append(label, select);
-  rail.append(wrap);
+  installAudiencePreferenceControl(rail, AUDIENCE_MODES, (value) => applyAudienceMode(normalizeAudienceMode(value)));
   bindHomeLogo();
   const requested = urlAudienceMode();
   const stored = storedAudienceMode();

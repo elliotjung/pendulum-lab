@@ -1,263 +1,45 @@
 /**
- * Stochastic (Langevin) dynamics — additive-noise SDEs and ensemble statistics.
+ * Adaptive Langevin paths and ensemble statistics.
  *
- * The rest of the engine integrates deterministic ODEs ẋ = f(x). Real
- * oscillators are also kicked by thermal/electronic noise; this module adds that
- * channel as an Itô stochastic differential equation
- *
- *     dx = f(x) dt + σ ⊙ dW,        dW_i ~ N(0, dt) independent,
- *
- * advanced with the Euler–Maruyama scheme x_{n+1} = x_n + f(x_n) dt + σ √dt ξ
- * (ξ standard normal per component, strong order ½ / weak order 1 for additive
- * noise). Noise is *additive* (σ constant), so Itô and Stratonovich coincide and
- * there is no drift-correction subtlety.
- *
- * Everything is seeded and reproducible: a given seed reproduces the entire
- * ensemble bit-for-bit. The point of the ensemble runner is the *statistics* —
- * mean and variance across realisations — which converge to the SDE's true
- * moments and are validated against closed forms (Brownian MSD σ²t, and the
- * Ornstein–Uhlenbeck stationary variance σ²/2θ) in the test suite.
+ * Low-level diagonal and matrix SDE steppers live in stochasticSteppers so
+ * both modules remain reviewable and below the source-size ratchet.
  */
-
-import { mulberry32 } from './variational';
-import { stochasticSchemeMetadata, type LangevinScheme } from './stochasticMetadata';
 import type { Derivative, StateVector } from './types';
+import { stochasticSchemeMetadata, type LangevinScheme } from './stochasticMetadata';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
+import {
+  assertFiniteBuffer,
+  assertUint32Seed,
+  commutativeMilsteinStepCore,
+  eulerMaruyamaStepCore,
+  gaussianSampler,
+  milsteinStepCore,
+  stochasticHeunStratonovichStepCore,
+  type DiffusionMatrix,
+  type DiffusionMatrixJacobian,
+  type MatrixSdeScratch,
+  type StateDependentVector
+} from './stochasticSteppers';
 
+export {
+  commutativeMilsteinStep,
+  eulerMaruyamaStep,
+  gaussianSampler,
+  milsteinStep,
+  stochasticHeunStratonovichStep
+} from './stochasticSteppers';
+export type {
+  DiffusionMatrix,
+  DiffusionMatrixJacobian,
+  GaussianSampler,
+  MatrixSdeScratch,
+  StateDependentVector
+} from './stochasticSteppers';
 export type { LangevinScheme };
-
-/** A standard-normal generator. */
-export type GaussianSampler = () => number;
-
-/**
- * Box–Muller standard-normal sampler driven by the deterministic mulberry32
- * PRNG. The second Box–Muller output is cached so two normals cost one pair of
- * uniforms.
- */
-export function gaussianSampler(seed: number): GaussianSampler {
-  const rng = mulberry32(seed >>> 0);
-  let spare: number | null = null;
-  return () => {
-    if (spare !== null) {
-      const s = spare;
-      spare = null;
-      return s;
-    }
-    let u1 = 0;
-    do {
-      u1 = rng();
-    } while (u1 <= 1e-12); // guard log(0)
-    const u2 = rng();
-    const radius = Math.sqrt(-2 * Math.log(u1));
-    const angle = 2 * Math.PI * u2;
-    spare = radius * Math.sin(angle);
-    return radius * Math.cos(angle);
-  };
-}
-
-/**
- * One Euler–Maruyama step in place into `out`:
- *   out = state + drift(state)·dt + diffusion·√dt·ξ.
- * `diffusion[i]` is the per-component noise amplitude σ_i; components with σ_i=0
- * are integrated deterministically. `gaussian` supplies the ξ samples.
- */
-export function eulerMaruyamaStep(
-  state: StateVector,
-  dt: number,
-  drift: Derivative,
-  diffusion: readonly number[],
-  gaussian: GaussianSampler,
-  out: StateVector
-): StateVector {
-  drift(state, out);
-  const sqrtDt = Math.sqrt(dt);
-  for (let i = 0; i < state.length; i += 1) {
-    const sigma = diffusion[i] ?? 0;
-    const noise = sigma !== 0 ? sigma * sqrtDt * gaussian() : 0;
-    out[i] = state[i]! + out[i]! * dt + noise;
-  }
-  return out;
-}
-
-/** Writes per-component noise coefficients (σ_i(x) or σ'_i(x)) for a state. */
-export type StateDependentVector = (state: StateVector, out: number[]) => void;
-
-/**
- * One Milstein step in place into `out` for *diagonal* noise:
- *   out_i = x_i + a_i·dt + b_i·ΔW_i + ½·b_i·b'_i·(ΔW_i² − dt),   ΔW_i = √dt·ξ_i,
- * where `diffusion[i]` = b_i(x) and `diffusionPrime[i]` = ∂b_i/∂x_i, both already
- * evaluated at the current state. The ½·b·b' term is the Milstein correction
- * that lifts the strong order from ½ (Euler–Maruyama) to 1 for multiplicative
- * noise; with b' = 0 (additive noise) it vanishes and this reduces exactly to
- * {@link eulerMaruyamaStep}.
- */
-export function milsteinStep(
-  state: StateVector,
-  dt: number,
-  drift: Derivative,
-  diffusion: readonly number[],
-  diffusionPrime: readonly number[],
-  gaussian: GaussianSampler,
-  out: StateVector
-): StateVector {
-  drift(state, out);
-  const sqrtDt = Math.sqrt(dt);
-  for (let i = 0; i < state.length; i += 1) {
-    const b = diffusion[i] ?? 0;
-    if (b === 0) {
-      out[i] = state[i]! + out[i]! * dt;
-      continue;
-    }
-    const bPrime = diffusionPrime[i] ?? 0;
-    const xi = gaussian();
-    const dW = sqrtDt * xi;
-    // `b * sqrtDt * xi` matches eulerMaruyamaStep's exact association, so with
-    // bPrime = 0 (additive noise) the Milstein step is bit-identical to EM.
-    const noise = b * sqrtDt * xi + 0.5 * b * bPrime * (dW * dW - dt);
-    out[i] = state[i]! + out[i]! * dt + noise;
-  }
-  return out;
-}
-
-/** Writes a row-major diffusion matrix B(x), shape stateDim x noiseDim. */
-export type DiffusionMatrix = (state: StateVector, out: number[], noiseDimension: number) => void;
-
-/**
- * Writes dB[i,k]/dx[l] in row-major blocks:
- *   out[((i * noiseDimension + k) * stateDim) + l].
- *
- * This is the derivative layout needed by the commutative-noise Milstein
- * correction L_j B_{i,k} = sum_l B_{l,j} dB_{i,k}/dx_l.
- */
-export type DiffusionMatrixJacobian = (state: StateVector, out: number[], noiseDimension: number) => void;
-
-export interface MatrixSdeScratch {
-  drift0?: Float64Array;
-  drift1?: Float64Array;
-  predictor?: Float64Array;
-  diffusion0?: number[];
-  diffusion1?: number[];
-  diffusionJacobian?: number[];
-  increments?: number[];
-}
-
-function matrixScratch(spec: MatrixSdeScratch | undefined, dim: number, noiseDim: number): Required<MatrixSdeScratch> {
-  return {
-    drift0: spec?.drift0 ?? new Float64Array(dim),
-    drift1: spec?.drift1 ?? new Float64Array(dim),
-    predictor: spec?.predictor ?? new Float64Array(dim),
-    diffusion0: spec?.diffusion0 ?? new Array<number>(dim * noiseDim).fill(0),
-    diffusion1: spec?.diffusion1 ?? new Array<number>(dim * noiseDim).fill(0),
-    diffusionJacobian: spec?.diffusionJacobian ?? new Array<number>(dim * noiseDim * dim).fill(0),
-    increments: spec?.increments ?? new Array<number>(noiseDim).fill(0)
-  };
-}
-
-function validateNoiseDimension(noiseDimension: number): void {
-  if (!Number.isInteger(noiseDimension) || noiseDimension < 1) {
-    throw new Error('matrix SDE step: noiseDimension must be a positive integer.');
-  }
-}
-
-/**
- * One stochastic Heun predictor-corrector step for Stratonovich SDEs:
- *
- *   dx = a(x) dt + B(x) o dW
- *
- * where B is a full stateDim x noiseDim diffusion matrix. For additive noise it
- * reduces to Euler-Maruyama with a trapezoidal drift correction; for
- * multiplicative Stratonovich noise it avoids silently applying the Ito drift
- * convention used by Euler-Maruyama.
- */
-export function stochasticHeunStratonovichStep(
-  state: StateVector,
-  dt: number,
-  drift: Derivative,
-  noiseDimension: number,
-  diffusion: DiffusionMatrix,
-  gaussian: GaussianSampler,
-  out: StateVector,
-  scratch?: MatrixSdeScratch
-): StateVector {
-  validateNoiseDimension(noiseDimension);
-  const dim = state.length;
-  const ws = matrixScratch(scratch, dim, noiseDimension);
-  drift(state, ws.drift0);
-  diffusion(state, ws.diffusion0, noiseDimension);
-  const sqrtDt = Math.sqrt(dt);
-  for (let k = 0; k < noiseDimension; k += 1) ws.increments[k] = sqrtDt * gaussian();
-
-  for (let i = 0; i < dim; i += 1) {
-    let noise = 0;
-    const row = i * noiseDimension;
-    for (let k = 0; k < noiseDimension; k += 1) noise += (ws.diffusion0[row + k] ?? 0) * (ws.increments[k] ?? 0);
-    ws.predictor[i] = state[i]! + ws.drift0[i]! * dt + noise;
-  }
-
-  drift(ws.predictor, ws.drift1);
-  diffusion(ws.predictor, ws.diffusion1, noiseDimension);
-  for (let i = 0; i < dim; i += 1) {
-    let noise = 0;
-    const row = i * noiseDimension;
-    for (let k = 0; k < noiseDimension; k += 1) {
-      noise += 0.5 * ((ws.diffusion0[row + k] ?? 0) + (ws.diffusion1[row + k] ?? 0)) * (ws.increments[k] ?? 0);
-    }
-    out[i] = state[i]! + 0.5 * (ws.drift0[i]! + ws.drift1[i]!) * dt + noise;
-  }
-  return out;
-}
-
-/**
- * One strong-order-1 Milstein step for full matrix diffusion under the standard
- * commutative-noise assumption:
- *
- *   dx_i = a_i dt + sum_k B_{i,k} dW_k
- *          + 1/2 sum_{j,k} L_j B_{i,k} (dW_j dW_k - delta_jk dt)
- *
- * where L_j = sum_l B_{l,j} d/dx_l. Non-commutative noise needs Levy-area
- * terms and is intentionally not approximated here.
- */
-export function commutativeMilsteinStep(
-  state: StateVector,
-  dt: number,
-  drift: Derivative,
-  noiseDimension: number,
-  diffusion: DiffusionMatrix,
-  diffusionJacobian: DiffusionMatrixJacobian,
-  gaussian: GaussianSampler,
-  out: StateVector,
-  scratch?: MatrixSdeScratch
-): StateVector {
-  validateNoiseDimension(noiseDimension);
-  const dim = state.length;
-  const ws = matrixScratch(scratch, dim, noiseDimension);
-  drift(state, ws.drift0);
-  diffusion(state, ws.diffusion0, noiseDimension);
-  diffusionJacobian(state, ws.diffusionJacobian, noiseDimension);
-  const sqrtDt = Math.sqrt(dt);
-  for (let k = 0; k < noiseDimension; k += 1) ws.increments[k] = sqrtDt * gaussian();
-
-  for (let i = 0; i < dim; i += 1) {
-    let noise = 0;
-    const row = i * noiseDimension;
-    for (let k = 0; k < noiseDimension; k += 1) noise += (ws.diffusion0[row + k] ?? 0) * (ws.increments[k] ?? 0);
-
-    let correction = 0;
-    for (let j = 0; j < noiseDimension; j += 1) {
-      for (let k = 0; k < noiseDimension; k += 1) {
-        let lieDerivative = 0;
-        for (let l = 0; l < dim; l += 1) {
-          const bLj = ws.diffusion0[l * noiseDimension + j] ?? 0;
-          const dBikDxl = ws.diffusionJacobian[(i * noiseDimension + k) * dim + l] ?? 0;
-          lieDerivative += bLj * dBikDxl;
-        }
-        const quadratic = (ws.increments[j] ?? 0) * (ws.increments[k] ?? 0) - (j === k ? dt : 0);
-        correction += lieDerivative * quadratic;
-      }
-    }
-    out[i] = state[i]! + ws.drift0[i]! * dt + noise + 0.5 * correction;
-  }
-  return out;
-}
 
 // ---------------------------------------------------------------------------
 // Adaptive (step-size-controlled) SDE integration over a frozen Brownian path.
@@ -287,15 +69,24 @@ export interface BrownianGrid {
 
 /** Build a frozen, reproducible Wiener path on 2^levels intervals of [0, totalTime]. */
 export function buildBrownianGrid(totalTime: number, levels: number, dimension: number, seed = 1): BrownianGrid {
-  if (!(totalTime > 0)) throw new Error('buildBrownianGrid: totalTime must be positive.');
+  const budget = NUMERICAL_WORK_BUDGETS.adaptiveLangevin;
+  if (!Number.isFinite(totalTime) || !(totalTime > 0)) {
+    throw new Error('buildBrownianGrid: totalTime must be positive and finite.');
+  }
   if (!Number.isInteger(levels) || levels < 1 || levels > 24)
     throw new Error('buildBrownianGrid: levels must be an integer in [1, 24].');
-  if (!Number.isInteger(dimension) || dimension < 1)
-    throw new Error('buildBrownianGrid: dimension must be a positive integer.');
+  if (!Number.isSafeInteger(dimension) || dimension < 1 || dimension > budget.maxStateDimension) {
+    throw new Error(`buildBrownianGrid: dimension must be an integer in [1, ${budget.maxStateDimension}].`);
+  }
   const steps = 2 ** levels;
   const dt = totalTime / steps;
+  assertUsableIntegrationStep(dt, 'buildBrownianGrid');
+  const cells = checkedWorkProduct([steps + 1, dimension], 'buildBrownianGrid');
+  if (cells > budget.maxBrownianCells) {
+    throw new RangeError(`buildBrownianGrid: Brownian grid storage exceeds ${budget.maxBrownianCells} float64 cells.`);
+  }
   const sqrtDt = Math.sqrt(dt);
-  const gaussian = gaussianSampler(seed >>> 0);
+  const gaussian = gaussianSampler(seed);
   // Cumulative W at each node, row-major (steps+1) × dimension.
   const cum = new Float64Array((steps + 1) * dimension);
   for (let k = 1; k <= steps; k += 1) {
@@ -309,6 +100,18 @@ export function buildBrownianGrid(totalTime: number, levels: number, dimension: 
     totalTime,
     dimension,
     increment(aIndex, bIndex, i) {
+      if (
+        !Number.isSafeInteger(aIndex) ||
+        !Number.isSafeInteger(bIndex) ||
+        aIndex < 0 ||
+        bIndex < aIndex ||
+        bIndex > steps
+      ) {
+        throw new RangeError('BrownianGrid.increment: indices must satisfy 0 <= aIndex <= bIndex <= steps.');
+      }
+      if (!Number.isSafeInteger(i) || i < 0 || i >= dimension) {
+        throw new RangeError('BrownianGrid.increment: component index is outside the grid dimension.');
+      }
       return (cum[bIndex * dimension + i] ?? 0) - (cum[aIndex * dimension + i] ?? 0);
     }
   };
@@ -345,6 +148,71 @@ export interface AdaptiveLangevinResult {
   method: string;
 }
 
+function validateAdaptiveLangevinSpec(spec: AdaptiveLangevinSpec, recordsPath: boolean): void {
+  const caller = recordsPath ? 'runAdaptiveLangevinPath' : 'fixedGridLangevinPath';
+  const budget = NUMERICAL_WORK_BUDGETS.adaptiveLangevin;
+  if (!spec || typeof spec !== 'object') throw new TypeError(`${caller}: spec must be an object.`);
+  const dim = spec.initialState?.length;
+  if (!Number.isSafeInteger(dim) || dim < 1 || dim > budget.maxStateDimension) {
+    throw new RangeError(`${caller}: state dimension must be in [1, ${budget.maxStateDimension}].`);
+  }
+  assertFiniteBuffer(spec.initialState, `${caller}: initialState`);
+  if (typeof spec.drift !== 'function') throw new TypeError(`${caller}: drift must be a function.`);
+  if (typeof spec.diffusion !== 'function') {
+    if (!spec.diffusion || spec.diffusion.length !== dim) {
+      throw new RangeError(`${caller}: diffusion length must equal the state dimension.`);
+    }
+    assertFiniteBuffer(spec.diffusion, `${caller}: diffusion`);
+  }
+  if (spec.diffusionPrime !== undefined && typeof spec.diffusionPrime !== 'function') {
+    throw new TypeError(`${caller}: diffusionPrime must be a function when supplied.`);
+  }
+  if (spec.base !== undefined && spec.base !== 'euler-maruyama' && spec.base !== 'milstein') {
+    throw new RangeError(`${caller}: base scheme is unsupported.`);
+  }
+  const grid = spec.grid;
+  if (!grid || typeof grid !== 'object') throw new TypeError(`${caller}: grid must be an object.`);
+  if (
+    !Number.isSafeInteger(grid.steps) ||
+    grid.steps < 2 ||
+    grid.steps > budget.maxGridSteps ||
+    !Number.isInteger(Math.log2(grid.steps))
+  ) {
+    throw new RangeError(`${caller}: grid.steps must be a power of two in [2, ${budget.maxGridSteps}].`);
+  }
+  if (!Number.isSafeInteger(grid.dimension) || grid.dimension !== dim) {
+    throw new RangeError(`${caller}: grid dimension must equal the state dimension.`);
+  }
+  assertUsableIntegrationStep(grid.dt, caller);
+  if (!Number.isFinite(grid.totalTime) || !(grid.totalTime > 0)) {
+    throw new RangeError(`${caller}: grid.totalTime must be positive and finite.`);
+  }
+  const reconstructedTotal = grid.steps * grid.dt;
+  const timeScale = Math.max(Math.abs(reconstructedTotal), Math.abs(grid.totalTime));
+  if (
+    !Number.isFinite(reconstructedTotal) ||
+    Math.abs(reconstructedTotal - grid.totalTime) > 32 * Number.EPSILON * timeScale
+  ) {
+    throw new RangeError(`${caller}: grid totalTime must equal steps * dt.`);
+  }
+  if (typeof grid.increment !== 'function') throw new TypeError(`${caller}: grid.increment must be a function.`);
+  const pathStepCells = checkedWorkProduct([grid.steps, dim], caller);
+  if (pathStepCells > budget.maxPathStepCells) {
+    throw new RangeError(`${caller}: path work exceeds ${budget.maxPathStepCells} state-step cells.`);
+  }
+  if (recordsPath) {
+    const outputCells = checkedWorkProduct([grid.steps + 1, dim], caller);
+    if (outputCells > budget.maxRecordedStateCells) {
+      throw new RangeError(`${caller}: worst-case recorded path exceeds ${budget.maxRecordedStateCells} state cells.`);
+    }
+  }
+  const atol = spec.absoluteTolerance ?? 1e-3;
+  const rtol = spec.relativeTolerance ?? 1e-3;
+  if (!Number.isFinite(atol) || atol < 0 || !Number.isFinite(rtol) || rtol < 0 || (atol === 0 && rtol === 0)) {
+    throw new RangeError(`${caller}: tolerances must be finite and non-negative, with at least one positive.`);
+  }
+}
+
 /** One diagonal base step over [a, b] (dt = b−a) with the grid's own ΔW; writes into out. */
 function adaptiveBaseStep(
   spec: AdaptiveLangevinSpec,
@@ -358,20 +226,33 @@ function adaptiveBaseStep(
   out: Float64Array
 ): void {
   const dim = state.length;
+  driftScratch.fill(Number.NaN);
   spec.drift(state, driftScratch);
+  assertFiniteBuffer(driftScratch, 'adaptive Langevin: drift output');
   const diffusion = spec.diffusion;
-  if (typeof diffusion === 'function') diffusion(state, bScratch);
+  if (typeof diffusion === 'function') {
+    bScratch.fill(0);
+    diffusion(state, bScratch);
+    assertFiniteBuffer(bScratch, 'adaptive Langevin: diffusion output');
+  }
   const useMilstein = (spec.base ?? 'euler-maruyama') === 'milstein';
-  if (useMilstein && spec.diffusionPrime) spec.diffusionPrime(state, bPrimeScratch);
+  if (useMilstein && spec.diffusionPrime) {
+    bPrimeScratch.fill(0);
+    spec.diffusionPrime(state, bPrimeScratch);
+    assertFiniteBuffer(bPrimeScratch, 'adaptive Langevin: diffusionPrime output');
+  }
   for (let i = 0; i < dim; i += 1) {
     const b = typeof diffusion === 'function' ? (bScratch[i] ?? 0) : (diffusion[i] ?? 0);
     const dW = spec.grid.increment(aIndex, bIndex, i);
+    if (!Number.isFinite(b)) throw new Error(`adaptive Langevin: diffusion[${i}] must be finite.`);
+    if (!Number.isFinite(dW)) throw new Error(`adaptive Langevin: Brownian increment[${i}] must be finite.`);
     let increment = (driftScratch[i] ?? 0) * dt + b * dW;
     if (useMilstein && b !== 0) {
       const bPrime = spec.diffusionPrime ? (bPrimeScratch[i] ?? 0) : 0;
       increment += 0.5 * b * bPrime * (dW * dW - dt);
     }
     out[i] = (state[i] ?? 0) + increment;
+    if (!Number.isFinite(out[i])) throw new Error(`adaptive Langevin: result[${i}] must be finite.`);
   }
 }
 
@@ -380,10 +261,8 @@ function adaptiveBaseStep(
  * a frozen {@link BrownianGrid}, controlling the local error by step doubling.
  */
 export function runAdaptiveLangevinPath(spec: AdaptiveLangevinSpec): AdaptiveLangevinResult {
+  validateAdaptiveLangevinSpec(spec, true);
   const dim = spec.initialState.length;
-  if (dim === 0) throw new Error('runAdaptiveLangevinPath: empty initial state.');
-  if (spec.grid.dimension !== dim)
-    throw new Error('runAdaptiveLangevinPath: grid dimension must equal the state dimension.');
   const atol = spec.absoluteTolerance ?? 1e-3;
   const rtol = spec.relativeTolerance ?? 1e-3;
   const totalSteps = spec.grid.steps;
@@ -424,7 +303,9 @@ export function runAdaptiveLangevinPath(spec: AdaptiveLangevinSpec): AdaptiveLan
       let errNorm = 0;
       for (let i = 0; i < dim; i += 1) {
         const scale = atol + rtol * Math.max(Math.abs(state[i] ?? 0), Math.abs(small[i] ?? 0));
-        errNorm = Math.max(errNorm, Math.abs((small[i] ?? 0) - (big[i] ?? 0)) / scale);
+        const difference = Math.abs((small[i] ?? 0) - (big[i] ?? 0));
+        const normalizedError = scale === 0 ? (difference === 0 ? 0 : Number.POSITIVE_INFINITY) : difference / scale;
+        errNorm = Math.max(errNorm, normalizedError);
       }
       acceptable = errNorm <= 1;
     }
@@ -458,6 +339,7 @@ export function runAdaptiveLangevinPath(spec: AdaptiveLangevinSpec): AdaptiveLan
 
 /** Full diagonal-noise reference: fixed step on every fine node of the grid (the all-fine baseline). */
 export function fixedGridLangevinPath(spec: AdaptiveLangevinSpec): number[] {
+  validateAdaptiveLangevinSpec(spec, false);
   const dim = spec.initialState.length;
   const state = Float64Array.from(spec.initialState);
   const out = new Float64Array(dim);
@@ -511,7 +393,7 @@ export interface LangevinEnsembleSpec {
   steps: number;
   /** Number of independent realisations to average over (≥ 2). */
   realizations: number;
-  /** Base seed; realisation r uses a decorrelated derived seed. Default 1. */
+  /** Uint32 base seed; realisation r uses a decorrelated derived seed. Default 1. */
   seed?: number;
   /** Record ensemble stats every `recordEvery` steps (≥ 1). Default = steps (final only). */
   recordEvery?: number;
@@ -550,17 +432,58 @@ function realizationSeed(baseSeed: number, index: number): number {
  */
 export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembleResult {
   const dim = spec.initialState.length;
-  if (dim === 0) throw new Error('runLangevinEnsemble: empty initial state.');
-  if (spec.realizations < 2) throw new Error('runLangevinEnsemble: need at least 2 realisations for variance.');
-  if (spec.steps < 1) throw new Error('runLangevinEnsemble: steps must be ≥ 1.');
+  const budget = NUMERICAL_WORK_BUDGETS.langevinEnsemble;
+  if (!Number.isSafeInteger(dim) || dim < 1 || dim > budget.maxStateDimension) {
+    throw new RangeError(`runLangevinEnsemble: state dimension must be in [1, ${budget.maxStateDimension}].`);
+  }
+  if (typeof spec.drift !== 'function') throw new TypeError('runLangevinEnsemble: drift must be a function.');
+  for (let i = 0; i < dim; i += 1) {
+    if (!Object.hasOwn(spec.initialState, i) || !Number.isFinite(spec.initialState[i])) {
+      throw new TypeError(`runLangevinEnsemble: initialState[${i}] must be present and finite.`);
+    }
+  }
+  assertUsableIntegrationStep(spec.dt, 'runLangevinEnsemble');
+  if (!Number.isSafeInteger(spec.realizations) || spec.realizations < 2 || spec.realizations > budget.maxRealizations) {
+    throw new RangeError(`runLangevinEnsemble: realizations must be a safe integer in [2, ${budget.maxRealizations}].`);
+  }
+  if (!Number.isSafeInteger(spec.steps) || spec.steps < 1 || spec.steps > budget.maxSteps) {
+    throw new RangeError(`runLangevinEnsemble: steps must be a safe integer in [1, ${budget.maxSteps}].`);
+  }
   const recordEvery = spec.recordEvery ?? spec.steps;
-  if (recordEvery < 1) throw new Error('runLangevinEnsemble: recordEvery must be ≥ 1.');
+  if (!Number.isSafeInteger(recordEvery) || recordEvery < 1) {
+    throw new RangeError('runLangevinEnsemble: recordEvery must be a positive safe integer.');
+  }
   const seed = spec.seed ?? 1;
+  assertUint32Seed(seed, 'runLangevinEnsemble');
   const scheme = spec.scheme ?? 'euler-maruyama';
+  if (
+    scheme !== 'euler-maruyama' &&
+    scheme !== 'milstein' &&
+    scheme !== 'heun-stratonovich' &&
+    scheme !== 'commutative-milstein'
+  ) {
+    throw new RangeError(`runLangevinEnsemble: unsupported scheme ${String(scheme)}.`);
+  }
   const multiplicative = spec.multiplicative;
   const matrixNoise = spec.matrixNoise;
   const useMilstein = scheme === 'milstein';
-  if (useMilstein && multiplicative && !multiplicative.diffusionPrime) {
+  if (!matrixNoise && !multiplicative) {
+    if (spec.diffusion.length !== dim) {
+      throw new RangeError('runLangevinEnsemble: additive diffusion length must equal the state dimension.');
+    }
+    for (let i = 0; i < dim; i += 1) {
+      if (!Object.hasOwn(spec.diffusion, i) || !Number.isFinite(spec.diffusion[i])) {
+        throw new TypeError(`runLangevinEnsemble: diffusion[${i}] must be present and finite.`);
+      }
+    }
+  }
+  if (multiplicative && typeof multiplicative.diffusion !== 'function') {
+    throw new TypeError('runLangevinEnsemble: multiplicative.diffusion must be a function.');
+  }
+  if (multiplicative?.diffusionPrime !== undefined && typeof multiplicative.diffusionPrime !== 'function') {
+    throw new TypeError('runLangevinEnsemble: multiplicative.diffusionPrime must be a function when supplied.');
+  }
+  if (useMilstein && multiplicative && typeof multiplicative.diffusionPrime !== 'function') {
     throw new Error('runLangevinEnsemble: the Milstein scheme needs multiplicative.diffusionPrime (σ′).');
   }
   if (matrixNoise && scheme !== 'heun-stratonovich' && scheme !== 'commutative-milstein') {
@@ -571,6 +494,35 @@ export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembl
   }
   if (matrixNoise && scheme === 'commutative-milstein' && !matrixNoise.jacobian) {
     throw new Error('runLangevinEnsemble: the commutative-milstein scheme needs matrixNoise.jacobian.');
+  }
+  let workFactors = [spec.realizations, spec.steps, dim];
+  if (matrixNoise) {
+    if (
+      !Number.isSafeInteger(matrixNoise.noiseDimension) ||
+      matrixNoise.noiseDimension < 1 ||
+      matrixNoise.noiseDimension > budget.maxNoiseDimension
+    ) {
+      throw new RangeError(`runLangevinEnsemble: matrix-noise dimension must be in [1, ${budget.maxNoiseDimension}].`);
+    }
+    if (typeof matrixNoise.diffusion !== 'function') {
+      throw new TypeError('runLangevinEnsemble: matrixNoise.diffusion must be a function.');
+    }
+    if (matrixNoise.jacobian !== undefined && typeof matrixNoise.jacobian !== 'function') {
+      throw new TypeError('runLangevinEnsemble: matrixNoise.jacobian must be a function when supplied.');
+    }
+    workFactors =
+      scheme === 'commutative-milstein'
+        ? [spec.realizations, spec.steps, dim, dim, matrixNoise.noiseDimension, matrixNoise.noiseDimension]
+        : [spec.realizations, spec.steps, dim, matrixNoise.noiseDimension];
+  }
+  const stateUpdates = checkedWorkProduct(workFactors, 'runLangevinEnsemble');
+  if (stateUpdates > budget.maxStateUpdates) {
+    throw new RangeError(`runLangevinEnsemble: requested work exceeds ${budget.maxStateUpdates} scalar updates.`);
+  }
+  const recordCount = Math.floor((spec.steps - 1) / recordEvery) + 2;
+  const statisticCells = checkedWorkProduct([recordCount, dim, 2], 'runLangevinEnsemble');
+  if (statisticCells > budget.maxStatisticCells) {
+    throw new RangeError(`runLangevinEnsemble: recorded statistics exceed ${budget.maxStatisticCells} cells.`);
   }
   // Scratch for state-dependent coefficients and the additive Milstein σ′ = 0.
   const bScratch = new Array<number>(dim).fill(0);
@@ -612,7 +564,7 @@ export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembl
     for (let s = 1; s <= spec.steps; s += 1) {
       if (matrixNoise) {
         if (scheme === 'commutative-milstein') {
-          commutativeMilsteinStep(
+          commutativeMilsteinStepCore(
             state,
             spec.dt,
             spec.drift,
@@ -621,10 +573,11 @@ export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembl
             matrixNoise.jacobian!,
             gaussian,
             next,
-            matrixScratchBuffers
+            matrixScratchBuffers,
+            false
           );
         } else {
-          stochasticHeunStratonovichStep(
+          stochasticHeunStratonovichStepCore(
             state,
             spec.dt,
             spec.drift,
@@ -632,22 +585,25 @@ export function runLangevinEnsemble(spec: LangevinEnsembleSpec): LangevinEnsembl
             matrixNoise.diffusion,
             gaussian,
             next,
-            matrixScratchBuffers
+            matrixScratchBuffers,
+            false
           );
         }
       } else if (multiplicative) {
+        bScratch.fill(0);
         multiplicative.diffusion(state, bScratch);
         if (useMilstein) {
+          bPrimeScratch.fill(0);
           multiplicative.diffusionPrime!(state, bPrimeScratch);
-          milsteinStep(state, spec.dt, spec.drift, bScratch, bPrimeScratch, gaussian, next);
+          milsteinStepCore(state, spec.dt, spec.drift, bScratch, bPrimeScratch, gaussian, next, 'runLangevinEnsemble');
         } else {
-          eulerMaruyamaStep(state, spec.dt, spec.drift, bScratch, gaussian, next);
+          eulerMaruyamaStepCore(state, spec.dt, spec.drift, bScratch, gaussian, next, 'runLangevinEnsemble');
         }
       } else if (useMilstein) {
         // Constant additive diffusion ⇒ σ′ = 0 (Milstein reduces to EM, exercised for parity).
-        milsteinStep(state, spec.dt, spec.drift, spec.diffusion, zeroPrime, gaussian, next);
+        milsteinStepCore(state, spec.dt, spec.drift, spec.diffusion, zeroPrime, gaussian, next, 'runLangevinEnsemble');
       } else {
-        eulerMaruyamaStep(state, spec.dt, spec.drift, spec.diffusion, gaussian, next);
+        eulerMaruyamaStepCore(state, spec.dt, spec.drift, spec.diffusion, gaussian, next, 'runLangevinEnsemble');
       }
       state.set(next);
       if (recordIndex < sampleCount && recordSteps[recordIndex] === s) accumulate();

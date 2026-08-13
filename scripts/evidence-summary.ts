@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { dirname, resolve } from 'node:path';
 import { buildEvidenceSummary } from '../src/research/evidenceSummary';
+import { assertEvidenceSourceCommit, evidenceWorktreeIsDirty } from './evidence-provenance';
 
 const sourceReports = {
   vitestResults: 'reports/vitest-results.json',
@@ -56,8 +57,7 @@ const summary = buildEvidenceSummary({
     sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     packageVersion: packageJson.version ?? 'unknown',
     lockfileSha256: createHash('sha256').update(lockfile).digest('hex'),
-    dirtyWorktree:
-      execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).trim().length > 0,
+    dirtyWorktree: evidenceWorktreeIsDirty(),
     expiresAfterDays,
     expiresAt: new Date(generatedAt.getTime() + expiresAfterDays * 86_400_000).toISOString()
   }
@@ -65,6 +65,7 @@ const summary = buildEvidenceSummary({
 
 if (checkOnly) {
   const committed = await readJson(evidencePath);
+  assertReleaseReadyEvidence(committed);
   const comparable = structuredClone(summary) as unknown;
   preserveVolatileEvidence(comparable, committed);
   if (JSON.stringify(comparable) !== JSON.stringify(committed)) {
@@ -72,9 +73,38 @@ if (checkOnly) {
       'Committed evidence is stale. Run `npm run evidence:refresh`, review the scientific diff, and commit it.'
     );
   }
-  console.log('Evidence summary is synchronized (volatile timestamps and commit coordinates ignored).');
+  console.log('Evidence summary is synchronized, clean, and within its release validity window.');
 } else {
   await writeJson(evidencePath, summary);
+}
+
+function assertReleaseReadyEvidence(value: unknown): void {
+  if (!value || typeof value !== 'object') throw new Error('Committed evidence must be a JSON object.');
+  const evidence = value as {
+    generatedAt?: unknown;
+    provenance?: {
+      sourceCommit?: unknown;
+      dirtyWorktree?: unknown;
+      expiresAt?: unknown;
+    };
+  };
+  const generatedAt = Date.parse(String(evidence.generatedAt ?? ''));
+  const expiresAt = Date.parse(String(evidence.provenance?.expiresAt ?? ''));
+  if (!Number.isFinite(generatedAt)) throw new Error('Committed evidence generatedAt is missing or invalid.');
+  const sourceCommit = String(evidence.provenance?.sourceCommit ?? '');
+  if (!/^[0-9a-f]{40}$/i.test(sourceCommit)) {
+    throw new Error('Committed evidence provenance.sourceCommit must be a full Git SHA.');
+  }
+  assertEvidenceSourceCommit(sourceCommit);
+  if (evidence.provenance?.dirtyWorktree !== false) {
+    throw new Error(
+      'Committed evidence was generated from a dirty worktree. Commit the source, then refresh evidence.'
+    );
+  }
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+    throw new Error('Committed evidence has expired. Run `npm run evidence:refresh` from a clean committed tree.');
+  }
+  if (expiresAt <= generatedAt) throw new Error('Committed evidence expiresAt must be later than generatedAt.');
 }
 
 const landingSummaryPath = resolve('..', 'landing page', 'pendulum-landing', 'assets', 'evidence-summary.json');

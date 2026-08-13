@@ -13,7 +13,7 @@ const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> =
     owner: 'split into experiment library, batch runner, design study, comparison matrix'
   },
   'src/app/parity/figure-export.ts': { maxLines: 941, owner: 'split exporters by artifact type' },
-  'src/app/parity/governance-ui.ts': { maxLines: 979, owner: 'split command palette, manifest, mode controls' },
+  'src/app/parity/governance-ui.ts': { maxLines: 938, owner: 'split command palette, manifest, mode controls' },
   'src/app/ExpansionLabTab.ts': { maxLines: 872, owner: 'split controller, rendering, persistence' },
   'src/workers/chaosProtocol.ts': { maxLines: 700, owner: 'split request schemas from job handlers' },
   'src/app/parity/runtime-diagnostics.ts': { maxLines: 925, owner: 'split probes, benchmarks, validation surface' },
@@ -23,12 +23,15 @@ const KNOWN_LARGE_MODULES: Record<string, { maxLines: number; owner: string }> =
     owner: 'split schema migration, persistence, and cross-tab synchronization'
   },
   'src/app/audienceMode.ts': {
-    maxLines: 763,
+    maxLines: 735,
     owner: 'split mode chooser housing, navigation decoration, and adopted-sheet CSS by concern'
   },
   'src/app/ResearchMatrixTab.ts': { maxLines: 652, owner: 'split matrix state from golden-run rendering' },
   'src/physics/expandedModels-research.ts': { maxLines: 720, owner: 'split research runners from preset tables' },
-  'src/physics/stochastic.ts': { maxLines: 671, owner: 'split SDE steppers from noise-process helpers' },
+  'src/physics/stochasticSteppers.ts': {
+    maxLines: 658,
+    owner: 'split stochastic step families by solver and noise structure'
+  },
   'src/runtime/gpuChaosPromotion.ts': { maxLines: 698, owner: 'split promotion contracts by diagnostic' },
   'src/runtime/gpuFields.ts': { maxLines: 666, owner: 'split field kernels from dispatch plumbing' }
 };

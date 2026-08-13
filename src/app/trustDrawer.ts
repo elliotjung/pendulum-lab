@@ -6,7 +6,11 @@
  * tab strip so the Lab screen itself stays focused on the simulation.
  */
 
+import { hasActiveModalSurface } from './modalSurface';
+
 export type TrustSection = 'health' | 'validation' | 'provenance' | 'performance' | 'faults';
+
+let returnFocus: HTMLElement | null = null;
 
 function drawer(): HTMLElement | null {
   return document.getElementById('trustDrawer');
@@ -20,17 +24,24 @@ export function trustSection(name: TrustSection): HTMLElement | null {
 export function openTrustDrawer(section?: TrustSection): void {
   const root = drawer();
   if (!root) return;
+  if (root.hidden) {
+    const active = document.activeElement;
+    returnFocus = active instanceof HTMLElement && !root.contains(active) ? active : null;
+  }
   root.hidden = false;
   document.getElementById('trustDrawerToggle')?.setAttribute('aria-expanded', 'true');
   if (section) selectSection(section);
   root.focus();
 }
 
-export function closeTrustDrawer(): void {
+export function closeTrustDrawer(restoreFocus = true): void {
   const root = drawer();
   if (!root || root.hidden) return;
   root.hidden = true;
   document.getElementById('trustDrawerToggle')?.setAttribute('aria-expanded', 'false');
+  const target = returnFocus;
+  returnFocus = null;
+  if (restoreFocus && target?.isConnected) queueMicrotask(() => target.focus());
 }
 
 function selectSection(name: TrustSection): void {
@@ -59,7 +70,6 @@ export function installTrustDrawer(): void {
   });
   document.getElementById('trustDrawerClose')?.addEventListener('click', () => {
     closeTrustDrawer();
-    toggle?.focus();
   });
 
   const tabs = Array.from(document.querySelectorAll<HTMLElement>('#trustDrawer [data-trust-tab]'));
@@ -70,14 +80,14 @@ export function installTrustDrawer(): void {
     });
     // Roving-tabindex arrow navigation across the section tabs.
     tab.addEventListener('keydown', (event) => {
-      if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+      if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
       const nextIndex =
         event.key === 'Home'
           ? 0
           : event.key === 'End'
             ? tabs.length - 1
-            : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+            : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length;
       const next = tabs[nextIndex];
       next?.focus();
       const name = next?.dataset.trustTab as TrustSection | undefined;
@@ -86,11 +96,12 @@ export function installTrustDrawer(): void {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
     const root = drawer();
     if (root && !root.hidden) {
+      if (hasActiveModalSurface() || document.querySelector('dialog[open]')) return;
+      event.preventDefault();
       closeTrustDrawer();
-      toggle?.focus();
     }
   });
 }

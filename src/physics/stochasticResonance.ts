@@ -1,4 +1,10 @@
-import { gaussianSampler } from './stochastic';
+import { assertUint32Seed, gaussianSampler } from './stochasticSteppers';
+import {
+  assertUsableIntegrationStep,
+  checkedWorkProduct,
+  integrationStepCount,
+  NUMERICAL_WORK_BUDGETS
+} from '../validation/numericalBudgets';
 
 /**
  * Stochastic resonance (SR) — the counter-intuitive phenomenon where adding the
@@ -58,30 +64,110 @@ export interface SrResponse {
   sigma: number;
 }
 
+interface ValidatedSrParameters {
+  amplitude: number;
+  driveOmega: number;
+  sigma: number;
+  dt: number;
+  periods: number;
+  transientPeriods: number;
+  seed: number;
+  x0: number;
+  transientSteps: number;
+  measureSteps: number;
+  totalSteps: number;
+  phaseStep: number;
+}
+
+function roundedStepCount(span: number, dt: number, minimum: number, caller: string): number {
+  // The public routine historically rounds to the nearest step. Use the shared
+  // ceiling helper for finite/safe-ratio validation while preserving that
+  // scientific sampling contract.
+  integrationStepCount(span, dt, caller);
+  const count = Math.max(minimum, Math.round(span / dt));
+  if (!Number.isSafeInteger(count)) throw new RangeError(`${caller}: derived step count must be a safe integer.`);
+  return count;
+}
+
+function validateSrParameters(params: BistableSrParameters, caller: string): ValidatedSrParameters {
+  if (params === null || typeof params !== 'object') throw new TypeError(`${caller}: parameters must be an object.`);
+  const amplitude = params.amplitude;
+  const driveOmega = params.driveOmega;
+  const sigma = params.sigma;
+  const dt = params.dt;
+  const periods = params.periods;
+  const transientPeriods = params.transientPeriods ?? 2;
+  const seed = params.seed;
+  const x0 = params.x0 ?? -1;
+
+  if (!Number.isFinite(amplitude)) throw new TypeError(`${caller}: amplitude must be finite.`);
+  if (!(driveOmega > 0) || !Number.isFinite(driveOmega)) {
+    throw new RangeError(`${caller}: driveOmega must be positive and finite.`);
+  }
+  if (!(sigma >= 0) || !Number.isFinite(sigma)) {
+    throw new RangeError(`${caller}: sigma must be non-negative and finite.`);
+  }
+  assertUsableIntegrationStep(dt, caller);
+  if (!(periods > 0) || !Number.isFinite(periods)) {
+    throw new RangeError(`${caller}: periods must be positive and finite.`);
+  }
+  if (!(transientPeriods >= 0) || !Number.isFinite(transientPeriods)) {
+    throw new RangeError(`${caller}: transientPeriods must be non-negative and finite.`);
+  }
+  if (!Number.isFinite(x0)) throw new TypeError(`${caller}: x0 must be finite.`);
+  assertUint32Seed(seed, caller);
+
+  const period = (2 * Math.PI) / driveOmega;
+  if (!(period > 0) || !Number.isFinite(period)) {
+    throw new RangeError(`${caller}: the derived drive period must be positive and finite.`);
+  }
+  const transientSteps = roundedStepCount(transientPeriods * period, dt, 0, caller);
+  const measureSteps = roundedStepCount(periods * period, dt, 1, caller);
+  const totalSteps = transientSteps + measureSteps;
+  if (!Number.isSafeInteger(totalSteps))
+    throw new RangeError(`${caller}: total step count must be safely representable.`);
+  if (totalSteps > NUMERICAL_WORK_BUDGETS.stochasticResonance.maxStepsPerResponse) {
+    throw new RangeError(
+      `${caller}: response work exceeds ${NUMERICAL_WORK_BUDGETS.stochasticResonance.maxStepsPerResponse} integration steps.`
+    );
+  }
+  const phaseStep = driveOmega * dt;
+  if (!Number.isFinite(phaseStep)) throw new RangeError(`${caller}: driveOmega * dt must be finite.`);
+
+  return {
+    amplitude,
+    driveOmega,
+    sigma,
+    dt,
+    periods,
+    transientPeriods,
+    seed,
+    x0,
+    transientSteps,
+    measureSteps,
+    totalSteps,
+    phaseStep
+  };
+}
+
 /**
  * Integrate the bistable SR model once (Euler–Maruyama) and measure the spectral
  * response at the drive frequency. Deterministic for a given seed.
  */
 export function stochasticResonanceResponse(params: BistableSrParameters): SrResponse {
-  const { amplitude: A, driveOmega: omega, sigma, dt, periods, seed } = params;
-  if (!(dt > 0)) throw new Error('stochasticResonanceResponse: dt must be positive');
-  if (!(omega > 0)) throw new Error('stochasticResonanceResponse: driveOmega must be positive');
-  if (!(periods > 0)) throw new Error('stochasticResonanceResponse: periods must be positive');
-  if (!(sigma >= 0)) throw new Error('stochasticResonanceResponse: sigma must be non-negative');
-  const transientPeriods = params.transientPeriods ?? 2;
-  const x0 = params.x0 ?? -1;
-  const period = (2 * Math.PI) / omega;
-  const transientSteps = Math.max(0, Math.round((transientPeriods * period) / dt));
-  const measureSteps = Math.max(1, Math.round((periods * period) / dt));
+  const caller = 'stochasticResonanceResponse';
+  const validated = validateSrParameters(params, caller);
+  const { amplitude: A, sigma, dt, seed, x0, transientSteps, measureSteps, phaseStep } = validated;
   const gaussian = gaussianSampler(seed);
   const sqrtDt = Math.sqrt(dt);
 
   let x = x0;
-  let t = 0;
+  let phase = 0;
   for (let i = 0; i < transientSteps; i += 1) {
-    const drift = x - x * x * x + A * Math.cos(omega * t);
+    const drift = x - x * x * x + A * Math.cos(phase);
     x = x + drift * dt + sigma * sqrtDt * gaussian();
-    t += dt;
+    if (!Number.isFinite(x)) throw new Error(`${caller}: trajectory became non-finite during the transient.`);
+    phase = (phase + phaseStep) % (2 * Math.PI);
   }
 
   let ic = 0;
@@ -90,11 +176,15 @@ export function stochasticResonanceResponse(params: BistableSrParameters): SrRes
   let transitions = 0;
   let prevSign = x >= 0 ? 1 : -1;
   for (let i = 0; i < measureSteps; i += 1) {
-    const drift = x - x * x * x + A * Math.cos(omega * t);
+    const drift = x - x * x * x + A * Math.cos(phase);
     x = x + drift * dt + sigma * sqrtDt * gaussian();
-    t += dt;
-    ic += x * Math.cos(omega * t) * dt;
-    is += x * Math.sin(omega * t) * dt;
+    if (!Number.isFinite(x)) throw new Error(`${caller}: trajectory became non-finite during measurement.`);
+    phase = (phase + phaseStep) % (2 * Math.PI);
+    ic += x * Math.cos(phase) * dt;
+    is += x * Math.sin(phase) * dt;
+    if (!Number.isFinite(ic) || !Number.isFinite(is)) {
+      throw new Error(`${caller}: spectral accumulation became non-finite.`);
+    }
     if (x > 0) rightSteps += 1;
     const sign = x >= 0 ? 1 : -1;
     if (sign !== prevSign) {
@@ -104,13 +194,22 @@ export function stochasticResonanceResponse(params: BistableSrParameters): SrRes
   }
 
   const tMeas = measureSteps * dt;
-  return {
+  const response: SrResponse = {
     responseAmplitude: (2 / tMeas) * Math.hypot(ic, is),
     signalPower: ic * ic + is * is,
     rightWellFraction: rightSteps / measureSteps,
     transitions,
     sigma
   };
+  if (
+    !Number.isFinite(tMeas) ||
+    tMeas <= 0 ||
+    !Number.isFinite(response.responseAmplitude) ||
+    !Number.isFinite(response.signalPower)
+  ) {
+    throw new Error(`${caller}: response statistics became non-finite.`);
+  }
+  return response;
 }
 
 /**
@@ -125,14 +224,54 @@ export function stochasticResonanceCurve(
   sigmas: readonly number[],
   realizations = 1
 ): SrResponse[] {
-  if (!(realizations >= 1)) throw new Error('stochasticResonanceCurve: realizations must be >= 1');
-  return sigmas.map((sigma) => {
+  const caller = 'stochasticResonanceCurve';
+  const budget = NUMERICAL_WORK_BUDGETS.stochasticResonance;
+  if (!Number.isSafeInteger(realizations) || realizations < 1) {
+    throw new Error(`${caller}: realizations must be a positive safe integer`);
+  }
+  if (realizations > budget.maxCurveResponses) {
+    throw new RangeError(`${caller}: realizations exceed ${budget.maxCurveResponses}.`);
+  }
+  if (!Array.isArray(sigmas)) throw new TypeError(`${caller}: sigmas must be an array.`);
+  if (sigmas.length > budget.maxNoiseLevels) {
+    throw new RangeError(`${caller}: noise-level count exceeds ${budget.maxNoiseLevels}.`);
+  }
+  const sigmaValues = Array.from({ length: sigmas.length }, (_, index) => {
+    const sigma = sigmas[index];
+    if (!Object.hasOwn(sigmas, index) || typeof sigma !== 'number' || sigma < 0 || !Number.isFinite(sigma)) {
+      throw new RangeError(`${caller}: sigmas[${index}] must be present, non-negative, and finite.`);
+    }
+    return sigma;
+  });
+  const validatedBase = validateSrParameters({ ...base, sigma: 0 }, caller);
+  const responseCount = checkedWorkProduct([sigmaValues.length, realizations], caller);
+  if (responseCount > budget.maxCurveResponses) {
+    throw new RangeError(`${caller}: response count exceeds ${budget.maxCurveResponses}.`);
+  }
+  const totalIntegrationSteps = checkedWorkProduct([responseCount, validatedBase.totalSteps], caller);
+  if (totalIntegrationSteps > budget.maxCurveIntegrationSteps) {
+    throw new RangeError(`${caller}: curve work exceeds ${budget.maxCurveIntegrationSteps} integration steps.`);
+  }
+  const normalizedBase: Omit<BistableSrParameters, 'sigma'> = {
+    amplitude: validatedBase.amplitude,
+    driveOmega: validatedBase.driveOmega,
+    dt: validatedBase.dt,
+    periods: validatedBase.periods,
+    transientPeriods: validatedBase.transientPeriods,
+    seed: validatedBase.seed,
+    x0: validatedBase.x0
+  };
+  return sigmaValues.map((sigma) => {
     let ampSum = 0;
     let powSum = 0;
     let rightSum = 0;
     let transSum = 0;
     for (let r = 0; r < realizations; r += 1) {
-      const res = stochasticResonanceResponse({ ...base, sigma, seed: base.seed + r });
+      const res = stochasticResonanceResponse({
+        ...normalizedBase,
+        sigma,
+        seed: (normalizedBase.seed + r) >>> 0
+      });
       ampSum += res.responseAmplitude;
       powSum += res.signalPower;
       rightSum += res.rightWellFraction;

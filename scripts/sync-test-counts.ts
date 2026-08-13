@@ -83,8 +83,11 @@ async function replaceInFile({ file, pattern, replace }: Replacement, metadata: 
   await rename(tempFile, file);
 }
 
-const summary = await readEvidenceSummary('reports/evidence-summary.json').catch(() =>
-  readReport('reports/vitest-results.json')
+// `verify` writes the Vitest report immediately before syncing documentation.
+// Prefer that current run so an older evidence snapshot cannot overwrite fresh
+// test counts while a release-evidence commit is being prepared.
+const summary = await readReport('reports/vitest-results.json').catch(() =>
+  readEvidenceSummary('reports/evidence-summary.json')
 );
 const metadata: ProjectMetadata = {
   ...summary,

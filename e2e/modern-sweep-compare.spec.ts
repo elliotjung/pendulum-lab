@@ -6,7 +6,9 @@ function canvasSum(id: string): number {
   if (!c) return -1;
   const d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data;
   let s = 0;
-  for (let i = 0; i < d.length; i += 277) s = (s + d[i]!) % 2147483647;
+  for (let i = 0; i < d.length; i += 277) {
+    s = (s + d[i]! + d[i + 1]! + d[i + 2]! + d[i + 3]!) % 2147483647;
+  }
   return s;
 }
 
@@ -38,13 +40,14 @@ test('modern Sweep tab paints a chaos map and exports', async ({ page }) => {
 test('modern Compare tab overlays integrators and benchmarks', async ({ page }) => {
   await page.goto('/');
   await openModernTab(page, 'compare', '#tab-compare');
+  await expect(page.locator('#tab-compare')).not.toHaveAttribute('aria-busy', 'true');
+  await page.waitForFunction(() =>
+    Boolean((window as unknown as { __modernTabs?: { compare?: unknown } }).__modernTabs?.compare)
+  );
 
-  await page.evaluate(() => document.getElementById('cmpStart')?.click());
-  const a = await page.evaluate(canvasSum, 'cmpCanvas');
-  await page.waitForTimeout(500);
-  const b = await page.evaluate(canvasSum, 'cmpCanvas');
-  expect(a).toBeGreaterThanOrEqual(0);
-  expect(b).not.toBe(a); // animating
+  const before = await page.evaluate(canvasSum, 'cmpCanvas');
+  await page.locator('#cmpStart').click();
+  await expect.poll(() => page.evaluate(canvasSum, 'cmpCanvas')).not.toBe(before);
 
   // Benchmark fills the per-method fields.
   await page.evaluate(() => document.getElementById('cmpBenchBtn')?.click());

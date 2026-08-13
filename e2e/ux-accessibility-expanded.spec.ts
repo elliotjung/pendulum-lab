@@ -95,8 +95,8 @@ test('system light preference changes the major page and rail surfaces', async (
     rail: getComputedStyle(document.querySelector('.rail')!).backgroundColor
   }));
   expect(colors.scheme).toContain('light');
-  expect(colors.body).toBe('rgb(24, 46, 68)');
-  expect(colors.rail).toMatch(/rgba?\(248, 251, 255/);
+  expect(colors.body).toBe('rgb(71, 80, 100)');
+  expect(colors.rail).toBe('rgb(238, 241, 246)');
 });
 
 test('Validation tab exposes committed energy-drift curves and accessible legend', async ({ page }) => {

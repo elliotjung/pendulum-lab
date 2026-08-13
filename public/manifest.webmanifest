@@ -8,9 +8,13 @@
   "start_url": "./?source=pwa",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#05060f",
-  "theme_color": "#05060f",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070910",
+  "theme_color": "#070910",
   "categories": ["education", "science", "productivity"],
+  "prefer_related_applications": false,
+  "launch_handler": { "client_mode": "navigate-existing" },
   "icons": [
     {
       "src": "./icons/pendulum-lab-192.png",

@@ -28,8 +28,6 @@ import {
  * counters, using safe element-by-element DOM construction.
  */
 
-const PALETTE = { pass: '#34e88a', fail: '#ff4565', meta: '#6b7686' };
-
 /** A 200k-step RK4 energy-drift stress test (browser-sized stand-in for 10⁶). */
 function runStressCheck(): ValidationCaseResult {
   const parameters = { m1: 1, m2: 1, l1: 1.2, l2: 1, g: 9.81 };
@@ -107,14 +105,14 @@ export class ValidationTab extends TabController {
 
   private row(c: ValidationCaseResult): HTMLElement {
     const row = document.createElement('div');
-    row.style.cssText = 'padding:3px 0;border-bottom:1px solid #0a0e16;font-size:10.5px';
+    row.className = 'validation-result-row';
     const status = document.createElement('span');
-    status.style.color = c.status === 'PASS' ? PALETTE.pass : PALETTE.fail;
+    status.className = `validation-result-status ${c.status === 'PASS' ? 'is-pass' : 'is-fail'}`;
     status.textContent = c.status;
     const title = document.createElement('strong');
     title.textContent = ` ${c.id} `;
     const meta = document.createElement('span');
-    meta.style.color = PALETTE.meta;
+    meta.className = 'validation-result-meta';
     meta.textContent = `${c.measured}  (${c.threshold})`;
     row.append(status, title, meta);
     return row;
