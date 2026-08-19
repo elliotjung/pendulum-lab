@@ -94,10 +94,11 @@ async function waitForStableRail(page: Page): Promise<void> {
  * immediately after assigning `.open` can therefore race an app listener or
  * the browser's next layout, particularly in the tall mobile control panel.
  *
- * We deliberately do not widen the image tolerance: first pin every
- * accordion, then require the full state vector and panel geometry to remain
- * unchanged for several animation frames.  A late UI mutation now fails the
- * readiness condition instead of silently producing an alternate baseline.
+ * We deliberately do not widen the image tolerance.  The fixture locks both
+ * the native state and each body's rendered display: a late `open` mutation
+ * therefore cannot expand a closed section in the interval between Playwright
+ * readiness and its screenshot capture.  This lives only in the test page;
+ * production accordion behavior remains native and interactive.
  */
 async function pinLabControlAccordions(page: Page, controls: Locator): Promise<void> {
   const accordions = controls.locator('details.acc');
@@ -105,18 +106,57 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
   expect(count).toBeGreaterThanOrEqual(3);
 
   const expectedOpenStates = Array.from({ length: count }, (_value, index) => index < 2);
-  await accordions.evaluateAll((details, expected) => {
-    const normalize = () => {
-      details.forEach((detail, index) => {
-        const accordion = detail as HTMLDetailsElement;
-        const open = expected[index] === true;
-        if (accordion.open !== open) accordion.open = open;
+  await controls.evaluate((panel, expected) => {
+    type FixtureAccordion = HTMLDetailsElement & { __visualExpectedOpen?: boolean };
+
+    const directBody = (accordion: HTMLDetailsElement): HTMLElement | undefined =>
+      Array.from(accordion.children).find((child) => child.classList.contains('acc-body')) as HTMLElement | undefined;
+    const fixtureState = (accordion: FixtureAccordion): boolean => accordion.__visualExpectedOpen ?? false;
+    const pin = (accordion: FixtureAccordion): void => {
+      const open = fixtureState(accordion);
+      if (accordion.open !== open) accordion.open = open;
+
+      // Native <details> hides a closed body during layout, but a queued or
+      // late handler can otherwise expose it for one frame before `toggle` is
+      // observed.  Lock the direct body too, preserving the default block
+      // layout of the two intended-open sections exactly.
+      const body = directBody(accordion);
+      if (!body) return;
+      const display = open ? 'block' : 'none';
+      if (
+        body.style.getPropertyValue('display') !== display ||
+        body.style.getPropertyPriority('display') !== 'important'
+      ) {
+        body.style.setProperty('display', display, 'important');
+      }
+    };
+    const normalize = (): void => {
+      Array.from(panel.querySelectorAll<HTMLDetailsElement>('details.acc')).forEach((accordion) => {
+        const fixture = accordion as FixtureAccordion;
+        // Sections mounted after the initial baseline fixture are always
+        // closed; their summary still participates in layout as normal.
+        fixture.__visualExpectedOpen ??= false;
+        pin(fixture);
       });
     };
-    // `toggle` is delivered asynchronously. Keep the test fixture's declared
-    // state pinned if native delivery lands while Playwright is preparing an
-    // element screenshot; production code never receives this listener.
-    details.forEach((detail) => detail.addEventListener('toggle', normalize));
+
+    // The initial first two sections are the baseline's intended-open bodies.
+    // Any asynchronously mounted section is deliberately closed, so a late
+    // mount cannot make the tall component crop nondeterministic.
+    Array.from(panel.querySelectorAll<HTMLDetailsElement>('details.acc')).forEach((accordion, index) => {
+      (accordion as FixtureAccordion).__visualExpectedOpen = expected[index] === true;
+    });
+
+    // `toggle` can arrive after an `.open` assignment.  Capture-phase handling
+    // covers native toggles on future descendants; the observer also catches
+    // direct attribute/style writes made by application listeners.
+    panel.addEventListener('toggle', normalize, true);
+    new MutationObserver(normalize).observe(panel, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['open', 'style']
+    });
     normalize();
   }, expectedOpenStates);
 
@@ -131,13 +171,34 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
       if (!panel) return false;
 
       const signature = () => {
-        const details = Array.from(panel.querySelectorAll<HTMLDetailsElement>('details.acc'));
-        const openStates = details.map((detail) => detail.open);
-        if (openStates.length !== expected.length || openStates.some((open, index) => open !== expected[index]))
-          return null;
+        const details = Array.from(panel.querySelectorAll<HTMLDetailsElement>('details.acc')) as Array<
+          HTMLDetailsElement & { __visualExpectedOpen?: boolean }
+        >;
+        const accordionStates = details.map((detail, index) => {
+          const expectedOpen = detail.__visualExpectedOpen ?? expected[index] === true;
+          const body = Array.from(detail.children).find((child) => child.classList.contains('acc-body')) as
+            HTMLElement | undefined;
+          const expectedDisplay = expectedOpen ? 'block' : 'none';
+          if (
+            detail.open !== expectedOpen ||
+            !body ||
+            body.style.getPropertyValue('display') !== expectedDisplay ||
+            body.style.getPropertyPriority('display') !== 'important'
+          )
+            return null;
+          const rect = detail.getBoundingClientRect();
+          const bodyRect = body.getBoundingClientRect();
+          return [
+            expectedOpen ? 'open' : 'closed',
+            rect.height.toFixed(3),
+            bodyRect.height.toFixed(3),
+            body.style.display
+          ].join(',');
+        });
+        if (accordionStates.some((state) => state === null)) return null;
         const rect = panel.getBoundingClientRect();
         return [
-          openStates.join(','),
+          accordionStates.join(';'),
           rect.width.toFixed(3),
           rect.height.toFixed(3),
           panel.clientWidth,
@@ -153,7 +214,9 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
         await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         if (signature() !== initial) return false;
       }
-      return true;
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      return signature() === initial;
     },
     expectedOpenStates,
     { timeout: 5_000 }
