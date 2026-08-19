@@ -56,7 +56,12 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-baselines-${{ matrix.platform }}
-          path: e2e/visual-regression.spec.ts-snapshots/
+          # The checkout also contains the other platforms' committed images.
+          # Uploading the directory would let merge-multiple overwrite a newly
+          # generated native image with a stale image from another artifact.
+          # Platform suffices are unique, so the promote job can safely merge
+          # these three native-only artifact sets into the canonical directory.
+          path: e2e/visual-regression.spec.ts-snapshots/*-${{ matrix.platform }}.png
           if-no-files-found: error
           retention-days: 30
 
