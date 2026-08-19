@@ -6,13 +6,75 @@
  * Generate initial golden snapshots with:
  *   npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium
  */
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // The app now follows the OS light/dark preference. Pin the original dark
 // presentation so a runner's desktop preference cannot invalidate every
 // baseline before any component pixels are compared. Keep the project device
 // settings intact so mobile-chrome snapshots exercise the real mobile layout.
 test.use({ colorScheme: 'dark' });
+
+/**
+ * A native <details> property update queues its `toggle` event.  Capturing
+ * immediately after assigning `.open` can therefore race an app listener or
+ * the browser's next layout, particularly in the tall mobile control panel.
+ *
+ * We deliberately do not widen the image tolerance: first pin every
+ * accordion, then require the full state vector and panel geometry to remain
+ * unchanged for several animation frames.  A late UI mutation now fails the
+ * readiness condition instead of silently producing an alternate baseline.
+ */
+async function pinLabControlAccordions(page: Page, controls: Locator): Promise<void> {
+  const accordions = controls.locator('details.acc');
+  const count = await accordions.count();
+  expect(count).toBeGreaterThanOrEqual(3);
+
+  const expectedOpenStates = Array.from({ length: count }, (_value, index) => index < 2);
+  await accordions.evaluateAll((details, expected) => {
+    details.forEach((detail, index) => {
+      (detail as HTMLDetailsElement).open = expected[index] === true;
+    });
+  }, expectedOpenStates);
+
+  await expect
+    .poll(async () => accordions.evaluateAll((details) => details.map((detail) => (detail as HTMLDetailsElement).open)))
+    .toEqual(expectedOpenStates);
+
+  await page.waitForFunction(
+    async (expected) => {
+      await document.fonts.ready;
+      const panel = document.querySelector<HTMLElement>('#tab-lab .controls[role="region"]');
+      if (!panel) return false;
+
+      const signature = () => {
+        const details = Array.from(panel.querySelectorAll<HTMLDetailsElement>('details.acc'));
+        const openStates = details.map((detail) => detail.open);
+        if (openStates.length !== expected.length || openStates.some((open, index) => open !== expected[index]))
+          return null;
+        const rect = panel.getBoundingClientRect();
+        return [
+          openStates.join(','),
+          rect.width.toFixed(3),
+          rect.height.toFixed(3),
+          panel.clientWidth,
+          panel.clientHeight,
+          panel.scrollWidth,
+          panel.scrollHeight
+        ].join('|');
+      };
+
+      const initial = signature();
+      if (!initial) return false;
+      for (let frame = 0; frame < 8; frame += 1) {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        if (signature() !== initial) return false;
+      }
+      return true;
+    },
+    expectedOpenStates,
+    { timeout: 5_000 }
+  );
+}
 
 test('rail sidebar renders correctly', async ({ page }) => {
   await page.goto('/');
@@ -26,7 +88,6 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   const labBtn = page.locator('.rail-menu-button[data-rail-section-button="lab"]').first();
   if (await labBtn.isVisible()) await labBtn.click();
-  await page.waitForTimeout(300);
   // The parity layer installs this floating overlay asynchronously. Wait for
   // its completed audit result so it cannot appear midway through capture.
   const integrityBadge = page.locator('#figBadge');
@@ -42,16 +103,7 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
     });
   });
   const controls = page.getByRole('region', { name: 'controls' });
-  // Pin the declared default accordion state before measuring the full
-  // element. Native details layout can otherwise settle between retries.
-  await controls.locator('details.acc').evaluateAll((details) => {
-    details.forEach((detail, index) => {
-      (detail as HTMLDetailsElement).open = index < 2;
-    });
-  });
-  await expect(controls.locator('details.acc').nth(1)).toHaveJSProperty('open', true);
-  await expect(controls.locator('details.acc').nth(2)).toHaveJSProperty('open', false);
-  await page.waitForTimeout(100);
+  await pinLabControlAccordions(page, controls);
   await expect(controls).toHaveScreenshot('lab-controls.png', {
     // Runtime diagnostics update every frame. Their stable container remains
     // in layout but was hidden above, avoiding locator-mask scroll side

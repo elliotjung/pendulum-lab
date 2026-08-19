@@ -38,12 +38,21 @@ jobs:
       - uses: ./.github/actions/setup-node-project
       - name: Install native Chromium
         run: npx playwright install ${{ matrix.install_args }}
+      # Generate and prove snapshots against the production artifact. The
+      # enforcement jobs use Vite preview as well, so a dev-server-only image
+      # can never be promoted as a native baseline.
+      - name: Build production app for native visual baselines
+        run: npm run build
       - name: Regenerate native chromium + mobile-chrome baselines
         run: npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium --project=mobile-chrome
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
       - name: Validate the complete ${{ matrix.platform }} baseline set
         run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome
       - name: Prove regenerated baselines without update mode
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-baselines-${{ matrix.platform }}

@@ -256,7 +256,14 @@ jobs:
       - uses: ./.github/actions/setup-node-project
       - run: npx playwright install ${{ matrix.install_args }}
       - run: npm run smoke
+      # Native visual comparisons must exercise the same production artifact
+      # and preview server as the Linux mainline gate. A dev-server snapshot
+      # can otherwise be green while the deployed bundle regresses.
+      - name: Build production app for native visual gate
+        run: npm run build
       - name: Require the native visual-baseline contract
         run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome
       - name: Run the native visual regression gate
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
