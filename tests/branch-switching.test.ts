@@ -110,6 +110,10 @@ describe('symmetry-breaking pitchfork of the driven pendulum', () => {
   // driveAmplitude is overridden by the continuation / per-A params below.
   const base = { g: 1, length: 1, damping: 0.5, driveAmplitude: 0.7, driveFrequency: 2 / 3 };
 
+  // This deliberately resolves 73 high-accuracy Floquet/Newton continuation
+  // points before switching both branches. V8 coverage instrumentation can make
+  // that scientific workload exceed the suite-wide 30 s default on a loaded
+  // CI worker, while leaving every numerical assertion unchanged.
   test('follows the two mirror-image asymmetric orbits born at the +1 crossing', () => {
     // Locate the first stability loss by continuing the symmetric branch from low A.
     const cont = continueDrivenPeriodicOrbit(base, {
@@ -162,7 +166,7 @@ describe('symmetry-breaking pitchfork of the driven pendulum', () => {
 
     // Deterministic ordering by θ.
     expect(a.orbit[0]).toBeLessThanOrEqual(b.orbit[0]);
-  });
+  }, 90_000);
 
   test('reports switched=false (no false positive) on a stable symmetric orbit', () => {
     // Well below onset the symmetric orbit is stable: there is no pitchfork pair.

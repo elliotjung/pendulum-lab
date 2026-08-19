@@ -252,8 +252,25 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
     });
   });
   const controls = page.getByRole('region', { name: 'controls' });
+  // Chromium's element-screenshot path can flip mobile touch emulation after
+  // it captures a tall element. Scroll while the normal mobile media state is
+  // still active, then take exactly one prepared capture below.
+  await controls.scrollIntoViewIfNeeded();
   await pinLabControlAccordions(page, controls);
-  await expect(controls).toHaveScreenshot('lab-controls.png', {
+  // `toHaveScreenshot` intentionally captures again to prove that two
+  // consecutive images are stable. On Chromium mobile that second capture
+  // can see `(pointer: coarse)` change from true to false after the first
+  // element screenshot, reducing each touch target and changing the crop.
+  // The fixture above has already proved the relevant DOM geometry stable
+  // across frames; capture it once and compare the exact buffer so the
+  // assertion cannot itself perturb its next sample.
+  const image = await controls.screenshot({
+    animations: 'disabled',
+    caret: 'hide',
+    scale: 'css'
+  });
+  expect(image).toMatchSnapshot('lab-controls.png', {
+    threshold: 0.2,
     // Runtime diagnostics update every frame. Their stable container remains
     // in layout but was hidden above, avoiding locator-mask scroll side
     // effects while keeping the accordion frame and labels in scope.
@@ -261,10 +278,9 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
     // device scale its fractional top rounds differently run-to-run and the
     // whole capture ghosts by one device pixel. CSS-pixel scale removes the
     // rounding entirely (and shrinks the baseline bytes).
-    scale: 'css',
     // The tall mobile element screenshot can differ at a subpixel scrollbar
-    // edge while Playwright scrolls it into view. Keep that tolerance below
-    // 0.25% of the captured panel and stricter on desktop.
+    // edge while native Chromium captures it. Keep that tolerance below 0.25%
+    // of the captured panel and stricter on desktop.
     maxDiffPixels: testInfo.project.name === 'mobile-chrome' ? 1_200 : 500
   });
 });
