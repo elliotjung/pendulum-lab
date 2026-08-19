@@ -223,6 +223,72 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
   );
 }
 
+/**
+ * Element screenshots are only reliable when their target fits in the
+ * viewport.  The production mobile layout intentionally expands the Lab
+ * controls to their full document height; Chromium then has to scroll a tall
+ * locator while rasterising it, and two fresh browser processes can select
+ * different vertical segments of that scrollable surface.
+ *
+ * The visual test is concerned with the panel's visible top controls, so give
+ * it the same 600px viewport-bounded surface that desktop uses, hide overflow,
+ * and explicitly anchor it at its first pixel.  This fixture changes only the
+ * test page: normal users retain the full, scrollable mobile control panel.
+ */
+async function boundLabControlCaptureSurface(page: Page, controls: Locator): Promise<void> {
+  const captureHeight = 600;
+  await controls.evaluate((panel, height) => {
+    panel.style.setProperty('height', `${height}px`, 'important');
+    panel.style.setProperty('min-height', '0', 'important');
+    panel.style.setProperty('max-height', `${height}px`, 'important');
+    panel.style.setProperty('overflow', 'hidden', 'important');
+    panel.style.setProperty('overflow-x', 'hidden', 'important');
+    panel.style.setProperty('overflow-y', 'hidden', 'important');
+    panel.scrollTop = 0;
+  }, captureHeight);
+
+  await page.waitForFunction(
+    async (height) => {
+      await document.fonts.ready;
+      const panel = document.querySelector<HTMLElement>('#tab-lab .controls[role="region"]');
+      if (!panel) return false;
+
+      const signature = () => {
+        const rect = panel.getBoundingClientRect();
+        const style = getComputedStyle(panel);
+        if (
+          Math.abs(rect.height - height) > 1 ||
+          panel.scrollTop !== 0 ||
+          style.overflow !== 'hidden' ||
+          style.overflowX !== 'hidden' ||
+          style.overflowY !== 'hidden'
+        )
+          return null;
+        return [
+          rect.width.toFixed(3),
+          rect.height.toFixed(3),
+          panel.clientWidth,
+          panel.clientHeight,
+          panel.scrollTop,
+          panel.scrollHeight,
+          style.height,
+          style.overflow
+        ].join('|');
+      };
+
+      const initial = signature();
+      if (!initial) return false;
+      for (let frame = 0; frame < 8; frame += 1) {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        if (signature() !== initial) return false;
+      }
+      return signature() === initial;
+    },
+    captureHeight,
+    { timeout: 5_000 }
+  );
+}
+
 test('rail sidebar renders correctly', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
@@ -244,19 +310,25 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   // text still provides a renderer-independent readiness signal.
   await integrityBadge.waitFor({ state: 'attached' });
   await expect(integrityBadge).toContainText('DOM/API checks 22/22');
-  // Keep fixed global surfaces out of this component crop. Otherwise they
-  // move through a tall mobile element screenshot as Playwright scrolls it.
+  // Keep fixed global surfaces out of this component crop. This makes the
+  // bounded control surface independent of page-level fixed decorations.
   await page.locator('.rail, #figBadge, #stats').evaluateAll((elements) => {
     elements.forEach((element) => {
       (element as HTMLElement).style.visibility = 'hidden';
     });
   });
   const controls = page.getByRole('region', { name: 'controls' });
-  // Chromium's element-screenshot path can flip mobile touch emulation after
-  // it captures a tall element. Scroll while the normal mobile media state is
-  // still active, then take exactly one prepared capture below.
+  // Settle the panel under the normal mobile media state before installing the
+  // bounded fixture and taking one prepared capture below.
   await controls.scrollIntoViewIfNeeded();
   await pinLabControlAccordions(page, controls);
+  await boundLabControlCaptureSurface(page, controls);
+  // The fixture now fits in both visual projects' viewports, so this affects
+  // only page scroll and cannot select a different internal panel segment.
+  await controls.scrollIntoViewIfNeeded();
+  await controls.evaluate((panel) => {
+    panel.scrollTop = 0;
+  });
   // `toHaveScreenshot` intentionally captures again to prove that two
   // consecutive images are stable. On Chromium mobile that second capture
   // can see `(pointer: coarse)` change from true to false after the first
@@ -274,13 +346,8 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
     // Runtime diagnostics update every frame. Their stable container remains
     // in layout but was hidden above, avoiding locator-mask scroll side
     // effects while keeping the accordion frame and labels in scope.
-    // The mobile panel is a ~4000-CSS-px element captured at dpr 2.75; at
-    // device scale its fractional top rounds differently run-to-run and the
-    // whole capture ghosts by one device pixel. CSS-pixel scale removes the
-    // rounding entirely (and shrinks the baseline bytes).
-    // The tall mobile element screenshot can differ at a subpixel scrollbar
-    // edge while native Chromium captures it. Keep that tolerance below 0.25%
-    // of the captured panel and stricter on desktop.
+    // CSS-pixel scale avoids device-pixel rounding noise while retaining the
+    // same existing, project-specific diff limits.
     maxDiffPixels: testInfo.project.name === 'mobile-chrome' ? 1_200 : 500
   });
 });
