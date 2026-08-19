@@ -53,6 +53,17 @@ jobs:
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+      # Preserve Playwright's actual and diff PNGs even when regeneration or
+      # the no-update proof fails. These files are diagnostic-only: promotion
+      # still consumes exclusively the native baseline artifacts below.
+      - name: Upload ${{ matrix.platform }} visual diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: visual-diagnostics-${{ matrix.platform }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-baselines-${{ matrix.platform }}
