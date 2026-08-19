@@ -1,5 +1,14 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import {
+  PhysicsEvaluationError,
+  assertDensePhysicsDimension,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
 
 /**
  * Network of planar pendula coupled by linear torsional springs — a discrete
@@ -59,28 +68,37 @@ export interface NetworkEdge {
 
 /** Number of nodes N in the network. */
 export function networkSize(parameters: PendulumNetworkParameters): number {
+  validatePendulumNetworkParameters(parameters);
   return parameters.masses.length;
 }
 
 /** Throw on malformed network parameters (sizes, positivity, coupling symmetry). */
 export function validatePendulumNetworkParameters(parameters: PendulumNetworkParameters): void {
   const n = parameters.masses.length;
-  if (n === 0) throw new Error('PendulumNetworkParameters: at least one node is required');
+  assertDensePhysicsDimension(n, 'masses.length', 'PendulumNetworkParameters');
+  if (!Number.isSafeInteger(parameters.lengths.length)) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      'PendulumNetworkParameters: lengths.length must be a safe integer',
+      {
+        operation: 'PendulumNetworkParameters',
+        retryable: false,
+        parameter: 'lengths.length',
+        value: parameters.lengths.length
+      }
+    );
+  }
   if (parameters.lengths.length !== n) {
     throw new Error(
       `PendulumNetworkParameters: masses (${n}) and lengths (${parameters.lengths.length}) must have the same length`
     );
   }
-  if (!Number.isFinite(parameters.g) || parameters.g <= 0) {
-    throw new Error('PendulumNetworkParameters: g must be positive and finite');
-  }
+  assertPositiveFinite(parameters.g, 'g', 'PendulumNetworkParameters');
   for (let i = 0; i < n; i += 1) {
     const m = parameters.masses[i] ?? NaN;
     const l = parameters.lengths[i] ?? NaN;
-    if (!Number.isFinite(m) || m <= 0)
-      throw new Error(`PendulumNetworkParameters: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(l) || l <= 0)
-      throw new Error(`PendulumNetworkParameters: length[${i}] must be positive and finite`);
+    assertPositiveFinite(m, `mass[${i}]`, 'PendulumNetworkParameters');
+    assertPositiveFinite(l, `length[${i}]`, 'PendulumNetworkParameters');
   }
   if (parameters.coupling.length !== n * n) {
     throw new Error(
@@ -88,12 +106,13 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
     );
   }
   for (let i = 0; i < n; i += 1) {
-    for (let j = i + 1; j < n; j += 1) {
+    for (let j = i; j < n; j += 1) {
       const kij = parameters.coupling[i * n + j] ?? NaN;
-      const kji = parameters.coupling[j * n + i] ?? NaN;
       if (!Number.isFinite(kij) || kij < 0) {
         throw new Error(`PendulumNetworkParameters: coupling[${i},${j}] must be finite and non-negative`);
       }
+      if (i === j) continue;
+      const kji = parameters.coupling[j * n + i] ?? NaN;
       if (Math.abs(kij - kji) > 1e-12 * (1 + Math.abs(kij))) {
         throw new Error(
           `PendulumNetworkParameters: coupling must be symmetric (coupling[${i},${j}] != coupling[${j},${i}])`
@@ -106,8 +125,7 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
       throw new Error(`PendulumNetworkParameters: damping must have length N (${n})`);
     for (let i = 0; i < n; i += 1) {
       const gi = parameters.damping[i] ?? NaN;
-      if (!Number.isFinite(gi) || gi < 0)
-        throw new Error(`PendulumNetworkParameters: damping[${i}] must be finite and non-negative`);
+      assertNonNegativeFinite(gi, `damping[${i}]`, 'PendulumNetworkParameters');
     }
   }
 }
@@ -117,7 +135,7 @@ export function validatePendulumNetworkParameters(parameters: PendulumNetworkPar
  * Parallel edges between the same pair accumulate; self-edges are rejected.
  */
 export function buildCouplingMatrix(n: number, edges: readonly NetworkEdge[]): Float64Array {
-  if (!Number.isInteger(n) || n < 1) throw new Error('buildCouplingMatrix: n must be a positive integer');
+  assertDensePhysicsDimension(n, 'n', 'buildCouplingMatrix');
   const K = new Float64Array(n * n);
   for (const { i, j, kappa } of edges) {
     if (!Number.isInteger(i) || !Number.isInteger(j) || i < 0 || j < 0 || i >= n || j >= n) {
@@ -139,7 +157,9 @@ export function buildCouplingMatrix(n: number, edges: readonly NetworkEdge[]): F
  * single spring (a 2-ring would otherwise double-count the one bond).
  */
 export function ringCouplingMatrix(n: number, kappa: number): Float64Array {
-  if (!Number.isInteger(n) || n < 2) throw new Error('ringCouplingMatrix: n must be an integer >= 2');
+  assertDensePhysicsDimension(n, 'n', 'ringCouplingMatrix');
+  if (n < 2) throw new Error('ringCouplingMatrix: n must be an integer >= 2');
+  assertNonNegativeFinite(kappa, 'kappa', 'ringCouplingMatrix');
   const edges: NetworkEdge[] = [];
   if (n === 2) {
     edges.push({ i: 0, j: 1, kappa });
@@ -159,13 +179,15 @@ export function rhsPendulumNetwork(
   parameters: PendulumNetworkParameters,
   out: StateVector
 ): StateVector {
+  validatePendulumNetworkParameters(parameters);
   const n = parameters.masses.length;
+  assertFiniteVector(state, 2 * n, 'rhsPendulumNetwork');
+  assertOutputVector(out, 2 * n, 'rhsPendulumNetwork');
   const { g, coupling } = parameters;
   const damping = parameters.damping;
   for (let i = 0; i < n; i += 1) {
     const theta = Number(state[i] ?? 0);
     const omega = Number(state[n + i] ?? 0);
-    out[i] = omega;
     const l = parameters.lengths[i] ?? 1;
     const inertia = (parameters.masses[i] ?? 1) * l * l;
     let couplingTorque = 0; // Σ_j κ_ij (θ_i − θ_j); the j = i term is identically 0.
@@ -175,7 +197,16 @@ export function rhsPendulumNetwork(
       couplingTorque += kij * (theta - Number(state[j] ?? 0));
     }
     const gammaI = damping ? (damping[i] ?? 0) : 0;
-    out[n + i] = -(g / l) * Math.sin(theta) - couplingTorque / inertia - gammaI * omega;
+    const acceleration = -(g / l) * Math.sin(theta) - couplingTorque / inertia - gammaI * omega;
+    if (!Number.isFinite(acceleration)) {
+      throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'rhsPendulumNetwork: acceleration overflowed', {
+        operation: 'rhsPendulumNetwork',
+        retryable: false,
+        component: i
+      });
+    }
+    out[i] = omega;
+    out[n + i] = acceleration;
   }
   return out;
 }
@@ -188,7 +219,9 @@ export function pendulumNetworkEnergy(
   state: ArrayLike<number>,
   parameters: PendulumNetworkParameters
 ): EnergyBreakdown {
+  validatePendulumNetworkParameters(parameters);
   const n = parameters.masses.length;
+  assertFiniteVector(state, 2 * n, 'pendulumNetworkEnergy');
   const { g, coupling } = parameters;
   let KE = 0;
   let PE = 0;
@@ -208,7 +241,14 @@ export function pendulumNetworkEnergy(
       PE += 0.5 * kij * d * d;
     }
   }
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  if (![KE, PE, total].every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'pendulumNetworkEnergy: result overflowed', {
+      operation: 'pendulumNetworkEnergy',
+      retryable: false
+    });
+  }
+  return { total, KE, PE };
 }
 
 /**
@@ -220,6 +260,7 @@ export function pendulumNetworkEnergy(
  *   K_ii = g/l_i + (1/I_i) Σ_{j≠i} κ_ij,   K_ij = −κ_ij / I_i  (i ≠ j)
  */
 export function pendulumNetworkStiffnessMatrix(parameters: PendulumNetworkParameters): Float64Array {
+  validatePendulumNetworkParameters(parameters);
   const n = parameters.masses.length;
   const { g, coupling } = parameters;
   const K = new Float64Array(n * n);
@@ -248,7 +289,9 @@ export function pendulumNetworkStiffnessMatrix(parameters: PendulumNetworkParame
  * zone boundary q = π.
  */
 export function ringPhononDispersion(onsiteOmegaSq: number, couplingRate: number, n: number): number[] {
-  if (!Number.isInteger(n) || n < 1) throw new Error('ringPhononDispersion: n must be a positive integer');
+  assertFiniteScalar(onsiteOmegaSq, 'onsiteOmegaSq', 'ringPhononDispersion');
+  assertFiniteScalar(couplingRate, 'couplingRate', 'ringPhononDispersion');
+  assertDensePhysicsDimension(n, 'n', 'ringPhononDispersion');
   const out: number[] = [];
   for (let k = 0; k < n; k += 1) {
     const q = (2 * Math.PI * k) / n;

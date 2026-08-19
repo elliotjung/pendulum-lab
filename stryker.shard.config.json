@@ -25,7 +25,10 @@
     "src/physics/sphericalChain.ts",
     "src/physics/sphericalEmbeddedChain.ts",
     "src/physics/stochastic.ts",
-    "src/physics/stochasticSteppers.ts",
+    "src/physics/stochasticStepperShared.ts",
+    "src/physics/stochasticAdditive.ts",
+    "src/physics/stochasticMultiplicative.ts",
+    "src/physics/stochasticMatrixNoise.ts",
     "src/chaos/melnikov.ts",
     "src/chaos/lyapunov.ts",
     "src/chaos/rqa.ts",
@@ -37,6 +40,7 @@
     "src/research/surrogate.ts",
     "src/research/zipBundle.ts",
     "src/research/researchDb.ts",
+    "src/app/tabRouting.ts",
     "src/workers/jobProtocol.ts"
   ],
   "thresholds": {

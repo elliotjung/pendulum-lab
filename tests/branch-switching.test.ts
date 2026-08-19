@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { drivenPeriodicOrbit } from '../src/chaos/floquet';
 import {
+  autoSwitchDrivenBranch,
   drivenPeriodicOrbitN,
   realEigenvector2x2,
   switchPeriodDoubling,
@@ -75,6 +76,18 @@ describe('period-doubling of the driven pendulum', () => {
     expect(back.converged).toBe(true);
     expect(Math.hypot(back.orbit[0] - p2.orbit[0], back.orbit[1] - p2.orbit[1])).toBeGreaterThan(0.05);
     expect(Math.hypot(back.orbit[0] - p1.orbit[0], back.orbit[1] - p1.orbit[1])).toBeLessThan(1e-3);
+  });
+
+  test('automatically classifies the -1 crossing and follows the doubled branch', () => {
+    const p1 = drivenPeriodicOrbit(params(1.07), GUESS, { dt: 0.005, tolerance: 1e-10 });
+    const automatic = autoSwitchDrivenBranch(params(1.07), p1.orbit, {
+      dt: 0.005,
+      tolerance: 1e-10,
+      criticalMultiplierTolerance: 0.3
+    });
+    expect(automatic.classification).toBe('period-doubling');
+    expect(automatic.switched).toBe(true);
+    expect(automatic.result?.switched).toBe(true);
   });
 
   test('drivenPeriodicOrbitN with n = 1 reproduces the period-1 solver', () => {

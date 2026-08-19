@@ -17,6 +17,13 @@
  */
 
 import { SPHERICAL_POLE_EPS } from './constants';
+import {
+  PhysicsEvaluationError,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertPositiveFinite
+} from './errors';
 
 export interface SphericalParams {
   /** Pendulum length (m). */
@@ -30,7 +37,29 @@ export interface SphericalParams {
 /** State vector [θ, φ, θ̇, φ̇]. */
 export type SphericalState = [number, number, number, number];
 
+function validateSphericalParams(params: SphericalParams, operation: string): void {
+  assertPositiveFinite(params.l, 'l', operation);
+  assertNonNegativeFinite(params.g, 'g', operation);
+  assertNonNegativeFinite(params.damping, 'damping', operation);
+}
+
+function assertSphericalState(state: ArrayLike<number>, operation: string): void {
+  assertFiniteVector(state, 4, operation);
+}
+
+function assertFiniteSphericalValues(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the spherical parameters.'
+    });
+  }
+}
+
 export function sphericalRhs(state: SphericalState, params: SphericalParams): SphericalState {
+  assertSphericalState(state, 'sphericalRhs');
+  validateSphericalParams(params, 'sphericalRhs');
   const [theta, , thetaDot, phiDot] = state;
   const { g, l, damping } = params;
   const sin = Math.sin(theta);
@@ -40,21 +69,30 @@ export function sphericalRhs(state: SphericalState, params: SphericalParams): Sp
   const safeSin = Math.abs(sin) < SPHERICAL_POLE_EPS ? (sin >= 0 ? SPHERICAL_POLE_EPS : -SPHERICAL_POLE_EPS) : sin;
   const thetaAcc = sin * cos * phiDot * phiDot - (g / l) * sin - damping * thetaDot;
   const phiAcc = ((-2 * cos) / safeSin) * thetaDot * phiDot - damping * phiDot;
+  assertFiniteSphericalValues([thetaDot, phiDot, thetaAcc, phiAcc], 'sphericalRhs');
   return [thetaDot, phiDot, thetaAcc, phiAcc];
 }
 
 export function sphericalEnergy(state: SphericalState, params: SphericalParams): number {
+  assertSphericalState(state, 'sphericalEnergy');
+  validateSphericalParams(params, 'sphericalEnergy');
   const [theta, , thetaDot, phiDot] = state;
   const { g, l } = params;
   const sin = Math.sin(theta);
-  return 0.5 * l * l * (thetaDot * thetaDot + sin * sin * phiDot * phiDot) - g * l * Math.cos(theta);
+  const energy = 0.5 * l * l * (thetaDot * thetaDot + sin * sin * phiDot * phiDot) - g * l * Math.cos(theta);
+  assertFiniteSphericalValues([energy], 'sphericalEnergy');
+  return energy;
 }
 
 /** Vertical angular momentum per unit mass: conserved when γ = 0. */
 export function sphericalLz(state: SphericalState, params: SphericalParams): number {
+  assertSphericalState(state, 'sphericalLz');
+  validateSphericalParams(params, 'sphericalLz');
   const [theta, , , phiDot] = state;
   const sin = Math.sin(theta);
-  return params.l * params.l * sin * sin * phiDot;
+  const lz = params.l * params.l * sin * sin * phiDot;
+  assertFiniteSphericalValues([lz], 'sphericalLz');
+  return lz;
 }
 
 /**
@@ -63,25 +101,46 @@ export function sphericalLz(state: SphericalState, params: SphericalParams): num
  * pendulum requires T ≥ 0; a rod supports both signs.
  */
 export function sphericalTension(state: SphericalState, params: SphericalParams): number {
+  assertSphericalState(state, 'sphericalTension');
+  validateSphericalParams(params, 'sphericalTension');
   const [theta, , thetaDot, phiDot] = state;
   const sin = Math.sin(theta);
-  return params.g * Math.cos(theta) + params.l * (thetaDot * thetaDot + sin * sin * phiDot * phiDot);
+  const tension = params.g * Math.cos(theta) + params.l * (thetaDot * thetaDot + sin * sin * phiDot * phiDot);
+  assertFiniteSphericalValues([tension], 'sphericalTension');
+  return tension;
 }
 
 /** Cartesian bob position (y up, pivot at origin). */
 export function sphericalPosition(state: SphericalState, params: SphericalParams): { x: number; y: number; z: number } {
+  assertSphericalState(state, 'sphericalPosition');
+  validateSphericalParams(params, 'sphericalPosition');
   const [theta, phi] = state;
   const sin = Math.sin(theta);
-  return {
+  const position = {
     x: params.l * sin * Math.cos(phi),
     z: params.l * sin * Math.sin(phi),
     y: -params.l * Math.cos(theta)
   };
+  assertFiniteSphericalValues([position.x, position.y, position.z], 'sphericalPosition');
+  return position;
 }
 
 /** Steady conical-pendulum azimuthal rate for polar angle θ₀: φ̇² = g/(l·cosθ₀). */
 export function conicalRate(theta0: number, params: SphericalParams): number {
-  return Math.sqrt(params.g / (params.l * Math.cos(theta0)));
+  assertFiniteScalar(theta0, 'theta0', 'conicalRate');
+  validateSphericalParams(params, 'conicalRate');
+  const denominator = params.l * Math.cos(theta0);
+  if (!(denominator > 0) || !Number.isFinite(denominator)) {
+    throw new PhysicsEvaluationError('INVALID_PARAMETER', 'conicalRate: theta0 must satisfy cos(theta0) > 0', {
+      operation: 'conicalRate',
+      retryable: false,
+      parameter: 'theta0',
+      value: theta0
+    });
+  }
+  const rate = Math.sqrt(params.g / denominator);
+  assertFiniteSphericalValues([rate], 'conicalRate');
+  return rate;
 }
 
 export interface SphericalDiagnostics {
@@ -109,6 +168,9 @@ export class SphericalPendulum {
     initial: SphericalState,
     readonly dt = 0.002
   ) {
+    validateSphericalParams(params, 'SphericalPendulum');
+    assertSphericalState(initial, 'SphericalPendulum');
+    assertPositiveFinite(dt, 'dt', 'SphericalPendulum');
     this.state = [...initial] as SphericalState;
     this.initialEnergy = sphericalEnergy(this.state, params);
     this.initialLz = sphericalLz(this.state, params);
@@ -124,6 +186,29 @@ export class SphericalPendulum {
 
   /** Advance by `elapsed` seconds using fixed-step RK4 substeps of size dt. */
   step(elapsed: number): void {
+    if (!(elapsed >= 0) || !Number.isFinite(elapsed)) {
+      throw new PhysicsEvaluationError(
+        'NON_FINITE_INPUT',
+        'SphericalPendulum.step: elapsed must be finite and non-negative',
+        {
+          operation: 'SphericalPendulum.step',
+          retryable: false,
+          parameter: 'elapsed',
+          value: elapsed
+        }
+      );
+    }
+    if (Math.ceil(elapsed / this.dt) > 1_000_000) {
+      throw new PhysicsEvaluationError(
+        'INVALID_PARAMETER',
+        'SphericalPendulum.step: elapsed exceeds the per-call step budget',
+        {
+          operation: 'SphericalPendulum.step',
+          retryable: true,
+          suggestedAction: 'Split the run into smaller chunks or use a worker batch.'
+        }
+      );
+    }
     let remaining = elapsed;
     while (remaining > 1e-12) {
       const h = Math.min(this.dt, remaining);

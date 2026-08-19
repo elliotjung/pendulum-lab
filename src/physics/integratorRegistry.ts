@@ -121,11 +121,14 @@ export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> 
   },
   rkf45: {
     id: 'rkf45',
-    name: 'RKF45 Adaptive',
-    order: 'adaptive',
+    name: 'RKF45 embedded (monitored fixed-step)',
+    order: 5,
     symplectic: 'no',
     dampingSupport: 'supported',
-    stabilityNotes: ['Adaptive step statistics must be exported for replay and comparison.'],
+    stabilityNotes: [
+      'The live dispatcher advances every configured dt and reports the embedded error; it does not reject/retry.',
+      'Use integrateAdaptive for genuine tolerance-controlled reject/retry and accepted-step replay metadata.'
+    ],
     recommendedDt: [0.0002, 0.01]
   },
   dopri5: {
@@ -153,13 +156,14 @@ export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> 
   },
   gbs: {
     id: 'gbs',
-    name: 'Gragg-Bulirsch-Stoer',
-    order: 'adaptive',
+    name: 'GBS extrapolation (fixed macro-step)',
+    order: 12,
     symplectic: 'no',
     dampingSupport: 'supported',
     stabilityNotes: [
       'Modified-midpoint extrapolation; effective order grows with the number of stages.',
-      'Extrapolation weights are computed from substep ratios, not transcribed, so high accuracy is reached without a large hand-written tableau.'
+      'The default six-level extrapolation has effective order 12; depth is strictly validated.',
+      'This dispatcher path is a monitored fixed macro-step, not a reject/retry adaptive controller.'
     ],
     recommendedDt: [0.001, 0.05]
   },
@@ -171,7 +175,8 @@ export const integratorRegistry: Readonly<Record<IntegratorId, IntegratorMeta>> 
     dampingSupport: 'supported',
     stabilityNotes: [
       'One-step, self-starting, L-stable second-order method for stiff systems.',
-      'Each stage uses Newton iteration with a finite-difference Jacobian; the final residual is exported via previousError.'
+      'Each stage uses Newton iteration with a model Jacobian when available and a central-difference fallback otherwise.',
+      'Non-converged stages fail closed and publish a retryable diagnostic instead of advancing an inaccurate state.'
     ],
     recommendedDt: [0.001, 0.05]
   }

@@ -4,6 +4,15 @@ Use this page as the table of contents for the repository. The app is a browser
 simulation surface, a typed TypeScript library, and a reproducible research
 package; the docs are grouped by those jobs.
 
+For the two-repository product boundary, shared physics/link contract, local
+verification and Pages workflow, start with
+[`product-integration.md`](product-integration.md). The numbered whole-product
+audit is [`PRODUCT_AUDIT_2026-08-13.md`](PRODUCT_AUDIT_2026-08-13.md).
+The post-remediation, evidence-gated expansion plan is
+[`WORLD_CLASS_BACKLOG_2026-08-19.md`](WORLD_CLASS_BACKLOG_2026-08-19.md).
+The item-by-item implementation, release-gate, and external-evidence record is
+[`REMEDIATION_2026-08-19.md`](REMEDIATION_2026-08-19.md).
+
 ## Start Here
 
 - [`architecture.md`](architecture.md) - runtime shape, TypeScript boot flow,
@@ -68,6 +77,13 @@ package; the docs are grouped by those jobs.
   routes with official-source freshness policy and reviewer-kit mapping.
 - [`curriculum-mapping-ko.md`](curriculum-mapping-ko.md) - one-page Korean
   Physics I/II and AP Physics C classroom mapping.
+- [`education/student-lab-template-ko.md`](education/student-lab-template-ko.md),
+  [`education/teacher-rubric-ko.md`](education/teacher-rubric-ko.md), and
+  [`education/uncertainty-repro-checklist-ko.md`](education/uncertainty-repro-checklist-ko.md)
+  - ready-to-use student, teacher, uncertainty, and reproducibility materials.
+- [`education/submission-schema.md`](education/submission-schema.md) and
+  [`examples/student-submission-template.csv`](examples/student-submission-template.csv)
+  - machine-checkable classroom submission contract and starter file.
 - [`portfolio-korean.md`](portfolio-korean.md) - Korean portfolio summary.
 - [`portfolio-summary.html`](portfolio-summary.html) - rendered portfolio page.
 - [`articles/01-melnikov-vs-period-doubling-ko.md`](articles/01-melnikov-vs-period-doubling-ko.md)

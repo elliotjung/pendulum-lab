@@ -1,9 +1,9 @@
-import type { Derivative, Jacobian } from '../physics/types';
+import type { Derivative, Jacobian, JacobianTrustMetadata } from '../physics/types';
 import type { PendulumParameters } from '../types/domain';
 import { rk4Step } from '../physics/integrators';
 import { rhsDouble, jacobianDouble } from '../physics/double';
 import { jacobiEigenSymmetric } from '../research/svd';
-import { makeVariationalRhs } from './variational';
+import { jacobianTrustMetadata, makeVariationalRhs } from './variational';
 import { checkedWorkProduct, integrationStepCount, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
 /**
@@ -35,6 +35,7 @@ export interface FlowMapGradient {
   /** ∂x(T)/∂x(0), n×n row-major (column j is the evolved j-th basis perturbation). */
   stm: Float64Array;
   n: number;
+  jacobianTrust: JacobianTrustMetadata;
 }
 
 /**
@@ -75,7 +76,8 @@ export function flowMapGradient(
     );
   }
   const fullSteps = Math.floor(totalTime / dt);
-  const varRhs = makeVariationalRhs(rhs, n, n, jacobian);
+  const resolvedJacobian = jacobian ?? rhs.jacobian;
+  const varRhs = makeVariationalRhs(rhs, n, n, resolvedJacobian);
 
   const aug = new Float64Array(n * (n + 1));
   const augOut = new Float64Array(aug.length);
@@ -99,7 +101,7 @@ export function flowMapGradient(
   for (let j = 0; j < n; j += 1) {
     for (let i = 0; i < n; i += 1) stm[i * n + j] = aug[n + j * n + i] ?? 0;
   }
-  return { stm, n };
+  return { stm, n, jacobianTrust: jacobianTrustMetadata(rhs, jacobian) };
 }
 
 /**
@@ -187,6 +189,31 @@ export function finiteTimeLyapunov(
   return totalTime > 0 && sigma > 0 ? Math.log(sigma) / totalTime : 0;
 }
 
+export interface FiniteTimeLyapunovReport {
+  value: number;
+  totalTime: number;
+  dt: number;
+  jacobianTrust: JacobianTrustMetadata;
+}
+
+/** Metadata-bearing FTLE entry point for publication/export consumers. */
+export function finiteTimeLyapunovReport(
+  state0: ArrayLike<number>,
+  rhs: Derivative,
+  totalTime: number,
+  options: FtleOptions = {},
+  jacobian?: Jacobian
+): FiniteTimeLyapunovReport {
+  const gradient = flowMapGradient(state0, rhs, totalTime, options, jacobian);
+  const sigma = largestSingularValue(gradient.stm, gradient.n);
+  return {
+    value: totalTime > 0 && sigma > 0 ? Math.log(sigma) / totalTime : 0,
+    totalTime,
+    dt: options.dt ?? 0.01,
+    jacobianTrust: gradient.jacobianTrust
+  };
+}
+
 export interface FtleFieldOptions {
   /** Grid cells per axis (the field is n×n). Default 60. */
   n?: number;
@@ -204,6 +231,7 @@ export interface FtleField {
   height: number;
   min: number;
   max: number;
+  jacobianTrust?: JacobianTrustMetadata;
 }
 
 /**
@@ -269,5 +297,16 @@ export function doublePendulumFtleField(params: PendulumParameters, options: Ftl
   }
   if (!Number.isFinite(min)) min = 0;
   if (!Number.isFinite(max)) max = 0;
-  return { values, width: n, height: n, min, max };
+  return {
+    values,
+    width: n,
+    height: n,
+    min,
+    max,
+    jacobianTrust: {
+      provenance: 'analytic-model',
+      confidence: 'model-validated',
+      caveat: 'Double-pendulum FTLE uses the closed-form Jacobian validated against central differences.'
+    }
+  };
 }

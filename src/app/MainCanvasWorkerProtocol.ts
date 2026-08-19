@@ -8,6 +8,8 @@ export interface MainCanvasFrameStyle {
   trailLength: number;
   glow: boolean;
   trailBackend: 'canvas2d' | 'webgl2';
+  /** Total physical chain length used for viewport-safe projection. */
+  worldRadius?: number;
   skipTrail?: boolean;
 }
 
@@ -64,6 +66,7 @@ function validStyle(value: unknown): value is MainCanvasFrameStyle {
     style.trailLength! >= 0 &&
     style.trailLength! <= MAX_TRAIL_LENGTH &&
     typeof style.glow === 'boolean' &&
+    (style.worldRadius === undefined || finiteInRange(style.worldRadius, Number.EPSILON, 1_000_000)) &&
     (style.trailBackend === 'canvas2d' || style.trailBackend === 'webgl2') &&
     (style.skipTrail === undefined || typeof style.skipTrail === 'boolean')
   );

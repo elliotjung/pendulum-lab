@@ -2,6 +2,7 @@ import { mountModernLab, type LabHandle } from './LabController';
 import { publishDebugApi } from '../runtime/globalApi';
 import { LabApp } from './LabApp';
 import { Shell, TAB_ACTIVATED_EVENT, TAB_REQUESTED_EVENT } from './Shell';
+import type { TabHistoryMode, TabRequestedDetail } from './tabRouting';
 import type { LabConfig } from './LabSimulation';
 import type { LyapunovTab } from './LyapunovTab';
 import type { ValidationTab } from './ValidationTab';
@@ -225,8 +226,9 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
   let latestActivatedTab = activeTabName();
 
   document.addEventListener(TAB_REQUESTED_EVENT, (event) => {
-    const tabName = (event as CustomEvent<{ tab?: string }>).detail?.tab;
-    if (!tabName) return;
+    const request = (event as CustomEvent<TabRequestedDetail>).detail;
+    if (!request?.tab || !Number.isSafeInteger(request.requestId)) return;
+    const { tab: tabName, historyMode, fallbackTab } = request;
     const entries = entriesForTab(tabName);
     // Other lazy owners (notably the research/parity layer) receive the same
     // request event. Re-dispatching an unowned tab after Promise.all([]) would
@@ -234,9 +236,27 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
     if (!entries.length) return;
     void mountEntries(entries)
       .then(() => {
-        (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabName);
+        (
+          window as Window & {
+            __modernShell?: { completeTabRequest(request: TabRequestedDetail): boolean };
+          }
+        ).__modernShell?.completeTabRequest(request);
       })
       .catch((error: unknown) => {
+        const shell = (
+          window as Window & {
+            __modernShell?: {
+              isCurrentTabRequest(requestId: number): boolean;
+              switchTo(name: string, mode?: TabHistoryMode): void;
+            };
+          }
+        ).__modernShell;
+        // An obsolete import failure belongs to obsolete navigation too. It
+        // must not restore a fallback over the user's newer workspace.
+        if (!shell?.isCurrentTabRequest(request.requestId)) return;
+        // On initial deep links or popstate, location already names the lazy
+        // target. Restore the still-visible fallback panel and canonical URL.
+        if (historyMode !== 'push') shell.switchTo(fallbackTab, 'replace');
         console.error(`Failed to mount requested analysis tab "${tabName}".`, error);
         window.toast?.(`Could not open ${tabName}. The current workspace is still active.`, 3600);
       });
@@ -258,7 +278,7 @@ export function maybeMountModernAnalysisTabs(): Promise<boolean> {
         .then(() => {
           const panel = document.getElementById(`tab-${tabName}`);
           panel?.removeAttribute('aria-busy');
-          if (panel) panel.inert = false;
+          if (panel) panel.inert = !panel.classList.contains('active');
           if (panel && !panel.classList.contains('active') && latestActivatedTab === tabName) {
             reactivating.add(tabName);
             (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(tabName);

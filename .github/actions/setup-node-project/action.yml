@@ -1,0 +1,20 @@
+name: Setup Pendulum Lab Node project
+description: Install the pinned Node runtime and the exact npm lockfile dependency graph.
+
+inputs:
+  node-version:
+    description: Node.js major or exact version accepted by actions/setup-node.
+    required: false
+    default: '22'
+
+runs:
+  using: composite
+  steps:
+    - name: Install Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+    - name: Restore the exact dependency graph
+      shell: bash
+      run: npm ci

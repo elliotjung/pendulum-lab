@@ -3,10 +3,10 @@
     "id": "@elliotjung/pendulum-lab@10.36.0",
     "name": "@elliotjung/pendulum-lab",
     "version": "10.36.0",
-    "size": 855744,
-    "unpackedSize": 2760942,
-    "shasum": "451c53d44f5140dd36d410329884cac448920927",
-    "integrity": "sha512-4bOdmaS3ZRWfZCAYG+gcVP1qShMrfelhbs80YX3Ubn4KKJWzXLUoavgz1jh4fxFHade8f186UkiKV3j0dNO6Kw==",
+    "size": 963749,
+    "unpackedSize": 3232198,
+    "shasum": "3f7c8371510e82f554276323f5e86b32350526e5",
+    "integrity": "sha512-cM+vP/tQLy96V/3O+q2OQY5UZNuCzZjJPqaYHFuetwDA6Bav3rLCbNZoi2NBJeppyyoTzn6GTyr/cadacXy8og==",
     "filename": "elliotjung-pendulum-lab-10.36.0.tgz",
     "files": [
       {
@@ -21,12 +21,12 @@
       },
       {
         "path": "README.md",
-        "size": 14049,
+        "size": 17115,
         "mode": 420
       },
       {
         "path": "dist-lib/_headers",
-        "size": 374,
+        "size": 987,
         "mode": 420
       },
       {
@@ -36,42 +36,42 @@
       },
       {
         "path": "dist-lib/accelerationContract-BO5BqdQQ.js.map",
-        "size": 9082,
+        "size": 9177,
         "mode": 420
       },
       {
-        "path": "dist-lib/analysis-C8vrDI-L.js",
-        "size": 77598,
+        "path": "dist-lib/analysis-SfRQw4qz.js",
+        "size": 81780,
         "mode": 420
       },
       {
-        "path": "dist-lib/analysis-C8vrDI-L.js.map",
-        "size": 281373,
+        "path": "dist-lib/analysis-SfRQw4qz.js.map",
+        "size": 293774,
         "mode": 420
       },
       {
         "path": "dist-lib/analysis.js",
-        "size": 4278,
+        "size": 4436,
         "mode": 420
       },
       {
         "path": "dist-lib/browser.js",
-        "size": 11243,
+        "size": 15648,
         "mode": 420
       },
       {
         "path": "dist-lib/browser.js.map",
-        "size": 32480,
+        "size": 50523,
         "mode": 420
       },
       {
-        "path": "dist-lib/codimTwo-gE-OqU5y.js",
-        "size": 15694,
+        "path": "dist-lib/codimTwo-C5zsOwom.js",
+        "size": 27158,
         "mode": 420
       },
       {
-        "path": "dist-lib/codimTwo-gE-OqU5y.js.map",
-        "size": 60572,
+        "path": "dist-lib/codimTwo-C5zsOwom.js.map",
+        "size": 89069,
         "mode": 420
       },
       {
@@ -81,17 +81,17 @@
       },
       {
         "path": "dist-lib/complexEig-CI4AwbQU.js.map",
-        "size": 27725,
+        "size": 27775,
         "mode": 420
       },
       {
-        "path": "dist-lib/core-C5ZRMuB4.js",
-        "size": 97868,
+        "path": "dist-lib/core-DO8ujfv-.js",
+        "size": 118620,
         "mode": 420
       },
       {
-        "path": "dist-lib/core-C5ZRMuB4.js.map",
-        "size": 325323,
+        "path": "dist-lib/core-DO8ujfv-.js.map",
+        "size": 388346,
         "mode": 420
       },
       {
@@ -100,38 +100,38 @@
         "mode": 420
       },
       {
-        "path": "dist-lib/eventLocator-DpEdGs32.js",
-        "size": 22405,
+        "path": "dist-lib/eventLocator-CsSL22Yw.js",
+        "size": 24575,
         "mode": 420
       },
       {
-        "path": "dist-lib/eventLocator-DpEdGs32.js.map",
-        "size": 87913,
+        "path": "dist-lib/eventLocator-CsSL22Yw.js.map",
+        "size": 93599,
         "mode": 420
       },
       {
-        "path": "dist-lib/experimental-C6YULZpW.js",
-        "size": 80748,
+        "path": "dist-lib/experimental-mCwcSnIQ.js",
+        "size": 95940,
         "mode": 420
       },
       {
-        "path": "dist-lib/experimental-C6YULZpW.js.map",
-        "size": 156717,
+        "path": "dist-lib/experimental-mCwcSnIQ.js.map",
+        "size": 177304,
         "mode": 420
       },
       {
         "path": "dist-lib/experimental.js",
-        "size": 917,
+        "size": 1061,
         "mode": 420
       },
       {
-        "path": "dist-lib/fft-2jBZcHbG.js",
-        "size": 1186,
+        "path": "dist-lib/fft-D2PDN2R0.js",
+        "size": 1877,
         "mode": 420
       },
       {
-        "path": "dist-lib/fft-2jBZcHbG.js.map",
-        "size": 3890,
+        "path": "dist-lib/fft-D2PDN2R0.js.map",
+        "size": 5677,
         "mode": 420
       },
       {
@@ -141,87 +141,97 @@
       },
       {
         "path": "dist-lib/figureRaster-DVfDfgMv.js.map",
-        "size": 9018,
+        "size": 9036,
         "mode": 420
       },
       {
-        "path": "dist-lib/ftle-lvEJzrlw.js",
-        "size": 18052,
+        "path": "dist-lib/ftle-BuJwLGdX.js",
+        "size": 30590,
         "mode": 420
       },
       {
-        "path": "dist-lib/ftle-lvEJzrlw.js.map",
-        "size": 73098,
+        "path": "dist-lib/ftle-BuJwLGdX.js.map",
+        "size": 107591,
         "mode": 420
       },
       {
         "path": "dist-lib/icons/pendulum-lab-192.png",
-        "size": 19503,
+        "size": 19143,
         "mode": 420
       },
       {
         "path": "dist-lib/icons/pendulum-lab-512.png",
-        "size": 115686,
+        "size": 105964,
         "mode": 420
       },
       {
-        "path": "dist-lib/jobProtocol-CSVGxcuc.js",
-        "size": 13433,
+        "path": "dist-lib/icons/pendulum-lab-maskable.svg",
+        "size": 875,
         "mode": 420
       },
       {
-        "path": "dist-lib/jobProtocol-CSVGxcuc.js.map",
-        "size": 47175,
+        "path": "dist-lib/JobEngine-Ccprm-z1.js",
+        "size": 32200,
         "mode": 420
       },
       {
-        "path": "dist-lib/kuramoto-C4Rx2SKh.js",
-        "size": 4321,
+        "path": "dist-lib/JobEngine-Ccprm-z1.js.map",
+        "size": 102313,
         "mode": 420
       },
       {
-        "path": "dist-lib/kuramoto-C4Rx2SKh.js.map",
-        "size": 12569,
+        "path": "dist-lib/kuramoto-CKA4tqkP.js",
+        "size": 4807,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/kuramoto-CKA4tqkP.js.map",
+        "size": 13482,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/manifest.ko.webmanifest",
+        "size": 1818,
         "mode": 420
       },
       {
         "path": "dist-lib/manifest.webmanifest",
-        "size": 651,
+        "size": 1731,
         "mode": 420
       },
       {
         "path": "dist-lib/node.js",
-        "size": 17541,
+        "size": 17806,
         "mode": 420
       },
       {
         "path": "dist-lib/pendulum-lab-core.js",
-        "size": 16259,
+        "size": 16567,
         "mode": 420
       },
       {
-        "path": "dist-lib/quantumKickedRotor-Hy_OD6w4.js",
+        "path": "dist-lib/quantumKickedRotor-pf1v9KE-.js",
         "size": 3087,
         "mode": 420
       },
       {
-        "path": "dist-lib/quantumKickedRotor-Hy_OD6w4.js.map",
+        "path": "dist-lib/quantumKickedRotor-pf1v9KE-.js.map",
         "size": 11223,
         "mode": 420
       },
       {
         "path": "dist-lib/research.js",
-        "size": 115982,
+        "size": 121440,
         "mode": 420
       },
       {
         "path": "dist-lib/research.js.map",
-        "size": 348200,
+        "size": 359392,
         "mode": 420
       },
       {
         "path": "dist-lib/sw.js",
-        "size": 1567,
+        "size": 10427,
         "mode": 420
       },
       {
@@ -231,7 +241,7 @@
       },
       {
         "path": "dist-lib/types/browser/imuMotionCapture.d.ts",
-        "size": 1887,
+        "size": 2920,
         "mode": 420
       },
       {
@@ -241,7 +251,7 @@
       },
       {
         "path": "dist-lib/types/browser/videoMarkerCapture.d.ts",
-        "size": 2165,
+        "size": 3315,
         "mode": 420
       },
       {
@@ -271,7 +281,7 @@
       },
       {
         "path": "dist-lib/types/chaos/branchSwitching.d.ts",
-        "size": 8623,
+        "size": 9556,
         "mode": 420
       },
       {
@@ -321,7 +331,7 @@
       },
       {
         "path": "dist-lib/types/chaos/ftle.d.ts",
-        "size": 3321,
+        "size": 4087,
         "mode": 420
       },
       {
@@ -331,7 +341,7 @@
       },
       {
         "path": "dist-lib/types/chaos/index.d.ts",
-        "size": 7730,
+        "size": 7937,
         "mode": 420
       },
       {
@@ -341,7 +351,7 @@
       },
       {
         "path": "dist-lib/types/chaos/lyapunov.d.ts",
-        "size": 5988,
+        "size": 6123,
         "mode": 420
       },
       {
@@ -376,12 +386,12 @@
       },
       {
         "path": "dist-lib/types/chaos/periodicOrbitDatabase.d.ts",
-        "size": 2633,
+        "size": 3406,
         "mode": 420
       },
       {
         "path": "dist-lib/types/chaos/poincare.d.ts",
-        "size": 3590,
+        "size": 4157,
         "mode": 420
       },
       {
@@ -396,7 +406,7 @@
       },
       {
         "path": "dist-lib/types/chaos/shadowing.d.ts",
-        "size": 2260,
+        "size": 2749,
         "mode": 420
       },
       {
@@ -421,7 +431,7 @@
       },
       {
         "path": "dist-lib/types/chaos/variational.d.ts",
-        "size": 440,
+        "size": 463,
         "mode": 420
       },
       {
@@ -431,12 +441,12 @@
       },
       {
         "path": "dist-lib/types/chaos/zeroOneTest.d.ts",
-        "size": 2908,
+        "size": 3134,
         "mode": 420
       },
       {
         "path": "dist-lib/types/lib.d.ts",
-        "size": 12409,
+        "size": 12482,
         "mode": 420
       },
       {
@@ -446,7 +456,7 @@
       },
       {
         "path": "dist-lib/types/lib/browser.d.ts",
-        "size": 854,
+        "size": 902,
         "mode": 420
       },
       {
@@ -456,7 +466,7 @@
       },
       {
         "path": "dist-lib/types/lib/experimental.d.ts",
-        "size": 2400,
+        "size": 2628,
         "mode": 420
       },
       {
@@ -466,7 +476,7 @@
       },
       {
         "path": "dist-lib/types/lib/research.d.ts",
-        "size": 2521,
+        "size": 2567,
         "mode": 420
       },
       {
@@ -476,7 +486,12 @@
       },
       {
         "path": "dist-lib/types/physics/adaptive.d.ts",
-        "size": 6099,
+        "size": 6276,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/physics/adaptiveController.d.ts",
+        "size": 1872,
         "mode": 420
       },
       {
@@ -496,7 +511,7 @@
       },
       {
         "path": "dist-lib/types/physics/double.d.ts",
-        "size": 1196,
+        "size": 1795,
         "mode": 420
       },
       {
@@ -515,8 +530,18 @@
         "mode": 420
       },
       {
+        "path": "dist-lib/types/physics/embeddedIntegrators.d.ts",
+        "size": 472,
+        "mode": 420
+      },
+      {
         "path": "dist-lib/types/physics/energy.d.ts",
-        "size": 360,
+        "size": 1604,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/physics/errors.d.ts",
+        "size": 1293,
         "mode": 420
       },
       {
@@ -526,7 +551,7 @@
       },
       {
         "path": "dist-lib/types/physics/events.d.ts",
-        "size": 2238,
+        "size": 2570,
         "mode": 420
       },
       {
@@ -541,12 +566,12 @@
       },
       {
         "path": "dist-lib/types/physics/friction.d.ts",
-        "size": 2026,
+        "size": 3238,
         "mode": 420
       },
       {
         "path": "dist-lib/types/physics/implicitDiagnostics.d.ts",
-        "size": 2790,
+        "size": 3162,
         "mode": 420
       },
       {
@@ -556,7 +581,12 @@
       },
       {
         "path": "dist-lib/types/physics/integrators.d.ts",
-        "size": 3125,
+        "size": 2672,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/physics/integratorScratch.d.ts",
+        "size": 268,
         "mode": 420
       },
       {
@@ -571,12 +601,12 @@
       },
       {
         "path": "dist-lib/types/physics/kramersEscape.d.ts",
-        "size": 4102,
+        "size": 4123,
         "mode": 420
       },
       {
         "path": "dist-lib/types/physics/kuramoto.d.ts",
-        "size": 3068,
+        "size": 3266,
         "mode": 420
       },
       {
@@ -586,7 +616,7 @@
       },
       {
         "path": "dist-lib/types/physics/linearSolve.d.ts",
-        "size": 3353,
+        "size": 3527,
         "mode": 420
       },
       {
@@ -611,7 +641,7 @@
       },
       {
         "path": "dist-lib/types/physics/pyragasDde.d.ts",
-        "size": 1684,
+        "size": 3337,
         "mode": 420
       },
       {
@@ -671,7 +701,7 @@
       },
       {
         "path": "dist-lib/types/physics/stochastic.d.ts",
-        "size": 10177,
+        "size": 5998,
         "mode": 420
       },
       {
@@ -685,18 +715,23 @@
         "mode": 420
       },
       {
+        "path": "dist-lib/types/physics/stochasticSteppers.d.ts",
+        "size": 6142,
+        "mode": 420
+      },
+      {
         "path": "dist-lib/types/physics/systemSpec.d.ts",
         "size": 3242,
         "mode": 420
       },
       {
         "path": "dist-lib/types/physics/triple.d.ts",
-        "size": 252,
+        "size": 723,
         "mode": 420
       },
       {
         "path": "dist-lib/types/physics/types.d.ts",
-        "size": 2142,
+        "size": 3075,
         "mode": 420
       },
       {
@@ -706,7 +741,7 @@
       },
       {
         "path": "dist-lib/types/physics/variational.d.ts",
-        "size": 2666,
+        "size": 2797,
         "mode": 420
       },
       {
@@ -845,6 +880,11 @@
         "mode": 420
       },
       {
+        "path": "dist-lib/types/research/trainingProtocol.d.ts",
+        "size": 1648,
+        "mode": 420
+      },
+      {
         "path": "dist-lib/types/research/unitaryFloquet.d.ts",
         "size": 4221,
         "mode": 420
@@ -861,7 +901,7 @@
       },
       {
         "path": "dist-lib/types/runtime/EventBus.d.ts",
-        "size": 962,
+        "size": 1087,
         "mode": 420
       },
       {
@@ -886,7 +926,7 @@
       },
       {
         "path": "dist-lib/types/runtime/gpuNChainVariational.d.ts",
-        "size": 2264,
+        "size": 2442,
         "mode": 420
       },
       {
@@ -906,7 +946,12 @@
       },
       {
         "path": "dist-lib/types/runtime/sharedRingBuffer.d.ts",
-        "size": 1362,
+        "size": 1759,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/runtime/wasmNChain.d.ts",
+        "size": 1264,
         "mode": 420
       },
       {
@@ -921,7 +966,17 @@
       },
       {
         "path": "dist-lib/types/validation/importSchema.d.ts",
-        "size": 229,
+        "size": 318,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/validation/numericalBudgets.d.ts",
+        "size": 3097,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/validation/sessionConstraints.d.ts",
+        "size": 1722,
         "mode": 420
       },
       {
@@ -931,51 +986,81 @@
       },
       {
         "path": "dist-lib/types/viz/phase3dMath.d.ts",
-        "size": 292,
+        "size": 525,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/workers/angularObservable.d.ts",
+        "size": 304,
         "mode": 420
       },
       {
         "path": "dist-lib/types/workers/chaosProtocol.d.ts",
-        "size": 10656,
+        "size": 10707,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/workers/chaosRequestValidation.d.ts",
+        "size": 165,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/workers/JobEngine.d.ts",
+        "size": 1078,
         "mode": 420
       },
       {
         "path": "dist-lib/types/workers/jobProtocol.d.ts",
-        "size": 4268,
+        "size": 724,
         "mode": 420
       },
       {
-        "path": "dist-lib/variational-DG5rJYIJ.js",
-        "size": 30471,
+        "path": "dist-lib/types/workers/jobProtocolTypes.d.ts",
+        "size": 2670,
         "mode": 420
       },
       {
-        "path": "dist-lib/variational-DG5rJYIJ.js.map",
-        "size": 112817,
+        "path": "dist-lib/types/workers/jobProtocolValidation.d.ts",
+        "size": 1188,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/types/workers/protocolSafety.d.ts",
+        "size": 285,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/variational-DPUb_rRI.js",
+        "size": 50355,
+        "mode": 420
+      },
+      {
+        "path": "dist-lib/variational-DPUb_rRI.js.map",
+        "size": 175055,
         "mode": 420
       },
       {
         "path": "dist-lib/worker.js",
-        "size": 159,
+        "size": 157,
         "mode": 420
       },
       {
         "path": "documents/api-overview.md",
-        "size": 3784,
+        "size": 4344,
         "mode": 420
       },
       {
         "path": "documents/README.md",
-        "size": 4004,
+        "size": 5523,
         "mode": 420
       },
       {
         "path": "package.json",
-        "size": 8510,
+        "size": 9855,
         "mode": 420
       }
     ],
-    "entryCount": 193,
+    "entryCount": 210,
     "bundled": []
   }
 ]

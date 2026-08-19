@@ -25,6 +25,7 @@ export * from '../research/qkrFloquet';
 export * from '../research/qkrViewModel';
 export * from '../research/reservoir';
 export * from '../research/hamiltonianLearning';
+export * from '../research/trainingProtocol';
 export * from '../research/lanczos';
 export * from '../research/arnoldi';
 export * from '../research/zipBundle';

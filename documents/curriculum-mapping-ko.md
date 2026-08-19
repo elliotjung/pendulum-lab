@@ -15,7 +15,7 @@ AP 열은 College Board의 현행
 | 감쇠 진자의 에너지 곡선 비교                                | 역학적 에너지와 비보존력 | 감쇠 진동              | Units 3/7; data analysis               | (E(t)) 그래프, 감쇠계수 변화, 에너지 단조성에 대한 주장-증거-추론 |
 | 구동 진자의 공명 곡선과 위상차                              | 파동/진동의 공명         | 강제 진동과 공명       | Unit 7; experimental design            | 진폭-주파수 곡선, 공명점 추정, 정상상태 전 transient 제거 근거    |
 | 이중진자의 정상모드와 에너지 교환                           | 결합계의 에너지          | 정상모드와 결합 진동   | Units 3/5/6/7                          | 동상/역상 초기조건, 모드 주파수, 해석값-수치값 비교               |
-| RK4와 심플렉틱 적분기의 에너지 드리프트 비교                | 계산 모델의 신뢰성       | 미분방정식과 수치 방법 | Practices 1-3; model justification     | 같은 (dt)의 \(                                                    | \Delta E/E_0 | (t)\), (dt/2) 수렴표, 적분기 선택 이유 |
+| RK4와 심플렉틱 적분기의 에너지 드리프트 비교                | 계산 모델의 신뢰성       | 미분방정식과 수치 방법 | Practices 1-3; model justification     | 같은 `dt`의 `abs(ΔE/E0)(t)`, `dt/2` 수렴표, 적분기 선택 이유      |
 | Poincaré 단면과 주기배가 관찰                               | 확장 탐구: 결정론과 예측 | 비선형 동역학/카오스   | Unit 7 extension; representation       | strobe 규칙, 분기도, 주기 1→2 판정 기준, 유한시간 한계            |
 | Melnikov (A_c)와 Floquet (A_{PD}) 비교                      | 과학적 탐구와 자료 해석  | 심화 연구: 안정성/섭동 | Practices 2/3; evidence-based argument | Figure 1 재현, 두 임계의 정의, γ≈0.69 역전과 caveat 설명          |
 | 스마트폰/영상 추적 자료로 (g,L,\gamma) 추정                 | 측정·불확도·그래프       | 역문제와 매개변수 추정 | Laboratory/Practice 3                  | 원자료, 보정/시간축, 적합 잔차, 불확도, 재현 명령                 |
@@ -37,3 +37,11 @@ AP 열은 College Board의 현행
 `documents/known-limitations.md`를 함께 제공하고, 결과 배지의 신뢰 수준을 학생이
 직접 해석하게 합니다. 접근성 대안으로 키보드 조작, 표/CSV, 정적 SVG/PDF를
 허용하며 캔버스의 색이나 애니메이션만 평가하지 않습니다.
+
+## 바로 사용하는 수업 패키지
+
+- [학생용 실험지](education/student-lab-template-ko.md)
+- [교사용 100점 루브릭](education/teacher-rubric-ko.md)
+- [불확도·재현성 체크리스트](education/uncertainty-repro-checklist-ko.md)
+- [CSV 제출 계약](education/submission-schema.md)
+- [CSV 템플릿](examples/student-submission-template.csv)

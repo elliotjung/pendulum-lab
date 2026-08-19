@@ -23,7 +23,8 @@ const sources = {
   release: './reports/release-readiness.json',
   publication: './reports/publication-status.json',
   reviewer: './reports/reviewer-kit-manifest.json',
-  mutation: './reports/mutation-aggregate.json'
+  mutation: './reports/mutation-aggregate.json',
+  validationScope: './reports/independent-validation-scope.json'
 } as const;
 
 function element<K extends keyof HTMLElementTagNameMap>(
@@ -181,6 +182,8 @@ async function render(): Promise<void> {
   const hardwareNChainComparison = object(hardwareNChain.comparison);
   const mutationScore = number(data.mutation.mutationScore);
   const coveredMutationScore = number(data.mutation.coveredMutationScore);
+  const validationSummary = object(data.validationScope.summary);
+  const validationRuntimes = array(data.validationScope.runtimes).map(object);
 
   const evidence: Evidence[] = [
     {
@@ -207,6 +210,22 @@ async function render(): Promise<void> {
       validation: json(data.external.summary ?? data.external.comparison ?? data.external.status),
       reproduce: 'npm run flagship:external',
       caveat: text(data.external.caveat, 'Independent tolerance agreement, not bitwise identity.')
+    },
+    {
+      id: 'independent-validation-scope',
+      title: 'Independent validation scope',
+      status: text(data.validationScope.status),
+      primary: `${text(validationSummary.independentPassed, '0')} independent runtimes`,
+      detail: `SciPy and Julia are evidence-backed; MATLAB is ${text(
+        validationRuntimes.find((item) => item.id === 'matlab')?.availability
+      )} and optional.`,
+      source: sources.validationScope,
+      parameters: json(data.validationScope.policy ?? {}),
+      validation: json(validationSummary),
+      reproduce:
+        'npm run validate:reference && npm run validate:cross && npm run validate:julia && npm run validate:scope',
+      caveat:
+        'Internal TypeScript checks are not counted as independent. No MATLAB evidence is present or claimed because a licensed runner is not configured.'
     },
     {
       id: 'hardware',
@@ -315,6 +334,11 @@ async function render(): Promise<void> {
       'Reviewer kit',
       text(data.reviewer.status),
       `${reviewerArtifacts.filter((item) => item.available === true).length} artifacts available`
+    ],
+    [
+      'Independent runtimes',
+      `${text(validationSummary.independentPassed, '0')}/${text(validationSummary.independentAvailable, '0')}`,
+      'SciPy + Julia; MATLAB optional/unavailable'
     ]
   ];
   summaryItems.forEach(([label, value, meta], index) => {
@@ -331,10 +355,16 @@ async function render(): Promise<void> {
   tabs.setAttribute('role', 'tablist');
   const overview = panel('panel-overview', 'Evidence overview', text(data.flagship.generatedAt, 'Generated artifacts'));
   const gpu = panel('panel-gpu', 'WebGPU adapter matrix', 'Physical hardware evidence only');
+  const validation = panel(
+    'panel-validation',
+    'Independent validation scope',
+    'Availability and evidence claims are explicit per runtime'
+  );
   const artifacts = panel('panel-artifacts', 'Artifact ledger', `${reviewerArtifacts.length} reviewer entries`);
   const definitions = [
     ['Overview', overview.section],
     ['GPU Matrix', gpu.section],
+    ['Validation', validation.section],
     ['Artifacts', artifacts.section]
   ] as const;
   definitions.forEach(([label, section], index) => {
@@ -371,6 +401,19 @@ async function render(): Promise<void> {
   });
   gpu.content.append(table(['Vendor', 'Status', 'Adapter', 'Architecture', 'N-chain', 'Evidence source'], matrixRows));
 
+  const validationRows = validationRuntimes.map((item) => [
+    text(item.id),
+    text(item.role),
+    text(item.availability),
+    text(item.status),
+    text(item.requiredForRelease),
+    text(item.evidencePath, 'none'),
+    text(item.validation)
+  ]);
+  validation.content.append(
+    table(['Runtime', 'Role', 'Availability', 'Status', 'Required', 'Evidence', 'Validation'], validationRows)
+  );
+
   const artifactRows = reviewerArtifacts.map((item) => [
     text(item.priority),
     text(item.available),
@@ -381,7 +424,7 @@ async function render(): Promise<void> {
   ]);
   artifacts.content.append(table(['Priority', 'Available', 'ID', 'Path', 'Reproduce', 'Description'], artifactRows));
 
-  main.append(summary, tabs, overview.section, gpu.section, artifacts.section);
+  main.append(summary, tabs, overview.section, gpu.section, validation.section, artifacts.section);
   shell.append(header, main);
   root.replaceChildren(shell);
 }

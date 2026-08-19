@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "pendulum-deployment-security/v1",
+  "generatedAt": "2026-08-19T01:00:09.128Z",
+  "status": "failed",
+  "profile": "hardened",
+  "requestedUrl": "https://elliotjung.github.io/pendulum-lab/",
+  "finalUrl": "https://elliotjung.github.io/pendulum-lab/",
+  "httpStatus": 200,
+  "checks": [
+    {
+      "header": "Content-Security-Policy",
+      "expected": "default-src 'self'; frame-ancestors 'none'; object-src 'none'",
+      "actual": null,
+      "ok": false
+    },
+    {
+      "header": "X-Content-Type-Options",
+      "expected": "nosniff",
+      "actual": null,
+      "ok": false
+    },
+    {
+      "header": "X-Frame-Options",
+      "expected": "DENY",
+      "actual": null,
+      "ok": false
+    },
+    {
+      "header": "Referrer-Policy",
+      "expected": "strict-origin-when-cross-origin",
+      "actual": null,
+      "ok": false
+    },
+    {
+      "header": "Permissions-Policy",
+      "expected": "camera=(self), accelerometer=(self), gyroscope=(self), microphone=(), geolocation=(), payment=(), usb=()",
+      "actual": null,
+      "ok": false
+    },
+    {
+      "header": "Strict-Transport-Security",
+      "expected": "max-age>=31536000; includeSubDomains",
+      "actual": "max-age=31556952",
+      "ok": false
+    },
+    {
+      "header": "Origin-Agent-Cluster",
+      "expected": "?1",
+      "actual": null,
+      "ok": false
+    }
+  ]
+}

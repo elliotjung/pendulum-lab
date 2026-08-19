@@ -36,11 +36,35 @@ describe('PWA assets', () => {
     expect(source).toContain('if (!response.ok || response.status !== 200) return');
     expect(source).toContain('const RUNTIME_CACHE_LIMIT = 96');
     expect(source).toContain('cache.keys()');
-    expect(source).toContain('cache.delete(request)');
+    expect(source).toContain('cache.delete(record.request)');
     expect(source).toContain('MAX_RUNTIME_RESPONSE_BYTES');
+    expect(source).toContain('RUNTIME_CACHE_MAX_BYTES');
+    expect(source).toContain('lastAccess');
     expect(source).toContain('trimQueue.catch(() => undefined)');
     expect(source).toContain("event.data?.type === 'SKIP_WAITING'");
     expect(source).toContain("url.search = ''");
+  });
+
+  test('ships localized install metadata and a wide product screenshot', async () => {
+    const english = JSON.parse(await readFile('public/manifest.webmanifest', 'utf8')) as {
+      screenshots?: Array<{ src?: string; sizes?: string; form_factor?: string }>;
+    };
+    const korean = JSON.parse(await readFile('public/manifest.ko.webmanifest', 'utf8')) as {
+      id?: string;
+      lang?: string;
+      start_url?: string;
+      screenshots?: unknown[];
+    };
+    expect(english.screenshots).toContainEqual(
+      expect.objectContaining({
+        src: './reports/modern-demo-screenshot.png',
+        sizes: '1280x820',
+        form_factor: 'wide'
+      })
+    );
+    expect(korean).toMatchObject({ id: './', lang: 'ko' });
+    expect(korean.start_url).toContain('lang=ko');
+    expect(korean.screenshots).toHaveLength(1);
   });
 
   test('Cloudflare mirror opts into the isolation headers required by SAB', async () => {

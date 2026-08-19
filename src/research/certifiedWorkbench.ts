@@ -136,6 +136,14 @@ export const REVIEWER_KIT_ARTIFACTS: readonly ReviewerKitArtifact[] = [
     description: 'Independent SciPy DOP853 trajectory comparison.'
   },
   {
+    id: 'independent-validation-scope',
+    path: 'reports/independent-validation-scope.json',
+    command: 'npm run validate:scope',
+    priority: 'recommended',
+    description:
+      'Hash-linked distinction among internal TypeScript, independent SciPy and Julia, and explicitly unavailable optional MATLAB evidence.'
+  },
+  {
     id: 'symbolic-validation',
     path: 'reports/sympy-validation.json',
     command: 'npm run validate:sympy',

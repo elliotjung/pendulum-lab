@@ -44,6 +44,31 @@ export interface ResearchDbArchive {
   stores: Record<ResearchDbStoreName, ResearchDbRecord[]>;
 }
 
+export interface ResearchDbRecoveryArchive extends ResearchDbArchive {
+  recovery: {
+    complete: boolean;
+    missingStores: ResearchDbStoreName[];
+    sourceDatabase: string;
+  };
+}
+
+/**
+ * Opening detected a malformed database. The database is deliberately left in
+ * place so the UI can offer salvage/export before the user explicitly rebuilds
+ * it; no research data is deleted as a side effect of an ordinary read.
+ */
+export class ResearchDbRecoveryRequiredError extends Error {
+  readonly code = 'RESEARCH_DB_RECOVERY_REQUIRED';
+
+  constructor(
+    readonly databaseName: string,
+    readonly originalError: unknown
+  ) {
+    super(`Research database "${databaseName}" requires recovery before it can be used`);
+    this.name = 'ResearchDbRecoveryRequiredError';
+  }
+}
+
 export interface ResearchDbQuota {
   usageBytes: number;
   quotaBytes: number;
@@ -73,7 +98,8 @@ function transactionDone(tx: IDBTransaction): Promise<void> {
 
 export class ResearchDb {
   private db: IDBDatabase | null = null;
-  /** Number of times the database had to be deleted and recreated after corruption. */
+  private recoveryError: unknown = null;
+  /** Number of explicit, user-approved rebuilds completed after corruption. */
   recoveries = 0;
 
   constructor(
@@ -85,18 +111,75 @@ export class ResearchDb {
     return this.factory !== null;
   }
 
-  /** Open the database, recreating it from scratch if the stored data is corrupted. */
+  /** Open the database without mutating a malformed store. */
   async open(): Promise<void> {
     if (this.db || !this.factory) return;
     try {
       this.db = await this.openOnce();
-    } catch {
-      // Corruption recovery: a database that cannot even open is useless —
-      // delete and recreate empty rather than leaving research storage dead.
-      this.recoveries += 1;
-      await requestToPromise(this.factory.deleteDatabase(this.name) as IDBRequest<unknown>).catch(() => undefined);
-      this.db = await this.openOnce();
+      this.recoveryError = null;
+    } catch (error) {
+      this.recoveryError = error;
+      throw new ResearchDbRecoveryRequiredError(this.name, error);
     }
+  }
+
+  recoveryRequired(): boolean {
+    return this.recoveryError !== null;
+  }
+
+  /**
+   * Best-effort, read-only salvage of every expected store that can still be
+   * opened. Missing stores stay empty and are named in recovery metadata.
+   */
+  async exportRecoverableArchive(): Promise<ResearchDbRecoveryArchive> {
+    if (!this.factory) throw new Error('IndexedDB unavailable');
+    this.close();
+    const raw = await this.openRaw();
+    try {
+      const stores = Object.fromEntries(RESEARCH_DB_STORES.map((store) => [store, []])) as unknown as Record<
+        ResearchDbStoreName,
+        ResearchDbRecord[]
+      >;
+      const missingStores = RESEARCH_DB_STORES.filter((store) => !raw.objectStoreNames.contains(store));
+      for (const name of RESEARCH_DB_STORES) {
+        if (missingStores.includes(name)) continue;
+        const tx = raw.transaction(name, 'readonly');
+        const records = await requestToPromise(tx.objectStore(name).getAll() as IDBRequest<ResearchDbRecord[]>);
+        stores[name] = records;
+      }
+      return {
+        schemaVersion: RESEARCH_DB_SCHEMA_VERSION,
+        exportedAt: new Date().toISOString(),
+        stores,
+        recovery: {
+          complete: missingStores.length === 0,
+          missingStores,
+          sourceDatabase: this.name
+        }
+      };
+    } finally {
+      raw.close();
+    }
+  }
+
+  /** Delete and recreate only after an explicit recovery action. */
+  async rebuildAfterCorruption(): Promise<void> {
+    if (!this.factory) throw new Error('IndexedDB unavailable');
+    if (!this.recoveryRequired()) throw new Error('Research database is not awaiting recovery');
+    this.close();
+    await requestToPromise(this.factory.deleteDatabase(this.name) as IDBRequest<unknown>);
+    this.db = await this.openOnce();
+    this.recoveryError = null;
+    this.recoveries += 1;
+  }
+
+  private openRaw(): Promise<IDBDatabase> {
+    return new Promise((resolve, reject) => {
+      const request = this.factory!.open(this.name);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error ?? new Error('IndexedDB recovery open failed'));
+      request.onblocked = () => reject(new Error('IndexedDB recovery open blocked'));
+    });
   }
 
   private openOnce(): Promise<IDBDatabase> {

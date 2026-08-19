@@ -23,6 +23,8 @@ export interface LabRenderOptions {
   scale?: number;
   /** Vertical pivot position as a fraction of height. Default 0.38 (legacy). */
   pivotYFraction?: number;
+  /** Total chain length in metres; when set, projection is fit to the viewport. */
+  worldRadius?: number;
   background?: string;
   /** Per-frame background fade alpha (motion-blur trail). Default 0.12. */
   fade?: number;
@@ -80,6 +82,7 @@ export class LabRenderer {
     this.opts = {
       scale: 110,
       pivotYFraction: 0.38,
+      worldRadius: 0,
       background: '#07090d',
       fade: 0.12,
       trailColorOld: '#13243a',
@@ -130,6 +133,10 @@ export class LabRenderer {
     return { x: this.opts.width / 2, y: this.opts.height * this.opts.pivotYFraction };
   }
 
+  setWorldRadius(radius: number): void {
+    this.opts.worldRadius = Number.isFinite(radius) && radius > 0 ? radius : 0;
+  }
+
   /** Map a bob position in metres to canvas pixels. */
   toPixels(bob: BobPosition): Point2D {
     return this.toPixelsInto(bob, { x: 0, y: 0 });
@@ -140,9 +147,20 @@ export class LabRenderer {
   }
 
   toPixelsXYInto(x: number, y: number, out: Point2D): Point2D {
-    out.x = this.opts.width / 2 + x * this.opts.scale;
-    out.y = this.opts.height * this.opts.pivotYFraction + y * this.opts.scale;
+    const scale = this.effectiveScale();
+    out.x = this.opts.width / 2 + x * scale;
+    out.y = this.opts.height * this.opts.pivotYFraction + y * scale;
     return out;
+  }
+
+  private effectiveScale(): number {
+    const radius = this.opts.worldRadius;
+    if (!(radius > 0)) return this.opts.scale;
+    const padding = Math.min(24, Math.max(10, Math.min(this.opts.width, this.opts.height) * 0.04));
+    const pivotY = this.opts.height * this.opts.pivotYFraction;
+    const fitX = (this.opts.width / 2 - padding) / radius;
+    const fitY = Math.min(pivotY - padding, this.opts.height - pivotY - padding) / radius;
+    return Math.max(8, Math.min(this.opts.scale, fitX, fitY));
   }
 
   /** Clear to the background colour (used for a hard reset, e.g. on trail clear). */
@@ -155,6 +173,15 @@ export class LabRenderer {
     this.ensembleTrails = [];
     this.lastTrailTip = null;
     this.clearTrailLayer();
+  }
+
+  dispose(): void {
+    this.webglTrailRenderer?.dispose();
+    this.webglTrailRenderer = null;
+    this.webglTrailLayer = null;
+    this.trailLayer = null;
+    this.trailLayerCtx = null;
+    this.ensembleTrails = [];
   }
 
   draw(bobsMeters: readonly BobPosition[], extras: LabDrawExtras = {}): void {
@@ -365,7 +392,7 @@ export class LabRenderer {
     const drawCtx = this.ctx as DrawableCtx;
     if (this.webglTrailUnavailable || typeof drawCtx.drawImage !== 'function') return false;
     if (!this.webglTrailRenderer || !this.webglTrailLayer) {
-      const layer = createTrailLayer(this.opts.width, this.opts.height);
+      const layer = createWebGLLayer(this.opts.width, this.opts.height);
       const renderer = layer ? tryCreateWebGLTrailRenderer(layer as unknown as TrailCanvasLike) : null;
       if (!layer || !renderer) {
         this.webglTrailUnavailable = true;
@@ -387,7 +414,7 @@ export class LabRenderer {
         newColor: colors.next
       });
       if (!ok) {
-        this.webglTrailUnavailable = true;
+        if (!this.webglTrailRenderer.isContextLost()) this.webglTrailUnavailable = true;
         return false;
       }
       drawCtx.save();
@@ -395,7 +422,7 @@ export class LabRenderer {
       drawCtx.restore();
       return true;
     } catch {
-      this.webglTrailUnavailable = true;
+      if (!this.webglTrailRenderer?.isContextLost()) this.webglTrailUnavailable = true;
       return false;
     }
   }
@@ -467,6 +494,18 @@ function createTrailLayer(width: number, height: number): TrailLayerCanvas | nul
     return canvas;
   }
   return null;
+}
+
+function createWebGLLayer(width: number, height: number): TrailLayerCanvas | null {
+  // A DOM canvas emits webglcontextlost/restored events, allowing the renderer
+  // to rebuild GPU resources. OffscreenCanvas remains the non-DOM fallback.
+  if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
+  }
+  return typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(width, height) : null;
 }
 
 function trailGradient(mode: string): {

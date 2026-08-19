@@ -1,5 +1,13 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import {
+  PhysicsEvaluationError,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
 
 /**
  * Magnetic pendulum — an iron bob swinging on a long string over N fixed magnets
@@ -48,11 +56,69 @@ export const THREE_MAGNET_PRESET: MagneticPendulumParameters = Object.freeze({
   height: 0.25
 });
 
+const MAX_MAGNETIC_SETTLE_STEPS = 1_000_000;
+const MAX_MAGNETIC_BASIN_AXIS = 256;
+
+function validateMagneticParameters(parameters: MagneticPendulumParameters, operation: string): void {
+  if (!Number.isSafeInteger(parameters.magnets.length) || parameters.magnets.length < 1) {
+    throw new PhysicsEvaluationError('INVALID_DIMENSION', `${operation}: at least one magnet is required`, {
+      operation,
+      retryable: false,
+      parameter: 'magnets.length',
+      value: parameters.magnets.length
+    });
+  }
+  for (let index = 0; index < parameters.magnets.length; index += 1) {
+    const magnet = parameters.magnets[index]!;
+    assertFiniteScalar(magnet.x, `magnets[${index}].x`, operation);
+    assertFiniteScalar(magnet.y, `magnets[${index}].y`, operation);
+    assertPositiveFinite(magnet.strength, `magnets[${index}].strength`, operation);
+  }
+  assertNonNegativeFinite(parameters.restoring, 'restoring', operation);
+  assertNonNegativeFinite(parameters.damping, 'damping', operation);
+  assertPositiveFinite(parameters.height, 'height', operation);
+}
+
+function assertFiniteMagneticResult(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the magnetic parameters.'
+    });
+  }
+}
+
+function validateSettleOptions(options: MagneticSettleOptions, operation: string): Required<MagneticSettleOptions> {
+  const dt = options.dt ?? 5e-3;
+  const maxSteps = options.maxSteps ?? 20_000;
+  const speedTolerance = options.speedTolerance ?? 1e-3;
+  assertPositiveFinite(dt, 'dt', operation);
+  if (!Number.isSafeInteger(maxSteps) || maxSteps < 1 || maxSteps > MAX_MAGNETIC_SETTLE_STEPS) {
+    throw new PhysicsEvaluationError(
+      'INVALID_PARAMETER',
+      `${operation}: maxSteps must be a safe integer in [1, ${MAX_MAGNETIC_SETTLE_STEPS}]`,
+      {
+        operation,
+        retryable: false,
+        parameter: 'maxSteps',
+        value: maxSteps,
+        maximum: MAX_MAGNETIC_SETTLE_STEPS
+      }
+    );
+  }
+  assertPositiveFinite(speedTolerance, 'speedTolerance', operation);
+  return { dt, maxSteps, speedTolerance };
+}
+
 export function rhsMagneticPendulum(
   state: ArrayLike<number>,
   parameters: MagneticPendulumParameters,
   out: StateVector
 ): StateVector {
+  assertFiniteVector(state, 4, 'rhsMagneticPendulum');
+  assertOutputVector(out, 4, 'rhsMagneticPendulum');
+  validateMagneticParameters(parameters, 'rhsMagneticPendulum');
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -70,6 +136,7 @@ export function rhsMagneticPendulum(
     fx += dx * inv3;
     fy += dy * inv3;
   }
+  assertFiniteMagneticResult([vx, vy, fx, fy], 'rhsMagneticPendulum');
   out[0] = vx;
   out[1] = vy;
   out[2] = fx;
@@ -86,6 +153,8 @@ export function magneticPendulumEnergy(
   state: ArrayLike<number>,
   parameters: MagneticPendulumParameters
 ): EnergyBreakdown {
+  assertFiniteVector(state, 4, 'magneticPendulumEnergy');
+  validateMagneticParameters(parameters, 'magneticPendulumEnergy');
   const x = Number(state[0] ?? 0);
   const y = Number(state[1] ?? 0);
   const vx = Number(state[2] ?? 0);
@@ -100,11 +169,16 @@ export function magneticPendulumEnergy(
     const dy = m.y - y;
     PE -= m.strength / Math.sqrt(dx * dx + dy * dy + d2);
   }
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteMagneticResult([KE, PE, total], 'magneticPendulumEnergy');
+  return { total, KE, PE };
 }
 
 /** Index of the magnet nearest to the bob's current planar position. */
 export function nearestMagnetIndex(x: number, y: number, parameters: MagneticPendulumParameters): number {
+  assertFiniteScalar(x, 'x', 'nearestMagnetIndex');
+  assertFiniteScalar(y, 'y', 'nearestMagnetIndex');
+  validateMagneticParameters(parameters, 'nearestMagnetIndex');
   const { magnets } = parameters;
   let best = -1;
   let bestD2 = Infinity;
@@ -169,9 +243,10 @@ export function magneticPendulumSettle(
   y0: number,
   options: MagneticSettleOptions = {}
 ): MagneticSettleResult {
-  const dt = options.dt ?? 5e-3;
-  const maxSteps = options.maxSteps ?? 20000;
-  const speedTol = options.speedTolerance ?? 1e-3;
+  validateMagneticParameters(parameters, 'magneticPendulumSettle');
+  assertFiniteScalar(x0, 'x0', 'magneticPendulumSettle');
+  assertFiniteScalar(y0, 'y0', 'magneticPendulumSettle');
+  const { dt, maxSteps, speedTolerance: speedTol } = validateSettleOptions(options, 'magneticPendulumSettle');
   const state = Float64Array.of(x0, y0, 0, 0);
   const out = new Float64Array(4);
   let steps = 0;
@@ -185,6 +260,7 @@ export function magneticPendulumSettle(
     state[1] = state[1]! + dt * vy;
     state[2] = vx;
     state[3] = vy;
+    assertFiniteMagneticResult([state[0]!, state[1]!, vx, vy], 'magneticPendulumSettle');
     steps = k + 1;
     const speed = Math.hypot(vx, vy);
     if (speed < speedTol) {
@@ -214,11 +290,31 @@ export function magneticPendulumBasinGrid(
   options: MagneticBasinGridOptions = {}
 ): MagneticBasinGrid {
   const n = options.n ?? 80;
-  if (!Number.isInteger(n) || n < 2) throw new Error('magneticPendulumBasinGrid: n must be an integer >= 2.');
+  validateMagneticParameters(parameters, 'magneticPendulumBasinGrid');
+  validateSettleOptions(options, 'magneticPendulumBasinGrid');
+  if (!Number.isSafeInteger(n) || n < 2 || n > MAX_MAGNETIC_BASIN_AXIS) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      `magneticPendulumBasinGrid: n must be an integer in [2, ${MAX_MAGNETIC_BASIN_AXIS}]`,
+      { operation: 'magneticPendulumBasinGrid', retryable: false, parameter: 'n', value: n }
+    );
+  }
   const xRange = options.xRange ?? ([-2, 2] as const);
   const yRange = options.yRange ?? ([-2, 2] as const);
-  if (!(xRange[1] > xRange[0]) || !(yRange[1] > yRange[0]))
-    throw new Error('magneticPendulumBasinGrid: ranges must be increasing.');
+  if (
+    ![xRange[0], xRange[1], yRange[0], yRange[1]].every(Number.isFinite) ||
+    !(xRange[1] > xRange[0]) ||
+    !(yRange[1] > yRange[0])
+  ) {
+    throw new PhysicsEvaluationError(
+      'INVALID_PARAMETER',
+      'magneticPendulumBasinGrid: ranges must be finite and increasing',
+      {
+        operation: 'magneticPendulumBasinGrid',
+        retryable: false
+      }
+    );
+  }
   const labels = new Int32Array(n * n);
   const converged = new Uint8Array(n * n);
   let convergedCount = 0;

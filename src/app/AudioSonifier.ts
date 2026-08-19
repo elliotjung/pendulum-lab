@@ -95,4 +95,23 @@ export class AudioSonifier {
   isEnabled(): boolean {
     return this.enabled;
   }
+
+  dispose(): void {
+    this.enabled = false;
+    for (const voice of this.voices) {
+      try {
+        voice.osc.stop();
+      } catch {
+        // An oscillator may already have stopped during browser teardown.
+      }
+      voice.osc.disconnect();
+      voice.gain.disconnect();
+    }
+    this.voices = [];
+    this.master?.disconnect();
+    const context = this.ctx;
+    this.master = null;
+    this.ctx = null;
+    if (context && context.state !== 'closed') void context.close().catch(() => {});
+  }
 }

@@ -1,6 +1,14 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
 import { assertLinearSolve, solveCholeskyInPlace, solveLinearInPlace, type LinearSolveResult } from './linearSolve';
+import {
+  PhysicsEvaluationError,
+  assertDensePhysicsDimension,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
 
 /**
  * Generalized planar chain ("N-pendulum"). The double and triple pendulums are
@@ -33,24 +41,31 @@ export function chainLength(parameters: ChainParameters): number {
 }
 
 export function validateChainParameters(parameters: ChainParameters): void {
+  assertDensePhysicsDimension(parameters.masses.length, 'masses.length', 'ChainParameters');
+  if (!Number.isSafeInteger(parameters.lengths.length)) {
+    throw new PhysicsEvaluationError('INVALID_DIMENSION', 'ChainParameters: lengths.length must be a safe integer', {
+      operation: 'ChainParameters',
+      retryable: false,
+      parameter: 'lengths.length',
+      value: parameters.lengths.length
+    });
+  }
   if (parameters.masses.length !== parameters.lengths.length) {
     throw new Error(
       `ChainParameters: masses (${parameters.masses.length}) and lengths (${parameters.lengths.length}) must have the same length`
     );
   }
-  if (parameters.masses.length === 0) throw new Error('ChainParameters: at least one link is required');
   for (let i = 0; i < parameters.masses.length; i += 1) {
     const mass = parameters.masses[i] ?? NaN;
     const length = parameters.lengths[i] ?? NaN;
-    if (!Number.isFinite(mass) || mass <= 0) throw new Error(`ChainParameters: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(length) || length <= 0)
-      throw new Error(`ChainParameters: length[${i}] must be positive and finite`);
+    assertPositiveFinite(mass, `mass[${i}]`, 'ChainParameters');
+    assertPositiveFinite(length, `length[${i}]`, 'ChainParameters');
   }
-  if (!Number.isFinite(parameters.g) || parameters.g <= 0)
-    throw new Error('ChainParameters: g must be positive and finite');
+  assertPositiveFinite(parameters.g, 'g', 'ChainParameters');
 }
 
 export function createChainWorkspace(n: number): ChainWorkspace {
+  assertDensePhysicsDimension(n, 'n', 'createChainWorkspace');
   return {
     n,
     suffix: new Float64Array(n),
@@ -58,6 +73,41 @@ export function createChainWorkspace(n: number): ChainWorkspace {
     rhs: new Float64Array(n),
     factor: new Float64Array(n * n)
   };
+}
+
+function assertChainWorkspace(workspace: ChainWorkspace, n: number, operation: string): void {
+  if (
+    workspace.n !== n ||
+    workspace.suffix.length < n ||
+    workspace.rhs.length < n ||
+    workspace.matrix.length < n * n ||
+    workspace.factor.length < n * n
+  ) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      `${operation}: workspace buffers do not match chain length ${n}`,
+      {
+        operation,
+        retryable: false,
+        expectedDimension: n,
+        workspaceDimension: workspace.n
+      }
+    );
+  }
+}
+
+function assertFiniteChainState(state: ArrayLike<number>, n: number, operation: string): void {
+  assertFiniteVector(state, 2 * n, operation);
+}
+
+function assertFiniteEnergy(value: number, operation: string): void {
+  if (!Number.isFinite(value)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the physical parameters.'
+    });
+  }
 }
 
 // Suffix mass sums S_j = sum_{i >= j} m_i, precomputed for the coupling terms.
@@ -87,7 +137,10 @@ export function rhsChain(
 ): StateVector {
   const n = chainLength(parameters);
   const { masses, lengths, g } = parameters;
-  if (workspace.n !== n) throw new Error(`rhsChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  assertFiniteChainState(state, n, 'rhsChain');
+  assertOutputVector(out, 2 * n, 'rhsChain');
+  assertFiniteScalar(gamma, 'gamma', 'rhsChain');
+  assertChainWorkspace(workspace, n, 'rhsChain');
   const { suffix: s, matrix, rhs } = workspace;
   fillSuffixMass(masses, n, s);
   matrix.fill(0);
@@ -97,7 +150,6 @@ export function rhsChain(
     const tj = Number(state[j] ?? 0);
     const wj = Number(state[n + j] ?? 0);
     const lj = lengths[j] ?? 0;
-    out[j] = wj; // d(theta_j)/dt = omega_j
     let coupling = 0;
     for (let k = 0; k < n; k += 1) {
       const tk = Number(state[k] ?? 0);
@@ -119,7 +171,22 @@ export function rhsChain(
     const solve = solveLinearInPlace(matrix, rhs, n);
     assertLinearSolve(solve, 'rhsChain mass matrix');
   }
-  for (let j = 0; j < n; j += 1) out[n + j] = rhs[j] ?? 0;
+  for (let j = 0; j < n; j += 1) {
+    const acceleration = rhs[j] ?? NaN;
+    if (!Number.isFinite(acceleration)) {
+      throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'rhsChain: acceleration overflowed', {
+        operation: 'rhsChain',
+        retryable: false,
+        component: j
+      });
+    }
+  }
+  // Delay writes until after every validation/solve succeeds: a rejected
+  // evaluation must leave a caller-owned output buffer untouched.
+  for (let j = 0; j < n; j += 1) {
+    out[j] = Number(state[n + j]);
+    out[n + j] = rhs[j] ?? 0;
+  }
   return out;
 }
 
@@ -134,6 +201,8 @@ export function chainMassMatrix(
   out: Float64Array = new Float64Array(chainLength(parameters) ** 2)
 ): Float64Array {
   const n = chainLength(parameters);
+  assertFiniteVector(state, n, 'chainMassMatrix');
+  assertOutputVector(out, n * n, 'chainMassMatrix');
   const { lengths } = parameters;
   const s = new Float64Array(n);
   fillSuffixMass(parameters.masses, n, s);
@@ -143,7 +212,16 @@ export function chainMassMatrix(
     for (let k = 0; k < n; k += 1) {
       const tk = Number(state[k] ?? 0);
       const lk = lengths[k] ?? 0;
-      out[j * n + k] = (s[Math.max(j, k)] ?? 0) * lj * lk * Math.cos(tj - tk);
+      const value = (s[Math.max(j, k)] ?? 0) * lj * lk * Math.cos(tj - tk);
+      if (!Number.isFinite(value)) {
+        throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'chainMassMatrix: matrix entry overflowed', {
+          operation: 'chainMassMatrix',
+          retryable: false,
+          row: j,
+          column: k
+        });
+      }
+      out[j * n + k] = value;
     }
   }
   return out;
@@ -159,6 +237,7 @@ export function chainMassMatrixDiagnostics(state: ArrayLike<number>, parameters:
 
 export function energyChain(state: ArrayLike<number>, parameters: ChainParameters): EnergyBreakdown {
   const n = chainLength(parameters);
+  assertFiniteChainState(state, n, 'energyChain');
   const { masses, lengths, g } = parameters;
   let vx = 0;
   let vy = 0;
@@ -177,5 +256,9 @@ export function energyChain(state: ArrayLike<number>, parameters: ChainParameter
     KE += 0.5 * mi * (vx * vx + vy * vy);
     PE += g * mi * y;
   }
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteEnergy(KE, 'energyChain');
+  assertFiniteEnergy(PE, 'energyChain');
+  assertFiniteEnergy(total, 'energyChain');
+  return { total, KE, PE };
 }

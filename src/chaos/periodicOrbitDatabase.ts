@@ -217,6 +217,19 @@ export interface CycleExpansionObservableResult {
   caveat: string;
 }
 
+export interface CycleExpansionConvergenceResult {
+  levels: Array<{
+    maxPeriod: number;
+    weightedAverage: number;
+    changeFromPrevious: number | null;
+    coefficientTailNorm: number;
+    usedOrbits: number;
+  }>;
+  converged: boolean;
+  tolerance: number;
+  caveat: string;
+}
+
 /**
  * Finite-prime-cycle observable demo.  It returns both the genuine truncated
  * Euler-product coefficients and the transparent leading prime-weighted
@@ -273,5 +286,50 @@ export function cycleExpansionObservable(
     maxPeriod,
     caveat:
       'Finite prime-cycle truncation: inspect coefficient decay and max-period stability. The weightedAverage is the leading prime-weight approximation; full cycle-expansion curvature corrections are represented by the returned Euler-product coefficients, not silently folded into that scalar.'
+  };
+}
+
+/**
+ * Required max-period refinement evidence for a finite cycle expansion. The
+ * final verdict needs both observable stability and decay of newly introduced
+ * Euler-product coefficients.
+ */
+export function cycleExpansionConvergence(
+  records: readonly PeriodicOrbitRecord[],
+  observable: (point: readonly number[]) => number,
+  options: CycleExpansionOptions & { minPeriod?: number; tolerance?: number } = {}
+): CycleExpansionConvergenceResult {
+  if (records.length === 0) throw new Error('cycleExpansionConvergence requires at least one prime orbit.');
+  const maximum = options.maxPeriod ?? Math.max(...records.map((record) => record.period));
+  const minimum = options.minPeriod ?? Math.min(...records.map((record) => record.period));
+  const tolerance = options.tolerance ?? 1e-3;
+  if (!Number.isInteger(minimum) || minimum < 1 || minimum > maximum)
+    throw new Error('cycle-expansion minPeriod must be a positive integer no larger than maxPeriod.');
+  if (!(tolerance > 0) || !Number.isFinite(tolerance))
+    throw new Error('cycle-expansion convergence tolerance must be positive and finite.');
+  const levels: CycleExpansionConvergenceResult['levels'] = [];
+  for (let maxPeriod = minimum; maxPeriod <= maximum; maxPeriod += 1) {
+    if (!records.some((record) => record.period <= maxPeriod)) continue;
+    const result = cycleExpansionObservable(records, observable, { ...options, maxPeriod });
+    const previous = levels.at(-1)?.weightedAverage;
+    const newlyResolved = result.zetaCoefficients.slice(Math.max(1, maxPeriod - 1));
+    levels.push({
+      maxPeriod,
+      weightedAverage: result.weightedAverage,
+      changeFromPrevious: previous === undefined ? null : Math.abs(result.weightedAverage - previous),
+      coefficientTailNorm: newlyResolved.reduce((norm, value) => Math.max(norm, Math.abs(value)), 0),
+      usedOrbits: result.usedOrbits
+    });
+  }
+  const final = levels.at(-1);
+  return {
+    levels,
+    converged:
+      levels.length >= 2 &&
+      (final?.changeFromPrevious ?? Infinity) <= tolerance &&
+      (final?.coefficientTailNorm ?? Infinity) <= tolerance,
+    tolerance,
+    caveat:
+      'A finite max-period refinement is numerical evidence, not proof of the infinite cycle expansion. Increase the orbit database and verify stable coefficient decay before publication.'
   };
 }

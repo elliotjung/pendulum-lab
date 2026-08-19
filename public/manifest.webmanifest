@@ -15,6 +15,15 @@
   "categories": ["education", "science", "productivity"],
   "prefer_related_applications": false,
   "launch_handler": { "client_mode": "navigate-existing" },
+  "screenshots": [
+    {
+      "src": "./reports/modern-demo-screenshot.png",
+      "sizes": "1280x820",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Pendulum Lab simulator and live numerical diagnostics"
+    }
+  ],
   "icons": [
     {
       "src": "./icons/pendulum-lab-192.png",

@@ -75,5 +75,21 @@ describe('ImuMotionCaptureController', () => {
     expect(controller.consume(motionEvent(10, 0))).not.toBeNull();
     expect(controller.consume(motionEvent(10, 0))).toBeNull();
     expect(controller.consume({ timeStamp: 20 } as DeviceMotionEvent)).toBeNull();
+    expect(controller.metadata().sampling.rejectedEvents).toBe(2);
+  });
+
+  it('records sampling jitter and supports explicit stationary gyroscope-bias calibration', async () => {
+    const { controller, dispatch } = fixture();
+    await controller.start();
+    dispatch(motionEvent(1000, 10));
+    dispatch(motionEvent(1100, 10));
+    expect(controller.calibrateAngularVelocityBias(2)).toBeCloseTo((10 * Math.PI) / 180, 12);
+    dispatch(motionEvent(1210, 10));
+    expect(controller.series().at(-1)?.angularVelocity).toBeCloseTo(0, 12);
+    const metadata = controller.metadata();
+    expect(metadata.consentGrantedAt).toBeTruthy();
+    expect(metadata.calibration.angularVelocityBias).toBeCloseTo((10 * Math.PI) / 180, 12);
+    expect(metadata.sampling.meanIntervalSeconds).toBeCloseTo(0.105, 12);
+    expect(metadata.sampling.maxJitterSeconds).toBeCloseTo(0.005, 12);
   });
 });

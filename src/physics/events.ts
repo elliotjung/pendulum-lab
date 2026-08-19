@@ -37,6 +37,11 @@ export interface EventHit {
   label: string | undefined;
   /** +1 for a rising crossing (g goes - to +), -1 for falling. */
   direction: 1 | -1;
+  /** |g| at the reported bracket endpoint. */
+  rootResidual: number;
+  /** Final time-bracket width used to certify the crossing. */
+  rootBracketWidth: number;
+  rootIterations: number;
   state: StateVector;
 }
 
@@ -172,6 +177,9 @@ export function detectEvents(
         eventIndex: s,
         label: spec.label,
         direction: dir,
+        rootResidual: Math.abs(crossing.gAfter),
+        rootBracketWidth: crossing.tAfter - crossing.tBefore,
+        rootIterations: crossing.iterations,
         state: new Float64Array(stateAt(crossing.tAfter)),
         offset: crossing.tAfter
       });

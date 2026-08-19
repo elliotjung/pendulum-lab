@@ -27,6 +27,8 @@ export interface TrailCanvasLike {
   width: number;
   height: number;
   getContext(contextId: 'webgl2', options?: WebGLContextAttributes): WebGL2RenderingContext | null;
+  addEventListener?(type: string, listener: EventListenerOrEventListenerObject): void;
+  removeEventListener?(type: string, listener: EventListenerOrEventListenerObject): void;
 }
 
 /** Explicit feature flag. Cinematic quality is checked separately by LabApp. */
@@ -137,13 +139,28 @@ function createProgram(gl: WebGL2RenderingContext): WebGLProgram {
 
 export class WebGLTrailRenderer {
   private readonly gl: WebGL2RenderingContext;
-  private readonly program: WebGLProgram;
-  private readonly buffer: WebGLBuffer;
-  private readonly vao: WebGLVertexArrayObject;
-  private readonly viewportLocation: WebGLUniformLocation;
-  private readonly halfWidthLocation: WebGLUniformLocation;
-  private readonly oldColorLocation: WebGLUniformLocation;
-  private readonly newColorLocation: WebGLUniformLocation;
+  private program!: WebGLProgram;
+  private buffer!: WebGLBuffer;
+  private vao!: WebGLVertexArrayObject;
+  private viewportLocation!: WebGLUniformLocation;
+  private halfWidthLocation!: WebGLUniformLocation;
+  private oldColorLocation!: WebGLUniformLocation;
+  private newColorLocation!: WebGLUniformLocation;
+  private contextLost = false;
+  private disposed = false;
+  private readonly onContextLost = (event: Event): void => {
+    event.preventDefault();
+    this.contextLost = true;
+  };
+  private readonly onContextRestored = (): void => {
+    if (this.disposed) return;
+    try {
+      this.initializeResources();
+      this.contextLost = false;
+    } catch {
+      this.contextLost = true;
+    }
+  };
 
   constructor(private readonly canvas: TrailCanvasLike) {
     const gl = canvas.getContext('webgl2', {
@@ -156,6 +173,13 @@ export class WebGLTrailRenderer {
     });
     if (!gl) throw new Error('WebGL2 trail context unavailable');
     this.gl = gl;
+    this.initializeResources();
+    canvas.addEventListener?.('webglcontextlost', this.onContextLost);
+    canvas.addEventListener?.('webglcontextrestored', this.onContextRestored);
+  }
+
+  private initializeResources(): void {
+    const gl = this.gl;
     this.program = createProgram(gl);
     const buffer = gl.createBuffer();
     const vao = gl.createVertexArray();
@@ -188,6 +212,7 @@ export class WebGLTrailRenderer {
   }
 
   draw(points: ArrayLike<number>, options: WebGLTrailDrawOptions): boolean {
+    if (this.disposed || this.contextLost || this.gl.isContextLost?.()) return false;
     const batch = buildTrailInstances(points);
     const width = Math.max(1, Math.round(options.width));
     const height = Math.max(1, Math.round(options.height));
@@ -216,10 +241,20 @@ export class WebGLTrailRenderer {
     return gl.getError() === gl.NO_ERROR;
   }
 
+  isContextLost(): boolean {
+    return this.contextLost || Boolean(this.gl.isContextLost?.());
+  }
+
   dispose(): void {
-    this.gl.deleteBuffer(this.buffer);
-    this.gl.deleteVertexArray(this.vao);
-    this.gl.deleteProgram(this.program);
+    if (this.disposed) return;
+    this.disposed = true;
+    this.canvas.removeEventListener?.('webglcontextlost', this.onContextLost);
+    this.canvas.removeEventListener?.('webglcontextrestored', this.onContextRestored);
+    if (!this.gl.isContextLost?.()) {
+      this.gl.deleteBuffer(this.buffer);
+      this.gl.deleteVertexArray(this.vao);
+      this.gl.deleteProgram(this.program);
+    }
   }
 }
 

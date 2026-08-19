@@ -1,14 +1,18 @@
 import { renderEnergyPlot, renderLyapunovConvergence, renderPoincareSection } from '../viz';
 import { magnitudeSpectrum } from '../app/fft';
 import { renderPhasePortrait, renderSpectrum, type PhaseSample } from '../app/labPlots';
+import { sharedMemoryCapability } from '../runtime/sharedRingBuffer';
 import type { Ctx2D, Rect } from '../viz/types';
 import {
+  LAB_SIDE_PLOT_SHARED_RING_PROTOCOL,
   isLabSidePlotWorkerMessage,
   pairsToPoints,
   type LabSidePlotId,
+  type LabSidePlotPayload,
   type LabSidePlotWorkerMessage,
   type LabSidePlotWorkerResponse
 } from '../app/LabSidePlotProtocol';
+import { LabSidePlotSharedRingReader } from '../app/LabSidePlotSharedTransport';
 
 interface PlotTarget {
   canvas: OffscreenCanvas;
@@ -16,9 +20,12 @@ interface PlotTarget {
 }
 
 const targets = new Map<LabSidePlotId, PlotTarget>();
-const pending = new Map<LabSidePlotId, Extract<LabSidePlotWorkerMessage, { kind: 'render' }>>();
+type QueuedRender = Extract<LabSidePlotWorkerMessage, { kind: 'render' | 'render-shared' }>;
+
+const pending = new Map<LabSidePlotId, QueuedRender>();
 const priorities: Record<LabSidePlotId, number> = { energy: 1, lyap: 2, phase: 3, poincare: 4, fft: 5 };
 let drainQueued = false;
+let sharedTransport: LabSidePlotSharedRingReader | null = null;
 
 self.addEventListener('message', (event: MessageEvent<unknown>) => {
   if (!isLabSidePlotWorkerMessage(event.data)) {
@@ -26,6 +33,10 @@ self.addEventListener('message', (event: MessageEvent<unknown>) => {
     return;
   }
   const message = event.data;
+  if (message.kind === 'shared-init') {
+    initializeSharedTransport(message.transport);
+    return;
+  }
   if (message.kind === 'canvas') {
     try {
       const ctx = message.canvas.getContext('2d');
@@ -75,43 +86,94 @@ function drainLatestJobs(): void {
   }
 }
 
-function renderJob(message: Extract<LabSidePlotWorkerMessage, { kind: 'render' }>): void {
-  const target = targets.get(message.plot);
-  if (!target) return;
+function initializeSharedTransport(
+  transport: Extract<LabSidePlotWorkerMessage, { kind: 'shared-init' }>['transport']
+): void {
+  if (!sharedMemoryCapability().supported) {
+    post({ kind: 'shared-unavailable', detail: 'side-plot shared transport requires cross-origin isolation' });
+    return;
+  }
+  if (sharedTransport) {
+    post({ kind: 'shared-unavailable', detail: 'side-plot shared transport was already initialized' });
+    return;
+  }
+  try {
+    sharedTransport = new LabSidePlotSharedRingReader(transport);
+    post({ kind: 'shared-ready', protocol: LAB_SIDE_PLOT_SHARED_RING_PROTOCOL });
+  } catch (error) {
+    sharedTransport = null;
+    post({
+      kind: 'shared-unavailable',
+      detail: error instanceof Error ? error.message : 'side-plot shared transport initialization failed'
+    });
+  }
+}
+
+function renderJob(message: QueuedRender): void {
   const started = now();
-  const rect = configure(target, message.width, message.height, message.dpr);
+  if (message.kind === 'render-shared') {
+    const transport = sharedTransport;
+    if (!transport) throw new Error('side-plot shared render arrived before transport initialization');
+    const lease = transport.acquire({ slot: message.slot, sequence: message.sequence });
+    try {
+      renderPayload(message.plot, message.width, message.height, message.dpr, lease.payload);
+    } finally {
+      lease.release();
+    }
+    post({
+      kind: 'rendered',
+      plot: message.plot,
+      elapsedMs: now() - started,
+      transport: 'shared',
+      slot: message.slot,
+      sequence: message.sequence
+    });
+    return;
+  }
+  renderPayload(message.plot, message.width, message.height, message.dpr, message.payload);
+  post({ kind: 'rendered', plot: message.plot, elapsedMs: now() - started, transport: 'transfer' });
+}
+
+function renderPayload(
+  plot: LabSidePlotId,
+  width: number,
+  height: number,
+  dpr: number,
+  payload: LabSidePlotPayload
+): void {
+  const target = targets.get(plot);
+  if (!target) return;
+  const rect = configure(target, width, height, dpr);
   const ctx = target.ctx as unknown as Ctx2D;
 
-  switch (message.payload.plot) {
+  switch (payload.plot) {
     case 'energy':
-      renderEnergyPlot(ctx, rect, message.payload.energy);
+      renderEnergyPlot(ctx, rect, payload.energy);
       break;
     case 'lyap': {
-      const history =
-        message.payload.history.length > 1 ? Array.from(message.payload.history) : [0, message.payload.value];
+      const history = payload.history.length > 1 ? Array.from(payload.history) : [0, payload.value];
       renderLyapunovConvergence(ctx, rect, history);
       break;
     }
     case 'phase':
-      renderPhasePortrait(ctx, rect, phaseSamples(message.payload.theta, message.payload.omega));
+      renderPhasePortrait(ctx, rect, phaseSamples(payload.theta, payload.omega));
       break;
     case 'poincare':
-      renderPoincareSection(ctx, rect, pairsToPoints(message.payload.points), { xLabel: 'θ₂', yLabel: 'ω₂' });
+      renderPoincareSection(ctx, rect, pairsToPoints(payload.points), { xLabel: 'θ₂', yLabel: 'ω₂' });
       break;
     case 'fft': {
-      if (message.payload.theta1Frames.length < 16) {
+      if (payload.theta1Frames.length < 16) {
         target.ctx.clearRect(0, 0, rect.width, rect.height);
         break;
       }
-      const spectrum = magnitudeSpectrum(message.payload.theta1Frames, message.payload.sampleRate);
+      const spectrum = magnitudeSpectrum(payload.theta1Frames, payload.sampleRate);
       renderSpectrum(ctx, rect, spectrum.mags, {
         log: true,
-        nyquist: message.payload.sampleRate / 2
+        nyquist: payload.sampleRate / 2
       });
       break;
     }
   }
-  post({ kind: 'rendered', plot: message.plot, elapsedMs: now() - started });
 }
 
 function post(response: LabSidePlotWorkerResponse): void {

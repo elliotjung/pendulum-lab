@@ -258,6 +258,26 @@ export interface SymmetryBreakResult {
   switched: boolean;
 }
 
+export type AutomaticDrivenBranchSwitchResult =
+  | {
+      classification: 'period-doubling';
+      distanceToCriticalMultiplier: number;
+      switched: boolean;
+      result: BranchSwitchResult;
+    }
+  | {
+      classification: 'symmetry-breaking';
+      distanceToCriticalMultiplier: number;
+      switched: boolean;
+      result: SymmetryBreakResult;
+    }
+  | {
+      classification: 'none';
+      distanceToCriticalMultiplier: number;
+      switched: false;
+      result: null;
+    };
+
 function distance(a: readonly [number, number], b: readonly [number, number]): number {
   return Math.hypot(a[0] - b[0], a[1] - b[1]);
 }
@@ -374,6 +394,54 @@ export function switchSymmetryBreaking(
     pitchforkResidual: Infinity,
     separation: 0,
     switched: false
+  };
+}
+
+/**
+ * Classify the nearest real ±1 Floquet crossing and invoke the matching branch
+ * switch. This removes the manual seed-method choice while keeping the verdict
+ * fail-closed when no multiplier is sufficiently close to a supported local
+ * bifurcation.
+ */
+export function autoSwitchDrivenBranch(
+  params: DrivenParameters,
+  periodOneOrbit: [number, number],
+  options: BranchSwitchOptions & { criticalMultiplierTolerance?: number } = {}
+): AutomaticDrivenBranchSwitchResult {
+  const tolerance = options.criticalMultiplierTolerance ?? 0.25;
+  if (!(tolerance > 0) || !Number.isFinite(tolerance))
+    throw new Error('autoSwitchDrivenBranch: criticalMultiplierTolerance must be positive and finite.');
+  const periodOne = drivenPeriodicOrbitN(params, periodOneOrbit, 1, options);
+  const real = periodOne.multipliers.filter((multiplier) => Math.abs(multiplier.im) <= 1e-7);
+  const minus = real.reduce<FloquetMultiplier | null>(
+    (best, multiplier) => (!best || Math.abs(multiplier.re + 1) < Math.abs(best.re + 1) ? multiplier : best),
+    null
+  );
+  const plus = real.reduce<FloquetMultiplier | null>(
+    (best, multiplier) => (!best || Math.abs(multiplier.re - 1) < Math.abs(best.re - 1) ? multiplier : best),
+    null
+  );
+  const minusDistance = minus ? Math.abs(minus.re + 1) : Infinity;
+  const plusDistance = plus ? Math.abs(plus.re - 1) : Infinity;
+  const nearest = Math.min(minusDistance, plusDistance);
+  if (nearest > tolerance) {
+    return { classification: 'none', distanceToCriticalMultiplier: nearest, switched: false, result: null };
+  }
+  if (minusDistance <= plusDistance) {
+    const result = switchPeriodDoubling(params, periodOne.orbit, options);
+    return {
+      classification: 'period-doubling',
+      distanceToCriticalMultiplier: minusDistance,
+      switched: result.switched,
+      result
+    };
+  }
+  const result = switchSymmetryBreaking(params, periodOne.orbit, options);
+  return {
+    classification: 'symmetry-breaking',
+    distanceToCriticalMultiplier: plusDistance,
+    switched: result.switched,
+    result
   };
 }
 

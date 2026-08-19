@@ -26,11 +26,7 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       - run: npm run audit:deps
       - name: Verify policy, types, tests, documentation, and generated evidence
         run: npm run verify
@@ -69,11 +65,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: pages-production-build
@@ -105,25 +97,21 @@ jobs:
         include:
           - project: firefox
             browser: firefox
-            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts
+            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts e2e/audience-mode.spec.ts e2e/cross-engine-resource-pressure.spec.ts
           - project: webkit
             browser: webkit
-            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts
+            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts e2e/audience-mode.spec.ts e2e/cross-engine-resource-pressure.spec.ts
           - project: mobile-chrome
             browser: chromium
-            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/mobile-research.spec.ts e2e/axe-audit.spec.ts
+            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/mobile-research.spec.ts e2e/axe-audit.spec.ts e2e/cross-engine-resource-pressure.spec.ts
           - project: mobile-webkit
             browser: webkit
-            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/trust-inspector.spec.ts
+            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/trust-inspector.spec.ts e2e/cross-engine-resource-pressure.spec.ts
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: pages-production-build

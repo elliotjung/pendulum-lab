@@ -46,6 +46,8 @@ import {
   runStudyBatch,
   saveCurrentExperiment
 } from './parity/research-workbench';
+import { ParityLifecycle } from './parity/disposable';
+import { disposeResearchWorkbenchEventBridge } from './parity/research-workbench-events';
 import { loadResearchState } from './parity/storage-sync';
 import {
   buildPaperFigureManifest,
@@ -73,12 +75,19 @@ export { currentSnapshot } from './parity/shared';
 // opens the palette directly once the chunk lands.
 export { showCommandPalette } from './parity/command-palette';
 
-let installed = false;
+export interface FeatureParityHandle {
+  dispose(): void;
+}
 
-export function installFeatureParityLayer(): void {
-  if (installed || typeof document === 'undefined') return;
-  installed = true;
+let lifecycle: ParityLifecycle | null = null;
+const featureParityHandle: FeatureParityHandle = Object.freeze({ dispose: disposeFeatureParityLayer });
+
+export function installFeatureParityLayer(): FeatureParityHandle | null {
+  if (lifecycle) return featureParityHandle;
+  if (typeof document === 'undefined') return null;
+  lifecycle = new ParityLifecycle();
   setAuditRenderHook(renderRuntimePanels);
+  lifecycle.add(() => setAuditRenderHook(null));
   installStyles();
   ensureCompatAnchors();
   loadResearchState();
@@ -108,9 +117,13 @@ export function installFeatureParityLayer(): void {
   renderRuntimePanels();
   // Refresh runtime panels only while the page is visible; a hidden tab
   // shouldn't pay a 2s DOM-write heartbeat.
-  window.setInterval(() => {
+  lifecycle.interval(() => {
     if (!document.hidden) renderRuntimePanels();
   }, 2000);
+  lifecycle.listen(window, 'pagehide', (event) => {
+    if (!event.persisted) disposeFeatureParityLayer();
+  });
+  lifecycle.add(disposeResearchWorkbenchEventBridge);
   const featureIntegrity = Object.freeze({ report: featureReport, show: showFeaturePanel });
   const aPlus = Object.freeze({ runAudit: runAPlusAudit });
   const researchWorkspace = Object.freeze({
@@ -140,4 +153,11 @@ export function installFeatureParityLayer(): void {
   // tooling is debug-only. Old global names stay as deprecated aliases.
   publishPublicApi({ research: researchWorkspace }, { PendulumResearchWorkspace: researchWorkspace });
   publishDebugApi({ featureIntegrity, aPlus }, { PendulumFeatureIntegrity: featureIntegrity, PendulumLabAPlus: aPlus });
+  return featureParityHandle;
+}
+
+/** Release parity-owned timers/listeners and allow a clean reinstall. */
+export function disposeFeatureParityLayer(): void {
+  lifecycle?.dispose();
+  lifecycle = null;
 }

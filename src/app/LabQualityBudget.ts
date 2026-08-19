@@ -19,6 +19,9 @@ interface QualityMetrics {
   renderMs: number;
   physicsMs: number;
   sidePlotMs: number;
+  longTaskCount: number;
+  longTaskMs: number;
+  longestTaskMs: number;
   stepsPerFrame: number;
   requestedStepsPerFrame: number;
 }
@@ -75,7 +78,9 @@ export class LabQualityBudget {
   private currentMode: QualityMode = 'balanced';
   private currentReason = 'startup';
   private stableFrames = 0;
+  private recoveryFrames = 0;
   private trailScale = 1;
+  private decorativeEffects = true;
 
   constructor(private readonly onModeChanged: () => void) {}
 
@@ -95,6 +100,11 @@ export class LabQualityBudget {
     return getCanvasDprCap();
   }
 
+  /** Haze, glow, and GPU post-processing are shed before backing-store DPR. */
+  get allowDecorativeEffects(): boolean {
+    return this.decorativeEffects;
+  }
+
   readMode(): QualityMode {
     const raw = dom.str('qualityMode', 'balanced');
     return raw === 'performance' || raw === 'cinematic' ? raw : 'balanced';
@@ -112,6 +122,8 @@ export class LabQualityBudget {
     if (!QUALITY_PROFILES[mode]) mode = 'balanced';
     const previous = this.currentMode;
     this.currentMode = mode;
+    if (mode === 'performance') this.decorativeEffects = false;
+    else if (reason === 'manual' || reason === 'silent') this.decorativeEffects = true;
     const profile = this.profile();
     this.currentReason = note ?? (reason === 'silent' ? `${mode} profile` : `${reason}: ${mode} profile`);
     setCanvasDprCap(profile.dprCap, this.currentReason);
@@ -144,6 +156,10 @@ export class LabQualityBudget {
       renderMs: Number.isFinite(metrics.renderMs) && metrics.renderMs >= 0 ? metrics.renderMs : 0,
       physicsMs: Number.isFinite(metrics.physicsMs) && metrics.physicsMs >= 0 ? metrics.physicsMs : 0,
       sidePlotMs: Number.isFinite(metrics.sidePlotMs) && metrics.sidePlotMs >= 0 ? metrics.sidePlotMs : 0,
+      longTaskCount:
+        Number.isSafeInteger(metrics.longTaskCount) && metrics.longTaskCount >= 0 ? metrics.longTaskCount : 0,
+      longTaskMs: Number.isFinite(metrics.longTaskMs) && metrics.longTaskMs >= 0 ? metrics.longTaskMs : 0,
+      longestTaskMs: Number.isFinite(metrics.longestTaskMs) && metrics.longestTaskMs >= 0 ? metrics.longestTaskMs : 0,
       stepsPerFrame: safeSteps,
       requestedStepsPerFrame:
         Number.isFinite(metrics.requestedStepsPerFrame) && metrics.requestedStepsPerFrame >= 1
@@ -152,13 +168,32 @@ export class LabQualityBudget {
     };
     if (!dom.bool('autoQual', true) || normalizedMetrics.sampleCount < 20) return normalizedMetrics.stepsPerFrame;
     this.stableFrames += 1;
-    if (this.stableFrames < 45) return normalizedMetrics.stepsPerFrame;
 
-    const { fps, renderMs, physicsMs, sidePlotMs, requestedStepsPerFrame } = normalizedMetrics;
+    const { fps, renderMs, physicsMs, sidePlotMs, longTaskCount, longTaskMs, longestTaskMs, requestedStepsPerFrame } =
+      normalizedMetrics;
     let stepsPerFrame = normalizedMetrics.stepsPerFrame;
     const physicsOver = physicsMs > 10 || (fps > 0 && fps < 45 && physicsMs > 7);
     const renderOver = (fps > 0 && fps < 30) || renderMs > 20;
     const sidePlotOver = sidePlotMs > 14;
+    const longTaskOver = longTaskCount > 0 && (longestTaskMs >= 50 || longTaskMs >= 90);
+    const pressured = physicsOver || renderOver || sidePlotOver || longTaskOver;
+    this.recoveryFrames = pressured ? 0 : this.recoveryFrames + 1;
+
+    // Long tasks are an input-latency signal even when frame averaging still
+    // reports 60 fps. Shed broad decorative passes before reducing canvas DPR.
+    if (longTaskOver && this.decorativeEffects && this.currentMode !== 'performance') {
+      this.decorativeEffects = false;
+      this.stableFrames = 0;
+      this.note(
+        `long tasks ${longTaskMs.toFixed(0)} ms/${longTaskCount}; effects reduced before DPR`,
+        normalizedMetrics,
+        stepsPerFrame
+      );
+      this.onModeChanged();
+      return stepsPerFrame;
+    }
+
+    if (this.stableFrames < 45) return stepsPerFrame;
 
     if (physicsOver) {
       if (stepsPerFrame > 1) stepsPerFrame = Math.max(1, Math.floor(stepsPerFrame * 0.82));
@@ -173,7 +208,12 @@ export class LabQualityBudget {
 
     if (renderOver) {
       this.trailScale = Math.max(0.5, this.trailScale * 0.85);
-      if (this.currentMode !== 'performance')
+      if (this.decorativeEffects) {
+        this.decorativeEffects = false;
+        this.stableFrames = 0;
+        this.note(`render ${renderMs.toFixed(1)} ms; effects reduced before DPR`, normalizedMetrics, stepsPerFrame);
+        this.onModeChanged();
+      } else if (this.currentMode !== 'performance')
         this.setMode('performance', 'auto', `render ${renderMs.toFixed(1)} ms; quality downgraded`);
       else
         this.note(
@@ -196,7 +236,8 @@ export class LabQualityBudget {
       return stepsPerFrame;
     }
 
-    const canUpgrade = fps > 57 && renderMs < 7 && physicsMs < 5 && sidePlotMs < 8 && this.stableFrames > 300;
+    const canUpgrade =
+      fps > 57 && renderMs < 7 && physicsMs < 5 && sidePlotMs < 8 && longTaskCount === 0 && this.recoveryFrames > 300;
     if (!canUpgrade) return stepsPerFrame;
     if (stepsPerFrame < requestedStepsPerFrame) {
       stepsPerFrame += 1;
@@ -210,6 +251,12 @@ export class LabQualityBudget {
     }
     if (this.currentMode === 'performance') this.setMode('balanced', 'auto');
     else if (this.currentMode === 'balanced') this.setMode('cinematic', 'auto');
+    else if (!this.decorativeEffects) {
+      this.decorativeEffects = true;
+      this.stableFrames = 0;
+      this.note('stable headroom recovered; decorative effects restored', normalizedMetrics, stepsPerFrame);
+      this.onModeChanged();
+    }
     return stepsPerFrame;
   }
 
@@ -234,6 +281,7 @@ export class LabQualityBudget {
 
   private note(reason: string, metrics: QualityMetrics, stepsPerFrame: number): void {
     this.currentReason = reason;
+    this.stableFrames = 0;
     recordCanvasQualityEvent({
       dprCap: getCanvasDprCap(),
       reason,
@@ -241,6 +289,8 @@ export class LabQualityBudget {
       physicsMs: metrics.physicsMs,
       renderMs: metrics.renderMs,
       sidePlotMs: metrics.sidePlotMs,
+      longTaskCount: metrics.longTaskCount,
+      longTaskMs: metrics.longTaskMs,
       stepsPerFrame
     });
     dom.setText('dQualityReason', reason);

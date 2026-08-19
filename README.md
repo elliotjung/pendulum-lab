@@ -33,23 +33,60 @@ The project landing page lives at
 cinematic overview of the engine, workspaces, frontier modules, and the
 validation ledger, with launch links back to this app.
 
+## One product, two repositories
+
+The repositories are released and reviewed as one product, but keep different
+runtime responsibilities:
+
+| Surface | Repository | Character | Runtime responsibility |
+|---|---|---|---|
+| Product entryway | `pendulum-landing` | cinematic / exploratory | static EN/KO pages, lazy Three.js double-pendulum story, lightweight trajectory console, product evidence and deep links |
+| Scientific workspace | `pendulum-lab` (this repository) | minimal / scientific | validated physics and integrators, interactive simulation, analysis workers, research exports and reviewer evidence |
+
+Both surfaces share the graphite/indigo/cyan token family, direct Lab URL
+contracts, and an immutable evidence source commit. They intentionally do not
+share control density or an animation framework. The Landing imports a small,
+allocation-free RK4 kernel derived from the same double-pendulum model; the Lab
+remains the authoritative numerical implementation and validation surface.
+
+The complete cross-repository audit and its 148 concrete findings are in
+[`documents/PRODUCT_AUDIT_2026-08-13.md`](documents/PRODUCT_AUDIT_2026-08-13.md).
+
 The Research tab is now a persisted workspace: save/switch workspace profiles,
 toggle compact density, export/import the full session, and keep GPU/scale claims
 behind `npm run validate:gpu-scale` CPU-reference gates.
 
-**Run it:** download the standalone HTML from the latest GitHub Release and
-double-click it (no server), or generate the same artifact locally with
-`npm run build:standalone` and open `standalone/index.html` — or:
+## Local development
+
+Use a supported Node.js release (`>=22 <27`) and a clean lockfile install.
+Download the standalone HTML from the latest GitHub Release and double-click it
+when a local server is not desirable, or build the modular application locally:
 
 ```bash
-npm install
-npm run dev        # live dev shell (app.html) at the printed URL
-npm test           # 1388 unit tests
-npm run evidence:summary # sync README/landing evidence numbers from reports
-npm run reproduce  # reproduce all headline claims headlessly (hash-stamped manifest)
-npm run reviewer:kit # checklist for the flagship paper/reviewer artifacts
-npm run release:status # audit npm, Zenodo DOI, GitHub release, and Pages
+npm ci
+npm run dev               # Vite serves app.html at the printed local URL
+npm run typecheck         # strict TypeScript check
+npm run test:quick        # browser-free fast regression tier
+npm test           # 1457 unit tests
+npm run build             # production GitHub Pages bundle in dist/
+npm run build:standalone  # portable standalone/index.html
+npm run verify            # policy, lint, types, tests, docs and formatting gate
 ```
+
+Scientific/release workflows are deliberately separate from the basic build:
+
+```bash
+npm run validate:reference # measured-order and energy envelopes
+npm run validate:cross     # independent SciPy DOP853 comparison
+npm run validate:sympy     # independent symbolic equation comparison
+npm run reproduce          # hash-stamped headline-claim manifest
+npm run reviewer:kit       # outside-review package checklist
+npm run release:status     # public npm, release, DOI and Pages audit
+```
+
+`npm run preview` serves the exact `dist/` output. The application uses relative
+asset URLs, so the same build works under the GitHub Pages project path. Do not
+open `app.html` over `file://`; use the standalone artifact for that case.
 
 Public ESM/type-first consumers use the version-neutral scoped name:
 
@@ -65,6 +102,21 @@ Stable subpaths are `core`, `analysis`, `research`, `browser`, `worker`, and
 For the two-repo publish path, use
 [`documents/cross-project-release.md`](documents/cross-project-release.md): sim verify →
 standalone build → landing evidence sync → landing smoke → tag/release.
+
+### GitHub Pages deployment
+
+Pages is intentionally fail-closed. The canonical app workflow is
+`.github/workflows/pages.yml`; it reacts only after **Mainline Full Validation**
+completes successfully on `main` or `master`, checks out that exact validated
+SHA, runs the full verification/library/standalone/WASM/bundle-budget gates,
+then exercises the same `dist/` artifact in desktop and mobile browser shards.
+Only the final deployment job receives `pages: write` and OIDC permission.
+
+Repository Settings → Pages → Build and deployment must use **GitHub Actions**.
+The companion Landing has its own Pages workflow and publishes an explicit
+static-file allowlist only after its static, EN/KO, browser, accessibility and
+Lighthouse gates. Pushing a local commit is therefore not enough to claim a
+deployment: confirm the corresponding Actions run and then load the public URL.
 
 ## Documentation map
 
@@ -147,7 +199,7 @@ Final publication checklist:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `standalone/index.html` (opens via `file://`; Git tracks only its SHA-256 manifest) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1388 tests across 190 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1457 tests across 202 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

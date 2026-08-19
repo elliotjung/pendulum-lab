@@ -1,107 +1,113 @@
 {
   "schemaVersion": "pendulum-bundle-budget/v1",
   "status": "pass",
+  "artifactSetSha256": "bcb2454f84af64a6d4b908ad0d17506b2be17f955e955a0158f7de062c210e63",
+  "artifactSet": {
+    "sha256": "bcb2454f84af64a6d4b908ad0d17506b2be17f955e955a0158f7de062c210e63",
+    "files": 83,
+    "bytes": 4317886
+  },
   "rows": [
     {
       "label": "initial JS raw",
-      "bytes": 139787,
+      "bytes": 171177,
       "budget": 778240,
       "ok": true,
-      "ratio": 0.17961939761513157,
-      "remainingBytes": 638453
+      "ratio": 0.21995399876644736,
+      "remainingBytes": 607063
     },
     {
       "label": "initial JS gzip",
-      "bytes": 46046,
+      "bytes": 56143,
       "budget": 215040,
       "ok": true,
-      "ratio": 0.21412760416666668,
-      "remainingBytes": 168994
+      "ratio": 0.2610816592261905,
+      "remainingBytes": 158897
     },
     {
       "label": "initial JS brotli",
-      "bytes": 39799,
+      "bytes": 47693,
       "budget": 184320,
       "ok": true,
-      "ratio": 0.21592339409722222,
-      "remainingBytes": 144521
+      "ratio": 0.25875108506944444,
+      "remainingBytes": 136627
     },
     {
       "label": "largest non-initial JS raw",
-      "bytes": 337985,
+      "bytes": 343958,
       "budget": 532480,
       "ok": true,
-      "ratio": 0.6347374549278846,
-      "remainingBytes": 194495
+      "ratio": 0.6459547776442308,
+      "remainingBytes": 188522
     },
     {
       "label": "largest non-initial JS gzip",
-      "bytes": 105575,
+      "bytes": 108098,
       "budget": 138240,
       "ok": true,
-      "ratio": 0.7637080439814815,
-      "remainingBytes": 32665
+      "ratio": 0.781958912037037,
+      "remainingBytes": 30142
     },
     {
       "label": "largest non-initial JS brotli",
-      "bytes": 86378,
+      "bytes": 88120,
       "budget": 117760,
       "ok": true,
-      "ratio": 0.7335088315217392,
-      "remainingBytes": 31382
+      "ratio": 0.7483016304347826,
+      "remainingBytes": 29640
     },
     {
       "label": "initial CSS raw",
-      "bytes": 98782,
+      "bytes": 102299,
       "budget": 143360,
       "ok": true,
-      "ratio": 0.6890485491071429,
-      "remainingBytes": 44578
+      "ratio": 0.7135811941964286,
+      "remainingBytes": 41061
     },
     {
       "label": "initial CSS gzip",
-      "bytes": 18348,
+      "bytes": 19005,
       "budget": 32768,
       "ok": true,
-      "ratio": 0.5599365234375,
-      "remainingBytes": 14420
+      "ratio": 0.579986572265625,
+      "remainingBytes": 13763
     },
     {
       "label": "initial CSS brotli",
-      "bytes": 15589,
+      "bytes": 16092,
       "budget": 26624,
       "ok": true,
-      "ratio": 0.5855243389423077,
-      "remainingBytes": 11035
+      "ratio": 0.6044170673076923,
+      "remainingBytes": 10532
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1142821,
+      "bytes": 1226685,
       "budget": 1331200,
       "ok": true,
-      "ratio": 0.8584893329326924,
-      "remainingBytes": 188379
+      "ratio": 0.9214881310096154,
+      "remainingBytes": 104515
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 335468,
+      "bytes": 359011,
       "budget": 440320,
       "ok": true,
-      "ratio": 0.7618731831395349,
-      "remainingBytes": 104852
+      "ratio": 0.8153411155523256,
+      "remainingBytes": 81309
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 265104,
+      "bytes": 284148,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.719140625,
-      "remainingBytes": 103536
+      "ratio": 0.77080078125,
+      "remainingBytes": 84492
     }
   ],
   "nonInitialJsTotal": {
-    "raw": 1014094,
-    "gzip": 336353,
-    "brotli": 286545
+    "raw": 1111467,
+    "gzip": 363666,
+    "brotli": 308908
   }
 }

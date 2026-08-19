@@ -26,14 +26,11 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       - name: Reject stale or uncommitted release evidence
         shell: bash
         run: |
+          npm run release:evidence:check
           node -e "const r=require('./reports/evidence-summary.json'); const p=r?.provenance; if(!/^[0-9a-f]{40}$/i.test(p?.sourceCommit??'')) throw new Error('evidence sourceCommit must be a full Git SHA'); if(p?.dirtyWorktree!==false) throw new Error('release evidence was generated from a dirty worktree'); const expiry=Date.parse(p?.expiresAt??''); if(!Number.isFinite(expiry)||expiry<=Date.now()) throw new Error('release evidence is expired')"
       - name: Verify immutable release coordinate
         if: startsWith(github.ref, 'refs/tags/')
@@ -48,6 +45,8 @@ jobs:
             exit 1
           }
       - run: npm run verify
+      - name: Require fresh 70%+ mutation evidence including routing lifecycle
+        run: npm run release:mutation-gate
       - name: Reject unexpected tracked rewrites before packaging
         shell: bash
         run: git diff --exit-code
@@ -55,6 +54,8 @@ jobs:
       - run: npm run build:standalone
       - run: npm run check:standalone-sync
       - run: npm run check:wasm-sync
+      - name: Build and verify the authoritative Landing demo kernel
+        run: npm run landing:kernel:build && npm run landing:kernel:check
       - run: npx playwright install --with-deps chromium
       - name: Install PDF visual-verification renderer
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
@@ -72,6 +73,8 @@ jobs:
           echo "PACKAGE_FILE=$package_file" >> "$GITHUB_ENV"
           sha256sum "$package_file" > reports/npm-package.sha256
           sha256sum "$package_file" reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt > reports/release-checksums.txt
+          sha256sum reports/landing-kernel/pendulum-demo-kernel.js reports/landing-kernel/demo-kernel-manifest.json >> reports/release-checksums.txt
+          sha256sum src/runtime/wasm/pendulum-kernel.wasm reports/wasm-sync.json >> reports/release-checksums.txt
       - name: Install the packed tarball in a clean consumer project
         shell: bash
         run: |
@@ -110,7 +113,7 @@ jobs:
         shell: bash
         run: |
           source_ref="${GITHUB_REF}"
-          npm run release:verify-attestations -- --artifact "${PACKAGE_FILE}" --source-ref "${source_ref}"
+          npm run release:verify-attestations -- --artifact "${PACKAGE_FILE}" --source-ref "${source_ref}" --source-commit "${GITHUB_SHA}"
       - name: Attach supply-chain artifacts to release
         if: startsWith(github.ref, 'refs/tags/')
         env:
@@ -131,6 +134,8 @@ jobs:
             reports/release-checksums.txt reports/sbom.cdx.json reports/attestation-verification.json \
             reports/release-one-page.pdf reports/portfolio-korean.pdf reports/portfolio-korean-pdf-validation.json \
             reports/demo-narrated-ko.mp4 reports/demo-narrated-ko.vtt reports/demo-narrated-ko.md \
+            reports/landing-kernel/pendulum-demo-kernel.js reports/landing-kernel/demo-kernel-manifest.json \
+            src/runtime/wasm/pendulum-kernel.wasm reports/wasm-sync.json \
             --clobber
       - name: Preserve the exact npm tarball consumed by the publish job
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -164,6 +169,9 @@ jobs:
             reports/sbom.cdx.json
             reports/attestation-verification.json
             reports/bundle-budget.*
+            reports/landing-kernel/
+            reports/wasm-sync.json
+            src/runtime/wasm/pendulum-kernel.wasm
             *.tgz
       - name: Dispatch and wait for the landing release gate
         if: startsWith(github.ref, 'refs/tags/')
@@ -183,8 +191,14 @@ jobs:
           fi
           evidence_sha256="$(sha256sum reports/evidence-summary.json | cut -d' ' -f1)"
           evidence_base64="$(base64 -w0 reports/evidence-summary.json)"
+          kernel_base64="$(base64 -w0 reports/landing-kernel/pendulum-demo-kernel.js)"
+          kernel_sha256="$(sha256sum reports/landing-kernel/pendulum-demo-kernel.js | cut -d' ' -f1)"
+          kernel_manifest_base64="$(base64 -w0 reports/landing-kernel/demo-kernel-manifest.json)"
+          kernel_manifest_sha256="$(sha256sum reports/landing-kernel/demo-kernel-manifest.json | cut -d' ' -f1)"
           EVIDENCE_BASE64="$evidence_base64" EVIDENCE_SHA256="$evidence_sha256" \
-            EVIDENCE_SOURCE_COMMIT="$evidence_source_commit" node -e "const fs=require('fs'); fs.writeFileSync('/tmp/landing-dispatch.json', JSON.stringify({event_type:'pendulum-release',client_payload:{source_commit:process.env.EVIDENCE_SOURCE_COMMIT,release_commit:process.env.GITHUB_SHA,tag:process.env.GITHUB_REF_NAME,orchestrator_run_id:process.env.GITHUB_RUN_ID,evidence_sha256:process.env.EVIDENCE_SHA256,evidence_base64:process.env.EVIDENCE_BASE64}}))"
+            EVIDENCE_SOURCE_COMMIT="$evidence_source_commit" KERNEL_BASE64="$kernel_base64" \
+            KERNEL_SHA256="$kernel_sha256" KERNEL_MANIFEST_BASE64="$kernel_manifest_base64" \
+            KERNEL_MANIFEST_SHA256="$kernel_manifest_sha256" node -e "const fs=require('fs'); fs.writeFileSync('/tmp/landing-dispatch.json', JSON.stringify({event_type:'pendulum-release',client_payload:{source_commit:process.env.EVIDENCE_SOURCE_COMMIT,release_commit:process.env.GITHUB_SHA,tag:process.env.GITHUB_REF_NAME,orchestrator_run_id:process.env.GITHUB_RUN_ID,evidence_sha256:process.env.EVIDENCE_SHA256,evidence_base64:process.env.EVIDENCE_BASE64,kernel_sha256:process.env.KERNEL_SHA256,kernel_base64:process.env.KERNEL_BASE64,kernel_manifest_sha256:process.env.KERNEL_MANIFEST_SHA256,kernel_manifest_base64:process.env.KERNEL_MANIFEST_BASE64}}))"
           curl --fail-with-body --retry 3 --retry-all-errors --connect-timeout 10 --max-time 60 \
             -X POST \
             -H "Accept: application/vnd.github+json" \
@@ -223,6 +237,30 @@ jobs:
             [ "$attempt" -lt 180 ] || { echo "landing release run $run_id timed out" >&2; exit 1; }
             sleep 10
           done
+      - name: Verify the deployed two-repository product and write its atomic manifest
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          npm run release:manifest --
+          --artifact "${PACKAGE_FILE}"
+          --source-ref "${GITHUB_REF}"
+          --tag "${GITHUB_REF_NAME}"
+          --attempts 30
+          --retry-delay-ms 10000
+      - name: Attach the verified product manifest to the coordinated draft release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${GITHUB_REF_NAME}" reports/release-evidence-manifest.json --clobber
+      - name: Preserve the coordinated product manifest
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coordinated-product-manifest
+          path: reports/release-evidence-manifest.json
+          if-no-files-found: error
+          retention-days: 90
       - name: Publish Zenodo record and synchronize DOI when configured
         if: startsWith(github.ref, 'refs/tags/')
         env:
@@ -284,11 +322,9 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: ./.github/actions/setup-node-project
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
       - name: Verify and publish the JSR coordinate
         shell: bash
         run: |

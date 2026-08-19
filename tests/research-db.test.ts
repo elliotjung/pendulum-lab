@@ -3,6 +3,7 @@ import { IDBFactory } from 'fake-indexeddb';
 import {
   migrateFromLocalStorageV2,
   ResearchDb,
+  ResearchDbRecoveryRequiredError,
   RESEARCH_DB_SCHEMA_VERSION,
   RESEARCH_DB_STORES,
   validateResearchDbArchive,
@@ -192,7 +193,7 @@ describe('localStorage v2 -> IndexedDB migration', () => {
 });
 
 describe('corruption recovery', () => {
-  it('recreates the database when stores are missing', async () => {
+  it('preserves a malformed database until recovery is explicitly approved', async () => {
     const factory = new IDBFactory();
     const name = 'recovery-db';
     // Create a database at the right version but with no object stores.
@@ -208,8 +209,17 @@ describe('corruption recovery', () => {
       request.onerror = () => reject(request.error);
     });
     const db = new ResearchDb(factory, name);
-    await db.open();
+    await expect(db.open()).rejects.toBeInstanceOf(ResearchDbRecoveryRequiredError);
+    expect(db.recoveryRequired()).toBe(true);
+    expect(db.recoveries).toBe(0);
+
+    const recovery = await db.exportRecoverableArchive();
+    expect(recovery.recovery.complete).toBe(false);
+    expect(recovery.recovery.missingStores).toEqual([...RESEARCH_DB_STORES]);
+
+    await db.rebuildAfterCorruption();
     expect(db.recoveries).toBe(1);
+    expect(db.recoveryRequired()).toBe(false);
     await db.put('experiments', 'after-recovery', { ok: true });
     expect(await db.count('experiments')).toBe(1);
   });

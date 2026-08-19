@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   buildTrailInstances,
   orderedTrailPoints,
@@ -34,4 +34,92 @@ describe('WebGL2 batched trail renderer', () => {
     const canvas = { width: 1, height: 1, getContext: () => null };
     expect(tryCreateWebGLTrailRenderer(canvas)).toBeNull();
   });
+
+  it('stops drawing on context loss and rebuilds resources after restoration', () => {
+    const listeners = new Map<string, EventListener>();
+    const gl = fakeWebGl2();
+    const canvas = {
+      width: 320,
+      height: 180,
+      getContext: () => gl,
+      addEventListener: (type: string, listener: EventListener) => listeners.set(type, listener),
+      removeEventListener: (type: string) => listeners.delete(type)
+    };
+    const renderer = tryCreateWebGLTrailRenderer(canvas);
+    expect(renderer).not.toBeNull();
+    const preventDefault = vi.fn();
+    listeners.get('webglcontextlost')?.({ preventDefault } as unknown as Event);
+    expect(preventDefault).toHaveBeenCalledOnce();
+    expect(renderer!.isContextLost()).toBe(true);
+    expect(
+      renderer!.draw([0, 0, 1, 1], {
+        width: 320,
+        height: 180,
+        lineWidth: 1,
+        oldColor: [1, 1, 1, 0.1],
+        newColor: [1, 1, 1, 1]
+      })
+    ).toBe(false);
+    listeners.get('webglcontextrestored')?.(new Event('webglcontextrestored'));
+    expect(renderer!.isContextLost()).toBe(false);
+    renderer!.dispose();
+    expect(listeners.size).toBe(0);
+  });
 });
+
+function fakeWebGl2(): WebGL2RenderingContext {
+  const noop = () => undefined;
+  return {
+    VERTEX_SHADER: 1,
+    FRAGMENT_SHADER: 2,
+    COMPILE_STATUS: 3,
+    LINK_STATUS: 4,
+    ARRAY_BUFFER: 5,
+    STATIC_DRAW: 6,
+    DYNAMIC_DRAW: 7,
+    FLOAT: 8,
+    COLOR_BUFFER_BIT: 9,
+    BLEND: 10,
+    SRC_ALPHA: 11,
+    ONE_MINUS_SRC_ALPHA: 12,
+    TRIANGLES: 13,
+    ONE: 14,
+    NO_ERROR: 0,
+    createShader: () => ({}),
+    shaderSource: noop,
+    compileShader: noop,
+    getShaderParameter: () => true,
+    getShaderInfoLog: () => '',
+    createProgram: () => ({}),
+    attachShader: noop,
+    linkProgram: noop,
+    getProgramParameter: () => true,
+    getProgramInfoLog: () => '',
+    deleteShader: noop,
+    createVertexArray: () => ({}),
+    createBuffer: () => ({}),
+    bindVertexArray: noop,
+    bindBuffer: noop,
+    bufferData: noop,
+    enableVertexAttribArray: noop,
+    vertexAttribPointer: noop,
+    vertexAttribDivisor: noop,
+    getAttribLocation: () => 0,
+    getUniformLocation: () => ({}),
+    viewport: noop,
+    clearColor: noop,
+    clear: noop,
+    enable: noop,
+    blendFunc: noop,
+    useProgram: noop,
+    uniform2f: noop,
+    uniform1f: noop,
+    uniform4fv: noop,
+    drawArraysInstanced: noop,
+    deleteBuffer: noop,
+    deleteVertexArray: noop,
+    deleteProgram: noop,
+    isContextLost: () => false,
+    getError: () => 0
+  } as unknown as WebGL2RenderingContext;
+}

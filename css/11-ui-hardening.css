@@ -114,6 +114,59 @@ select option {
   z-index: 11000;
 }
 
+.control-guidance,
+.control-validation {
+  display: block;
+  margin: 5px 0 8px;
+  color: var(--workbench-text-muted, #aab3c5);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.control-validation {
+  color: var(--workbench-red, #ff8290);
+  border-inline-start: 3px solid currentColor;
+  padding-inline-start: 8px;
+}
+
+[aria-invalid='true'] {
+  border-color: var(--workbench-red, #ff8290) !important;
+}
+
+.pwa-trust-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 10px;
+}
+
+.beginner-research-hint {
+  display: none;
+}
+
+body.audience-beginner .beginner-research-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-block: 8px 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--workbench-border-strong, rgba(205, 214, 245, 0.18));
+  border-radius: 10px;
+  color: var(--workbench-text-muted, #bac2d2);
+  font-size: 11px;
+}
+
+.beginner-research-hint strong {
+  color: var(--workbench-text, #f1f3f8);
+}
+
+.beginner-research-hint button {
+  min-height: 36px;
+  margin-inline-start: auto;
+}
+
 .trust-drawer {
   height: var(--ui-viewport-height, 100dvh);
   max-height: 100dvh;
@@ -229,6 +282,98 @@ body .audience-select select:hover {
   min-height: 42px;
 }
 
+/* Quiet scientific feedback: state changes stay legible without competing
+   with the simulation itself. Transform-only motion avoids layout/paint churn. */
+@keyframes ui-menu-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(-3px, 2px, 0) scale(0.992);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes ui-panel-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rail-logo .pendulum-logo-svg,
+  .rail-menu-button,
+  .rail-menu-button .rail-icon-svg,
+  .rail-submenu .tab,
+  .rail-submenu .dev-tool-btn.rail-action,
+  .pbtn,
+  .btnrow button,
+  .workflow-strip button,
+  .panel-toggle,
+  .audience-choice {
+    transition:
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .rail-section.open .rail-submenu {
+    animation: ui-menu-arrive 170ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .tabpanel.active {
+    animation: ui-panel-arrive 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .rail-logo:hover .pendulum-logo-svg {
+    transform: rotate(2deg) scale(1.035);
+  }
+
+  .rail-menu-button:hover,
+  .rail-menu-button[aria-expanded='true'] {
+    transform: translateX(1px);
+  }
+
+  .rail-menu-button:hover .rail-icon-svg,
+  .rail-menu-button[aria-expanded='true'] .rail-icon-svg,
+  .rail-submenu .tab:hover .rail-icon-svg {
+    transform: translateY(-1px) scale(1.045);
+  }
+
+  .rail-submenu .tab:hover,
+  .rail-submenu .dev-tool-btn.rail-action:hover,
+  .pbtn:hover,
+  .btnrow button:hover,
+  .workflow-strip button:hover,
+  .panel-toggle:hover,
+  .audience-choice:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.rail-logo:active,
+.rail-menu-button:active,
+.rail-submenu .tab:active,
+.rail-submenu .dev-tool-btn.rail-action:active,
+.pbtn:active,
+.btnrow button:active,
+.workflow-strip button:active,
+.panel-toggle:active,
+.audience-choice:active {
+  transform: translateY(1px) scale(0.985);
+}
+
 .presets,
 .plots-row,
 .diag-row,
@@ -250,6 +395,10 @@ body .audience-select select:hover {
   .pbtn,
   .btnrow button,
   .workflow-strip button,
+  .rail-logo,
+  .rail-menu-button,
+  .rail-submenu .tab,
+  .rail-submenu .dev-tool-btn,
   .trust-toggle,
   .trust-drawer-tabs [role='tab'],
   .acc > summary {
@@ -294,6 +443,16 @@ body .audience-select select:hover {
   .plots-row,
   .diag-row {
     scrollbar-width: thin;
+  }
+
+  /* A narrow CSS viewport also represents browser zoom, even with a mouse. */
+  .rail-logo,
+  .rail-menu-button,
+  .rail-submenu .tab,
+  .rail-submenu .dev-tool-btn,
+  .workflow-strip button {
+    min-width: 44px;
+    min-height: 44px;
   }
 }
 
@@ -423,6 +582,24 @@ body .audience-select select:hover {
     transition-duration: 0.001ms !important;
   }
 
+  .rail-section.open .rail-submenu,
+  .tabpanel.active {
+    animation: none !important;
+  }
+
+  :where(
+    .rail-logo,
+    .rail-menu-button,
+    .rail-submenu .tab,
+    .rail-submenu .dev-tool-btn.rail-action,
+    .pbtn,
+    .btnrow button,
+    .workflow-strip button,
+    .panel-toggle,
+    .audience-choice
+  ) {
+    transform: none !important;
+  }
 }
 
 @media (forced-colors: active) {
@@ -454,11 +631,29 @@ body .audience-select select:hover {
 
   [aria-selected='true'],
   [aria-pressed='true'],
+  [aria-current='step'],
   .rail-section.open > .rail-menu-button {
     outline: 3px solid Highlight;
     outline-offset: -3px;
   }
 
+  :where(button, select, input, textarea, summary, [role='button'], [role='tab']):focus-visible {
+    outline: 3px solid Highlight !important;
+    outline-offset: 3px !important;
+  }
+
+  .control-validation,
+  [aria-invalid='true'] {
+    color: MarkText;
+    background: Mark;
+    border-color: MarkText !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
 }
 
 @media print {

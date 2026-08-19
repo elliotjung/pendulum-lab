@@ -15,8 +15,7 @@ import { RenderScheduler } from './RenderScheduler';
 import { SimulationClock, type SimulationTimingMode } from './SimulationClock';
 import { LabRecording } from './LabRecording';
 import { LabControls, readLabConfig, readLabStepsPerFrame } from './LabControls';
-import { compactViewport, LabQualityBudget, type QualityMode } from './LabQualityBudget';
-import { webGLTrailRequested } from '../render/webglTrailRenderer';
+import { LabQualityBudget } from './LabQualityBudget';
 import {
   mainCanvasWorkerRequested,
   tryCreateMainCanvasWorkerClient,
@@ -27,20 +26,13 @@ import { stateStore } from '../state/StateStore';
 import { legacyApp } from '../runtime/legacyCompat';
 import { canonicalLabSnapshot, labConfigFromSnapshot } from './LabSnapshotRestore';
 import { bobsFromState, mainCanvasContext } from './LabRenderHelpers';
+import { LabHistory } from './LabHistory';
+import { uiMessage } from './uiLocale';
+import { labChainLength, labMainFrameStyle } from './LabRenderPolicy';
+import type { LabDiagnostics } from './LabDiagnostics';
+import { LabCanvasLifecycle } from './LabCanvasLifecycle';
 
-/**
- * Full modern Lab tab: the simulation/render loop plus every side plot
- * (energy/drift, Lyapunov convergence, phase portrait, Poincaré section, FFT),
- * reading the on-page controls and driving the real lab canvases. When mounted
- * it sets `App.__modernLabActive` so the legacy lab render (guarded in
- * `Render.all`) stands down, pauses the legacy stepping, and mirrors its state
- * into `window.App` so the legacy chrome (diagnostics, hash, export) stays
- * coherent. This is the Stage-2 takeover that precedes deleting the legacy lab.
- *
- * Collaborators own the non-loop responsibilities: `LabSidePlotCoordinator`
- * (worker payloads + fallback drawing), `LabEnsembleController` (perturbed
- * copies), and `presentLabChrome` (header/diagnostics DOM writes).
- */
+/** Simulation orchestration; rendering policy, lifecycle, plots, and chrome are collaborators. */
 
 const SIDE_PLOT_COUNT = 5;
 
@@ -50,8 +42,7 @@ export class LabApp {
   private mainCanvasWorker: MainCanvasWorkerClient | null = null;
   private poincare = new PoincareAccumulator(4000, 'both');
   private lyap!: LyapunovEstimator;
-  private theta1Frames: number[] = [];
-  private energy = { time: [] as number[], total: [] as number[], drift: [] as number[] };
+  private readonly history = new LabHistory();
   private rafId: number | null = null;
   private running = false;
   private lastTime = 0;
@@ -61,12 +52,15 @@ export class LabApp {
   private spf = 6;
   private requestedSpf = 6;
   private lastAdvancedSteps = 0;
+  private lastTimingDebtSeconds = 0;
+  private droppedSimulationSeconds = 0;
   private phaseAxis = '1';
   private readonly simulationClock = new SimulationClock();
   private readonly renderScheduler = new RenderScheduler();
   private readonly diagnosticsScheduler = new DiagnosticsScheduler(SIDE_PLOT_COUNT);
   private readonly controls = new LabControls();
   private readonly quality = new LabQualityBudget(() => {
+    this.renderer?.dispose();
     this.renderer = null;
     // Quality profiles carry the user-facing Poincaré memory budget.
     this.poincare.setCapacity(this.quality.effectivePoincareCap());
@@ -76,35 +70,36 @@ export class LabApp {
   private readonly ensemble = new LabEnsembleController();
   private rhs: ((s: Float64Array, o: Float64Array) => void) | null = null;
 
-  // Side plots pull their payloads lazily so histories stay owned here.
-  private readonly sidePlots = new LabSidePlotCoordinator({
-    energy: () => ({
-      time: Float32Array.from(this.energy.time),
-      total: Float32Array.from(this.energy.total),
-      drift: Float32Array.from(this.energy.drift)
-    }),
-    lyapunov: () => ({ history: Float32Array.from(this.lyap.history()), value: this.lyap.value() }),
-    phase: () => this.phaseSeriesForAxis(),
-    poincarePairs: () => this.poincare.toFloat32Pairs(),
-    fft: () => ({ theta1Frames: Float32Array.from(this.theta1Frames), sampleRate: 1 / (this.sim.config.dt * this.spf) })
-  });
+  private readonly sidePlots = new LabSidePlotCoordinator(
+    {
+      energy: () => this.history.energy(),
+      lyapunov: () => ({ history: Float32Array.from(this.lyap.history()), value: this.lyap.value() }),
+      phase: () => this.history.phase(this.phaseAxis),
+      poincarePairs: () => this.poincare.toFloat32Pairs(),
+      fft: () => ({ theta1Frames: this.history.thetaFrames(), sampleRate: 1 / (this.sim.config.dt * this.spf) })
+    },
+    () => this.canvasLifecycle?.refresh()
+  );
 
-  // Trajectory recording for export + scrubber/replay.
   private readonly recording = new LabRecording(4000);
   private scrubIndex = -1; // -1 = live; >=0 = showing a recorded frame
   private readonly bobsScratch: BobPosition[] = [];
 
-  // Phase portrait history as a fixed ring to avoid hundreds of object writes.
-  private readonly phaseCap = 800;
-  private phaseT1 = new Float64Array(this.phaseCap);
-  private phaseW1 = new Float64Array(this.phaseCap);
-  private phaseT2 = new Float64Array(this.phaseCap);
-  private phaseW2 = new Float64Array(this.phaseCap);
-  private phaseIndex = 0;
-  private phaseCount = 0;
-
   // Audio sonification of the angular velocities.
   private audio = new AudioSonifier();
+  private canvasLifecycle: LabCanvasLifecycle | null = null;
+  private disposed = false;
+  private readonly onVisibilityChange = (): void => {
+    if (!this.running) return;
+    if (document.hidden && !dom.bool('backgroundSim', false)) {
+      if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+      this.simulationClock.reset(false);
+      return;
+    }
+    this.simulationClock.reset(false);
+    this.scheduleFrame();
+  };
 
   /** Read the current control values into a LabConfig. */
   readConfig(): LabConfig {
@@ -128,6 +123,8 @@ export class LabApp {
     this.lastDrift = 0;
     this.lastPhysicsMs = 0;
     this.lastAdvancedSteps = 0;
+    this.lastTimingDebtSeconds = 0;
+    this.droppedSimulationSeconds = 0;
     const activeConfig = this.sim.config;
     const dim = activeConfig.system === 'triple' ? 6 : 4;
     const rhs = (s: Float64Array, o: Float64Array) =>
@@ -139,10 +136,7 @@ export class LabApp {
     // Event-refined section crossings: root-found on the flow itself rather
     // than linearly interpolated between steps.
     this.poincare.setRefiner(rhs, activeConfig.dt);
-    this.phaseIndex = 0;
-    this.phaseCount = 0;
-    this.theta1Frames = [];
-    this.energy = { time: [], total: [], drift: [] };
+    this.history.clear();
     this.recording.clear();
     this.scrubIndex = -1;
     this.simulationClock.reset();
@@ -161,36 +155,9 @@ export class LabApp {
     this.renderScheduler.reset();
   }
 
-  private push<T>(arr: T[], value: T, cap: number): void {
-    arr.push(value);
-    if (arr.length > cap) arr.splice(0, arr.length - cap);
-  }
-
-  private pushPhase(state: ArrayLike<number>, w1Index: number, w2Index: number): void {
-    const i = this.phaseIndex;
-    this.phaseT1[i] = state[0] ?? 0;
-    this.phaseW1[i] = state[w1Index] ?? 0;
-    this.phaseT2[i] = state[1] ?? 0;
-    this.phaseW2[i] = state[w2Index] ?? 0;
-    this.phaseIndex = (i + 1) % this.phaseCap;
-    this.phaseCount = Math.min(this.phaseCap, this.phaseCount + 1);
-  }
-
-  private phaseSeriesForAxis(): { theta: Float32Array; omega: Float32Array } {
-    const useArm2 = this.phaseAxis === '2';
-    const theta = new Float32Array(this.phaseCount);
-    const omega = new Float32Array(this.phaseCount);
-    const start = this.phaseCount === this.phaseCap ? this.phaseIndex : 0;
-    for (let i = 0; i < this.phaseCount; i += 1) {
-      const j = (start + i) % this.phaseCap;
-      theta[i] = useArm2 ? this.phaseT2[j]! : this.phaseT1[j]!;
-      omega[i] = useArm2 ? this.phaseW2[j]! : this.phaseW1[j]!;
-    }
-    return { theta, omega };
-  }
-
   /** One animation frame: advance spf steps, update histories, render everything. */
   frame(): void {
+    if (document.hidden && !dom.bool('backgroundSim', false)) return;
     // Scrub/replay mode: render a recorded frame instead of advancing.
     if (this.scrubIndex >= 0) {
       this.renderScrubFrame();
@@ -217,18 +184,22 @@ export class LabApp {
       onStep: (state) => {
         this.poincare.push(state);
         this.lyap.step(state);
-        this.pushPhase(state, w1Index, w2Index);
+        this.history.pushStep(state, w1Index, w2Index);
       },
       afterSteps: (stepsAdvanced) => this.ensemble.step(stepsAdvanced, sim.config, this.rhs)
     });
     this.lastAdvancedSteps = frame.stepsAdvanced;
+    this.lastTimingDebtSeconds = frame.timingDebtSeconds;
+    this.droppedSimulationSeconds = frame.droppedSimulationSeconds;
     const { state, energy, drift, bobs } = frame;
     this.lastPhysicsMs = frame.physicsMs;
-    this.push(this.theta1Frames, state[0]!, 1024);
-    this.push(this.energy.time, frame.time, 600);
-    this.push(this.energy.total, energy, 600);
-    this.push(this.energy.drift, drift, 600);
-    this.recording.push(frame.time, state);
+    // Frame cadence may exceed physics cadence on high-refresh displays. Do
+    // not duplicate samples when the accumulator advances zero fixed steps;
+    // FFT/history/export timelines must represent physical observations.
+    if (frame.stepsAdvanced > 0) {
+      this.history.pushFrame(frame.time, state, energy, drift);
+      this.recording.push(frame.time, state);
+    }
 
     this.frameCount += 1;
     const diag = this.diagnosticsScheduler.shouldRun(this.frameCount, this.sidePlotInterval());
@@ -238,10 +209,9 @@ export class LabApp {
     this.lastTime = frame.time;
     this.lastDrift = drift;
 
-    // Skip all drawing while the Lab tab is hidden: the simulation keeps
-    // advancing (so the trajectory is continuous when you return) but we don't
-    // pay for rendering canvases nobody is looking at — which keeps the active
-    // analysis tab smooth.
+    // Skip all drawing while the Lab tab is hidden. Physics continuation is
+    // intentional so analysis workspaces observe one continuous trajectory;
+    // canvas and DOM rendering remain suspended to keep the active tab smooth.
     const labVisible = dom.tabActive('tab-lab');
     if (!labVisible) return;
 
@@ -252,14 +222,14 @@ export class LabApp {
         mainWorker.draw({
           bobs,
           ensembleBobs: this.ensemble.tipPositionsMeters(sim.config),
-          style: this.mainFrameStyle()
+          style: labMainFrameStyle(this.sim.config, this.quality, this.frameCount)
         });
       } else {
         const renderer = !this.renderer || this.frameCount % 30 === 0 ? this.ensureRenderer() : this.renderer;
         if (!renderer) return;
         renderer.draw(bobs, {
           ensembleTips: this.ensemble.tips(sim.config, renderer),
-          ...this.mainFrameStyle()
+          ...labMainFrameStyle(this.sim.config, this.quality, this.frameCount)
         });
       }
     });
@@ -284,27 +254,17 @@ export class LabApp {
     this.maybeAutoAdjustQuality();
   }
 
-  /** New-segment trail colour for the current trail-mode (incremental trail). */
-  private trailColor(): string {
-    const mode = dom.str('trailMode', 'rainbow');
-    if (mode === 'rainbow') return `hsl(${(this.frameCount * 2) % 360}, 90%, 60%)`; // cycles hue over time
-    const fixed: Record<string, string> = {
-      heat: '#ff7a1a',
-      ice: '#7fdfff',
-      plasma: '#f0c419',
-      white: '#ffffff',
-      green: '#3bff7a'
-    };
-    return fixed[mode] ?? '#56b4e9';
-  }
-
   private ensureRenderer(): LabRenderer | null {
     if (this.mainCanvasWorker?.isActive()) return null;
     const main = mainCanvasContext();
     if (!main) return null;
     const size = this.renderer?.size();
     if (!this.renderer) {
-      this.renderer = new LabRenderer(main.ctx, { width: main.width, height: main.height });
+      this.renderer = new LabRenderer(main.ctx, {
+        width: main.width,
+        height: main.height,
+        worldRadius: labChainLength(this.sim.config)
+      });
       this.renderer.clear();
     } else if (size?.width !== main.width || size?.height !== main.height) {
       this.renderer.resize({ width: main.width, height: main.height });
@@ -315,6 +275,8 @@ export class LabApp {
   private configureMainSurface(): void {
     if (this.mainCanvasWorker?.isActive()) {
       this.mainCanvasWorker.clear();
+      this.mainCanvasWorker.resize();
+      this.renderer?.dispose();
       this.renderer = null;
       return;
     }
@@ -325,7 +287,10 @@ export class LabApp {
         dprCap: this.quality.dprCap,
         onFallback: () => {
           this.mainCanvasWorker = null;
+          this.renderer?.dispose();
           this.renderer = null;
+          this.controls.rebindMainCanvasDrag();
+          this.canvasLifecycle?.refresh();
         }
       });
       if (client) {
@@ -337,37 +302,27 @@ export class LabApp {
 
     this.mainCanvasWorker = null;
     const main = mainCanvasContext();
-    this.renderer = main ? new LabRenderer(main.ctx, { width: main.width, height: main.height }) : null;
+    this.renderer = main
+      ? new LabRenderer(main.ctx, {
+          width: main.width,
+          height: main.height,
+          worldRadius: labChainLength(this.sim.config)
+        })
+      : null;
     this.renderer?.clear();
   }
 
-  private mainFrameStyle(): {
-    fade: number;
-    trailColor: string;
-    trailMode: string;
-    trailLength: number;
-    glow: boolean;
-    trailBackend: 'canvas2d' | 'webgl2';
-  } {
-    return {
-      fade: this.readFade(),
-      trailColor: this.trailColor(),
-      trailMode: dom.str('trailMode', 'rainbow'),
-      trailLength: this.quality.effectiveTrailLength(),
-      glow: dom.bool('glowMode') && this.quality.profile().glow,
-      // An explicit URL opt-in plus the highest quality tier keeps the
-      // experimental GPU compositor away from ordinary/classroom runs.
-      trailBackend: this.quality.mode === 'cinematic' && webGLTrailRequested() ? 'webgl2' : 'canvas2d'
-    };
-  }
-
   private maybeAutoAdjustQuality(): void {
+    const longTasks = this.renderScheduler.longTaskSnapshot();
     this.spf = this.quality.maybeAutoAdjust({
       sampleCount: this.renderScheduler.sampleCount(),
       fps: this.renderScheduler.fps,
       renderMs: this.renderScheduler.renderMs,
       physicsMs: this.lastPhysicsMs,
       sidePlotMs: this.sidePlots.renderMs(),
+      longTaskCount: longTasks.count,
+      longTaskMs: longTasks.totalDurationMs,
+      longestTaskMs: longTasks.maxDurationMs,
       stepsPerFrame: this.spf,
       requestedStepsPerFrame: this.requestedSpf
     });
@@ -375,19 +330,6 @@ export class LabApp {
 
   private timingMode(): SimulationTimingMode {
     return dom.str('timeMode', 'wall-clock') === 'deterministic' ? 'deterministic' : 'wall-clock';
-  }
-
-  /**
-   * Per-frame fade alpha, which sets how long the incremental trail persists.
-   * Long-exposure / glow override it; otherwise it derives from the trail-length
-   * control (a segment stays visible for roughly `trailLen/10` frames).
-   */
-  private readFade(): number {
-    const compact = compactViewport();
-    if (this.quality.mode === 'performance') return compact ? 0.22 : 0.16;
-    if (dom.bool('longExpose')) return compact ? 0.018 : 0.008;
-    if (dom.bool('glowMode')) return compact ? 0.07 : 0.04;
-    return compact ? 0.18 : 0.12;
   }
 
   private sidePlotInterval(): number {
@@ -402,7 +344,7 @@ export class LabApp {
       this.mainCanvasWorker.draw({
         bobs,
         ensembleBobs: [],
-        style: { ...this.mainFrameStyle(), skipTrail: true }
+        style: { ...labMainFrameStyle(this.sim.config, this.quality, this.frameCount), skipTrail: true }
       });
     } else {
       this.ensureRenderer()?.draw(bobs, { skipTrail: true });
@@ -415,9 +357,11 @@ export class LabApp {
     w1Index: number,
     w2Index: number
   ): void {
+    const longTasks = this.renderScheduler.longTaskSnapshot();
     presentLabChrome({
       ...snapshot,
       initialEnergy: this.sim.initialEnergy,
+      damping: this.sim.config.gamma,
       w1Index,
       w2Index,
       fps: this.renderScheduler.fps,
@@ -430,6 +374,12 @@ export class LabApp {
       backend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
       lambdaMax: this.lyap.value(),
       poincare: { size: this.poincare.size, ...this.poincare.policy() },
+      timingDebtSeconds: this.lastTimingDebtSeconds,
+      droppedSimulationSeconds: this.droppedSimulationSeconds,
+      longTaskCount: longTasks.count,
+      longTaskMs: longTasks.totalDurationMs,
+      phasePoints: this.history.phasePoints,
+      spectrumSamples: this.history.spectrumSamples,
       modeLabel:
         this.scrubIndex >= 0
           ? 'replay'
@@ -440,30 +390,8 @@ export class LabApp {
   }
 
   /** Live diagnostics for tooling/tests. */
-  diagnostics(): {
-    time: number;
-    drift: number;
-    poincarePoints: number;
-    lambdaMax: number;
-    fps: number;
-    physicsMsPerFrame: number;
-    renderMsPerFrame: number;
-    sidePlotMsPerFrame: number;
-    trailPoints: number;
-    qualityMode: QualityMode;
-    qualityReason: string;
-    dprCap: number;
-    stepsPerFrame: number;
-    stepsAdvanced: number;
-    timingMode: SimulationTimingMode;
-    requestedStepsPerFrame: number;
-    trailQualityScale: number;
-    sidePlotBackend: 'offscreen' | 'main';
-    mainCanvasBackend: 'offscreen' | 'main';
-    mainTrailBackend: 'webgl2' | 'canvas2d' | 'worker';
-    pendingUiTasks: number;
-    canvasQualityEvents: readonly ReturnType<typeof canvasQualityDiagnostics>[number][];
-  } {
+  diagnostics(): LabDiagnostics {
+    const longTasks = this.renderScheduler.longTaskSnapshot();
     return {
       time: this.lastTime,
       drift: this.lastDrift,
@@ -488,6 +416,13 @@ export class LabApp {
         ? 'worker'
         : (this.renderer?.activeTrailBackend() ?? 'canvas2d'),
       pendingUiTasks: this.diagnosticsScheduler.pendingCount(),
+      longTaskCount: longTasks.count,
+      longTaskMs: longTasks.totalDurationMs,
+      longestTaskMs: longTasks.maxDurationMs,
+      timingDebtSeconds: this.lastTimingDebtSeconds,
+      droppedSimulationSeconds: this.droppedSimulationSeconds,
+      backgroundPolicy: dom.bool('backgroundSim', false) ? 'continue-when-hidden' : 'pause-when-hidden',
+      decorativeEffects: this.quality.allowDecorativeEffects,
       canvasQualityEvents: canvasQualityDiagnostics()
     };
   }
@@ -499,21 +434,28 @@ export class LabApp {
       this.frame();
     } catch (error) {
       this.running = false;
-      console.error('Pendulum Lab simulation frame failed; playback was paused.', error);
-      document.dispatchEvent(new CustomEvent('pendulum:simulation-error', { detail: { error } }));
+      const message = uiMessage('simulationError');
+      console.error(message, error);
+      const toast = (window as Window & { toast?: unknown }).toast;
+      if (typeof toast === 'function') toast(message, 5000);
+      document.dispatchEvent(new CustomEvent('pendulum:simulation-error', { detail: { error, message } }));
       return;
     }
     this.scheduleFrame();
   };
 
   private scheduleFrame(): void {
-    if (this.running && this.rafId === null) this.rafId = requestAnimationFrame(this.loop);
+    if (this.running && this.rafId === null && (!document.hidden || dom.bool('backgroundSim', false)))
+      this.rafId = requestAnimationFrame(this.loop);
   }
 
   start(): void {
     if (this.running) return;
+    if (this.disposed) throw new Error('A disposed LabApp cannot be restarted');
     this.build();
     this.wireControls();
+    this.canvasLifecycle ??= new LabCanvasLifecycle(() => this.handleCanvasResize(), this.onVisibilityChange);
+    this.canvasLifecycle.install();
     this.running = true;
     this.renderer?.clear();
     this.mainCanvasWorker?.clear();
@@ -526,6 +468,25 @@ export class LabApp {
     this.rafId = null;
     const app = (window as Window & { App?: Record<string, unknown> }).App;
     if (app) app.__modernLabActive = false;
+  }
+
+  /** Release every browser resource owned by this Lab mount. */
+  dispose(): void {
+    if (this.disposed) return;
+    this.stop();
+    this.disposed = true;
+    this.mainCanvasWorker?.dispose();
+    this.mainCanvasWorker = null;
+    this.sidePlots.dispose();
+    this.renderer?.dispose();
+    this.renderer = null;
+    this.audio.dispose();
+    this.controls.dispose();
+    this.diagnosticsScheduler.dispose();
+    this.renderScheduler.dispose();
+    this.canvasLifecycle?.dispose();
+    this.canvasLifecycle = null;
+    this.simulationClock.reset();
   }
 
   isRunning(): boolean {
@@ -551,7 +512,7 @@ export class LabApp {
   }
 
   /** Replace the initial angles (used by drag-to-set) and restart. */
-  setAngles(angles: number[]): void {
+  setAngles(angles: number[], resume = this.running): void {
     const ids = this.sim.config.system === 'triple' ? ['th1', 'th2', 'th3'] : ['th1', 'th2'];
     if (angles.length < ids.length || ids.some((_, index) => !Number.isFinite(angles[index]))) return;
     ids.forEach((id, i) => {
@@ -562,6 +523,26 @@ export class LabApp {
       if (out) out.textContent = angles[i]!.toFixed(3);
     });
     this.reset();
+    if (!resume) {
+      this.running = false;
+      if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+  }
+
+  private pauseForDrag(): boolean {
+    const wasRunning = this.running;
+    this.running = false;
+    if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+    this.rafId = null;
+    this.simulationClock.reset(false);
+    return wasRunning;
+  }
+
+  private finishDrag(resume: boolean): void {
+    this.running = resume;
+    this.simulationClock.reset(false);
+    if (resume) this.scheduleFrame();
   }
 
   private wireControls(): void {
@@ -578,6 +559,10 @@ export class LabApp {
       clearPoincare: () => this.poincare.clear(),
       toggleRunning: () => {
         this.running = !this.running;
+        // Never carry wall-clock debt across an explicit pause. The next
+        // frame uses the deterministic fallback quantum instead of a catch-up
+        // burst from time spent paused.
+        this.simulationClock.reset(false);
         if (this.running) this.scheduleFrame();
         else if (this.rafId !== null) {
           cancelAnimationFrame(this.rafId);
@@ -600,7 +585,8 @@ export class LabApp {
             runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift, {
               mode: legacyApp()?.runMode ?? stateStore.snapshot().mode,
               stepsPerFrame: this.requestedSpf,
-              seed: Number.isFinite(seed) ? seed : null
+              seed: Number.isFinite(seed) ? seed : null,
+              locale: document.documentElement.lang === 'ko' ? 'ko' : 'en'
             }),
             null,
             2
@@ -634,9 +620,25 @@ export class LabApp {
           const state = this.sim.stateView();
           return this.sim.config.system === 'triple' ? [state[0]!, state[1]!, state[2]!] : [state[0]!, state[1]!];
         },
-        setAngles: (angles) => this.setAngles(angles)
+        setAngles: (angles, resume) => this.setAngles(angles, resume),
+        beginDrag: () => this.pauseForDrag(),
+        endDrag: (resume) => this.finishDrag(resume)
       }
     });
+  }
+
+  private handleCanvasResize(): void {
+    if (this.disposed || !this.sim) return;
+    if (this.mainCanvasWorker?.isActive()) this.mainCanvasWorker.resize();
+    else {
+      const renderer = this.ensureRenderer();
+      if (renderer)
+        renderer.draw(this.sim.bobPositionsInto(this.bobsScratch), {
+          ...labMainFrameStyle(this.sim.config, this.quality, this.frameCount),
+          skipTrail: true
+        });
+    }
+    for (let plot = 0; plot < SIDE_PLOT_COUNT; plot += 1) this.sidePlots.drawSlice(plot);
   }
 }
 

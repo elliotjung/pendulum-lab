@@ -50,6 +50,7 @@ export type {
   WebgpuFtleFieldPromotion
 } from '../runtime/gpuChaosPromotion';
 export {
+  NCHAIN_GPU_PROMOTION_SCOPE,
   buildNChainJacobianTape,
   nChainVariationalCpuOracle,
   promotedNChainVariational,

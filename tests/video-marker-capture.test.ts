@@ -21,6 +21,10 @@ function markerFrame(): ImageData {
   return { width, height, data, colorSpace: 'srgb' };
 }
 
+function emptyFrame(): ImageData {
+  return { width: 16, height: 16, data: new Uint8ClampedArray(16 * 16 * 4), colorSpace: 'srgb' };
+}
+
 function fixture(getUserMedia?: VideoMarkerCaptureDependencies['getUserMedia']) {
   const stop = vi.fn();
   const stream = { getTracks: () => [{ stop }] } as unknown as MediaStream;
@@ -59,7 +63,7 @@ function fixture(getUserMedia?: VideoMarkerCaptureDependencies['getUserMedia']) 
     },
     dependencies
   });
-  return { controller, dependencies, video, stop };
+  return { controller, dependencies, video, stop, context, canvas };
 }
 
 describe('VideoMarkerCaptureController', () => {
@@ -111,5 +115,23 @@ describe('VideoMarkerCaptureController', () => {
   it('requires at least two valid samples for a parameter-estimation observation', () => {
     const { controller } = fixture();
     expect(() => controller.observation()).toThrow(/At least two/);
+  });
+
+  it('announces marker loss, automatically reacquires, and exports calibration quality metadata', async () => {
+    const { controller, context } = fixture();
+    await controller.start();
+    vi.mocked(context.getImageData).mockReturnValue(emptyFrame());
+    for (let index = 0; index < 8; index += 1) expect(controller.captureFrame(1016 + index)).toBeNull();
+    expect(controller.state).toBe('tracking-lost');
+
+    vi.mocked(context.getImageData).mockReturnValue(markerFrame());
+    expect(controller.captureFrame(1100)).not.toBeNull();
+    expect(controller.state).toBe('streaming');
+    expect(controller.metadata().quality).toMatchObject({
+      trackedFrames: 1,
+      missedFrames: 8,
+      lossEvents: 1,
+      recoveryEvents: 1
+    });
   });
 });

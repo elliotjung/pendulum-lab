@@ -1,24 +1,38 @@
+import { LongTaskMonitor, type LongTaskSnapshot } from './LongTaskMonitor';
+
+const FRAME_WINDOW = 30;
+
 export class RenderScheduler {
   private lastFrameTs = 0;
-  private readonly frameTimes: number[] = [];
+  private readonly frameTimes = new Float64Array(FRAME_WINDOW);
+  private frameIndex = 0;
+  private frameCount = 0;
 
   fps = 0;
   renderMs = 0;
 
+  constructor(private readonly longTasks = new LongTaskMonitor()) {}
+
   reset(): void {
     this.lastFrameTs = 0;
-    this.frameTimes.length = 0;
+    this.frameTimes.fill(0);
+    this.frameIndex = 0;
+    this.frameCount = 0;
     this.fps = 0;
     this.renderMs = 0;
+    this.longTasks.reset();
   }
 
   markFrame(timestamp = now()): number {
     if (this.lastFrameTs) {
-      this.frameTimes.push(timestamp - this.lastFrameTs);
-      if (this.frameTimes.length > 30) this.frameTimes.shift();
+      this.frameTimes[this.frameIndex] = timestamp - this.lastFrameTs;
+      this.frameIndex = (this.frameIndex + 1) % FRAME_WINDOW;
+      this.frameCount = Math.min(FRAME_WINDOW, this.frameCount + 1);
     }
     this.lastFrameTs = timestamp;
-    const avg = this.frameTimes.reduce((a, b) => a + b, 0) / (this.frameTimes.length || 1);
+    let total = 0;
+    for (let i = 0; i < this.frameCount; i += 1) total += this.frameTimes[i]!;
+    const avg = total / (this.frameCount || 1);
     this.fps = avg > 0 ? 1000 / avg : 0;
     return this.fps;
   }
@@ -33,7 +47,15 @@ export class RenderScheduler {
   }
 
   sampleCount(): number {
-    return this.frameTimes.length;
+    return this.frameCount;
+  }
+
+  longTaskSnapshot(): LongTaskSnapshot {
+    return this.longTasks.snapshot();
+  }
+
+  dispose(): void {
+    this.longTasks.dispose();
   }
 }
 

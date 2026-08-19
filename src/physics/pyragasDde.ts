@@ -32,6 +32,37 @@ export interface PyragasDdeResult {
   caveat: string;
 }
 
+export interface PyragasDtRefinementResult {
+  levels: Array<{
+    dt: number;
+    finalState: readonly [number, number];
+    differenceFromPrevious: number | null;
+    observedOrder: number | null;
+  }>;
+  converged: boolean;
+  tolerance: number;
+  caveat: string;
+}
+
+export interface PyragasDelayBoundaryRefinementOptions {
+  dt: number;
+  duration: number;
+  delayCandidates: readonly number[];
+  refinements?: number;
+  tailFraction?: number;
+  rmsThreshold?: number;
+}
+
+export interface PyragasDelayBoundaryRefinementResult {
+  levels: Array<{
+    dt: number;
+    boundaryDelay: number | null;
+    samples: Array<{ delay: number; tailRms: number; stable: boolean }>;
+  }>;
+  converged: boolean;
+  caveat: string;
+}
+
 export function pyragasFeedback(current: number, delayed: number, gain: number): number {
   if (![current, delayed, gain].every(Number.isFinite)) throw new Error('Pyragas feedback inputs must be finite.');
   return gain * (delayed - current);
@@ -166,5 +197,90 @@ export function integratePyragasPendulumDde(
     method: 'method-of-steps-rk4-linear-history',
     caveat:
       'Fixed-step explicit method of steps with linear delay interpolation; delay must be at least dt. Refine dt and the history function before quoting event times or stability boundaries.'
+  };
+}
+
+/** Run a deterministic dt-halving study and report empirical convergence. */
+export function pyragasDtRefinementStudy(
+  initialState: readonly [number, number],
+  parameters: PyragasPendulumParameters,
+  options: Omit<PyragasDdeOptions, 'dt'> & { dt: number; refinements?: number; tolerance?: number }
+): PyragasDtRefinementResult {
+  const refinements = options.refinements ?? 3;
+  const tolerance = options.tolerance ?? 1e-6;
+  if (!Number.isInteger(refinements) || refinements < 1 || refinements > 10)
+    throw new Error('Pyragas refinements must be an integer in [1, 10].');
+  if (!(tolerance > 0) || !Number.isFinite(tolerance))
+    throw new Error('Pyragas refinement tolerance must be positive and finite.');
+  const levels: PyragasDtRefinementResult['levels'] = [];
+  let previousDifference: number | null = null;
+  for (let level = 0; level <= refinements; level += 1) {
+    const dt = options.dt / 2 ** level;
+    const result = integratePyragasPendulumDde(initialState, parameters, { ...options, dt });
+    const previous = levels.at(-1)?.finalState;
+    const difference = previous
+      ? Math.max(Math.abs(result.finalState[0] - previous[0]), Math.abs(result.finalState[1] - previous[1]))
+      : null;
+    const observedOrder =
+      difference !== null && difference > 0 && previousDifference !== null && previousDifference > 0
+        ? Math.log2(previousDifference / difference)
+        : null;
+    levels.push({ dt, finalState: result.finalState, differenceFromPrevious: difference, observedOrder });
+    if (difference !== null) previousDifference = difference;
+  }
+  return {
+    levels,
+    converged: (levels.at(-1)?.differenceFromPrevious ?? Infinity) <= tolerance,
+    tolerance,
+    caveat:
+      'Convergence is based on final-state dt halving for one supplied history. Repeat across histories and inspect the full trajectory before claiming a delay-stability boundary.'
+  };
+}
+
+/**
+ * Repeat a delay sweep on progressively halved time steps. A candidate is
+ * classified by the theta RMS over the recorded tail; the returned boundary is
+ * evidence with an explicit resolution gate, not an analytic stability proof.
+ */
+export function pyragasDelayStabilityRefinementStudy(
+  initialState: readonly [number, number],
+  parameters: Omit<PyragasPendulumParameters, 'delay'>,
+  options: PyragasDelayBoundaryRefinementOptions
+): PyragasDelayBoundaryRefinementResult {
+  const refinements = options.refinements ?? 2;
+  const tailFraction = options.tailFraction ?? 0.25;
+  const rmsThreshold = options.rmsThreshold ?? 0.05;
+  if (!Number.isInteger(refinements) || refinements < 1 || refinements > 8)
+    throw new Error('Pyragas boundary refinements must be an integer in [1, 8].');
+  if (!(tailFraction > 0 && tailFraction <= 1)) throw new Error('Pyragas tailFraction must be in (0, 1].');
+  if (!(rmsThreshold >= 0) || !Number.isFinite(rmsThreshold))
+    throw new Error('Pyragas rmsThreshold must be finite and non-negative.');
+  const delays = [...options.delayCandidates];
+  if (delays.length < 2 || delays.some((delay) => !(delay > 0) || !Number.isFinite(delay)))
+    throw new Error('Pyragas delayCandidates must contain at least two positive finite delays.');
+  delays.sort((left, right) => left - right);
+  const levels: PyragasDelayBoundaryRefinementResult['levels'] = [];
+  for (let level = 0; level <= refinements; level += 1) {
+    const dt = options.dt / 2 ** level;
+    const samples = delays.map((delay) => {
+      const result = integratePyragasPendulumDde(
+        initialState,
+        { ...parameters, delay },
+        { dt, duration: options.duration }
+      );
+      const start = Math.max(0, Math.floor(result.states.length * (1 - tailFraction)));
+      const tail = result.states.slice(start);
+      const tailRms = Math.sqrt(tail.reduce((sum, state) => sum + state[0] ** 2, 0) / Math.max(1, tail.length));
+      return { delay, tailRms, stable: tailRms <= rmsThreshold };
+    });
+    levels.push({ dt, boundaryDelay: samples.find((sample) => sample.stable)?.delay ?? null, samples });
+  }
+  const last = levels.at(-1)?.boundaryDelay;
+  const previous = levels.at(-2)?.boundaryDelay;
+  return {
+    levels,
+    converged: last !== undefined && last === previous,
+    caveat:
+      'Boundary classification uses a finite tail-RMS threshold on a discrete delay grid. Refine dt, delay spacing, duration, and history before interpreting the boundary physically.'
   };
 }

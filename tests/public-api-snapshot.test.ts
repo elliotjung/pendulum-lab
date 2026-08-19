@@ -104,6 +104,7 @@ describe('public grouped API surface', () => {
       'jacobianChain',
       'jacobianDriven',
       'jacobianSphericalChain',
+      'jacobianTrustForSpec',
       'kapitzaEffectivePotential',
       'kapitzaInvertedFrequency',
       'kapitzaInvertedStable',
@@ -212,6 +213,7 @@ describe('public grouped API surface', () => {
       'PERIODIC_ORBIT_DATABASE_SCHEMA',
       'analyzeSpectrumConsistency',
       'autoBatchedStandardError',
+      'autoSwitchDrivenBranch',
       'basinEntropy',
       'batchedStandardError',
       'bifurcationDiagram',
@@ -239,6 +241,7 @@ describe('public grouped API surface', () => {
       'covariantLyapunovVectors',
       'coveringTransitionMatrix1D',
       'createDrivenStroboscopicMap',
+      'cycleExpansionConvergence',
       'cycleExpansionObservable',
       'cyclicOrbitDistance',
       'delayEmbed',
@@ -254,6 +257,7 @@ describe('public grouped API surface', () => {
       'extractFtleRidges',
       'findPeriodicOrbit',
       'finiteTimeLyapunov',
+      'finiteTimeLyapunovReport',
       'fliIndicator',
       'floquetAnalysis',
       'floquetLinearSpectrum',
@@ -291,6 +295,7 @@ describe('public grouped API surface', () => {
       'ogyControlSignal',
       'perronEigenvalue',
       'planarMapRotationNumber',
+      'poincareResultCsv',
       'poincareSection',
       'poincareSectionPreset',
       'realEigenvector2x2',
@@ -425,6 +430,7 @@ describe('public grouped API surface', () => {
       'reviewerKitCommands',
       'runChaosJob',
       'runCliBatch',
+      'runResearchTraining',
       'scaleCanvasToPngDataUrl',
       'sha256Hex',
       'sobolIndices',
@@ -443,13 +449,15 @@ describe('public grouped API surface', () => {
       'validateCliBatchSpec',
       'validateDoi',
       'validateNotebook',
-      'validateProvenanceGraph'
+      'validateProvenanceGraph',
+      'validateResearchTrainingProtocol'
     ]);
   });
 
   it('keeps the experimental namespace explicit', () => {
     expect(namespaceKeys(experimental)).toEqual([
       'Float64RingBuffer',
+      'NCHAIN_GPU_PROMOTION_SCOPE',
       'buildNChainJacobianTape',
       'buildNChainJacobianTapeWasm',
       'compareEnsembleStatistics',

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildPeriodicOrbitDatabase,
+  cycleExpansionConvergence,
   cycleExpansionObservable,
   cyclicOrbitDistance
 } from '../src/chaos/periodicOrbitDatabase';
@@ -58,5 +59,18 @@ describe('periodic-orbit database and cycle expansion', () => {
     expect(a.records.map((record) => record.id)).toEqual(b.records.map((record) => record.id));
     expect(() => buildPeriodicOrbitDatabase(logistic, [], [1])).toThrow(/seed/);
     expect(() => cycleExpansionObservable([], () => 0)).toThrow(/at least one/);
+  });
+
+  it('exports max-period stability and coefficient-decay evidence', () => {
+    const db = buildPeriodicOrbitDatabase(logistic, seeds, [1, 2]);
+    const convergence = cycleExpansionConvergence(db.records, (point) => point[0]!, {
+      minPeriod: 1,
+      maxPeriod: 2,
+      tolerance: 1
+    });
+    expect(convergence.levels.map((level) => level.maxPeriod)).toEqual([1, 2]);
+    expect(convergence.levels[1]!.changeFromPrevious).not.toBeNull();
+    expect(Number.isFinite(convergence.levels[1]!.coefficientTailNorm)).toBe(true);
+    expect(convergence.converged).toBe(true);
   });
 });

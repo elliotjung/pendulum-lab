@@ -1,4 +1,5 @@
 import type { StateVector } from './types';
+import { assertDensePhysicsDimension, assertFiniteScalar, assertFiniteVector, assertOutputVector } from './errors';
 
 /**
  * Phase-reduced oscillator networks for Kuramoto/Huygens synchronization.
@@ -32,9 +33,12 @@ export interface PhaseOrderParameter {
 
 function validateNetwork(parameters: KuramotoNetworkParameters, stateLength: number): number {
   const n = parameters.naturalFrequencies.length;
-  if (n === 0) throw new Error('Kuramoto network requires at least one oscillator.');
+  assertDensePhysicsDimension(n, 'naturalFrequencies.length', 'KuramotoNetworkParameters');
   if (stateLength !== n) throw new Error(`Kuramoto phase length ${stateLength} does not match frequency length ${n}.`);
   if (!Number.isFinite(parameters.coupling)) throw new Error('Kuramoto coupling must be finite.');
+  if (parameters.phaseLag !== undefined && !Number.isFinite(parameters.phaseLag)) {
+    throw new Error('Kuramoto phaseLag must be finite.');
+  }
   if (parameters.adjacency && parameters.adjacency.length !== n * n) {
     throw new Error(`Kuramoto adjacency must contain N^2=${n * n} entries.`);
   }
@@ -58,7 +62,8 @@ export function rhsKuramoto(
   out: StateVector
 ): StateVector {
   const n = validateNetwork(parameters, phases.length);
-  if (out.length < n) throw new Error(`rhsKuramoto output length ${out.length} is shorter than N=${n}.`);
+  assertFiniteVector(phases, n, 'rhsKuramoto');
+  assertOutputVector(out, n, 'rhsKuramoto');
   const alpha = parameters.phaseLag ?? 0;
   const adjacency = parameters.adjacency;
   for (let i = 0; i < n; i += 1) {
@@ -103,8 +108,9 @@ export function kuramotoLocalOrderParameters(
   adjacency: ArrayLike<number>
 ): PhaseOrderParameter[] {
   const n = phases.length;
-  if (n === 0) throw new Error('kuramotoLocalOrderParameters requires at least one phase.');
+  assertDensePhysicsDimension(n, 'phases.length', 'kuramotoLocalOrderParameters');
   if (adjacency.length !== n * n) throw new Error(`local-order adjacency must contain N^2=${n * n} entries.`);
+  assertFiniteVector(phases, n, 'kuramotoLocalOrderParameters');
   const result: PhaseOrderParameter[] = [];
   for (let i = 0; i < n; i += 1) {
     let real = 0;
@@ -138,7 +144,8 @@ export function kuramotoLocalOrderParameters(
 
 /** Symmetric non-local ring: each node couples to `radius` neighbours on each side. */
 export function nonlocalRingAdjacency(n: number, radius: number): Float64Array {
-  if (!Number.isInteger(n) || n < 2) throw new Error('nonlocalRingAdjacency: n must be an integer >= 2.');
+  assertDensePhysicsDimension(n, 'n', 'nonlocalRingAdjacency');
+  if (n < 2) throw new Error('nonlocalRingAdjacency: n must be an integer >= 2.');
   if (!Number.isInteger(radius) || radius < 1 || radius > Math.floor((n - 1) / 2)) {
     throw new Error(`nonlocalRingAdjacency: radius must be in [1, ${Math.floor((n - 1) / 2)}].`);
   }
@@ -182,6 +189,21 @@ export interface HuygensPhasePairParameters {
   phaseLag?: number;
 }
 
+export const HUYGENS_PHASE_REDUCTION_METADATA: Readonly<{
+  modelClass: string;
+  state: string;
+  includes: readonly string[];
+  excludes: readonly string[];
+  claim: string;
+}> = Object.freeze({
+  modelClass: 'phase-reduced coupled oscillators',
+  state: '[phase_1, phase_2]',
+  includes: ['natural-frequency mismatch', 'sinusoidal phase coupling', 'optional phase lag'],
+  excludes: ['pendulum amplitude', 'escapement contact', 'support recoil', 'impact impulse', 'gear friction'],
+  claim:
+    'Synchronization/locking model only. It is not a mechanical Huygens clock or escapement simulation; contact mechanics require a separate hybrid model.'
+});
+
 /**
  * Two-clock Huygens phase reduction.  For alpha=0 the phase difference obeys
  * Delta' = omega_2-omega_1 - 2K sin(Delta), giving a locked state whenever
@@ -194,6 +216,10 @@ export function rhsHuygensPhasePair(
 ): StateVector {
   if (phases.length !== 2 || out.length < 2)
     throw new Error('rhsHuygensPhasePair requires two phases and a length-2 output.');
+  assertFiniteScalar(parameters.frequencies[0], 'frequencies[0]', 'rhsHuygensPhasePair');
+  assertFiniteScalar(parameters.frequencies[1], 'frequencies[1]', 'rhsHuygensPhasePair');
+  assertFiniteScalar(parameters.coupling, 'coupling', 'rhsHuygensPhasePair');
+  if (parameters.phaseLag !== undefined) assertFiniteScalar(parameters.phaseLag, 'phaseLag', 'rhsHuygensPhasePair');
   return rhsKuramoto(
     phases,
     {
@@ -208,6 +234,10 @@ export function rhsHuygensPhasePair(
 
 /** Stable locked phase difference theta_2-theta_1 for the zero-lag Huygens pair. */
 export function huygensLockedPhaseDifference(parameters: HuygensPhasePairParameters): number | null {
+  assertFiniteScalar(parameters.frequencies[0], 'frequencies[0]', 'huygensLockedPhaseDifference');
+  assertFiniteScalar(parameters.frequencies[1], 'frequencies[1]', 'huygensLockedPhaseDifference');
+  if (parameters.phaseLag !== undefined)
+    assertFiniteScalar(parameters.phaseLag, 'phaseLag', 'huygensLockedPhaseDifference');
   if (!(parameters.coupling > 0) || !Number.isFinite(parameters.coupling)) return null;
   const ratio = (parameters.frequencies[1] - parameters.frequencies[0]) / (2 * parameters.coupling);
   return Math.abs(ratio) <= 1 ? Math.asin(ratio) : null;

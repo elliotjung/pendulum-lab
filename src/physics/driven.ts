@@ -1,5 +1,13 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import {
+  PhysicsEvaluationError,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
 
 /**
  * Sinusoidally driven, damped single pendulum — the canonical low-dimensional
@@ -31,13 +39,36 @@ export const DAMPED_DRIVEN_CHAOS_PRESET: DrivenParameters = Object.freeze({
   driveFrequency: 2 / 3
 });
 
+function validateDrivenParameters(parameters: DrivenParameters, operation: string): void {
+  assertNonNegativeFinite(parameters.g, 'g', operation);
+  assertPositiveFinite(parameters.length, 'length', operation);
+  assertNonNegativeFinite(parameters.damping, 'damping', operation);
+  assertFiniteScalar(parameters.driveAmplitude, 'driveAmplitude', operation);
+  assertFiniteScalar(parameters.driveFrequency, 'driveFrequency', operation);
+}
+
+function assertFiniteDrivenResult(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the drive parameters.'
+    });
+  }
+}
+
 export function rhsDriven(state: ArrayLike<number>, parameters: DrivenParameters, out: StateVector): StateVector {
+  assertFiniteVector(state, 3, 'rhsDriven');
+  assertOutputVector(out, 3, 'rhsDriven');
+  validateDrivenParameters(parameters, 'rhsDriven');
   const theta = Number(state[0] ?? 0);
   const omega = Number(state[1] ?? 0);
   const phi = Number(state[2] ?? 0);
   const { g, length, damping, driveAmplitude, driveFrequency } = parameters;
+  const acceleration = -(g / length) * Math.sin(theta) - damping * omega + driveAmplitude * Math.cos(phi);
+  assertFiniteDrivenResult([omega, acceleration, driveFrequency], 'rhsDriven');
   out[0] = omega;
-  out[1] = -(g / length) * Math.sin(theta) - damping * omega + driveAmplitude * Math.cos(phi);
+  out[1] = acceleration;
   out[2] = driveFrequency;
   return out;
 }
@@ -48,10 +79,14 @@ export function rhsDriven(state: ArrayLike<number>, parameters: DrivenParameters
  * diagnostic of energy injection and dissipation, not as a conservation check.
  */
 export function energyDriven(state: ArrayLike<number>, parameters: DrivenParameters): EnergyBreakdown {
+  assertFiniteVector(state, 2, 'energyDriven');
+  validateDrivenParameters(parameters, 'energyDriven');
   const theta = Number(state[0] ?? 0);
   const omega = Number(state[1] ?? 0);
   const { g, length } = parameters;
   const KE = 0.5 * length * length * omega * omega;
   const PE = -g * length * Math.cos(theta);
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteDrivenResult([KE, PE, total], 'energyDriven');
+  return { total, KE, PE };
 }

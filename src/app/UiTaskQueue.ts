@@ -78,7 +78,38 @@ function defaultIdleScheduler(callback: IdleLikeCallback, options?: { timeout: n
   const global = globalThis as typeof globalThis & {
     requestIdleCallback?: IdleLikeScheduler;
     setTimeout?: (handler: () => void, timeout?: number) => unknown;
+    scheduler?: {
+      postTask(handler: () => void, options: { priority: 'background' }): Promise<unknown>;
+    };
   };
+  if (typeof global.scheduler?.postTask === 'function') {
+    let ran = false;
+    void global.scheduler
+      .postTask(
+        () => {
+          ran = true;
+          callback();
+        },
+        { priority: 'background' }
+      )
+      .catch(() => {
+        // scheduler.postTask is still optional/experimental. If the browser
+        // declines the task before executing it, retain the idle/timer path.
+        if (!ran) scheduleIdleFallback(global, callback, options);
+      });
+    return undefined;
+  }
+  return scheduleIdleFallback(global, callback, options);
+}
+
+function scheduleIdleFallback(
+  global: typeof globalThis & {
+    requestIdleCallback?: IdleLikeScheduler;
+    setTimeout?: (handler: () => void, timeout?: number) => unknown;
+  },
+  callback: IdleLikeCallback,
+  options?: { timeout: number }
+): number | void {
   if (typeof global.requestIdleCallback === 'function') return global.requestIdleCallback(callback, options);
   if (typeof global.setTimeout === 'function') {
     global.setTimeout(() => callback(), 0);

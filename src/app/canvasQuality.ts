@@ -18,6 +18,8 @@ export interface CanvasQualityEvent {
   physicsMs?: number;
   renderMs?: number;
   sidePlotMs?: number;
+  longTaskCount?: number;
+  longTaskMs?: number;
   stepsPerFrame?: number;
 }
 

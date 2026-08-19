@@ -23,7 +23,8 @@ export interface NewtonStepRecord {
   stepNorm: number;
 }
 
-export type ImplicitMidpointFailureReason = 'non-finite-input' | 'singular-newton-matrix' | 'max-iterations';
+export type ImplicitMidpointFailureReason =
+  'non-finite-input' | 'non-finite-rhs' | 'non-finite-jacobian' | 'singular-newton-matrix' | 'max-iterations';
 
 export interface ImplicitMidpointReport {
   /** Whether the residual fell below tolerance within the iteration budget. */
@@ -44,6 +45,12 @@ export interface ImplicitMidpointReport {
   failureReason?: ImplicitMidpointFailureReason;
   /** The accepted next state y_{n+1}. */
   state: Float64Array;
+  /** Last Newton iterate; differs from `state` on fail-closed reports. */
+  attemptedState: Float64Array;
+  /** Stable code and retry guidance for UI/library consumers. */
+  errorCode?: 'IMPLICIT_SOLVER_DID_NOT_CONVERGE' | 'NON_FINITE_INPUT' | 'SINGULAR_NEWTON_MATRIX';
+  retryable: boolean;
+  suggestedDt?: number;
 }
 
 export interface ImplicitMidpointNewtonOptions {
@@ -103,7 +110,17 @@ export function implicitMidpointNewton(
   let finalResidual = Infinity;
   let failureReason: ImplicitMidpointFailureReason | undefined;
 
-  if (![dt, tolerance, maxIterations].every(Number.isFinite) || n === 0) {
+  const finiteState =
+    Number.isSafeInteger(n) && n > 0 && Array.from({ length: n }, (_, i) => Number(state[i])).every(Number.isFinite);
+  if (
+    !finiteState ||
+    !Number.isFinite(dt) ||
+    dt === 0 ||
+    !(tolerance > 0) ||
+    !Number.isFinite(tolerance) ||
+    !Number.isSafeInteger(maxIterations) ||
+    maxIterations < 1
+  ) {
     failureReason = 'non-finite-input';
     return {
       converged,
@@ -114,13 +131,23 @@ export function implicitMidpointNewton(
       conditionNumber: Infinity,
       conditionEstimate: Infinity,
       failureReason,
-      state: y
+      state: y0,
+      attemptedState: y,
+      errorCode: 'NON_FINITE_INPUT',
+      retryable: false
     };
   }
 
   for (let iter = 1; iter <= maxIterations; iter += 1) {
     for (let i = 0; i < n; i += 1) mid[i] = 0.5 * ((y0[i] ?? 0) + (y[i] ?? 0));
     rhs(mid, fmid);
+    let finiteRhs = true;
+    for (let i = 0; i < n; i += 1) finiteRhs &&= Number.isFinite(fmid[i]);
+    if (!finiteRhs) {
+      failureReason = 'non-finite-rhs';
+      finalResidual = Infinity;
+      break;
+    }
     let residual = 0;
     for (let i = 0; i < n; i += 1) {
       g[i] = (y[i] ?? 0) - (y0[i] ?? 0) - dt * (fmid[i] ?? 0);
@@ -139,6 +166,12 @@ export function implicitMidpointNewton(
     }
     // Newton matrix M = I - (dt/2)·J(mid); solve M·Δ = -G.
     jacobian(mid, jac);
+    let finiteJacobian = true;
+    for (let i = 0; i < n * n; i += 1) finiteJacobian &&= Number.isFinite(jac[i]);
+    if (!finiteJacobian) {
+      failureReason = 'non-finite-jacobian';
+      break;
+    }
     for (let r = 0; r < n; r += 1) {
       for (let c = 0; c < n; c += 1) {
         newtonMatrix[r * n + c] = (r === c ? 1 : 0) - 0.5 * dt * (jac[r * n + c] ?? 0);
@@ -161,13 +194,29 @@ export function implicitMidpointNewton(
 
   // Condition number of the Newton matrix at the accepted iterate.
   for (let i = 0; i < n; i += 1) mid[i] = 0.5 * ((y0[i] ?? 0) + (y[i] ?? 0));
+  let conditionNumber = Infinity;
   jacobian(mid, jac);
-  for (let r = 0; r < n; r += 1) {
-    for (let c = 0; c < n; c += 1) {
-      newtonMatrix[r * n + c] = (r === c ? 1 : 0) - 0.5 * dt * (jac[r * n + c] ?? 0);
+  let conditionJacobianFinite = true;
+  for (let i = 0; i < n * n; i += 1) conditionJacobianFinite &&= Number.isFinite(jac[i]);
+  if (conditionJacobianFinite) {
+    for (let r = 0; r < n; r += 1) {
+      for (let c = 0; c < n; c += 1) {
+        newtonMatrix[r * n + c] = (r === c ? 1 : 0) - 0.5 * dt * (jac[r * n + c] ?? 0);
+      }
     }
+    conditionNumber = newtonMatrixConditionNumber(newtonMatrix, n);
   }
-  const conditionNumber = newtonMatrixConditionNumber(newtonMatrix, n);
+
+  const errorCode = converged
+    ? undefined
+    : failureReason === 'singular-newton-matrix'
+      ? 'SINGULAR_NEWTON_MATRIX'
+      : failureReason === 'non-finite-input' ||
+          failureReason === 'non-finite-rhs' ||
+          failureReason === 'non-finite-jacobian'
+        ? 'NON_FINITE_INPUT'
+        : 'IMPLICIT_SOLVER_DID_NOT_CONVERGE';
+  const retryable = !converged && (failureReason === 'max-iterations' || failureReason === 'singular-newton-matrix');
 
   return {
     converged,
@@ -178,6 +227,10 @@ export function implicitMidpointNewton(
     conditionNumber,
     conditionEstimate: conditionNumber,
     ...(failureReason ? { failureReason } : {}),
-    state: y
+    state: converged ? new Float64Array(y) : y0,
+    attemptedState: new Float64Array(y),
+    ...(errorCode ? { errorCode } : {}),
+    retryable,
+    ...(retryable ? { suggestedDt: Math.abs(dt) / 2 } : {})
   };
 }

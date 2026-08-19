@@ -19,11 +19,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       # Supply-chain gate: the toolchain that generates research artifacts and
       # signs releases must not carry known high/critical advisories.
       - run: npm run audit:deps
@@ -74,11 +70,9 @@ jobs:
         node-version: [24, 26]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: ./.github/actions/setup-node-project
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
-      - run: npm ci
       - run: npm run audit:deps
       - run: npm run typecheck
       - run: npm run test:quick
@@ -94,11 +88,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-project
       - run: npx playwright install --with-deps chromium
       - name: Build PR candidate
         run: npm run build

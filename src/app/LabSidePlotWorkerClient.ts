@@ -1,4 +1,5 @@
 import { getCanvasDprCap } from './canvasQuality';
+import { sharedMemoryCapability } from '../runtime/sharedRingBuffer';
 import {
   isLabSidePlotPayload,
   isLabSidePlotWorkerResponse,
@@ -8,6 +9,7 @@ import {
   type LabSidePlotWorkerMessage,
   type LabSidePlotWorkerResponse
 } from './LabSidePlotProtocol';
+import { LabSidePlotSharedRingWriter, type LabSidePlotSharedFrame } from './LabSidePlotSharedTransport';
 
 type SidePlotCanvasMap = Partial<Record<LabSidePlotId, HTMLCanvasElement | undefined>>;
 export type SidePlotReplacementMap = Partial<Record<LabSidePlotId, HTMLCanvasElement>>;
@@ -25,7 +27,13 @@ export interface LabSidePlotWorkerClientOptions {
   createWorker?: () => LabSidePlotWorkerLike;
   onFallback?: (replacements: SidePlotReplacementMap, reason: string) => void;
   readyTimeoutMs?: number;
+  /** Test/tuning override; production keeps the bounded defaults. */
+  sharedRingCapacity?: number;
+  /** Test/tuning override; oversize snapshots retain the transferable path. */
+  sharedSlotFloatCapacity?: number;
 }
+
+type SharedTransportState = 'unavailable' | 'initializing' | 'ready';
 
 function defaultWorker(): LabSidePlotWorkerLike {
   return new Worker(new URL('../workers/labSidePlots.worker.ts', import.meta.url), {
@@ -51,10 +59,14 @@ export class LabSidePlotWorkerClient {
   private readonly fallbacks: SidePlotReplacementMap = {};
   private readonly ready = new Set<LabSidePlotId>();
   private readonly inFlight = new Set<LabSidePlotId>();
+  private readonly sharedFrames = new Map<LabSidePlotId, LabSidePlotSharedFrame>();
   private readonly pending = new Map<LabSidePlotId, LabSidePlotPayload>();
   private lastRenderElapsedMs = 0;
   private failureReason: string | null = null;
   private readyTimer: ReturnType<typeof setTimeout> | null = null;
+  private sharedInitTimer: ReturnType<typeof setTimeout> | null = null;
+  private sharedWriter: LabSidePlotSharedRingWriter | null = null;
+  private sharedTransportState: SharedTransportState = 'unavailable';
 
   private readonly onMessage = (event: MessageEvent<LabSidePlotWorkerResponse>): void => this.receive(event.data);
   private readonly onError = (): void => this.fail('side-plot worker error');
@@ -92,6 +104,7 @@ export class LabSidePlotWorkerClient {
       worker.addEventListener('message', this.onMessage);
       worker.addEventListener('messageerror', this.onMessageError);
       worker.addEventListener('error', this.onError);
+      this.initializeSharedTransport(worker, readyTimeoutMs);
       for (const [plot, canvas] of Object.entries(canvases) as Array<[LabSidePlotId, HTMLCanvasElement | undefined]>) {
         if (!canvas || typeof canvas.transferControlToOffscreen !== 'function') continue;
         const fallback = canvas.cloneNode(false) as HTMLCanvasElement;
@@ -138,6 +151,11 @@ export class LabSidePlotWorkerClient {
     return this.lastRenderElapsedMs;
   }
 
+  /** True only after the worker acknowledges a COOP/COEP-gated shared ring. */
+  usesSharedTransport(): boolean {
+    return this.sharedTransportState === 'ready' && this.sharedWriter !== null;
+  }
+
   lastFailureReason(): string | null {
     return this.failureReason;
   }
@@ -152,6 +170,58 @@ export class LabSidePlotWorkerClient {
     const worker = this.worker;
     const canvas = this.canvases[payload.plot];
     if (!worker || !canvas) return false;
+    if (this.sharedTransportState === 'initializing') {
+      // Preserve the latest snapshot until the explicit shared-init handshake
+      // resolves, rather than silently sending a mixed protocol first.
+      this.pending.set(payload.plot, payload);
+      return true;
+    }
+
+    const sharedWriter = this.sharedWriter;
+    if (this.sharedTransportState === 'ready' && sharedWriter) {
+      try {
+        const result = sharedWriter.tryWrite(payload);
+        if (result.kind === 'written') {
+          const size = measureCanvas(canvas);
+          const message = {
+            kind: 'render-shared',
+            plot: payload.plot,
+            width: size.width,
+            height: size.height,
+            dpr: size.dpr,
+            slot: result.frame.slot,
+            sequence: result.frame.sequence
+          } satisfies LabSidePlotWorkerMessage;
+          this.inFlight.add(payload.plot);
+          this.sharedFrames.set(payload.plot, result.frame);
+          try {
+            // SharedArrayBuffer objects are deliberately never placed in a
+            // transfer list. The worker received the descriptor at init time.
+            worker.postMessage(message);
+            return true;
+          } catch (error) {
+            this.inFlight.delete(payload.plot);
+            this.sharedFrames.delete(payload.plot);
+            sharedWriter.cancel(result.frame);
+            throw error;
+          }
+        }
+        if (result.kind === 'backpressured') {
+          // A bounded ring cannot accept this plot yet. Coalesce it and flush
+          // after any worker acknowledgement frees a slot.
+          this.pending.set(payload.plot, payload);
+          return true;
+        }
+        // Oversize payloads intentionally retain the transferable fallback.
+      } catch (error) {
+        this.fail(`side-plot shared postMessage failed: ${errorMessage(error, 'unknown shared transport error')}`);
+        return false;
+      }
+    }
+    return this.sendTransfer(payload, worker, canvas);
+  }
+
+  private sendTransfer(payload: LabSidePlotPayload, worker: LabSidePlotWorkerLike, canvas: HTMLCanvasElement): boolean {
     try {
       const size = measureCanvas(canvas);
       const message = {
@@ -180,6 +250,19 @@ export class LabSidePlotWorkerClient {
       return;
     }
     const response = value;
+    if (response.kind === 'shared-ready') {
+      if (this.sharedTransportState === 'initializing' && this.sharedWriter) {
+        this.sharedTransportState = 'ready';
+        this.clearSharedInitTimer();
+        this.flushAll();
+      }
+      return;
+    }
+    if (response.kind === 'shared-unavailable') {
+      this.disableSharedTransport();
+      this.flushAll();
+      return;
+    }
     if (response.kind === 'error') {
       this.fail(response.detail);
       return;
@@ -206,8 +289,23 @@ export class LabSidePlotWorkerClient {
       this.fail('side-plot worker rendered a frame that was not in flight');
       return;
     }
+    const sharedFrame = this.sharedFrames.get(response.plot);
+    if (sharedFrame) {
+      if (
+        response.transport !== 'shared' ||
+        response.slot !== sharedFrame.slot ||
+        response.sequence !== sharedFrame.sequence
+      ) {
+        this.fail('side-plot worker shared acknowledgement did not match its frame');
+        return;
+      }
+      this.sharedFrames.delete(response.plot);
+    } else if (response.transport === 'shared') {
+      this.fail('side-plot worker acknowledged an unexpected shared frame');
+      return;
+    }
     this.lastRenderElapsedMs = response.elapsedMs;
-    this.flush(response.plot);
+    this.flushAll();
   }
 
   private flush(plot: LabSidePlotId): void {
@@ -216,6 +314,42 @@ export class LabSidePlotWorkerClient {
     if (!payload) return;
     this.pending.delete(plot);
     this.send(payload);
+  }
+
+  private flushAll(): void {
+    for (const plot of Object.keys(this.canvases) as LabSidePlotId[]) this.flush(plot);
+  }
+
+  private initializeSharedTransport(worker: LabSidePlotWorkerLike, timeoutMs: number): void {
+    const capability = sharedMemoryCapability();
+    if (!capability.supported) return;
+    try {
+      const writer = new LabSidePlotSharedRingWriter({
+        ...(this.options.sharedRingCapacity === undefined ? {} : { capacity: this.options.sharedRingCapacity }),
+        ...(this.options.sharedSlotFloatCapacity === undefined
+          ? {}
+          : { slotFloatCapacity: this.options.sharedSlotFloatCapacity })
+      });
+      this.sharedWriter = writer;
+      this.sharedTransportState = 'initializing';
+      this.sharedInitTimer = setTimeout(() => {
+        if (this.sharedTransportState !== 'initializing') return;
+        this.disableSharedTransport();
+        this.flushAll();
+      }, timeoutMs);
+      // No transfer list: SharedArrayBuffer is shared by reference, not moved.
+      worker.postMessage({ kind: 'shared-init', transport: writer.descriptor });
+    } catch {
+      // A failed optimization must not take down a healthy OffscreenCanvas
+      // worker; ordinary transferable rendering remains available.
+      this.disableSharedTransport();
+    }
+  }
+
+  private disableSharedTransport(): void {
+    this.sharedWriter = null;
+    this.sharedTransportState = 'unavailable';
+    this.clearSharedInitTimer();
   }
 
   private fail(reason: string, recover = true): void {
@@ -235,8 +369,10 @@ export class LabSidePlotWorkerClient {
     this.enabled = false;
     this.ready.clear();
     this.inFlight.clear();
+    this.sharedFrames.clear();
     this.pending.clear();
     this.clearReadyTimer();
+    this.disableSharedTransport();
     if (worker) {
       try {
         worker.removeEventListener('message', this.onMessage);
@@ -289,6 +425,12 @@ export class LabSidePlotWorkerClient {
     if (this.readyTimer === null) return;
     clearTimeout(this.readyTimer);
     this.readyTimer = null;
+  }
+
+  private clearSharedInitTimer(): void {
+    if (this.sharedInitTimer === null) return;
+    clearTimeout(this.sharedInitTimer);
+    this.sharedInitTimer = null;
   }
 }
 

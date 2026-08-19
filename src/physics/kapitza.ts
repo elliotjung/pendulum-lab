@@ -1,5 +1,13 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import {
+  PhysicsEvaluationError,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
 
 /**
  * Kapitza pendulum — a rigid pendulum whose pivot is driven vertically at high
@@ -47,14 +55,37 @@ export const KAPITZA_INVERTED_PRESET: KapitzaParameters = Object.freeze({
   damping: 0
 });
 
+function validateKapitzaParameters(parameters: KapitzaParameters, operation: string): void {
+  assertPositiveFinite(parameters.g, 'g', operation);
+  assertPositiveFinite(parameters.length, 'length', operation);
+  assertNonNegativeFinite(parameters.driveAmplitude, 'driveAmplitude', operation);
+  assertFiniteScalar(parameters.driveFrequency, 'driveFrequency', operation);
+  assertNonNegativeFinite(parameters.damping, 'damping', operation);
+}
+
+function assertFiniteKapitzaResult(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the drive parameters.'
+    });
+  }
+}
+
 export function rhsKapitza(state: ArrayLike<number>, parameters: KapitzaParameters, out: StateVector): StateVector {
+  assertFiniteVector(state, 3, 'rhsKapitza');
+  assertOutputVector(out, 3, 'rhsKapitza');
+  validateKapitzaParameters(parameters, 'rhsKapitza');
   const theta = Number(state[0] ?? 0);
   const thetaDot = Number(state[1] ?? 0);
   const phi = Number(state[2] ?? 0);
   const { g, length, driveAmplitude, driveFrequency, damping } = parameters;
   const effectiveG = g - driveAmplitude * driveFrequency * driveFrequency * Math.cos(phi);
+  const acceleration = -(effectiveG / length) * Math.sin(theta) - damping * thetaDot;
+  assertFiniteKapitzaResult([thetaDot, effectiveG, acceleration, driveFrequency], 'rhsKapitza');
   out[0] = thetaDot;
-  out[1] = -(effectiveG / length) * Math.sin(theta) - damping * thetaDot;
+  out[1] = acceleration;
   out[2] = driveFrequency;
   return out;
 }
@@ -65,12 +96,16 @@ export function rhsKapitza(state: ArrayLike<number>, parameters: KapitzaParamete
  * shaker, not a conserved quantity.
  */
 export function energyKapitza(state: ArrayLike<number>, parameters: KapitzaParameters): EnergyBreakdown {
+  assertFiniteVector(state, 2, 'energyKapitza');
+  validateKapitzaParameters(parameters, 'energyKapitza');
   const theta = Number(state[0] ?? 0);
   const thetaDot = Number(state[1] ?? 0);
   const { g, length } = parameters;
   const KE = 0.5 * length * length * thetaDot * thetaDot;
   const PE = -g * length * Math.cos(theta);
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteKapitzaResult([KE, PE, total], 'energyKapitza');
+  return { total, KE, PE };
 }
 
 /**
@@ -79,15 +114,19 @@ export function energyKapitza(state: ArrayLike<number>, parameters: KapitzaParam
  * that the slow dynamics is θ''_slow = -dΦ_eff/dθ.
  */
 export function kapitzaEffectivePotential(theta: number, parameters: KapitzaParameters): number {
+  assertFiniteScalar(theta, 'theta', 'kapitzaEffectivePotential');
+  validateKapitzaParameters(parameters, 'kapitzaEffectivePotential');
   const { g, length, driveAmplitude, driveFrequency } = parameters;
   const aOmega = driveAmplitude * driveFrequency;
-  return (
-    -(g / length) * Math.cos(theta) + ((aOmega * aOmega) / (4 * length * length)) * Math.sin(theta) * Math.sin(theta)
-  );
+  const potential =
+    -(g / length) * Math.cos(theta) + ((aOmega * aOmega) / (4 * length * length)) * Math.sin(theta) * Math.sin(theta);
+  assertFiniteKapitzaResult([aOmega, potential], 'kapitzaEffectivePotential');
+  return potential;
 }
 
 /** True iff the inverted equilibrium θ = π is dynamically stable: a² Ω² > 2 g l. */
 export function kapitzaInvertedStable(parameters: KapitzaParameters): boolean {
+  validateKapitzaParameters(parameters, 'kapitzaInvertedStable');
   const { g, length, driveAmplitude, driveFrequency } = parameters;
   const aOmega = driveAmplitude * driveFrequency;
   return aOmega * aOmega > 2 * g * length;
@@ -99,10 +138,13 @@ export function kapitzaInvertedStable(parameters: KapitzaParameters): boolean {
  * stable (otherwise the effective curvature is non-positive).
  */
 export function kapitzaInvertedFrequency(parameters: KapitzaParameters): number {
+  validateKapitzaParameters(parameters, 'kapitzaInvertedFrequency');
   if (!kapitzaInvertedStable(parameters)) {
     throw new Error('kapitzaInvertedFrequency: inverted equilibrium is not stable (need a²Ω² > 2gl)');
   }
   const { g, length, driveAmplitude, driveFrequency } = parameters;
   const aOmega = driveAmplitude * driveFrequency;
-  return Math.sqrt((aOmega * aOmega) / (2 * length * length) - g / length);
+  const frequency = Math.sqrt((aOmega * aOmega) / (2 * length * length) - g / length);
+  assertFiniteKapitzaResult([frequency], 'kapitzaInvertedFrequency');
+  return frequency;
 }

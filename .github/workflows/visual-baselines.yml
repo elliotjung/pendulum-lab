@@ -1,16 +1,13 @@
-# Regenerates the Playwright visual-regression baselines on the Linux CI
-# runner. Snapshots are pixel-host-specific (the committed *-win32.png files
-# only match Windows hosts), so Linux baselines must be produced here — this
-# is the "baseline promotion stays a CI task" decision from ROADMAP.md made
-# executable. Run it manually after any intentional reskin; it opens a PR
-# with the refreshed *-linux.png files.
-name: Visual Baselines (Linux)
+# Visual snapshots are operating-system-specific. This workflow regenerates
+# each platform on its native hosted runner, proves the images without update
+# mode, and combines only those native artifacts into one reviewable PR.
+name: Visual Baselines (Linux, Windows, macOS)
 
 on:
   workflow_dispatch:
     inputs:
       create_pr:
-        description: Open a pull request with the regenerated baselines
+        description: Open one pull request containing all native baselines
         type: boolean
         default: true
 
@@ -20,42 +17,72 @@ permissions:
 
 jobs:
   regenerate:
-    runs-on: ubuntu-latest
+    name: regenerate (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            install_args: --with-deps chromium
+          - os: windows-latest
+            platform: win32
+            install_args: chromium
+          - os: macos-latest
+            platform: darwin
+            install_args: chromium
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - name: Regenerate chromium + mobile-chrome baselines
+      - uses: ./.github/actions/setup-node-project
+      - name: Install native Chromium
+        run: npx playwright install ${{ matrix.install_args }}
+      - name: Regenerate native chromium + mobile-chrome baselines
         run: npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium --project=mobile-chrome
-      - name: Validate the complete Linux baseline set
-        run: npm run test:visual:linux:contract
+      - name: Validate the complete ${{ matrix.platform }} baseline set
+        run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome
       - name: Prove regenerated baselines without update mode
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: visual-baselines-linux
+          name: visual-baselines-${{ matrix.platform }}
           path: e2e/visual-regression.spec.ts-snapshots/
           if-no-files-found: error
+          retention-days: 30
+
+  promote:
+    needs: regenerate
+    if: ${{ inputs.create_pr }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: visual-baselines-*
+          path: e2e/visual-regression.spec.ts-snapshots
+          merge-multiple: true
+      - name: Require all three native baseline sets before promotion
+        run: |
+          node scripts/check-visual-baselines.mjs --platform=linux --projects=chromium,mobile-chrome
+          node scripts/check-visual-baselines.mjs --platform=win32 --projects=chromium,mobile-chrome
+          node scripts/check-visual-baselines.mjs --platform=darwin --projects=chromium,mobile-chrome
       - name: Open baseline-promotion PR
-        if: ${{ inputs.create_pr }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          BRANCH="ci/visual-baselines-linux-${GITHUB_RUN_ID}"
-          git checkout -b "$BRANCH"
+          branch="ci/visual-baselines-all-${GITHUB_RUN_ID}"
+          git checkout -b "$branch"
           git add e2e/visual-regression.spec.ts-snapshots/
           if git diff --cached --quiet; then
-            echo "Baselines unchanged — nothing to promote."
+            echo "Baselines unchanged - nothing to promote."
             exit 0
           fi
-          git commit -m "ci: promote Linux visual-regression baselines (run ${GITHUB_RUN_ID})"
-          git push origin "$BRANCH"
-          gh pr create --title "ci: promote Linux visual-regression baselines" \
-            --body "Regenerated on ubuntu-latest by the Visual Baselines workflow (run ${GITHUB_RUN_ID}). Review the rendered PNGs, then merge to make the Linux lane's visual checks meaningful."
+          git commit -m "ci: promote Linux, Windows, and macOS visual baselines"
+          git push origin "$branch"
+          gh pr create \
+            --title "ci: promote native cross-platform visual baselines" \
+            --body "Regenerated and re-verified on native ubuntu-latest, windows-latest, and macos-latest runners (run ${GITHUB_RUN_ID}). Review every PNG before merging; no platform image was copied or relabeled."

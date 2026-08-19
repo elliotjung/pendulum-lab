@@ -27,9 +27,18 @@ function option(name: string): string | undefined {
 
 const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as { name: string; version: string };
 const artifact = option('--artifact') ?? `tmp/release/${packageJson.name}-${packageJson.version}.tgz`;
-const sourceRef = option('--source-ref');
+const sourceRef = option('--source-ref') ?? `refs/tags/v${packageJson.version}`;
+const sourceCommit =
+  option('--source-commit') ?? execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+if (sourceRef !== `refs/tags/v${packageJson.version}`) {
+  throw new Error(`Source ref ${sourceRef} does not match package version ${packageJson.version}.`);
+}
+if (!/^[0-9a-f]{40}$/.test(sourceCommit)) throw new Error('Source commit must be a full lowercase Git SHA.');
 const bytes = await readFile(artifact);
 const localDigest = createHash('sha256').update(bytes).digest('hex');
+const lockfileDigest = createHash('sha256')
+  .update(await readFile('package-lock.json'))
+  .digest('hex');
 const gh = process.platform === 'win32' ? 'gh.exe' : 'gh';
 
 async function verify(predicateType: string): Promise<VerificationResult['verificationResult']> {
@@ -46,7 +55,7 @@ async function verify(predicateType: string): Promise<VerificationResult['verifi
     '--format',
     'json'
   ];
-  if (sourceRef) commandArgs.push('--source-ref', sourceRef);
+  commandArgs.push('--source-ref', sourceRef);
   let output = '';
   let lastError: unknown;
   for (let attempt = 1; attempt <= 5; attempt += 1) {
@@ -75,6 +84,16 @@ for (const predicateType of ['https://slsa.dev/provenance/v1', 'https://cycloned
   const result = await verify(predicateType);
   const certificate = result?.signature?.certificate ?? {};
   const timestamp = result?.verifiedTimestamps?.[0] ?? {};
+  if (certificate.sourceRepositoryRef !== sourceRef) {
+    throw new Error(
+      `Verified ${predicateType} certificate ref ${String(certificate.sourceRepositoryRef ?? 'missing')} does not match ${sourceRef}.`
+    );
+  }
+  if (certificate.sourceRepositoryDigest !== sourceCommit) {
+    throw new Error(
+      `Verified ${predicateType} source ${String(certificate.sourceRepositoryDigest ?? 'missing')} does not match ${sourceCommit}.`
+    );
+  }
   predicates.push({
     predicateType: result?.statement?.predicateType ?? predicateType,
     status: 'verified',
@@ -96,7 +115,12 @@ const report = {
   status: 'verified',
   repository,
   artifact: basename(artifact),
+  artifactBytes: bytes.length,
   sha256: localDigest,
+  packageVersion: packageJson.version,
+  sourceRef,
+  sourceCommit,
+  lockfileSha256: lockfileDigest,
   signerWorkflow,
   predicates
 };

@@ -47,12 +47,19 @@ interface SpectrumHorizonRow {
 }
 
 interface GpuBenchmarkLadderReport {
-  schemaVersion: 'pendulum-gpu-benchmark-ladder/v2';
+  schemaVersion: 'pendulum-gpu-benchmark-ladder/v3';
   generatedAt: string;
   channel: string;
   url: string;
   status: Status;
   adapter: AdapterMetadata | null;
+  runContext: {
+    userAgent: string | null;
+    driverVersion: string | null;
+    thermalState: 'cold' | 'stable' | 'throttled' | 'unknown';
+    estimatedCostUsd: number | null;
+    fallbackRate: number;
+  };
   ensemble: {
     horizons: EnsembleHorizonRow[];
     allReductionComparisonsPassed: boolean;
@@ -177,6 +184,10 @@ function markdown(report: GpuBenchmarkLadderReport): string {
     `| device | ${adapter?.device ?? 'n/a'} |`,
     `| description | ${adapter?.description ?? 'n/a'} |`,
     `| features | ${(adapter?.features ?? []).join(', ') || 'n/a'} |`,
+    `| driver | ${report.runContext.driverVersion ?? 'not supplied'} |`,
+    `| thermal state | ${report.runContext.thermalState} |`,
+    `| estimated run cost | ${report.runContext.estimatedCostUsd === null ? 'not supplied' : `$${report.runContext.estimatedCostUsd.toFixed(4)}`} |`,
+    `| fallback rate | ${(report.runContext.fallbackRate * 100).toFixed(1)}% |`,
     '',
     '## Ensemble f32/f64 Horizon Drift',
     '',
@@ -384,6 +395,7 @@ try {
     );
     return {
       adapter: adapterMetadata,
+      userAgent: navigator.userAgent,
       ensembleHorizons,
       spectrumHorizons,
       clv: {
@@ -449,12 +461,34 @@ try {
       ? 'pass'
       : 'fail';
   report = {
-    schemaVersion: 'pendulum-gpu-benchmark-ladder/v2',
+    schemaVersion: 'pendulum-gpu-benchmark-ladder/v3',
     generatedAt,
     channel,
     url,
     status,
     adapter: payload.adapter as AdapterMetadata,
+    runContext: {
+      userAgent: String(payload.userAgent ?? ''),
+      driverVersion: process.env.GPU_DRIVER_VERSION?.trim() || null,
+      thermalState: ['cold', 'stable', 'throttled'].includes(process.env.GPU_THERMAL_STATE ?? '')
+        ? (process.env.GPU_THERMAL_STATE as 'cold' | 'stable' | 'throttled')
+        : 'unknown',
+      estimatedCostUsd:
+        process.env.GPU_RUN_COST_USD && Number.isFinite(Number(process.env.GPU_RUN_COST_USD))
+          ? Number(process.env.GPU_RUN_COST_USD)
+          : null,
+      fallbackRate:
+        [
+          ...ensembleHorizons.map((row) => row.backend),
+          ...spectrumHorizons.map((row) => row.backend),
+          clv?.backend,
+          variationalFtleField?.backend,
+          nChainVariational?.backend
+        ]
+          .filter(Boolean)
+          .filter((backend) => backend !== 'webgpu').length /
+        (ensembleHorizons.length + spectrumHorizons.length + 3)
+    },
     ensemble: {
       horizons: ensembleHorizons,
       allReductionComparisonsPassed,
@@ -476,12 +510,19 @@ try {
   };
 } catch (error) {
   report = {
-    schemaVersion: 'pendulum-gpu-benchmark-ladder/v2',
+    schemaVersion: 'pendulum-gpu-benchmark-ladder/v3',
     generatedAt,
     channel,
     url,
     status: 'fail',
     adapter: null,
+    runContext: {
+      userAgent: null,
+      driverVersion: process.env.GPU_DRIVER_VERSION?.trim() || null,
+      thermalState: 'unknown',
+      estimatedCostUsd: null,
+      fallbackRate: 1
+    },
     ensemble: {
       horizons: [],
       allReductionComparisonsPassed: false,

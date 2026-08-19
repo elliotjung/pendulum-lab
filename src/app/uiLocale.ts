@@ -41,6 +41,83 @@ const CONTROL_LABELS_KO: Record<string, string> = {
   audioVol: '음량'
 };
 
+const CHECKBOX_LABELS_KO: Record<string, string> = {
+  glowMode: '광원 효과',
+  longExpose: '장노출 궤적',
+  interpolateRender: '보간 렌더링',
+  backgroundSim: '탭이 숨겨져도 계속 실행',
+  useWorker: '워커 풀 사용',
+  autoQual: '자동 품질 조절',
+  audioOn: '소리 사용'
+};
+
+const ELEMENT_TEXT_KO: Record<string, string> = {
+  resetBtn: '↺ 초기화',
+  pauseBtn: '⏸ 일시정지',
+  clearTrailBtn: '궤적 지우기',
+  clearPoincBtn: '푸앵카레 지우기',
+  dlTrajBtn: '⬇ 궤적 CSV',
+  dlPoincBtn: '⬇ 푸앵카레',
+  dlPNGBtn: '⬇ PNG 이미지',
+  dlJsonBtn: '⬇ 실행 JSON',
+  pwaInstallButton: 'Pendulum Lab 설치',
+  beginnerResearchHintTitle: '고급 연구 도구도 준비되어 있습니다.',
+  beginnerResearchHintCopy: '모드를 바꾸면 수렴 검증, 분기·스펙트럼 분석과 재현 가능한 내보내기를 사용할 수 있습니다.',
+  beginnerResearchHintButton: '고급 작업공간 보기',
+  mainCanvasLabel: '주 화면 — ',
+  energyCanvasLabel: '에너지 변화 ΔE / E₀',
+  lyapCanvasLabel: '랴푸노프 지수 λ (Benettin)',
+  phaseCanvasLabel: '위상 궤적',
+  poincareCanvasLabel: '푸앵카레 단면 (θ₁=0, θ̇₁>0) — 휠/핀치 확대',
+  fftCanvasLabel: 'FFT 주파수 스펙트럼 (로그)'
+};
+
+const OPTION_LABELS: Record<string, Record<string, { en: string; ko: string }>> = {
+  timeMode: {
+    deterministic: { en: 'Deterministic replay', ko: '결정론적 재생' },
+    'wall-clock': { en: 'Real-time fixed-dt', ko: '실시간 고정 dt' }
+  },
+  qualityMode: {
+    performance: { en: 'Performance', ko: '성능 우선' },
+    balanced: { en: 'Balanced', ko: '균형' },
+    cinematic: { en: 'Cinematic', ko: '고화질' }
+  },
+  trailMode: {
+    rainbow: { en: 'Rainbow', ko: '무지개' },
+    heat: { en: 'Heat', ko: '열' },
+    ice: { en: 'Ice', ko: '얼음' },
+    plasma: { en: 'Plasma', ko: '플라즈마' },
+    white: { en: 'White', ko: '흰색' },
+    green: { en: 'Phosphor', ko: '형광 녹색' }
+  }
+};
+
+export type UiMessageKey =
+  'simulationError' | 'offline' | 'online' | 'offlineUnavailable' | 'cacheReady' | 'cacheStale';
+
+const UI_MESSAGES: Record<UiMessageKey, { en: string; ko: string }> = {
+  simulationError: {
+    en: 'The simulation was paused after an unexpected numerical or rendering error. Review Trust & Diagnostics.',
+    ko: '예기치 않은 수치 또는 렌더링 오류로 시뮬레이션을 일시정지했습니다. 신뢰 및 진단을 확인하세요.'
+  },
+  offline: {
+    en: 'You are offline. Cached laboratory tools remain available.',
+    ko: '오프라인 상태입니다. 캐시된 실험 도구는 계속 사용할 수 있습니다.'
+  },
+  online: {
+    en: 'Back online. Fresh release evidence can now be checked.',
+    ko: '다시 온라인 상태입니다. 최신 릴리스 근거를 확인할 수 있습니다.'
+  },
+  offlineUnavailable: { en: 'Offline support is unavailable.', ko: '오프라인 기능을 시작하지 못했습니다.' },
+  cacheReady: { en: 'Offline cache ready', ko: '오프라인 캐시 준비됨' },
+  cacheStale: { en: 'Cache status unavailable', ko: '캐시 상태를 확인할 수 없음' }
+};
+
+export function uiMessage(key: UiMessageKey): string {
+  const korean = typeof document !== 'undefined' && document.documentElement.lang === 'ko';
+  return UI_MESSAGES[key][korean ? 'ko' : 'en'];
+}
+
 const STRUCTURAL_TEXT_KO: Record<string, string> = {
   Simulation: '시뮬레이션',
   'System & Initial Conditions': '시스템과 초기조건',
@@ -93,6 +170,22 @@ export function applyStructuralLocale(): void {
     if (control) control.dataset.testid = `control-${id}`;
     localizeText(document.querySelector<HTMLElement>(`label[for="${id}"]`), text, korean);
   }
+  for (const [id, text] of Object.entries(CHECKBOX_LABELS_KO)) {
+    const input = document.getElementById(id);
+    replaceTrailingText(
+      input?.closest('label') ?? null,
+      korean ? text : labelEnglishText(input?.closest('label') ?? null)
+    );
+  }
+  for (const [id, text] of Object.entries(ELEMENT_TEXT_KO)) localizeText(document.getElementById(id), text, korean);
+  for (const [selectId, options] of Object.entries(OPTION_LABELS)) {
+    const select = document.getElementById(selectId);
+    if (!(select instanceof HTMLSelectElement)) continue;
+    Array.from(select.options).forEach((option) => {
+      const label = options[option.value];
+      if (label) option.textContent = korean ? label.ko : label.en;
+    });
+  }
   document.querySelectorAll<HTMLElement>('#tab-lab .ctrl-sticky-title, #tab-lab .acc-label').forEach((element) => {
     element.dataset.localeEn ??= element.textContent ?? '';
     const translated = STRUCTURAL_TEXT_KO[element.dataset.localeEn];
@@ -129,6 +222,21 @@ export function applyStructuralLocale(): void {
     'title',
     korean ? '메뉴와 핵심 조절기의 표시 언어' : 'Language for menus and core controls'
   );
+  const manifest = document.getElementById('pwaManifest');
+  if (manifest instanceof HTMLLinkElement)
+    manifest.href = korean ? './manifest.ko.webmanifest' : './manifest.webmanifest';
+
+  const researchHintButton = document.getElementById('beginnerResearchHintButton');
+  if (researchHintButton instanceof HTMLButtonElement && researchHintButton.dataset.modeBound !== 'true') {
+    researchHintButton.dataset.modeBound = 'true';
+    researchHintButton.addEventListener('click', () => {
+      const audience = document.getElementById('audienceMode');
+      if (!(audience instanceof HTMLSelectElement)) return;
+      audience.value = 'research';
+      audience.dispatchEvent(new Event('change', { bubbles: true }));
+      document.getElementById('method')?.focus();
+    });
+  }
 
   const trustToggle = document.getElementById('trustDrawerToggle');
   trustToggle?.setAttribute('data-testid', 'trust-inspector-toggle');
@@ -159,6 +267,16 @@ export function applyStructuralLocale(): void {
     panelToggle.setAttribute('aria-label', panelLabel);
     panelToggle.setAttribute('title', `${panelLabel} (\\)`);
   }
+}
+
+function labelEnglishText(label: Element | null): string {
+  if (!(label instanceof HTMLElement)) return '';
+  label.dataset.localeEn ??= Array.from(label.childNodes)
+    .filter((node) => node.nodeType === Node.TEXT_NODE)
+    .map((node) => node.textContent ?? '')
+    .join(' ')
+    .trim();
+  return label.dataset.localeEn;
 }
 
 function storedNavLocale(): NavLocale | null {

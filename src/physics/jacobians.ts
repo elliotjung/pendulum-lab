@@ -28,6 +28,13 @@ import { sphericalChainLength } from './sphericalChain';
 import { assertLinearSolve, choleskyFactor, choleskySolveFactored, solveLinearInPlace } from './linearSolve';
 import { SPHERICAL_CHAIN_POLE_EPS } from './constants';
 import {
+  PhysicsEvaluationError,
+  assertDensePhysicsDimension,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertOutputVector
+} from './errors';
+import {
   DualArena,
   dAdd,
   dAddScaled,
@@ -89,6 +96,7 @@ export interface ChainJacobianWorkspace {
 }
 
 export function createChainJacobianWorkspace(n: number): ChainJacobianWorkspace {
+  assertDensePhysicsDimension(n, 'n', 'createChainJacobianWorkspace');
   const nv = 2 * n;
   const arena = new DualArena(nv, 2 * n + n * n + n + 3);
   return {
@@ -124,10 +132,31 @@ export function jacobianChain(
   workspace: ChainJacobianWorkspace = createChainJacobianWorkspace(chainLength(parameters))
 ): Float64Array {
   const n = chainLength(parameters);
-  if (workspace.n !== n)
-    throw new Error(`jacobianChain: workspace length ${workspace.n} does not match chain length ${n}`);
-  const { masses, lengths, g } = parameters;
   const nv = 2 * n;
+  assertFiniteVector(state, nv, 'jacobianChain');
+  assertFiniteScalar(gamma, 'gamma', 'jacobianChain');
+  assertOutputVector(jac, nv * nv, 'jacobianChain');
+  if (
+    workspace.n !== n ||
+    workspace.suffix.length < n ||
+    workspace.matrix.length < n * n ||
+    workspace.factor.length < n * n ||
+    workspace.geScratch.length < n * n ||
+    workspace.accel.length < n ||
+    workspace.column.length < n
+  ) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      `jacobianChain: workspace buffers do not match chain length ${n}`,
+      {
+        operation: 'jacobianChain',
+        retryable: false,
+        expectedDimension: n,
+        workspaceDimension: workspace.n
+      }
+    );
+  }
+  const { masses, lengths, g } = parameters;
   const { theta, omega, mDual, fDual, t1, t2, t3, suffix } = workspace;
 
   let acc = 0;
@@ -223,6 +252,7 @@ export interface SphericalChainJacobianWorkspace {
 }
 
 export function createSphericalChainJacobianWorkspace(n: number): SphericalChainJacobianWorkspace {
+  assertDensePhysicsDimension(n, 'n', 'createSphericalChainJacobianWorkspace');
   const dof = 2 * n;
   const nv = 4 * n;
   // Per link: 5 trig/clamp + 4 vectors of 3 (u, a, b, v) = 17 slots.
@@ -272,10 +302,30 @@ export function jacobianSphericalChain(
   workspace: SphericalChainJacobianWorkspace = createSphericalChainJacobianWorkspace(sphericalChainLength(params))
 ): Float64Array {
   const n = sphericalChainLength(params);
-  if (workspace.n !== n)
-    throw new Error(`jacobianSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
   const dof = 2 * n;
   const nv = 4 * n;
+  assertFiniteVector(state, nv, 'jacobianSphericalChain');
+  assertOutputVector(jac, nv * nv, 'jacobianSphericalChain');
+  if (
+    workspace.n !== n ||
+    workspace.suffix.length < n ||
+    workspace.matrix.length < dof * dof ||
+    workspace.factor.length < dof * dof ||
+    workspace.geScratch.length < dof * dof ||
+    workspace.accel.length < dof ||
+    workspace.column.length < dof
+  ) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      `jacobianSphericalChain: workspace buffers do not match chain length ${n}`,
+      {
+        operation: 'jacobianSphericalChain',
+        retryable: false,
+        expectedDimension: n,
+        workspaceDimension: workspace.n
+      }
+    );
+  }
   const { thetaDot, phiDot, links, mDual, fDual, t1, t2, t3, suffix } = workspace;
 
   let acc = 0;

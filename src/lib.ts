@@ -65,7 +65,7 @@ export type {
   LinearSolveOptions,
   LinearSolveResult
 } from './physics/linearSolve';
-export { buildRhs, buildJacobian } from './physics/systemSpec';
+export { buildRhs, buildJacobian, jacobianTrustForSpec } from './physics/systemSpec';
 export type { SystemSpec } from './physics/systemSpec';
 export {
   gaussianSampler,
@@ -385,6 +385,7 @@ export * from './research/qkrFloquet';
 export * from './research/qkrViewModel';
 export * from './research/reservoir';
 export * from './research/hamiltonianLearning';
+export * from './research/trainingProtocol';
 export * from './research/lanczos';
 export * from './research/arnoldi';
 export * from './research/zipBundle';
@@ -426,6 +427,7 @@ export {
   webgpuDoublePendulumVariationalFtleFieldCandidate
 } from './runtime/gpuChaosPromotion';
 export {
+  NCHAIN_GPU_PROMOTION_SCOPE,
   buildNChainJacobianTape,
   nChainVariationalCpuOracle,
   promotedNChainVariational,

@@ -6,7 +6,8 @@ export type {
   VideoMarkerCaptureDependencies,
   VideoMarkerCaptureOptions,
   VideoMarkerCaptureState,
-  VideoMarkerSample
+  VideoMarkerSample,
+  VideoMarkerCaptureMetadata
 } from '../browser/videoMarkerCapture';
 export { ImuMotionCaptureController } from '../browser/imuMotionCapture';
 export type {
@@ -14,7 +15,8 @@ export type {
   ImuCaptureState,
   ImuMotionCaptureDependencies,
   ImuMotionCaptureOptions,
-  ImuMotionSample
+  ImuMotionSample,
+  ImuCaptureMetadata
 } from '../browser/imuMotionCapture';
 export { OrbitCamera, bindOrbitControls, drawPolyline3D, drawSphereWireframe } from '../viz/orbit3d';
 export type { OrbitCameraState, PolylinePoint3 } from '../viz/orbit3d';

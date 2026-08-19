@@ -24,9 +24,11 @@ The Euler–Lagrange equations give the standard coupled form
 m₂ l₂ α₂ + m₂ l₁ α₁ cosΔ       =   m₂ l₁ ω₁² sinΔ − m₂ g sinθ₂
 ```
 
-with Δ = θ₁−θ₂, solved in closed form in `rhsDouble`. Rate damping subtracts
-γωᵢ from each acceleration. The analytic Jacobian (`jacobianDouble`) is the
-exact derivative of this RHS and removes the finite-difference floor from the
+with Δ = θ₁−θ₂, solved in closed form in `rhsDouble`. Linear rate damping is a
+generalized torque `Qᵢ = −γωᵢ` on the right-hand side of the coupled system;
+the acceleration contribution is therefore `M(θ)⁻¹Q`, not an independent
+post-step velocity decay. The analytic Jacobian (`jacobianDouble`) is the exact
+derivative of this RHS and removes the finite-difference floor from the
 Lyapunov spectrum.
 
 **Validation:** energy conservation at machine precision over RK4 dt-halving

@@ -22,13 +22,55 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
       - name: Block newly introduced vulnerable dependencies
         uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
         with:
           fail-on-severity: moderate
           deny-licenses: GPL-3.0, AGPL-3.0
+          comment-summary-in-pr: always
+      - uses: ./.github/actions/setup-node-project
+        with:
+          node-version: 24
+      - name: Build base/head CycloneDX SBOM and audit snapshots
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          base_dir="$(mktemp -d)"
+          git show "${BASE_SHA}:package.json" > "${base_dir}/package.json"
+          git show "${BASE_SHA}:package-lock.json" > "${base_dir}/package-lock.json"
+          npm sbom --package-lock-only --sbom-format cyclonedx > reports/sbom-head.cdx.json
+          npm --prefix "$base_dir" sbom --package-lock-only --sbom-format cyclonedx > reports/sbom-base.cdx.json
+          npm audit --package-lock-only --json > reports/audit-head.json || test -s reports/audit-head.json
+          npm --prefix "$base_dir" audit --package-lock-only --json > reports/audit-base.json || test -s reports/audit-base.json
+      - name: Annotate dependency changes and block new high/critical advisories
+        id: sbom_diff
+        continue-on-error: true
+        run: npm run audit:sbom-diff
+      - name: Comment the machine-generated SBOM diff on the pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr comment "$PR_URL" --body-file reports/sbom-diff.md
+      - name: Enforce the SBOM/advisory gate after publishing its report
+        if: steps.sbom_diff.outcome != 'success'
+        run: exit 1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: dependency-sbom-diff
+          path: |
+            reports/sbom-*.cdx.json
+            reports/audit-*.json
+            reports/sbom-diff.md
+          if-no-files-found: error
+          retention-days: 30
 
   codeql:
     runs-on: ubuntu-latest

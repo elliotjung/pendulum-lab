@@ -17,6 +17,14 @@ reports/mutation/
 desktop.ini
 Thumbs.db
 reports/paper-study-probe.json
+reports/release-evidence-manifest.json
+reports/deployment-security.json
+reports/sbom-*.cdx.json
+reports/audit-base.json
+reports/audit-head.json
+reports/sbom-diff.md
+reports/landing-kernel/
+reports/wasm-sync.json
 tmp/
 # Ad-hoc UI review captures (design passes); never release evidence.
 reports/analysis-screenshots/

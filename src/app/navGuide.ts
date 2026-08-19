@@ -3,7 +3,7 @@
  * entry, written for first-time visitors who do not know the field jargon.
  *
  * The rail submenus render these as a second description line under each
- * label (see `decorateNavigation` in audienceMode.ts), and the same text is
+ * label (see `decorateAudienceNavigation` in audienceNavigation.ts), and the same text is
  * folded into each button's title/aria-label tooltip. Pure data + pure
  * helpers so the module is unit-testable in the node vitest environment.
  *

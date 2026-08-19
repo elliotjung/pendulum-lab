@@ -1,5 +1,6 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import { PhysicsEvaluationError, assertFiniteVector, assertNonNegativeFinite, assertOutputVector } from './errors';
 
 /**
  * Van der Pol oscillator — the archetypal self-sustained (limit-cycle)
@@ -27,12 +28,31 @@ export interface VanDerPolParameters {
   mu: number;
 }
 
+function validateVanDerPolParameters(parameters: VanDerPolParameters, operation: string): void {
+  assertNonNegativeFinite(parameters.mu, 'mu', operation);
+}
+
+function assertFiniteVanDerPolResult(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or reduce mu.'
+    });
+  }
+}
+
 export function rhsVanDerPol(state: ArrayLike<number>, parameters: VanDerPolParameters, out: StateVector): StateVector {
+  assertFiniteVector(state, 2, 'rhsVanDerPol');
+  assertOutputVector(out, 2, 'rhsVanDerPol');
+  validateVanDerPolParameters(parameters, 'rhsVanDerPol');
   const x = Number(state[0] ?? 0);
   const v = Number(state[1] ?? 0);
   const { mu } = parameters;
+  const acceleration = mu * (1 - x * x) * v - x;
+  assertFiniteVanDerPolResult([v, acceleration], 'rhsVanDerPol');
   out[0] = v;
-  out[1] = mu * (1 - x * x) * v - x;
+  out[1] = acceleration;
   return out;
 }
 
@@ -41,11 +61,15 @@ export function rhsVanDerPol(state: ArrayLike<number>, parameters: VanDerPolPara
  * (NOT a conserved quantity unless μ = 0). KE = ½v², PE = ½x².
  */
 export function energyVanDerPol(state: ArrayLike<number>, _parameters: VanDerPolParameters): EnergyBreakdown {
+  assertFiniteVector(state, 2, 'energyVanDerPol');
+  validateVanDerPolParameters(_parameters, 'energyVanDerPol');
   const x = Number(state[0] ?? 0);
   const v = Number(state[1] ?? 0);
   const KE = 0.5 * v * v;
   const PE = 0.5 * x * x;
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteVanDerPolResult([KE, PE, total], 'energyVanDerPol');
+  return { total, KE, PE };
 }
 
 /**
@@ -55,7 +79,8 @@ export function energyVanDerPol(state: ArrayLike<number>, _parameters: VanDerPol
  * estimate and is meant for orientation, not as a high-accuracy value at μ ~ 1.
  */
 export function vanDerPolPeriodEstimate(mu: number): number {
-  if (!(mu >= 0)) throw new Error(`vanDerPolPeriodEstimate: μ must be ≥ 0 (got ${mu})`);
-  if (mu <= 1) return 2 * Math.PI * (1 + (mu * mu) / 16);
-  return (3 - 2 * Math.LN2) * mu;
+  assertNonNegativeFinite(mu, 'mu', 'vanDerPolPeriodEstimate');
+  const period = mu <= 1 ? 2 * Math.PI * (1 + (mu * mu) / 16) : (3 - 2 * Math.LN2) * mu;
+  assertFiniteVanDerPolResult([period], 'vanDerPolPeriodEstimate');
+  return period;
 }

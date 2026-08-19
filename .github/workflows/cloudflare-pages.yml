@@ -37,11 +37,9 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: ./.github/actions/setup-node-project
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
       - run: npm run audit:deps
       - run: npm run verify
       - name: Reject unexpected tracked rewrites from verification
@@ -58,11 +56,12 @@ jobs:
           npm exec --no -- wrangler pages deploy dist --project-name pendulum-lab --branch "${GITHUB_REF_NAME}"
       - name: Verify deployed isolation and security headers
         env:
-          CLOUDFLARE_MIRROR_URL: ${{ vars.CLOUDFLARE_MIRROR_URL }}
-        shell: bash
-        run: |
-          headers="$(curl --fail --silent --show-error --retry 5 --retry-all-errors --connect-timeout 10 --max-time 60 --dump-header - --output /dev/null "$CLOUDFLARE_MIRROR_URL")"
-          printf '%s\n' "$headers" | grep -Eiq '^cross-origin-opener-policy:[[:space:]]*same-origin'
-          printf '%s\n' "$headers" | grep -Eiq '^cross-origin-embedder-policy:[[:space:]]*require-corp'
-          printf '%s\n' "$headers" | grep -Eiq '^x-content-type-options:[[:space:]]*nosniff'
-          printf '## Cloudflare mirror: verified\n\n%s returned the required COOP, COEP, and nosniff headers.\n' "$CLOUDFLARE_MIRROR_URL" >> "$GITHUB_STEP_SUMMARY"
+          DEPLOYMENT_URL: ${{ vars.CLOUDFLARE_MIRROR_URL }}
+        run: npm run release:verify-deployment -- --profile isolated --attempts 5
+      - name: Preserve live deployment security evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cloudflare-deployment-security
+          path: reports/deployment-security.json
+          if-no-files-found: error
+          retention-days: 90

@@ -9,7 +9,7 @@
       content="Certified chaotic-dynamics workbench in the browser: 8 pendulum systems, 15 measured-order integrators, full Lyapunov/chaos diagnostics with uncertainties, and hash-verifiable research bundles."
     />
     <meta name="theme-color" content="#070910" />
-    <link rel="manifest" href="./manifest.webmanifest" />
+    <link id="pwaManifest" rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./icons/pendulum-lab-192.png" />
     <link
       rel="icon"
@@ -399,6 +399,13 @@
             <span>Export</span><small>figures + bundle</small>
           </button>
         </div>
+        <aside id="beginnerResearchHint" class="beginner-research-hint" aria-labelledby="beginnerResearchHintTitle">
+          <strong id="beginnerResearchHintTitle">Advanced research tools are ready when you are.</strong>
+          <span id="beginnerResearchHintCopy"
+            >Switch modes to unlock convergence checks, bifurcation and spectrum analysis, and reproducible exports.</span
+          >
+          <button id="beginnerResearchHintButton" type="button">Show advanced workspace</button>
+        </aside>
 
         <div class="presets">
           <span title="One-click starting setups — pick one, then press Reset to replay it">Presets</span>
@@ -438,7 +445,7 @@
               <div class="main-wrap">
                 <canvas id="main" width="680" height="520" tabindex="0" aria-label="pendulum simulation"></canvas>
               </div>
-              <div class="canvas-label">Main view — <span id="modeLabel">running</span></div>
+              <div class="canvas-label"><span id="mainCanvasLabel">Main view — </span><span id="modeLabel">running</span></div>
               <div class="scrub-row">
                 <button id="rewindBtn" class="pbtn" aria-label="Rewind replay to the first recorded frame">⏮</button>
                 <input type="range" id="scrubber" min="0" max="0" value="0" step="1" aria-label="Replay position" />
@@ -447,25 +454,25 @@
               <div class="plots-row">
                 <div class="plot-cell">
                   <canvas id="energy" width="220" height="120"></canvas>
-                  <div class="canvas-label">ΔE / E₀</div>
+                  <div class="canvas-label" id="energyCanvasLabel">ΔE / E₀</div>
                 </div>
                 <div class="plot-cell">
                   <canvas id="lyap" width="220" height="120"></canvas>
-                  <div class="canvas-label">λ (Benettin)</div>
+                  <div class="canvas-label" id="lyapCanvasLabel">λ (Benettin)</div>
                 </div>
                 <div class="plot-cell">
                   <canvas id="phase" width="220" height="120"></canvas>
-                  <div class="canvas-label">Phase portrait</div>
+                  <div class="canvas-label" id="phaseCanvasLabel">Phase portrait</div>
                 </div>
               </div>
               <div class="plots-row">
                 <div class="plot-cell">
                   <canvas id="poincare" width="330" height="320"></canvas>
-                  <div class="canvas-label">Poincaré section (θ₁=0, θ̇₁&gt;0) — wheel/pinch zoom</div>
+                  <div class="canvas-label" id="poincareCanvasLabel">Poincaré section (θ₁=0, θ̇₁&gt;0) — wheel/pinch zoom</div>
                 </div>
                 <div class="plot-cell">
                   <canvas id="fft" width="330" height="320"></canvas>
-                  <div class="canvas-label">FFT spectrum (log)</div>
+                  <div class="canvas-label" id="fftCanvasLabel">FFT spectrum (log)</div>
                 </div>
               </div>
             </div>
@@ -682,6 +689,12 @@
                   <div class="row">
                     <label><input id="interpolateRender" type="checkbox" checked /> Interpolated render</label>
                   </div>
+                  <div class="row">
+                    <label
+                      title="Pause is the default to avoid surprising battery and thermal use when this tab is hidden."
+                      ><input id="backgroundSim" type="checkbox" /> Continue while hidden</label
+                    >
+                  </div>
                 </div>
               </details>
 
@@ -717,6 +730,7 @@
                       <option value="euler">Euler 1st</option>
                     </select>
                   </div>
+                  <p id="methodGuidance" class="control-guidance" role="status" aria-live="polite"></p>
                   <div class="row">
                     <label
                       class="has-tip"
@@ -1891,6 +1905,15 @@
             <span>reason <span class="diag-val" id="dQualityReason">startup</span></span>
             <span>dpr <span class="diag-val" id="dDpr">1.5</span></span>
             <span>backend <span class="diag-val" id="dBackend">—</span></span>
+            <span>timing debt <span class="diag-val" id="dTimeDebt">0.000 s</span></span>
+            <span>dropped time <span class="diag-val" id="dDroppedTime">0.000 s</span></span>
+            <span>long tasks <span class="diag-val" id="dLongTasks">0 / 0 ms</span></span>
+            <span>offline cache <span class="diag-val" id="dPwaCache">checking</span></span>
+            <span>evidence freshness <span class="diag-val" id="dPwaEvidence">checking</span></span>
+          </div>
+          <div class="pwa-trust-actions">
+            <button id="pwaInstallButton" type="button" hidden>Install Pendulum Lab</button>
+            <a href="./reports/release-readiness.json" target="_blank" rel="noopener">Release evidence</a>
           </div>
         </section>
         <section

@@ -1,86 +1,169 @@
-import type { Derivative, StateVector, StepOptions } from './types';
+import type { Derivative, Jacobian, StateVector, StepOptions } from './types';
 import { solveLinearInPlace } from './linearSolve';
-import { FD_JACOBIAN_EPS, IMPLICIT_SOLVE_TOLERANCE } from './constants';
+import { IMPLICIT_SOLVE_TOLERANCE } from './constants';
 
 /**
- * TR-BDF2: a one-step, L-stable, second-order implicit solver for stiff systems.
- * It composes a trapezoidal substep to t + gamma*h with a BDF2 substep to t + h
- * (gamma = 2 - sqrt(2)). Being self-starting and history-free, it fits the
- * memoryless single-step contract used by `step()` (a classical multistep BDF
- * cannot, because it needs past points carried across calls).
- *
- * Each implicit stage is solved by Newton iteration with a finite-difference
- * Jacobian, so it converges on genuinely stiff problems where the fixed-point
- * iteration used by the explicit-friendly methods would diverge.
+ * TR-BDF2: a self-starting, L-stable, second-order implicit solver. Both
+ * implicit stages are Newton-solved and fail closed: on any non-convergence the
+ * output remains the previous state and diagnostics provide a retryable code.
  */
 
-const GAMMA = 2 - Math.SQRT2; // ~0.5858
-const C1 = 1 / (GAMMA * (2 - GAMMA)); // weight on the trapezoidal-stage result
-const C0 = (1 - GAMMA) ** 2 / (GAMMA * (2 - GAMMA)); // weight on y_n
-const CF = (1 - GAMMA) / (2 - GAMMA); // weight on h * f(y_{n+1})
+const GAMMA = 2 - Math.SQRT2;
+const C1 = 1 / (GAMMA * (2 - GAMMA));
+const C0 = (1 - GAMMA) ** 2 / (GAMMA * (2 - GAMMA));
+const CF = (1 - GAMMA) / (2 - GAMMA);
+const CENTRAL_DIFFERENCE_SCALE = Math.cbrt(Number.EPSILON);
 
-/** Forward-difference Jacobian of `rhs` at `y`, written row-major into `jac`. */
-function numericalJacobian(
-  rhs: Derivative,
-  y: StateVector,
-  fy: StateVector,
-  jac: Float64Array,
-  scratch: StateVector,
-  fPert: StateVector
-): void {
-  const n = y.length;
-  for (let j = 0; j < n; j += 1) {
-    const yj = Number(y[j] ?? 0);
-    const eps = FD_JACOBIAN_EPS * Math.max(1, Math.abs(yj));
-    scratch.set(y);
-    scratch[j] = yj + eps;
-    rhs(scratch, fPert);
-    for (let i = 0; i < n; i += 1) jac[i * n + j] = (Number(fPert[i] ?? 0) - Number(fy[i] ?? 0)) / eps;
-  }
+interface StiffWorkspace {
+  dimension: number;
+  jac: Float64Array;
+  f: StateVector;
+  plusState: StateVector;
+  minusState: StateVector;
+  fPlus: StateVector;
+  fMinus: StateVector;
+  residual: StateVector;
+  delta: StateVector;
+  fn: StateVector;
+  trapBase: StateVector;
+  y1: StateVector;
+  bdfBase: StateVector;
+  y2: StateVector;
 }
 
-/**
- * Solve one implicit stage of the form  Y = base + coef*h*f(Y)  by Newton's
- * method. The residual is R(Y) = Y - base - coef*h*f(Y) and the Newton matrix is
- * (I - coef*h*J). Writes the solution into `Y` and returns the final residual.
- * J comes from the exact `jacobian` when one is supplied (faster, quadratic
- * Newton convergence on stiff systems) and forward differences otherwise.
- */
+function createStiffWorkspace(n: number): StiffWorkspace {
+  const vector = (): Float64Array => new Float64Array(n);
+  return {
+    dimension: n,
+    jac: new Float64Array(n * n),
+    f: vector(),
+    plusState: vector(),
+    minusState: vector(),
+    fPlus: vector(),
+    fMinus: vector(),
+    residual: vector(),
+    delta: vector(),
+    fn: vector(),
+    trapBase: vector(),
+    y1: vector(),
+    bdfBase: vector(),
+    y2: vector()
+  };
+}
+
+const WORKSPACES = new Map<number, StiffWorkspace>();
+
+function workspaceFor(n: number): StiffWorkspace {
+  const existing = WORKSPACES.get(n);
+  if (existing) return existing;
+  const created = createStiffWorkspace(n);
+  WORKSPACES.set(n, created);
+  return created;
+}
+
+function finiteVector(values: ArrayLike<number>, n: number): boolean {
+  for (let i = 0; i < n; i += 1) if (!Number.isFinite(Number(values[i]))) return false;
+  return true;
+}
+
+/** A validated fixed zero-step is an exact identity map and never evaluates RHS. */
+function completeZeroStep(state: StateVector, out: StateVector, options: StepOptions): StateVector {
+  out.set(state);
+  if (options.previousError) options.previousError.value = 0;
+  if (options.errorComponents) options.errorComponents.fill(0, 0, state.length);
+  if (options.diagnostics) {
+    options.diagnostics.solver = 'newton';
+    options.diagnostics.iterations = 0;
+    options.diagnostics.residualNorm = 0;
+    options.diagnostics.converged = true;
+    options.diagnostics.accepted = true;
+    options.diagnostics.retryable = false;
+    delete options.diagnostics.failureReason;
+    delete options.diagnostics.errorCode;
+    delete options.diagnostics.suggestedDt;
+    delete options.diagnostics.conditionEstimate;
+  }
+  return out;
+}
+
+/** Central-difference fallback; exact/AD model Jacobians are preferred. */
+function numericalJacobian(rhs: Derivative, y: StateVector, jac: Float64Array, work: StiffWorkspace): boolean {
+  const n = y.length;
+  for (let j = 0; j < n; j += 1) {
+    const yj = Number(y[j]);
+    const eps = CENTRAL_DIFFERENCE_SCALE * Math.max(1, Math.abs(yj));
+    work.plusState.set(y);
+    work.minusState.set(y);
+    work.plusState[j] = yj + eps;
+    work.minusState[j] = yj - eps;
+    rhs(work.plusState, work.fPlus);
+    rhs(work.minusState, work.fMinus);
+    if (!finiteVector(work.fPlus, n) || !finiteVector(work.fMinus, n)) return false;
+    const inv = 0.5 / eps;
+    for (let i = 0; i < n; i += 1) jac[i * n + j] = (Number(work.fPlus[i]) - Number(work.fMinus[i])) * inv;
+  }
+  return finiteVector(jac, n * n);
+}
+
+type StageFailure = 'non-finite-rhs' | 'non-finite-jacobian' | 'singular-newton-matrix' | 'max-iterations';
+
+interface StageReport {
+  converged: boolean;
+  iterations: number;
+  residualNorm: number;
+  failureReason?: StageFailure;
+}
+
 function newtonStage(
   rhs: Derivative,
   base: StateVector,
   coef: number,
   h: number,
-  Y: StateVector,
+  y: StateVector,
   tolerance: number,
-  scratch: { jac: Float64Array; f: StateVector; tmp: StateVector; fPert: StateVector; residual: StateVector },
-  jacobian?: (state: StateVector, jac: Float64Array) => void
-): number {
-  const n = Y.length;
-  const { jac, f, tmp, fPert, residual } = scratch;
-  let resNorm = Infinity;
+  work: StiffWorkspace,
+  jacobian?: Jacobian
+): StageReport {
+  const n = y.length;
+  let residualNorm = Infinity;
+  let iterations = 0;
   for (let iter = 0; iter < 25; iter += 1) {
-    rhs(Y, f);
-    resNorm = 0;
-    for (let i = 0; i < n; i += 1) {
-      residual[i] = Number(Y[i] ?? 0) - Number(base[i] ?? 0) - coef * h * Number(f[i] ?? 0);
-      resNorm = Math.max(resNorm, Math.abs(Number(residual[i] ?? 0)));
+    iterations = iter + 1;
+    rhs(y, work.f);
+    if (!finiteVector(work.f, n)) {
+      return { converged: false, iterations, residualNorm: Infinity, failureReason: 'non-finite-rhs' };
     }
-    if (resNorm < tolerance) break;
-    if (jacobian) jacobian(Y, jac);
-    else numericalJacobian(rhs, Y, f, jac, tmp, fPert);
-    // Newton matrix M = I - coef*h*J.
+    residualNorm = 0;
+    for (let i = 0; i < n; i += 1) {
+      work.residual[i] = Number(y[i]) - Number(base[i]) - coef * h * Number(work.f[i]);
+      residualNorm = Math.max(residualNorm, Math.abs(Number(work.residual[i])));
+    }
+    if (residualNorm <= tolerance) return { converged: true, iterations, residualNorm };
+
+    if (jacobian) {
+      jacobian(y, work.jac);
+      if (!finiteVector(work.jac, n * n)) {
+        return { converged: false, iterations, residualNorm, failureReason: 'non-finite-jacobian' };
+      }
+    } else if (!numericalJacobian(rhs, y, work.jac, work)) {
+      return { converged: false, iterations, residualNorm, failureReason: 'non-finite-jacobian' };
+    }
     for (let i = 0; i < n; i += 1) {
       for (let j = 0; j < n; j += 1) {
-        jac[i * n + j] = (i === j ? 1 : 0) - coef * h * Number(jac[i * n + j] ?? 0);
+        work.jac[i * n + j] = (i === j ? 1 : 0) - coef * h * Number(work.jac[i * n + j]);
       }
+      work.delta[i] = -Number(work.residual[i]);
     }
-    const rhsVec = new Float64Array(n);
-    for (let i = 0; i < n; i += 1) rhsVec[i] = -Number(residual[i] ?? 0);
-    if (!solveLinearInPlace(jac, rhsVec, n).ok) break;
-    for (let i = 0; i < n; i += 1) Y[i] = Number(Y[i] ?? 0) + Number(rhsVec[i] ?? 0);
+    const solve = solveLinearInPlace(work.jac, work.delta, n);
+    if (!solve.ok) {
+      return { converged: false, iterations, residualNorm, failureReason: 'singular-newton-matrix' };
+    }
+    for (let i = 0; i < n; i += 1) y[i] = Number(y[i]) + Number(work.delta[i]);
+    if (!finiteVector(y, n)) {
+      return { converged: false, iterations, residualNorm: Infinity, failureReason: 'non-finite-rhs' };
+    }
   }
-  return resNorm;
+  return { converged: false, iterations, residualNorm, failureReason: 'max-iterations' };
 }
 
 export function trBdf2Step(
@@ -92,29 +175,67 @@ export function trBdf2Step(
 ): StateVector {
   const n = state.length;
   const tolerance = options.tolerance ?? IMPLICIT_SOLVE_TOLERANCE;
-  const scratch = {
-    jac: new Float64Array(n * n),
-    f: new Float64Array(n),
-    tmp: new Float64Array(n),
-    fPert: new Float64Array(n),
-    residual: new Float64Array(n)
-  };
+  if (!Number.isSafeInteger(n) || n < 1 || out.length < n) {
+    throw new RangeError('trBdf2Step: state/output dimensions must match a positive state dimension.');
+  }
+  if (!finiteVector(state, n)) throw new RangeError('trBdf2Step: state components must be finite.');
+  if (!Number.isFinite(dt)) throw new RangeError('trBdf2Step: dt must be finite.');
+  if (typeof rhs !== 'function') throw new TypeError('trBdf2Step: rhs must be a function.');
+  if (!(tolerance > 0) || !Number.isFinite(tolerance)) {
+    throw new RangeError('trBdf2Step: tolerance must be positive and finite.');
+  }
+  if (dt === 0) return completeZeroStep(state, out, options);
 
-  // Trapezoidal stage: Y1 = (y_n + (gamma*h/2) f_n) + (gamma*h/2) f(Y1).
-  const fn = new Float64Array(n);
-  rhs(state, fn);
-  const trapBase = new Float64Array(n);
-  for (let i = 0; i < n; i += 1) trapBase[i] = Number(state[i] ?? 0) + ((GAMMA * dt) / 2) * Number(fn[i] ?? 0);
-  const Y1 = new Float64Array(state);
-  const res1 = newtonStage(rhs, trapBase, GAMMA / 2, dt, Y1, tolerance, scratch, options.jacobian);
+  const work = workspaceFor(n);
+  const jacobian = options.jacobian ?? rhs.jacobian;
+  rhs(state, work.fn);
+  let stage1: StageReport;
+  let stage2: StageReport | undefined;
+  if (!finiteVector(work.fn, n)) {
+    stage1 = { converged: false, iterations: 0, residualNorm: Infinity, failureReason: 'non-finite-rhs' };
+  } else {
+    for (let i = 0; i < n; i += 1) {
+      work.trapBase[i] = Number(state[i]) + ((GAMMA * dt) / 2) * Number(work.fn[i]);
+    }
+    work.y1.set(state);
+    stage1 = newtonStage(rhs, work.trapBase, GAMMA / 2, dt, work.y1, tolerance, work, jacobian);
+    if (stage1.converged) {
+      for (let i = 0; i < n; i += 1) {
+        work.bdfBase[i] = C1 * Number(work.y1[i]) - C0 * Number(state[i]);
+      }
+      work.y2.set(work.y1);
+      stage2 = newtonStage(rhs, work.bdfBase, CF, dt, work.y2, tolerance, work, jacobian);
+    }
+  }
 
-  // BDF2 stage: Y2 = (C1*Y1 - C0*y_n) + CF*h*f(Y2).
-  const bdfBase = new Float64Array(n);
-  for (let i = 0; i < n; i += 1) bdfBase[i] = C1 * Number(Y1[i] ?? 0) - C0 * Number(state[i] ?? 0);
-  const Y2 = new Float64Array(Y1);
-  const res2 = newtonStage(rhs, bdfBase, CF, dt, Y2, tolerance, scratch, options.jacobian);
-
-  out.set(Y2);
-  if (options.previousError) options.previousError.value = Math.max(res1, res2);
+  const converged = stage1.converged && stage2?.converged === true;
+  const residualNorm = Math.max(stage1.residualNorm, stage2?.residualNorm ?? 0);
+  out.set(converged ? work.y2 : state);
+  if (options.previousError) options.previousError.value = residualNorm;
+  if (options.diagnostics) {
+    const failure = stage2?.failureReason ?? stage1.failureReason;
+    options.diagnostics.solver = 'newton';
+    options.diagnostics.iterations = stage1.iterations + (stage2?.iterations ?? 0);
+    options.diagnostics.residualNorm = residualNorm;
+    options.diagnostics.converged = converged;
+    options.diagnostics.accepted = converged;
+    options.diagnostics.retryable = !converged && failure !== 'non-finite-rhs' && failure !== 'non-finite-jacobian';
+    if (converged) {
+      delete options.diagnostics.failureReason;
+      delete options.diagnostics.errorCode;
+      delete options.diagnostics.suggestedDt;
+    } else {
+      options.diagnostics.failureReason = failure ?? 'max-iterations';
+      options.diagnostics.errorCode =
+        failure === 'singular-newton-matrix'
+          ? 'SINGULAR_NEWTON_MATRIX'
+          : failure === 'non-finite-rhs' || failure === 'non-finite-jacobian'
+            ? 'NON_FINITE_INPUT'
+            : 'IMPLICIT_SOLVER_DID_NOT_CONVERGE';
+      if (options.diagnostics.retryable) options.diagnostics.suggestedDt = Math.abs(dt) / 2;
+      else delete options.diagnostics.suggestedDt;
+    }
+    delete options.diagnostics.conditionEstimate;
+  }
   return out;
 }

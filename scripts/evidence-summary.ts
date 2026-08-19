@@ -40,6 +40,12 @@ async function exists(path: string): Promise<boolean> {
 
 const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as { version?: string };
 const lockfile = await readFile('package-lock.json');
+const worktreeDirty = evidenceWorktreeIsDirty();
+if (!checkOnly && worktreeDirty) {
+  throw new Error(
+    'Refusing to refresh public evidence from a dirty worktree. Commit the source and successful test report first.'
+  );
+}
 const generatedAt = new Date();
 const expiresAfterDays = 14;
 const summary = buildEvidenceSummary({
@@ -57,7 +63,7 @@ const summary = buildEvidenceSummary({
     sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
     packageVersion: packageJson.version ?? 'unknown',
     lockfileSha256: createHash('sha256').update(lockfile).digest('hex'),
-    dirtyWorktree: evidenceWorktreeIsDirty(),
+    dirtyWorktree: worktreeDirty,
     expiresAfterDays,
     expiresAt: new Date(generatedAt.getTime() + expiresAfterDays * 86_400_000).toISOString()
   }
@@ -67,7 +73,7 @@ if (checkOnly) {
   const committed = await readJson(evidencePath);
   assertReleaseReadyEvidence(committed);
   const comparable = structuredClone(summary) as unknown;
-  preserveVolatileEvidence(comparable, committed);
+  preserveVolatileEvidence(comparable, committed, worktreeDirty);
   if (JSON.stringify(comparable) !== JSON.stringify(committed)) {
     throw new Error(
       'Committed evidence is stale. Run `npm run evidence:refresh`, review the scientific diff, and commit it.'
@@ -87,6 +93,12 @@ function assertReleaseReadyEvidence(value: unknown): void {
       dirtyWorktree?: unknown;
       expiresAt?: unknown;
     };
+    tests?: {
+      total?: unknown;
+      passed?: unknown;
+      failed?: unknown;
+      success?: unknown;
+    };
   };
   const generatedAt = Date.parse(String(evidence.generatedAt ?? ''));
   const expiresAt = Date.parse(String(evidence.provenance?.expiresAt ?? ''));
@@ -105,6 +117,12 @@ function assertReleaseReadyEvidence(value: unknown): void {
     throw new Error('Committed evidence has expired. Run `npm run evidence:refresh` from a clean committed tree.');
   }
   if (expiresAt <= generatedAt) throw new Error('Committed evidence expiresAt must be later than generatedAt.');
+  const total = Number(evidence.tests?.total);
+  const passed = Number(evidence.tests?.passed);
+  const failed = Number(evidence.tests?.failed);
+  if (!Number.isInteger(total) || total <= 0 || passed !== total || failed !== 0 || evidence.tests?.success !== true) {
+    throw new Error('Committed evidence tests must come from a successful, complete Vitest JSON report.');
+  }
 }
 
 const landingSummaryPath = resolve('..', 'landing page', 'pendulum-landing', 'assets', 'evidence-summary.json');
@@ -120,16 +138,16 @@ if (!checkOnly) {
   }
 }
 
-function preserveVolatileEvidence(candidate: unknown, committed: unknown): void {
+function preserveVolatileEvidence(candidate: unknown, committed: unknown, preserveTestSnapshot: boolean): void {
   if (!candidate || !committed || typeof candidate !== 'object' || typeof committed !== 'object') return;
   const target = candidate as Record<string, unknown>;
   const source = committed as Record<string, unknown>;
   for (const key of Object.keys(target)) {
     if (!(key in source)) continue;
-    if (volatileEvidenceKeys.has(key)) {
+    if (volatileEvidenceKeys.has(key) || (preserveTestSnapshot && key === 'tests')) {
       target[key] = source[key];
     } else {
-      preserveVolatileEvidence(target[key], source[key]);
+      preserveVolatileEvidence(target[key], source[key], preserveTestSnapshot);
     }
   }
 }

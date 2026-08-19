@@ -13,6 +13,8 @@ const MAX_WINDOW = 64;
 const OUTPUT_VECTOR_OFFSET = 32;
 const OUTPUT_FLOATS = OUTPUT_VECTOR_OFFSET + MAX_DIMENSION * MAX_DIMENSION;
 
+export const NCHAIN_GPU_PROMOTION_SCOPE = 'hybrid-cpu-trajectory-gpu-tangent' as const;
+
 export interface NChainVariationalOptions extends Partial<ClvSettings> {
   forceCpu?: boolean;
   ftleTolerance?: number;
@@ -30,6 +32,7 @@ export interface NChainVariationalSummary {
 
 export interface WebgpuNChainVariationalCandidate {
   backend: 'webgpu';
+  scope: typeof NCHAIN_GPU_PROMOTION_SCOPE;
   result: NChainVariationalSummary;
   elapsedMs: number;
   caveat: string;
@@ -44,6 +47,7 @@ export interface NChainVariationalComparison {
 
 export interface NChainVariationalPromotion {
   backend: 'webgpu' | 'cpu';
+  scope: typeof NCHAIN_GPU_PROMOTION_SCOPE;
   result: NChainVariationalSummary;
   cpuOracle: NChainVariationalSummary;
   gpuCandidate: WebgpuNChainVariationalCandidate | null;
@@ -403,6 +407,7 @@ export async function webgpuNChainVariationalCandidate(
   if (![...exponents, meanAngle, minAngle, ftle].every(Number.isFinite) || angleCount <= 0) return null;
   return {
     backend: 'webgpu',
+    scope: NCHAIN_GPU_PROMOTION_SCOPE,
     elapsedMs,
     result: {
       dimension,
@@ -436,6 +441,7 @@ export async function promotedNChainVariational(
   if (!gpuCandidate) {
     return {
       backend: 'cpu',
+      scope: NCHAIN_GPU_PROMOTION_SCOPE,
       result: cpuOracle,
       cpuOracle,
       gpuCandidate: null,
@@ -455,6 +461,7 @@ export async function promotedNChainVariational(
   if (!comparison.passed) {
     return {
       backend: 'cpu',
+      scope: NCHAIN_GPU_PROMOTION_SCOPE,
       result: cpuOracle,
       cpuOracle,
       gpuCandidate,
@@ -465,6 +472,7 @@ export async function promotedNChainVariational(
   }
   return {
     backend: 'webgpu',
+    scope: NCHAIN_GPU_PROMOTION_SCOPE,
     result: gpuCandidate.result,
     cpuOracle,
     gpuCandidate,

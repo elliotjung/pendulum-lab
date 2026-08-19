@@ -45,9 +45,14 @@ function phaseSamples(theta: Float32Array, omega: Float32Array): PhaseSample[] {
  * rendering when the worker is unavailable. Extracted from `LabApp`.
  */
 export class LabSidePlotCoordinator {
-  private readonly worker = new LabSidePlotWorkerClient();
+  private readonly worker: LabSidePlotWorkerClient;
 
-  constructor(private readonly sources: LabSidePlotSources) {}
+  constructor(
+    private readonly sources: LabSidePlotSources,
+    onFallback?: () => void
+  ) {
+    this.worker = new LabSidePlotWorkerClient({ onFallback: () => onFallback?.() });
+  }
 
   /** Render one plot slice (0..4), via the worker when possible. */
   drawSlice(plotIndex: number): void {
@@ -63,6 +68,10 @@ export class LabSidePlotCoordinator {
 
   renderMs(): number {
     return this.worker.renderMs();
+  }
+
+  dispose(): void {
+    this.worker.dispose();
   }
 
   private ensureWorker(): boolean {

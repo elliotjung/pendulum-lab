@@ -24,12 +24,35 @@
  */
 
 import type { SphericalParams, SphericalState } from './spherical';
+import { PhysicsEvaluationError, assertFiniteVector, assertNonNegativeFinite, assertPositiveFinite } from './errors';
 
 /** Embedded state [u_x, u_y, u_z, w_x, w_y, w_z] with |u| = 1 and u·w = 0. */
 export type EmbeddedSphericalState = readonly [number, number, number, number, number, number];
 
+function validateEmbeddedParams(params: SphericalParams, operation: string): void {
+  assertPositiveFinite(params.l, 'l', operation);
+  assertNonNegativeFinite(params.g, 'g', operation);
+  assertNonNegativeFinite(params.damping, 'damping', operation);
+}
+
+function assertEmbeddedState(state: ArrayLike<number>, operation: string): void {
+  assertFiniteVector(state, 6, operation);
+}
+
+function assertFiniteEmbeddedValues(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the spherical parameters.'
+    });
+  }
+}
+
 /** Right-hand side of the embedded equation of motion: returns [u̇, ü] = [w, ü]. */
 export function sphericalEmbeddedRhs(state: EmbeddedSphericalState, params: SphericalParams): EmbeddedSphericalState {
+  assertEmbeddedState(state, 'sphericalEmbeddedRhs');
+  validateEmbeddedParams(params, 'sphericalEmbeddedRhs');
   const ux = state[0];
   const uy = state[1];
   const uz = state[2];
@@ -45,19 +68,28 @@ export function sphericalEmbeddedRhs(state: EmbeddedSphericalState, params: Sphe
   const ax = c * ux - damping * wx;
   const ay = -gl + c * uy - damping * wy;
   const az = c * uz - damping * wz;
+  assertFiniteEmbeddedValues([wx, wy, wz, ax, ay, az], 'sphericalEmbeddedRhs');
   return [wx, wy, wz, ax, ay, az];
 }
 
 /** Total energy per unit mass: ½l²|w|² + g·l·u_y. Matches `sphericalEnergy`. */
 export function sphericalEmbeddedEnergy(state: EmbeddedSphericalState, params: SphericalParams): number {
+  assertEmbeddedState(state, 'sphericalEmbeddedEnergy');
+  validateEmbeddedParams(params, 'sphericalEmbeddedEnergy');
   const { g, l } = params;
   const wSq = state[3] * state[3] + state[4] * state[4] + state[5] * state[5];
-  return 0.5 * l * l * wSq + g * l * state[1];
+  const energy = 0.5 * l * l * wSq + g * l * state[1];
+  assertFiniteEmbeddedValues([energy], 'sphericalEmbeddedEnergy');
+  return energy;
 }
 
 /** Vertical angular momentum per unit mass: l²(u_x w_z − u_z w_x) = l²sin²θ·φ̇. Matches `sphericalLz`. */
 export function sphericalEmbeddedLz(state: EmbeddedSphericalState, params: SphericalParams): number {
-  return params.l * params.l * (state[0] * state[5] - state[2] * state[3]);
+  assertEmbeddedState(state, 'sphericalEmbeddedLz');
+  validateEmbeddedParams(params, 'sphericalEmbeddedLz');
+  const lz = params.l * params.l * (state[0] * state[5] - state[2] * state[3]);
+  assertFiniteEmbeddedValues([lz], 'sphericalEmbeddedLz');
+  return lz;
 }
 
 /** Cartesian bob position (y up, pivot at origin): r = l·u. */
@@ -65,11 +97,16 @@ export function sphericalEmbeddedPosition(
   state: EmbeddedSphericalState,
   params: SphericalParams
 ): { x: number; y: number; z: number } {
-  return { x: params.l * state[0], y: params.l * state[1], z: params.l * state[2] };
+  assertEmbeddedState(state, 'sphericalEmbeddedPosition');
+  validateEmbeddedParams(params, 'sphericalEmbeddedPosition');
+  const position = { x: params.l * state[0], y: params.l * state[1], z: params.l * state[2] };
+  assertFiniteEmbeddedValues([position.x, position.y, position.z], 'sphericalEmbeddedPosition');
+  return position;
 }
 
 /** Convert a polar (θ, φ, θ̇, φ̇) state to the embedded chart. */
 export function angleToEmbedded(state: SphericalState): EmbeddedSphericalState {
+  assertFiniteVector(state, 4, 'angleToEmbedded');
   const [theta, phi, thetaDot, phiDot] = state;
   const sin = Math.sin(theta);
   const cos = Math.cos(theta);
@@ -83,11 +120,13 @@ export function angleToEmbedded(state: SphericalState): EmbeddedSphericalState {
   const wx = thetaDot * cos * cp - phiDot * sin * sp;
   const wy = thetaDot * sin;
   const wz = thetaDot * cos * sp + phiDot * sin * cp;
+  assertFiniteEmbeddedValues([ux, uy, uz, wx, wy, wz], 'angleToEmbedded');
   return [ux, uy, uz, wx, wy, wz];
 }
 
 /** Convert an embedded state back to polar (θ, φ, θ̇, φ̇). Singular at the poles (sinθ → 0). */
 export function embeddedToAngle(state: EmbeddedSphericalState): SphericalState {
+  assertEmbeddedState(state, 'embeddedToAngle');
   const ux = state[0];
   const uy = state[1];
   const uz = state[2];
@@ -100,6 +139,7 @@ export function embeddedToAngle(state: EmbeddedSphericalState): SphericalState {
   // θ̇ = w·∂u/∂θ (unit); φ̇ = (w·e_φ)/sinθ with e_φ = (−sinφ, 0, cosφ)
   const thetaDot = state[3] * cos * cp + state[4] * sin + state[5] * cos * sp;
   const phiDot = sin === 0 ? 0 : (state[3] * -sp + state[5] * cp) / sin;
+  assertFiniteEmbeddedValues([theta, phi, thetaDot, phiDot], 'embeddedToAngle');
   return [theta, phi, thetaDot, phiDot];
 }
 
@@ -134,6 +174,9 @@ export class EmbeddedSphericalPendulum {
     initial: EmbeddedSphericalState,
     readonly dt = 0.002
   ) {
+    validateEmbeddedParams(params, 'EmbeddedSphericalPendulum');
+    assertEmbeddedState(initial, 'EmbeddedSphericalPendulum');
+    assertPositiveFinite(dt, 'dt', 'EmbeddedSphericalPendulum');
     this.state = project(initial);
     this.initialEnergy = sphericalEmbeddedEnergy(this.state, params);
     this.initialLz = sphericalEmbeddedLz(this.state, params);
@@ -153,6 +196,24 @@ export class EmbeddedSphericalPendulum {
   }
 
   step(elapsed: number): void {
+    if (!(elapsed >= 0) || !Number.isFinite(elapsed)) {
+      throw new PhysicsEvaluationError(
+        'NON_FINITE_INPUT',
+        'EmbeddedSphericalPendulum.step: elapsed must be finite and non-negative',
+        { operation: 'EmbeddedSphericalPendulum.step', retryable: false, parameter: 'elapsed', value: elapsed }
+      );
+    }
+    if (Math.ceil(elapsed / this.dt) > 1_000_000) {
+      throw new PhysicsEvaluationError(
+        'INVALID_PARAMETER',
+        'EmbeddedSphericalPendulum.step: elapsed exceeds the per-call step budget',
+        {
+          operation: 'EmbeddedSphericalPendulum.step',
+          retryable: true,
+          suggestedAction: 'Split the run into smaller chunks or use a worker batch.'
+        }
+      );
+    }
     let remaining = elapsed;
     while (remaining > 1e-12) {
       const h = Math.min(this.dt, remaining);
@@ -212,10 +273,30 @@ export class EmbeddedSphericalPendulum {
 
 /** Renormalise u to the unit sphere and remove the radial component of w (u·w = 0). */
 function project(state: EmbeddedSphericalState): EmbeddedSphericalState {
-  const norm = Math.hypot(state[0], state[1], state[2]) || 1;
+  assertEmbeddedState(state, 'EmbeddedSphericalPendulum.project');
+  const norm = Math.hypot(state[0], state[1], state[2]);
+  if (!(norm > 0) || !Number.isFinite(norm)) {
+    throw new PhysicsEvaluationError(
+      'INVALID_PARAMETER',
+      'EmbeddedSphericalPendulum.project: direction vector must be non-zero',
+      {
+        operation: 'EmbeddedSphericalPendulum.project',
+        retryable: false
+      }
+    );
+  }
   const ux = state[0] / norm;
   const uy = state[1] / norm;
   const uz = state[2] / norm;
   const radial = ux * state[3] + uy * state[4] + uz * state[5];
-  return [ux, uy, uz, state[3] - radial * ux, state[4] - radial * uy, state[5] - radial * uz];
+  const projected: EmbeddedSphericalState = [
+    ux,
+    uy,
+    uz,
+    state[3] - radial * ux,
+    state[4] - radial * uy,
+    state[5] - radial * uz
+  ];
+  assertFiniteEmbeddedValues(projected, 'EmbeddedSphericalPendulum.project');
+  return projected;
 }

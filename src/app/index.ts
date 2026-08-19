@@ -1,5 +1,5 @@
 export { LabSimulation } from './LabSimulation';
-export type { LabConfig, LabSnapshot, BobPosition } from './LabSimulation';
+export type { LabConfig, LabSnapshot, LabStepReport, BobPosition } from './LabSimulation';
 export { LabRenderer } from './LabRenderer';
 export type { LabRenderOptions } from './LabRenderer';
 export { mountModernLab } from './LabController';

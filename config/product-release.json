@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "pendulum-product-release-config/v1",
+  "lab": {
+    "repository": "elliotjung/pendulum-lab",
+    "publicUrl": "https://elliotjung.github.io/pendulum-lab/",
+    "evidencePath": "reports/evidence-summary.json",
+    "validationScopePath": "reports/independent-validation-scope.json",
+    "reviewerPath": "reviewer.html",
+    "manifestPath": "manifest.webmanifest",
+    "serviceWorkerPath": "sw.js"
+  },
+  "landing": {
+    "repository": "elliotjung/pendulum-landing",
+    "publicUrl": "https://elliotjung.github.io/pendulum-landing/",
+    "entryPaths": ["index.html", "ko.html"],
+    "evidencePath": "assets/evidence-summary.json",
+    "kernelManifestPath": "assets/demo-kernel-manifest.json"
+  },
+  "cta": {
+    "requiredTab": "lab",
+    "minimumPerEntry": 1
+  }
+}

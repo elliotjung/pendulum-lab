@@ -56,9 +56,10 @@ export {
   largestSingularValue,
   determinant,
   finiteTimeLyapunov,
+  finiteTimeLyapunovReport,
   doublePendulumFtleField
 } from './ftle';
-export type { FtleOptions, FlowMapGradient, FtleFieldOptions, FtleField } from './ftle';
+export type { FiniteTimeLyapunovReport, FtleOptions, FlowMapGradient, FtleFieldOptions, FtleField } from './ftle';
 
 export {
   CHAOS_ACCELERATION_CONTRACTS,
@@ -97,6 +98,7 @@ export {
   drivenPeriodicOrbitN,
   switchPeriodDoubling,
   switchSymmetryBreaking,
+  autoSwitchDrivenBranch,
   switchTranscriticalBranch,
   realEigenvector2x2
 } from './branchSwitching';
@@ -106,6 +108,7 @@ export type {
   BranchSwitchResult,
   SymmetryBreakOptions,
   SymmetryBreakResult,
+  AutomaticDrivenBranchSwitchResult,
   BranchResidualSystem,
   TranscriticalPoint,
   TranscriticalSwitchOptions,
@@ -128,12 +131,13 @@ export { saliIndicator, fliIndicator } from './indicators';
 export type { IndicatorSettings, SaliResult, FliResult } from './indicators';
 
 export { shadowingHorizon } from './shadowing';
-export type { ShadowingOptions, ShadowingResult } from './shadowing';
+export type { ShadowingOptions, ShadowingResult, ShadowingSample } from './shadowing';
 
 export {
   buildPoincareSection,
   poincareSection,
   poincareSectionPreset,
+  poincareResultCsv,
   bifurcationDiagram,
   distinctValueCount
 } from './poincare';
@@ -254,12 +258,14 @@ export {
   PERIODIC_ORBIT_DATABASE_SCHEMA,
   cyclicOrbitDistance,
   buildPeriodicOrbitDatabase,
-  cycleExpansionObservable
+  cycleExpansionObservable,
+  cycleExpansionConvergence
 } from './periodicOrbitDatabase';
 export type {
   PeriodicOrbitRecord,
   PeriodicOrbitDatabase,
   PeriodicOrbitDatabaseOptions,
   CycleExpansionOptions,
-  CycleExpansionObservableResult
+  CycleExpansionObservableResult,
+  CycleExpansionConvergenceResult
 } from './periodicOrbitDatabase';

@@ -25,6 +25,48 @@ export interface PoincareResult {
   points: StateVector[];
   /** Crossing times for the retained points. */
   times: number[];
+  /** +1 rising / -1 falling, aligned with `points`. */
+  directions: Array<1 | -1>;
+  /** |section(state)| at each refined crossing. */
+  rootResiduals: number[];
+  rootBracketWidths: number[];
+  metadata: {
+    dt: number;
+    maxTime: number;
+    rootTolerance: number;
+    requestedDirection: CrossingDirection;
+    transientDiscarded: number;
+  };
+}
+
+/** Publication-oriented CSV with crossing certification columns. */
+export function poincareResultCsv(result: PoincareResult, componentNames?: readonly string[]): string {
+  const dimension = result.points[0]?.length ?? componentNames?.length ?? 0;
+  if (componentNames && componentNames.length !== dimension) {
+    throw new RangeError('poincareResultCsv: componentNames must match the section-state dimension.');
+  }
+  const names = componentNames ? [...componentNames] : Array.from({ length: dimension }, (_, i) => `x${i}`);
+  const header = ['time', 'crossing_direction', 'root_residual', 'root_bracket_width', ...names].join(',');
+  const rows = result.points.map((point, index) => {
+    if (point.length !== dimension) throw new RangeError('poincareResultCsv: all points must have the same dimension.');
+    const direction = result.directions[index] === 1 ? 'rising' : 'falling';
+    return [
+      result.times[index],
+      direction,
+      result.rootResiduals[index],
+      result.rootBracketWidths[index],
+      ...Array.from(point)
+    ]
+      .map((value) => (typeof value === 'number' ? value.toPrecision(17) : value))
+      .join(',');
+  });
+  return [
+    `# root_tolerance=${result.metadata.rootTolerance.toPrecision(17)}`,
+    `# integration_dt=${result.metadata.dt.toPrecision(17)}`,
+    `# requested_direction=${result.metadata.requestedDirection}`,
+    header,
+    ...rows
+  ].join('\n');
 }
 
 export type PoincareSectionPreset =
@@ -52,6 +94,11 @@ function centeredModulo(value: number, period: number): number {
 
 export function buildPoincareSection(preset: PoincareSectionPreset): PoincareSectionBuilderResult {
   if (preset.kind === 'coordinate') {
+    if (!Number.isSafeInteger(preset.index) || preset.index < 0 || !Number.isFinite(preset.value)) {
+      throw new RangeError(
+        'buildPoincareSection: coordinate index/value must be a non-negative integer and finite value.'
+      );
+    }
     return {
       section: (state) => (state[preset.index] ?? 0) - preset.value,
       direction: preset.direction ?? 'both',
@@ -60,6 +107,9 @@ export function buildPoincareSection(preset: PoincareSectionPreset): PoincareSec
   }
   if (preset.kind === 'theta') {
     const index = preset.index ?? 0;
+    if (!Number.isSafeInteger(index) || index < 0 || !Number.isFinite(preset.value)) {
+      throw new RangeError('buildPoincareSection: theta index/value must be a non-negative integer and finite value.');
+    }
     return {
       section: (state) => (state[index] ?? 0) - preset.value,
       direction: preset.direction ?? 'both',
@@ -67,11 +117,25 @@ export function buildPoincareSection(preset: PoincareSectionPreset): PoincareSec
     };
   }
   if (preset.kind === 'energy') {
+    if (!Number.isFinite(preset.value) || typeof preset.energy !== 'function') {
+      throw new RangeError('buildPoincareSection: energy target must be finite and an energy function is required.');
+    }
     return {
       section: (state) => preset.energy(state) - preset.value,
       direction: preset.direction ?? 'both',
       label: `energy=${preset.value}`
     };
+  }
+  if (
+    !Number.isSafeInteger(preset.phaseIndex) ||
+    preset.phaseIndex < 0 ||
+    !(preset.period > 0) ||
+    !Number.isFinite(preset.period)
+  ) {
+    throw new RangeError('buildPoincareSection: stroboscopic phaseIndex/period are invalid.');
+  }
+  if (preset.phase !== undefined && !Number.isFinite(preset.phase)) {
+    throw new RangeError('buildPoincareSection: stroboscopic phase must be finite.');
   }
   return {
     section: (state) => centeredModulo((state[preset.phaseIndex] ?? 0) - (preset.phase ?? 0), preset.period),
@@ -86,21 +150,41 @@ export function buildPoincareSection(preset: PoincareSectionPreset): PoincareSec
 export function poincareSection(state0: ArrayLike<number>, rhs: Derivative, options: PoincareOptions): PoincareResult {
   const transient = options.transientCrossings ?? 0;
   const maxPoints = options.maxPoints ?? Infinity;
+  if (!Number.isSafeInteger(transient) || transient < 0) {
+    throw new RangeError('poincareSection: transientCrossings must be a non-negative safe integer.');
+  }
+  if (!(maxPoints === Infinity || (Number.isSafeInteger(maxPoints) && maxPoints >= 0))) {
+    throw new RangeError('poincareSection: maxPoints must be Infinity or a non-negative safe integer.');
+  }
+  if (typeof options.section !== 'function') throw new TypeError('poincareSection: section must be a function.');
+  const dt = options.dt ?? 1e-3;
+  const rootTolerance = options.rootTol ?? 1e-9;
+  const requestedDirection = options.direction ?? 'both';
   const result = detectEvents(
     new Float64Array(state0),
     rhs,
     [{ g: options.section, direction: options.direction ?? 'both' }],
     {
-      dt: options.dt ?? 1e-3,
+      dt,
       maxTime: options.maxTime,
-      rootTol: options.rootTol ?? 1e-9,
+      rootTol: rootTolerance,
       ...(Number.isFinite(maxPoints) ? { maxEvents: transient + maxPoints } : {})
     }
   );
   const kept = result.events.slice(transient);
   return {
     points: kept.map((e) => e.state),
-    times: kept.map((e) => e.time)
+    times: kept.map((e) => e.time),
+    directions: kept.map((e) => e.direction),
+    rootResiduals: kept.map((e) => e.rootResidual),
+    rootBracketWidths: kept.map((e) => e.rootBracketWidth),
+    metadata: {
+      dt,
+      maxTime: options.maxTime,
+      rootTolerance,
+      requestedDirection,
+      transientDiscarded: Math.min(transient, result.events.length)
+    }
   };
 }
 

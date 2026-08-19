@@ -10,6 +10,15 @@ import {
 } from './expandedModels-factory';
 import { expansionLyapunovProfile } from './expandedModels-lyapunov';
 import {
+  GOLDEN_REGRESSION_BASELINES,
+  modelAxis,
+  primaryResearchLength,
+  primaryResearchMass,
+  researchAxes,
+  researchPhaseIndexes,
+  withResearchAxisValue
+} from './expandedModels-research-presets';
+import {
   cloneState,
   configFromPreset,
   expansionPreset,
@@ -25,161 +34,20 @@ import type {
   ExpansionLyapunovProfiler,
   ExpansionMatrixCell,
   ExpansionMethodResult,
-  ExpansionModelId,
-  ExpansionParameterMap,
   ExpansionPoincarePoint,
   ExpansionPoint,
   ExpansionResearchMatrixResult,
   ExpansionSuiteConfig,
   ExpansionSuiteResult,
-  ExpansionSweepAxis,
   ExpansionTrajectorySample,
   GoldenCenterResult,
   ResearchComparisonKind,
   ResearchComparisonRun
 } from './expandedModels-types';
 
-function parameterUnit(model: ExpansionModelId, parameter: string): string {
-  const units: Record<string, string> = {
-    g: 'm/s^2',
-    length: 'm',
-    length1: 'm',
-    length2: 'm',
-    length3: 'm',
-    length4: 'm',
-    damping: '1/s',
-    driveAmplitude: 'rad/s^2',
-    driveFrequency: 'rad/s',
-    frequency: 'rad/s',
-    amplitude: '1',
-    coupling: '1/s^2',
-    force: 'N',
-    friction: 'N s/m',
-    cartMass: 'kg',
-    poleMass: 'kg',
-    links: 'count',
-    lengthScale: '1'
-  };
-  if (model === 'spherical' && parameter === 'length') return 'm';
-  return units[parameter] ?? 'model unit';
-}
-
-function modelAxis(
-  model: ExpansionModelId,
-  parameter: string,
-  label: string,
-  min: number,
-  max: number
-): ExpansionSweepAxis {
-  return { parameter, label, unit: parameterUnit(model, parameter), min, max };
-}
-
-function researchAxes(model: ExpansionModelId): { xAxis: ExpansionSweepAxis; yAxis: ExpansionSweepAxis } {
-  switch (model) {
-    case 'driven':
-      return {
-        xAxis: modelAxis(model, 'driveAmplitude', 'drive amplitude', 0.7, 1.45),
-        yAxis: modelAxis(model, 'damping', 'damping', 0.05, 0.9)
-      };
-    case 'cartpole':
-      return {
-        xAxis: modelAxis(model, 'force', 'cart force', -3, 3),
-        yAxis: modelAxis(model, 'length', 'pole length', 0.35, 1.4)
-      };
-    case 'parametric':
-      return {
-        xAxis: modelAxis(model, 'amplitude', 'modulation amplitude', 0, 0.7),
-        yAxis: modelAxis(model, 'frequency', 'modulation frequency', 3, 9)
-      };
-    case 'coupled':
-      return {
-        xAxis: modelAxis(model, 'coupling', 'coupling', 0.1, 5),
-        yAxis: modelAxis(model, 'length', 'length', 0.45, 1.8)
-      };
-    case 'inverted':
-      return {
-        xAxis: modelAxis(model, 'g', 'gravity', 2, 18),
-        yAxis: modelAxis(model, 'length', 'length', 0.35, 1.8)
-      };
-    case 'spherical':
-      return {
-        xAxis: modelAxis(model, 'g', 'gravity', 2, 18),
-        yAxis: modelAxis(model, 'length', 'length', 0.45, 1.8)
-      };
-    case 'chain':
-      return {
-        xAxis: modelAxis(model, 'g', 'gravity', 2, 18),
-        yAxis: modelAxis(model, 'lengthScale', 'link length scale', 0.65, 1.35)
-      };
-    default: {
-      const exhaustive: never = model;
-      throw new Error(`unknown research axis model: ${String(exhaustive)}`);
-    }
-  }
-}
-
-function withAxisValue(
-  model: ExpansionModelId,
-  base: Partial<ExpansionParameterMap>,
-  axis: ExpansionSweepAxis,
-  value: number
-): Partial<ExpansionParameterMap> {
-  const next: ExpansionParameterMap = {};
-  for (const [key, item] of Object.entries(base)) {
-    if (item !== undefined) next[key] = item;
-  }
-  if (model === 'chain' && axis.parameter === 'lengthScale') {
-    const definition = expansionModelDefinition(model);
-    const links = Math.max(
-      2,
-      Math.min(8, Math.round(finiteParam(next, 'links', definition.defaultParameters.links ?? 4)))
-    );
-    for (let i = 1; i <= links; i += 1) {
-      const key = `length${i}`;
-      const baseLength = finiteParam(definition.defaultParameters, key, Math.max(0.25, 1 - (i - 1) * 0.15));
-      next[key] = baseLength * value;
-    }
-    return next;
-  }
-  next[axis.parameter] = value;
-  return next;
-}
-
-function phaseIndexes(model: ExpansionModelId, stateLength: number): { position: number; velocity: number } {
-  switch (model) {
-    case 'cartpole':
-      return { position: 1, velocity: 3 };
-    case 'coupled':
-      return { position: 0, velocity: 2 };
-    case 'spherical':
-      return { position: 0, velocity: 2 };
-    case 'chain':
-      return { position: 0, velocity: Math.max(1, Math.floor(stateLength / 2)) };
-    case 'driven':
-    case 'inverted':
-    case 'parametric':
-      return { position: 0, velocity: 1 };
-    default: {
-      const exhaustive: never = model;
-      throw new Error(`unknown phase-index model: ${String(exhaustive)}`);
-    }
-  }
-}
-
-function primaryLength(parameters: ExpansionParameterMap): number {
-  const direct = finiteParam(parameters, 'length', Number.NaN);
-  if (Number.isFinite(direct) && direct > 0) return direct;
-  const length1 = finiteParam(parameters, 'length1', Number.NaN);
-  return Number.isFinite(length1) && length1 > 0 ? length1 : 1;
-}
-
-function primaryMass(parameters: ExpansionParameterMap): number {
-  const cartMass = finiteParam(parameters, 'cartMass', Number.NaN);
-  const poleMass = finiteParam(parameters, 'poleMass', Number.NaN);
-  if (Number.isFinite(cartMass) && Number.isFinite(poleMass)) return Math.max(1e-9, cartMass + poleMass);
-  return Math.max(1e-9, finiteParam(parameters, 'mass1', 1));
-}
-
+// Re-exported for existing callers; the immutable data itself lives with the
+// research-preset table rather than with the numerical runner.
+export { GOLDEN_REGRESSION_BASELINES } from './expandedModels-research-presets';
 function rounded(value: number, digits = 6): number {
   return Number.isFinite(value) ? Number(value.toFixed(digits)) : value;
 }
@@ -256,7 +124,12 @@ function build2dSweep(config: ExpansionSuiteConfig, gridSize: number): Expansion
     for (let xIndex = 0; xIndex < size; xIndex += 1) {
       const x = interpolate(xAxis.min, xAxis.max, xIndex, size);
       const baseOverrides = config.parameterOverrides ?? {};
-      const axisOverrides = withAxisValue(config.model, withAxisValue(config.model, baseOverrides, xAxis, x), yAxis, y);
+      const axisOverrides = withResearchAxisValue(
+        config.model,
+        withResearchAxisValue(config.model, baseOverrides, xAxis, x),
+        yAxis,
+        y
+      );
       const { row, score, finalPhase } = quickProbe(
         {
           ...config,
@@ -288,7 +161,7 @@ function physicalMetricsFor(
 ): ExpansionDimensionlessMetric[] {
   const parameters = result.parameters;
   const g = Math.max(1e-9, finiteParam(parameters, 'g', 9.81));
-  const length = Math.max(1e-9, primaryLength(parameters));
+  const length = Math.max(1e-9, primaryResearchLength(parameters));
   const characteristicTime = Math.sqrt(length / g);
   const dt = result.dt;
   const horizon = result.horizon;
@@ -336,7 +209,7 @@ function physicalMetricsFor(
     metrics.push({
       id: 'force-star',
       label: 'F / mg',
-      value: force / (primaryMass(parameters) * g),
+      value: force / (primaryResearchMass(parameters) * g),
       unit: '1',
       note: 'cart-pole open-loop force ratio'
     });
@@ -399,7 +272,7 @@ function basinGrid(
   const definition = expansionModelDefinition(config.model);
   const size = Math.max(5, Math.min(13, Math.round(gridSize)));
   const state0 = [...(config.initialState ?? definition.defaultState)];
-  const indexes = phaseIndexes(config.model, state0.length);
+  const indexes = researchPhaseIndexes(config.model, state0.length);
   const xAxis = modelAxis(config.model, 'initial position', 'initial phase coordinate', -Math.PI, Math.PI);
   const yAxis = modelAxis(config.model, 'initial velocity', 'initial phase velocity', -4, 4);
   const cells: ExpansionBasinCell[] = [];
@@ -430,7 +303,7 @@ function energyLandscape(
   const size = Math.max(9, Math.min(31, Math.round(gridSize * 2 + 3)));
   const system = createExpansionSystem(config.model, config.parameterOverrides ?? {}, config.initialState);
   const state0 = [...system.initialState];
-  const indexes = phaseIndexes(config.model, state0.length);
+  const indexes = researchPhaseIndexes(config.model, state0.length);
   const referenceEnergy = system.energy(system.initialState);
   const xAxis = modelAxis(config.model, 'phase position', 'phase coordinate', -Math.PI, Math.PI);
   const yAxis = modelAxis(config.model, 'phase velocity', 'phase velocity', -6, 6);
@@ -591,60 +464,7 @@ function median(values: readonly number[]): number {
   return sorted.length % 2 === 0 ? ((sorted[middle - 1] ?? 0) + (sorted[middle] ?? 0)) / 2 : (sorted[middle] ?? 0);
 }
 
-// ===== Section: Golden Regression (GOLDEN_REGRESSION_BASELINES, runGoldenExpansionCenter) =
-
-export const GOLDEN_REGRESSION_BASELINES: Readonly<Record<string, Partial<Record<IntegratorId, string>>>> =
-  Object.freeze({
-    'driven-chaos': {
-      rk4: 'exp-d4df1991',
-      dopri5: 'exp-02e3f836',
-      leapfrog: 'exp-46ffd90b',
-      symplectic: 'exp-a15c4262',
-      euler: 'exp-8633ecb8'
-    },
-    'coupled-normal-mode': {
-      rk4: 'exp-50ed08d1',
-      dopri5: 'exp-cde68620',
-      leapfrog: 'exp-903d21ef',
-      symplectic: 'exp-2f56e213',
-      euler: 'exp-6bdd225a'
-    },
-    'inverted-growth': {
-      rk4: 'exp-26212d81',
-      dopri5: 'exp-ea58c760',
-      leapfrog: 'exp-49255901',
-      symplectic: 'exp-2bc2741c',
-      euler: 'exp-b7ce02a9'
-    },
-    'cartpole-open-loop': {
-      rk4: 'exp-f2b35906',
-      dopri5: 'exp-3d195f04',
-      leapfrog: 'exp-0d97aad4',
-      symplectic: 'exp-6053f497',
-      euler: 'exp-1fb29c06'
-    },
-    'parametric-resonance': {
-      rk4: 'exp-5d7918d0',
-      dopri5: 'exp-9d76947e',
-      leapfrog: 'exp-0de34b55',
-      symplectic: 'exp-29a1bdb7',
-      euler: 'exp-90e7641f'
-    },
-    'spherical-conical': {
-      rk4: 'exp-e32cfcda',
-      dopri5: 'exp-59d1105c',
-      leapfrog: 'exp-6b1635f9',
-      symplectic: 'exp-ef0f627c',
-      euler: 'exp-df184220'
-    },
-    'chain-cascade': {
-      rk4: 'exp-cc31d2b4',
-      dopri5: 'exp-beff4a42',
-      leapfrog: 'exp-c77e95b3',
-      symplectic: 'exp-5591e72b',
-      euler: 'exp-f1b6295e'
-    }
-  });
+// ===== Section: Golden Regression (preset table + runner) ==================
 
 export function runGoldenExpansionCenter(
   presetIds: readonly string[] = GOLDEN_EXPANSION_PRESET_IDS,

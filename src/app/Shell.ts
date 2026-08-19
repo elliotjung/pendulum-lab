@@ -1,6 +1,7 @@
 import { takeOverElement } from './domTakeover';
 import { commitLabControls } from './controlCommit';
 import { canAccessAudienceTab, currentAudienceMode } from './audienceMode';
+import { TabRouting, type TabHistoryMode, type TabRequestedDetail } from './tabRouting';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -209,36 +210,30 @@ const PRESETS: Record<string, Preset> = {
 };
 
 export class Shell {
+  private readonly tabRouting = new TabRouting({
+    canActivate: (tab) => KNOWN_TABS.includes(tab) && canAccessAudienceTab(currentAudienceMode(), tab),
+    syncRail: (tab) => this.syncRailSectionForTab(tab),
+    request: (detail) => document.dispatchEvent(new CustomEvent(TAB_REQUESTED_EVENT, { detail })),
+    activated: (tab) => document.dispatchEvent(new CustomEvent(TAB_ACTIVATED_EVENT, { detail: { tab } }))
+  });
+
+  /** Whether a lazy completion still owns the user's latest navigation intent. */
+  isCurrentTabRequest(requestId: number): boolean {
+    return this.tabRouting.isCurrentRequest(requestId);
+  }
+
+  /**
+   * Activate a mounted lazy tab only if no newer click, shortcut, or popstate
+   * has superseded its request. Mounting may finish; stale work may not take
+   * back the visible panel or commit its URL.
+   */
+  completeTabRequest(request: TabRequestedDetail): boolean {
+    return this.tabRouting.complete(request);
+  }
+
   /** Activate a tab by name, replicating the legacy `switchTab` exactly. */
-  switchTo(name: string): void {
-    if (!KNOWN_TABS.includes(name) || !canAccessAudienceTab(currentAudienceMode(), name)) return;
-    const targetPanel = document.getElementById(`tab-${name}`);
-    if (!targetPanel) {
-      document.dispatchEvent(new CustomEvent(TAB_REQUESTED_EVENT, { detail: { tab: name } }));
-      return;
-    }
-    const focusWasInPanel =
-      document.activeElement instanceof HTMLElement && Boolean(document.activeElement.closest('.tabpanel'));
-    document.querySelectorAll<HTMLElement>('.tab[data-tab]').forEach((tab) => {
-      const selected = tab.dataset.tab === name;
-      tab.setAttribute('aria-selected', String(selected));
-      tab.tabIndex = selected ? 0 : -1;
-    });
-    const selectedTab = document.querySelector<HTMLElement>(`.tab[data-tab="${CSS.escape(name)}"]`);
-    document.querySelectorAll<HTMLElement>('.tabpanel').forEach((panel) => {
-      const selected = panel === targetPanel;
-      panel.classList.toggle('active', selected);
-      panel.setAttribute('aria-hidden', String(!selected));
-      panel.inert = !selected;
-    });
-    const app = (window as Window & { App?: { activeTab?: string } }).App;
-    if (app) app.activeTab = name;
-    this.syncRailSectionForTab(name);
-    const status = document.getElementById('tabChangeStatus');
-    if (status) status.textContent = selectedTab?.getAttribute('aria-label') ?? name;
-    if (focusWasInPanel && selectedTab) queueMicrotask(() => selectedTab?.focus());
-    // Lazily-mounted collaborators (analysis tab controllers) listen for this.
-    document.dispatchEvent(new CustomEvent(TAB_ACTIVATED_EVENT, { detail: { tab: name } }));
+  switchTo(name: string, historyMode: TabHistoryMode = 'push'): void {
+    this.tabRouting.switchTo(name, historyMode);
   }
 
   private openRailSection(name: string): void {
@@ -586,8 +581,7 @@ export class Shell {
       }
     }
     if (hasControlOverride) commitLabControls('deep-link', changed);
-    const tab = urlParam('tab');
-    if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
+    this.tabRouting.applyInitialUrl();
   }
 
   /** Collapse/expand every tab's right control panel (persisted; shortcut "\"). */
@@ -642,6 +636,7 @@ export class Shell {
     this.bindPresets();
     this.bindWorkflowStrip();
     this.bindKeyboard();
+    this.tabRouting.bindPopstate();
     this.bindPanelToggle();
     this.applyUrlDeepLink();
     if (compactRail()) this.closeRailSections();

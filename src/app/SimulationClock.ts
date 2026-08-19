@@ -14,11 +14,17 @@ export interface SimulationFrameResult {
   physicsMs: number;
   stepsAdvanced: number;
   timingMode: SimulationTimingMode;
+  /** Fixed-dt simulation time waiting behind the per-frame catch-up budget. */
+  timingDebtSeconds: number;
+  /** Cumulative wall time intentionally not simulated because safety bounds were exceeded. */
+  droppedSimulationSeconds: number;
 }
 
 export type SimulationTimingMode = 'deterministic' | 'wall-clock';
 
 const MAX_FRAME_STEPS = 1_000_000;
+const MAX_WALL_CLOCK_ELAPSED_SECONDS = 0.25;
+const MAX_WALL_CLOCK_DEBT_SECONDS = 2;
 
 function finiteNonNegative(name: string, value: number): number {
   if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be finite and non-negative`);
@@ -28,10 +34,19 @@ function finiteNonNegative(name: string, value: number): number {
 export class SimulationClock {
   private lastWallClockMs: number | null = null;
   private wallClockRemainderSec = 0;
+  private totalDroppedSimulationSec = 0;
 
-  reset(): void {
+  reset(clearDiagnostics = true): void {
     this.lastWallClockMs = null;
     this.wallClockRemainderSec = 0;
+    if (clearDiagnostics) this.totalDroppedSimulationSec = 0;
+  }
+
+  diagnostics(): { timingDebtSeconds: number; droppedSimulationSeconds: number } {
+    return {
+      timingDebtSeconds: this.wallClockRemainderSec,
+      droppedSimulationSeconds: this.totalDroppedSimulationSec
+    };
   }
 
   advance(options: {
@@ -72,7 +87,10 @@ export class SimulationClock {
       bobs: options.sim.bobPositionsInto(options.bobsScratch),
       physicsMs,
       stepsAdvanced,
-      timingMode: mode
+      timingMode: mode,
+      ...(mode === 'wall-clock'
+        ? this.diagnostics()
+        : { timingDebtSeconds: 0, droppedSimulationSeconds: this.totalDroppedSimulationSec })
     };
   }
 
@@ -92,15 +110,23 @@ export class SimulationClock {
     }
     const maxSteps = requestedMaxSteps;
     const fallbackElapsedSec = options.stepsPerFrame * dt;
-    const elapsedSec =
-      this.lastWallClockMs === null
-        ? fallbackElapsedSec
-        : Math.max(0, Math.min(0.25, (timestampMs - this.lastWallClockMs) / 1000));
+    const rawElapsedSec =
+      this.lastWallClockMs === null ? fallbackElapsedSec : Math.max(0, (timestampMs - this.lastWallClockMs) / 1000);
+    const elapsedSec = Math.min(MAX_WALL_CLOCK_ELAPSED_SECONDS, rawElapsedSec);
+    if (rawElapsedSec > elapsedSec) this.totalDroppedSimulationSec += (rawElapsedSec - elapsedSec) * speed;
     this.lastWallClockMs = timestampMs;
     const available = this.wallClockRemainderSec + elapsedSec * speed;
     const rawSteps = Math.floor(available / dt);
     const steps = Math.min(maxSteps, rawSteps);
-    this.wallClockRemainderSec = rawSteps > maxSteps ? 0 : available - steps * dt;
+    // Preserve catch-up remainder as visible debt instead of silently erasing
+    // it when the per-frame step budget is reached. A separate hard debt bound
+    // prevents a permanently overloaded session from chasing hours of backlog;
+    // any excess is accumulated as an explicit dropped-time diagnostic.
+    const remainder = Math.max(0, available - steps * dt);
+    this.wallClockRemainderSec = Math.min(MAX_WALL_CLOCK_DEBT_SECONDS, remainder);
+    if (remainder > this.wallClockRemainderSec) {
+      this.totalDroppedSimulationSec += remainder - this.wallClockRemainderSec;
+    }
     return steps;
   }
 }

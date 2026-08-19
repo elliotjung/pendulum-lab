@@ -46,6 +46,7 @@ describe('N-chain WebGPU STM/QR promotion contract', () => {
   it('fails closed to the f64 oracle when WebGPU is unavailable', async () => {
     const promotion = await promotedNChainVariational(parameters, state, options, 0.01);
     expect(promotion.backend).toBe('cpu');
+    expect(promotion.scope).toBe('hybrid-cpu-trajectory-gpu-tangent');
     expect(promotion.gpuCandidate).toBeNull();
     expect(promotion.result).toBe(promotion.cpuOracle);
   });

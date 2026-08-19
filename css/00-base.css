@@ -141,9 +141,16 @@ body {
     0 0 28px -14px rgba(24, 212, 248, 0.72);
   backdrop-filter: blur(12px);
   font: 11px/1.4 var(--font-mono);
+  /* This is an informational status, not a modal. Its empty/text area must
+     never eat a click intended for the workspace beneath it. Explicitly
+     restore events on its genuine update controls below. */
+  pointer-events: none;
 }
 .pwa-update-banner span {
   flex: 1;
+}
+.pwa-update-banner :is(button, a) {
+  pointer-events: auto;
 }
 .pwa-update-banner button {
   min-height: 36px;
@@ -151,6 +158,16 @@ body {
 .pwa-update-dismiss {
   min-width: 36px;
   padding: 0;
+}
+
+/* On compact viewports the workspace rail becomes a fixed bottom bar. Keep
+   the update prompt above its hit targets so an available update never blocks
+   navigation or the Home chooser (notably in iOS/WebKit). */
+@media (max-width: 560px) {
+  .pwa-update-banner {
+    bottom: calc(var(--compact-rail-offset) + 12px);
+    max-width: calc(100vw - 24px);
+  }
 }
 
 /* APP SHELL */

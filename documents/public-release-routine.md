@@ -11,14 +11,19 @@ npm run test:check
 npm run reviewer:kit
 npm run release:status
 npm run benchmark:gpu-matrix
-npm run evidence:summary
+npm run evidence:refresh
+npm run release:evidence:check
 ```
 
-`npm run evidence:summary` writes:
+Run this only from a clean committed worktree. `npm run evidence:refresh`
+writes:
 
 - `reports/evidence-summary.json`
 - `../landing page/pendulum-landing/assets/evidence-summary.json` when the
   sibling landing repository is present
+
+`npm run release:evidence:check` is the non-mutating release gate. It rejects
+dirty, expired, stale, or provenance-mismatched public evidence.
 
 ## External Gates
 

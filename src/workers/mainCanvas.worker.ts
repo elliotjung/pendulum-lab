@@ -39,6 +39,7 @@ self.addEventListener('message', (event: MessageEvent<unknown>) => {
       case 'frame': {
         if (!renderer) throw new Error('main canvas worker received a frame before initialization');
         const started = now();
+        renderer.setWorldRadius(message.style.worldRadius ?? 0);
         const ensembleTips = unpackBobPositions(message.ensembleBobs).map((bob) => renderer!.toPixels(bob));
         renderer.draw(unpackBobPositions(message.bobs), {
           ...message.style,

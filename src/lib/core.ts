@@ -48,7 +48,7 @@ export type {
   LinearSolveOptions,
   LinearSolveResult
 } from '../physics/linearSolve';
-export { buildRhs, buildJacobian, dampingConventionFor } from '../physics/systemSpec';
+export { buildRhs, buildJacobian, dampingConventionFor, jacobianTrustForSpec } from '../physics/systemSpec';
 export type { SystemSpec } from '../physics/systemSpec';
 // Stochastic (Langevin) dynamics — seeded, so deterministic for a given seed.
 export {

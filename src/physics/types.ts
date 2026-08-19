@@ -1,7 +1,20 @@
 import type { EnergyBreakdown, IntegratorId, PendulumParameters, SystemType } from '../types/domain';
 
 export type StateVector = Float64Array;
-export type Derivative = (state: StateVector, out: StateVector) => void;
+export type JacobianProvenance = 'analytic-model' | 'automatic-differentiation' | 'central-difference';
+
+export interface JacobianTrustMetadata {
+  provenance: JacobianProvenance;
+  confidence: 'model-validated' | 'numerical-fallback';
+  caveat: string;
+}
+
+/** RHS callback; model factories may attach an exact Jacobian for implicit/tangent consumers. */
+export interface Derivative {
+  (state: StateVector, out: StateVector): void;
+  jacobian?: Jacobian;
+  jacobianProvenance?: JacobianProvenance;
+}
 
 /**
  * Exact tangent-space Jacobian J[i][j] = df_i/dx_j for a `Derivative`, written
@@ -17,12 +30,21 @@ export interface StepDiagnostics {
   residualNorm: number;
   conditionEstimate?: number;
   converged: boolean;
+  /** True only when `out` contains an accepted next state. */
+  accepted?: boolean;
   failureReason?: string;
+  /** Stable machine-readable failure code for UI/retry logic. */
+  errorCode?: 'IMPLICIT_SOLVER_DID_NOT_CONVERGE' | 'NON_FINITE_INPUT' | 'SINGULAR_NEWTON_MATRIX';
+  retryable?: boolean;
+  /** Conservative retry proposed by an implicit solve failure. */
+  suggestedDt?: number;
 }
 
 export interface StepOptions {
   tolerance?: number;
   previousError?: { value: number };
+  /** Optional caller-owned sink for per-component embedded error estimates. */
+  errorComponents?: Float64Array;
   /**
    * Exact tangent Jacobian of the RHS. When supplied, Newton-based implicit
    * steppers (TR-BDF2) use it instead of a forward-difference approximation:

@@ -26,6 +26,8 @@ export interface LinearSolveOptions {
    * default to keep hot RHS loops allocation-free.
    */
   diagnostics?: boolean;
+  /** Caller-owned length-n work buffer used by the Cholesky triangular solve. */
+  solutionScratch?: Float64Array;
   /**
    * The solver never invents a physical fallback solution. By default it
    * returns diagnostics; callers may opt into throwing at the failure point.
@@ -327,7 +329,12 @@ export function choleskyFactor(
 }
 
 /** Solve L·Lᵀ x = b in place of `b` given a factor from {@link choleskyFactor}. */
-export function choleskySolveFactored(factor: Float64Array, b: Float64Array, n: number): void {
+export function choleskySolveFactored(
+  factor: Float64Array,
+  b: Float64Array,
+  n: number,
+  solutionScratch?: Float64Array
+): void {
   if (!Number.isSafeInteger(n) || n < 1 || factor.length < n * n || b.length < n) {
     throw new RangeError('choleskySolveFactored: factor and rhs dimensions must match a positive safe order');
   }
@@ -344,7 +351,16 @@ export function choleskySolveFactored(factor: Float64Array, b: Float64Array, n: 
   }
   // Solve in a private vector and publish only after both triangular passes
   // succeed, so an arithmetic failure never leaves a partially rewritten rhs.
-  const solution = new Float64Array(n);
+  if (solutionScratch && solutionScratch.length < n) {
+    throw new RangeError('choleskySolveFactored: solution scratch must contain at least n components');
+  }
+  if (solutionScratch && float64RegionsOverlap(solutionScratch, n, b, n)) {
+    throw new RangeError('choleskySolveFactored: solution scratch and rhs work regions must not overlap');
+  }
+  if (solutionScratch && float64RegionsOverlap(solutionScratch, n, factor, n * n)) {
+    throw new RangeError('choleskySolveFactored: solution scratch and factor work regions must not overlap');
+  }
+  const solution = solutionScratch ?? new Float64Array(n);
   for (let i = 0; i < n; i += 1) {
     const diagonal = factor[i * n + i];
     if (!Number.isFinite(diagonal) || !(diagonal! > 0)) {
@@ -440,7 +456,7 @@ export function solveCholeskyInPlace(
 
   const originalB = options.diagnostics ? new Float64Array(b.subarray(0, n)) : undefined;
   try {
-    choleskySolveFactored(factor, b, n);
+    choleskySolveFactored(factor, b, n, options.solutionScratch);
   } catch {
     return choleskyFailure('non-finite-output', scale, rhsScale, fallbackPolicy);
   }

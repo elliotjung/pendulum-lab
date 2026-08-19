@@ -1,5 +1,12 @@
 import type { EnergyBreakdown } from '../types/domain';
 import type { StateVector } from './types';
+import {
+  PhysicsEvaluationError,
+  assertFiniteScalar,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector
+} from './errors';
 
 /**
  * Duffing oscillator — the canonical forced, damped nonlinear oscillator and the
@@ -50,13 +57,36 @@ export const DUFFING_CHAOS_PRESET: DuffingParameters = Object.freeze({
   driveFrequency: 1.2
 });
 
+function validateDuffingParameters(parameters: DuffingParameters, operation: string): void {
+  assertNonNegativeFinite(parameters.damping, 'damping', operation);
+  assertFiniteScalar(parameters.linearStiffness, 'linearStiffness', operation);
+  assertFiniteScalar(parameters.cubicStiffness, 'cubicStiffness', operation);
+  assertNonNegativeFinite(parameters.driveAmplitude, 'driveAmplitude', operation);
+  assertFiniteScalar(parameters.driveFrequency, 'driveFrequency', operation);
+}
+
+function assertFiniteDuffingResult(values: readonly number[], operation: string): void {
+  if (!values.every(Number.isFinite)) {
+    throw new PhysicsEvaluationError('NON_FINITE_INPUT', `${operation}: result overflowed`, {
+      operation,
+      retryable: false,
+      suggestedAction: 'Reduce the state magnitude or rescale the Duffing parameters.'
+    });
+  }
+}
+
 export function rhsDuffing(state: ArrayLike<number>, parameters: DuffingParameters, out: StateVector): StateVector {
+  assertFiniteVector(state, 3, 'rhsDuffing');
+  assertOutputVector(out, 3, 'rhsDuffing');
+  validateDuffingParameters(parameters, 'rhsDuffing');
   const x = Number(state[0] ?? 0);
   const v = Number(state[1] ?? 0);
   const phi = Number(state[2] ?? 0);
   const { damping, linearStiffness, cubicStiffness, driveAmplitude, driveFrequency } = parameters;
+  const acceleration = -damping * v - linearStiffness * x - cubicStiffness * x * x * x + driveAmplitude * Math.cos(phi);
+  assertFiniteDuffingResult([v, acceleration, driveFrequency], 'rhsDuffing');
   out[0] = v;
-  out[1] = -damping * v - linearStiffness * x - cubicStiffness * x * x * x + driveAmplitude * Math.cos(phi);
+  out[1] = acceleration;
   out[2] = driveFrequency;
   return out;
 }
@@ -66,8 +96,13 @@ export function duffingPotential(
   x: number,
   parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>
 ): number {
+  assertFiniteScalar(x, 'x', 'duffingPotential');
   const { linearStiffness, cubicStiffness } = parameters;
-  return 0.5 * linearStiffness * x * x + 0.25 * cubicStiffness * x * x * x * x;
+  assertFiniteScalar(linearStiffness, 'linearStiffness', 'duffingPotential');
+  assertFiniteScalar(cubicStiffness, 'cubicStiffness', 'duffingPotential');
+  const potential = 0.5 * linearStiffness * x * x + 0.25 * cubicStiffness * x * x * x * x;
+  assertFiniteDuffingResult([potential], 'duffingPotential');
+  return potential;
 }
 
 /**
@@ -77,11 +112,15 @@ export function duffingPotential(
  * negative for the double-well case).
  */
 export function energyDuffing(state: ArrayLike<number>, parameters: DuffingParameters): EnergyBreakdown {
+  assertFiniteVector(state, 2, 'energyDuffing');
+  validateDuffingParameters(parameters, 'energyDuffing');
   const x = Number(state[0] ?? 0);
   const v = Number(state[1] ?? 0);
   const KE = 0.5 * v * v;
   const PE = duffingPotential(x, parameters);
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteDuffingResult([KE, PE, total], 'energyDuffing');
+  return { total, KE, PE };
 }
 
 /** Geometry of a symmetric Duffing double well (requires α < 0 and β > 0). */
@@ -106,7 +145,7 @@ export function duffingDoubleWell(
   parameters: Pick<DuffingParameters, 'linearStiffness' | 'cubicStiffness'>
 ): DuffingDoubleWell {
   const { linearStiffness: alpha, cubicStiffness: beta } = parameters;
-  if (!(alpha < 0) || !(beta > 0)) {
+  if (!Number.isFinite(alpha) || !Number.isFinite(beta) || !(alpha < 0) || !(beta > 0)) {
     throw new Error(`duffingDoubleWell: requires α < 0 and β > 0 for a double well (got α=${alpha}, β=${beta})`);
   }
   const xMin = Math.sqrt(-alpha / beta);

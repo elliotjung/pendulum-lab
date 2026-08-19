@@ -1,4 +1,4 @@
-import type { Derivative, Jacobian, StateVector } from './types';
+import type { Derivative, Jacobian, JacobianTrustMetadata, StateVector } from './types';
 
 /**
  * Shared linear-tangent-space machinery for the chaos diagnostics: a
@@ -67,6 +67,7 @@ export function numericalJacobian(
  * approximation is formed each step.
  */
 export function makeVariationalRhs(rhs: Derivative, n: number, k: number, jacobian?: Jacobian): Derivative {
+  const resolvedJacobian = jacobian ?? rhs.jacobian;
   const fx = new Float64Array(n);
   const jac = new Float64Array(n * n);
   const scratch = new Float64Array(n);
@@ -77,7 +78,7 @@ export function makeVariationalRhs(rhs: Derivative, n: number, k: number, jacobi
     for (let i = 0; i < n; i += 1) refView[i] = Number(aug[i] ?? 0);
     rhs(refView, fx);
     for (let i = 0; i < n; i += 1) out[i] = Number(fx[i] ?? 0);
-    if (jacobian) jacobian(refView, jac);
+    if (resolvedJacobian) resolvedJacobian(refView, jac);
     else numericalJacobian(rhs, refView, n, jac, scratch, fPlus, fMinus);
     for (let j = 0; j < k; j += 1) {
       const base = n + j * n;
@@ -88,6 +89,28 @@ export function makeVariationalRhs(rhs: Derivative, n: number, k: number, jacobi
       }
     }
   };
+}
+
+export function jacobianTrustMetadata(rhs: Derivative, jacobian?: Jacobian): JacobianTrustMetadata {
+  const resolved = jacobian ?? rhs.jacobian;
+  const provenance = resolved
+    ? rhs.jacobian === resolved
+      ? (rhs.jacobianProvenance ?? 'analytic-model')
+      : 'analytic-model'
+    : 'central-difference';
+  return resolved
+    ? {
+        provenance,
+        confidence: 'model-validated',
+        caveat:
+          'Tangent dynamics use a supplied model/AD Jacobian; model-specific derivative validation still bounds trust.'
+      }
+    : {
+        provenance: 'central-difference',
+        confidence: 'numerical-fallback',
+        caveat:
+          'No validated model Jacobian was supplied; FTLE/Lyapunov accuracy includes central-difference truncation and scale sensitivity.'
+      };
 }
 
 /**

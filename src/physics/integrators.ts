@@ -3,11 +3,89 @@ import type { Derivative, StateVector, StepOptions } from './types';
 import { dormandPrince54Step, bulirschStoerStep } from './adaptive';
 import { trBdf2Step } from './stiff';
 import { implicitMidpointNewton } from './implicitDiagnostics';
+import { dop853Step, rkf45Step } from './embeddedIntegrators';
+import { integratorRegistry } from './integratorRegistry';
+import {
+  acquireIntegratorScratch as ensureScratch,
+  releaseIntegratorScratch as releaseScratch
+} from './integratorScratch';
 
-export { integratorRegistry } from './integratorRegistry';
+export { integratorRegistry };
+export { dop853Step, rkf45Step } from './embeddedIntegrators';
 
-function ensureScratch(n: number): Float64Array[] {
-  return Array.from({ length: 5 }, () => new Float64Array(n));
+/** Validate every direct public stepping entry point, not just `step(...)`. */
+function validateDirectStepInput(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  out: StateVector,
+  operation: string
+): number {
+  const n = state.length;
+  if (!Number.isSafeInteger(n) || n < 1 || out.length < n) {
+    throw new RangeError(`${operation}: state/output dimensions must match a positive state dimension.`);
+  }
+  if (!Number.isFinite(dt)) throw new RangeError(`${operation}: dt must be finite.`);
+  if (typeof rhs !== 'function') throw new TypeError(`${operation}: rhs must be a function.`);
+  for (let i = 0; i < n; i += 1) {
+    if (!Number.isFinite(state[i])) throw new RangeError(`${operation}: state[${i}] must be finite.`);
+  }
+  return n;
+}
+
+/**
+ * A zero-length fixed step is a valid identity map.  Event refinement probes
+ * the left endpoint with `tau = 0`; treating that probe as an invalid step
+ * breaks otherwise valid Poincare and bifurcation calculations.  Validate all
+ * inputs first, then avoid evaluating the RHS so the identity is exact and
+ * cannot surface an irrelevant derivative failure.
+ */
+function completeZeroStep(
+  state: StateVector,
+  out: StateVector,
+  options?: StepOptions,
+  solver: 'explicit' | 'fixed-point' | 'newton' = 'explicit'
+): StateVector {
+  out.set(state);
+  if (!options) return out;
+  if (options.previousError) options.previousError.value = 0;
+  if (options.errorComponents) options.errorComponents.fill(0, 0, state.length);
+  if (options.diagnostics) {
+    options.diagnostics.solver = solver;
+    options.diagnostics.iterations = 0;
+    options.diagnostics.residualNorm = 0;
+    options.diagnostics.converged = true;
+    options.diagnostics.accepted = true;
+    options.diagnostics.retryable = false;
+    delete options.diagnostics.failureReason;
+    delete options.diagnostics.errorCode;
+    delete options.diagnostics.suggestedDt;
+    delete options.diagnostics.conditionEstimate;
+  }
+  return out;
+}
+
+function validateDirectStepOptions(options: StepOptions, n: number, operation: string): void {
+  if (options.tolerance !== undefined && (!(options.tolerance > 0) || !Number.isFinite(options.tolerance))) {
+    throw new RangeError(`${operation}: tolerance must be positive and finite.`);
+  }
+  if (options.errorComponents && options.errorComponents.length < n) {
+    throw new RangeError(`${operation}: errorComponents must have at least state.length entries.`);
+  }
+  if (options.jacobian !== undefined && typeof options.jacobian !== 'function') {
+    throw new TypeError(`${operation}: jacobian must be a function when supplied.`);
+  }
+  if (options.diagnostics !== undefined && (typeof options.diagnostics !== 'object' || options.diagnostics === null)) {
+    throw new TypeError(`${operation}: diagnostics must be an object when supplied.`);
+  }
+  if (
+    options.previousError !== undefined &&
+    (typeof options.previousError !== 'object' ||
+      options.previousError === null ||
+      !Object.hasOwn(options.previousError, 'value'))
+  ) {
+    throw new TypeError(`${operation}: previousError must be an object with a value field when supplied.`);
+  }
 }
 
 function addScaled(dst: StateVector, a: StateVector, k: number, b: StateVector, n: number): void {
@@ -41,48 +119,63 @@ function isSplittable(n: number): boolean {
 }
 
 export function eulerStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'eulerStep');
+  if (dt === 0) return completeZeroStep(state, out);
   const scratch = ensureScratch(n);
   const k1 = scratch[0]!;
-  rhs(state, k1);
-  for (let i = 0; i < n; i += 1) out[i] = Number(state[i] ?? 0) + dt * Number(k1[i] ?? 0);
-  return out;
+  try {
+    rhs(state, k1);
+    for (let i = 0; i < n; i += 1) out[i] = Number(state[i] ?? 0) + dt * Number(k1[i] ?? 0);
+    return out;
+  } finally {
+    releaseScratch(scratch);
+  }
 }
 
 export function rk2Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'rk2Step');
+  if (dt === 0) return completeZeroStep(state, out);
   const scratch = ensureScratch(n);
   const k1 = scratch[0]!;
   const k2 = scratch[1]!;
   const tmp = scratch[2]!;
-  rhs(state, k1);
-  addScaled(tmp, state, 0.5 * dt, k1, n);
-  rhs(tmp, k2);
-  for (let i = 0; i < n; i += 1) out[i] = Number(state[i] ?? 0) + dt * Number(k2[i] ?? 0);
-  return out;
+  try {
+    rhs(state, k1);
+    addScaled(tmp, state, 0.5 * dt, k1, n);
+    rhs(tmp, k2);
+    for (let i = 0; i < n; i += 1) out[i] = Number(state[i] ?? 0) + dt * Number(k2[i] ?? 0);
+    return out;
+  } finally {
+    releaseScratch(scratch);
+  }
 }
 
 export function rk4Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'rk4Step');
+  if (dt === 0) return completeZeroStep(state, out);
   const scratch = ensureScratch(n);
   const k1 = scratch[0]!;
   const k2 = scratch[1]!;
   const k3 = scratch[2]!;
   const k4 = scratch[3]!;
   const tmp = scratch[4]!;
-  rhs(state, k1);
-  addScaled(tmp, state, 0.5 * dt, k1, n);
-  rhs(tmp, k2);
-  addScaled(tmp, state, 0.5 * dt, k2, n);
-  rhs(tmp, k3);
-  addScaled(tmp, state, dt, k3, n);
-  rhs(tmp, k4);
-  for (let i = 0; i < n; i += 1) {
-    out[i] =
-      Number(state[i] ?? 0) +
-      (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
+  try {
+    rhs(state, k1);
+    addScaled(tmp, state, 0.5 * dt, k1, n);
+    rhs(tmp, k2);
+    addScaled(tmp, state, 0.5 * dt, k2, n);
+    rhs(tmp, k3);
+    addScaled(tmp, state, dt, k3, n);
+    rhs(tmp, k4);
+    for (let i = 0; i < n; i += 1) {
+      out[i] =
+        Number(state[i] ?? 0) +
+        (dt / 6) * (Number(k1[i] ?? 0) + 2 * Number(k2[i] ?? 0) + 2 * Number(k3[i] ?? 0) + Number(k4[i] ?? 0));
+    }
+    return out;
+  } finally {
+    releaseScratch(scratch);
   }
-  return out;
 }
 
 export function implicitMidpointStep(
@@ -92,10 +185,14 @@ export function implicitMidpointStep(
   out: StateVector,
   options: StepOptions = {}
 ): StateVector {
-  if (options.jacobian) {
+  const n = validateDirectStepInput(state, dt, rhs, out, 'implicitMidpointStep');
+  validateDirectStepOptions(options, n, 'implicitMidpointStep');
+  if (dt === 0) return completeZeroStep(state, out, options, 'fixed-point');
+  const exactJacobian = options.jacobian ?? rhs.jacobian;
+  if (exactJacobian) {
     const newtonOptions: { tolerance?: number; maxIterations: number } = { maxIterations: 25 };
     if (options.tolerance !== undefined) newtonOptions.tolerance = options.tolerance;
-    const report = implicitMidpointNewton(state, dt, rhs, options.jacobian, newtonOptions);
+    const report = implicitMidpointNewton(state, dt, rhs, exactJacobian, newtonOptions);
     out.set(report.state);
     if (options.previousError) options.previousError.value = report.residualNorm;
     if (options.diagnostics) {
@@ -104,54 +201,76 @@ export function implicitMidpointStep(
       options.diagnostics.residualNorm = report.residualNorm;
       options.diagnostics.conditionEstimate = report.conditionEstimate;
       options.diagnostics.converged = report.converged;
+      options.diagnostics.accepted = report.converged;
+      options.diagnostics.retryable = report.retryable;
+      if (report.errorCode) options.diagnostics.errorCode = report.errorCode;
+      else delete options.diagnostics.errorCode;
+      if (report.suggestedDt !== undefined) options.diagnostics.suggestedDt = report.suggestedDt;
+      else delete options.diagnostics.suggestedDt;
       if (report.failureReason) options.diagnostics.failureReason = report.failureReason;
       else delete options.diagnostics.failureReason;
     }
     return out;
   }
-  const n = state.length;
   const scratch = ensureScratch(n);
   const k = scratch[0]!;
   const mid = scratch[1]!;
   const trial = scratch[2]!;
-  trial.set(state);
   const tolerance = options.tolerance ?? 1e-10;
   let residual = Infinity;
   let iterations = 0;
   let converged = false;
   let failureReason: string | undefined;
-  for (let iter = 0; iter < 10; iter += 1) {
-    iterations = iter + 1;
-    for (let i = 0; i < n; i += 1) mid[i] = 0.5 * (Number(state[i] ?? 0) + Number(trial[i] ?? 0));
-    rhs(mid, k);
-    residual = 0;
-    for (let i = 0; i < n; i += 1) {
-      const next = Number(state[i] ?? 0) + dt * Number(k[i] ?? 0);
-      residual = Math.max(residual, Math.abs(next - Number(trial[i] ?? 0)));
-      trial[i] = next;
+  try {
+    trial.set(state);
+    for (let iter = 0; iter < 10; iter += 1) {
+      iterations = iter + 1;
+      for (let i = 0; i < n; i += 1) mid[i] = 0.5 * (Number(state[i] ?? 0) + Number(trial[i] ?? 0));
+      rhs(mid, k);
+      residual = 0;
+      for (let i = 0; i < n; i += 1) {
+        const next = Number(state[i] ?? 0) + dt * Number(k[i] ?? 0);
+        residual = Math.max(residual, Math.abs(next - Number(trial[i] ?? 0)));
+        trial[i] = next;
+      }
+      if (!Number.isFinite(residual)) {
+        failureReason = 'non-finite-input';
+        break;
+      }
+      if (residual < tolerance) {
+        converged = true;
+        break;
+      }
     }
-    if (!Number.isFinite(residual)) {
-      failureReason = 'non-finite-input';
-      break;
+    if (!converged && !failureReason) failureReason = 'max-iterations';
+    // Fail closed: an unconverged iterate is diagnostic evidence, not a state
+    // the caller is allowed to advance as if it were a valid implicit solution.
+    out.set(converged ? trial : state);
+    if (options.previousError) options.previousError.value = residual;
+    if (options.diagnostics) {
+      options.diagnostics.solver = 'fixed-point';
+      options.diagnostics.iterations = iterations;
+      options.diagnostics.residualNorm = residual;
+      options.diagnostics.converged = converged;
+      options.diagnostics.accepted = converged;
+      options.diagnostics.retryable = !converged && failureReason === 'max-iterations';
+      if (converged) {
+        delete options.diagnostics.errorCode;
+        delete options.diagnostics.suggestedDt;
+      } else {
+        options.diagnostics.errorCode =
+          failureReason === 'non-finite-input' ? 'NON_FINITE_INPUT' : 'IMPLICIT_SOLVER_DID_NOT_CONVERGE';
+        if (failureReason === 'max-iterations') options.diagnostics.suggestedDt = Math.abs(dt) / 2;
+        else delete options.diagnostics.suggestedDt;
+      }
+      if (failureReason) options.diagnostics.failureReason = failureReason;
+      else delete options.diagnostics.failureReason;
+      delete options.diagnostics.conditionEstimate;
     }
-    if (residual < tolerance) {
-      converged = true;
-      break;
-    }
+    return out;
+  } finally {
+    releaseScratch(scratch);
   }
-  if (!converged && !failureReason) failureReason = 'max-iterations';
-  out.set(trial);
-  if (options.previousError) options.previousError.value = residual;
-  if (options.diagnostics) {
-    options.diagnostics.solver = 'fixed-point';
-    options.diagnostics.iterations = iterations;
-    options.diagnostics.residualNorm = residual;
-    options.diagnostics.converged = converged;
-    if (failureReason) options.diagnostics.failureReason = failureReason;
-    else delete options.diagnostics.failureReason;
-    delete options.diagnostics.conditionEstimate;
-  }
-  return out;
 }
 
 /**
@@ -161,7 +280,8 @@ export function implicitMidpointStep(
  * Euler. Falls back to explicit Euler when the state is not splittable.
  */
 export function symplecticEulerStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'symplecticEulerStep');
+  if (dt === 0) return completeZeroStep(state, out);
   if (!isSplittable(n)) return eulerStep(state, dt, rhs, out);
   const half = n / 2;
   const scratch = ensureScratch(n);
@@ -170,13 +290,17 @@ export function symplecticEulerStep(state: StateVector, dt: number, rhs: Derivat
   const acc = scratch[2]!;
   const q = state.subarray(0, half);
   const v = state.subarray(half, n);
-  evalAcceleration(rhs, q, v, half, ss, sd, acc);
-  for (let i = 0; i < half; i += 1) {
-    const vNew = Number(v[i] ?? 0) + dt * Number(acc[i] ?? 0);
-    out[half + i] = vNew;
-    out[i] = Number(q[i] ?? 0) + dt * vNew;
+  try {
+    evalAcceleration(rhs, q, v, half, ss, sd, acc);
+    for (let i = 0; i < half; i += 1) {
+      const vNew = Number(v[i] ?? 0) + dt * Number(acc[i] ?? 0);
+      out[half + i] = vNew;
+      out[i] = Number(q[i] ?? 0) + dt * vNew;
+    }
+    return out;
+  } finally {
+    releaseScratch(scratch);
   }
-  return out;
 }
 
 /**
@@ -185,7 +309,8 @@ export function symplecticEulerStep(state: StateVector, dt: number, rhs: Derivat
  * pendulum it is a separable approximation (see registry stability notes).
  */
 export function leapfrogStep(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'leapfrogStep');
+  if (dt === 0) return completeZeroStep(state, out);
   if (!isSplittable(n)) return rk2Step(state, dt, rhs, out);
   const half = n / 2;
   const scratch = ensureScratch(n);
@@ -196,17 +321,21 @@ export function leapfrogStep(state: StateVector, dt: number, rhs: Derivative, ou
   const vHalf = scratch[4]!;
   const q = state.subarray(0, half);
   const v = state.subarray(half, n);
-  evalAcceleration(rhs, q, v, half, ss, sd, acc);
-  for (let i = 0; i < half; i += 1) {
-    vHalf[i] = Number(v[i] ?? 0) + 0.5 * dt * Number(acc[i] ?? 0);
-    qHalf[i] = Number(q[i] ?? 0) + dt * Number(vHalf[i] ?? 0);
+  try {
+    evalAcceleration(rhs, q, v, half, ss, sd, acc);
+    for (let i = 0; i < half; i += 1) {
+      vHalf[i] = Number(v[i] ?? 0) + 0.5 * dt * Number(acc[i] ?? 0);
+      qHalf[i] = Number(q[i] ?? 0) + dt * Number(vHalf[i] ?? 0);
+    }
+    evalAcceleration(rhs, qHalf, vHalf, half, ss, sd, acc);
+    for (let i = 0; i < half; i += 1) {
+      out[i] = Number(qHalf[i] ?? 0);
+      out[half + i] = Number(vHalf[i] ?? 0) + 0.5 * dt * Number(acc[i] ?? 0);
+    }
+    return out;
+  } finally {
+    releaseScratch(scratch);
   }
-  evalAcceleration(rhs, qHalf, vHalf, half, ss, sd, acc);
-  for (let i = 0; i < half; i += 1) {
-    out[i] = Number(qHalf[i] ?? 0);
-    out[half + i] = Number(vHalf[i] ?? 0) + 0.5 * dt * Number(acc[i] ?? 0);
-  }
-  return out;
 }
 
 // Yoshida's fourth-order symmetric composition coefficients.
@@ -219,14 +348,20 @@ const YOSHIDA_W0 = -Math.cbrt(2) * YOSHIDA_W1;
  * leapfrog separability caveat.
  */
 export function yoshida4Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'yoshida4Step');
+  if (dt === 0) return completeZeroStep(state, out);
   if (!isSplittable(n)) return rk4Step(state, dt, rhs, out);
-  const a = new Float64Array(state);
-  const b = new Float64Array(n);
-  leapfrogStep(a, YOSHIDA_W1 * dt, rhs, b);
-  leapfrogStep(b, YOSHIDA_W0 * dt, rhs, a);
-  leapfrogStep(a, YOSHIDA_W1 * dt, rhs, out);
-  return out;
+  const scratch = ensureScratch(n, 2);
+  const [a, b] = scratch as [Float64Array, Float64Array];
+  try {
+    a.set(state);
+    leapfrogStep(a, YOSHIDA_W1 * dt, rhs, b);
+    leapfrogStep(b, YOSHIDA_W0 * dt, rhs, a);
+    leapfrogStep(a, YOSHIDA_W1 * dt, rhs, out);
+    return out;
+  } finally {
+    releaseScratch(scratch);
+  }
 }
 
 type SymmetricStepper = (state: StateVector, dt: number, rhs: Derivative, out: StateVector) => StateVector;
@@ -244,16 +379,21 @@ function yoshidaTripleJump(
   rhs: Derivative,
   out: StateVector
 ): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'yoshidaTripleJump');
+  if (dt === 0) return completeZeroStep(state, out);
   const root = 2 ** (1 / (baseOrder + 1));
   const z1 = 1 / (2 - root);
   const z0 = -root * z1;
-  const a = new Float64Array(n);
-  const b = new Float64Array(n);
-  base(state, z1 * dt, rhs, a);
-  base(a, z0 * dt, rhs, b);
-  base(b, z1 * dt, rhs, out);
-  return out;
+  const scratch = ensureScratch(n, 2);
+  const [a, b] = scratch as [Float64Array, Float64Array];
+  try {
+    base(state, z1 * dt, rhs, a);
+    base(a, z0 * dt, rhs, b);
+    base(b, z1 * dt, rhs, out);
+    return out;
+  } finally {
+    releaseScratch(scratch);
+  }
 }
 
 /** Sixth-order symmetric Yoshida composition of the leapfrog split. */
@@ -266,162 +406,6 @@ export function yoshida6Step(state: StateVector, dt: number, rhs: Derivative, ou
 export function yoshida8Step(state: StateVector, dt: number, rhs: Derivative, out: StateVector): StateVector {
   if (!isSplittable(state.length)) return rk4Step(state, dt, rhs, out);
   return yoshidaTripleJump(yoshida6Step, 6, state, dt, rhs, out);
-}
-
-// Runge-Kutta-Fehlberg 4(5) Butcher tableau.
-const RKF_A: readonly (readonly number[])[] = [
-  [],
-  [1 / 4],
-  [3 / 32, 9 / 32],
-  [1932 / 2197, -7200 / 2197, 7296 / 2197],
-  [439 / 216, -8, 3680 / 513, -845 / 4104],
-  [-8 / 27, 2, -3544 / 2565, 1859 / 4104, -11 / 40]
-];
-// Fifth-order solution weights (used to advance) and the 4th-order weights.
-const RKF_B5 = [16 / 135, 0, 6656 / 12825, 28561 / 56430, -9 / 50, 2 / 55];
-const RKF_B4 = [25 / 216, 0, 1408 / 2565, 2197 / 4104, -1 / 5, 0];
-
-/**
- * One embedded Runge-Kutta-Fehlberg step. Advances with the 5th-order solution
- * and reports the infinity-norm difference against the embedded 4th-order
- * solution through `options.previousError` for adaptive step-size control.
- */
-export function rkf45Step(
-  state: StateVector,
-  dt: number,
-  rhs: Derivative,
-  out: StateVector,
-  options: StepOptions = {}
-): StateVector {
-  const n = state.length;
-  const k: StateVector[] = Array.from({ length: 6 }, () => new Float64Array(n));
-  const tmp = new Float64Array(n);
-  for (let s = 0; s < 6; s += 1) {
-    if (s === 0) {
-      rhs(state, k[0]!);
-      continue;
-    }
-    const a = RKF_A[s]!;
-    for (let i = 0; i < n; i += 1) {
-      let acc = 0;
-      for (let j = 0; j < a.length; j += 1) acc += a[j]! * Number(k[j]![i] ?? 0);
-      tmp[i] = Number(state[i] ?? 0) + dt * acc;
-    }
-    rhs(tmp, k[s]!);
-  }
-  let error = 0;
-  for (let i = 0; i < n; i += 1) {
-    let sum5 = 0;
-    let sum4 = 0;
-    for (let s = 0; s < 6; s += 1) {
-      const ki = Number(k[s]![i] ?? 0);
-      sum5 += RKF_B5[s]! * ki;
-      sum4 += RKF_B4[s]! * ki;
-    }
-    out[i] = Number(state[i] ?? 0) + dt * sum5;
-    error = Math.max(error, Math.abs(dt * (sum5 - sum4)));
-  }
-  if (options.previousError) options.previousError.value = error;
-  return out;
-}
-
-// Dormand-Prince DOP853 8(5,3) coefficients. The tableau matches the Hairer,
-// Norsett & Wanner DOP853 scheme used by SciPy solve_ivp; this in-repo stepper
-// advances with the 8th-order solution and reports the embedded 5th-order
-// infinity-norm difference through previousError.
-const DOP853_C = [
-  0,
-  0.05260015195876773,
-  0.0789002279381516,
-  0.1183503419072274,
-  0.2816496580927726,
-  1 / 3,
-  0.25,
-  0.3076923076923077,
-  0.6512820512820513,
-  0.6,
-  0.8571428571428571,
-  1
-] as const;
-
-const DOP853_A: readonly (readonly number[])[] = [
-  [],
-  [0.05260015195876773],
-  [0.0197250569845379, 0.0591751709536137],
-  [0.02958758547680685, 0, 0.08876275643042054],
-  [0.2413651341592667, 0, -0.8845494793282861, 0.924834003261792],
-  [0.037037037037037035, 0, 0, 0.17082860872947386, 0.12546768756682242],
-  [0.037109375, 0, 0, 0.17025221101954405, 0.06021653898045596, -0.017578125],
-  [0.03709200011850479, 0, 0, 0.17038392571223998, 0.10726203044637328, -0.015319437748624402, 0.008273789163814023],
-  [
-    0.6241109587160757, 0, 0, -3.3608926294469414, -0.868219346841726, 27.59209969944671, 20.154067550477894,
-    -43.48988418106996
-  ],
-  [
-    0.47766253643826434, 0, 0, -2.4881146199716677, -0.590290826836843, 21.230051448181193, 15.279233632882423,
-    -33.28821096898486, -0.020331201708508627
-  ],
-  [
-    -0.9371424300859873, 0, 0, 5.186372428844064, 1.0914373489967295, -8.149787010746927, -18.52006565999696,
-    22.739487099350505, 2.4936055526796523, -3.0467644718982196
-  ],
-  [
-    2.273310147516538, 0, 0, -10.53449546673725, -2.0008720582248625, -17.9589318631188, 27.94888452941996,
-    -2.8589982771350235, -8.87285693353063, 12.360567175794303, 0.6433927460157636
-  ]
-];
-
-const DOP853_B = [
-  0.054293734116568765, 0, 0, 0, 0, 4.450312892752409, 1.8915178993145003, -5.801203960010585, 0.3111643669578199,
-  -0.1521609496625161, 0.20136540080403034, 0.04471061572777259
-] as const;
-
-const DOP853_E5 = [
-  0.01312004499419488, 0, 0, 0, 0, -1.2251564463762044, -0.4957589496572502, 1.6643771824549864, -0.35032884874997366,
-  0.3341791187130175, 0.08192320648511571, -0.022355307863886294, 0
-] as const;
-
-void DOP853_C;
-
-export function dop853Step(
-  state: StateVector,
-  dt: number,
-  rhs: Derivative,
-  out: StateVector,
-  options: StepOptions = {}
-): StateVector {
-  const n = state.length;
-  const k: StateVector[] = Array.from({ length: 13 }, () => new Float64Array(n));
-  const tmp = new Float64Array(n);
-  for (let s = 0; s < 12; s += 1) {
-    if (s === 0) {
-      rhs(state, k[0]!);
-      continue;
-    }
-    const a = DOP853_A[s]!;
-    for (let i = 0; i < n; i += 1) {
-      let acc = 0;
-      for (let j = 0; j < a.length; j += 1) acc += a[j]! * Number(k[j]![i] ?? 0);
-      tmp[i] = Number(state[i] ?? 0) + dt * acc;
-    }
-    rhs(tmp, k[s]!);
-  }
-  for (let i = 0; i < n; i += 1) {
-    let sum = 0;
-    for (let s = 0; s < 12; s += 1) sum += DOP853_B[s]! * Number(k[s]![i] ?? 0);
-    out[i] = Number(state[i] ?? 0) + dt * sum;
-  }
-  rhs(out, k[12]!);
-  if (options.previousError) {
-    let error = 0;
-    for (let i = 0; i < n; i += 1) {
-      let e5 = 0;
-      for (let s = 0; s < 13; s += 1) e5 += DOP853_E5[s]! * Number(k[s]![i] ?? 0);
-      error = Math.max(error, Math.abs(dt * e5));
-    }
-    options.previousError.value = error;
-  }
-  return out;
 }
 
 /**
@@ -439,16 +423,24 @@ function gaussLegendreStep(
   out: StateVector,
   options: StepOptions
 ): StateVector {
-  const n = state.length;
+  const n = validateDirectStepInput(state, dt, rhs, out, 'gaussLegendreStep');
+  validateDirectStepOptions(options, n, 'gaussLegendreStep');
+  if (dt === 0) return completeZeroStep(state, out, options, 'fixed-point');
   const s = b.length;
   const tolerance = options.tolerance ?? 1e-12;
-  const k: StateVector[] = Array.from({ length: s }, () => new Float64Array(n));
-  const stage = new Float64Array(n);
+  const scratch = ensureScratch(n, s + 2);
+  const k = scratch;
+  const stage = scratch[s]!;
   // Seed each stage derivative with f(state) so iteration starts sensibly.
   rhs(state, stage);
   for (let i = 0; i < s; i += 1) k[i]!.set(stage);
   let residual = Infinity;
+  let iterations = 0;
+  let converged = false;
+  let nonFinite = false;
+  const knew = scratch[s + 1]!;
   for (let iter = 0; iter < 50 && residual > tolerance; iter += 1) {
+    iterations = iter + 1;
     residual = 0;
     for (let i = 0; i < s; i += 1) {
       for (let m = 0; m < n; m += 1) {
@@ -456,20 +448,46 @@ function gaussLegendreStep(
         for (let j = 0; j < s; j += 1) acc += a[i]![j]! * Number(k[j]![m] ?? 0);
         stage[m] = Number(state[m] ?? 0) + dt * acc;
       }
-      const knew = new Float64Array(n);
       rhs(stage, knew);
       for (let m = 0; m < n; m += 1) {
+        if (!Number.isFinite(knew[m])) nonFinite = true;
         residual = Math.max(residual, Math.abs(knew[m]! - Number(k[i]![m] ?? 0)));
       }
       k[i]!.set(knew);
+      if (nonFinite) break;
     }
+    if (nonFinite) break;
+    converged = residual <= tolerance;
   }
-  for (let m = 0; m < n; m += 1) {
-    let acc = 0;
-    for (let i = 0; i < s; i += 1) acc += b[i]! * Number(k[i]![m] ?? 0);
-    out[m] = Number(state[m] ?? 0) + dt * acc;
+  if (converged) {
+    for (let m = 0; m < n; m += 1) {
+      let acc = 0;
+      for (let i = 0; i < s; i += 1) acc += b[i]! * Number(k[i]![m] ?? 0);
+      out[m] = Number(state[m] ?? 0) + dt * acc;
+    }
+  } else {
+    out.set(state);
   }
   if (options.previousError) options.previousError.value = residual;
+  if (options.diagnostics) {
+    options.diagnostics.solver = 'fixed-point';
+    options.diagnostics.iterations = iterations;
+    options.diagnostics.residualNorm = residual;
+    options.diagnostics.converged = converged;
+    options.diagnostics.accepted = converged;
+    options.diagnostics.retryable = !nonFinite;
+    if (converged) {
+      delete options.diagnostics.failureReason;
+      delete options.diagnostics.errorCode;
+      delete options.diagnostics.suggestedDt;
+    } else {
+      options.diagnostics.failureReason = nonFinite ? 'non-finite-input' : 'max-iterations';
+      options.diagnostics.errorCode = nonFinite ? 'NON_FINITE_INPUT' : 'IMPLICIT_SOLVER_DID_NOT_CONVERGE';
+      if (!nonFinite) options.diagnostics.suggestedDt = Math.abs(dt) / 2;
+    }
+    delete options.diagnostics.conditionEstimate;
+  }
+  releaseScratch(scratch);
   return out;
 }
 
@@ -516,6 +534,12 @@ export function step(
   out: StateVector,
   options: StepOptions = {}
 ): StateVector {
+  const n = validateDirectStepInput(state, dt, rhs, out, 'step');
+  validateDirectStepOptions(options, n, 'step');
+  if (!Object.hasOwn(integratorRegistry, method)) {
+    throw new RangeError(`step: unsupported integrator method ${String(method)}.`);
+  }
+  if (dt === 0) return completeZeroStep(state, out, options);
   switch (method) {
     case 'euler':
       return eulerStep(state, dt, rhs, out);
@@ -543,6 +567,8 @@ export function step(
       const result = dormandPrince54Step(state, dt, rhs);
       out.set(result.y);
       if (options.previousError) options.previousError.value = result.error;
+      if (options.errorComponents)
+        options.errorComponents.set(result.errorComponents.subarray(0, options.errorComponents.length));
       return out;
     }
     case 'dop853':
@@ -551,12 +577,15 @@ export function step(
       const result = bulirschStoerStep(state, dt, rhs);
       out.set(result.y);
       if (options.previousError) options.previousError.value = result.error;
+      if (options.errorComponents)
+        options.errorComponents.set(result.errorComponents.subarray(0, options.errorComponents.length));
       return out;
     }
     case 'bdf2':
       return trBdf2Step(state, dt, rhs, out, options);
     case 'rk4':
-    default:
       return rk4Step(state, dt, rhs, out);
+    default:
+      throw new RangeError(`step: unsupported integrator method ${String(method)}.`);
   }
 }

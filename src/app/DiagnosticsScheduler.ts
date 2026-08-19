@@ -34,4 +34,8 @@ export class DiagnosticsScheduler {
   pendingCount(): number {
     return this.queue.pendingCount();
   }
+
+  dispose(): void {
+    this.reset();
+  }
 }

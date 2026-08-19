@@ -154,6 +154,13 @@ export class MainCanvasWorkerClient {
     this.safePost({ kind: 'clear' });
   }
 
+  /** Push element-level ResizeObserver changes even while no frame is drawn. */
+  resize(): boolean {
+    if (!this.active) return false;
+    this.resizeIfNeeded();
+    return this.active;
+  }
+
   dispose(): void {
     if (!this.active) return;
     this.active = false;

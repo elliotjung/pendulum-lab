@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   applyStribeckFriction,
   coulombFrictionForce,
+  staticFrictionComplementarityStep,
   stribeckFrictionForce,
   stribeckFrictionMagnitude
 } from '../src/physics/friction';
@@ -42,5 +43,19 @@ describe('Coulomb + Stribeck friction', () => {
     expect(out[1]).toBe(0);
     expect(out[2]).toBeLessThan(0);
     expect(() => stribeckFrictionForce(1, { ...parameters, staticFriction: 0.2 })).toThrow(/greater/);
+  });
+
+  it('uses exact complementarity for static stick and kinetic slip', () => {
+    const contact = { mass: 2, dt: 0.1, staticLimit: 1.2, dynamicMagnitude: 0.7 };
+    const stuck = staticFrictionComplementarityStep(0, 0.8, contact);
+    expect(stuck).toMatchObject({ mode: 'stick', frictionForce: -0.8, nextVelocity: 0, coneResidual: 0 });
+    expect(stuck.momentumResidual).toBe(0);
+
+    const slipping = staticFrictionComplementarityStep(0, 2, contact);
+    expect(slipping.mode).toBe('slip');
+    expect(slipping.frictionForce).toBe(-0.7);
+    expect(slipping.nextVelocity).toBeCloseTo(0.065, 14);
+    expect(Math.abs(slipping.momentumResidual)).toBeLessThan(1e-14);
+    expect(slipping.coneResidual).toBe(0);
   });
 });

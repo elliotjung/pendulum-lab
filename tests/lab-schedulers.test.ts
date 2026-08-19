@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DiagnosticsScheduler } from '../src/app/DiagnosticsScheduler';
 import { LabSimulation, type LabConfig } from '../src/app/LabSimulation';
 import { SimulationClock } from '../src/app/SimulationClock';
@@ -14,6 +14,8 @@ const DOUBLE: LabConfig = {
 };
 
 describe('UiTaskQueue', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
   it('runs higher-priority tasks first and coalesces keyed tasks', () => {
     const callbacks: Array<() => void> = [];
     const queue = new UiTaskQueue((callback) => callbacks.push(() => callback()));
@@ -27,6 +29,22 @@ describe('UiTaskQueue', () => {
 
     expect(order).toEqual(['new-plot', 'mid', 'low']);
     expect(queue.pendingCount()).toBe(0);
+  });
+
+  it('uses scheduler.postTask background priority when the browser provides it', async () => {
+    let run: (() => void) | undefined;
+    const postTask = vi.fn((callback: () => void) => {
+      run = callback;
+      return Promise.resolve();
+    });
+    vi.stubGlobal('scheduler', { postTask });
+    const queue = new UiTaskQueue();
+    const task = vi.fn();
+    queue.schedule({ run: task });
+    expect(postTask).toHaveBeenCalledWith(expect.any(Function), { priority: 'background' });
+    run?.();
+    await Promise.resolve();
+    expect(task).toHaveBeenCalledOnce();
   });
 });
 
@@ -100,6 +118,19 @@ describe('SimulationClock', () => {
     expect(second.stepsAdvanced).toBe(5);
     expect(advanced).toEqual([4, 5]);
     expect(second.timingMode).toBe('wall-clock');
+    expect(second.timingDebtSeconds).toBeGreaterThan(0.2);
+    expect(second.droppedSimulationSeconds).toBeCloseTo(0.05, 10);
+
+    const third = clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_300,
+      maxWallClockSteps: 5,
+      stepsPerFrame: 4,
+      bobsScratch: [],
+      onStep: () => {}
+    });
+    expect(third.timingDebtSeconds).toBeLessThan(second.timingDebtSeconds);
   });
 
   it.each([

@@ -1,7 +1,7 @@
-import type { Derivative, Jacobian, StateVector } from '../physics/types';
+import type { Derivative, Jacobian, JacobianTrustMetadata, StateVector } from '../physics/types';
 import type { IntegratorId } from '../types/domain';
 import { rk4Step, step } from '../physics/integrators';
-import { gramSchmidt, makeVariationalRhs, mulberry32, seedTangentFrame } from './variational';
+import { gramSchmidt, jacobianTrustMetadata, makeVariationalRhs, mulberry32, seedTangentFrame } from './variational';
 import { analyzeSpectrumConsistency, type SpectrumConsistency } from './spectrumConsistency';
 import { assertUsableIntegrationStep, NUMERICAL_WORK_BUDGETS } from '../validation/numericalBudgets';
 
@@ -191,6 +191,8 @@ export interface LyapunovSpectrumResult {
    * zero exponents). A free, independent validation of the tangent-space pipeline.
    */
   consistency: SpectrumConsistency;
+  /** Model-specific trust label for the tangent Jacobian path. */
+  jacobianTrust?: JacobianTrustMetadata;
   settings: LyapunovSettings & { count: number };
 }
 
@@ -418,7 +420,9 @@ export function lyapunovSpectrum(
   const n = state0.length;
   const k = Math.min(count, n);
   const finiteRhs = checkedDerivative(rhs, n, caller, 'RHS');
-  const finiteJacobian = jacobian ? checkedJacobian(jacobian, n, caller) : undefined;
+  const resolvedJacobian = jacobian ?? rhs.jacobian;
+  const finiteJacobian = resolvedJacobian ? checkedJacobian(resolvedJacobian, n, caller) : undefined;
+  const jacobianTrust = jacobianTrustMetadata(rhs, jacobian);
   const rawVarRhs = makeVariationalRhs(finiteRhs, n, k, finiteJacobian);
   const varRhs = checkedDerivative(rawVarRhs, n * (k + 1), caller, 'variational RHS');
 
@@ -489,6 +493,7 @@ export function lyapunovSpectrum(
     sum,
     kaplanYorkeDimension: kaplanYorkeDimension(spectrum),
     consistency: analyzeSpectrumConsistency(spectrum),
+    jacobianTrust,
     settings: { ...settings, count: k }
   };
 }

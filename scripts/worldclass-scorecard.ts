@@ -107,7 +107,15 @@ const attestationVerification = await readJson<{
   repository?: string;
   artifact?: string;
   signerWorkflow?: string;
-  predicates?: Array<{ status?: string; predicateType?: string }>;
+  packageVersion?: string;
+  sourceRef?: string;
+  sourceCommit?: string;
+  predicates?: Array<{
+    status?: string;
+    predicateType?: string;
+    sourceRepositoryRef?: string;
+    sourceRepositoryDigest?: string;
+  }>;
 }>('reports/attestation-verification.json', {});
 const expectedAttestationArtifact =
   packageJson.name && packageJson.version
@@ -116,7 +124,15 @@ const expectedAttestationArtifact =
 const attestationMatchesCurrentCoordinate =
   attestationVerification.repository?.toLowerCase() === 'elliotjung/pendulum-lab' &&
   attestationVerification.signerWorkflow?.toLowerCase() === 'elliotjung/pendulum-lab/.github/workflows/release.yml' &&
-  attestationVerification.artifact === expectedAttestationArtifact;
+  attestationVerification.artifact === expectedAttestationArtifact &&
+  attestationVerification.packageVersion === packageJson.version &&
+  attestationVerification.sourceRef === `refs/tags/v${packageJson.version}` &&
+  /^[0-9a-f]{40}$/.test(attestationVerification.sourceCommit ?? '') &&
+  attestationVerification.predicates?.every(
+    (predicate) =>
+      predicate.sourceRepositoryRef === attestationVerification.sourceRef &&
+      predicate.sourceRepositoryDigest === attestationVerification.sourceCommit
+  ) === true;
 const verifiedAttestationPredicates = new Set(
   attestationVerification.predicates?.filter((item) => item.status === 'verified').map((item) => item.predicateType)
 );
@@ -137,8 +153,18 @@ const ciWorkflow = await readText('.github/workflows/ci.yml');
 const mainWorkflow = await readText('.github/workflows/main.yml');
 const webgpuHardwareWorkflow = await readText('.github/workflows/webgpu-hardware.yml');
 const resultBadgesSource = await readText('src/app/resultBadges.ts');
-const researchWorkbenchSource = await readText('src/app/parity/research-workbench.ts');
-const storageSyncSource = await readText('src/app/parity/storage-sync.ts');
+// The public barrels stay deliberately thin after the 2026-08 responsibility
+// split; score the relevant implementation units rather than mistaking a
+// healthy barrel for an absent feature.
+const researchWorkbenchSource = [
+  await readText('src/app/parity/research-workbench.ts'),
+  await readText('src/app/parity/research-workbench-ui.ts'),
+  await readText('src/app/parity/research-workbench-experiments.ts')
+].join('\n');
+const storageSyncSource = [
+  await readText('src/app/parity/storage-sync.ts'),
+  await readText('src/app/parity/storage-schema.ts')
+].join('\n');
 const researchSessionStorageSource = await readText('src/app/parity/research-session-storage.ts');
 const certifiedWorkbenchSource = await readText('src/research/certifiedWorkbench.ts');
 const accelerationContractSource = await readText('src/chaos/accelerationContract.ts');
@@ -698,7 +724,9 @@ const items: ScorecardItem[] = [
         : 'SLSA/SBOM attestation workflow missing',
       has.attestationsVerified
         ? 'published SLSA provenance and CycloneDX attestations pass signer-workflow and tarball SHA-256 verification'
-        : 'published release attestations have not been cryptographically verified',
+        : attestationVerification.status === 'verified' && attestationVerification.artifact
+          ? `historical attestation report verifies ${attestationVerification.artifact}; current ${expectedAttestationArtifact} remains unverified`
+          : 'published release attestations have not been cryptographically verified',
       has.githubReleasePublished ? 'GitHub release resolves publicly' : 'public GitHub release missing',
       has.pagesPublished ? 'Pages reviewer dashboard resolves publicly' : 'Pages reviewer dashboard not yet deployed',
       has.npmPublished ? 'exact npm package version resolves publicly' : 'npm package version is not published',

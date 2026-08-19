@@ -56,10 +56,21 @@ export const physicsAdapter: PhysicsAdapter = Object.freeze({
   }
 });
 
-export { energyDouble, energyTriple, relativeEnergyDrift } from './energy';
+export {
+  energyDouble,
+  energyTriple,
+  relativeEnergyDrift,
+  forceLevelDampingPower,
+  DissipatedWorkTracker
+} from './energy';
+export type { DissipatedWorkBalance } from './energy';
 export { integratorRegistry } from './integrators';
-export { rhsDouble } from './double';
-export { rhsTriple } from './triple';
+export { createDoublePendulumDerivative, doubleMassMatrixDiagnostics, jacobianDouble, rhsDouble } from './double';
+export type { DoubleMassMatrixDiagnostics } from './double';
+export { createTripleRhsWorkspace, rhsTriple } from './triple';
+export type { TripleRhsWorkspace } from './triple';
+export { PhysicsEvaluationError } from './errors';
+export type { PhysicsErrorCode, PhysicsErrorDetails } from './errors';
 export {
   rhsChain,
   energyChain,
@@ -87,6 +98,13 @@ export type {
   SphericalChainOptions,
   SphericalChainWorkspace
 } from './sphericalChain';
+export { AutoChartSphericalChain } from './sphericalAutoChart';
+export type {
+  AutoChartSphericalChainDiagnostics,
+  AutoChartSphericalChainOptions,
+  SphericalChartKind,
+  SphericalChartTransition
+} from './sphericalAutoChart';
 export {
   assertLinearSolve,
   choleskyFactor,
@@ -263,7 +281,8 @@ export {
   kuramotoCriticalCoupling,
   kuramotoCriticalCouplingLorentzian,
   kuramotoCriticalCouplingGaussian,
-  huygensLockedPhaseDifference
+  huygensLockedPhaseDifference,
+  HUYGENS_PHASE_REDUCTION_METADATA
 } from './kuramoto';
 export type { KuramotoNetworkParameters, PhaseOrderParameter, HuygensPhasePairParameters } from './kuramoto';
 export {
@@ -271,11 +290,31 @@ export {
   coulombFrictionForce,
   stribeckFrictionMagnitude,
   stribeckFrictionForce,
-  applyStribeckFriction
+  applyStribeckFriction,
+  staticFrictionComplementarityStep
 } from './friction';
-export type { RegularizedCoulombFriction, StribeckFrictionParameters } from './friction';
-export { pyragasFeedback, rhsPyragasPendulum, integratePyragasPendulumDde } from './pyragasDde';
-export type { PyragasPendulumParameters, PyragasHistory, PyragasDdeOptions, PyragasDdeResult } from './pyragasDde';
+export type {
+  RegularizedCoulombFriction,
+  StribeckFrictionParameters,
+  StaticFrictionStepParameters,
+  StaticFrictionStepResult
+} from './friction';
+export {
+  pyragasFeedback,
+  rhsPyragasPendulum,
+  integratePyragasPendulumDde,
+  pyragasDtRefinementStudy,
+  pyragasDelayStabilityRefinementStudy
+} from './pyragasDde';
+export type {
+  PyragasPendulumParameters,
+  PyragasHistory,
+  PyragasDdeOptions,
+  PyragasDdeResult,
+  PyragasDtRefinementResult,
+  PyragasDelayBoundaryRefinementOptions,
+  PyragasDelayBoundaryRefinementResult
+} from './pyragasDde';
 export { stochasticResonanceResponse, stochasticResonanceCurve } from './stochasticResonance';
 export type { BistableSrParameters, SrResponse } from './stochasticResonance';
 export { RopePendulum } from './rope';
@@ -305,10 +344,23 @@ export {
   bulirschStoerStep,
   adaptiveStep,
   integrateAdaptive,
+  replayAcceptedSteps,
   richardsonStep,
-  createStepController
+  createStepController,
+  createAdaptiveWorkspace
 } from './adaptive';
-export type { DenseStepResult, StepController, StepControllerCoefficients, StepControllerKind } from './adaptive';
+export type {
+  AdaptiveAcceptedStep,
+  AdaptiveIntegrationResult,
+  AdaptiveTerminationReason,
+  AdaptiveWorkspace,
+  BulirschStoerStepResult,
+  ComponentTolerance,
+  DenseStepResult,
+  StepController,
+  StepControllerCoefficients,
+  StepControllerKind
+} from './adaptive';
 export { refineCrossing, locateTransition } from './eventLocator';
 export type { RefineOptions, RefinedCrossing } from './eventLocator';
 export { trBdf2Step } from './stiff';
@@ -322,7 +374,18 @@ export type {
   EventSolveResult
 } from './events';
 export type { EmbeddedStepResult, AdaptiveControllerOptions, AdaptiveStepOutcome, FixedStepper } from './adaptive';
-export type { Derivative, IntegratorMeta, PhysicsAdapter, StateVector, StepOptions } from './types';
+export type {
+  Derivative,
+  IntegratorMeta,
+  JacobianProvenance,
+  JacobianTrustMetadata,
+  PhysicsAdapter,
+  StateVector,
+  StepDiagnostics,
+  StepOptions
+} from './types';
+export { buildRhs, buildJacobian, dampingConventionFor, jacobianTrustForSpec } from './systemSpec';
+export type { SystemSpec } from './systemSpec';
 export {
   DEFAULT_EXPANSION_METHODS,
   EXPANSION_MODEL_DEFINITIONS,

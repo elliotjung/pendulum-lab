@@ -93,6 +93,12 @@ function enhanceButton(button: HTMLButtonElement): void {
   if (button.classList.contains('rail-menu-button')) {
     const label = railButtonLabel(button);
     if (label && !button.getAttribute('aria-label')) button.setAttribute('aria-label', label);
+    const section = button.closest<HTMLElement>('.rail-section');
+    const menu = section?.querySelector<HTMLElement>('.rail-submenu');
+    if (menu) {
+      menu.id ||= `${section?.dataset.railSection ?? 'navigation'}Menu`;
+      button.setAttribute('aria-controls', menu.id);
+    }
     return;
   }
 
@@ -125,6 +131,27 @@ function enhanceElement(root: ParentNode): void {
 
 export function installAccessibilityEnhancements(): () => void {
   enhanceElement(document);
+  const listeners = new AbortController();
+  const menuStatus = installNavigationStatus();
+  const syncWorkflow = (preferred?: HTMLElement): void => {
+    const buttons = Array.from(document.querySelectorAll<HTMLElement>('[data-workflow-tab]'));
+    const current = preferred ?? buttons.find((button) => button.getAttribute('aria-current') === 'step');
+    const target =
+      current && document.getElementById(`tab-${current.dataset.workflowTab}`)?.classList.contains('active')
+        ? current
+        : buttons.find((button) =>
+            document.getElementById(`tab-${button.dataset.workflowTab}`)?.classList.contains('active')
+          );
+    buttons.forEach((button) => {
+      if (button === target) button.setAttribute('aria-current', 'step');
+      else button.removeAttribute('aria-current');
+    });
+  };
+  document.querySelectorAll<HTMLElement>('[data-workflow-tab]').forEach((button) => {
+    button.addEventListener('click', () => syncWorkflow(button), { signal: listeners.signal });
+  });
+  document.addEventListener('pendulum:tab-activated', () => syncWorkflow(), { signal: listeners.signal });
+  syncWorkflow();
 
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
@@ -135,6 +162,45 @@ export function installAccessibilityEnhancements(): () => void {
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
+  const menuObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      const button = mutation.target;
+      if (!(button instanceof HTMLButtonElement) || mutation.oldValue === button.getAttribute('aria-expanded'))
+        continue;
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      // Announce the menu a user opened, or the focused menu they closed;
+      // bulk-closing unrelated sections must not flood the live region.
+      if (!expanded && document.activeElement !== button) continue;
+      const korean = document.documentElement.lang === 'ko';
+      const visible =
+        button.querySelector('.rail-menu-label')?.textContent?.trim() ?? button.dataset.railSectionButton ?? '';
+      menuStatus.textContent = korean
+        ? `${visible} 메뉴 ${expanded ? '열림' : '닫힘'}`
+        : `${visible} menu ${expanded ? 'opened' : 'closed'}`;
+    }
+  });
+  document.querySelectorAll('.rail-menu-button[aria-expanded]').forEach((button) => {
+    menuObserver.observe(button, { attributes: true, attributeFilter: ['aria-expanded'], attributeOldValue: true });
+  });
+
   document.documentElement.classList.add('focus-visible-ready');
-  return () => observer.disconnect();
+  return () => {
+    listeners.abort();
+    observer.disconnect();
+    menuObserver.disconnect();
+    menuStatus.remove();
+  };
+}
+
+function installNavigationStatus(): HTMLElement {
+  const existing = document.getElementById('navigationMenuStatus');
+  if (existing) return existing;
+  const status = document.createElement('div');
+  status.id = 'navigationMenuStatus';
+  status.className = 'v10-sr';
+  status.setAttribute('role', 'status');
+  status.setAttribute('aria-live', 'polite');
+  status.setAttribute('aria-atomic', 'true');
+  document.body.append(status);
+  return status;
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T08:05:26.222Z",
+  "generatedAt": "2026-08-18T23:12:17.062Z",
   "pass": true,
   "counts": {
     "innerHTML": 0,
@@ -1278,6 +1278,18 @@
       "standalonePortableBlobWorker": 0
     },
     "src\\app\\TabController.ts": {
+      "innerHTML": 0,
+      "onclick": 0,
+      "inlineWorkerBlob": 0,
+      "evalLike": 0,
+      "dynamicScript": 0,
+      "globalRuntimeExports": 0,
+      "servedHtmlUnsafeInlineScript": 0,
+      "servedHtmlUnsafeInlineStyle": 0,
+      "standalonePortableInlineScript": 0,
+      "standalonePortableBlobWorker": 0
+    },
+    "src\\app\\tabRouting.ts": {
       "innerHTML": 0,
       "onclick": 0,
       "inlineWorkerBlob": 0,

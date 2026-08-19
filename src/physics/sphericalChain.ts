@@ -50,6 +50,20 @@ import type { IntegratorId } from '../types/domain';
 import { assertLinearSolve, solveCholeskyInPlace, solveLinearInPlace, type LinearSolveResult } from './linearSolve';
 import { step as integrateStep } from './integrators';
 import { SPHERICAL_CHAIN_POLE_EPS } from './constants';
+import {
+  PhysicsEvaluationError,
+  assertDensePhysicsDimension,
+  assertFiniteVector,
+  assertNonNegativeFinite,
+  assertOutputVector,
+  assertPositiveFinite
+} from './errors';
+import {
+  SPHERICAL_CHAIN_FRAME_STRIDE,
+  assertFiniteSphericalChainResult,
+  assertSphericalChainState,
+  assertSphericalChainWorkspace
+} from './sphericalChainValidation';
 
 export interface SphericalChainParams {
   /** Bob masses, length N. */
@@ -79,7 +93,7 @@ export interface SphericalChainWorkspace {
   frames: Float64Array;
 }
 
-const FRAME_STRIDE = 14;
+const FRAME_STRIDE = SPHERICAL_CHAIN_FRAME_STRIDE;
 const FRAME_U = 0;
 const FRAME_A = 3;
 const FRAME_B = 6;
@@ -92,27 +106,31 @@ export function sphericalChainLength(params: SphericalChainParams): number {
 }
 
 export function validateSphericalChainParams(params: SphericalChainParams): void {
+  assertDensePhysicsDimension(params.masses.length, 'masses.length', 'SphericalChainParams');
+  if (!Number.isSafeInteger(params.lengths.length)) {
+    throw new PhysicsEvaluationError(
+      'INVALID_DIMENSION',
+      'SphericalChainParams: lengths.length must be a safe integer',
+      { operation: 'SphericalChainParams', retryable: false, parameter: 'lengths.length', value: params.lengths.length }
+    );
+  }
   if (params.masses.length !== params.lengths.length) {
     throw new Error(
       `SphericalChainParams: masses (${params.masses.length}) and lengths (${params.lengths.length}) must have the same length`
     );
   }
-  if (params.masses.length === 0) throw new Error('SphericalChainParams: at least one link is required');
   for (let i = 0; i < params.masses.length; i += 1) {
     const mass = params.masses[i] ?? NaN;
     const length = params.lengths[i] ?? NaN;
-    if (!Number.isFinite(mass) || mass <= 0)
-      throw new Error(`SphericalChainParams: mass[${i}] must be positive and finite`);
-    if (!Number.isFinite(length) || length <= 0)
-      throw new Error(`SphericalChainParams: length[${i}] must be positive and finite`);
+    assertPositiveFinite(mass, `mass[${i}]`, 'SphericalChainParams');
+    assertPositiveFinite(length, `length[${i}]`, 'SphericalChainParams');
   }
-  if (!Number.isFinite(params.g) || params.g <= 0)
-    throw new Error('SphericalChainParams: g must be positive and finite');
-  if (!Number.isFinite(params.damping) || params.damping < 0)
-    throw new Error('SphericalChainParams: damping must be non-negative and finite');
+  assertPositiveFinite(params.g, 'g', 'SphericalChainParams');
+  assertNonNegativeFinite(params.damping, 'damping', 'SphericalChainParams');
 }
 
 export function createSphericalChainWorkspace(n: number): SphericalChainWorkspace {
+  assertDensePhysicsDimension(n, 'n', 'createSphericalChainWorkspace');
   const dof = 2 * n;
   return {
     n,
@@ -194,8 +212,9 @@ export function rhsSphericalChain(
 ): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
-  if (workspace.n !== n || workspace.dof !== dof)
-    throw new Error(`rhsSphericalChain: workspace length ${workspace.n} does not match chain length ${n}`);
+  assertSphericalChainState(state, n, 'rhsSphericalChain');
+  assertOutputVector(out, 4 * n, 'rhsSphericalChain');
+  assertSphericalChainWorkspace(workspace, n, 'rhsSphericalChain');
   const { suffix: s, matrix, force, frames } = workspace;
   fillSuffixMass(params.masses, n, s);
   matrix.fill(0);
@@ -205,10 +224,6 @@ export function rhsSphericalChain(
   for (let j = 0; j < n; j += 1) {
     const jBase = FRAME_STRIDE * j;
     const lj = params.lengths[j] ?? 0;
-    // d/dt of the coordinates.
-    out[2 * j] = Number(state[dof + 2 * j] ?? 0);
-    out[2 * j + 1] = Number(state[dof + 2 * j + 1] ?? 0);
-
     // Row vectors of J for link j's two coordinates (a then b), scaled by l_j.
     for (let alpha = 0; alpha < 2; alpha += 1) {
       const rowOff = jBase + FRAME_A + 3 * alpha;
@@ -247,7 +262,20 @@ export function rhsSphericalChain(
   }
   for (let i = 0; i < dof; i += 1) {
     const qDot = Number(state[dof + i] ?? 0);
-    out[dof + i] = (force[i] ?? 0) - params.damping * qDot;
+    const acceleration = (force[i] ?? NaN) - params.damping * qDot;
+    if (!Number.isFinite(acceleration)) {
+      throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'rhsSphericalChain: acceleration overflowed', {
+        operation: 'rhsSphericalChain',
+        retryable: false,
+        component: i
+      });
+    }
+  }
+  // Commit only after the complete solve is finite so rejected work does not
+  // leak a partial state into a caller-owned output buffer.
+  for (let i = 0; i < dof; i += 1) {
+    out[i] = Number(state[dof + i]);
+    out[dof + i] = (force[i] ?? 0) - params.damping * Number(state[dof + i]);
   }
   return out;
 }
@@ -265,6 +293,8 @@ export function sphericalChainMassMatrix(
 ): Float64Array {
   const n = sphericalChainLength(params);
   const dof = 2 * n;
+  assertFiniteVector(state, dof, 'sphericalChainMassMatrix');
+  assertOutputVector(out, dof * dof, 'sphericalChainMassMatrix');
   const s = new Float64Array(n);
   fillSuffixMass(params.masses, n, s);
   const frames = new Float64Array(FRAME_STRIDE * n);
@@ -278,13 +308,22 @@ export function sphericalChainMassMatrix(
         const sjk = s[Math.max(j, k)] ?? 0;
         for (let beta = 0; beta < 2; beta += 1) {
           const colOff = FRAME_STRIDE * k + FRAME_A + 3 * beta;
-          out[(2 * j + alpha) * dof + (2 * k + beta)] =
+          const value =
             sjk *
             lj *
             lk *
             (frames[rowOff]! * frames[colOff]! +
               frames[rowOff + 1]! * frames[colOff + 1]! +
               frames[rowOff + 2]! * frames[colOff + 2]!);
+          if (!Number.isFinite(value)) {
+            throw new PhysicsEvaluationError('NON_FINITE_INPUT', 'sphericalChainMassMatrix: matrix entry overflowed', {
+              operation: 'sphericalChainMassMatrix',
+              retryable: false,
+              row: 2 * j + alpha,
+              column: 2 * k + beta
+            });
+          }
+          out[(2 * j + alpha) * dof + (2 * k + beta)] = value;
         }
       }
     }
@@ -310,6 +349,7 @@ export function sphericalChainPositions(
   params: SphericalChainParams
 ): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
+  assertSphericalChainState(state, n, 'sphericalChainPositions');
   const positions: Array<{ x: number; y: number; z: number }> = [];
   let x = 0;
   let y = 0;
@@ -336,6 +376,7 @@ export function sphericalChainVelocities(
   params: SphericalChainParams
 ): Array<{ x: number; y: number; z: number }> {
   const n = sphericalChainLength(params);
+  assertSphericalChainState(state, n, 'sphericalChainVelocities');
   const velocities: Array<{ x: number; y: number; z: number }> = [];
   let vx = 0;
   let vy = 0;
@@ -360,6 +401,7 @@ export function sphericalChainVelocities(
 
 export function sphericalChainEnergy(state: ArrayLike<number>, params: SphericalChainParams): EnergyBreakdown {
   const n = sphericalChainLength(params);
+  assertSphericalChainState(state, n, 'sphericalChainEnergy');
   let KE = 0;
   let PE = 0;
   let vx = 0;
@@ -385,12 +427,17 @@ export function sphericalChainEnergy(state: ArrayLike<number>, params: Spherical
     KE += 0.5 * m * (vx * vx + vy * vy + vz * vz);
     PE += m * params.g * y;
   }
-  return { total: KE + PE, KE, PE };
+  const total = KE + PE;
+  assertFiniteSphericalChainResult(KE, 'sphericalChainEnergy');
+  assertFiniteSphericalChainResult(PE, 'sphericalChainEnergy');
+  assertFiniteSphericalChainResult(total, 'sphericalChainEnergy');
+  return { total, KE, PE };
 }
 
 /** Total angular momentum about the vertical axis: Σ m_i (z_i ẋ_i − x_i ż_i)… conserved when γ = 0. */
 export function sphericalChainLz(state: ArrayLike<number>, params: SphericalChainParams): number {
   const n = sphericalChainLength(params);
+  assertSphericalChainState(state, n, 'sphericalChainLz');
   let lz = 0;
   let x = 0;
   let z = 0;
@@ -414,6 +461,7 @@ export function sphericalChainLz(state: ArrayLike<number>, params: SphericalChai
     // (r × v)·ŷ = z·ẋ − x·ż  in right-handed (x, y, z) with y up.
     lz += m * (z * vx - x * vz);
   }
+  assertFiniteSphericalChainResult(lz, 'sphericalChainLz');
   return lz;
 }
 
@@ -436,8 +484,6 @@ export interface SphericalChainOptions {
   method?: IntegratorId;
   tolerance?: number;
 }
-
-/** Fixed-step integrator over the spherical chain, mirroring `SphericalPendulum`. */
 export class SphericalChain {
   private state: Float64Array;
   private time = 0;
@@ -448,18 +494,34 @@ export class SphericalChain {
   private readonly method: IntegratorId;
   private readonly dt: number;
   private readonly tolerance: number;
-
   constructor(
     readonly params: SphericalChainParams,
     initial: ArrayLike<number>,
     options: number | SphericalChainOptions = 0.001
   ) {
     const dof = 4 * sphericalChainLength(params);
+    assertFiniteVector(initial, dof, 'SphericalChain');
     this.state = Float64Array.from({ length: dof }, (_, i) => Number(initial[i] ?? 0));
     const parsed = typeof options === 'number' ? { dt: options } : options;
     this.dt = parsed.dt ?? 0.001;
     this.method = parsed.method ?? 'rk4';
     this.tolerance = parsed.tolerance ?? 1e-10;
+    if (!(this.dt > 0) || !Number.isFinite(this.dt)) {
+      throw new PhysicsEvaluationError('INVALID_PARAMETER', 'SphericalChain: dt must be positive and finite', {
+        operation: 'SphericalChain',
+        retryable: false,
+        parameter: 'dt',
+        value: this.dt
+      });
+    }
+    if (!(this.tolerance > 0) || !Number.isFinite(this.tolerance)) {
+      throw new PhysicsEvaluationError('INVALID_PARAMETER', 'SphericalChain: tolerance must be positive and finite', {
+        operation: 'SphericalChain',
+        retryable: false,
+        parameter: 'tolerance',
+        value: this.tolerance
+      });
+    }
     this.initialEnergy = sphericalChainEnergy(this.state, params).total;
     this.initialLz = sphericalChainLz(this.state, params);
     this.scratch = [0, 1, 2, 3, 4].map(() => new Float64Array(dof));
@@ -475,6 +537,32 @@ export class SphericalChain {
   }
 
   step(elapsed: number): void {
+    if (!(elapsed >= 0) || !Number.isFinite(elapsed)) {
+      throw new PhysicsEvaluationError(
+        'NON_FINITE_INPUT',
+        'SphericalChain.step: elapsed must be finite and non-negative',
+        {
+          operation: 'SphericalChain.step',
+          retryable: false,
+          parameter: 'elapsed',
+          value: elapsed
+        }
+      );
+    }
+    const steps = Math.ceil(elapsed / this.dt);
+    if (steps > 1_000_000) {
+      throw new PhysicsEvaluationError(
+        'INVALID_PARAMETER',
+        'SphericalChain.step: elapsed exceeds the per-call step budget',
+        {
+          operation: 'SphericalChain.step',
+          retryable: true,
+          suggestedAction: 'Split the run into smaller chunks or use a worker batch.',
+          steps,
+          maximumSteps: 1_000_000
+        }
+      );
+    }
     let remaining = elapsed;
     while (remaining > 1e-12) {
       const h = Math.min(this.dt, remaining);

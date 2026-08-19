@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  HUYGENS_PHASE_REDUCTION_METADATA,
   huygensLockedPhaseDifference,
   kuramotoCriticalCoupling,
   kuramotoCriticalCouplingGaussian,
@@ -41,6 +42,7 @@ describe('Kuramoto/Huygens phase network', () => {
   });
 
   it('locks the Huygens phase difference at Delta omega = 2K sin Delta', () => {
+    expect(HUYGENS_PHASE_REDUCTION_METADATA.excludes).toContain('escapement contact');
     const parameters = { frequencies: [1, 1.2] as const, coupling: 0.4 };
     const delta = huygensLockedPhaseDifference(parameters);
     expect(delta).not.toBeNull();

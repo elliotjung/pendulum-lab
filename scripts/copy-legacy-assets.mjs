@@ -20,9 +20,11 @@ const reviewerReports = [
   'npm-pack-dry-run.json',
   'reviewer-kit-manifest.json',
   'mutation-aggregate.json',
+  'independent-validation-scope.json',
   'flagship-figure1.svg',
   'coverage-badge.json',
-  'coverage-badge.svg'
+  'coverage-badge.svg',
+  'modern-demo-screenshot.png'
 ];
 await mkdir('dist/reports', { recursive: true });
 for (const report of reviewerReports) {

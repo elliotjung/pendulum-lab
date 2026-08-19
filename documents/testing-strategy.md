@@ -12,21 +12,31 @@ Every change must pass `npm run verify` before it is claimed done:
 1. `lint` — source-policy lint (`scripts/lint-source.ts`: no `innerHTML`,
    CSP-safe DOM construction) plus ESLint with `--max-warnings 0`.
 2. `typecheck` — strict `tsc` including `noUncheckedIndexedAccess`.
-3. `audit:modules` — module-size ratchet: a default per-file line cap plus
-   exact-pinned ratchets for known-large modules, so orchestrators cannot grow
-   silently and new modules stay focused.
+3. `audit:modules` — module-size gate: every source file is held to the
+   default per-file line cap, so orchestrators cannot grow silently and new
+   modules stay focused.
 4. `test:json` — the full Vitest unit suite, written as a machine-readable
    report to `reports/vitest-results.json`. The JSON reporter prints almost
    nothing to stdout, which is why the next step exists.
 5. `test:check` — re-reads the JSON report and hard-fails unless
    `numPassedTests === numTotalTests` with zero failed suites. A green verify
    therefore genuinely means every test passed.
-6. `docs:sync` — regenerates the evidence summary and rewrites the synced test
-   counts in the README and docs from the report, so quoted numbers cannot
-   drift from measured results.
-7. `format:check` — the repository Prettier config is enforced last for all
+6. `docs:sync` — rewrites synced test counts in the README and docs from the
+   successful report, so quoted numbers cannot drift from measured results.
+   It deliberately does not rewrite public release evidence from a dirty
+   development worktree.
+7. `validate:scope` — records the independent-validation boundary without
+   claiming unavailable external tools or hardware as local evidence.
+8. `format:check` — the repository Prettier config is enforced last for all
    TypeScript/JSON sources (markdown prose is exempt because the `docs:sync`
    generators own its synced numbers).
+
+`npm run release:evidence:check` is intentionally separate from the local
+verification gate. It proves that the committed public evidence is clean,
+fresh, provenance-bound and release-ready; `npm run evidence:refresh` may
+only be run from a clean committed tree. This separation prevents a developer
+worktree from being presented as public release evidence while keeping
+ordinary implementation verification runnable before a commit exists.
 
 ## Unit suite conventions
 

@@ -28,6 +28,7 @@ import {
   installAudienceMode
 } from './app/audienceMode';
 import { isTextEntryShortcutTarget, TAB_ACTIVATED_EVENT, TAB_REQUESTED_EVENT } from './app/Shell';
+import type { TabRequestedDetail } from './app/tabRouting';
 import { applyStructuralLocale, initNavLocale, installLocaleSelect } from './app/uiLocale';
 import { installOnboardingTour } from './app/onboardingTour';
 import { installExperimentShare } from './app/experimentShare';
@@ -35,6 +36,7 @@ import { installShortcutHelp } from './app/shortcutHelp';
 import { APP_VERSION } from './runtime/version';
 import { captureReferralAttribution } from './runtime/referralAttribution';
 import { createRetryableLazy } from './runtime/retryableLazy';
+import { installPwaLifecycle } from './app/PwaLifecycle';
 
 function showToast(message: string, timeout = 2200): void {
   if (typeof window.toast === 'function') {
@@ -49,76 +51,7 @@ function showToast(message: string, timeout = 2200): void {
 }
 
 function installPwa(): void {
-  if (!('serviceWorker' in navigator)) return;
-  if (location.protocol === 'file:') return;
-  const loopback =
-    location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '[::1]';
-  if (!window.isSecureContext && !loopback) return;
-  const scope = new URL('./', location.href).pathname;
-  let reloading = false;
-  let hadController = Boolean(navigator.serviceWorker.controller);
-  const showUpdate = (registration: ServiceWorkerRegistration): void => {
-    if (!registration.waiting || document.getElementById('pwaUpdateBanner')) return;
-    const banner = document.createElement('div');
-    banner.id = 'pwaUpdateBanner';
-    banner.className = 'pwa-update-banner';
-    banner.setAttribute('role', 'status');
-    const copy = document.createElement('span');
-    copy.textContent =
-      document.documentElement.lang === 'ko' ? '새 버전을 사용할 수 있습니다.' : 'A new version is ready.';
-    const update = document.createElement('button');
-    update.type = 'button';
-    update.textContent = document.documentElement.lang === 'ko' ? '지금 업데이트' : 'Update now';
-    update.addEventListener('click', () => registration.waiting?.postMessage({ type: 'SKIP_WAITING' }));
-    const dismiss = document.createElement('button');
-    dismiss.type = 'button';
-    dismiss.className = 'pwa-update-dismiss';
-    dismiss.setAttribute(
-      'aria-label',
-      document.documentElement.lang === 'ko' ? '업데이트 알림 닫기' : 'Dismiss update'
-    );
-    dismiss.textContent = '×';
-    dismiss.addEventListener('click', () => banner.remove());
-    banner.append(copy, update, dismiss);
-    document.body.append(banner);
-  };
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    // `clients.claim()` also emits controllerchange on the first install.
-    // That transition should never tear down a user's first session; reload
-    // only when an already-controlled page accepts an explicit update.
-    if (!hadController) {
-      hadController = true;
-      return;
-    }
-    if (reloading) return;
-    reloading = true;
-    location.reload();
-  });
-  window.addEventListener('offline', () =>
-    showToast(document.documentElement.lang === 'ko' ? '오프라인 모드입니다.' : 'You are offline.')
-  );
-  window.addEventListener('online', () =>
-    showToast(document.documentElement.lang === 'ko' ? '다시 온라인 상태입니다.' : 'Back online.')
-  );
-  void navigator.serviceWorker
-    .register(new URL('./sw.js', location.href), { scope })
-    .then((registration) => {
-      showUpdate(registration);
-      registration.addEventListener('updatefound', () => {
-        const installing = registration.installing;
-        installing?.addEventListener('statechange', () => {
-          if (installing.state === 'installed' && navigator.serviceWorker.controller) showUpdate(registration);
-        });
-      });
-    })
-    .catch((error: unknown) => {
-      console.warn('Pendulum Lab service worker registration failed; online mode remains available.', error);
-      showToast(
-        document.documentElement.lang === 'ko'
-          ? '오프라인 기능을 시작하지 못했습니다.'
-          : 'Offline support is unavailable.'
-      );
-    });
+  installPwaLifecycle(showToast);
 }
 
 function installIndexCommands(): void {
@@ -223,7 +156,7 @@ async function bootResearch(): Promise<void> {
 const RESEARCH_SURFACE_TABS = new Set(['architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs']);
 const researchBoot = createRetryableLazy(bootResearch);
 
-function ensureResearch(tabAfterInstall?: string): Promise<void> {
+function ensureResearch(tabAfterInstall?: string, request?: TabRequestedDetail): Promise<void> {
   return researchBoot.load().then(() => {
     // The research layer registers extra rail entries lazily; redecorate them
     // after mounting so Korean labels and stable data-testid selectors cover
@@ -233,9 +166,16 @@ function ensureResearch(tabAfterInstall?: string): Promise<void> {
     if (tabAfterInstall) {
       const panel = document.getElementById(`tab-${tabAfterInstall}`);
       if (!panel) throw new Error(`Research surface "${tabAfterInstall}" did not install its tab panel.`);
-      (window as Window & { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo(
-        tabAfterInstall
-      );
+      const shell = (
+        window as Window & {
+          __modernShell?: {
+            completeTabRequest(request: TabRequestedDetail): boolean;
+            switchTo(name: string): void;
+          };
+        }
+      ).__modernShell;
+      if (request) shell?.completeTabRequest(request);
+      else shell?.switchTo(tabAfterInstall);
     }
   });
 }
@@ -260,8 +200,26 @@ function armResearchOnDemand(): void {
   // audience-mode change already started it, so the requested tab is selected
   // exactly once after installation.
   document.addEventListener(TAB_REQUESTED_EVENT, (event) => {
-    const tab = (event as CustomEvent<{ tab?: string }>).detail?.tab;
-    if (tab && RESEARCH_SURFACE_TABS.has(tab)) void ensureResearch(tab).catch(reportResearchBootFailure);
+    const request = (event as CustomEvent<TabRequestedDetail>).detail;
+    if (!request || !Number.isSafeInteger(request.requestId)) return;
+    const { tab, historyMode, fallbackTab } = request;
+    if (tab && RESEARCH_SURFACE_TABS.has(tab)) {
+      void ensureResearch(tab, request).catch((error: unknown) => {
+        const shell = (
+          window as Window & {
+            __modernShell?: {
+              isCurrentTabRequest(requestId: number): boolean;
+              switchTo(name: string, mode: 'replace'): void;
+            };
+          }
+        ).__modernShell;
+        if (!shell?.isCurrentTabRequest(request.requestId)) return;
+        // On initial deep links or popstate, location already names the lazy
+        // target. Restore the still-visible fallback panel and canonical URL.
+        if (historyMode !== 'push') shell.switchTo(fallbackTab, 'replace');
+        reportResearchBootFailure(error);
+      });
+    }
   });
   // Rail action buttons (the always-visible palette launcher, Floquet probe,
   // manifest/report exports) are bound by the lazily-loaded parity layer. A

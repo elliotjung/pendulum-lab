@@ -15,6 +15,12 @@ interface LadderEvidence {
     device?: string;
     description?: string;
   } | null;
+  runContext?: {
+    driverVersion?: string | null;
+    thermalState?: string;
+    estimatedCostUsd?: number | null;
+    fallbackRate?: number;
+  };
   nChainVariational?: {
     backend?: string;
     comparison?: {
@@ -34,6 +40,10 @@ interface VendorRow {
   adapter: LadderEvidence['adapter'];
   nChainPassed: boolean;
   nChainDimension: number | null;
+  driverVersion: string | null;
+  thermalState: string;
+  estimatedCostUsd: number | null;
+  fallbackRate: number | null;
   caveat: string;
 }
 
@@ -101,6 +111,10 @@ const rows: VendorRow[] = vendors.map((vendor) => {
       adapter: null,
       nChainPassed: false,
       nChainDimension: null,
+      driverVersion: null,
+      thermalState: 'unknown',
+      estimatedCostUsd: null,
+      fallbackRate: null,
       caveat: `No ${vendor} hardware ladder artifact was supplied. This row is not simulated or inferred.`
     };
   }
@@ -116,6 +130,10 @@ const rows: VendorRow[] = vendors.map((vendor) => {
     adapter: selected.evidence.adapter ?? null,
     nChainPassed,
     nChainDimension: selected.evidence.nChainVariational?.dimension ?? null,
+    driverVersion: selected.evidence.runContext?.driverVersion ?? null,
+    thermalState: selected.evidence.runContext?.thermalState ?? 'unknown',
+    estimatedCostUsd: selected.evidence.runContext?.estimatedCostUsd ?? null,
+    fallbackRate: selected.evidence.runContext?.fallbackRate ?? null,
     caveat: passed
       ? 'Real-adapter ladder passed reductions, 4D diagnostics, and the N-chain STM/QR oracle gate.'
       : 'A hardware artifact exists, but one or more CPU-oracle promotion gates failed.'
@@ -151,11 +169,11 @@ const lines = [
   '',
   `Status: **${status}** (${passed}/${vendors.length} required vendor classes passing)`,
   '',
-  '| Vendor | Evidence | Adapter | Architecture | N-chain | Source |',
-  '|---|---|---|---|---|---|',
+  '| Vendor | Evidence | Adapter | Driver | Thermal | Fallback | Cost | N-chain | Source |',
+  '|---|---|---|---|---|---:|---:|---|---|',
   ...rows.map(
     (row) =>
-      `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} | ${row.adapter?.architecture ?? 'n/a'} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} |`
+      `| ${row.vendor} | ${row.status} | ${row.adapter?.name ?? row.adapter?.description ?? 'missing'} (${row.adapter?.architecture ?? 'n/a'}) | ${row.driverVersion ?? 'n/a'} | ${row.thermalState} | ${row.fallbackRate === null ? 'n/a' : `${(row.fallbackRate * 100).toFixed(1)}%`} | ${row.estimatedCostUsd === null ? 'n/a' : `$${row.estimatedCostUsd.toFixed(4)}`} | ${row.nChainPassed ? `pass (${row.nChainDimension}D)` : 'missing/fail'} | ${row.source ? `\`${row.source}\`` : 'none'} |`
   ),
   '',
   '## Contract',

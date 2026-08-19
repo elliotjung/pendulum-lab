@@ -142,8 +142,11 @@ describe('generated-drift workflow contract', () => {
 
   test('deployment header and localhost readiness probes have finite request deadlines', async () => {
     const cloudflare = await readFile('.github/workflows/cloudflare-pages.yml', 'utf8');
+    const deploymentProbe = await readFile('scripts/verify-deployment-security.ts', 'utf8');
     const mainline = await readFile('.github/workflows/main.yml', 'utf8');
-    expect(cloudflare).toContain('--retry-all-errors --connect-timeout 10 --max-time 60');
+    expect(cloudflare).toContain('npm run release:verify-deployment -- --profile isolated --attempts 5');
+    expect(deploymentProbe).toContain('signal: AbortSignal.timeout(60_000)');
+    expect(deploymentProbe).toContain('attempts > 10');
     expect(mainline).toContain('--connect-timeout 2 --max-time 5 http://127.0.0.1:4173/app.html');
   });
 
@@ -187,36 +190,40 @@ describe('mutation-runner isolation contract', () => {
         expect.arrayContaining(['/test-results/**', '/playwright-report/**', '/reports/**', '/coverage/**'])
       );
       expect(config.ignorePatterns).not.toContain('/tmp-trace-lab3d/**');
-      expect(config.mutate).toEqual(
-        expect.arrayContaining(['src/physics/stochastic.ts', 'src/physics/stochasticSteppers.ts'])
-      );
-      expect(config.mutate?.filter((target) => target === 'src/physics/stochasticSteppers.ts')).toHaveLength(1);
+      const stochasticStepperModules = [
+        'src/physics/stochasticStepperShared.ts',
+        'src/physics/stochasticAdditive.ts',
+        'src/physics/stochasticMultiplicative.ts',
+        'src/physics/stochasticMatrixNoise.ts'
+      ];
+      expect(config.mutate).toEqual(expect.arrayContaining(['src/physics/stochastic.ts', ...stochasticStepperModules]));
+      for (const target of stochasticStepperModules) {
+        expect(config.mutate?.filter((entry) => entry === target)).toHaveLength(1);
+      }
+      expect(config.mutate).not.toContain('src/physics/stochasticSteppers.ts');
       expect(config.dryRunTimeoutMinutes).toBe(20);
       expect(config.timeoutMS).toBe(30_000);
       expect(config.concurrency).toBe(2);
     }
   );
 
-  test('nightly mutation shards cover every stochastic stepper line exactly once', async () => {
+  test('nightly mutation shards cover every concrete stochastic stepper family', async () => {
     const workflow = await readFile('.github/workflows/nightly.yml', 'utf8');
-    const stepper = await readFile('src/physics/stochasticSteppers.ts', 'utf8');
-    const ranges = [...workflow.matchAll(/^\s+mutate: src\/physics\/stochasticSteppers\.ts:(\d+)-(\d+)\s*$/gm)].map(
-      ([, start, end]) => [Number(start), Number(end)] as const
+    const stepperModules = [
+      'src/physics/stochasticStepperShared.ts',
+      'src/physics/stochasticAdditive.ts',
+      'src/physics/stochasticMultiplicative.ts',
+      'src/physics/stochasticMatrixNoise.ts'
+    ];
+    const targets = [...workflow.matchAll(/^\s+mutate: (src\/physics\/stochastic[^\s]+\.ts)\s*$/gm)].map(
+      ([, target]) => target
     );
 
     expect(workflow.match(/^\s+mutate: src\/physics\/stochastic\.ts\s*$/gm)).toHaveLength(1);
-    expect(workflow).not.toMatch(/^\s+mutate: src\/physics\/stochasticSteppers\.ts\s*$/m);
-    expect(ranges).toEqual([
-      [1, 230],
-      [231, 386],
-      [387, 541],
-      [542, 657]
-    ]);
-    expect(ranges[0]?.[0]).toBe(1);
-    for (let index = 1; index < ranges.length; index += 1) {
-      expect(ranges[index]?.[0]).toBe((ranges[index - 1]?.[1] ?? 0) + 1);
+    expect(workflow).not.toContain('src/physics/stochasticSteppers.ts');
+    for (const target of stepperModules) {
+      expect(targets.filter((entry) => entry === target)).toHaveLength(1);
     }
-    expect(ranges.at(-1)?.[1]).toBe(stepper.trimEnd().split(/\r?\n/).length);
   });
 
   test('keeps the relaxed stochastic timeout out of the normal test profile', async () => {

@@ -8,6 +8,7 @@ export {
   mulberry32,
   numericalJacobian,
   makeVariationalRhs,
+  jacobianTrustMetadata,
   gramSchmidt,
   seedTangentFrame
 } from '../physics/variational';

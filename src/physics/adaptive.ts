@@ -1,4 +1,19 @@
 import type { Derivative, StateVector } from './types';
+import {
+  createStepController,
+  normalisedError,
+  resolveAdaptiveOptions,
+  validateEmbeddedStepInput,
+  type AdaptiveControllerOptions
+} from './adaptiveController';
+export { createStepController } from './adaptiveController';
+export type {
+  AdaptiveControllerOptions,
+  ComponentTolerance,
+  StepController,
+  StepControllerCoefficients,
+  StepControllerKind
+} from './adaptiveController';
 
 /**
  * Adaptive step-size numerics: an embedded Dormand-Prince 5(4) pair, a PI
@@ -12,26 +27,30 @@ export interface EmbeddedStepResult {
   y: StateVector;
   /** Scaled error estimate (infinity norm of high minus low order solution). */
   error: number;
+  /** Absolute local error estimate per state component. */
+  errorComponents: StateVector;
 }
 
-export interface AdaptiveControllerOptions {
-  absTol?: number;
-  relTol?: number;
-  minDt?: number;
-  maxDt?: number;
-  safety?: number;
-  /** Embedded method order used for the error exponent (default 5). */
-  order?: number;
-  /**
-   * Step-size controller. `basic` is the classical elementary controller
-   * (default, byte-identical to the historical behaviour). `pi` adds the
-   * proportional memory term of Gustafsson's PI controller, which damps the
-   * accept/reject oscillation ("chattering") near stability boundaries —
-   * e.g. sweeping the driven pendulum across the Melnikov threshold.
-   */
-  controller?: StepControllerKind;
-  /** Override the per-order PI(D) exponents; defaults to PI4.2 for `pi`. */
-  controllerCoefficients?: StepControllerCoefficients;
+/** Reusable Dormand-Prince stage buffers for high-frequency/adaptive runs. */
+export interface AdaptiveWorkspace {
+  readonly dimension: number;
+  readonly stages: StateVector[];
+  readonly tmp: StateVector;
+  readonly output: StateVector;
+  readonly errorComponents: StateVector;
+}
+
+export function createAdaptiveWorkspace(dimension: number): AdaptiveWorkspace {
+  if (!Number.isSafeInteger(dimension) || dimension < 1) {
+    throw new RangeError('createAdaptiveWorkspace: dimension must be a positive safe integer.');
+  }
+  return {
+    dimension,
+    stages: Array.from({ length: 7 }, () => new Float64Array(dimension)),
+    tmp: new Float64Array(dimension),
+    output: new Float64Array(dimension),
+    errorComponents: new Float64Array(dimension)
+  };
 }
 
 export interface AdaptiveStepOutcome {
@@ -42,7 +61,35 @@ export interface AdaptiveStepOutcome {
   nextDt: number;
   /** Normalised error (target is <= 1). */
   errorNorm: number;
+  /** Component-wise local error estimates used to form `errorNorm`. */
+  errorComponents: StateVector;
   y: StateVector;
+  failureReason?: 'minimum-step-tolerance' | 'non-finite-error';
+}
+
+export interface AdaptiveAcceptedStep {
+  index: number;
+  startTime: number;
+  endTime: number;
+  dt: number;
+  errorNorm: number;
+}
+
+export type AdaptiveTerminationReason =
+  'target-reached' | 'iteration-budget-exhausted' | 'minimum-step-tolerance' | 'non-finite-error';
+
+export interface AdaptiveIntegrationResult {
+  y: StateVector;
+  accepted: number;
+  rejected: number;
+  steps: number;
+  finalTime: number;
+  targetTime: number;
+  reachedTarget: boolean;
+  terminationReason: AdaptiveTerminationReason;
+  /** Exact accepted controller decisions required for deterministic replay. */
+  acceptedSteps: AdaptiveAcceptedStep[];
+  finalSuggestedDt: number;
 }
 
 // Dormand-Prince 5(4) Butcher tableau (the method underlying MATLAB ode45).
@@ -66,11 +113,15 @@ void DP_C; // tableau nodes retained for documentation/extension
 function dormandPrinceStages(
   state: StateVector,
   dt: number,
-  rhs: Derivative
-): { k: StateVector[]; y: StateVector; error: number } {
+  rhs: Derivative,
+  workspace: AdaptiveWorkspace
+): { k: StateVector[]; y: StateVector; error: number; errorComponents: StateVector } {
   const n = state.length;
-  const k: StateVector[] = Array.from({ length: 7 }, () => new Float64Array(n));
-  const tmp = new Float64Array(n);
+  if (workspace.dimension !== n || workspace.stages.length < 7) {
+    throw new RangeError('dormandPrince54Step: workspace dimension does not match state.');
+  }
+  const k = workspace.stages;
+  const tmp = workspace.tmp;
   for (let s = 0; s < 7; s += 1) {
     if (s === 0) {
       rhs(state, k[0]!);
@@ -84,7 +135,8 @@ function dormandPrinceStages(
     }
     rhs(tmp, k[s]!);
   }
-  const y = new Float64Array(n);
+  const y = workspace.output;
+  const errorComponents = workspace.errorComponents;
   let error = 0;
   for (let i = 0; i < n; i += 1) {
     let sum5 = 0;
@@ -95,9 +147,11 @@ function dormandPrinceStages(
       sum4 += DP_B4[s]! * ki;
     }
     y[i] = Number(state[i] ?? 0) + dt * sum5;
-    error = Math.max(error, Math.abs(dt * (sum5 - sum4)));
+    const componentError = Math.abs(dt * (sum5 - sum4));
+    errorComponents[i] = componentError;
+    error = Math.max(error, componentError);
   }
-  return { k, y, error };
+  return { k, y, error, errorComponents };
 }
 
 /**
@@ -105,9 +159,20 @@ function dormandPrinceStages(
  * infinity-norm error estimate (difference between the 5th and 4th order
  * solutions). Does not mutate `state`.
  */
-export function dormandPrince54Step(state: StateVector, dt: number, rhs: Derivative): EmbeddedStepResult {
-  const { y, error } = dormandPrinceStages(state, dt, rhs);
-  return { y, error };
+export function dormandPrince54Step(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  workspace?: AdaptiveWorkspace
+): EmbeddedStepResult {
+  validateEmbeddedStepInput(state, dt, 'dormandPrince54Step');
+  const work = workspace ?? createAdaptiveWorkspace(state.length);
+  const { y, error, errorComponents } = dormandPrinceStages(state, dt, rhs, work);
+  // Caller-supplied workspaces opt into reusable result buffers. The default
+  // preserves the historical ownership contract (fresh result arrays).
+  return workspace
+    ? { y, error, errorComponents }
+    : { y: new Float64Array(y), error, errorComponents: new Float64Array(errorComponents) };
 }
 
 export interface DenseStepResult extends EmbeddedStepResult {
@@ -138,9 +203,19 @@ const DP_D = [
  * estimate to {@link dormandPrince54Step}, plus a 4th-order interpolant over
  * the step built from the same seven stages (no extra RHS evaluations).
  */
-export function dormandPrince54StepDense(state: StateVector, dt: number, rhs: Derivative): DenseStepResult {
+export function dormandPrince54StepDense(
+  state: StateVector,
+  dt: number,
+  rhs: Derivative,
+  workspace?: AdaptiveWorkspace
+): DenseStepResult {
+  validateEmbeddedStepInput(state, dt, 'dormandPrince54StepDense');
   const n = state.length;
-  const { k, y, error } = dormandPrinceStages(state, dt, rhs);
+  const work = workspace ?? createAdaptiveWorkspace(n);
+  const staged = dormandPrinceStages(state, dt, rhs, work);
+  const { k, error } = staged;
+  const y = new Float64Array(staged.y);
+  const errorComponents = new Float64Array(staged.errorComponents);
   // rcont1..5 of Hairer's contd5: u(θ) = r1 + θ(r2 + (1−θ)(r3 + θ(r4 + (1−θ)r5))).
   const r1 = new Float64Array(state);
   const r2 = new Float64Array(n);
@@ -160,6 +235,7 @@ export function dormandPrince54StepDense(state: StateVector, dt: number, rhs: De
   return {
     y,
     error,
+    errorComponents,
     interpolate(theta: number, out: StateVector): StateVector {
       const oneMinus = 1 - theta;
       for (let i = 0; i < n; i += 1) {
@@ -174,83 +250,6 @@ export function dormandPrince54StepDense(state: StateVector, dt: number, rhs: De
   };
 }
 
-export type StepControllerKind = 'basic' | 'pi';
-
-/**
- * Exponents (per unit of method order p) of the generalised controller
- * factor = safety · err^(−kI/p) · errPrev^(kP/p) · errPrev2^(−kD/p).
- * kI = 1, kP = kD = 0 is the elementary controller; the PI4.2 choice
- * kI = 0.7, kP = 0.4 (Gustafsson; Hairer & Wanner II.4) damps step-size
- * oscillation. A derivative term kD can be supplied for a full PID.
- */
-export interface StepControllerCoefficients {
-  kI: number;
-  kP: number;
-  kD?: number;
-}
-
-export interface StepController {
-  /**
-   * Step-size factor for the next attempt. Error memory advances only on
-   * accepted steps; after a rejection the factor is capped at 1 so the step
-   * can never grow off a failure.
-   */
-  factor(errorNorm: number, accepted: boolean): number;
-  reset(): void;
-}
-
-const PI42: StepControllerCoefficients = { kI: 0.7, kP: 0.4 };
-
-export function createStepController(
-  options: {
-    kind?: StepControllerKind;
-    order?: number;
-    safety?: number;
-    minFactor?: number;
-    maxFactor?: number;
-    coefficients?: StepControllerCoefficients;
-  } = {}
-): StepController {
-  const order = options.order ?? 5;
-  const safety = options.safety ?? 0.9;
-  const minFactor = options.minFactor ?? 0.2;
-  const maxFactor = options.maxFactor ?? 5;
-  const kind = options.kind ?? 'basic';
-  const co = options.coefficients ?? (kind === 'pi' ? PI42 : { kI: 1, kP: 0 });
-  const ERR_FLOOR = 1e-12; // keeps the memory powers finite on exact steps
-  let prev = 1;
-  let prev2 = 1;
-  return {
-    factor(errorNorm: number, accepted: boolean): number {
-      const err = Math.max(errorNorm, ERR_FLOOR);
-      let raw =
-        errorNorm === 0
-          ? maxFactor
-          : safety * err ** (-co.kI / order) * prev ** (co.kP / order) * prev2 ** (-(co.kD ?? 0) / order);
-      if (!accepted) raw = Math.min(raw, 1);
-      if (accepted) {
-        prev2 = prev;
-        prev = err;
-      }
-      return Math.min(maxFactor, Math.max(minFactor, raw));
-    },
-    reset(): void {
-      prev = 1;
-      prev2 = 1;
-    }
-  };
-}
-
-/** Mixed abs/rel normalised error: target is ≤ 1 (shared by all controllers). */
-function normalisedError(state: StateVector, y: StateVector, error: number, absTol: number, relTol: number): number {
-  let errorNorm = 0;
-  for (let i = 0; i < state.length; i += 1) {
-    const scale = absTol + relTol * Math.max(Math.abs(Number(state[i] ?? 0)), Math.abs(Number(y[i] ?? 0)));
-    errorNorm = Math.max(errorNorm, error / scale);
-  }
-  return errorNorm;
-}
-
 /**
  * Embedded-pair adaptive step with a standard error-per-step controller.
  * Computes a candidate step, normalises its error against a mixed abs/rel
@@ -260,24 +259,38 @@ export function adaptiveStep(
   state: StateVector,
   dt: number,
   rhs: Derivative,
-  options: AdaptiveControllerOptions = {}
+  options: AdaptiveControllerOptions = {},
+  workspace?: AdaptiveWorkspace
 ): AdaptiveStepOutcome {
-  const absTol = options.absTol ?? 1e-8;
-  const relTol = options.relTol ?? 1e-6;
-  const minDt = options.minDt ?? 1e-9;
-  const maxDt = options.maxDt ?? 1;
-  const safety = options.safety ?? 0.9;
-  const order = options.order ?? 5;
-
-  const { y, error } = dormandPrince54Step(state, dt, rhs);
-  // Normalise: error / (absTol + relTol * max(|y_old|, |y_new|)).
-  const errorNorm = normalisedError(state, y, error, absTol, relTol);
-  const accepted = errorNorm <= 1 || dt <= minDt;
-  const exponent = 1 / order;
-  const raw = errorNorm === 0 ? 5 : safety * errorNorm ** -exponent;
-  const factor = Math.min(5, Math.max(0.2, raw));
-  const nextDt = Math.min(maxDt, Math.max(minDt, dt * factor));
-  return { accepted, dt, nextDt, errorNorm, y };
+  validateEmbeddedStepInput(state, dt, 'adaptiveStep');
+  const resolved = resolveAdaptiveOptions(options, state.length, 'adaptiveStep');
+  if (options.maxDt !== undefined && dt > resolved.maxDt) {
+    throw new RangeError('adaptiveStep: dt must not exceed an explicitly configured maxDt.');
+  }
+  const { y, errorComponents } = dormandPrince54Step(state, dt, rhs, workspace);
+  const errorNorm = normalisedError(state, y, errorComponents, resolved.absTol, resolved.relTol);
+  const accepted = Number.isFinite(errorNorm) && errorNorm <= 1;
+  const exponent = 1 / resolved.order;
+  const raw = errorNorm === 0 ? resolved.maxFactor : resolved.safety * errorNorm ** -exponent;
+  const factor = Math.min(
+    resolved.maxFactor,
+    Math.max(resolved.minFactor, Number.isFinite(raw) ? raw : resolved.minFactor)
+  );
+  const nextDt = Math.min(resolved.maxDt, Math.max(resolved.minDt, dt * factor));
+  const failureReason = !Number.isFinite(errorNorm)
+    ? 'non-finite-error'
+    : !accepted && dt <= resolved.minDt * (1 + 8 * Number.EPSILON)
+      ? 'minimum-step-tolerance'
+      : undefined;
+  return {
+    accepted,
+    dt,
+    nextDt,
+    errorNorm,
+    errorComponents,
+    y,
+    ...(failureReason ? { failureReason } : {})
+  };
 }
 
 /**
@@ -290,60 +303,143 @@ export function integrateAdaptive(
   duration: number,
   rhs: Derivative,
   options: AdaptiveControllerOptions & { initialDt?: number } = {}
-): { y: StateVector; accepted: number; rejected: number; steps: number } {
+): AdaptiveIntegrationResult {
+  if (!Number.isFinite(duration) || duration < 0) {
+    throw new RangeError('integrateAdaptive: duration must be finite and non-negative.');
+  }
+  if (!Number.isSafeInteger(state0.length) || state0.length < 1) {
+    throw new RangeError('integrateAdaptive: state must contain at least one component.');
+  }
+  for (let i = 0; i < state0.length; i += 1) {
+    if (!Number.isFinite(state0[i])) throw new RangeError('integrateAdaptive: state components must be finite.');
+  }
+  const resolved = resolveAdaptiveOptions(options, state0.length, 'integrateAdaptive');
   const y = new Float64Array(state0);
   let t = 0;
-  let dt = options.initialDt ?? Math.min(options.maxDt ?? 1e-2, 1e-2);
+  let dt = options.initialDt ?? Math.min(resolved.maxDt, 1e-2);
+  if (!(dt >= resolved.minDt && dt <= resolved.maxDt) || !Number.isFinite(dt)) {
+    throw new RangeError('integrateAdaptive: initialDt must be finite and within [minDt, maxDt].');
+  }
   let accepted = 0;
   let rejected = 0;
   let guard = 0;
-  const maxIterations = 10_000_000;
+  const acceptedSteps: AdaptiveAcceptedStep[] = [];
+  let terminationReason: AdaptiveTerminationReason = duration === 0 ? 'target-reached' : 'iteration-budget-exhausted';
+  const workspace = createAdaptiveWorkspace(state0.length);
   // The stateful PI(D) controller path; `basic`/unset keeps the historical
   // memoryless adaptiveStep behaviour bit for bit.
   const controller =
     options.controller && options.controller !== 'basic'
       ? createStepController({
           kind: options.controller,
-          order: options.order ?? 5,
-          safety: options.safety ?? 0.9,
+          order: resolved.order,
+          safety: resolved.safety,
+          minFactor: resolved.minFactor,
+          maxFactor: resolved.maxFactor,
           ...(options.controllerCoefficients ? { coefficients: options.controllerCoefficients } : {})
         })
       : undefined;
-  const absTol = options.absTol ?? 1e-8;
-  const relTol = options.relTol ?? 1e-6;
-  const minDt = options.minDt ?? 1e-9;
-  const maxDt = options.maxDt ?? 1;
-  while (t < duration && guard < maxIterations) {
+  while (t < duration && guard < resolved.maxIterations) {
     guard += 1;
     if (t + dt > duration) dt = duration - t;
     if (controller) {
-      const { y: yNew, error } = dormandPrince54Step(y, dt, rhs);
-      const errorNorm = normalisedError(y, yNew, error, absTol, relTol);
-      const ok = errorNorm <= 1 || dt <= minDt;
+      const { y: yNew, errorComponents } = dormandPrince54Step(y, dt, rhs, workspace);
+      const errorNorm = normalisedError(y, yNew, errorComponents, resolved.absTol, resolved.relTol);
+      const ok = Number.isFinite(errorNorm) && errorNorm <= 1;
       const factor = controller.factor(errorNorm, ok);
-      const nextDt = Math.min(maxDt, Math.max(minDt, dt * factor));
+      const nextDt = Math.min(resolved.maxDt, Math.max(resolved.minDt, dt * factor));
       if (ok) {
+        const startTime = t;
         y.set(yNew);
-        t += dt;
+        t = startTime + dt;
+        if (duration - t <= Math.max(Number.EPSILON * Math.max(1, duration) * 8, resolved.minDt * 1e-6)) t = duration;
         accepted += 1;
+        acceptedSteps.push({ index: accepted - 1, startTime, endTime: t, dt, errorNorm });
       } else {
         rejected += 1;
+        if (!Number.isFinite(errorNorm)) {
+          terminationReason = 'non-finite-error';
+          break;
+        }
+        if (dt <= resolved.minDt * (1 + 8 * Number.EPSILON)) {
+          terminationReason = 'minimum-step-tolerance';
+          break;
+        }
       }
       dt = nextDt;
       continue;
     }
-    const outcome = adaptiveStep(y, dt, rhs, options);
+    const outcome = adaptiveStep(y, dt, rhs, { ...options, maxDt: resolved.maxDt }, workspace);
     if (outcome.accepted) {
+      const startTime = t;
       y.set(outcome.y);
-      t += outcome.dt;
+      t = startTime + outcome.dt;
+      if (duration - t <= Math.max(Number.EPSILON * Math.max(1, duration) * 8, resolved.minDt * 1e-6)) t = duration;
       accepted += 1;
+      acceptedSteps.push({ index: accepted - 1, startTime, endTime: t, dt: outcome.dt, errorNorm: outcome.errorNorm });
       dt = outcome.nextDt;
     } else {
       rejected += 1;
       dt = outcome.nextDt;
+      if (outcome.failureReason) {
+        terminationReason = outcome.failureReason;
+        break;
+      }
     }
   }
-  return { y, accepted, rejected, steps: accepted + rejected };
+  const reachedTarget = t === duration;
+  if (reachedTarget) terminationReason = 'target-reached';
+  else if (guard >= resolved.maxIterations && terminationReason === 'iteration-budget-exhausted') {
+    terminationReason = 'iteration-budget-exhausted';
+  }
+  return {
+    y,
+    accepted,
+    rejected,
+    steps: accepted + rejected,
+    finalTime: t,
+    targetTime: duration,
+    reachedTarget,
+    terminationReason,
+    acceptedSteps,
+    finalSuggestedDt: dt
+  };
+}
+
+/** Replay a previously exported accepted-step sequence without rerunning the controller. */
+export function replayAcceptedSteps(
+  state0: StateVector,
+  rhs: Derivative,
+  acceptedSteps: readonly AdaptiveAcceptedStep[]
+): { y: StateVector; finalTime: number } {
+  if (!Number.isSafeInteger(state0.length) || state0.length < 1) {
+    throw new RangeError('replayAcceptedSteps: state must contain at least one component.');
+  }
+  const y = new Float64Array(state0);
+  for (let i = 0; i < y.length; i += 1) {
+    if (!Number.isFinite(y[i])) throw new RangeError('replayAcceptedSteps: state must be finite.');
+  }
+  const workspace = createAdaptiveWorkspace(y.length);
+  let time = 0;
+  for (let index = 0; index < acceptedSteps.length; index += 1) {
+    const accepted = acceptedSteps[index]!;
+    if (
+      accepted.index !== index ||
+      !Number.isFinite(accepted.startTime) ||
+      !Number.isFinite(accepted.endTime) ||
+      !(accepted.dt > 0) ||
+      !Number.isFinite(accepted.dt) ||
+      Math.abs(accepted.startTime - time) > 32 * Number.EPSILON * Math.max(1, Math.abs(time)) ||
+      Math.abs(accepted.endTime - accepted.startTime - accepted.dt) >
+        32 * Number.EPSILON * Math.max(1, Math.abs(accepted.endTime))
+    ) {
+      throw new RangeError(`replayAcceptedSteps: invalid/non-contiguous metadata at step ${index}.`);
+    }
+    const advanced = dormandPrince54Step(y, accepted.dt, rhs, workspace);
+    y.set(advanced.y);
+    time = accepted.endTime;
+  }
+  return { y, finalTime: time };
 }
 
 export type FixedStepper = (state: StateVector, dt: number, rhs: Derivative, out: StateVector) => StateVector;
@@ -423,8 +519,17 @@ const GBS_SEQUENCE = [2, 4, 6, 8, 10, 12, 14, 16];
  * (difference between the two highest extrapolation orders). `kMax` controls how
  * many sequence entries are used (effective order grows with kMax).
  */
-export function bulirschStoerStep(state: StateVector, H: number, rhs: Derivative, kMax = 6): EmbeddedStepResult {
-  const stages = Math.min(Math.max(2, kMax), GBS_SEQUENCE.length);
+export interface BulirschStoerStepResult extends EmbeddedStepResult {
+  extrapolationDepth: number;
+  effectiveOrder: number;
+}
+
+export function bulirschStoerStep(state: StateVector, H: number, rhs: Derivative, kMax = 6): BulirschStoerStepResult {
+  validateEmbeddedStepInput(state, H, 'bulirschStoerStep');
+  if (!Number.isSafeInteger(kMax) || kMax < 2 || kMax > GBS_SEQUENCE.length) {
+    throw new RangeError(`bulirschStoerStep: kMax must be a safe integer in [2, ${GBS_SEQUENCE.length}].`);
+  }
+  const stages = kMax;
   const n = state.length;
   const table: StateVector[][] = [];
   for (let k = 0; k < stages; k += 1) {
@@ -445,6 +550,16 @@ export function bulirschStoerStep(state: StateVector, H: number, rhs: Derivative
   const best = table[stages - 1]![stages - 1]!;
   const lower = table[stages - 1]![stages - 2] ?? best;
   let error = 0;
-  for (let i = 0; i < n; i += 1) error = Math.max(error, Math.abs(Number(best[i] ?? 0) - Number(lower[i] ?? 0)));
-  return { y: new Float64Array(best), error };
+  const errorComponents = new Float64Array(n);
+  for (let i = 0; i < n; i += 1) {
+    errorComponents[i] = Math.abs(Number(best[i] ?? 0) - Number(lower[i] ?? 0));
+    error = Math.max(error, errorComponents[i] ?? 0);
+  }
+  return {
+    y: new Float64Array(best),
+    error,
+    errorComponents,
+    extrapolationDepth: stages,
+    effectiveOrder: 2 * stages
+  };
 }

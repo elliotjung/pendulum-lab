@@ -1,0 +1,61 @@
+{
+  "name": "Pendulum Lab 비선형 동역학 실험실",
+  "short_name": "Pendulum Lab",
+  "id": "./",
+  "lang": "ko",
+  "dir": "ltr",
+  "description": "검증된 수치 근거와 오프라인 실행을 지원하는 비선형 동역학 실험실입니다.",
+  "start_url": "./?source=pwa&lang=ko",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070910",
+  "theme_color": "#070910",
+  "categories": ["education", "science", "productivity"],
+  "prefer_related_applications": false,
+  "launch_handler": { "client_mode": "navigate-existing" },
+  "screenshots": [
+    {
+      "src": "./reports/modern-demo-screenshot.png",
+      "sizes": "1280x820",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "진자 시뮬레이터와 실시간 수치 진단"
+    }
+  ],
+  "icons": [
+    {
+      "src": "./icons/pendulum-lab-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/pendulum-lab-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/pendulum-lab-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "시뮬레이터 열기",
+      "short_name": "시뮬레이터",
+      "url": "./?audience=beginner&tab=lab&lang=ko",
+      "icons": [{ "src": "./icons/pendulum-lab-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "연구 작업공간 열기",
+      "short_name": "연구",
+      "url": "./?audience=research&tab=research&lang=ko",
+      "icons": [{ "src": "./icons/pendulum-lab-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "pendulum-independent-validation-scope/v1",
+  "status": "pass",
+  "policy": {
+    "minimumIndependentRuntimeCount": 2,
+    "requiredRuntimeIds": [
+      "internal-typescript",
+      "scipy-python",
+      "julia"
+    ],
+    "optionalRuntimeIds": [
+      "matlab"
+    ],
+    "unavailableOptionalRuntimesDoNotFailRelease": true
+  },
+  "summary": {
+    "requiredPassed": 3,
+    "requiredTotal": 3,
+    "independentPassed": 2,
+    "independentAvailable": 2,
+    "optionalUnavailable": 1
+  },
+  "runtimes": [
+    {
+      "id": "internal-typescript",
+      "role": "primary-implementation",
+      "independentFromTypeScript": false,
+      "requiredForRelease": true,
+      "availability": "available",
+      "status": "pass",
+      "evidencePath": "reports/validation-reference.json",
+      "evidenceSha256": "1bff971d240e36e85f44980f37cd6d4ab4ebb0add140113fe4b192e4b037e484",
+      "command": "npm run validate:reference",
+      "implementation": "TypeScript integrator registry (gbs)",
+      "validation": "14/14 internal integrator checks passed",
+      "caveat": "This is the product implementation validating itself; it is not counted as an independent runtime."
+    },
+    {
+      "id": "scipy-python",
+      "role": "independent-oracle",
+      "independentFromTypeScript": true,
+      "requiredForRelease": true,
+      "availability": "available",
+      "status": "pass",
+      "evidencePath": "reports/cross-validation.json",
+      "evidenceSha256": "057be6c086d35e14591dcb0e0343afea115bd129561588620405d8e680b2fef1",
+      "command": "npm run validate:cross",
+      "implementation": "scipy.solve_ivp DOP853 rtol=atol=1e-13",
+      "validation": "4/4 trajectory comparisons passed",
+      "caveat": "Independent runtime and solver implementation; agreement is tolerance-based rather than bitwise."
+    },
+    {
+      "id": "julia",
+      "role": "independent-oracle",
+      "independentFromTypeScript": true,
+      "requiredForRelease": true,
+      "availability": "available",
+      "status": "pass",
+      "evidencePath": "reports/julia-comparison.json",
+      "evidenceSha256": "b63a6c18e0241e8c964a7be5a3d0a381840ebe90508b27249d3c830e44f7942b",
+      "command": "npm run validate:julia",
+      "implementation": "Vern9 (OrdinaryDiffEq.jl)",
+      "validation": "9 early-time state comparisons plus long-horizon energy drift",
+      "caveat": "Pointwise agreement decays at the Lyapunov rate; energy drift is the long-horizon metric."
+    },
+    {
+      "id": "matlab",
+      "role": "optional-independent-oracle",
+      "independentFromTypeScript": true,
+      "requiredForRelease": false,
+      "availability": "unavailable",
+      "status": "not-run",
+      "evidencePath": null,
+      "evidenceSha256": null,
+      "command": null,
+      "implementation": "MATLAB (licensed runtime not configured)",
+      "validation": "No MATLAB artifact is present and no MATLAB result is claimed.",
+      "caveat": "Optional expansion only. CI has neither a configured MATLAB runner nor a project license; absence does not weaken the two available independent-runtime checks."
+    }
+  ]
+}

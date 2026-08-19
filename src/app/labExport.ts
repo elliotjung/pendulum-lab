@@ -1,4 +1,5 @@
 import type { LabConfig } from './LabSimulation';
+import type { PoincareCrossingPoint } from './PoincareAccumulator';
 import type { Point2D } from '../viz/poincare';
 import type { RunMode, RuntimeSnapshot } from '../types/domain';
 
@@ -24,9 +25,31 @@ export function trajectoryCsv(samples: readonly TrajectorySample[], system: LabC
   return [header, ...rows].join('\n');
 }
 
-/** Poincaré-section CSV: theta2, omega2 per crossing. */
+function hasCrossingMetadata(point: Point2D): point is PoincareCrossingPoint {
+  const candidate = point as Partial<PoincareCrossingPoint>;
+  return (
+    (candidate.direction === 'rising' || candidate.direction === 'falling') &&
+    typeof candidate.rootResidual === 'number' &&
+    'rootBracketWidth' in candidate
+  );
+}
+
+/**
+ * Poincaré-section CSV. Plain Point2D input retains the historical two-column
+ * format; Lab accumulator records add auditable root and direction metadata.
+ */
 export function poincareCsv(points: readonly Point2D[]): string {
-  return ['theta2,omega2', ...points.map((p) => `${p.x.toPrecision(10)},${p.y.toPrecision(10)}`)].join('\n');
+  const includeMetadata = points.some(hasCrossingMetadata);
+  if (!includeMetadata) {
+    return ['theta2,omega2', ...points.map((p) => `${p.x.toPrecision(10)},${p.y.toPrecision(10)}`)].join('\n');
+  }
+  const rows = points.map((point) => {
+    const base = `${point.x.toPrecision(10)},${point.y.toPrecision(10)}`;
+    if (!hasCrossingMetadata(point)) return `${base},,,`;
+    const bracket = point.rootBracketWidth === null ? '' : point.rootBracketWidth.toPrecision(10);
+    return `${base},${point.direction},${point.rootResidual.toPrecision(10)},${bracket}`;
+  });
+  return ['theta2,omega2,direction,rootResidual,rootBracketWidth', ...rows].join('\n');
 }
 
 export interface RunExport {
@@ -45,6 +68,8 @@ export interface RunExport {
   drift: number;
   /** Exact, directly restorable session state added without breaking v2 readers. */
   runtimeSnapshot: RuntimeSnapshot;
+  /** UI locale active when the artifact was created (scientific columns stay stable). */
+  locale: 'en' | 'ko';
 }
 
 export interface RunExportOptions {
@@ -52,6 +77,7 @@ export interface RunExportOptions {
   stepsPerFrame?: number;
   seed?: number | null;
   hash?: string;
+  locale?: 'en' | 'ko';
 }
 
 function stateHash(state: ArrayLike<number>): string {
@@ -106,6 +132,7 @@ export function runJson(
     simTime,
     energy,
     drift,
+    locale: options.locale === 'ko' ? 'ko' : 'en',
     runtimeSnapshot
   };
 }

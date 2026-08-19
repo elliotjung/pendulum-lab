@@ -1,6 +1,21 @@
 import type { Point2D } from '../viz/poincare';
 import type { Derivative } from '../physics/types';
 
+export type PoincareCrossingDirection = 'rising' | 'falling';
+
+/**
+ * A plotted section point plus the numerical evidence needed to audit the
+ * crossing.  The extra fields are additive, so records remain valid Point2D
+ * values for the renderer and older consumers.
+ */
+export interface PoincareCrossingPoint extends Point2D {
+  direction: PoincareCrossingDirection;
+  /** Absolute section-function value at the reported crossing. */
+  rootResidual: number;
+  /** Width in seconds of the final certified root bracket, or null when dt is unknown. */
+  rootBracketWidth: number | null;
+}
+
 /**
  * Collects Poincaré-section points for the Lab panel. The section condition is a
  * rising zero-crossing of θ₁ (θ₁ = 0, θ̇₁ > 0); at each crossing it records
@@ -19,9 +34,9 @@ import type { Derivative } from '../physics/types';
  */
 export class PoincareAccumulator {
   private static readonly MAX_CAPACITY = 100_000;
-  private readonly points: Point2D[] = [];
+  private readonly points: PoincareCrossingPoint[] = [];
   private pointStart = 0;
-  private orderedPoints: readonly Point2D[] | null = null;
+  private orderedPoints: readonly PoincareCrossingPoint[] | null = null;
   private prev: Float64Array | null = null;
   private cap: number;
   private readonly direction: 'rising' | 'falling' | 'both';
@@ -81,7 +96,7 @@ export class PoincareAccumulator {
     };
   }
 
-  list(): readonly Point2D[] {
+  list(): readonly PoincareCrossingPoint[] {
     if (this.pointStart === 0) return this.points;
     this.orderedPoints ??= [...this.points.slice(this.pointStart), ...this.points.slice(0, this.pointStart)];
     return this.orderedPoints;
@@ -152,7 +167,11 @@ export class PoincareAccumulator {
    * evaluation integrates the actual flow, so the result converges to the true
    * crossing of the numerical trajectory.
    */
-  private refineCrossing(previous: Float64Array, sectionAngle: number): Point2D | null {
+  private refineCrossing(
+    previous: Float64Array,
+    sectionAngle: number,
+    direction: PoincareCrossingDirection
+  ): PoincareCrossingPoint | null {
     const dt = this.refineDt;
     this.ensureWork(previous.length);
     const scratch = this.refineScratch;
@@ -183,9 +202,15 @@ export class PoincareAccumulator {
       }
     }
     if (Math.abs(residual) > 1e-8) return null;
-    thetaAt(tau);
+    residual = thetaAt(tau);
     const velocityOffset = scratch.length / 2;
-    return { x: scratch[1]!, y: scratch[velocityOffset + 1]! };
+    return {
+      x: scratch[1]!,
+      y: scratch[velocityOffset + 1]!,
+      direction,
+      rootResidual: Math.abs(residual),
+      rootBracketWidth: Math.max(0, hi - lo)
+    };
   }
 
   /**
@@ -231,18 +256,26 @@ export class PoincareAccumulator {
 
     // Linear interpolation factor to the zero crossing.
     const sectionAngle = rising ? risingSection : fallingSection;
+    const crossingDirection: PoincareCrossingDirection = rising ? 'rising' : 'falling';
     const denom = t1 - t1Prev;
     const frac = denom === 0 ? 0 : (sectionAngle - t1Prev) / denom;
 
-    let point: Point2D | null = null;
+    let point: PoincareCrossingPoint | null = null;
     if (this.refineRhs && this.refineDt > 0) {
-      point = this.refineCrossing(previous, sectionAngle);
+      point = this.refineCrossing(previous, sectionAngle, crossingDirection);
     }
     if (!point) {
       const t2 = previous[1]! + frac * (Number(state[1] ?? 0) - previous[1]!);
       const w2 =
         previous[velocityOffset + 1]! + frac * (Number(state[velocityOffset + 1] ?? 0) - previous[velocityOffset + 1]!);
-      point = { x: t2, y: w2 };
+      const interpolatedSection = t1Prev + frac * denom;
+      point = {
+        x: t2,
+        y: w2,
+        direction: crossingDirection,
+        rootResidual: Math.abs(interpolatedSection - sectionAngle),
+        rootBracketWidth: this.refineDt > 0 ? this.refineDt : null
+      };
     }
     if (this.points.length < this.cap) this.points.push(point);
     else {
@@ -251,6 +284,8 @@ export class PoincareAccumulator {
     }
     this.orderedPoints = null;
     this.copyStateInto(previous, state);
-    return point;
+    // Keep the historical push() return shape exact; auditable metadata is
+    // retained in list() for export and diagnostics.
+    return { x: point.x, y: point.y };
   }
 }

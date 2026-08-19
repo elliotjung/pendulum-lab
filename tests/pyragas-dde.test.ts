@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { integratePyragasPendulumDde, pyragasFeedback, rhsPyragasPendulum } from '../src/physics/pyragasDde';
+import {
+  integratePyragasPendulumDde,
+  pyragasDelayStabilityRefinementStudy,
+  pyragasDtRefinementStudy,
+  pyragasFeedback,
+  rhsPyragasPendulum
+} from '../src/physics/pyragasDde';
 
 describe('Pyragas time-delay pendulum', () => {
   it('makes feedback non-invasive when current and delayed states coincide', () => {
@@ -67,5 +73,26 @@ describe('Pyragas time-delay pendulum', () => {
     expect(a).toEqual(b);
     expect(a.times).toHaveLength(9);
     expect(() => integratePyragasPendulumDde([0, 0], { ...parameters, delay: 0.001 }, options)).toThrow(/delay >= dt/);
+  });
+
+  it('reports dt-halving convergence and a resolution-gated delay stability boundary', () => {
+    const parameters = { g: 1, length: 1, damping: 0.2, feedbackGain: 0.1, delay: 0.2 };
+    const refinement = pyragasDtRefinementStudy([0.1, 0], parameters, {
+      dt: 0.02,
+      duration: 0.4,
+      refinements: 2,
+      tolerance: 1e-4
+    });
+    expect(refinement.levels).toHaveLength(3);
+    expect(refinement.levels[2]!.dt).toBe(0.005);
+    expect(refinement.levels[2]!.differenceFromPrevious).toBeLessThan(refinement.levels[1]!.differenceFromPrevious!);
+
+    const boundary = pyragasDelayStabilityRefinementStudy(
+      [0, 0],
+      { g: 0, length: 1, damping: 0, feedbackGain: 0 },
+      { dt: 0.02, duration: 0.2, delayCandidates: [0.1, 0.2], refinements: 1, rmsThreshold: 0 }
+    );
+    expect(boundary.converged).toBe(true);
+    expect(boundary.levels.every((level) => level.boundaryDelay === 0.1)).toBe(true);
   });
 });

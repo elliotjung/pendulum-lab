@@ -1,4 +1,5 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
 
@@ -45,6 +46,12 @@ interface SizeSet {
   brotli: number;
 }
 
+interface ArtifactSetFingerprint {
+  sha256: string;
+  files: number;
+  bytes: number;
+}
+
 async function fileBytes(path: string): Promise<Buffer> {
   return Buffer.from(await readFile(path));
 }
@@ -86,6 +93,38 @@ function maxSize(total: SizeSet, next: SizeSet): void {
   total.raw = Math.max(total.raw, next.raw);
   total.gzip = Math.max(total.gzip, next.gzip);
   total.brotli = Math.max(total.brotli, next.brotli);
+}
+
+async function artifactSetFingerprint(roots: readonly string[]): Promise<ArtifactSetFingerprint> {
+  const files: string[] = [];
+  async function walk(path: string): Promise<void> {
+    let entries;
+    try {
+      entries = await readdir(path, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const child = join(path, entry.name);
+      if (entry.isDirectory()) await walk(child);
+      else if (entry.isFile()) files.push(child.replaceAll('\\', '/'));
+    }
+  }
+  for (const root of roots) await walk(root);
+  files.sort();
+  const hash = createHash('sha256');
+  let bytes = 0;
+  for (const path of files) {
+    const content = await fileBytes(path);
+    bytes += content.length;
+    hash.update(path);
+    hash.update('\0');
+    hash.update(String(content.length));
+    hash.update('\0');
+    hash.update(content);
+    hash.update('\0');
+  }
+  return { sha256: hash.digest('hex'), files: files.length, bytes };
 }
 
 function assetRefsFromIndex(indexHtml: string): Set<string> {
@@ -178,6 +217,7 @@ async function main(): Promise<void> {
   }));
   const failed = results.filter((row) => !row.ok).length;
   const status = failed > 0 ? 'fail' : 'pass';
+  const artifactSet = await artifactSetFingerprint(['dist', 'standalone']);
   await mkdir('reports', { recursive: true });
   await writeFile(
     'reports/bundle-budget.json',
@@ -185,6 +225,8 @@ async function main(): Promise<void> {
       {
         schemaVersion: 'pendulum-bundle-budget/v1',
         status,
+        artifactSetSha256: artifactSet.sha256,
+        artifactSet,
         rows: results,
         nonInitialJsTotal: chunkJsTotal
       },

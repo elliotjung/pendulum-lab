@@ -3,14 +3,20 @@ import { readFile, rename, writeFile } from 'node:fs/promises';
 interface VitestJsonReport {
   numTotalTests?: number;
   numPassedTests?: number;
+  numFailedTests?: number;
+  numPendingTests?: number;
+  numFailedTestSuites?: number;
   testResults?: unknown[];
+  success?: boolean;
 }
 
 interface EvidenceSummaryReport {
   tests?: {
     total?: number;
     passed?: number;
+    failed?: number;
     files?: number;
+    success?: boolean;
   };
 }
 
@@ -39,9 +45,16 @@ async function readReport(path: string): Promise<TestSummary> {
   if (
     !Number.isInteger(report.numTotalTests) ||
     !Number.isInteger(report.numPassedTests) ||
-    !Array.isArray(report.testResults)
+    !Number.isInteger(report.numFailedTests) ||
+    !Array.isArray(report.testResults) ||
+    report.numTotalTests! <= 0 ||
+    report.numPassedTests !== report.numTotalTests ||
+    report.numFailedTests !== 0 ||
+    (report.numPendingTests ?? 0) !== 0 ||
+    (report.numFailedTestSuites ?? 0) !== 0 ||
+    report.success !== true
   ) {
-    throw new Error(`Invalid Vitest JSON report at ${path}`);
+    throw new Error(`Vitest JSON report at ${path} is invalid, incomplete, or unsuccessful`);
   }
   return {
     totalTests: Number(report.numTotalTests),
@@ -53,8 +66,18 @@ async function readReport(path: string): Promise<TestSummary> {
 async function readEvidenceSummary(path: string): Promise<TestSummary> {
   const report = JSON.parse(await readFile(path, 'utf8')) as EvidenceSummaryReport;
   const tests = report.tests;
-  if (!tests || !Number.isInteger(tests.total) || !Number.isInteger(tests.passed) || !Number.isInteger(tests.files)) {
-    throw new Error(`Invalid evidence summary at ${path}`);
+  if (
+    !tests ||
+    !Number.isInteger(tests.total) ||
+    !Number.isInteger(tests.passed) ||
+    !Number.isInteger(tests.failed) ||
+    !Number.isInteger(tests.files) ||
+    tests.total! <= 0 ||
+    tests.passed !== tests.total ||
+    tests.failed !== 0 ||
+    tests.success !== true
+  ) {
+    throw new Error(`Evidence summary at ${path} does not contain a successful complete test run`);
   }
   return {
     totalTests: Number(tests.total),
