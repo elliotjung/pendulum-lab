@@ -4,7 +4,7 @@
   "solverReference": "Vern9 (OrdinaryDiffEq.jl)",
   "juliaEnergyDrift": 4.587526968420978e-14,
   "tsIntegrator": "gbs, dt=0.0005",
-  "tsEnergyDrift": 9.830989810396885e-13,
+  "tsEnergyDrift": 1.7686123707201928e-13,
   "earlyTimeWindow": "0..4s (pointwise; chaos prevents late-time pointwise comparison)",
   "rows": [
     {
@@ -13,37 +13,37 @@
     },
     {
       "t": 0.5,
-      "maxStateDelta": 1.318944953254686e-13
+      "maxStateDelta": 1.0302869668521453e-13
     },
     {
       "t": 1,
-      "maxStateDelta": 3.6859404417555197e-13
+      "maxStateDelta": 5.160316618457728e-13
     },
     {
       "t": 1.5,
-      "maxStateDelta": 9.409695245210514e-13
+      "maxStateDelta": 7.024242298925287e-13
     },
     {
       "t": 2,
-      "maxStateDelta": 9.65005853004186e-13
+      "maxStateDelta": 1.1229350782571146e-12
     },
     {
       "t": 2.5,
-      "maxStateDelta": 1.1170619984568475e-11
+      "maxStateDelta": 4.992450897134404e-12
     },
     {
       "t": 3,
-      "maxStateDelta": 3.543965121366455e-11
+      "maxStateDelta": 2.158961898146572e-11
     },
     {
       "t": 3.5,
-      "maxStateDelta": 5.500555566584353e-11
+      "maxStateDelta": 3.564193384875125e-11
     },
     {
       "t": 4,
-      "maxStateDelta": 1.3623324690570371e-11
+      "maxStateDelta": 8.892442338037654e-12
     }
   ],
   "caveat": "Pointwise agreement decays at the Lyapunov rate; energy drift is the long-horizon metric.",
-  "generatedAt": "2026-07-13T02:25:00.839Z"
+  "generatedAt": "2026-08-19T09:50:12.396Z"
 }

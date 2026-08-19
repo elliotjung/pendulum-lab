@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-  "generatedAt": "2026-07-10T09:29:18.012Z",
+  "generatedAt": "2026-08-19T09:50:21.293Z",
   "status": "partial",
   "requiredVendors": [
     "intel",
@@ -18,7 +18,7 @@
       "vendor": "intel",
       "status": "pass",
       "source": "C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json",
-      "generatedAt": "2026-06-18T16:45:48.879Z",
+      "generatedAt": "2026-07-10T09:29:21.172Z",
       "adapter": {
         "vendor": "intel",
         "architecture": "xe-2lpg",
@@ -39,6 +39,7 @@
           "primitive-index",
           "rg11b10ufloat-renderable",
           "shader-f16",
+          "subgroup-size-control",
           "subgroups",
           "texture-component-swizzle",
           "texture-compression-bc",
@@ -51,6 +52,10 @@
       },
       "nChainPassed": true,
       "nChainDimension": 6,
+      "driverVersion": null,
+      "thermalState": "unknown",
+      "estimatedCostUsd": null,
+      "fallbackRate": null,
       "caveat": "Real-adapter ladder passed reductions, 4D diagnostics, and the N-chain STM/QR oracle gate."
     },
     {
@@ -61,6 +66,10 @@
       "adapter": null,
       "nChainPassed": false,
       "nChainDimension": null,
+      "driverVersion": null,
+      "thermalState": "unknown",
+      "estimatedCostUsd": null,
+      "fallbackRate": null,
       "caveat": "No nvidia hardware ladder artifact was supplied. This row is not simulated or inferred."
     },
     {
@@ -71,6 +80,10 @@
       "adapter": null,
       "nChainPassed": false,
       "nChainDimension": null,
+      "driverVersion": null,
+      "thermalState": "unknown",
+      "estimatedCostUsd": null,
+      "fallbackRate": null,
       "caveat": "No amd hardware ladder artifact was supplied. This row is not simulated or inferred."
     }
   ],

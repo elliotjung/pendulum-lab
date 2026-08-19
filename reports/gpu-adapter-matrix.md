@@ -1,14 +1,14 @@
 # WebGPU Multi-Adapter Evidence Matrix
 
-Generated: 2026-07-10T09:29:18.012Z
+Generated: 2026-08-19T09:50:21.293Z
 
 Status: **partial** (1/3 required vendor classes passing)
 
-| Vendor | Evidence | Adapter | Architecture | N-chain | Source |
-|---|---|---|---|---|---|
-| intel | pass |  | xe-2lpg | pass (6D) | `C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json` |
-| nvidia | missing | missing | n/a | missing/fail | none |
-| amd | missing | missing | n/a | missing/fail | none |
+| Vendor | Evidence | Adapter | Driver | Thermal | Fallback | Cost | N-chain | Source |
+|---|---|---|---|---|---:|---:|---|---|
+| intel | pass |  (xe-2lpg) | n/a | unknown | n/a | n/a | pass (6D) | `C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json` |
+| nvidia | missing | missing (n/a) | n/a | unknown | n/a | n/a | missing/fail | none |
+| amd | missing | missing (n/a) | n/a | unknown | n/a | n/a | missing/fail | none |
 
 ## Contract
 

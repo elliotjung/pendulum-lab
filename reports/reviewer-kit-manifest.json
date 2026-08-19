@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-reviewer-kit/v1",
-  "generatedAt": "2026-06-18T17:57:49.302Z",
+  "generatedAt": "2026-08-19T09:50:29.659Z",
   "flagship": {
     "id": "melnikov-gap-map",
     "shortName": "Melnikov gap map",
@@ -93,6 +93,14 @@
       "command": "npm run validate:cross",
       "priority": "recommended",
       "description": "Independent SciPy DOP853 trajectory comparison.",
+      "available": true
+    },
+    {
+      "id": "independent-validation-scope",
+      "path": "reports/independent-validation-scope.json",
+      "command": "npm run validate:scope",
+      "priority": "recommended",
+      "description": "Hash-linked distinction among internal TypeScript, independent SciPy and Julia, and explicitly unavailable optional MATLAB evidence.",
       "available": true
     },
     {
@@ -221,6 +229,14 @@
       "command": "npm run benchmark:memory",
       "priority": "required",
       "description": "Machine-readable browser memory baseline consumed by the world-class audit.",
+      "available": true
+    },
+    {
+      "id": "mutation-aggregate",
+      "path": "reports/mutation-aggregate.json",
+      "command": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
+      "priority": "recommended",
+      "description": "Nightly sharded Stryker aggregate with total/covered mutation scores and status counts.",
       "available": true
     },
     {

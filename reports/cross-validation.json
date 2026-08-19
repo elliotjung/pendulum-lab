@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-10T09:44:42.020Z",
+  "generatedAt": "2026-08-19T09:50:03.812Z",
   "parameters": {
     "double": {
       "m1": 1,
@@ -32,8 +32,8 @@
       "scipyMethod": "scipy.solve_ivp DOP853 rtol=atol=1e-13",
       "scipyEnergyDrift": 7.105427357601002e-15,
       "tsEnergyDrift": 2.842170943040401e-14,
-      "maxDivergence": 4.118927421359331e-14,
-      "divergenceAtEnd": 4.0745185003743245e-14,
+      "maxDivergence": 4.696243394164412e-14,
+      "divergenceAtEnd": 4.529709940470639e-14,
       "perSample": [
         {
           "t": 0,
@@ -41,31 +41,31 @@
         },
         {
           "t": 0.5,
-          "divergence": 3.3861802251067274e-15
+          "divergence": 3.3306690738754696e-15
         },
         {
           "t": 1,
-          "divergence": 3.774758283725532e-15
+          "divergence": 3.885780586188048e-15
         },
         {
           "t": 1.5,
-          "divergence": 1.1435297153639112e-14
+          "divergence": 1.1102230246251565e-14
         },
         {
           "t": 2,
-          "divergence": 7.105427357601002e-15
+          "divergence": 6.5503158452884236e-15
         },
         {
           "t": 2.5,
-          "divergence": 1.2545520178264269e-14
+          "divergence": 1.2212453270876722e-14
         },
         {
           "t": 3,
-          "divergence": 9.103828801926284e-15
+          "divergence": 8.215650382226158e-15
         },
         {
           "t": 3.5,
-          "divergence": 3.497202527569243e-15
+          "divergence": 3.191891195797325e-15
         },
         {
           "t": 4,
@@ -73,131 +73,131 @@
         },
         {
           "t": 4.5,
-          "divergence": 4.274358644806853e-15
+          "divergence": 3.747002708109903e-15
         },
         {
           "t": 5,
-          "divergence": 7.993605777301127e-15
+          "divergence": 6.106226635438361e-15
         },
         {
           "t": 5.5,
-          "divergence": 1.687538997430238e-14
+          "divergence": 1.5654144647214707e-14
         },
         {
           "t": 6,
-          "divergence": 6.994405055138486e-15
+          "divergence": 5.773159728050814e-15
         },
         {
           "t": 6.5,
-          "divergence": 9.194034422677078e-15
+          "divergence": 8.840150833577809e-15
         },
         {
           "t": 7,
-          "divergence": 1.354472090042691e-14
+          "divergence": 1.2656542480726785e-14
         },
         {
           "t": 7.5,
-          "divergence": 1.0436096431476471e-14
+          "divergence": 1.0047518372857667e-14
         },
         {
           "t": 8,
-          "divergence": 9.547918011776346e-15
+          "divergence": 9.631184738623233e-15
         },
         {
           "t": 8.5,
-          "divergence": 1.902644708451362e-14
+          "divergence": 1.940114735532461e-14
         },
         {
           "t": 9,
-          "divergence": 6.6058269965196814e-15
+          "divergence": 6.994405055138486e-15
         },
         {
           "t": 9.5,
-          "divergence": 4.274358644806853e-15
+          "divergence": 3.9968028886505635e-15
         },
         {
           "t": 10,
-          "divergence": 1.199040866595169e-14
+          "divergence": 1.0658141036401503e-14
         },
         {
           "t": 10.5,
-          "divergence": 2.142730437526552e-14
+          "divergence": 1.8984813721090177e-14
         },
         {
           "t": 11,
-          "divergence": 3.630429290524262e-14
+          "divergence": 3.602673714908633e-14
         },
         {
           "t": 11.5,
-          "divergence": 2.9976021664879227e-14
+          "divergence": 2.930988785010413e-14
         },
         {
           "t": 12,
-          "divergence": 2.6423307986078726e-14
+          "divergence": 2.5701663020072374e-14
         },
         {
           "t": 12.5,
-          "divergence": 3.512034413288845e-14
+          "divergence": 3.839029788510473e-14
         },
         {
           "t": 13,
-          "divergence": 1.7569279364693102e-14
+          "divergence": 1.9595436384634013e-14
         },
         {
           "t": 13.5,
-          "divergence": 9.076073226310655e-15
+          "divergence": 9.658940314238862e-15
         },
         {
           "t": 14,
-          "divergence": 1.5931700403370996e-14
+          "divergence": 2.120525977034049e-14
         },
         {
           "t": 14.5,
-          "divergence": 3.008704396734174e-14
+          "divergence": 2.2870594307278225e-14
         },
         {
           "t": 15,
-          "divergence": 3.325117958752344e-14
+          "divergence": 3.0309088572266774e-14
         },
         {
           "t": 15.5,
-          "divergence": 3.519406988061746e-14
+          "divergence": 3.5638159090467525e-14
         },
         {
           "t": 16,
-          "divergence": 4.118927421359331e-14
+          "divergence": 4.696243394164412e-14
         },
         {
           "t": 16.5,
-          "divergence": 3.531896997088779e-14
+          "divergence": 4.206357484548562e-14
         },
         {
           "t": 17,
-          "divergence": 2.634004125923184e-14
+          "divergence": 3.1252778143198157e-14
         },
         {
           "t": 17.5,
-          "divergence": 1.0019762797242038e-14
+          "divergence": 1.9595436384634013e-14
         },
         {
           "t": 18,
-          "divergence": 1.1879386363489175e-14
+          "divergence": 1.7486012637846216e-14
         },
         {
           "t": 18.5,
-          "divergence": 3.708144902248023e-14
+          "divergence": 2.964295475749168e-14
         },
         {
           "t": 19,
-          "divergence": 1.8485213360008856e-14
+          "divergence": 1.5210055437364645e-14
         },
         {
           "t": 19.5,
-          "divergence": 2.403632848313464e-14
+          "divergence": 2.5479618415147343e-14
         },
         {
           "t": 20,
-          "divergence": 4.0745185003743245e-14
+          "divergence": 4.529709940470639e-14
         }
       ],
       "pass": true,
@@ -215,9 +215,9 @@
       "tEnd": 10,
       "scipyMethod": "scipy.solve_ivp DOP853 rtol=atol=1e-13",
       "scipyEnergyDrift": 6.821210263296962e-12,
-      "tsEnergyDrift": 3.481659405224491e-12,
-      "maxDivergence": 6.399325513939402e-11,
-      "divergenceAtEnd": 6.399325513939402e-11,
+      "tsEnergyDrift": 3.765876499528531e-13,
+      "maxDivergence": 3.907096868260851e-11,
+      "divergenceAtEnd": 3.907096868260851e-11,
       "perSample": [
         {
           "t": 0,
@@ -229,79 +229,79 @@
         },
         {
           "t": 1,
-          "divergence": 4.529709940470639e-14
+          "divergence": 4.618527782440651e-14
         },
         {
           "t": 1.5,
-          "divergence": 1.173089403394556e-13
+          "divergence": 1.1440848268762238e-13
         },
         {
           "t": 2,
-          "divergence": 1.2212453270876722e-13
+          "divergence": 1.1901590823981678e-13
         },
         {
           "t": 2.5,
-          "divergence": 1.1324274851176597e-12
+          "divergence": 1.1377565556358604e-12
         },
         {
           "t": 3,
-          "divergence": 3.3681946121078e-12
+          "divergence": 3.4057201503401302e-12
         },
         {
           "t": 3.5,
-          "divergence": 4.936051567483446e-12
+          "divergence": 5.007771974874231e-12
         },
         {
           "t": 4,
-          "divergence": 1.2649881142579034e-12
+          "divergence": 1.2241319069516976e-12
         },
         {
           "t": 4.5,
-          "divergence": 1.8847146066036657e-12
+          "divergence": 2.247979580261017e-12
         },
         {
           "t": 5,
-          "divergence": 1.1854961456947422e-12
+          "divergence": 1.8022250358740166e-12
         },
         {
           "t": 5.5,
-          "divergence": 2.575717417130363e-13
+          "divergence": 8.402167850363185e-13
         },
         {
           "t": 6,
-          "divergence": 4.916067553040193e-13
+          "divergence": 1.930233750613297e-12
         },
         {
           "t": 6.5,
-          "divergence": 3.8329339702158904e-12
+          "divergence": 3.746281063143897e-12
         },
         {
           "t": 7,
-          "divergence": 2.6015190002226518e-11
+          "divergence": 2.1710411246544936e-11
         },
         {
           "t": 7.5,
-          "divergence": 3.931943659551962e-11
+          "divergence": 3.334688081224613e-11
         },
         {
           "t": 8,
-          "divergence": 6.531664098474721e-12
+          "divergence": 5.980549389050793e-12
         },
         {
           "t": 8.5,
-          "divergence": 1.5161205624281138e-11
+          "divergence": 8.570033571686508e-12
         },
         {
           "t": 9,
-          "divergence": 2.1397994487415417e-11
+          "divergence": 5.285549775635445e-12
         },
         {
           "t": 9.5,
-          "divergence": 4.436384593020648e-11
+          "divergence": 3.4635849743835934e-11
         },
         {
           "t": 10,
-          "divergence": 6.399325513939402e-11
+          "divergence": 3.907096868260851e-11
         }
       ],
       "pass": true,
@@ -322,8 +322,8 @@
       "scipyMethod": "scipy.solve_ivp DOP853 rtol=atol=1e-13",
       "scipyEnergyDrift": 7.105427357601002e-15,
       "tsEnergyDrift": 7.815970093361102e-14,
-      "maxDivergence": 5.762057497804562e-14,
-      "divergenceAtEnd": 3.7643499428696714e-14,
+      "maxDivergence": 5.651035195342047e-14,
+      "divergenceAtEnd": 3.659572644920672e-14,
       "perSample": [
         {
           "t": 0,
@@ -331,163 +331,163 @@
         },
         {
           "t": 0.5,
-          "divergence": 4.912736883966318e-15
+          "divergence": 4.884981308350689e-15
         },
         {
           "t": 1,
-          "divergence": 7.216449660063518e-15
+          "divergence": 6.8833827526759706e-15
         },
         {
           "t": 1.5,
-          "divergence": 4.218847493575595e-15
+          "divergence": 4.191091917959966e-15
         },
         {
           "t": 2,
-          "divergence": 9.325873406851315e-15
+          "divergence": 9.603429163007604e-15
         },
         {
           "t": 2.5,
-          "divergence": 1.0380585280245214e-14
+          "divergence": 1.0966921815125374e-14
         },
         {
           "t": 3,
-          "divergence": 7.549516567451064e-15
+          "divergence": 6.994405055138486e-15
         },
         {
           "t": 3.5,
-          "divergence": 4.218847493575595e-15
+          "divergence": 2.6645352591003757e-15
         },
         {
           "t": 4,
-          "divergence": 5.88418203051333e-15
+          "divergence": 6.994405055138486e-15
         },
         {
           "t": 4.5,
-          "divergence": 1.1213252548714081e-14
+          "divergence": 1.2101430968414206e-14
         },
         {
           "t": 5,
-          "divergence": 1.0935696792557792e-14
+          "divergence": 1.0547118733938987e-14
         },
         {
           "t": 5.5,
-          "divergence": 1.1157741397482823e-14
+          "divergence": 9.325873406851315e-15
         },
         {
           "t": 6,
-          "divergence": 8.854028621385623e-15
+          "divergence": 7.667477763817487e-15
         },
         {
           "t": 6.5,
-          "divergence": 5.925815393936773e-15
+          "divergence": 8.659739592076221e-15
         },
         {
           "t": 7,
-          "divergence": 8.826273045769994e-15
+          "divergence": 9.880984919163893e-15
         },
         {
           "t": 7.5,
-          "divergence": 1.4238610290817633e-14
+          "divergence": 1.4460654895742664e-14
         },
         {
           "t": 8,
-          "divergence": 1.2073675392798577e-14
+          "divergence": 1.1823875212257917e-14
         },
         {
           "t": 8.5,
-          "divergence": 2.6867397195928788e-14
+          "divergence": 2.1760371282653068e-14
         },
         {
           "t": 9,
-          "divergence": 1.7930101847696278e-14
+          "divergence": 1.587618925213974e-14
         },
         {
           "t": 9.5,
-          "divergence": 1.8707257964933888e-14
+          "divergence": 1.915134717478395e-14
         },
         {
           "t": 10,
-          "divergence": 1.63202784619898e-14
+          "divergence": 1.582067810090848e-14
         },
         {
           "t": 10.5,
-          "divergence": 1.734723475976807e-14
+          "divergence": 1.5432100042289676e-14
         },
         {
           "t": 11,
-          "divergence": 9.409140133698202e-15
+          "divergence": 1.0880185641326534e-14
         },
         {
           "t": 11.5,
-          "divergence": 1.4932499681208355e-14
+          "divergence": 1.709743457922741e-14
         },
         {
           "t": 12,
-          "divergence": 1.865174681370263e-14
+          "divergence": 1.8512968935624485e-14
         },
         {
           "t": 12.5,
-          "divergence": 1.880440247958859e-14
+          "divergence": 1.9761969838327786e-14
         },
         {
           "t": 13,
-          "divergence": 2.481348460037225e-14
+          "divergence": 2.3370194668359545e-14
         },
         {
           "t": 13.5,
-          "divergence": 3.1731561822567755e-14
+          "divergence": 2.771394225220547e-14
         },
         {
           "t": 14,
-          "divergence": 3.569367024169878e-14
+          "divergence": 3.0281332996651145e-14
         },
         {
           "t": 14.5,
-          "divergence": 2.1593837828959295e-14
+          "divergence": 1.8818280267396403e-14
         },
         {
           "t": 15,
-          "divergence": 3.275157922644212e-14
+          "divergence": 3.008704396734174e-14
         },
         {
           "t": 15.5,
-          "divergence": 1.3711254354120683e-14
+          "divergence": 1.3211653993039363e-14
         },
         {
           "t": 16,
-          "divergence": 5.473399511402022e-14
+          "divergence": 5.206945985491984e-14
         },
         {
           "t": 16.5,
-          "divergence": 4.490852134608758e-14
+          "divergence": 4.241051954068098e-14
         },
         {
           "t": 17,
-          "divergence": 4.651834473179406e-14
+          "divergence": 4.440892098500626e-14
         },
         {
           "t": 17.5,
-          "divergence": 2.3869795029440866e-14
+          "divergence": 2.275957200481571e-14
         },
         {
           "t": 18,
-          "divergence": 4.446443213623752e-14
+          "divergence": 4.340972026284362e-14
         },
         {
           "t": 18.5,
-          "divergence": 5.762057497804562e-14
+          "divergence": 5.651035195342047e-14
         },
         {
           "t": 19,
-          "divergence": 2.781108676686017e-14
+          "divergence": 2.681188604469753e-14
         },
         {
           "t": 19.5,
-          "divergence": 1.479372180313021e-14
+          "divergence": 1.709743457922741e-14
         },
         {
           "t": 20,
-          "divergence": 3.7643499428696714e-14
+          "divergence": 3.659572644920672e-14
         }
       ],
       "pass": true,
@@ -507,9 +507,9 @@
       "tEnd": 8,
       "scipyMethod": "scipy.solve_ivp DOP853 rtol=atol=1e-13",
       "scipyEnergyDrift": 8.427036846114788e-12,
-      "tsEnergyDrift": 5.5351279115711804e-12,
-      "maxDivergence": 4.085032045963999e-8,
-      "divergenceAtEnd": 4.085032045963999e-8,
+      "tsEnergyDrift": 3.055333763768431e-13,
+      "maxDivergence": 2.095933826495866e-8,
+      "divergenceAtEnd": 2.095933826495866e-8,
       "perSample": [
         {
           "t": 0,
@@ -517,67 +517,67 @@
         },
         {
           "t": 0.5,
-          "divergence": 2.7533531010703882e-14
+          "divergence": 2.886579864025407e-14
         },
         {
           "t": 1,
-          "divergence": 2.631228568361621e-13
+          "divergence": 2.666755705149626e-13
         },
         {
           "t": 1.5,
-          "divergence": 6.679101716144942e-13
+          "divergence": 6.616929226765933e-13
         },
         {
           "t": 2,
-          "divergence": 1.6786572132332367e-13
+          "divergence": 1.6342482922482304e-13
         },
         {
           "t": 2.5,
-          "divergence": 2.8821389719269064e-13
+          "divergence": 3.2596148002994596e-13
         },
         {
           "t": 3,
-          "divergence": 6.612488334667432e-13
+          "divergence": 1.404654170755748e-12
         },
         {
           "t": 3.5,
-          "divergence": 3.137157200683305e-12
+          "divergence": 1.538325022920617e-12
         },
         {
           "t": 4,
-          "divergence": 1.2723821996019069e-11
+          "divergence": 4.0456527017340704e-12
         },
         {
           "t": 4.5,
-          "divergence": 3.284128524683183e-11
+          "divergence": 3.148414862153004e-11
         },
         {
           "t": 5,
-          "divergence": 1.358695378428365e-10
+          "divergence": 7.802269941237228e-11
         },
         {
           "t": 5.5,
-          "divergence": 3.7836933586277155e-10
+          "divergence": 2.2753621209403718e-10
         },
         {
           "t": 6,
-          "divergence": 2.7134774427395314e-9
+          "divergence": 1.669735461007349e-9
         },
         {
           "t": 6.5,
-          "divergence": 2.9432349890612386e-9
+          "divergence": 1.7953154518579595e-9
         },
         {
           "t": 7,
-          "divergence": 2.82206258361839e-9
+          "divergence": 1.7062049550986558e-9
         },
         {
           "t": 7.5,
-          "divergence": 2.211033622856462e-8
+          "divergence": 1.258402315684748e-8
         },
         {
           "t": 8,
-          "divergence": 4.085032045963999e-8
+          "divergence": 2.095933826495866e-8
         }
       ],
       "pass": true,

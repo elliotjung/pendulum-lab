@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-07-13T01:43:30.677Z",
+  "generatedAt": "2026-08-19T09:50:32.355Z",
   "status": "partial",
   "npm": {
     "package": "@elliotjung/pendulum-lab",

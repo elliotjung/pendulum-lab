@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T11:09:23.392Z",
+  "generatedAt": "2026-08-19T09:49:43.793Z",
   "referenceMethod": "gbs",
   "checks": [
     {
@@ -150,6 +150,48 @@
       "pass": true
     },
     {
+      "id": "yoshida6",
+      "name": "Yoshida 6 Composition",
+      "order": {
+        "measured": 6.005513684890028,
+        "expected": 6,
+        "roundOffLimited": false,
+        "pass": true
+      },
+      "energy": {
+        "value": 0.5565669062854312,
+        "threshold": 5,
+        "pass": true
+      },
+      "agreement": {
+        "value": 0.11521201053669769,
+        "threshold": 0.2,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
+      "id": "yoshida8",
+      "name": "Yoshida 8 Composition",
+      "order": {
+        "measured": 7.9872138155152745,
+        "expected": 8,
+        "roundOffLimited": false,
+        "pass": true
+      },
+      "energy": {
+        "value": 3.2675965112645433,
+        "threshold": 5,
+        "pass": true
+      },
+      "agreement": {
+        "value": 0.38094471572887834,
+        "threshold": 0.5,
+        "pass": true
+      },
+      "pass": true
+    },
+    {
       "id": "hmidpoint",
       "name": "Implicit Midpoint",
       "order": {
@@ -193,7 +235,7 @@
     },
     {
       "id": "rkf45",
-      "name": "RKF45 Adaptive",
+      "name": "RKF45 embedded (monitored fixed-step)",
       "order": {
         "measured": 4.9999622583271055,
         "expected": 5,
@@ -256,7 +298,7 @@
     },
     {
       "id": "gbs",
-      "name": "Gragg-Bulirsch-Stoer",
+      "name": "GBS extrapolation (fixed macro-step)",
       "order": {
         "measured": null,
         "expected": 6,
@@ -279,18 +321,18 @@
       "id": "bdf2",
       "name": "TR-BDF2 (stiff, L-stable)",
       "order": {
-        "measured": 1.9991575605725582,
+        "measured": 1.9991575581331984,
         "expected": 2,
         "roundOffLimited": false,
         "pass": true
       },
       "energy": {
-        "value": 0.00005974156106137305,
+        "value": 0.000059741561035672776,
         "threshold": 5,
         "pass": true
       },
       "agreement": {
-        "value": 0.00047857989581845395,
+        "value": 0.00047857989581745475,
         "threshold": 2,
         "pass": true
       },
@@ -298,7 +340,7 @@
     }
   ],
   "summary": {
-    "integrators": 14,
-    "passed": 14
+    "integrators": 16,
+    "passed": 16
   }
 }

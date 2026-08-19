@@ -1,6 +1,6 @@
 # Certified Chaotic Dynamics Workbench - Reviewer Kit
 
-Generated: 2026-06-18T17:57:49.302Z
+Generated: 2026-08-19T09:50:29.659Z
 
 Status: **READY**
 
@@ -43,6 +43,7 @@ Reproduce the study with `npm run paper:study`, then render the paper with `npm 
 | recommended | yes | `paper/paper.pdf` | `npm run paper:build` | Print-reviewable PDF generated from the same HTML paper. |
 | required | yes | `reports/reproduce/manifest.json` | `npm run reproduce` | Hash-stamped deterministic manifest for headline claims. |
 | recommended | yes | `reports/cross-validation.json` | `npm run validate:cross` | Independent SciPy DOP853 trajectory comparison. |
+| recommended | yes | `reports/independent-validation-scope.json` | `npm run validate:scope` | Hash-linked distinction among internal TypeScript, independent SciPy and Julia, and explicitly unavailable optional MATLAB evidence. |
 | recommended | yes | `reports/sympy-validation.json` | `npm run validate:sympy` | Independent SymPy Euler-Lagrange RHS derivation check. |
 | optional | yes | `reports/research-notebook.html` | `npm run notebook` | Figure-rich notebook driven through the same analysis handlers. |
 | recommended | yes | `reports/gpu-scale-validation.md` | `npm run validate:gpu-scale` | CPU reference plus mocked-WebGPU contract for accelerated field/ensemble paths. |
@@ -59,6 +60,7 @@ Reproduce the study with `npm run paper:study`, then render the paper with `npm 
 | recommended | yes | `reports/walkthrough-30s.gif` | `npm run release:package` | Thirty-second walkthrough artifact for the GitHub release and project page. |
 | required | yes | `reports/memory-regression-report.md` | `npm run benchmark:memory` | Browser memory regression report for the current build. |
 | required | yes | `reports/memory-baseline.json` | `npm run benchmark:memory` | Machine-readable browser memory baseline consumed by the world-class audit. |
+| recommended | yes | `reports/mutation-aggregate.json` | `npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85` | Nightly sharded Stryker aggregate with total/covered mutation scores and status counts. |
 | required | yes | `reports/reviewer-kit-manifest.json` | `npm run reviewer:kit` | Machine-readable checklist of the reviewer kit itself. |
 
 ## Commands To Complete The Kit
