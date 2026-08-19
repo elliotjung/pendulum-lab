@@ -15,6 +15,81 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 test.use({ colorScheme: 'dark' });
 
 /**
+ * A fixed compact rail can resize after the shell is installed (for example,
+ * while its responsive menu finishes laying out).  Chromium can otherwise
+ * capture a stale clipped backing store below the current rail height.  Wait
+ * for the rail and its menu to keep the same visible geometry across several
+ * frames before comparing pixels.
+ */
+async function waitForStableRail(page: Page): Promise<void> {
+  await page.waitForFunction(
+    async () => {
+      await document.fonts.ready;
+      const rail = document.querySelector<HTMLElement>('.rail');
+      const menu = rail?.querySelector<HTMLElement>('.rail-menu');
+      const audienceMode = document.getElementById('audienceMode');
+      const audienceSelect = audienceMode?.closest<HTMLElement>('.audience-select');
+      if (!rail || !menu || !audienceMode || !audienceSelect) return false;
+
+      const compact = window.matchMedia('(max-width: 560px)').matches;
+      if (
+        compact &&
+        (getComputedStyle(rail).position !== 'fixed' || getComputedStyle(audienceSelect).position !== 'fixed')
+      )
+        return false;
+
+      const signature = () => {
+        const railRect = rail.getBoundingClientRect();
+        const menuRect = menu.getBoundingClientRect();
+        if (railRect.width <= 0 || railRect.height <= 0 || menuRect.width <= 0 || menuRect.height <= 0) return null;
+        const style = getComputedStyle(rail);
+        const children = Array.from(rail.children).map((child) => {
+          const rect = child.getBoundingClientRect();
+          return [rect.left.toFixed(3), rect.top.toFixed(3), rect.width.toFixed(3), rect.height.toFixed(3)].join(',');
+        });
+        return [
+          railRect.left.toFixed(3),
+          railRect.top.toFixed(3),
+          railRect.width.toFixed(3),
+          railRect.height.toFixed(3),
+          menuRect.left.toFixed(3),
+          menuRect.top.toFixed(3),
+          menuRect.width.toFixed(3),
+          menuRect.height.toFixed(3),
+          rail.clientWidth,
+          rail.clientHeight,
+          rail.scrollWidth,
+          rail.scrollHeight,
+          menu.clientWidth,
+          menu.clientHeight,
+          menu.scrollWidth,
+          menu.scrollHeight,
+          style.height,
+          style.paddingTop,
+          style.paddingRight,
+          style.paddingBottom,
+          style.paddingLeft,
+          style.backgroundColor,
+          children.join(';')
+        ].join('|');
+      };
+
+      const initial = signature();
+      if (!initial) return false;
+      for (let frame = 0; frame < 8; frame += 1) {
+        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+        if (signature() !== initial) return false;
+      }
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      return signature() === initial;
+    },
+    undefined,
+    { timeout: 5_000 }
+  );
+}
+
+/**
  * A native <details> property update queues its `toggle` event.  Capturing
  * immediately after assigning `.open` can therefore race an app listener or
  * the browser's next layout, particularly in the tall mobile control panel.
@@ -79,8 +154,10 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
 test('rail sidebar renders correctly', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await expect(page.locator('.rail')).toBeVisible();
-  await expect(page.locator('.rail')).toHaveScreenshot('rail-sidebar.png');
+  const rail = page.locator('.rail');
+  await expect(rail).toBeVisible();
+  await waitForStableRail(page);
+  await expect(rail).toHaveScreenshot('rail-sidebar.png');
 });
 
 test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
