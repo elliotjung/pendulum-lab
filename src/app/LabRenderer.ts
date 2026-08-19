@@ -39,7 +39,10 @@ export interface LabDrawExtras {
   trailColor?: string;
   trailMode?: string;
   trailLength?: number;
+  /** Clear the stored trail (used by replay frames, which must not imply a continuous live path). */
   skipTrail?: boolean;
+  /** Repaint the stored trail without adding or discarding a sample (used after a canvas resize). */
+  preserveTrail?: boolean;
   glow?: boolean;
   /** Experimental long-trail backend. WebGL2 failures stay on Canvas2D. */
   trailBackend?: 'canvas2d' | 'webgl2';
@@ -187,7 +190,12 @@ export class LabRenderer {
   draw(bobsMeters: readonly BobPosition[], extras: LabDrawExtras = {}): void {
     const ctx = this.ctx;
     const { width, height } = this.opts;
-    const fade = extras.skipTrail ? 1 : (extras.fade ?? this.opts.fade);
+    // A backing-store resize clears canvas pixels but not the simulation.  A
+    // resize repaint must therefore reconstruct the existing trail rather
+    // than using `skipTrail`, whose deliberately destructive semantics are
+    // reserved for replay frames.
+    const preserveTrail = extras.preserveTrail === true && extras.skipTrail !== true;
+    const fade = extras.skipTrail || preserveTrail ? 1 : (extras.fade ?? this.opts.fade);
 
     ctx.save();
     ctx.globalAlpha = 1;
@@ -207,7 +215,14 @@ export class LabRenderer {
     const pixels = this.pixelsScratch;
     const tip = pixels[pixels.length - 1];
 
-    if (!extras.skipTrail && tip) {
+    if (extras.skipTrail) {
+      this.trail.idx = 0;
+      this.trail.filled = 0;
+      this.lastTrailTip = null;
+      this.clearTrailLayer();
+    } else if (preserveTrail) {
+      this.repaintStoredTrail(extras);
+    } else if (tip) {
       const trailLength = Math.max(2, Math.round(extras.trailLength ?? 1500));
       this.pushTrail(this.trail, tip.x, tip.y, trailLength);
       const webglDrawn = extras.trailBackend === 'webgl2' ? this.drawWebGLTrail(extras.trailMode ?? 'rainbow') : false;
@@ -215,11 +230,6 @@ export class LabRenderer {
       if (!webglDrawn && !this.drawLayerTrail(tip, trailLength, extras.trailMode ?? 'rainbow', extras.trailColor)) {
         this.drawMainTrail(extras.trailMode ?? 'rainbow', extras.trailColor);
       }
-    } else if (extras.skipTrail) {
-      this.trail.idx = 0;
-      this.trail.filled = 0;
-      this.lastTrailTip = null;
-      this.clearTrailLayer();
     }
 
     if (extras.ensembleTips && extras.ensembleTips.length > 0) {
@@ -322,10 +332,26 @@ export class LabRenderer {
     }
   }
 
+  /** Repaint the logical buffer after a backing-store resize without mutating it. */
+  private repaintStoredTrail(extras: LabDrawExtras): void {
+    const mode = extras.trailMode ?? 'rainbow';
+    const trailLength = Math.max(2, Math.round(extras.trailLength ?? 1500));
+    const webglDrawn = extras.trailBackend === 'webgl2' ? this.drawWebGLTrail(mode) : false;
+    this.lastTrailBackend = webglDrawn ? 'webgl2' : 'canvas2d';
+    if (webglDrawn) return;
+
+    if (trailLength >= LAYER_TRAIL_THRESHOLD && this.repaintLayerTrail(mode, extras.trailColor)) return;
+    this.drawMainTrail(mode, extras.trailColor);
+  }
+
   private drawMainTrail(mode: string, fallbackColor?: string): void {
+    this.drawStoredTrail(this.ctx, mode, fallbackColor);
+  }
+
+  /** Draw the ordered logical trail into either the visible canvas or its cached layer. */
+  private drawStoredTrail(ctx: Ctx2D, mode: string, fallbackColor?: string): void {
     const { buf, filled } = this.trail;
     if (filled < 2) return;
-    const ctx = this.ctx;
     const cap = buf.length / 2;
     const start = (this.trail.idx - filled + cap) % cap;
     const stride = Math.max(1, Math.ceil(filled / 1200));
@@ -352,6 +378,29 @@ export class LabRenderer {
       ctx.stroke();
     }
     ctx.restore();
+  }
+
+  /** Recreate the long-exposure layer from the logical buffer after it was resized. */
+  private repaintLayerTrail(mode: string, fallbackColor?: string): boolean {
+    const drawCtx = this.ctx as DrawableCtx;
+    if (typeof drawCtx.drawImage !== 'function') return false;
+    const layerCtx = this.ensureTrailLayer();
+    if (!layerCtx || !this.trailLayer) return false;
+    layerCtx.clearRect(0, 0, this.opts.width, this.opts.height);
+    this.drawStoredTrail(layerCtx as unknown as Ctx2D, mode, fallbackColor);
+    this.lastTrailTip = this.latestTrailTip();
+    drawCtx.save();
+    drawCtx.drawImage(this.trailLayer as CanvasImageSource, 0, 0, this.opts.width, this.opts.height);
+    drawCtx.restore();
+    return true;
+  }
+
+  private latestTrailTip(): Point2D | null {
+    const { buf, idx, filled } = this.trail;
+    const cap = buf.length / 2;
+    if (filled < 1 || cap < 1) return null;
+    const last = (idx - 1 + cap) % cap;
+    return { x: buf[last * 2]!, y: buf[last * 2 + 1]! };
   }
 
   private drawLayerTrail(tip: Point2D, trailLength: number, mode: string, fallbackColor?: string): boolean {

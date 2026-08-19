@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 /**
  * The header panel toggle collapses every tab's right control panel, persists
@@ -42,32 +42,40 @@ test('side-panel toggle collapses, persists, and restores', async ({ page }) => 
 test('side-panel and accordion arrows do not restart the live lab simulation', async ({ page }) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernLab?: unknown }).__modernLab));
-  await page.waitForTimeout(250);
+  // Establish a meaningful time lead before either layout mutation. With the
+  // default 1× real-time clock, a reset cannot regain this lead inside the
+  // bounded post-action observation window below.
+  await page.waitForFunction(
+    () =>
+      (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time >= 1,
+    undefined,
+    { timeout: 10_000 }
+  );
 
-  const beforePanelToggle = await page.evaluate(
-    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
-  );
-  await page.locator('#panelToggle').click();
-  await page.waitForTimeout(180);
-  const afterPanelToggle = await page.evaluate(
-    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
-  );
-  expect(afterPanelToggle.time).toBeGreaterThan(beforePanelToggle.time);
-  expect(afterPanelToggle.trailPoints).toBeGreaterThanOrEqual(beforePanelToggle.trailPoints);
+  await expectLiveSimulationToContinue(page, () => page.locator('#panelToggle').click());
 
   await page.locator('#panelToggle').click();
   await expect(page.locator('#tab-lab .controls')).toBeVisible();
-  await page.waitForTimeout(120);
 
   const firstSummary = page.locator('#tab-lab .controls details.acc > summary').first();
-  const beforeAccordionToggle = await page.evaluate(
-    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
-  );
-  await firstSummary.click();
-  await page.waitForTimeout(180);
-  const afterAccordionToggle = await page.evaluate(
-    () => (window as any).__modernLab.diagnostics() as { time: number; trailPoints: number }
-  );
-  expect(afterAccordionToggle.time).toBeGreaterThan(beforeAccordionToggle.time);
-  expect(afterAccordionToggle.trailPoints).toBeGreaterThanOrEqual(beforeAccordionToggle.trailPoints);
+  await expectLiveSimulationToContinue(page, () => firstSummary.click());
 });
+
+async function expectLiveSimulationToContinue(page: Page, action: () => Promise<void>): Promise<void> {
+  const before = await page.evaluate(readLabTime);
+  await action();
+
+  // A reset initiated directly by the interaction is observable before the
+  // next animation frame. Keep the later observation bounded rather than
+  // waiting until time overtakes `before`: a delayed reset must remain
+  // visible instead of being allowed to catch up over an arbitrary timeout.
+  const immediate = await page.evaluate(readLabTime);
+  expect(immediate).toBeGreaterThanOrEqual(before);
+  await page.waitForTimeout(350);
+  const settled = await page.evaluate(readLabTime);
+  expect(settled).toBeGreaterThan(before);
+}
+
+function readLabTime(): number {
+  return (window as unknown as { __modernLab: { diagnostics(): { time: number } } }).__modernLab.diagnostics().time;
+}

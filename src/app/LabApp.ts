@@ -635,7 +635,8 @@ export class LabApp {
       if (renderer)
         renderer.draw(this.sim.bobPositionsInto(this.bobsScratch), {
           ...labMainFrameStyle(this.sim.config, this.quality, this.frameCount),
-          skipTrail: true
+          // Repaint the trail after a CSS resize without clearing it as a replay frame would.
+          preserveTrail: true
         });
     }
     for (let plot = 0; plot < SIDE_PLOT_COUNT; plot += 1) this.sidePlots.drawSlice(plot);

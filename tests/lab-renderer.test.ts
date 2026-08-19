@@ -134,6 +134,32 @@ describe('LabRenderer', () => {
     expect(renderer.trailPointCount()).toBe(4);
   });
 
+  it('repaints a resized trail without clearing or adding a synthetic sample', () => {
+    const ctx = makeStubCtx();
+    const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
+    const bobs = [
+      { x: 0, y: 1.2 },
+      { x: 0.1, y: 2.2 }
+    ];
+
+    renderer.draw(bobs, { trailLength: 8 });
+    renderer.draw(bobs, { trailLength: 8 });
+    renderer.draw(bobs, { trailLength: 8 });
+    renderer.resize({ width: 640, height: 420 });
+    const lineTosBeforeRepaint = ctx.lineTos.length;
+    renderer.draw(bobs, { trailLength: 8, preserveTrail: true });
+
+    expect(renderer.trailPointCount()).toBe(3);
+    // A pendulum redraw contributes two rod segments; the additional segments
+    // prove the retained logical trail was painted after the canvas resize.
+    expect(ctx.lineTos.length - lineTosBeforeRepaint).toBeGreaterThan(2);
+
+    // Replay still intentionally clears the live trail; preserveTrail must
+    // not silently alter that separate rendering contract.
+    renderer.draw(bobs, { skipTrail: true });
+    expect(renderer.trailPointCount()).toBe(0);
+  });
+
   it('preserves recent trail points when the adaptive capacity changes', () => {
     const renderer = new LabRenderer(makeStubCtx(), { width: 400, height: 400, scale: 100 });
     const bobs = [
