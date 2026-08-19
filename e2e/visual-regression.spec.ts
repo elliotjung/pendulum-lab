@@ -106,9 +106,18 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
 
   const expectedOpenStates = Array.from({ length: count }, (_value, index) => index < 2);
   await accordions.evaluateAll((details, expected) => {
-    details.forEach((detail, index) => {
-      (detail as HTMLDetailsElement).open = expected[index] === true;
-    });
+    const normalize = () => {
+      details.forEach((detail, index) => {
+        const accordion = detail as HTMLDetailsElement;
+        const open = expected[index] === true;
+        if (accordion.open !== open) accordion.open = open;
+      });
+    };
+    // `toggle` is delivered asynchronously. Keep the test fixture's declared
+    // state pinned if native delivery lands while Playwright is preparing an
+    // element screenshot; production code never receives this listener.
+    details.forEach((detail) => detail.addEventListener('toggle', normalize));
+    normalize();
   }, expectedOpenStates);
 
   await expect
