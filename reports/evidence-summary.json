@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-evidence-summary/v1",
-  "generatedAt": "2026-08-19T09:51:15.752Z",
+  "generatedAt": "2026-08-19T23:29:42.230Z",
   "sourceReports": {
     "vitestResults": "reports/vitest-results.json",
     "reviewerKitManifest": "reports/reviewer-kit-manifest.json",
@@ -12,22 +12,22 @@
     "energyBenchmark": "reports/energy-benchmark.json"
   },
   "provenance": {
-    "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+    "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
     "packageVersion": "10.36.0",
     "lockfileSha256": "c19b38e230056a32b42bc9189720031accb0c214ccee7fa7c590578936ba0d33",
     "dirtyWorktree": false,
     "expiresAfterDays": 14,
-    "expiresAt": "2026-09-02T09:51:15.752Z"
+    "expiresAt": "2026-09-02T23:29:42.230Z"
   },
   "tests": {
-    "total": 1457,
-    "passed": 1457,
+    "total": 1458,
+    "passed": 1458,
     "failed": 0,
     "suites": 620,
     "files": 202,
     "success": true,
-    "generatedAt": "2026-08-19T09:48:28.037Z",
-    "passLabel": "1457 / 1457 pass"
+    "generatedAt": "2026-08-19T13:44:59.002Z",
+    "passLabel": "1458 / 1458 pass"
   },
   "validation": {
     "scipyAgreement": {
@@ -100,11 +100,11 @@
   "claims": [
     {
       "id": "tests.unit",
-      "displayValue": "1457 / 1457 pass",
+      "displayValue": "1458 / 1458 pass",
       "status": "passed",
       "uncertainty": null,
       "sourceReport": "reports/vitest-results.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": null,
       "reproduce": "npm run verify",
       "publicUrl": null
@@ -115,7 +115,7 @@
       "status": "passed",
       "uncertainty": "Maximum observed divergence for regular reference cases",
       "sourceReport": "reports/cross-validation.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": "Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.",
       "reproduce": "npm run validate:cross",
       "publicUrl": null
@@ -126,7 +126,7 @@
       "status": "low",
       "uncertainty": null,
       "sourceReport": "reports/mutation-aggregate.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": "Below the 70% quality target; the 65% regression floor is enforced.",
       "reproduce": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
       "publicUrl": null
@@ -137,7 +137,7 @@
       "status": "measured",
       "uncertainty": "Method-specific drift; no universal pass envelope",
       "sourceReport": "reports/energy-benchmark.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": "Compare each method against its documented order and structure-preservation behavior.",
       "reproduce": "npm run benchmark:energy",
       "publicUrl": null
@@ -148,7 +148,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/gpu-adapter-matrix.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.",
       "reproduce": "npm run benchmark:gpu-matrix",
       "publicUrl": null
@@ -159,7 +159,7 @@
       "status": "partial",
       "uncertainty": null,
       "sourceReport": "reports/publication-status.json",
-      "sourceCommit": "a829361513bf3c40156048b85ed169bc412fcbac",
+      "sourceCommit": "23cbb922037d0fe4fc964934abea9db5129a86e5",
       "caveat": "npm registry does not resolve this exact package version. No matching public Zenodo DOI record resolves for Pendulum Lab.",
       "reproduce": "npm run release:status",
       "publicUrl": "https://elliotjung.github.io/pendulum-lab/reviewer.html"
