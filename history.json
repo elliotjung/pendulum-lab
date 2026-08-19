@@ -538,5 +538,25 @@
       "devicePixelRatio": 1,
       "nodeVersion": "v24.19.0"
     }
+  },
+  {
+    "commit": "f6d7c4cbdd56d6b4a971da259d98c3e99fa67ae5",
+    "generatedAt": "2026-08-19T23:53:16.860Z",
+    "fps": 60.01200240047905,
+    "physicsMsPerStep": 0.016666666667636793,
+    "renderMs": 0.19999999999708962,
+    "memoryMiB": 9.5367431640625,
+    "longTaskMs": 79,
+    "environment": {
+      "commitSha": "f6d7c4cbdd56d6b4a971da259d98c3e99fa67ae5",
+      "dirtyWorktree": false,
+      "packageVersion": "10.36.0",
+      "browser": "149.0.7827.55",
+      "os": "linux 6.17.0-1022-azure",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "devicePixelRatio": 1,
+      "nodeVersion": "v24.19.0"
+    }
   }
 ]
