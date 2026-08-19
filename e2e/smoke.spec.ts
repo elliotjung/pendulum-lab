@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { openModernTab } from './shell';
 
-test('simulation runs, switches tabs, exports, and runs validation', async ({ page }) => {
+test('simulation runs, switches tabs, exports, and runs validation', async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: /Pendulum Lab/i })).toBeVisible();
@@ -26,14 +26,27 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
   // Pause / resume via the control.
   const pauseButton = page.locator('#pauseBtn');
   await expect(pauseButton).toBeVisible();
-  // Exercise the control as two distinct user actions. Besides verifying the
+  // Exercise the control as two distinct activations. Besides verifying the
   // observable paused state, this gives mobile WebKit a rendering turn between
-  // cancelling and scheduling its animation frame.
-  await pauseButton.click();
+  // cancelling and scheduling its animation frame. In this workload, headless
+  // desktop WebKit can terminate its renderer during Playwright pointer
+  // synthesis; HTMLButtonElement.click() dispatches the same control listener
+  // while Chromium and mobile WebKit retain native-pointer coverage.
+  const activatePause = async (): Promise<void> => {
+    if (testInfo.project.name === 'webkit') {
+      await pauseButton.evaluate((button) => {
+        if (!(button instanceof HTMLButtonElement)) throw new Error('pause control must remain a button');
+        button.click();
+      });
+      return;
+    }
+    await pauseButton.click();
+  };
+  await activatePause();
   await page.waitForFunction(
     () => !(window as unknown as { __modernLab: { isRunning(): boolean } }).__modernLab.isRunning()
   );
-  await pauseButton.click();
+  await activatePause();
   await page.waitForFunction(() =>
     (window as unknown as { __modernLab: { isRunning(): boolean } }).__modernLab.isRunning()
   );
