@@ -24,11 +24,19 @@ test('simulation runs, switches tabs, exports, and runs validation', async ({ pa
   expect(after).toBeGreaterThan(before);
 
   // Pause / resume via the control.
-  await expect(page.locator('#pauseBtn')).toBeVisible();
-  await page.evaluate(() => {
-    document.getElementById('pauseBtn')?.click();
-    document.getElementById('pauseBtn')?.click();
-  });
+  const pauseButton = page.locator('#pauseBtn');
+  await expect(pauseButton).toBeVisible();
+  // Exercise the control as two distinct user actions. Besides verifying the
+  // observable paused state, this gives mobile WebKit a rendering turn between
+  // cancelling and scheduling its animation frame.
+  await pauseButton.click();
+  await page.waitForFunction(
+    () => !(window as unknown as { __modernLab: { isRunning(): boolean } }).__modernLab.isRunning()
+  );
+  await pauseButton.click();
+  await page.waitForFunction(() =>
+    (window as unknown as { __modernLab: { isRunning(): boolean } }).__modernLab.isRunning()
+  );
 
   // Tab switching (modern shell).
   await openModernTab(page, 'validate', '#tab-validate');

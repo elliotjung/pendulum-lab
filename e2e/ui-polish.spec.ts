@@ -17,14 +17,26 @@ test('side-panel toggle collapses, persists, and restores', async ({ page }) => 
   // The class lives on <body>, so it applies on other tabs too.
   await page.locator('.rail-menu-button[data-rail-section-button="sim"]').click();
   await page.locator('.tab[data-tab="compare"]').first().click();
-  await expect(page.locator('#tab-compare .controls')).toBeHidden();
+  const compareControls = page.locator('#tab-compare .controls');
+  await expect(compareControls).toBeHidden();
 
+  // TabRouting persists the selected Compare tab in the URL.  After a reload,
+  // Lab's controls are therefore hidden because Lab is inactive—not because
+  // the side panel failed to reopen.  Assert against the restored active tab.
   await page.reload();
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  await expect(page.locator('#tab-lab .controls')).toBeHidden();
+  await expect(page.locator('#tab-compare')).toHaveClass(/active/);
+  await expect(compareControls).toBeHidden();
 
   await page.keyboard.press('\\');
-  await expect(page.locator('#tab-lab .controls')).toBeVisible();
+  await expect(page.locator('body')).not.toHaveClass(/panel-collapsed/);
+  await expect(compareControls).toBeVisible();
+
+  // Returning to Lab also exposes its controls, proving the global panel
+  // state restores every workspace rather than only the active tab.
+  await page.locator('.rail-menu-button[data-rail-section-button="sim"]').click();
+  await page.locator('.tab[data-tab="lab"]').first().click();
+  await expect(labControls).toBeVisible();
 });
 
 test('side-panel and accordion arrows do not restart the live lab simulation', async ({ page }) => {
