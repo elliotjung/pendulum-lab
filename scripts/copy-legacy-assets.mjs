@@ -20,6 +20,8 @@ const reviewerReports = [
   'npm-pack-dry-run.json',
   'reviewer-kit-manifest.json',
   'mutation-aggregate.json',
+  // The product-release manifest verifies this exact public Pages artifact.
+  'evidence-summary.json',
   'independent-validation-scope.json',
   'flagship-figure1.svg',
   'coverage-badge.json',

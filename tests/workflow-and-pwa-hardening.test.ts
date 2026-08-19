@@ -66,6 +66,18 @@ describe('generated-drift workflow contract', () => {
     expect(source).toContain('needs: [quality-gate, production-e2e, compatibility-e2e]');
   });
 
+  test('Pages build exports every Lab report required by the product release manifest', async () => {
+    const buildCopy = await readFile('scripts/copy-legacy-assets.mjs', 'utf8');
+    const releaseConfig = JSON.parse(await readFile('config/product-release.json', 'utf8')) as {
+      lab: { evidencePath: string; validationScopePath: string };
+    };
+
+    for (const path of [releaseConfig.lab.evidencePath, releaseConfig.lab.validationScopePath]) {
+      expect(path).toMatch(/^reports\/[^/]+$/);
+      expect(buildCopy).toContain(`'${path.slice('reports/'.length)}'`);
+    }
+  });
+
   test('evidence dispatch fails closed, validates provenance, and bounds network waits', async () => {
     const source = await readFile('.github/workflows/evidence-dispatch.yml', 'utf8');
     expect(source).toContain('LANDING_DISPATCH_TOKEN is required');
