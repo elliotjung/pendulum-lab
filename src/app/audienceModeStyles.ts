@@ -124,12 +124,12 @@ body.audience-research #tab-research .research-card:first-child{border-color:var
   body.audience-beginner #tab-lab .layout{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .rail .audience-select{position:fixed;left:max(10px,env(safe-area-inset-left));right:max(64px,calc(54px + env(safe-area-inset-right)));bottom:var(--compact-rail-offset,calc(77px + env(safe-area-inset-bottom)));z-index:955;display:block;padding:4px 6px;margin-top:0;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:8px;background:var(--workbench-elevated,#151a28);box-shadow:0 12px 30px rgba(0,0,0,.3)}
-  body .main-col{padding-bottom:calc(148px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(148px + env(safe-area-inset-bottom))}
-  .audience-preferences-toggle{display:none}
-  .audience-preference-fields{position:static;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
-  .audience-select label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  .audience-field{gap:0}
+  .rail .audience-select{position:fixed;left:auto;right:max(10px,env(safe-area-inset-right));bottom:var(--compact-rail-offset,calc(77px + env(safe-area-inset-bottom)));z-index:980;display:grid;width:52px;height:52px;padding:4px;margin-top:0;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:12px;background:var(--workbench-elevated,#151a28);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+  body .main-col{padding-bottom:calc(92px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  .audience-preferences-toggle{display:grid;width:44px;height:44px}
+  .audience-preference-fields{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(var(--compact-rail-offset,77px) + 62px);z-index:981;width:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:12px;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.14));border-radius:14px;background:var(--workbench-elevated,#151a28);box-shadow:0 20px 48px rgba(0,0,0,.42)}
+  .audience-select label{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:nowrap;border:0}
+  .audience-field{gap:5px}
   .audience-field::after{right:8px;bottom:16px}
   .audience-select select{height:44px;min-height:44px;font-size:12px;padding:5px 25px 5px 8px}
   body.audience-beginner #tab-lab .main-wrap{min-height:54vh}

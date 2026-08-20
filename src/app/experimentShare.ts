@@ -1,5 +1,6 @@
 import { integratorRegistry } from '../physics/integratorRegistry';
 import type { IntegratorId } from '../types/domain';
+import { currentAudienceMode, type AudienceMode } from './audienceMode';
 
 /** Stable, versioned URL payload used by the "Share experiment" button. */
 export interface SharedExperimentV1 {
@@ -40,6 +41,20 @@ const TABS = new Set([
   'aplus',
   'docs'
 ]);
+
+/** Preserve persona and locale alongside the versioned experiment payload. */
+export function experimentShareUrl(
+  href: string,
+  payload: SharedExperimentV1,
+  audience: AudienceMode,
+  locale: 'en' | 'ko'
+): URL {
+  const url = new URL(href);
+  url.searchParams.set('audience', audience);
+  url.searchParams.set('lang', locale);
+  url.hash = encodeSharedExperiment(payload);
+  return url;
+}
 
 function finite(value: unknown, fallback: number, min: number, max: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
@@ -218,8 +233,8 @@ export function installExperimentShare(): void {
   button.dataset.shareBound = '1';
   button.dataset.testid = 'share-experiment';
   button.addEventListener('click', () => {
-    const url = new URL(location.href);
-    url.hash = encodeSharedExperiment(captureSharedExperiment());
+    const locale = document.documentElement.lang === 'ko' ? 'ko' : 'en';
+    const url = experimentShareUrl(location.href, captureSharedExperiment(), currentAudienceMode(), locale);
     history.replaceState(null, '', url);
     void copyText(url.href)
       .then(() => notify('Experiment link copied'))

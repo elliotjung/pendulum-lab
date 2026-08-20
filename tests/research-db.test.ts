@@ -3,7 +3,9 @@ import { IDBFactory } from 'fake-indexeddb';
 import {
   migrateFromLocalStorageV2,
   ResearchDb,
+  ResearchDbPreviewLimitError,
   ResearchDbRecoveryRequiredError,
+  MAX_RESEARCH_DB_RECORDS_PER_STORE,
   RESEARCH_DB_SCHEMA_VERSION,
   RESEARCH_DB_STORES,
   validateResearchDbArchive,
@@ -27,6 +29,7 @@ describe('ResearchDb (IndexedDB store)', () => {
     expect(Object.keys(counts).sort()).toEqual([...RESEARCH_DB_STORES].sort());
     expect(counts.experiments).toBe(1);
     expect(counts.bundles).toBe(0);
+    expect(await db.getAllIds('experiments')).toEqual(['exp-1']);
     db.close();
   });
 
@@ -44,6 +47,18 @@ describe('ResearchDb (IndexedDB store)', () => {
     expect(await db.count('runLog')).toBe(2);
     await db.clear('runLog');
     expect(await db.count('runLog')).toBe(0);
+  });
+
+  it('enumerates preview keys with a bounded cursor and fails closed above the cap', async () => {
+    const db = freshDb();
+    await db.putMany('settings', [
+      { id: 'a', payload: 1 },
+      { id: 'b', payload: 2 },
+      { id: 'c', payload: 3 }
+    ]);
+    await expect(db.getAllIds('settings', 2)).rejects.toBeInstanceOf(ResearchDbPreviewLimitError);
+    await expect(db.getAllIds('settings', MAX_RESEARCH_DB_RECORDS_PER_STORE + 1)).rejects.toBeInstanceOf(RangeError);
+    expect(await db.getAllIds('settings', 3)).toEqual(['a', 'b', 'c']);
   });
 
   it('previews and deletes old content records while preserving recent work and settings', async () => {

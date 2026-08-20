@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "pendulum-research-db/v1",
+  "exportedAt": "2026-08-20T00:00:00.000Z",
+  "stores": {
+    "experiments": [
+      {
+        "id": "experiment-fixture-1",
+        "updatedAt": "2026-08-20T00:00:00.000Z",
+        "payload": { "name": "Fixture experiment" }
+      }
+    ],
+    "runLog": [],
+    "parameterStudies": [],
+    "studyResults": [],
+    "figures": [],
+    "bundles": [],
+    "settings": []
+  }
+}

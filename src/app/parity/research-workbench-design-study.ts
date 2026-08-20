@@ -66,6 +66,15 @@ export function persistDesignStudy(): void {
   }
 }
 
+/** Await every durable design-study write before a service-worker takeover. */
+export async function flushDesignStudyForUpdate(): Promise<void> {
+  if (!designStudy) return;
+  if (!window.localStorage) throw new Error('localStorage is unavailable');
+  window.localStorage.setItem(DESIGN_STORAGE_KEY, JSON.stringify(designStudy));
+  const db = researchDbInstance();
+  if (db.available()) await db.put('parameterStudies', `design:${designStudy.id}`, designStudy);
+}
+
 export function loadDesignStudy(): void {
   try {
     const raw = window.localStorage?.getItem(DESIGN_STORAGE_KEY);

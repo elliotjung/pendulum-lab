@@ -55,7 +55,11 @@ jobs:
       - run: npm run check:standalone-sync
       - run: npm run check:wasm-sync
       - name: Build and verify the authoritative Landing demo kernel
-        run: npm run landing:kernel:build && npm run landing:kernel:check
+        shell: bash
+        run: |
+          kernel_source_commit="$(node -e "const e=require('./reports/evidence-summary.json').provenance; const p=require('./package.json'); if(e.packageVersion!==p.version) throw new Error('evidence packageVersion does not match release package'); process.stdout.write(e.sourceCommit)")"
+          PENDULUM_LANDING_KERNEL_SOURCE_COMMIT="$kernel_source_commit" npm run landing:kernel:build
+          PENDULUM_LANDING_KERNEL_SOURCE_COMMIT="$kernel_source_commit" npm run landing:kernel:check
       - run: npx playwright install --with-deps chromium
       - name: Install PDF visual-verification renderer
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
@@ -190,11 +194,34 @@ jobs:
             exit 1
           fi
           evidence_sha256="$(sha256sum reports/evidence-summary.json | cut -d' ' -f1)"
+          kernel_sha256="$(sha256sum reports/landing-kernel/pendulum-demo-kernel.js | cut -d' ' -f1)"
+          kernel_manifest_sha256="$(sha256sum reports/landing-kernel/demo-kernel-manifest.json | cut -d' ' -f1)"
+          [[ "$kernel_sha256" =~ ^[0-9a-f]{64}$ ]] && [[ "$kernel_manifest_sha256" =~ ^[0-9a-f]{64}$ ]] || {
+            echo "Landing kernel payload hashes must be full lowercase SHA-256 values" >&2
+            exit 1
+          }
+          KERNEL_SHA256="$kernel_sha256" EVIDENCE_SOURCE_COMMIT="$evidence_source_commit" node -e '
+            const manifest = require("./reports/landing-kernel/demo-kernel-manifest.json");
+            const evidence = require("./reports/evidence-summary.json");
+            const packageJson = require("./package.json");
+            if (evidence.provenance.packageVersion !== packageJson.version) {
+              throw new Error("evidence packageVersion does not match release package");
+            }
+            const expected = {
+              schemaVersion: "pendulum-demo-kernel-manifest/v1",
+              kernel: "assets/pendulum-demo-kernel.js",
+              kernelVersion: "pendulum-demo-kernel/v3",
+              sourcePackageVersion: packageJson.version,
+              sourceCommit: process.env.EVIDENCE_SOURCE_COMMIT,
+              sha256: process.env.KERNEL_SHA256
+            };
+            for (const [key, value] of Object.entries(expected)) {
+              if (manifest[key] !== value) throw new Error(`Landing kernel manifest ${key} mismatch`);
+            }
+          '
           evidence_base64="$(base64 -w0 reports/evidence-summary.json)"
           kernel_base64="$(base64 -w0 reports/landing-kernel/pendulum-demo-kernel.js)"
-          kernel_sha256="$(sha256sum reports/landing-kernel/pendulum-demo-kernel.js | cut -d' ' -f1)"
           kernel_manifest_base64="$(base64 -w0 reports/landing-kernel/demo-kernel-manifest.json)"
-          kernel_manifest_sha256="$(sha256sum reports/landing-kernel/demo-kernel-manifest.json | cut -d' ' -f1)"
           EVIDENCE_BASE64="$evidence_base64" EVIDENCE_SHA256="$evidence_sha256" \
             EVIDENCE_SOURCE_COMMIT="$evidence_source_commit" KERNEL_BASE64="$kernel_base64" \
             KERNEL_SHA256="$kernel_sha256" KERNEL_MANIFEST_BASE64="$kernel_manifest_base64" \

@@ -36,7 +36,7 @@ import { installShortcutHelp } from './app/shortcutHelp';
 import { APP_VERSION } from './runtime/version';
 import { captureReferralAttribution } from './runtime/referralAttribution';
 import { createRetryableLazy } from './runtime/retryableLazy';
-import { installPwaLifecycle } from './app/PwaLifecycle';
+import { installPwaLifecycle, restorePwaUpdateRecovery } from './app/PwaLifecycle';
 
 function showToast(message: string, timeout = 2200): void {
   if (typeof window.toast === 'function') {
@@ -141,6 +141,7 @@ function bootSafety(): void {
 async function bootSimulation(): Promise<void> {
   maybeMountModernLabProbe();
   maybeMountModernLab();
+  restorePwaUpdateRecovery(showToast);
   await maybeMountModernAnalysisTabs();
 }
 

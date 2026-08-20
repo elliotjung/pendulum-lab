@@ -165,8 +165,12 @@ body {
    navigation or the Home chooser (notably in iOS/WebKit). */
 @media (max-width: 560px) {
   .pwa-update-banner {
-    bottom: calc(var(--compact-rail-offset) + 12px);
-    max-width: calc(100vw - 24px);
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: auto;
+    left: max(12px, env(safe-area-inset-left));
+    max-width: none;
+    flex-wrap: wrap;
   }
 }
 

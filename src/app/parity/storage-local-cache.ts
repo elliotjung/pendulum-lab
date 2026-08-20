@@ -41,18 +41,23 @@ export function loadResearchState(): void {
 
 export function persistResearchState(): void {
   try {
-    const payload: ResearchStoragePayload = {
-      schemaVersion: RESEARCH_STORAGE_SCHEMA_VERSION,
-      savedAt: new Date().toISOString(),
-      migrations: [],
-      droppedEntries: 0,
-      ...state.research
-    };
-    window.localStorage?.setItem(RESEARCH_STORAGE_KEY, JSON.stringify(payload));
+    writeResearchResumeCache();
   } catch (error) {
     state.lastFault = `Research storage failed: ${error instanceof Error ? error.message : String(error)}`;
   }
   mirrorResearchStateToDb();
+}
+
+function writeResearchResumeCache(): void {
+  const payload: ResearchStoragePayload = {
+    schemaVersion: RESEARCH_STORAGE_SCHEMA_VERSION,
+    savedAt: new Date().toISOString(),
+    migrations: [],
+    droppedEntries: 0,
+    ...state.research
+  };
+  if (!window.localStorage) throw new Error('localStorage is unavailable');
+  window.localStorage.setItem(RESEARCH_STORAGE_KEY, JSON.stringify(payload));
 }
 
 // --- IndexedDB long-term research store -----------------------------------
@@ -74,6 +79,49 @@ export function resetResearchDbInstance(): void {
 
 export let researchDbMirrorTimer = 0;
 
+async function mirrorResearchStateToDbNow(): Promise<void> {
+  const db = researchDbInstance();
+  if (!db.available()) return;
+  await db.putMany(
+    'experiments',
+    state.research.experiments.map((experiment) => ({ id: experiment.id, payload: experiment }))
+  );
+  await db.putMany(
+    'runLog',
+    state.research.runLog.map((entry) => ({ id: entry.id, payload: entry }))
+  );
+  const study = state.research.parameterStudy;
+  if (study) {
+    await db.put('parameterStudies', study.id, study);
+    const results = study.experiments
+      .filter((point) => point.results)
+      .map((point) => ({
+        id: `${study.id}:${point.id}`,
+        payload: { studyId: study.id, pointId: point.id, patch: point.patch, results: point.results }
+      }));
+    if (results.length > 0) await db.putMany('studyResults', results);
+  }
+  await db.put('settings', 'workbench-state', {
+    project: state.research.project,
+    sessions: state.research.sessions,
+    workspace: state.research.workspace,
+    workspaces: state.research.workspaces,
+    layout: state.research.layout,
+    selectedExperimentId: state.research.selectedExperimentId,
+    batchCheckpoint: state.research.batchCheckpoint,
+    comparisonRows: state.research.comparisonRows
+  });
+  renderResearchStoragePanel();
+}
+
+/** Durably flush both resume cache and IndexedDB before an approved app update. */
+export async function flushResearchStateForUpdate(): Promise<void> {
+  window.clearTimeout(researchDbMirrorTimer);
+  researchDbMirrorTimer = 0;
+  writeResearchResumeCache();
+  await mirrorResearchStateToDbNow();
+}
+
 /** Debounced async mirror of the workbench state into IndexedDB. */
 export function mirrorResearchStateToDb(): void {
   const db = researchDbInstance();
@@ -82,36 +130,7 @@ export function mirrorResearchStateToDb(): void {
   researchDbMirrorTimer = window.setTimeout(() => {
     void (async () => {
       try {
-        await db.putMany(
-          'experiments',
-          state.research.experiments.map((experiment) => ({ id: experiment.id, payload: experiment }))
-        );
-        await db.putMany(
-          'runLog',
-          state.research.runLog.map((entry) => ({ id: entry.id, payload: entry }))
-        );
-        const study = state.research.parameterStudy;
-        if (study) {
-          await db.put('parameterStudies', study.id, study);
-          const results = study.experiments
-            .filter((point) => point.results)
-            .map((point) => ({
-              id: `${study.id}:${point.id}`,
-              payload: { studyId: study.id, pointId: point.id, patch: point.patch, results: point.results }
-            }));
-          if (results.length > 0) await db.putMany('studyResults', results);
-        }
-        await db.put('settings', 'workbench-state', {
-          project: state.research.project,
-          sessions: state.research.sessions,
-          workspace: state.research.workspace,
-          workspaces: state.research.workspaces,
-          layout: state.research.layout,
-          selectedExperimentId: state.research.selectedExperimentId,
-          batchCheckpoint: state.research.batchCheckpoint,
-          comparisonRows: state.research.comparisonRows
-        });
-        renderResearchStoragePanel();
+        await mirrorResearchStateToDbNow();
       } catch (error) {
         state.auditLog.unshift(`research db mirror failed: ${error instanceof Error ? error.message : String(error)}`);
       }

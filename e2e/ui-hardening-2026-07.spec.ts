@@ -19,11 +19,9 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
     await page.evaluate(
       () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
     );
-    if (width > 560) {
-      const fields = page.locator('#audiencePreferenceFields');
-      if (!(await fields.isVisible())) await page.locator('#audiencePreferencesToggle').click();
-      await expect(fields).toBeVisible();
-    }
+    const fields = page.locator('#audiencePreferenceFields');
+    if (!(await fields.isVisible())) await page.locator('#audiencePreferencesToggle').click();
+    await expect(fields).toBeVisible();
     const geometry = await page.evaluate(() => {
       const rect = (selector: string) => document.querySelector<HTMLElement>(selector)?.getBoundingClientRect();
       const mode = rect('#audienceMode');
@@ -49,6 +47,7 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
         modeField: modeField && { left: modeField.left, right: modeField.right },
         localeField: localeField && { left: localeField.left, right: localeField.right },
         preferenceDockClearance: preferenceDock ? innerHeight - preferenceDock.top : null,
+        railClearance: rail ? innerHeight - rail.top : null,
         railWidth: rail?.width ?? null,
         mainColumnBottomPadding: mainColumn ? Number.parseFloat(getComputedStyle(mainColumn).paddingBottom) : null,
         overlap
@@ -67,7 +66,8 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
     if (width === 768) expect(geometry.railWidth).toBeLessThanOrEqual(60);
     if (width <= 560) {
       expect(geometry.preferenceDockClearance).not.toBeNull();
-      expect(geometry.mainColumnBottomPadding).toBeGreaterThanOrEqual(geometry.preferenceDockClearance! + 8);
+      expect(geometry.railClearance).not.toBeNull();
+      expect(geometry.mainColumnBottomPadding).toBeGreaterThanOrEqual(geometry.railClearance! + 8);
     }
   }
 });
@@ -75,6 +75,9 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
 test('Korean preference copy, long options, focus, and polite announcements stay synchronized', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 700 });
   await openResearchShell(page);
+
+  await page.locator('#audiencePreferencesToggle').click();
+  await expect(page.locator('#audiencePreferenceFields')).toBeVisible();
 
   const locale = page.locator('#navLocale');
   await locale.focus();
@@ -139,6 +142,62 @@ test('outside-pointer dismissal never strands focus inside the hidden desktop pr
   await panelToggle.click();
   await expect(fields).toBeHidden();
   await expect(panelToggle).toBeFocused();
+});
+
+test('compact preferences and an update prompt stay clear of the bottom navigation', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openResearchShell(page);
+
+  const toggle = page.locator('#audiencePreferencesToggle');
+  const fields = page.locator('#audiencePreferenceFields');
+  await expect(toggle).toBeVisible();
+  await expect(fields).toBeHidden();
+  await toggle.click();
+  await expect(fields).toBeVisible();
+
+  await page.evaluate(() => {
+    const banner = document.createElement('aside');
+    banner.className = 'pwa-update-banner';
+    banner.setAttribute('role', 'region');
+    const copy = document.createElement('span');
+    copy.textContent = 'Update ready. Save your exact experiment before restarting.';
+    const update = document.createElement('button');
+    update.type = 'button';
+    update.textContent = 'Save & update';
+    const dismiss = document.createElement('button');
+    dismiss.type = 'button';
+    dismiss.className = 'pwa-update-dismiss';
+    dismiss.setAttribute('aria-label', 'Later');
+    dismiss.textContent = '×';
+    banner.append(copy, update, dismiss);
+    document.body.append(banner);
+  });
+
+  const geometry = await page.evaluate(() => {
+    const rect = (selector: string) => document.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+    const intersects = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    const preferenceFields = rect('#audiencePreferenceFields');
+    const preferenceToggle = rect('#audiencePreferencesToggle');
+    const rail = rect('.rail');
+    const updatePrompt = rect('.pwa-update-banner');
+    return {
+      fieldsRailOverlap: intersects(preferenceFields, rail),
+      toggleRailOverlap: intersects(preferenceToggle, rail),
+      promptRailOverlap: intersects(updatePrompt, rail),
+      promptFieldsOverlap: intersects(updatePrompt, preferenceFields),
+      promptTop: updatePrompt.top,
+      fieldsBottom: preferenceFields.bottom,
+      viewportHeight: innerHeight
+    };
+  });
+
+  expect(geometry.fieldsRailOverlap).toBe(false);
+  expect(geometry.toggleRailOverlap).toBe(false);
+  expect(geometry.promptRailOverlap).toBe(false);
+  expect(geometry.promptFieldsOverlap).toBe(false);
+  expect(geometry.promptTop).toBeGreaterThanOrEqual(0);
+  expect(geometry.fieldsBottom).toBeLessThanOrEqual(geometry.viewportHeight);
 });
 
 test('audience chooser isolates the background, supports arrow navigation, and restores focus', async ({ page }) => {

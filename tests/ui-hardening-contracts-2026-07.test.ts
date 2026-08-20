@@ -133,7 +133,9 @@ describe('2026-07 UI hardening source contracts', () => {
     expect(css).toContain('@media(forced-colors:active)');
     expect(css).toContain('appearance:none');
     expect(css).toContain('border:2px solid ButtonText!important');
-    expect(css).toContain('padding-bottom:calc(148px + env(safe-area-inset-bottom))');
+    expect(css).toContain('padding-bottom:calc(92px + env(safe-area-inset-bottom))');
+    expect(css).toContain('.audience-preferences-toggle{display:grid;width:44px;height:44px}');
+    expect(css).toContain('bottom:calc(var(--compact-rail-offset,77px) + 62px)');
   });
 
   it('defers palette and control filtering during IME composition and resumes on compositionend', () => {

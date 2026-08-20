@@ -7,6 +7,23 @@ function pngDimensions(bytes: Buffer): [number, number] {
 }
 
 describe('PWA assets', () => {
+  test('application discovery metadata points stateful URLs at one clean canonical', async () => {
+    const html = await readFile('app.html', 'utf8');
+    const robots = await readFile('public/robots.txt', 'utf8');
+    const sitemap = await readFile('public/sitemap.xml', 'utf8');
+    expect(html).toContain('<meta name="robots" content="index,follow,max-image-preview:large"');
+    expect(html).toContain('<link rel="canonical" href="https://elliotjung.github.io/pendulum-lab/"');
+    expect(html).toContain('hreflang="en"');
+    expect(html).toContain('hreflang="ko"');
+    expect(html).toContain('hreflang="x-default"');
+    expect(html).toContain('<meta property="og:url" content="https://elliotjung.github.io/pendulum-lab/"');
+    expect(html).toContain('<meta name="twitter:card" content="summary_large_image"');
+    expect(html).not.toContain('Certified chaotic-dynamics workbench');
+    expect(robots).toContain('Sitemap: https://elliotjung.github.io/pendulum-lab/sitemap.xml');
+    expect(sitemap).toContain('<loc>https://elliotjung.github.io/pendulum-lab/</loc>');
+    expect(sitemap).toContain('hreflang="ko"');
+  });
+
   test('manifest exposes stable identity, shortcuts, and dedicated maskable artwork', async () => {
     const manifest = JSON.parse(await readFile('public/manifest.webmanifest', 'utf8')) as {
       display?: string;
@@ -43,6 +60,34 @@ describe('PWA assets', () => {
     expect(source).toContain('trimQueue.catch(() => undefined)');
     expect(source).toContain("event.data?.type === 'SKIP_WAITING'");
     expect(source).toContain("url.search = ''");
+  });
+
+  test('client updates require explicit consent and preserve a validated recovery point', async () => {
+    const source = await readFile('src/app/PwaLifecycle.ts', 'utf8');
+    expect(source).toContain('UPDATE_RECOVERY_KEY');
+    expect(source).toContain('UPDATE_REQUESTED_KEY');
+    expect(source).toContain('persistUpdateRecovery()');
+    expect(source).toContain('storage.flushResearchStateForUpdate()');
+    expect(source).toContain('design.flushDesignStudyForUpdate()');
+    expect(source).toContain('StateStore.validate(recovery.snapshot)');
+    expect(source).toContain("registration.waiting?.postMessage({ type: 'SKIP_WAITING' })");
+    expect(source).toContain('if (updateRequested && !reloading)');
+    expect(source).not.toContain(
+      "navigator.serviceWorker.addEventListener('controllerchange', () => location.reload())"
+    );
+    expect(source).toContain('isViteDevelopmentShell()');
+    expect(source).toContain('registration.unregister()');
+    expect(source).toContain("'./reports/evidence-summary.json'");
+    expect(source).toContain('report.provenance?.expiresAt');
+    expect(source).toContain("dataset.evidenceFreshness = expired ? 'expired' : 'current'");
+    expect(source).not.toContain('ageDays > 30');
+
+    const storage = await readFile('src/app/parity/storage-local-cache.ts', 'utf8');
+    const design = await readFile('src/app/parity/research-workbench-design-study.ts', 'utf8');
+    expect(storage).toContain('export async function flushResearchStateForUpdate()');
+    expect(storage).toContain('await mirrorResearchStateToDbNow()');
+    expect(design).toContain('export async function flushDesignStudyForUpdate()');
+    expect(design).toContain("await db.put('parameterStudies'");
   });
 
   test('ships localized install metadata and a wide product screenshot', async () => {

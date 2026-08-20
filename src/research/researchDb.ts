@@ -6,9 +6,15 @@
  * recovery, and a portable full-database archive format.
  */
 
+import { isCanonicalIsoTimestamp, validResearchDbPayload } from './researchDbArchiveValidation';
+
 export const RESEARCH_DB_NAME = 'pendulum-lab-research';
 export const RESEARCH_DB_VERSION = 1;
 export const RESEARCH_DB_SCHEMA_VERSION = 'pendulum-research-db/v1';
+/** Import caps are part of the portable archive contract, not merely UI hints. */
+export const MAX_RESEARCH_DB_RECORDS_PER_STORE = 10_000;
+export const MAX_RESEARCH_DB_RECORDS = 25_000;
+export const MAX_RESEARCH_DB_RECORD_ID_LENGTH = 256;
 
 export const RESEARCH_DB_STORES = [
   'experiments',
@@ -66,6 +72,19 @@ export class ResearchDbRecoveryRequiredError extends Error {
   ) {
     super(`Research database "${databaseName}" requires recovery before it can be used`);
     this.name = 'ResearchDbRecoveryRequiredError';
+  }
+}
+
+/** Preview key enumeration stopped before allocating an attacker-sized array. */
+export class ResearchDbPreviewLimitError extends Error {
+  readonly code = 'RESEARCH_DB_PREVIEW_LIMIT';
+
+  constructor(
+    readonly storeName: ResearchDbStoreName,
+    readonly maxIds: number
+  ) {
+    super(`Research DB store ${storeName} contains more than the preview limit of ${maxIds.toLocaleString()} records`);
+    this.name = 'ResearchDbPreviewLimitError';
   }
 }
 
@@ -243,6 +262,36 @@ export class ResearchDb {
     return records.sort((a, b) => a.id.localeCompare(b.id));
   }
 
+  /** Read primary keys with a bounded cursor; never materialize an unbounded getAllKeys() result. */
+  async getAllIds(name: ResearchDbStoreName, maxIds = MAX_RESEARCH_DB_RECORDS_PER_STORE): Promise<string[]> {
+    if (!Number.isSafeInteger(maxIds) || maxIds < 0 || maxIds > MAX_RESEARCH_DB_RECORDS_PER_STORE) {
+      throw new RangeError(`Research DB key preview limit must be between 0 and ${MAX_RESEARCH_DB_RECORDS_PER_STORE}`);
+    }
+    const { store } = await this.store(name, 'readonly');
+    return new Promise<string[]>((resolve, reject) => {
+      const ids: string[] = [];
+      const request = store.openKeyCursor();
+      request.onerror = () => reject(request.error ?? new Error(`IndexedDB key cursor failed for ${name}`));
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) {
+          resolve(ids);
+          return;
+        }
+        if (ids.length >= maxIds) {
+          reject(new ResearchDbPreviewLimitError(name, maxIds));
+          return;
+        }
+        if (typeof cursor.key !== 'string') {
+          reject(new Error(`Research DB store ${name} contains a non-string primary key`));
+          return;
+        }
+        ids.push(cursor.key);
+        cursor.continue();
+      };
+    });
+  }
+
   async delete(name: ResearchDbStoreName, id: string): Promise<void> {
     const { store, done } = await this.store(name, 'readwrite');
     store.delete(id);
@@ -382,10 +431,17 @@ export function validateResearchDbArchive(value: unknown): { ok: boolean; proble
   const archive = value as Partial<ResearchDbArchive>;
   if (archive.schemaVersion !== RESEARCH_DB_SCHEMA_VERSION)
     problems.push(`unexpected schemaVersion ${String(archive.schemaVersion)}`);
-  if (typeof archive.stores !== 'object' || archive.stores === null) {
+  if (typeof archive.stores !== 'object' || archive.stores === null || Array.isArray(archive.stores)) {
     problems.push('missing stores');
     return { ok: false, problems };
   }
+  for (const name in archive.stores) {
+    if (Object.hasOwn(archive.stores, name) && !RESEARCH_DB_STORES.includes(name as ResearchDbStoreName)) {
+      problems.push('archive contains an unexpected store');
+      break;
+    }
+  }
+  let totalRecords = 0;
   for (const name of RESEARCH_DB_STORES) {
     const records = (archive.stores as Record<string, unknown>)[name];
     if (records === undefined) continue;
@@ -393,14 +449,47 @@ export function validateResearchDbArchive(value: unknown): { ok: boolean; proble
       problems.push(`store ${name} is not an array`);
       continue;
     }
+    totalRecords += records.length;
+    if (records.length > MAX_RESEARCH_DB_RECORDS_PER_STORE) {
+      problems.push(`store ${name} exceeds the ${MAX_RESEARCH_DB_RECORDS_PER_STORE.toLocaleString()} record limit`);
+      continue;
+    }
+    const ids = new Set<string>();
     for (const record of records) {
+      if (typeof record !== 'object' || record === null || Array.isArray(record)) {
+        problems.push(`store ${name} contains a non-object record`);
+        break;
+      }
       const rec = record as Partial<ResearchDbRecord>;
-      if (typeof rec?.id !== 'string' || rec.id.length === 0) {
+      if (!Object.hasOwn(record, 'id') || typeof rec.id !== 'string' || rec.id.length === 0) {
         problems.push(`store ${name} has a record without an id`);
         break;
       }
+      if (rec.id.length > MAX_RESEARCH_DB_RECORD_ID_LENGTH) {
+        problems.push(`store ${name} has an id longer than ${MAX_RESEARCH_DB_RECORD_ID_LENGTH} characters`);
+        break;
+      }
+      if (ids.has(rec.id)) {
+        problems.push(`store ${name} contains a duplicate record id`);
+        break;
+      }
+      if (!Object.hasOwn(record, 'updatedAt') || !isCanonicalIsoTimestamp(rec.updatedAt)) {
+        problems.push(`store ${name} has a record without a valid ISO updatedAt`);
+        break;
+      }
+      if (!Object.hasOwn(record, 'payload')) {
+        problems.push(`store ${name} has a record without a payload`);
+        break;
+      }
+      if (!validResearchDbPayload(name, rec.id, rec.payload, MAX_RESEARCH_DB_RECORD_ID_LENGTH)) {
+        problems.push(`store ${name} has a record with an invalid payload`);
+        break;
+      }
+      ids.add(rec.id);
     }
   }
+  if (totalRecords > MAX_RESEARCH_DB_RECORDS)
+    problems.push(`archive exceeds the ${MAX_RESEARCH_DB_RECORDS.toLocaleString()} total record limit`);
   return { ok: problems.length === 0, problems };
 }
 

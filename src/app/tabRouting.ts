@@ -7,6 +7,24 @@ export interface TabRequestedDetail {
   requestId: number;
 }
 
+export type LandingGoal = 'explore' | 'classroom' | 'reproduce';
+
+const LANDING_GOAL_TABS: Record<LandingGoal, string> = {
+  explore: 'lab',
+  classroom: 'lyap',
+  reproduce: 'research'
+};
+
+/** Resolve the landing-page intent contract without accepting arbitrary tabs. */
+export function tabForLandingGoal(href: string): string | null {
+  try {
+    const goal = new URL(href).searchParams.get('goal');
+    return goal === 'explore' || goal === 'classroom' || goal === 'reproduce' ? LANDING_GOAL_TABS[goal] : null;
+  } catch {
+    return null;
+  }
+}
+
 interface TabRoutingHooks {
   canActivate(tab: string): boolean;
   syncRail(tab: string): void;
@@ -24,6 +42,14 @@ export function urlForTab(href: string, tab: string): string {
 function urlTab(): string | null {
   try {
     return new URL(window.location.href).searchParams.get('tab');
+  } catch {
+    return null;
+  }
+}
+
+function urlGoalTab(): string | null {
+  try {
+    return tabForLandingGoal(window.location.href);
   } catch {
     return null;
   }
@@ -112,7 +138,9 @@ export class TabRouting {
 
   applyInitialUrl(fallbackTab = 'lab'): void {
     const requested = urlTab();
-    this.switchTo(requested && this.hooks.canActivate(requested) ? requested : fallbackTab, 'replace');
+    const goalTab = urlGoalTab();
+    const fallback = goalTab && this.hooks.canActivate(goalTab) ? goalTab : fallbackTab;
+    this.switchTo(requested && this.hooks.canActivate(requested) ? requested : fallback, 'replace');
   }
 
   bindPopstate(fallbackTab = 'lab'): void {
@@ -120,7 +148,9 @@ export class TabRouting {
     const onPopstate = (): void => {
       const requested = urlTab();
       const tab = requested && this.hooks.canActivate(requested) ? requested : null;
-      this.switchTo(tab ?? fallbackTab, tab ? 'none' : 'replace');
+      const goalTab = urlGoalTab();
+      const fallback = goalTab && this.hooks.canActivate(goalTab) ? goalTab : fallbackTab;
+      this.switchTo(tab ?? fallback, tab ? 'none' : 'replace');
     };
     window.addEventListener('popstate', onPopstate);
     this.unbindPopstate = () => window.removeEventListener('popstate', onPopstate);

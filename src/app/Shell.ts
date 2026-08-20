@@ -2,6 +2,7 @@ import { takeOverElement } from './domTakeover';
 import { commitLabControls } from './controlCommit';
 import { canAccessAudienceTab, currentAudienceMode } from './audienceMode';
 import { TabRouting, type TabHistoryMode, type TabRequestedDetail } from './tabRouting';
+import { applyNumericControlParams } from './deepLinkControls';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -553,34 +554,12 @@ export class Shell {
       systemSelect.value = sysType;
       hasControlOverride = true;
     }
-    for (const id of [
-      'th1',
-      'th2',
-      'th3',
-      'iw1',
-      'iw2',
-      'iw3',
-      'm1',
-      'm2',
-      'm3',
-      'l1',
-      'l2',
-      'l3',
-      'g',
-      'gamma',
-      'dt',
-      'speed',
-      'spf'
-    ]) {
-      const value = urlParam(id);
-      if (value === null) continue;
-      const numeric = Number.parseFloat(value);
-      if (Number.isFinite(numeric)) {
-        this.setSlider(id, numeric, changed);
-        hasControlOverride = true;
-      }
-    }
+    const numeric = applyNumericControlParams(window.location.href, document, (id, value) =>
+      this.setSlider(id, value, changed)
+    );
+    if (numeric.acceptedCount > 0) hasControlOverride = true;
     if (hasControlOverride) commitLabControls('deep-link', changed);
+    if (numeric.canonicalHref) window.history.replaceState(window.history.state, '', numeric.canonicalHref);
     this.tabRouting.applyInitialUrl();
   }
 

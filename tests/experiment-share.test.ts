@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { decodeSharedExperiment, encodeSharedExperiment, type SharedExperimentV1 } from '../src/app/experimentShare';
+import {
+  decodeSharedExperiment,
+  encodeSharedExperiment,
+  experimentShareUrl,
+  type SharedExperimentV1
+} from '../src/app/experimentShare';
 
 const setup: SharedExperimentV1 = {
   v: 1,
@@ -19,6 +24,14 @@ describe('versioned experiment share hashes', () => {
     expect(hash).toMatch(/^#experiment=/);
     expect(hash).not.toContain('+');
     expect(decodeSharedExperiment(hash)).toEqual(setup);
+  });
+
+  it('makes a stored persona and locale explicit in the copied URL', () => {
+    const url = experimentShareUrl('https://example.test/lab?tab=lab&utm_source=landing', setup, 'student', 'ko');
+    expect(url.searchParams.get('audience')).toBe('student');
+    expect(url.searchParams.get('lang')).toBe('ko');
+    expect(url.searchParams.get('utm_source')).toBe('landing');
+    expect(decodeSharedExperiment(url.hash)).toEqual(setup);
   });
 
   it('fails closed for malformed and future-version hashes', () => {

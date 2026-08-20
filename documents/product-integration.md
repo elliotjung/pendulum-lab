@@ -41,12 +41,15 @@ coupling terms, and force-level rate damping `-gamma * omega_i`. See
 [`src/physics/double.ts`](../src/physics/double.ts) for the authoritative
 implementation.
 
-The Landing ships a deliberately small, allocation-free form of the same RHS
-in `assets/pendulum-demo-kernel.js`. Classical RK4 evaluates damping inside all
-four stages. The 3D hero uses `gamma = 0` and renders a conservative planar
-double pendulum as a real three-dimensional sculpture; camera/stage depth never
-replaces the physical joint integration. The hands-on console accepts damping
-and forwards the same `gamma` value to the full Lab deep link.
+The Landing hands-on console ships a deliberately small, allocation-free form
+of the same planar RHS in `assets/pendulum-demo-kernel.js`. Classical RK4
+evaluates damping inside all four stages and forwards the same `gamma` value to
+the full Lab deep link. The cinematic hero is intentionally a separate,
+conservative double-spherical model: two Cartesian point masses are advanced at
+240 Hz and mass-weighted position/velocity projection preserves both rod
+constraints. Its scroll response moves the camera around the integrated 3D
+trajectory; it does not rotate a planar result or feed marketing animation back
+into Lab validation claims.
 
 ## Time integration and runtime limits
 
@@ -65,11 +68,15 @@ claims must come from the Lab reports or an independent reference tool.
 
 ## Deep-link contract
 
-Every application link uses the public Pages URL and a canonical `tab=lab`
-parameter. Optional parameters (`audience`, system, initial angles and rates,
-masses, lengths, gravity, damping, locale, and UTM attribution) are preserved
-as long as they use the Lab's documented query keys (for example `lang`,
-`th1`, `th2`, `w1`, `w2`, `m1`, `m2`, `l1`, `l2`, `g`, and `gamma`).
+Every application CTA uses the public Pages URL and declares `goal`,
+`audience`, `lang`, and `tab` in its static `href`. The supported goals are
+`explore`, `classroom`, and `reproduce`; they map to a safe default workspace
+only when an explicit tab is absent. Optional system, initial-condition,
+physical, locale, and attribution parameters are preserved when they use the
+Lab's documented keys (for example `th1`, `th2`, `iw1`, `iw2`, `m1`, `m2`,
+`l1`, `l2`, `g`, and `gamma`). Historic Landing links using `w1` and `w2`
+remain accepted, then the Lab replaces them with canonical `iw1` and `iw2`
+without adding a history entry.
 Inside the app, selecting a workspace from the pendulum-logo home screen enters
 the real Lab panel and updates the same-document URL without reloading the
 simulation. Browser back/forward navigation follows this tab state.

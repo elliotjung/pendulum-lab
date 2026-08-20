@@ -82,6 +82,21 @@ function urlAudienceMode(): AudienceMode | null {
   }
 }
 
+/** Keep the visible workspace and reload/share URL on one canonical policy. */
+export function audienceModeUrl(href: string, mode: AudienceMode): string | null {
+  const url = new URL(href);
+  const alreadyCanonical = url.searchParams.get('audience') === mode && !url.searchParams.has('mode');
+  if (alreadyCanonical) return null;
+  url.searchParams.set('audience', mode);
+  url.searchParams.delete('mode');
+  return url.toString();
+}
+
+function syncAudienceModeUrl(mode: AudienceMode): void {
+  const canonical = audienceModeUrl(window.location.href, mode);
+  if (canonical) window.history.replaceState(window.history.state, '', canonical);
+}
+
 function chooser(): AudienceChooserController {
   audienceChooser ??= createAudienceChooser({
     currentMode: currentAudienceMode,
@@ -142,7 +157,7 @@ export function hasExplicitAudienceMode(): boolean {
   return urlAudienceMode() !== null || storedAudienceMode() !== null;
 }
 
-export function applyAudienceMode(mode: AudienceMode, persist = true): void {
+export function applyAudienceMode(mode: AudienceMode, persist = true, syncUrl = persist): void {
   activeAudienceMode = mode;
   installAudienceAnnotations();
   decorateAudienceNavigation();
@@ -151,6 +166,7 @@ export function applyAudienceMode(mode: AudienceMode, persist = true): void {
   document.body.classList.add(`audience-${mode}`);
   document.body.dataset.audienceMode = mode;
   if (persist) {
+    if (syncUrl) syncAudienceModeUrl(mode);
     try {
       window.localStorage?.setItem(STORAGE_KEY, mode);
     } catch {
@@ -186,7 +202,7 @@ export function installAudienceMode(): void {
   bindHomeLogo();
   const requested = urlAudienceMode();
   const stored = storedAudienceMode();
-  applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored));
+  applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored), requested !== null);
   // First visit asks for intent; returning users land directly in their saved workspace.
   if (!requested && !stored) showAudienceChooser();
 }

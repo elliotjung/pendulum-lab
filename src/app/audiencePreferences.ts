@@ -28,6 +28,7 @@ export function installAudiencePreferenceControl(
   preferenceFields.id = 'audiencePreferenceFields';
   preferenceFields.className = 'audience-preference-fields';
   preferenceFields.hidden = true;
+  preferenceFields.setAttribute('aria-label', 'Mode and language preferences');
 
   const field = document.createElement('div');
   field.className = 'audience-field audience-field-mode';
@@ -60,29 +61,30 @@ export function installAudiencePreferenceControl(
   wrap.append(preferenceToggle, preferenceFields);
   rail.append(wrap);
 
-  let desktopPreferencesOpen = false;
+  let preferencesOpen = false;
   const compactPreferences = window.matchMedia('(max-width: 560px)');
   const syncPreferencePanel = (): void => {
-    const open = compactPreferences.matches || desktopPreferencesOpen;
-    preferenceFields.hidden = !open;
-    wrap.classList.toggle('is-open', open);
-    preferenceToggle.hidden = compactPreferences.matches;
-    preferenceToggle.setAttribute('aria-expanded', String(open));
+    preferenceFields.hidden = !preferencesOpen;
+    preferenceFields.setAttribute('role', compactPreferences.matches ? 'dialog' : 'group');
+    wrap.classList.toggle('is-open', preferencesOpen);
+    preferenceToggle.hidden = false;
+    preferenceToggle.setAttribute('aria-expanded', String(preferencesOpen));
   };
   preferenceToggle.addEventListener('click', () => {
-    desktopPreferencesOpen = !desktopPreferencesOpen;
+    preferencesOpen = !preferencesOpen;
     syncPreferencePanel();
-    if (desktopPreferencesOpen) queueMicrotask(() => select.focus());
+    if (preferencesOpen) queueMicrotask(() => select.focus());
   });
   wrap.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape' || compactPreferences.matches || !desktopPreferencesOpen) return;
+    if (event.key !== 'Escape' || !preferencesOpen) return;
     event.preventDefault();
-    desktopPreferencesOpen = false;
+    preferencesOpen = false;
     syncPreferencePanel();
     preferenceToggle.focus();
   });
   document.addEventListener('pointerdown', (event) => {
-    if (compactPreferences.matches || !desktopPreferencesOpen || wrap.contains(event.target as Node)) return;
+    if (!preferencesOpen || wrap.contains(event.target as Node) || preferenceFields.contains(event.target as Node))
+      return;
     const restoreFocus = document.activeElement instanceof Element && wrap.contains(document.activeElement);
     const externalFocusable =
       event.target instanceof Element
@@ -90,7 +92,7 @@ export function installAudiencePreferenceControl(
             'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[contenteditable]:not([contenteditable="false"]),[tabindex]:not([tabindex="-1"])'
           )
         : null;
-    desktopPreferencesOpen = false;
+    preferencesOpen = false;
     syncPreferencePanel();
     // Keep keyboard focus out of the newly hidden subtree. If the pointer is
     // activating another focusable control, its native default action can
@@ -101,7 +103,10 @@ export function installAudiencePreferenceControl(
       }, 0);
     }
   });
-  compactPreferences.addEventListener?.('change', syncPreferencePanel);
+  compactPreferences.addEventListener?.('change', () => {
+    preferencesOpen = false;
+    syncPreferencePanel();
+  });
   syncPreferencePanel();
   return select;
 }

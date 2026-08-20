@@ -98,7 +98,26 @@ describe('generated-drift workflow contract', () => {
     expect(source).toContain('Reject stale or uncommitted release evidence');
     expect(source).toContain('release evidence was generated from a dirty worktree');
     expect(source).toContain('release evidence is expired');
+    expect(source).toContain('PENDULUM_LANDING_KERNEL_SOURCE_COMMIT="$kernel_source_commit"');
+    expect(source).toContain('evidence packageVersion does not match release package');
     const releaseGate = source.slice(source.indexOf('- name: Dispatch and wait for the landing release gate'));
+    for (const token of [
+      'kernel_base64',
+      'kernel_sha256',
+      'kernel_manifest_base64',
+      'kernel_manifest_sha256',
+      'Landing kernel manifest ${key} mismatch',
+      'schemaVersion: "pendulum-demo-kernel-manifest/v1"',
+      'kernelVersion: "pendulum-demo-kernel/v3"',
+      'sourceCommit: process.env.EVIDENCE_SOURCE_COMMIT',
+      'sha256: process.env.KERNEL_SHA256'
+    ]) {
+      expect(releaseGate).toContain(token);
+    }
+    const pairValidation = releaseGate.indexOf('Landing kernel manifest ${key} mismatch');
+    const payloadWrite = releaseGate.indexOf("fs.writeFileSync('/tmp/landing-dispatch.json'");
+    expect(pairValidation).toBeGreaterThanOrEqual(0);
+    expect(payloadWrite).toBeGreaterThan(pairValidation);
     const curls = releaseGate.match(/curl[^\n]*(?:\\\n[^\n]*)*/g) ?? [];
     expect(curls.length).toBeGreaterThanOrEqual(3);
     for (const curl of curls.slice(0, 3)) {
