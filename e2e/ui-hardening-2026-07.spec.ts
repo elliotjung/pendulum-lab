@@ -24,8 +24,8 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
     await expect(fields).toBeVisible();
     const geometry = await page.evaluate(() => {
       const rect = (selector: string) => document.querySelector<HTMLElement>(selector)?.getBoundingClientRect();
-      const mode = rect('#audienceMode');
-      const locale = rect('#navLocale');
+      const mode = rect('.audience-field-mode .custom-select-button');
+      const locale = rect('.audience-field-locale .custom-select-button');
       const modeField = rect('.audience-field-mode');
       const localeField = rect('.audience-field-locale');
       const preferenceDock = rect('.rail .audience-select');
@@ -61,8 +61,8 @@ test('mode and language fields stay unbroken at 320, 375, 768, and 1024 CSS pixe
     expect(geometry.mode!.right).toBeLessThanOrEqual(geometry.modeField!.right + 1);
     expect(geometry.locale!.left).toBeGreaterThanOrEqual(geometry.localeField!.left - 1);
     expect(geometry.locale!.right).toBeLessThanOrEqual(geometry.localeField!.right + 1);
-    expect(geometry.mode!.height).toBeGreaterThanOrEqual(width <= 560 ? 44 : 34);
-    expect(geometry.locale!.height).toBeGreaterThanOrEqual(width <= 560 ? 44 : 34);
+    expect(geometry.mode!.height).toBeGreaterThanOrEqual(width <= 560 ? 43.9 : 33.9);
+    expect(geometry.locale!.height).toBeGreaterThanOrEqual(width <= 560 ? 43.9 : 33.9);
     if (width === 768) expect(geometry.railWidth).toBeLessThanOrEqual(60);
     if (width <= 560) {
       expect(geometry.preferenceDockClearance).not.toBeNull();
@@ -80,27 +80,34 @@ test('Korean preference copy, long options, focus, and polite announcements stay
   await expect(page.locator('#audiencePreferenceFields')).toBeVisible();
 
   const locale = page.locator('#navLocale');
+  const localeButton = locale.locator('..').locator('.custom-select-button');
   await locale.focus();
   await locale.selectOption('ko');
-  await expect(locale).toBeFocused();
+  await expect(localeButton).toBeFocused();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(page.locator('#uiPreferenceStatus')).toHaveText('메뉴 언어: 한국어');
   await expect(page.locator('#audienceMode option')).toHaveText(['초보', '학생', '연구']);
+  await expect(page.locator('#colorTheme option')).toHaveText(['다크', '라이트']);
   await expect(page.locator('#audienceModeHint')).toHaveText('화면에 표시할 기능의 깊이를 조절합니다.');
   await expect(page.locator('#navLocaleHint')).toHaveText('메뉴와 핵심 조절기의 언어를 바꿉니다.');
+  await expect(page.locator('#colorThemeHint')).toHaveText('작업공간의 색상 테마를 바꿉니다. 기본값은 다크입니다.');
   await expect(page.locator('#panelToggle')).toHaveAttribute('aria-label', '측면 패널 숨기기');
   await expect(page.locator('#panelToggle')).toHaveAttribute('title', '측면 패널 숨기기 (\\)');
 
   const mode = page.locator('#audienceMode');
+  const modeButton = mode.locator('..').locator('.custom-select-button');
   await mode.focus();
   await mode.selectOption('student');
-  await expect(mode).toBeFocused();
+  await expect(modeButton).toBeFocused();
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
   await expect(page.locator('#uiPreferenceStatus')).toHaveText('사용자 모드: 학생');
-  const clipped = await mode.evaluate((element) => {
+  const clipped = await modeButton.evaluate((element) => {
     const rect = element.getBoundingClientRect();
     const host = element.closest('.audience-field')!.getBoundingClientRect();
-    return rect.left >= host.left && rect.right <= host.right && getComputedStyle(element).textOverflow === 'ellipsis';
+    const value = element.querySelector<HTMLElement>('.custom-select-value');
+    return (
+      rect.left >= host.left && rect.right <= host.right && value && getComputedStyle(value).textOverflow === 'ellipsis'
+    );
   });
   expect(clipped).toBe(true);
 
@@ -114,7 +121,7 @@ test('Korean preference copy, long options, focus, and polite announcements stay
   await page.keyboard.press('Escape');
   await expect(stableHelp).toBeHidden();
   await expect(stableHelp).toHaveAttribute('aria-hidden', 'true');
-  await expect(mode).toBeFocused();
+  await expect(modeButton).toBeFocused();
 
   await locale.selectOption('en');
   await expect(page.locator('#panelToggle')).toHaveAttribute('aria-label', 'Hide side panel');
@@ -131,13 +138,14 @@ test('outside-pointer dismissal never strands focus inside the hidden desktop pr
   const fields = page.locator('#audiencePreferenceFields');
   await toggle.click();
   await expect(fields).toBeVisible();
-  await expect(page.locator('#audienceMode')).toBeFocused();
+  const audienceButton = page.locator('#audienceMode').locator('..').locator('.custom-select-button');
+  await expect(audienceButton).toBeFocused();
   await page.locator('header h1').click();
   await expect(fields).toBeHidden();
   await expect(toggle).toBeFocused();
 
   await toggle.click();
-  await expect(page.locator('#audienceMode')).toBeFocused();
+  await expect(audienceButton).toBeFocused();
   const panelToggle = page.locator('#panelToggle');
   await panelToggle.click();
   await expect(fields).toBeHidden();
@@ -465,13 +473,15 @@ test('forced colors and reduced motion preserve visible state and remove decorat
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await openResearchShell(page);
   await page.locator('#audienceMode').focus();
-  const selectContract = await page.locator('#audienceMode').evaluate((element) => {
+  const visibleSelect = page.locator('#audienceMode').locator('..').locator('.custom-select-button');
+  await expect(visibleSelect).toBeFocused();
+  const selectContract = await visibleSelect.evaluate((element) => {
     const style = getComputedStyle(element);
-    return { border: style.borderStyle, outline: style.outlineStyle, appearance: style.appearance };
+    return { border: style.borderStyle, outline: style.outlineStyle, forcedColorAdjust: style.forcedColorAdjust };
   });
   expect(selectContract.border).toBe('solid');
-  expect(selectContract.outline).toBe('solid');
-  expect(selectContract.appearance).toBe('none');
+  expect(selectContract.outline).not.toBe('none');
+  expect(selectContract.forcedColorAdjust).toBe('auto');
 
   await page.keyboard.press('Control+K');
   const motionContract = await page.locator('.rgv8-cmd-panel').evaluate((element) => {

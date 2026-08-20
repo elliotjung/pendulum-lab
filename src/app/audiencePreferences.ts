@@ -1,3 +1,5 @@
+import { createAudienceIcon } from './audienceNavigation';
+
 interface AudienceOptionMeta {
   label: string;
   description: string;
@@ -18,17 +20,17 @@ export function installAudiencePreferenceControl(
   preferenceToggle.id = 'audiencePreferencesToggle';
   preferenceToggle.className = 'audience-preferences-toggle';
   preferenceToggle.type = 'button';
-  preferenceToggle.textContent = 'Aa';
+  preferenceToggle.append(createAudienceIcon('preferences'));
   preferenceToggle.setAttribute('aria-label', 'Open workspace preferences');
   preferenceToggle.setAttribute('aria-controls', 'audiencePreferenceFields');
   preferenceToggle.setAttribute('aria-expanded', 'false');
-  preferenceToggle.title = 'Mode and language';
+  preferenceToggle.title = 'Mode, language, and theme';
 
   const preferenceFields = document.createElement('div');
   preferenceFields.id = 'audiencePreferenceFields';
   preferenceFields.className = 'audience-preference-fields';
   preferenceFields.hidden = true;
-  preferenceFields.setAttribute('aria-label', 'Mode and language preferences');
+  preferenceFields.setAttribute('aria-label', 'Mode, language, and theme preferences');
 
   const field = document.createElement('div');
   field.className = 'audience-field audience-field-mode';

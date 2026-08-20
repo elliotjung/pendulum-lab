@@ -86,15 +86,28 @@ test('Trust Inspector stays inside a narrow viewport and remains scrollable', as
   expect(['auto', 'scroll']).toContain(geometry.overflowY);
 });
 
-test('system light preference changes the major page and rail surfaces', async ({ page }) => {
+test('dark is default and the explicit light preference changes major surfaces', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
   await waitForModernShell(page);
+  const initial = await page.evaluate(() => ({
+    theme: document.documentElement.dataset.colorTheme,
+    scheme: getComputedStyle(document.documentElement).colorScheme,
+    rail: getComputedStyle(document.querySelector('.rail')!).backgroundColor
+  }));
+  expect(initial.theme).toBe('dark');
+  expect(initial.scheme).toContain('dark');
+  expect(initial.rail).not.toBe('rgb(238, 241, 246)');
+
+  await page.locator('#audiencePreferencesToggle').click();
+  await page.locator('#colorTheme').selectOption('light');
   const colors = await page.evaluate(() => ({
+    theme: document.documentElement.dataset.colorTheme,
     scheme: getComputedStyle(document.documentElement).colorScheme,
     body: getComputedStyle(document.body).color,
     rail: getComputedStyle(document.querySelector('.rail')!).backgroundColor
   }));
+  expect(colors.theme).toBe('light');
   expect(colors.scheme).toContain('light');
   expect(colors.body).toBe('rgb(71, 80, 100)');
   expect(colors.rail).toBe('rgb(238, 241, 246)');

@@ -37,12 +37,13 @@ describe('UX and accessibility contracts', () => {
     expect(model.series.find((series) => series.id === 'yoshida4')?.maxRelDrift).toBeGreaterThan(0);
   });
 
-  it('loads the final light/print stylesheet and defines both structural media profiles', () => {
+  it('loads the explicit light/print stylesheet while keeping dark as the product default', () => {
     const root = resolve(import.meta.dirname, '..');
     const html = readFileSync(resolve(root, 'app.html'), 'utf8');
     const themes = readFileSync(resolve(root, 'css/09-accessibility-themes.css'), 'utf8');
     const daylight = readFileSync(resolve(root, 'css/10-porcelain-daylight.css'), 'utf8');
     expect(html).toContain('./css/09-accessibility-themes.css');
+    expect(html).toContain('data-color-theme="dark"');
     expect(themes).toContain('@media print');
     expect(themes).toContain('color-scheme: dark light');
     expect(themes).toContain('.trust-drawer');
@@ -50,7 +51,8 @@ describe('UX and accessibility contracts', () => {
     const daylightLink = html.indexOf('./css/10-porcelain-daylight.css');
     expect(instrumentLink).toBeGreaterThan(-1);
     expect(daylightLink).toBeGreaterThan(instrumentLink);
-    expect(daylight).toContain('@media (prefers-color-scheme: light)');
+    expect(daylight).toContain(":root[data-color-theme='light']");
+    expect(daylight).not.toContain('@media (prefers-color-scheme: light)');
     expect(daylight).toContain('--workbench-bg');
     expect(daylight).toContain('--bg-mesh');
     expect(daylight.match(/!important/g) ?? []).toHaveLength(0);

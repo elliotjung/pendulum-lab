@@ -6,15 +6,17 @@ const root = resolve(import.meta.dirname, '..');
 const read = (path: string): string => readFileSync(resolve(root, path), 'utf8');
 
 describe('2026-07 UI hardening source contracts', () => {
-  it('loads the hardening layer last, after every visual theme', () => {
+  it('loads hardening after themes and the interaction layer last', () => {
     const html = read('app.html');
     const instrument = html.indexOf('./css/03-instrument-workbench.css');
     const daylight = html.indexOf('./css/10-porcelain-daylight.css');
     const hardening = html.indexOf('./css/11-ui-hardening.css');
+    const interaction = html.indexOf('./css/12-interaction-polish.css');
     expect(instrument).toBeGreaterThan(html.indexOf('./css/02-research-governance-v7-style.css'));
     expect(daylight).toBeGreaterThan(instrument);
     expect(hardening).toBeGreaterThan(daylight);
-    expect(hardening).toBeLessThan(html.indexOf('./src/main.ts'));
+    expect(interaction).toBeGreaterThan(hardening);
+    expect(interaction).toBeLessThan(html.indexOf('./src/main.ts'));
   });
 
   it('keeps the retired decorative stack out of HTML, source, and the filesystem', () => {
@@ -109,9 +111,10 @@ describe('2026-07 UI hardening source contracts', () => {
     }
   });
 
-  it('models mode and locale as independently described preference fields with localized announcements', () => {
+  it('models mode, locale, and theme as independently described preference fields with localized announcements', () => {
     const audience = `${read('src/app/audienceMode.ts')}\n${read('src/app/audiencePreferences.ts')}`;
     const locale = read('src/app/uiLocale.ts');
+    const theme = read('src/app/themePreference.ts');
     expect(audience).toContain('audience-field audience-field-mode');
     expect(audience).toContain('audiencePreferencesToggle');
     expect(audience).toContain('audiencePreferenceFields');
@@ -121,6 +124,10 @@ describe('2026-07 UI hardening source contracts', () => {
     expect(locale).toContain("select.setAttribute('aria-describedby', 'navLocaleHint')");
     expect(locale).toContain('pendulum:ui-locale-changed');
     expect(locale).toContain('메뉴 언어: 한국어');
+    expect(theme).toContain('audience-field audience-field-theme');
+    expect(theme).toContain("select.setAttribute('aria-describedby', 'colorThemeHint')");
+    expect(theme).toContain("return value === 'light' ? 'light' : 'dark'");
+    expect(theme).toContain('화면 테마:');
   });
 
   it('makes the audience chooser safe at dynamic viewport sizes and in forced colors', () => {

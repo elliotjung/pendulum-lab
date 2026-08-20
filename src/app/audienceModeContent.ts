@@ -24,6 +24,7 @@ export type AudienceIconName =
   | 'manifest'
   | 'shield'
   | 'command'
+  | 'preferences'
   | 'report'
   | 'orbit';
 

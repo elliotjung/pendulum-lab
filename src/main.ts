@@ -37,6 +37,9 @@ import { APP_VERSION } from './runtime/version';
 import { captureReferralAttribution } from './runtime/referralAttribution';
 import { createRetryableLazy } from './runtime/retryableLazy';
 import { installPwaLifecycle, restorePwaUpdateRecovery } from './app/PwaLifecycle';
+import { installThemePreference } from './app/themePreference';
+import { installContextualHelp } from './app/contextualHelp';
+import { installCustomSelects } from './app/customSelect';
 
 function showToast(message: string, timeout = 2200): void {
   if (typeof window.toast === 'function') {
@@ -265,12 +268,15 @@ function bootShell(): void {
   initNavLocale(); // restore the guide language before the menus are decorated
   installAudienceMode();
   installLocaleSelect(() => applyAudienceMode(currentAudienceMode(), false));
+  installThemePreference();
   applyStructuralLocale();
   installExperimentShare();
   installShortcutHelp();
   installEducationCards();
   installOnboardingTour();
   installUiPolish();
+  installCustomSelects();
+  installContextualHelp();
 }
 
 async function boot(): Promise<void> {

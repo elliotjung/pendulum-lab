@@ -191,6 +191,14 @@ export function createAudienceIcon(name: IconName): SVGSVGElement {
       add('circle', { cx: '5', cy: '12', r: '1' });
       add('circle', { cx: '5', cy: '16', r: '1' });
       break;
+    case 'preferences':
+      line(4, 7, 20, 7);
+      line(4, 12, 20, 12);
+      line(4, 17, 20, 17);
+      add('circle', { cx: '9', cy: '7', r: '2' });
+      add('circle', { cx: '15', cy: '12', r: '2' });
+      add('circle', { cx: '11', cy: '17', r: '2' });
+      break;
     case 'orbit':
       add('circle', { cx: '12', cy: '12', r: '2' });
       add('path', { d: 'M4 12c3-7 13-7 16 0-3 7-13 7-16 0zM12 4c7 3 7 13 0 16-7-3-7-13 0-16z' });
@@ -283,4 +291,5 @@ export function decorateAudienceNavigation(): void {
     }
     describeMenuEntry(button, action ? actionGuideText(action) : undefined);
   });
+  setIcon(document.querySelector('#trustDrawerToggle span'), 'shield');
 }

@@ -511,15 +511,13 @@ body .audience-select select:hover {
   }
 }
 
-@media (prefers-color-scheme: light) {
-  body .audience-select select {
-    color-scheme: light;
-  }
+:root[data-color-theme='light'] body .audience-select select {
+  color-scheme: light;
+}
 
-  select option {
-    background: #fff;
-    color: #182e44;
-  }
+:root[data-color-theme='light'] select option {
+  background: #fff;
+  color: #182e44;
 }
 
 @media (prefers-contrast: more) {
@@ -544,8 +542,8 @@ body .audience-select select:hover {
   }
 }
 
-@media (prefers-contrast: more) and (prefers-color-scheme: light) {
-  :root {
+@media (prefers-contrast: more) {
+  :root[data-color-theme='light'] {
     --muted: #3e4658;
     --subtle: #2f3646;
     --border: rgba(23, 26, 36, 0.32);

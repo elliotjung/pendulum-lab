@@ -1,276 +1,288 @@
-/* Optional system-light palette. Component geometry stays in the shared
-   instrument layer; this file changes tokens and the few literal plot/modal
-   surfaces that need an explicit light counterpart. */
+/* Explicit light palette. Component geometry stays in the shared instrument
+   layer; this file changes tokens and the few literal plot/modal surfaces that
+   need a light counterpart. Dark remains the product default. */
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --workbench-bg: #f4f6fa;
-    --workbench-raised: #eef1f6;
-    --workbench-panel: #ffffff;
-    --workbench-elevated: #f8f9fc;
-    --workbench-control: #e9edf4;
-    --workbench-hover: #e2e7f0;
-    --workbench-selected: #e4e2f6;
-    --workbench-text: #171a24;
-    --workbench-text-secondary: #475064;
-    --workbench-text-muted: #6d768a;
-    --workbench-border: rgba(34, 43, 67, 0.1);
-    --workbench-border-strong: rgba(34, 43, 67, 0.18);
-    --workbench-border-selected: rgba(98, 84, 202, 0.52);
-    --workbench-primary: #6254ca;
-    --workbench-live: #167b8e;
-    --workbench-green: #247c5b;
-    --workbench-amber: #96651c;
-    --workbench-red: #bd3f52;
-    --workbench-info: #3c67a8;
+:root[data-color-theme='light'] {
+  color-scheme: light;
+  --workbench-bg: #f4f6fa;
+  --workbench-raised: #eef1f6;
+  --workbench-panel: #ffffff;
+  --workbench-elevated: #f8f9fc;
+  --workbench-control: #e9edf4;
+  --workbench-hover: #e2e7f0;
+  --workbench-selected: #e4e2f6;
+  --workbench-text: #171a24;
+  --workbench-text-secondary: #475064;
+  --workbench-text-muted: #6d768a;
+  --workbench-border: rgba(34, 43, 67, 0.1);
+  --workbench-border-strong: rgba(34, 43, 67, 0.18);
+  --workbench-border-selected: rgba(98, 84, 202, 0.52);
+  --workbench-primary: #6254ca;
+  --workbench-live: #167b8e;
+  --workbench-green: #247c5b;
+  --workbench-amber: #96651c;
+  --workbench-red: #bd3f52;
+  --workbench-info: #3c67a8;
 
-    --bg: var(--workbench-bg);
-    --bg-mesh: var(--workbench-bg);
-    --raised: var(--workbench-raised);
-    --panel: var(--workbench-panel);
-    --panel2: var(--workbench-elevated);
-    --panel-solid: var(--workbench-panel);
-    --panel-elevated: var(--workbench-elevated);
-    --control: var(--workbench-control);
-    --control-hover: var(--workbench-hover);
-    --selected: var(--workbench-selected);
-    --glass-stroke: var(--workbench-border);
-    --glass-stroke-strong: var(--workbench-border-strong);
-    --border: var(--workbench-border);
-    --border-strong: var(--workbench-border-strong);
-    --border-selected: var(--workbench-border-selected);
-    --divider: var(--workbench-border);
-    --muted: var(--workbench-text-muted);
-    --subtle: #5c667a;
-    --text: var(--workbench-text-secondary);
-    --fg: #303748;
-    --fg-bright: var(--workbench-text);
-    --primary: var(--workbench-primary);
-    --live: var(--workbench-live);
-    --cyan: var(--workbench-live);
-    --cyan-mid: #256f80;
-    --cyan-deep: #215d6b;
-    --purple: var(--workbench-primary);
-    --green: var(--workbench-green);
-    --orange: var(--workbench-amber);
-    --yellow: var(--workbench-amber);
-    --red: var(--workbench-red);
-    --info: var(--workbench-info);
-    --focus: #5144ba;
-    --lux-ice: var(--workbench-primary);
-    --shadow-xs: 0 1px 2px rgba(32, 40, 60, 0.08);
-    --shadow-sm: 0 4px 12px rgba(32, 40, 60, 0.08);
-    --shadow-md: 0 12px 30px rgba(32, 40, 60, 0.1);
-    --shadow-lg: 0 24px 56px rgba(32, 40, 60, 0.14);
-  }
+  --bg: var(--workbench-bg);
+  --bg-mesh: var(--workbench-bg);
+  --raised: var(--workbench-raised);
+  --panel: var(--workbench-panel);
+  --panel2: var(--workbench-elevated);
+  --panel-solid: var(--workbench-panel);
+  --panel-elevated: var(--workbench-elevated);
+  --control: var(--workbench-control);
+  --control-hover: var(--workbench-hover);
+  --selected: var(--workbench-selected);
+  --glass-stroke: var(--workbench-border);
+  --glass-stroke-strong: var(--workbench-border-strong);
+  --border: var(--workbench-border);
+  --border-strong: var(--workbench-border-strong);
+  --border-selected: var(--workbench-border-selected);
+  --divider: var(--workbench-border);
+  --muted: var(--workbench-text-muted);
+  --subtle: #5c667a;
+  --text: var(--workbench-text-secondary);
+  --fg: #303748;
+  --fg-bright: var(--workbench-text);
+  --primary: var(--workbench-primary);
+  --live: var(--workbench-live);
+  --cyan: var(--workbench-live);
+  --cyan-mid: #256f80;
+  --cyan-deep: #215d6b;
+  --purple: var(--workbench-primary);
+  --green: var(--workbench-green);
+  --orange: var(--workbench-amber);
+  --yellow: var(--workbench-amber);
+  --red: var(--workbench-red);
+  --info: var(--workbench-info);
+  --focus: #5144ba;
+  --lux-ice: var(--workbench-primary);
+  --shadow-xs: 0 1px 2px rgba(32, 40, 60, 0.08);
+  --shadow-sm: 0 4px 12px rgba(32, 40, 60, 0.08);
+  --shadow-md: 0 12px 30px rgba(32, 40, 60, 0.1);
+  --shadow-lg: 0 24px 56px rgba(32, 40, 60, 0.14);
+}
 
-  html,
-  body,
-  .app-shell,
-  .main-col {
-    background: var(--workbench-bg);
-    color: var(--workbench-text-secondary);
-  }
+:root[data-color-theme='light'] body,
+:root[data-color-theme='light'] .app-shell,
+:root[data-color-theme='light'] .main-col {
+  background: var(--workbench-bg);
+  color: var(--workbench-text-secondary);
+}
 
-  .rail,
-  .rail-submenu,
-  .trust-drawer,
-  .trust-drawer-head,
-  .trust-drawer-tabs,
-  .trust-drawer-body,
-  .ctrl-sticky {
-    background: var(--workbench-raised);
-  }
+:root[data-color-theme='light'] .rail,
+:root[data-color-theme='light'] .rail-submenu,
+:root[data-color-theme='light'] .trust-drawer,
+:root[data-color-theme='light'] .trust-drawer-head,
+:root[data-color-theme='light'] .trust-drawer-tabs,
+:root[data-color-theme='light'] .trust-drawer-body,
+:root[data-color-theme='light'] .ctrl-sticky {
+  background: var(--workbench-raised);
+}
 
-  header,
-  .diag-row > span,
-  .presets,
-  .workflow-strip,
-  .controls,
-  .main-wrap,
-  .plot-cell,
-  .scrub-row,
-  :where(.si-panel, .plx-card, .plx-panel, .v10-card, .rgv7-card, .rgv8-card, .rg-card, .ri-panel,
-      .research-card, .fig-panel, .education-card, .exp-shell, .matrix-shell, .golden-card,
-      .energy-benchmark-view) {
-    border-color: var(--workbench-border);
-    background: var(--workbench-panel);
-    color: var(--workbench-text-secondary);
-    box-shadow: none;
-  }
+:root[data-color-theme='light'] header,
+:root[data-color-theme='light'] .diag-row > span,
+:root[data-color-theme='light'] .presets,
+:root[data-color-theme='light'] .workflow-strip,
+:root[data-color-theme='light'] .controls,
+:root[data-color-theme='light'] .main-wrap,
+:root[data-color-theme='light'] .plot-cell,
+:root[data-color-theme='light'] .scrub-row,
+:root[data-color-theme='light']
+  :where(
+    .si-panel,
+    .plx-card,
+    .plx-panel,
+    .v10-card,
+    .rgv7-card,
+    .rgv8-card,
+    .rg-card,
+    .ri-panel,
+    .research-card,
+    .fig-panel,
+    .education-card,
+    .exp-shell,
+    .matrix-shell,
+    .golden-card,
+    .energy-benchmark-view
+  ) {
+  border-color: var(--workbench-border);
+  background: var(--workbench-panel);
+  color: var(--workbench-text-secondary);
+  box-shadow: none;
+}
 
-  h1,
-  h2,
-  h3,
-  .diag-val,
-  .trust-drawer-title,
-  .rgv8-cmd-title span,
-  .audience-chooser-title,
-  .shortcut-help-title,
-  .tour-title {
-    color: var(--workbench-text);
-  }
+:root[data-color-theme='light'] h1,
+:root[data-color-theme='light'] h2,
+:root[data-color-theme='light'] h3,
+:root[data-color-theme='light'] .diag-val,
+:root[data-color-theme='light'] .trust-drawer-title,
+:root[data-color-theme='light'] .rgv8-cmd-title span,
+:root[data-color-theme='light'] .audience-chooser-title,
+:root[data-color-theme='light'] .shortcut-help-title,
+:root[data-color-theme='light'] .tour-title {
+  color: var(--workbench-text);
+}
 
-  h1::before,
-  .diag-row > span::before {
-    background: var(--workbench-live);
-  }
+:root[data-color-theme='light'] h1::before,
+:root[data-color-theme='light'] .diag-row > span::before {
+  background: var(--workbench-live);
+}
 
-  .badge,
-  #qualBadge,
-  #fpsBadge,
-  .rail-kbd,
-  .val,
-  .acc-count,
-  .chip,
-  .fig-badge,
-  .plx-badge,
-  .v10-badge,
-  .rgv7-badge,
-  .rgv8-badge {
-    background: var(--workbench-raised);
-  }
+:root[data-color-theme='light'] .badge,
+:root[data-color-theme='light'] #qualBadge,
+:root[data-color-theme='light'] #fpsBadge,
+:root[data-color-theme='light'] .rail-kbd,
+:root[data-color-theme='light'] .val,
+:root[data-color-theme='light'] .acc-count,
+:root[data-color-theme='light'] .chip,
+:root[data-color-theme='light'] .fig-badge,
+:root[data-color-theme='light'] .plx-badge,
+:root[data-color-theme='light'] .v10-badge,
+:root[data-color-theme='light'] .rgv7-badge,
+:root[data-color-theme='light'] .rgv8-badge {
+  background: var(--workbench-raised);
+}
 
-  button,
-  input,
-  select,
-  textarea,
-  .pbtn,
-  .dev-tool-btn,
-  .panel-toggle,
-  .trust-toggle,
-  .trust-launcher {
-    border-color: var(--workbench-border-strong);
-    background-color: var(--workbench-control);
-    color: var(--workbench-text-secondary);
-  }
+:root[data-color-theme='light'] button,
+:root[data-color-theme='light'] input,
+:root[data-color-theme='light'] select,
+:root[data-color-theme='light'] textarea,
+:root[data-color-theme='light'] .pbtn,
+:root[data-color-theme='light'] .dev-tool-btn,
+:root[data-color-theme='light'] .panel-toggle,
+:root[data-color-theme='light'] .trust-toggle,
+:root[data-color-theme='light'] .trust-launcher {
+  border-color: var(--workbench-border-strong);
+  background-color: var(--workbench-control);
+  color: var(--workbench-text-secondary);
+}
 
-  button:hover,
-  input:hover,
-  select:hover,
-  textarea:hover,
-  .pbtn:hover,
-  .dev-tool-btn:hover {
-    background-color: var(--workbench-hover);
-    color: var(--workbench-text);
-  }
+:root[data-color-theme='light'] button:hover,
+:root[data-color-theme='light'] input:hover,
+:root[data-color-theme='light'] select:hover,
+:root[data-color-theme='light'] textarea:hover,
+:root[data-color-theme='light'] .pbtn:hover,
+:root[data-color-theme='light'] .dev-tool-btn:hover {
+  background-color: var(--workbench-hover);
+  color: var(--workbench-text);
+}
 
-  button.primary {
-    border-color: var(--workbench-primary);
-    background: var(--workbench-primary);
-    color: #ffffff;
-  }
+:root[data-color-theme='light'] button.primary {
+  border-color: var(--workbench-primary);
+  background: var(--workbench-primary);
+  color: #ffffff;
+}
 
-  button.primary:hover {
-    background: #5548bc;
-    color: #ffffff;
-  }
+:root[data-color-theme='light'] button.primary:hover {
+  background: #5548bc;
+  color: #ffffff;
+}
 
-  .rail-menu-button[aria-expanded='true'],
-  .rail-submenu .tab[aria-selected='true'],
-  .workflow-strip button[aria-current='step'],
-  .workflow-strip button[aria-pressed='true'],
-  .trust-drawer-tabs [role='tab'][aria-selected='true'],
-  .rgv8-cmd-row.is-active,
-  .audience-choice[aria-pressed='true'] {
-    border-color: var(--workbench-border-selected);
-    background: var(--workbench-selected);
-    color: var(--workbench-text);
-  }
+:root[data-color-theme='light'] .rail-menu-button[aria-expanded='true'],
+:root[data-color-theme='light'] .rail-submenu .tab[aria-selected='true'],
+:root[data-color-theme='light'] .workflow-strip button[aria-current='step'],
+:root[data-color-theme='light'] .workflow-strip button[aria-pressed='true'],
+:root[data-color-theme='light'] .trust-drawer-tabs [role='tab'][aria-selected='true'],
+:root[data-color-theme='light'] .rgv8-cmd-row.is-active,
+:root[data-color-theme='light'] .audience-choice[aria-pressed='true'] {
+  border-color: var(--workbench-border-selected);
+  background: var(--workbench-selected);
+  color: var(--workbench-text);
+}
 
-  .acc > summary,
-  .acc-body {
-    background: var(--workbench-panel);
-    color: var(--workbench-text-secondary);
-  }
+:root[data-color-theme='light'] .acc > summary,
+:root[data-color-theme='light'] .acc-body {
+  background: var(--workbench-panel);
+  color: var(--workbench-text-secondary);
+}
 
-  .acc > summary:hover,
-  .acc[open] > summary {
-    background: var(--workbench-raised);
-    color: var(--workbench-text);
-  }
+:root[data-color-theme='light'] .acc > summary:hover,
+:root[data-color-theme='light'] .acc[open] > summary {
+  background: var(--workbench-raised);
+  color: var(--workbench-text);
+}
 
-  canvas,
-  .main-wrap canvas,
-  .plot-cell canvas,
-  #energyBenchmarkCanvas {
-    border-color: var(--workbench-border-strong);
-    background: #f7f8fb;
-  }
+:root[data-color-theme='light'] canvas,
+:root[data-color-theme='light'] .main-wrap canvas,
+:root[data-color-theme='light'] .plot-cell canvas,
+:root[data-color-theme='light'] #energyBenchmarkCanvas {
+  border-color: var(--workbench-border-strong);
+  background: #f7f8fb;
+}
 
-  .canvas-label {
-    border-color: var(--workbench-border);
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--workbench-text-muted);
-  }
+:root[data-color-theme='light'] .canvas-label {
+  border-color: var(--workbench-border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--workbench-text-muted);
+}
 
-  .row input[type='range'] {
-    background: linear-gradient(
-      to right,
-      var(--workbench-primary) 0 var(--sp, 0%),
-      var(--workbench-control) var(--sp, 0%) 100%
-    );
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% 4px;
-  }
+:root[data-color-theme='light'] .row input[type='range'] {
+  background: linear-gradient(
+    to right,
+    var(--workbench-primary) 0 var(--sp, 0%),
+    var(--workbench-control) var(--sp, 0%) 100%
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 4px;
+}
 
-  .row input[type='range']::-webkit-slider-thumb,
-  .row input[type='range']::-moz-range-thumb {
-    border-color: var(--workbench-panel);
-    background: #ffffff;
-  }
+:root[data-color-theme='light'] .row input[type='range']::-webkit-slider-thumb,
+:root[data-color-theme='light'] .row input[type='range']::-moz-range-thumb {
+  border-color: var(--workbench-panel);
+  background: #ffffff;
+}
 
-  #rgv8Cmd,
-  .rgv8-overlay,
-  .si-help-backdrop,
-  .trust-inspector-backdrop,
-  .audience-chooser,
-  .shortcut-help-backdrop,
-  .tour-overlay {
-    background: rgba(31, 37, 52, 0.38);
-  }
+:root[data-color-theme='light'] #rgv8Cmd,
+:root[data-color-theme='light'] .rgv8-overlay,
+:root[data-color-theme='light'] .si-help-backdrop,
+:root[data-color-theme='light'] .trust-inspector-backdrop,
+:root[data-color-theme='light'] .audience-chooser,
+:root[data-color-theme='light'] .shortcut-help-backdrop,
+:root[data-color-theme='light'] .tour-overlay {
+  background: rgba(31, 37, 52, 0.38);
+}
 
-  .rgv8-cmd-panel,
-  .rgv8-modal,
-  .si-help,
-  .trust-inspector-panel,
-  .shortcut-help,
-  .tour-card,
-  .audience-chooser-card {
-    border-color: var(--workbench-border-strong);
-    background: var(--workbench-elevated);
-    color: var(--workbench-text-secondary);
-    box-shadow: var(--shadow-lg);
-  }
+:root[data-color-theme='light'] .rgv8-cmd-panel,
+:root[data-color-theme='light'] .rgv8-modal,
+:root[data-color-theme='light'] .si-help,
+:root[data-color-theme='light'] .trust-inspector-panel,
+:root[data-color-theme='light'] .shortcut-help,
+:root[data-color-theme='light'] .tour-card,
+:root[data-color-theme='light'] .audience-chooser-card {
+  border-color: var(--workbench-border-strong);
+  background: var(--workbench-elevated);
+  color: var(--workbench-text-secondary);
+  box-shadow: var(--shadow-lg);
+}
 
-  #rgv8Cmd input,
-  .rgv8-cmd-row,
-  .audience-choice,
-  .trust-inspector-param {
-    border-color: var(--workbench-border);
-    background: var(--workbench-panel);
-    color: var(--workbench-text-secondary);
-  }
+:root[data-color-theme='light'] #rgv8Cmd input,
+:root[data-color-theme='light'] .rgv8-cmd-row,
+:root[data-color-theme='light'] .audience-choice,
+:root[data-color-theme='light'] .trust-inspector-param {
+  border-color: var(--workbench-border);
+  background: var(--workbench-panel);
+  color: var(--workbench-text-secondary);
+}
 
-  #toast,
-  .pwa-update-banner {
-    border-color: var(--workbench-border-strong);
-    background: var(--workbench-elevated);
-    color: var(--workbench-text);
-    box-shadow: var(--shadow-md);
-  }
+:root[data-color-theme='light'] #toast,
+:root[data-color-theme='light'] .pwa-update-banner {
+  border-color: var(--workbench-border-strong);
+  background: var(--workbench-elevated);
+  color: var(--workbench-text);
+  box-shadow: var(--shadow-md);
+}
 
-  #nanOverlay,
-  .rgv7-fault {
-    border-color: color-mix(in srgb, var(--workbench-red) 48%, transparent);
-    background: #fff4f5;
-    color: var(--workbench-red);
-  }
+:root[data-color-theme='light'] #nanOverlay,
+:root[data-color-theme='light'] .rgv7-fault {
+  border-color: color-mix(in srgb, var(--workbench-red) 48%, transparent);
+  background: #fff4f5;
+  color: var(--workbench-red);
+}
 
-  select option {
-    background: #ffffff;
-    color: var(--workbench-text);
-  }
+:root[data-color-theme='light'] select option {
+  background: #ffffff;
+  color: var(--workbench-text);
 }

@@ -22,6 +22,33 @@ test('desktop rail uses five top-level menus with click-open detail panels', asy
   await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
   await expect(page.locator('#rail-panel-chaos .tab[data-tab="ftle"] .tab-label')).toHaveText('FTLE');
 
+  for (const sectionName of ['chaos', 'check', 'govern']) {
+    const section = page.locator(`.rail-section[data-rail-section="${sectionName}"]`);
+    const button = section.locator('.rail-menu-button');
+    if (!(await section.evaluate((element) => element.classList.contains('open')))) await button.click();
+    await expect(section).toHaveClass(/open/);
+    const geometry = await section.evaluate((element) => {
+      const trigger = element.querySelector<HTMLElement>('.rail-menu-button')?.getBoundingClientRect();
+      const panel = element.querySelector<HTMLElement>('.rail-submenu')?.getBoundingClientRect();
+      return trigger && panel
+        ? {
+            gap: panel.left - trigger.right,
+            triggerCenter: trigger.top + trigger.height / 2,
+            panelTop: panel.top,
+            panelBottom: panel.bottom
+          }
+        : null;
+    });
+    expect(geometry).toBeTruthy();
+    expect(geometry!.gap).toBeGreaterThanOrEqual(0);
+    expect(geometry!.gap).toBeLessThanOrEqual(18);
+    expect(geometry!.triggerCenter).toBeGreaterThanOrEqual(geometry!.panelTop + 8);
+    expect(geometry!.triggerCenter).toBeLessThanOrEqual(geometry!.panelBottom - 8);
+  }
+
+  await page.locator('.rail-menu-button[data-rail-section-button="chaos"]').click();
+  await expect(page.locator('.rail-section.open[data-rail-section="chaos"]')).toBeVisible();
+
   const chaosPanelBox = await page.locator('#rail-panel-chaos').boundingBox();
   expect(chaosPanelBox).toBeTruthy();
   await page.mouse.move(chaosPanelBox!.x + 20, chaosPanelBox!.y + 20);

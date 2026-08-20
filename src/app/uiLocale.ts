@@ -215,7 +215,10 @@ export function applyStructuralLocale(): void {
   preferenceGroup?.setAttribute('aria-label', korean ? '작업공간 환경설정' : 'Workspace preferences');
   const preferenceToggle = document.getElementById('audiencePreferencesToggle');
   preferenceToggle?.setAttribute('aria-label', korean ? '작업공간 환경설정 열기' : 'Open workspace preferences');
-  preferenceToggle?.setAttribute('title', korean ? '모드와 언어' : 'Mode and language');
+  preferenceToggle?.setAttribute('title', korean ? '모드, 언어, 화면 테마' : 'Mode, language, and theme');
+  document
+    .getElementById('audiencePreferenceFields')
+    ?.setAttribute('aria-label', korean ? '모드, 언어, 화면 테마 환경설정' : 'Mode, language, and theme preferences');
   const localeSelect = document.getElementById(SELECT_ID);
   localeSelect?.setAttribute('aria-label', korean ? '메뉴 안내 언어' : 'Menu guide language');
   localeSelect?.setAttribute(

@@ -6,6 +6,8 @@
  * No decorative DOM is created here.
  */
 
+import { createAudienceIcon } from './audienceNavigation';
+
 function syncRange(input: HTMLInputElement): void {
   const min = Number.parseFloat(input.min || '0');
   const max = Number.parseFloat(input.max || '100');
@@ -19,6 +21,70 @@ function syncRange(input: HTMLInputElement): void {
 
 function syncAllRanges(): void {
   document.querySelectorAll<HTMLInputElement>('input[type=range]').forEach(syncRange);
+}
+
+const CONTROL_ICON_BY_LABEL: ReadonlyArray<readonly [RegExp, Parameters<typeof createAudienceIcon>[0]]> = [
+  [/system|initial|시스템|초기/i, 'lab'],
+  [/3d/i, 'cube'],
+  [/density|밀도/i, 'density'],
+  [/bifurcation|분기/i, 'branch'],
+  [/basin|흡인역/i, 'basin'],
+  [/recurrence|rqa|embedding|재귀|임베딩/i, 'recurrence'],
+  [/spectrum|fft|스펙트럼/i, 'spectrum'],
+  [/sweep|grid|스윕|격자/i, 'grid'],
+  [/orbit|floquet|neimark|궤도/i, 'orbit'],
+  [/test|valid|diagnostic|health|검증|진단/i, 'validate'],
+  [/inverse|vector|역문제|벡터/i, 'vectors'],
+  [/field|audio|sound|장|소리/i, 'field'],
+  [/ensemble|compare|앙상블|비교/i, 'compare'],
+  [/export|record|내보내기|기록/i, 'export'],
+  [/physical|parameter|물리|매개/i, 'orbit'],
+  [/visual|plot|시각/i, 'spectrum'],
+  [/keyboard|shortcut|키보드|단축키/i, 'command'],
+  [/about|정보/i, 'report'],
+  [/numerical|method|computation|result|수치|방법|결과/i, 'chart']
+];
+
+const CONTROL_ICON_BY_GLYPH: Readonly<Record<string, Parameters<typeof createAudienceIcon>[0]>> = {
+  '⚛': 'lab',
+  '⚖': 'orbit',
+  '🎨': 'spectrum',
+  '∫': 'chart',
+  '👥': 'compare',
+  '♪': 'field',
+  '⬇': 'export',
+  '📊': 'chart',
+  '⌨': 'command',
+  λ: 'spectrum',
+  '▦': 'grid',
+  '∿': 'branch',
+  '⤳': 'orbit',
+  '◯': 'orbit',
+  '◉': 'cube',
+  '▓': 'density',
+  '✓': 'validate',
+  '◐': 'validate',
+  '⇌': 'compare',
+  '❋': 'basin',
+  '▨': 'recurrence',
+  '⩜': 'field',
+  '⊶': 'vectors',
+  '∑': 'chart',
+  G: 'shield',
+  '⚙': 'preferences'
+};
+
+function syncControlIcons(root: ParentNode = document): void {
+  root.querySelectorAll<HTMLElement>('.acc-icon').forEach((icon) => {
+    if (icon.dataset.polishedIcon === 'true') return;
+    const label = icon.closest('summary')?.querySelector<HTMLElement>('.acc-label')?.textContent ?? '';
+    const match = CONTROL_ICON_BY_LABEL.find(([pattern]) => pattern.test(label));
+    const glyph = icon.textContent?.trim() ?? '';
+    const iconName = match?.[1] ?? CONTROL_ICON_BY_GLYPH[glyph] ?? 'chart';
+    icon.replaceChildren(createAudienceIcon(iconName));
+    icon.dataset.polishedIcon = 'true';
+    icon.setAttribute('aria-hidden', 'true');
+  });
 }
 
 let resyncQueued = false;
@@ -48,6 +114,7 @@ export function installUiPolish(): void {
   if (installed) return;
   installed = true;
   syncAllRanges();
+  syncControlIcons();
   syncVisualViewport();
 
   window.addEventListener('resize', syncVisualViewport, { passive: true });
@@ -101,4 +168,10 @@ export function installUiPolish(): void {
     },
     true
   );
+
+  new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) if (node instanceof HTMLElement) syncControlIcons(node);
+    }
+  }).observe(document.body, { childList: true, subtree: true });
 }
