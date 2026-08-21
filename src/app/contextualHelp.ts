@@ -95,6 +95,7 @@ const HELP_BY_ID: Readonly<Record<string, HelpCopy>> = {
 
 let activeAnchor: HTMLElement | null = null;
 let keyboardNavigation = false;
+let pendingPositionFrame: number | null = null;
 
 function tooltip(): HTMLElement {
   let element = document.getElementById(TOOLTIP_ID);
@@ -136,6 +137,43 @@ function position(anchor: HTMLElement, popup: HTMLElement): void {
   popup.style.top = `${top.toFixed(1)}px`;
 }
 
+function anchorIsInViewport(anchor: HTMLElement): boolean {
+  const rect = anchor.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const left = viewport?.offsetLeft ?? 0;
+  const top = viewport?.offsetTop ?? 0;
+  const right = left + (viewport?.width ?? window.innerWidth);
+  const bottom = top + (viewport?.height ?? window.innerHeight);
+  return rect.right > left && rect.left < right && rect.bottom > top && rect.top < bottom;
+}
+
+function queuePosition(anchor: HTMLElement): void {
+  if (pendingPositionFrame !== null) cancelAnimationFrame(pendingPositionFrame);
+  pendingPositionFrame = requestAnimationFrame(() => {
+    pendingPositionFrame = null;
+    const popup = document.getElementById(TOOLTIP_ID);
+    if (activeAnchor === anchor && popup && !popup.hidden) position(anchor, popup);
+  });
+}
+
+function refreshForViewportChange(): void {
+  const anchor = activeAnchor;
+  const popup = document.getElementById(TOOLTIP_ID);
+  if (!anchor || !popup || popup.hidden) return;
+  // Browser-driven scroll (including an automatic scroll-to-hover) can arrive
+  // immediately after pointerover. Keep a still-hovered/focused anchor alive
+  // and re-anchor its fixed popup instead of dismissing it mid-interaction.
+  if (
+    !anchor.isConnected ||
+    !anchorIsInViewport(anchor) ||
+    (document.activeElement !== anchor && !anchor.matches(':hover'))
+  ) {
+    hide(anchor);
+    return;
+  }
+  queuePosition(anchor);
+}
+
 function show(anchor: HTMLElement): void {
   if (anchor.matches('.custom-select-button[aria-expanded="true"]')) {
     hide();
@@ -151,13 +189,15 @@ function show(anchor: HTMLElement): void {
   const descriptionIds = new Set((anchor.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
   descriptionIds.add(TOOLTIP_ID);
   anchor.setAttribute('aria-describedby', Array.from(descriptionIds).join(' '));
-  requestAnimationFrame(() => {
-    if (activeAnchor === anchor && !popup.hidden) position(anchor, popup);
-  });
+  queuePosition(anchor);
 }
 
 function hide(anchor?: HTMLElement): void {
   if (anchor && activeAnchor !== anchor) return;
+  if (pendingPositionFrame !== null) {
+    cancelAnimationFrame(pendingPositionFrame);
+    pendingPositionFrame = null;
+  }
   const popup = document.getElementById(TOOLTIP_ID);
   if (activeAnchor) {
     const descriptionIds = (activeAnchor.getAttribute('aria-describedby') ?? '')
@@ -227,7 +267,12 @@ export function installContextualHelp(): void {
   document.addEventListener('pointerout', (event) => {
     const anchor = anchorFrom(event.target);
     if (!anchor || (event.relatedTarget instanceof Node && anchor.contains(event.relatedTarget))) return;
-    hide(anchor);
+    // Canvas rendering and automatic scroll can transiently retarget the
+    // pointer. Recheck on the next frame so a still-hovered anchor does not
+    // flicker its contextual help away.
+    requestAnimationFrame(() => {
+      if (activeAnchor === anchor && !anchor.matches(':hover')) hide(anchor);
+    });
   });
   document.addEventListener('focusin', (event) => {
     const anchor = anchorFrom(event.target);
@@ -249,10 +294,10 @@ export function installContextualHelp(): void {
     if (anchor?.matches('.custom-select-button')) hide();
     if (event.key === 'Escape' && activeAnchor) hide();
   });
-  window.addEventListener('scroll', () => hide(), { capture: true, passive: true });
-  window.addEventListener('resize', () => hide(), { passive: true });
-  window.visualViewport?.addEventListener('scroll', () => hide(), { passive: true });
-  window.visualViewport?.addEventListener('resize', () => hide(), { passive: true });
+  window.addEventListener('scroll', refreshForViewportChange, { capture: true, passive: true });
+  window.addEventListener('resize', refreshForViewportChange, { passive: true });
+  window.visualViewport?.addEventListener('scroll', refreshForViewportChange, { passive: true });
+  window.visualViewport?.addEventListener('resize', refreshForViewportChange, { passive: true });
   new MutationObserver((records) => {
     for (const record of records) for (const node of record.addedNodes) if (node instanceof HTMLElement) enhance(node);
   }).observe(document.body, { childList: true, subtree: true });

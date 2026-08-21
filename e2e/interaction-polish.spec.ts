@@ -93,6 +93,10 @@ test('graphs expose collision-aware contextual help and surfaces use calm entran
   const tooltip = page.locator('#contextTooltip');
   await expect(tooltip).toBeVisible();
   await expect(tooltip).toContainText('Relative energy drift');
+  // Playwright and browsers may finish an automatic scroll immediately after
+  // pointerover. The still-hovered chart should retain and re-anchor its help.
+  await page.evaluate(() => window.dispatchEvent(new Event('scroll')));
+  await expect(tooltip).toBeVisible();
   const tooltipBox = await tooltip.boundingBox();
   const viewport = page.viewportSize();
   expect(tooltipBox).toBeTruthy();
