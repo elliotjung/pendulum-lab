@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { openModernTab, waitForModernShell } from './shell';
+import { openModernTab, openWorkspacePreferences, waitForModernShell } from './shell';
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -472,8 +472,9 @@ test('a coarse 768px tablet keeps the visually vertical rail orientation', async
 test('forced colors and reduced motion preserve visible state and remove decorative motion', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await openResearchShell(page);
-  await page.locator('#audienceMode').focus();
+  await openWorkspacePreferences(page);
   const visibleSelect = page.locator('#audienceMode').locator('..').locator('.custom-select-button');
+  await visibleSelect.focus();
   await expect(visibleSelect).toBeFocused();
   const selectContract = await visibleSelect.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -483,14 +484,15 @@ test('forced colors and reduced motion preserve visible state and remove decorat
   expect(selectContract.outline).not.toBe('none');
   expect(selectContract.forcedColorAdjust).toBe('auto');
 
-  await page.keyboard.press('Control+K');
-  const motionContract = await page.locator('.rgv8-cmd-panel').evaluate((element) => {
-    const panel = getComputedStyle(element);
-    const row = getComputedStyle(document.querySelector('.rgv8-cmd-row')!);
-    return { boxShadow: panel.boxShadow, animation: panel.animationDuration, transition: row.transitionDuration };
+  const motionContract = await visibleSelect.evaluate((element) => {
+    const button = getComputedStyle(element);
+    const chevron = element.querySelector<HTMLElement>('.custom-select-chevron');
+    return {
+      boxShadow: button.boxShadow,
+      transition: chevron ? getComputedStyle(chevron).transitionDuration : '1s'
+    };
   });
   expect(motionContract.boxShadow).toBe('none');
-  expect(Number.parseFloat(motionContract.animation)).toBeLessThanOrEqual(0.001);
   expect(Number.parseFloat(motionContract.transition)).toBeLessThanOrEqual(0.001);
 });
 

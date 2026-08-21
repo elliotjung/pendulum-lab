@@ -179,7 +179,7 @@ function enhance(root: ParentNode = document): void {
       : base;
     anchor.dataset.helpKey ??= id;
   }
-  root.querySelectorAll<HTMLElement>('[data-help],.has-tip[data-tip]').forEach((element) => {
+  root.querySelectorAll<HTMLElement>('[data-help],[data-help-key],.has-tip[data-tip]').forEach((element) => {
     element.classList.add('context-help-anchor');
     if (element instanceof HTMLCanvasElement && element.tabIndex < 0) element.tabIndex = 0;
   });
@@ -197,7 +197,10 @@ function enhance(root: ParentNode = document): void {
     else button.dataset.help = text;
     button.classList.add('context-help-anchor');
   });
-  if (root instanceof HTMLElement && (root.dataset.help || (root.classList.contains('has-tip') && root.dataset.tip))) {
+  if (
+    root instanceof HTMLElement &&
+    (root.dataset.help || root.dataset.helpKey || (root.classList.contains('has-tip') && root.dataset.tip))
+  ) {
     root.classList.add('context-help-anchor');
   }
 }

@@ -98,7 +98,8 @@
 }
 
 .audience-field .custom-select-button {
-  min-height: 44px;
+  /* Preserve a true 44px+ touch target after fractional browser rounding. */
+  min-height: 45px;
 }
 
 .custom-select-native {
@@ -287,6 +288,14 @@
     background: Canvas;
     color: CanvasText;
     forced-color-adjust: auto;
+  }
+
+  /* The native select is deliberately hidden after enhancement. Keep the
+     visible combobox unmistakably focused even when focus was restored by
+     script rather than a keyboard-originated :focus-visible event. */
+  .custom-select-button:focus {
+    outline: 3px solid Highlight !important;
+    outline-offset: 3px !important;
   }
 }
 

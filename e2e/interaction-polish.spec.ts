@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test';
 import { waitForModernShell } from './shell';
 
 test('custom selects stay anchored, keyboard accessible, and synchronized with native values', async ({ page }) => {
+  // Cold Vite compilation of the large modular workspace can take longer than
+  // the default test budget before this deliberately thorough interaction runs.
+  test.slow();
   await page.goto('/');
   await waitForModernShell(page);
 
@@ -81,7 +84,12 @@ test('graphs expose collision-aware contextual help and surfaces use calm entran
   await page.goto('/');
   await waitForModernShell(page);
 
-  await page.locator('#energy').hover();
+  const energy = page.locator('#energy');
+  await energy.scrollIntoViewIfNeeded();
+  // The shared tooltip deliberately closes on scroll. Let the browser finish
+  // the automatic scroll performed to reach this lower chart before hovering.
+  await page.waitForTimeout(80);
+  await energy.hover();
   const tooltip = page.locator('#contextTooltip');
   await expect(tooltip).toBeVisible();
   await expect(tooltip).toContainText('Relative energy drift');
