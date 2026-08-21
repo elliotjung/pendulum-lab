@@ -3,6 +3,7 @@ import { commitLabControls } from './controlCommit';
 import { canAccessAudienceTab, currentAudienceMode } from './audienceMode';
 import { TabRouting, type TabHistoryMode, type TabRequestedDetail } from './tabRouting';
 import { applyNumericControlParams } from './deepLinkControls';
+import { compactRail, positionRailSubmenu } from './railSubmenuPositioning';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -111,12 +112,6 @@ export function isTextEntryShortcutTarget(target: EventTarget | null): boolean {
 export function shouldIgnoreShellShortcut(event: ShortcutGuardEvent): boolean {
   if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey) return true;
   return isShellShortcutTarget(event.target);
-}
-
-function compactRail(): boolean {
-  // Match the actual horizontal-bottom-rail CSS breakpoint. Pointer precision
-  // does not change the layout: a 768px touch tablet still has a vertical rail.
-  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 560px)').matches;
 }
 
 function urlParam(name: string): string | null {
@@ -242,39 +237,7 @@ export class Shell {
       const open = section.dataset.railSection === name;
       section.classList.toggle('open', open);
       section.querySelector<HTMLElement>('.rail-menu-button')?.setAttribute('aria-expanded', open ? 'true' : 'false');
-      if (open) this.positionRailSubmenu(section);
-    });
-  }
-
-  /** Keep every desktop flyout visually attached to the button that opened it. */
-  private positionRailSubmenu(section: HTMLElement): void {
-    const submenu = section.querySelector<HTMLElement>('.rail-submenu');
-    const button = section.querySelector<HTMLElement>('.rail-menu-button');
-    if (!submenu || !button) return;
-    if (compactRail()) {
-      submenu.style.removeProperty('--rail-submenu-top');
-      submenu.style.removeProperty('--rail-submenu-anchor');
-      return;
-    }
-    requestAnimationFrame(() => {
-      if (!section.classList.contains('open')) return;
-      const buttonRect = button.getBoundingClientRect();
-      const viewport = window.visualViewport;
-      const viewportTop = viewport?.offsetTop ?? 0;
-      const viewportHeight = viewport?.height ?? window.innerHeight;
-      const viewportBottom = viewportTop + viewportHeight;
-      const availableHeight = Math.max(120, viewportHeight - 20);
-      const menuHeight = Math.min(submenu.scrollHeight, availableHeight);
-      const top = Math.min(
-        Math.max(viewportTop + 10, buttonRect.top),
-        Math.max(viewportTop + 10, viewportBottom - menuHeight - 10)
-      );
-      const anchor = Math.min(
-        Math.max(18, buttonRect.top + buttonRect.height / 2 - top),
-        Math.max(18, menuHeight - 18)
-      );
-      submenu.style.setProperty('--rail-submenu-top', `${top.toFixed(1)}px`);
-      submenu.style.setProperty('--rail-submenu-anchor', `${anchor.toFixed(1)}px`);
+      if (open) positionRailSubmenu(section);
     });
   }
 
@@ -393,7 +356,7 @@ export class Shell {
     });
     const repositionOpenSubmenu = (): void => {
       const open = document.querySelector<HTMLElement>('.rail-section.open[data-rail-section]');
-      if (open) this.positionRailSubmenu(open);
+      if (open) positionRailSubmenu(open);
     };
     window.addEventListener('resize', repositionOpenSubmenu, { passive: true });
     window.visualViewport?.addEventListener('resize', repositionOpenSubmenu, { passive: true });
