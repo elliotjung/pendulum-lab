@@ -6,135 +6,53 @@ on:
     types: [completed]
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
-  # Serialize a production branch so an older, slower validation cannot deploy
-  # after a newer commit. Checkout below remains pinned to the validated SHA.
+  # Serialize production deployment so an older workflow cannot overtake a
+  # newer validated commit.
   group: pages-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
-  quality-gate:
+  stage-validated-artifact:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master')
+      (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master') &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' ||
+      github.event.workflow_run.event == 'workflow_dispatch')
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      # Mainline already built this artifact, ran the scientific gates, and
+      # exercised the same bytes in Chromium/Firefox/WebKit/mobile. Download
+      # that exact artifact instead of rebuilding and retesting a second time.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node-project
-      - run: npm run audit:deps
-      - name: Verify policy, types, tests, documentation, and generated evidence
-        run: npm run verify
-      - name: Reject unexpected tracked rewrites from verification
+          name: mainline-validated-build
+          path: validated
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Verify the validated commit is still the branch tip
         shell: bash
-        # The JSON test report is intentionally ignored. `git diff` already
-        # limits this gate to tracked paths, so no restore is necessary.
-        run: git diff --exit-code
-      - run: npm run audit:legacy
-      - run: npm run audit:mojibake:strict
-      - run: npm run build:lib
-      - run: npm run build:standalone
-      - run: npm run check:standalone-sync
-      - run: npm run check:wasm-sync
-      - run: npm run build
-      - run: npm run budget
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: pages-production-build
-          path: dist/
-          if-no-files-found: error
-          retention-days: 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATED_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          current_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${VALIDATED_BRANCH}" --jq .sha)"
+          test "$VALIDATED_SHA" = "$current_sha"
+      - name: Confirm the validated Pages entrypoint exists
+        shell: bash
+        run: test -s validated/dist/index.html
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
-          path: dist
-
-  production-e2e:
-    needs: quality-gate
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2]
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: ./.github/actions/setup-node-project
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          name: pages-production-build
-          path: dist
-      - run: npx playwright install --with-deps chromium
-      - name: Exercise the production bundle in Chromium
-        env:
-          PLAYWRIGHT_USE_PREVIEW: '1'
-          PLAYWRIGHT_PRODUCTION_GATE: '1'
-          PLAYWRIGHT_PORT: '4173'
-        run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/2
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always()
-        with:
-          name: pages-e2e-chromium-${{ matrix.shard }}
-          path: |
-            reports/playwright/
-            test-results/
-          if-no-files-found: ignore
-          retention-days: 14
-
-  compatibility-e2e:
-    needs: quality-gate
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - project: firefox
-            browser: firefox
-            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts e2e/audience-mode.spec.ts e2e/cross-engine-resource-pressure.spec.ts
-          - project: webkit
-            browser: webkit
-            specs: e2e/smoke.spec.ts e2e/console-clean.spec.ts e2e/accessibility.spec.ts e2e/audience-mode.spec.ts e2e/cross-engine-resource-pressure.spec.ts
-          - project: mobile-chrome
-            browser: chromium
-            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/mobile-research.spec.ts e2e/axe-audit.spec.ts e2e/cross-engine-resource-pressure.spec.ts
-          - project: mobile-webkit
-            browser: webkit
-            specs: e2e/smoke.spec.ts e2e/audience-mode.spec.ts e2e/trust-inspector.spec.ts e2e/cross-engine-resource-pressure.spec.ts
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
-      - uses: ./.github/actions/setup-node-project
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          name: pages-production-build
-          path: dist
-      - run: npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Exercise the production bundle on ${{ matrix.project }}
-        env:
-          PLAYWRIGHT_USE_PREVIEW: '1'
-          PLAYWRIGHT_PRODUCTION_GATE: '1'
-          PLAYWRIGHT_PORT: '4173'
-        run: npx playwright test ${{ matrix.specs }} --project=${{ matrix.project }}
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always()
-        with:
-          name: pages-e2e-${{ matrix.project }}
-          path: |
-            reports/playwright/
-            test-results/
-          if-no-files-found: ignore
-          retention-days: 14
+          path: validated/dist
 
   deploy:
-    needs: [quality-gate, production-e2e, compatibility-e2e]
+    needs: stage-validated-artifact
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -145,6 +63,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy the exact artifact that passed every gate
+      - name: Deploy the exact artifact that passed Mainline Full Validation
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

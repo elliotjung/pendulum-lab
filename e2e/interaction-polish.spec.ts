@@ -119,8 +119,9 @@ test('graphs expose collision-aware contextual help and surfaces use calm entran
   await page.locator('#panelToggle').click();
   await expect(page.locator('#tab-lab .controls')).toBeVisible();
   await expect
-    .poll(() => page.locator('#tab-lab .controls').evaluate((element) => getComputedStyle(element).animationName))
-    .toContain('surface-arrive-right');
+    .poll(() => page.locator('#tab-lab .controls').evaluate((element) => getComputedStyle(element).transitionProperty))
+    .toContain('transform');
+  await expect(page.locator('body')).not.toHaveClass(/panel-transitioning/);
 
   await page.locator('#trustDrawerToggle').click();
   const drawer = page.locator('#trustDrawer');

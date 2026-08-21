@@ -202,7 +202,10 @@ export function installAudienceMode(): void {
   bindHomeLogo();
   const requested = urlAudienceMode();
   const stored = storedAudienceMode();
-  applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored), requested !== null);
+  // A saved persona is part of the reproducible workspace contract too. Keep
+  // the address bar canonical for returning sessions so a manual URL copy
+  // opens the same audience mode in a fresh browser profile.
+  applyAudienceMode(requested ?? stored ?? 'research', Boolean(requested ?? stored), Boolean(requested ?? stored));
   // First visit asks for intent; returning users land directly in their saved workspace.
   if (!requested && !stored) showAudienceChooser();
 }

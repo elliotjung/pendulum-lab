@@ -7,7 +7,6 @@ import { assertEvidenceSourceCommit, evidenceWorktreeIsDirty } from '../scripts/
 import { relaxCspForFileProtocolHtml } from '../vite.config.standalone';
 
 const DRIFT_GATED_WORKFLOWS = [
-  'pages.yml',
   'main.yml',
   'ci.yml',
   'release.yml',
@@ -20,7 +19,6 @@ const FULL_HISTORY_VERIFY_JOBS = [
   ['ci.yml', 'verify'],
   ['cloudflare-pages.yml', 'deploy'],
   ['main.yml', 'science-and-build'],
-  ['pages.yml', 'quality-gate'],
   ['publish-jsr.yml', 'publish'],
   ['publish-npm.yml', 'publish'],
   ['release.yml', 'release-artifacts'],
@@ -58,12 +56,30 @@ describe('generated-drift workflow contract', () => {
     expect(source).toContain('workflow_run:');
     expect(source).toContain('workflows: [Mainline Full Validation]');
     expect(source).toContain("github.event.workflow_run.conclusion == 'success'");
-    expect(source).toContain('ref: ${{ github.event.workflow_run.head_sha }}');
+    expect(source).toContain('github.event.workflow_run.head_repository.full_name == github.repository');
+    expect(source).toContain("github.event.workflow_run.event == 'push'");
+    expect(source).toContain('name: mainline-validated-build');
+    expect(source).toContain('run-id: ${{ github.event.workflow_run.id }}');
+    expect(source).toContain('github-token: ${{ github.token }}');
+    expect(source).toContain('test "$VALIDATED_SHA" = "$current_sha"');
+    expect(source).toContain('path: validated/dist');
     expect(source).toContain('group: pages-${{ github.event.workflow_run.head_branch }}');
     expect(source).not.toContain('group: pages-${{ github.event.workflow_run.head_sha }}');
     expect(source).not.toMatch(/^\s{2}push:/m);
     expect(source).not.toContain('workflow_dispatch:');
-    expect(source).toContain('needs: [quality-gate, production-e2e, compatibility-e2e]');
+    expect(source).toContain('needs: stage-validated-artifact');
+    expect(source).not.toContain('npm run verify');
+    expect(source).not.toContain('npm run build');
+  });
+
+  test('the mainline browser gate covers the interactive surfaces deployed by Pages', async () => {
+    const packageJson = JSON.parse(await readFile('package.json', 'utf8')) as {
+      scripts?: Record<string, string>;
+    };
+    const mainline = packageJson.scripts?.['test:e2e:mainline'] ?? '';
+    for (const spec of ['e2e/theory.spec.ts', 'e2e/ui-polish.spec.ts', 'e2e/interaction-polish.spec.ts']) {
+      expect(mainline).toContain(spec);
+    }
   });
 
   test('Pages build exports every Lab report required by the product release manifest', async () => {

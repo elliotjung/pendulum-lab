@@ -17,6 +17,7 @@ export const NAV_TAB_GUIDE: Record<string, string> = {
   // Explore
   lab: 'Run the live simulation and adjust every control',
   compare: 'Race integrators side by side on one motion',
+  theory: 'Follow the equations from assumptions to evidence',
   // Analyze
   lyap: 'Measure how fast nearby trajectories separate',
   sweep: 'Map chaos strength across starting angles',
@@ -72,6 +73,7 @@ export const NAV_LOCALE_STORAGE_KEY = 'pendulum-lab/ui/nav-locale';
 export const NAV_TAB_GUIDE_KO: Record<string, string> = {
   lab: '실시간 시뮬레이션을 돌리고 모든 값을 조절',
   compare: '여러 적분기를 같은 조건에서 나란히 비교',
+  theory: '가정에서 방정식과 검증 근거까지 따라가기',
   lyap: '가까운 궤적이 벌어지는 속도를 측정',
   sweep: '시작 각도에 따른 카오스 세기를 지도로',
   bifurc: '매개변수 변화에 따른 거동 변화를 관찰',
@@ -107,6 +109,7 @@ export const NAV_ACTION_GUIDE_KO: Record<string, string> = {
 export const NAV_TAB_LABEL_KO: Record<string, string> = {
   lab: '실험실',
   compare: '비교',
+  theory: '이론',
   lyap: '리아푸노프',
   sweep: '카오스 지도',
   bifurc: '분기',

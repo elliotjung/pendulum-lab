@@ -68,7 +68,7 @@ test('the active mode survives when browser storage is unavailable', async ({ pa
   await page.locator('#navLocale').selectOption('ko');
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
   await expect(page.locator('#audienceMode')).toHaveValue('student');
-  await expect(page).toHaveURL(/\?audience=student&tab=lab$/);
+  await expect.poll(() => new URL(page.url()).searchParams.get('audience')).toBe('student');
   await page.reload();
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
@@ -94,6 +94,12 @@ test('returning sessions open the saved mode and can reopen the chooser from Hom
 
   await expect(page.locator('#audienceModeChooser')).toHaveCount(0);
   await expect(page.locator('body')).toHaveAttribute('data-audience-mode', 'student');
+  await expect
+    .poll(() => {
+      const url = new URL(page.url());
+      return `${url.searchParams.get('audience')}:${url.searchParams.get('tab')}`;
+    })
+    .toBe('student:lab');
 
   await page.locator('#railHome').click();
   await expect(page.locator('#audienceModeChooser')).toBeVisible();

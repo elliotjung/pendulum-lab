@@ -56,8 +56,52 @@
   }
 }
 
+.panel-toggle-icon {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
+  transform: rotate(0deg);
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.panel-toggle[aria-expanded='false'] .panel-toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* The panel itself uses compositor-only motion. The grid commits its final
+   width exactly once after a close (or before an open), avoiding a resize
+   observer callback on every animation frame while still giving the canvas
+   the full final width. These selectors intentionally follow the structural
+   `display:none` rules in 00-base/03-instrument-workbench. */
+body.panel-motion-ready .tabpanel.active .layout > .controls {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-origin: right center;
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.panel-transitioning .tabpanel.active .layout > .controls {
+  display: block !important;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+body.panel-closing .tabpanel.active .layout > .controls,
+body.panel-motion-prep .tabpanel.active .layout > .controls {
+  opacity: 0;
+  transform: translate3d(18px, 0, 0) scale(0.992);
+}
+
+@media (max-width: 1100px) {
+  body.panel-closing .tabpanel.active .layout > .controls,
+  body.panel-motion-prep .tabpanel.active .layout > .controls {
+    transform: translate3d(0, 8px, 0) scale(0.996);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  body:not(.panel-collapsed) .tabpanel.active .layout > .controls,
   .trust-drawer:not([hidden]) {
     animation: surface-arrive-right 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -300,7 +344,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .custom-select-chevron {
+  .custom-select-chevron,
+  .panel-toggle-icon,
+  body.panel-motion-ready .tabpanel.active .layout > .controls {
     transition: none;
   }
 }

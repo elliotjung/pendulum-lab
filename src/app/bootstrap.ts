@@ -8,6 +8,7 @@ import type { LyapunovTab } from './LyapunovTab';
 import type { ValidationTab } from './ValidationTab';
 import type { SweepTab } from './SweepTab';
 import type { CompareTab } from './CompareTab';
+import type { TheoryTab } from './TheoryTab';
 import type { BifurcationTab } from './BifurcationTab';
 import type { Phase3DTab } from './Phase3DTab';
 import type { DensityTab } from './DensityTab';
@@ -91,6 +92,7 @@ interface ModernTabs {
   validation?: ValidationTab;
   sweep?: SweepTab;
   compare?: CompareTab;
+  theory?: TheoryTab;
   bifurcation?: BifurcationTab;
   phase3d?: Phase3DTab;
   density?: DensityTab;
@@ -153,6 +155,7 @@ function buildTabRegistry(tabs: ModernTabs): TabMount[] {
     entry('validate', 'validation', async () => new (await import('./ValidationTab')).ValidationTab()),
     entry('sweep', 'sweep', async () => new (await import('./SweepTab')).SweepTab()),
     entry('compare', 'compare', async () => new (await import('./CompareTab')).CompareTab()),
+    entry('theory', 'theory', async () => new (await import('./TheoryTab')).TheoryTab()),
     entry('bifurc', 'bifurcation', async () => new (await import('./BifurcationTab')).BifurcationTab()),
     entry('phase3d', 'phase3d', async () => new (await import('./Phase3DTab')).Phase3DTab()),
     entry('density', 'density', async () => new (await import('./DensityTab')).DensityTab()),

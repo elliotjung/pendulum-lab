@@ -21,6 +21,7 @@ import { compactRail, positionRailSubmenu } from './railSubmenuPositioning';
 const KNOWN_TABS = [
   'lab',
   'compare',
+  'theory',
   'lyap',
   'sweep',
   'bifurc',
@@ -47,6 +48,7 @@ const KNOWN_TABS = [
 export const TAB_ACTIVATED_EVENT = 'pendulum:tab-activated';
 export const TAB_REQUESTED_EVENT = 'pendulum:tab-requested';
 const PANEL_COLLAPSED_KEY = 'pendulum-lab/ui/panel-collapsed';
+const PANEL_MOTION_MS = 220;
 const TAB_KEYS: Record<string, string> = {
   '1': 'lab',
   '2': 'compare',
@@ -206,6 +208,8 @@ const PRESETS: Record<string, Preset> = {
 };
 
 export class Shell {
+  private panelCollapsed = false;
+  private panelMotionCleanup: (() => void) | null = null;
   private readonly tabRouting = new TabRouting({
     canActivate: (tab) => KNOWN_TABS.includes(tab) && canAccessAudienceTab(currentAudienceMode(), tab),
     syncRail: (tab) => this.syncRailSectionForTab(tab),
@@ -566,10 +570,27 @@ export class Shell {
     this.tabRouting.applyInitialUrl();
   }
 
-  /** Collapse/expand every tab's right control panel (persisted; shortcut "\"). */
-  togglePanel(force?: boolean): void {
-    const collapsed = force ?? !document.body.classList.contains('panel-collapsed');
-    document.body.classList.toggle('panel-collapsed', collapsed);
+  private panelControls(): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('.tabpanel .layout > .controls'));
+  }
+
+  private activePanelControl(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('.tabpanel.active .layout > .controls');
+  }
+
+  private setPanelControlsHidden(hidden: boolean): void {
+    for (const panel of this.panelControls()) {
+      if (hidden) {
+        panel.setAttribute('aria-hidden', 'true');
+        panel.setAttribute('inert', '');
+      } else {
+        panel.removeAttribute('aria-hidden');
+        panel.removeAttribute('inert');
+      }
+    }
+  }
+
+  private updatePanelToggle(collapsed: boolean): void {
     const btn = document.getElementById('panelToggle');
     if (btn) {
       const korean = document.documentElement.lang === 'ko';
@@ -580,16 +601,114 @@ export class Shell {
         : korean
           ? '측면 패널 숨기기'
           : 'Hide side panel';
-      btn.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      btn.removeAttribute('aria-pressed');
       btn.setAttribute('aria-label', label);
-      btn.textContent = collapsed ? '⟨' : '⟩';
       btn.title = `${label} (\\)`;
+      btn.dataset.panelState = collapsed ? 'collapsed' : 'expanded';
     }
+  }
+
+  private cancelPanelMotionWait(): void {
+    this.panelMotionCleanup?.();
+    this.panelMotionCleanup = null;
+  }
+
+  private finishPanelMotion(collapsed: boolean): void {
+    if (collapsed !== this.panelCollapsed) return;
+    this.cancelPanelMotionWait();
+    const body = document.body;
+    body.classList.toggle('panel-collapsed', collapsed);
+    body.classList.remove('panel-transitioning', 'panel-opening', 'panel-closing', 'panel-motion-prep');
+    this.setPanelControlsHidden(collapsed);
+    document.dispatchEvent(
+      new CustomEvent('pendulum:panel-toggle-settled', {
+        detail: { collapsed }
+      })
+    );
+  }
+
+  private waitForPanelMotion(collapsed: boolean): void {
+    this.cancelPanelMotionWait();
+    const panel = this.activePanelControl();
+    if (!panel) {
+      this.finishPanelMotion(collapsed);
+      return;
+    }
+
+    let settled = false;
+    const finish = (): void => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      this.finishPanelMotion(collapsed);
+    };
+    const onTransitionEnd = (event: TransitionEvent): void => {
+      if (event.target === panel && event.propertyName === 'transform') finish();
+    };
+    const timeout = window.setTimeout(finish, PANEL_MOTION_MS + 100);
+    const cleanup = (): void => {
+      panel.removeEventListener('transitionend', onTransitionEnd);
+      window.clearTimeout(timeout);
+      if (this.panelMotionCleanup === cleanup) this.panelMotionCleanup = null;
+    };
+    panel.addEventListener('transitionend', onTransitionEnd);
+    this.panelMotionCleanup = cleanup;
+  }
+
+  private animatePanel(collapsed: boolean): void {
+    const body = document.body;
+    this.cancelPanelMotionWait();
+
+    if (collapsed) {
+      body.classList.remove('panel-collapsed', 'panel-opening', 'panel-motion-prep');
+      body.classList.add('panel-transitioning', 'panel-closing');
+      this.waitForPanelMotion(true);
+      return;
+    }
+
+    const openingFromRest = body.classList.contains('panel-collapsed');
+    body.classList.remove('panel-collapsed', 'panel-closing');
+    body.classList.add('panel-transitioning', 'panel-opening');
+    if (openingFromRest) {
+      // Expose the panel in its translated/transparent pose before starting the
+      // compositor transition. The forced style read also commits the one real
+      // layout resize up front instead of resizing every animation frame.
+      body.classList.add('panel-motion-prep');
+      void this.activePanelControl()?.offsetWidth;
+      body.classList.remove('panel-motion-prep');
+    }
+    this.waitForPanelMotion(false);
+  }
+
+  /** Collapse/expand every tab's right control panel (persisted; shortcut "\"). */
+  togglePanel(force?: boolean, animate = true): void {
+    const collapsed = force ?? !this.panelCollapsed;
+    this.panelCollapsed = collapsed;
+    this.updatePanelToggle(collapsed);
+
+    if (collapsed) {
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && this.panelControls().some((panel) => panel.contains(active))) {
+        document.getElementById('panelToggle')?.focus({ preventScroll: true });
+      }
+    }
+    // Keep controls out of pointer and accessibility navigation for the whole
+    // close, and until an opening transition has completely settled.
+    this.setPanelControlsHidden(true);
+
     try {
       window.localStorage?.setItem(PANEL_COLLAPSED_KEY, collapsed ? '1' : '0');
     } catch {
       /* storage unavailable (private mode) — the toggle still works for the session */
     }
+
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    if (!animate || reduceMotion || !document.body.classList.contains('panel-motion-ready')) {
+      this.finishPanelMotion(collapsed);
+      return;
+    }
+    this.animatePanel(collapsed);
   }
 
   private bindPanelToggle(): void {
@@ -600,6 +719,17 @@ export class Shell {
     btn.type = 'button';
     btn.className = 'panel-toggle';
     btn.setAttribute('aria-label', 'Toggle side panel');
+    const icon = document.createElement('span');
+    icon.className = 'panel-toggle-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = '›';
+    btn.append(icon);
+    const panelIds = this.panelControls().map((panel, index) => {
+      const tabId = panel.closest<HTMLElement>('.tabpanel')?.id;
+      panel.id ||= tabId ? `${tabId}-controls` : `workspace-controls-${index + 1}`;
+      return panel.id;
+    });
+    if (panelIds.length > 0) btn.setAttribute('aria-controls', panelIds.join(' '));
     btn.addEventListener('click', () => this.togglePanel());
     header.append(btn);
     let collapsed = false;
@@ -608,7 +738,8 @@ export class Shell {
     } catch {
       collapsed = false;
     }
-    this.togglePanel(collapsed);
+    this.togglePanel(collapsed, false);
+    requestAnimationFrame(() => document.body.classList.add('panel-motion-ready'));
   }
 
   install(): void {
