@@ -67,6 +67,14 @@ export type { DissipatedWorkBalance } from './energy';
 export { integratorRegistry } from './integrators';
 export { createDoublePendulumDerivative, doubleMassMatrixDiagnostics, jacobianDouble, rhsDouble } from './double';
 export type { DoubleMassMatrixDiagnostics } from './double';
+export {
+  compoundDoubleMassMatrix,
+  compoundDoubleMassMatrixDiagnostics,
+  createCompoundDoublePendulumDerivative,
+  energyCompoundDouble,
+  rhsCompoundDouble
+} from './compoundDouble';
+export type { CompoundDoubleMassMatrix, CompoundDoubleMassMatrixDiagnostics } from './compoundDouble';
 export { createTripleRhsWorkspace, rhsTriple } from './triple';
 export type { TripleRhsWorkspace } from './triple';
 export { PhysicsEvaluationError } from './errors';

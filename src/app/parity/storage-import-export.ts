@@ -12,18 +12,9 @@ import {
   type ResearchDbArchive
 } from '../../research/researchDb';
 import { renderResearchDbRecovery } from './research-db-recovery-ui';
-import { isPlainObject } from './research-storage-validation';
 import { $, currentSnapshot, installStyle, state, toast } from './shared';
-import {
-  DesignStudyState,
-  applySnapshotControls,
-  designStudy,
-  logResearchRun,
-  persistDesignStudy,
-  renderResearchWorkbench,
-  setDesignStudy
-} from './research-workbench';
-import { loadFigureCaptionOverrides, saveFigureCaptionOverride } from './figure-export';
+import { designStudy, logResearchRun } from './research-workbench';
+import { loadFigureCaptionOverrides } from './figure-export';
 
 import {
   cleanupResearchDbByAge as runResearchDbCleanup,
@@ -33,11 +24,9 @@ import {
 import {
   RESEARCH_STORAGE_SCHEMA_VERSION,
   hydrateResearchDb,
-  normalizeResearchStorage,
   persistResearchState,
   researchDbInstance,
-  resetResearchDbInstance,
-  sanitizeRuntimeSnapshot
+  resetResearchDbInstance
 } from './storage-sync';
 import {
   buildResearchDbImportPreview,
@@ -49,12 +38,21 @@ import {
   type ResearchDbImportPreview,
   type StorageImportDiagnostic
 } from './storage-import-guards';
+import { workspaceImportRuntimeAdapter } from './workspace-import-runtime';
+import {
+  runWorkspaceImportTransaction,
+  stageWorkspaceImport,
+  type WorkspaceImportDiagnostic,
+  type WorkspaceImportTransactionResult
+} from './workspace-import-transaction';
 
 interface ImportDialogAction {
   value: 'merge' | 'replace' | 'restore';
   label: string;
   primary?: boolean;
 }
+
+let workspaceImportInFlight = false;
 
 function reportStorageImportDiagnostic(value: StorageImportDiagnostic): void {
   // Deliberately omit file name and payload content from the diagnostic log.
@@ -64,6 +62,17 @@ function reportStorageImportDiagnostic(value: StorageImportDiagnostic): void {
     ...(value.byteLength === undefined ? {} : { byteLength: value.byteLength })
   });
   toast(formatStorageImportDiagnostic(value));
+}
+
+function reportWorkspaceTransactionDiagnostic(
+  result: WorkspaceImportTransactionResult | { status: 'rejected'; diagnostics: WorkspaceImportDiagnostic[] }
+): void {
+  const diagnostic = result.diagnostics.at(-1);
+  if (!diagnostic) return;
+  const detail = { status: result.status, codes: result.diagnostics.map((entry) => entry.code) };
+  if (result.status !== 'committed') console.warn('Pendulum workspace import did not commit', detail);
+  window.dispatchEvent(new CustomEvent('pendulum-lab:workspace-import-result', { detail }));
+  toast(`[${diagnostic.code}] ${diagnostic.message}`, diagnostic.severity === 'critical' ? 8_000 : 5_200);
 }
 
 function installImportPreviewStyle(): void {
@@ -353,30 +362,26 @@ export function importWorkspaceJson(): void {
           if (!failure.ok) reportStorageImportDiagnostic(failure.diagnostic);
           return;
         }
-        const parsed = read.value;
-        const { research, droppedEntries } = normalizeResearchStorage(parsed.research);
-        const rawDesign = parsed.designStudy as DesignStudyState | null | undefined;
-        const designWillRestore = Boolean(
-          rawDesign &&
-          rawDesign.schemaVersion === 'pendulum-design-study/v1' &&
-          Array.isArray(rawDesign.variables) &&
-          Array.isArray(rawDesign.points)
-        );
-        const captionCount = isPlainObject(parsed.figureCaptions)
-          ? Object.values(parsed.figureCaptions).filter((caption) => typeof caption === 'string').length
-          : 0;
-        const snapshot = sanitizeRuntimeSnapshot(parsed.snapshot);
+        const staged = stageWorkspaceImport(read.value);
+        if (!staged.ok) {
+          reportWorkspaceTransactionDiagnostic({ status: 'rejected', diagnostics: [staged.diagnostic] });
+          return;
+        }
+        const workspace = staged.value;
         const preview = [
           `Workspace restore preview (${(read.stats.byteLength / 1024).toFixed(1)} KiB)`,
-          `Research state will be replaced: ${state.research.experiments.length} → ${research.experiments.length} experiments; ${state.research.runLog.length} → ${research.runLog.length} run-log entries.`,
-          `${droppedEntries} invalid or over-limit research entries will be dropped by schema sanitisation.`,
-          designWillRestore
-            ? `Design study will be restored (${rawDesign?.points.length ?? 0} points).`
-            : 'No valid design study is present; the current design study will remain unchanged.',
-          `${captionCount} figure caption override(s) will be merged.`,
-          snapshot
+          `Research state will be replaced: ${state.research.experiments.length} → ${workspace.research.experiments.length} experiments; ${state.research.runLog.length} → ${workspace.research.runLog.length} run-log entries.`,
+          `${workspace.droppedResearchEntries} invalid or over-limit research entries were removed during staging.`,
+          workspace.restoreDesignStudy
+            ? `Design study will be restored (${workspace.designStudy?.points.length ?? 0} points).`
+            : 'No design study replacement is present; the current design study will remain unchanged.',
+          workspace.mergeFigureCaptions
+            ? `${Object.keys(workspace.figureCaptionPatch).length} known figure caption override(s) will be merged${workspace.ignoredFigureCaptionIds.length ? `; ${workspace.ignoredFigureCaptionIds.length} unknown future caption id(s) will be ignored` : ''}.`
+            : 'No figure caption replacement is present; current overrides will remain unchanged.',
+          workspace.restoreSnapshot
             ? 'Live simulator controls will be replaced by the imported snapshot.'
-            : 'No valid live snapshot is present; current simulator controls will remain unchanged.'
+            : 'No live snapshot replacement is present; current simulator state will remain unchanged.',
+          'Before any mutation, all affected local, IndexedDB, workbench, design, caption, control, and simulator state will be backed up. Any failed apply or verification triggers a verified rollback.'
         ].join('\n');
         const action = await requestImportAction('Review workspace restore', preview, [
           { value: 'restore', label: 'Restore workspace', primary: true }
@@ -385,36 +390,33 @@ export function importWorkspaceJson(): void {
           toast('[IMPORT_CANCELLED] Workspace restore cancelled; current workspace kept.');
           return;
         }
-        state.research = research;
-        if (
-          rawDesign &&
-          rawDesign.schemaVersion === 'pendulum-design-study/v1' &&
-          Array.isArray(rawDesign.variables) &&
-          Array.isArray(rawDesign.points)
-        ) {
-          setDesignStudy({ ...rawDesign, status: rawDesign.status === 'running' ? 'idle' : rawDesign.status });
-          persistDesignStudy();
+        if (workspaceImportInFlight) {
+          reportWorkspaceTransactionDiagnostic({
+            status: 'rejected',
+            diagnostics: [
+              {
+                code: 'WORKSPACE_IMPORT_BUSY',
+                phase: 'backup',
+                severity: 'warning',
+                message: 'Another workspace restore is already in progress; this file was not applied.'
+              }
+            ]
+          });
+          return;
         }
-        if (isPlainObject(parsed.figureCaptions)) {
-          for (const [id, caption] of Object.entries(parsed.figureCaptions)) {
-            if (typeof caption === 'string') saveFigureCaptionOverride(id, caption);
-          }
+        workspaceImportInFlight = true;
+        try {
+          const result = await runWorkspaceImportTransaction(workspace, workspaceImportRuntimeAdapter());
+          reportWorkspaceTransactionDiagnostic(result);
+        } finally {
+          workspaceImportInFlight = false;
         }
-        if (snapshot) applySnapshotControls(snapshot);
-        persistResearchState();
-        renderResearchWorkbench();
-        logResearchRun(
-          'experiment',
-          'Workspace restored',
-          `${state.research.experiments.length} experiments, ${droppedEntries} entries dropped during sanitisation.`
-        );
-        toast('Workspace restored');
       } catch (error) {
         const failure = storageImportFailure(
           'workspace',
           'IMPORT_APPLY_FAILED',
           `Workspace restore failed: ${error instanceof Error ? error.message : String(error)}`,
-          'Current persisted data was not intentionally cleared. Retry with a fresh workspace export.'
+          'The import did not reach the transactional apply boundary. Retry with a fresh workspace export.'
         );
         if (!failure.ok) reportStorageImportDiagnostic(failure.diagnostic);
       }

@@ -474,7 +474,13 @@
             Triple ★
           </button>
           <button class="pbtn" id="savePreset" title="Save the current settings as a custom preset">💾 Save</button>
-          <button class="pbtn" id="shareUrl" title="Copy a link that reproduces this exact setup">🔗 Share</button>
+          <button
+            class="pbtn"
+            id="shareUrl"
+            title="Copy a setup-only link. Completed trajectories and analysis results are not included."
+          >
+            🔗 Share setup
+          </button>
         </div>
 
         <!-- TAB: LAB -->
@@ -504,6 +510,25 @@
                 <div class="plot-cell">
                   <canvas id="phase" width="220" height="120"></canvas>
                   <div class="canvas-label" id="phaseCanvasLabel">Phase portrait</div>
+                </div>
+              </div>
+              <div class="plots-row student-angle-plots" data-audience-min="student">
+                <div class="plot-cell">
+                  <canvas
+                    id="thetaProjection"
+                    width="330"
+                    height="180"
+                    role="img"
+                    aria-labelledby="thetaProjectionCanvasLabel"
+                    >Wrapped angle projection of theta one versus theta two.</canvas
+                  >
+                  <div class="canvas-label" id="thetaProjectionCanvasLabel">θ₁–θ₂ angle projection (wrapped)</div>
+                </div>
+                <div class="plot-cell">
+                  <canvas id="angleTime" width="330" height="180" role="img" aria-labelledby="angleTimeCanvasLabel"
+                    >Time histories of theta one and theta two.</canvas
+                  >
+                  <div class="canvas-label" id="angleTimeCanvasLabel">Angles over time — θ₁(t), θ₂(t)</div>
                 </div>
               </div>
               <div class="plots-row">
@@ -622,6 +647,12 @@
                   </div>
                   <div class="row">
                     <label for="m2">m₂ (kg)</label
+                    ><a
+                      id="m2TheoryLink"
+                      class="control-theory-link"
+                      href="?tab=theory#theory-mass-matrix-eom"
+                      aria-label="Open the mass-matrix theory for m2"
+                      >Theory</a
                     ><input id="m2" type="range" min="0.1" max="5" step="0.05" value="1" /><span class="val" id="m2V"
                       >1.00</span
                     >
@@ -709,7 +740,10 @@
                     <label><input id="longExpose" type="checkbox" /> Long exposure</label>
                   </div>
                   <div class="row">
-                    <label><input id="interpolateRender" type="checkbox" checked /> Interpolated render</label>
+                    <label
+                      title="Smooths the real-time fixed-dt display between solver states. Deterministic replay always shows exact step states."
+                      ><input id="interpolateRender" type="checkbox" checked /> Interpolated render</label
+                    >
                   </div>
                   <div class="row">
                     <label
@@ -782,7 +816,10 @@
                     </select>
                   </div>
                   <div class="row">
-                    <label><input id="useWorker" type="checkbox" checked /> Use worker pool</label>
+                    <label
+                      title="Choose before the first plot frame. Once canvases move to a worker, this setting locks until reload."
+                      ><input id="useWorker" type="checkbox" checked /> Use worker pool</label
+                    >
                   </div>
                   <div class="row">
                     <label><input id="autoQual" type="checkbox" checked /> Auto-quality scaling</label>
@@ -849,11 +886,15 @@
                 </summary>
                 <div class="acc-body">
                   <div class="acc-sub">Data Export</div>
+                  <p id="recordingRetentionNotice" class="control-guidance">
+                    Replay and trajectory export retain the most recent 4,000 sampled frames. Earlier samples are
+                    dropped when full; CSV and run JSON exports report the retained and dropped counts.
+                  </p>
                   <div class="btnrow xs-7">
-                    <button id="dlTrajBtn">⬇ CSV</button>
+                    <button id="dlTrajBtn" aria-describedby="recordingRetentionNotice">⬇ CSV</button>
                     <button id="dlPoincBtn">⬇ Poincaré</button>
                     <button id="dlPNGBtn">⬇ PNG</button>
-                    <button id="dlJsonBtn">⬇ JSON</button>
+                    <button id="dlJsonBtn" aria-describedby="recordingRetentionNotice">⬇ JSON</button>
                   </div>
                   <div class="btnrow xs-7">
                     <button id="dlReportBtn">⬇ Report</button>

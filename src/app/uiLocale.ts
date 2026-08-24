@@ -44,7 +44,7 @@ const CONTROL_LABELS_KO: Record<string, string> = {
 const CHECKBOX_LABELS_KO: Record<string, string> = {
   glowMode: '광원 효과',
   longExpose: '장노출 궤적',
-  interpolateRender: '보간 렌더링',
+  interpolateRender: '실시간 보간 렌더링',
   backgroundSim: '탭이 숨겨져도 계속 실행',
   useWorker: '워커 풀 사용',
   autoQual: '자동 품질 조절',
@@ -53,7 +53,6 @@ const CHECKBOX_LABELS_KO: Record<string, string> = {
 
 const ELEMENT_TEXT_KO: Record<string, string> = {
   resetBtn: '↺ 초기화',
-  pauseBtn: '⏸ 일시정지',
   clearTrailBtn: '궤적 지우기',
   clearPoincBtn: '푸앵카레 지우기',
   dlTrajBtn: '⬇ 궤적 CSV',
@@ -68,8 +67,13 @@ const ELEMENT_TEXT_KO: Record<string, string> = {
   energyCanvasLabel: '에너지 변화 ΔE / E₀',
   lyapCanvasLabel: '랴푸노프 지수 λ (Benettin)',
   phaseCanvasLabel: '위상 궤적',
+  thetaProjectionCanvasLabel: 'θ₁–θ₂ 각도 투영 (래핑)',
+  angleTimeCanvasLabel: '시간에 따른 각도 — θ₁(t), θ₂(t)',
   poincareCanvasLabel: '푸앵카레 단면 (θ₁=0, θ̇₁>0) — 휠/핀치 확대',
-  fftCanvasLabel: 'FFT 주파수 스펙트럼 (로그)'
+  fftCanvasLabel: 'FFT 주파수 스펙트럼 (로그)',
+  recordingRetentionNotice:
+    '재생과 궤적 내보내기는 최근 4,000개 표본 프레임을 보관합니다. CSV와 실행 JSON에 보존 및 제외된 표본 수가 기록됩니다.',
+  m2TheoryLink: '이론'
 };
 
 const OPTION_LABELS: Record<string, Record<string, { en: string; ko: string }>> = {
@@ -93,13 +97,28 @@ const OPTION_LABELS: Record<string, Record<string, { en: string; ko: string }>> 
 };
 
 export type UiMessageKey =
-  'simulationError' | 'offline' | 'online' | 'offlineUnavailable' | 'cacheReady' | 'cacheStale';
+  | 'simulationError'
+  | 'pauseSimulation'
+  | 'resumeSimulation'
+  | 'runningMode'
+  | 'pausedMode'
+  | 'replayMode'
+  | 'offline'
+  | 'online'
+  | 'offlineUnavailable'
+  | 'cacheReady'
+  | 'cacheStale';
 
 const UI_MESSAGES: Record<UiMessageKey, { en: string; ko: string }> = {
   simulationError: {
     en: 'The simulation was paused after an unexpected numerical or rendering error. Review Trust & Diagnostics.',
     ko: '예기치 않은 수치 또는 렌더링 오류로 시뮬레이션을 일시정지했습니다. 신뢰 및 진단을 확인하세요.'
   },
+  pauseSimulation: { en: 'Pause', ko: '일시정지' },
+  resumeSimulation: { en: 'Resume', ko: '다시 시작' },
+  runningMode: { en: 'running', ko: '실행 중' },
+  pausedMode: { en: 'paused', ko: '일시정지' },
+  replayMode: { en: 'replay', ko: '기록 재생' },
   offline: {
     en: 'You are offline. Cached laboratory tools remain available.',
     ko: '오프라인 상태입니다. 캐시된 실험 도구는 계속 사용할 수 있습니다.'
@@ -116,6 +135,19 @@ const UI_MESSAGES: Record<UiMessageKey, { en: string; ko: string }> = {
 export function uiMessage(key: UiMessageKey): string {
   const korean = typeof document !== 'undefined' && document.documentElement.lang === 'ko';
   return UI_MESSAGES[key][korean ? 'ko' : 'en'];
+}
+
+/** Keep the Lab's toggle semantics and localized action label in one writer. */
+export function presentSimulationControl(running: boolean): void {
+  if (typeof document === 'undefined') return;
+  const button = document.getElementById('pauseBtn');
+  if (!(button instanceof HTMLButtonElement)) return;
+  const label = uiMessage(running ? 'pauseSimulation' : 'resumeSimulation');
+  button.textContent = `${running ? '⏸' : '▶'} ${label}`;
+  button.dataset.running = String(running);
+  button.setAttribute('aria-pressed', String(!running));
+  button.setAttribute('aria-label', label);
+  button.title = label;
 }
 
 const STRUCTURAL_TEXT_KO: Record<string, string> = {
@@ -177,7 +209,19 @@ export function applyStructuralLocale(): void {
       korean ? text : labelEnglishText(input?.closest('label') ?? null)
     );
   }
+  document
+    .getElementById('interpolateRender')
+    ?.closest('label')
+    ?.setAttribute(
+      'title',
+      korean
+        ? '실시간 고정 dt 표시에서 솔버 상태 사이를 부드럽게 보간합니다. 결정론적 재생은 정확한 스텝 상태를 표시합니다.'
+        : 'Smooths the real-time fixed-dt display between solver states. Deterministic replay always shows exact step states.'
+    );
   for (const [id, text] of Object.entries(ELEMENT_TEXT_KO)) localizeText(document.getElementById(id), text, korean);
+  document
+    .getElementById('m2TheoryLink')
+    ?.setAttribute('aria-label', korean ? 'm₂가 등장하는 질량행렬 이론 열기' : 'Open the mass-matrix theory for m2');
   for (const [selectId, options] of Object.entries(OPTION_LABELS)) {
     const select = document.getElementById(selectId);
     if (!(select instanceof HTMLSelectElement)) continue;
@@ -359,4 +403,5 @@ export function installLocaleSelect(refresh: () => void): void {
   field.append(label, select, hint);
   host.append(field);
   applyStructuralLocale();
+  document.dispatchEvent(new CustomEvent('pendulum:ui-locale-changed', { detail: { locale: currentNavLocale() } }));
 }

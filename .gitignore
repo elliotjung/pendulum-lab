@@ -5,6 +5,7 @@ coverage/
 reports/*.tmp
 reports/vitest-results.json
 reports/playwright/
+reports/playwright-pwa/
 reports/coverage/
 test-results/
 playwright-report/

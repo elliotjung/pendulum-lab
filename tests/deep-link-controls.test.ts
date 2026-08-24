@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyNumericControlParams,
   canonicalizeVelocityAliases,
+  formatNumericControlRejections,
   numericInputContract,
   parseNumericControlParam
 } from '../src/app/deepLinkControls';
@@ -42,6 +44,31 @@ describe('numeric deep-link controls', () => {
 
     const gravity = { min: '0', max: '20', step: '0.1' } as HTMLInputElement;
     expect(parseNumericControlParam('9.81', numericInputContract(gravity))).toEqual({ ok: true, value: 9.81 });
+  });
+
+  it('returns bounded key/value/reason diagnostics instead of silently ignoring rejected URL values', () => {
+    const controls = new Map<string, HTMLInputElement>([
+      ['th1', { value: '2', min: '-3.1416', max: '3.1416', step: '0.001' } as HTMLInputElement],
+      ['dt', { value: '0.005', min: '0.0001', max: '0.05', step: '0.0001' } as HTMLInputElement],
+      ['g', { value: '9.81', min: '0', max: '20', step: '0.1' } as HTMLInputElement]
+    ]);
+    const applied: Array<[string, number]> = [];
+    const result = applyNumericControlParams(
+      `https://example.test/app.html?th1=2.18&dt=1oops&g=${'9'.repeat(80)}`,
+      { getElementById: (id) => controls.get(id) ?? null },
+      (id, value) => applied.push([id, value])
+    );
+
+    expect(applied).toEqual([['th1', 2.18]]);
+    expect(result.acceptedCount).toBe(1);
+    expect(result.rejected.map(({ id, reason }) => ({ id, reason }))).toEqual([
+      { id: 'g', reason: 'range' },
+      { id: 'dt', reason: 'syntax' }
+    ]);
+    const message = formatNumericControlRejections(result.rejected, false);
+    expect(message).toContain('g="99999999999999999999999999999…" (allowed range)');
+    expect(message).toContain('dt="1oops" (number syntax)');
+    expect(message.length).toBeLessThan(320);
   });
 });
 

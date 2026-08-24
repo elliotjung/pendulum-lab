@@ -12,10 +12,16 @@ export interface FormulationComparisonInput {
   /** Short comparison horizon. Long chaotic agreement is intentionally not claimed. */
   horizon: number;
   gamma?: number;
+  /** Named review envelope; both paths still share the same fixed RK4 step. */
+  comparisonPolicy?: FormulationComparisonPolicy;
 }
+
+export type FormulationComparisonPolicy = 'interactive' | 'reference';
 
 export interface FormulationComparisonResult {
   policy: 'shared-fixed-rk4';
+  comparisonPolicy: FormulationComparisonPolicy;
+  policyToleranceCeiling: number;
   steps: number;
   simulatedTime: number;
   maxAngleDifference: readonly [number, number];
@@ -26,12 +32,18 @@ export interface FormulationComparisonResult {
   maxNormalizedMismatch: number;
   comparisonTolerance: number;
   finalThetaOmega: Float64Array;
+  /** Final canonical state in the native [q1, q2, p1, p2] representation. */
+  finalCanonical: Float64Array;
   finalCanonicalAsThetaOmega: Float64Array;
   verdict: 'agreement' | 'review';
   caveat: string;
 }
 
 const MAX_STEPS = 250_000;
+const POLICY_TOLERANCE_CEILINGS: Readonly<Record<FormulationComparisonPolicy, number>> = Object.freeze({
+  interactive: 5e-5,
+  reference: 1e-7
+});
 
 function finitePositive(value: number, label: string): number {
   if (!(value > 0) || !Number.isFinite(value)) throw new RangeError(`${label} must be positive and finite.`);
@@ -66,6 +78,10 @@ export function compareDoublePendulumFormulations(input: FormulationComparisonIn
   const gamma = input.gamma ?? 0;
   if (!Number.isFinite(gamma) || gamma < 0) throw new RangeError('gamma must be finite and non-negative.');
   if (input.initialState.length < 4) throw new RangeError('initialState must contain theta1, theta2, omega1, omega2.');
+  const comparisonPolicy = input.comparisonPolicy ?? 'interactive';
+  if (comparisonPolicy !== 'interactive' && comparisonPolicy !== 'reference') {
+    throw new RangeError('comparisonPolicy must be interactive or reference.');
+  }
 
   const steps = Math.max(1, Math.ceil(horizon / dt));
   if (steps > MAX_STEPS)
@@ -124,17 +140,21 @@ export function compareDoublePendulumFormulations(input: FormulationComparisonIn
     );
   }
 
+  const policyToleranceCeiling = POLICY_TOLERANCE_CEILINGS[comparisonPolicy];
   const scaledTolerance = Math.max(5e-8, 40 * stepDt ** 4 * Math.max(1, horizon));
+  const comparisonTolerance = Math.min(policyToleranceCeiling, scaledTolerance);
   const maxNormalizedMismatch = Math.max(
     maxAngleDifference[0],
     maxAngleDifference[1],
     maxPositionDifference / lengthScale,
     maxEnergyDifference / energyScale
   );
-  const verdict = maxNormalizedMismatch <= scaledTolerance ? 'agreement' : 'review';
+  const verdict = maxNormalizedMismatch <= comparisonTolerance ? 'agreement' : 'review';
 
   return {
     policy: 'shared-fixed-rk4',
+    comparisonPolicy,
+    policyToleranceCeiling,
     steps,
     simulatedTime: horizon,
     maxAngleDifference,
@@ -142,8 +162,9 @@ export function compareDoublePendulumFormulations(input: FormulationComparisonIn
     maxEnergyDifference,
     maxRelativeEnergyChange,
     maxNormalizedMismatch,
-    comparisonTolerance: scaledTolerance,
+    comparisonTolerance,
     finalThetaOmega: Float64Array.from(thetaOmega),
+    finalCanonical: Float64Array.from(canonical),
     finalCanonicalAsThetaOmega: Float64Array.from(canonicalAsThetaOmega),
     verdict,
     caveat:

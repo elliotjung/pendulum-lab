@@ -26,6 +26,9 @@ describe('Euler-Lagrange / Hamiltonian formulation comparison', () => {
       expect(result.maxPositionDifference).toBeLessThan(1e-6);
       expect(result.maxEnergyDifference).toBeLessThan(1e-5);
       expect(result.maxNormalizedMismatch).toBeLessThanOrEqual(result.comparisonTolerance);
+      expect(result.comparisonPolicy).toBe('interactive');
+      expect(result.policyToleranceCeiling).toBe(5e-5);
+      expect(result.finalCanonical).toHaveLength(4);
       expect(result.caveat).toContain('Short-horizon');
     });
   }
@@ -46,5 +49,32 @@ describe('Euler-Lagrange / Hamiltonian formulation comparison', () => {
     expect(result.verdict).toBe('agreement');
     expect(result.maxNormalizedMismatch).toBe(0);
     expect(Number.isFinite(result.comparisonTolerance)).toBe(true);
+  });
+
+  it('supports the named reference envelope without changing the shared integrator policy', () => {
+    const result = compareDoublePendulumFormulations({
+      parameters,
+      initialState: [0.12, -0.08, 0, 0],
+      dt: 0.001,
+      horizon: 1,
+      comparisonPolicy: 'reference'
+    });
+    expect(result.policy).toBe('shared-fixed-rk4');
+    expect(result.comparisonPolicy).toBe('reference');
+    expect(result.policyToleranceCeiling).toBe(1e-7);
+    expect(result.comparisonTolerance).toBeLessThanOrEqual(1e-7);
+    expect(result.verdict).toBe('agreement');
+  });
+
+  it('rejects an unknown comparison policy at the public boundary', () => {
+    expect(() =>
+      compareDoublePendulumFormulations({
+        parameters,
+        initialState: [0, 0, 0, 0],
+        dt: 0.001,
+        horizon: 1,
+        comparisonPolicy: 'unknown' as 'reference'
+      })
+    ).toThrow(/comparisonPolicy/);
   });
 });

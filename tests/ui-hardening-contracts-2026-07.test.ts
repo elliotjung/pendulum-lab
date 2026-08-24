@@ -217,6 +217,7 @@ describe('2026-07 UI hardening source contracts', () => {
 
   it('keeps rail arrow navigation local and synchronizes orientation immediately and after media changes', () => {
     const shell = read('src/app/Shell.ts');
+    const sidePanel = read('src/app/SidePanelController.ts');
     const main = read('src/main.ts');
     expect(shell).toContain("clone.closest<HTMLElement>('.rail-submenu,.rail-tab-list') ?? document");
     expect(shell).toContain('syncTablistOrientation();');
@@ -226,9 +227,9 @@ describe('2026-07 UI hardening source contracts', () => {
     expect(shell).toContain('export function isTextEntryShortcutTarget');
     expect(main).toContain('isTextEntryShortcutTarget(event.target)');
     expect(shell).toContain("behavior: reduceMotion ? 'auto' : 'smooth'");
-    expect(shell).toContain("const korean = document.documentElement.lang === 'ko'");
-    expect(shell).toContain("? '측면 패널 표시'");
-    expect(shell).toContain("? '측면 패널 숨기기'");
+    expect(sidePanel).toContain("const korean = document.documentElement.lang === 'ko'");
+    expect(sidePanel).toContain("? '측면 패널 표시'");
+    expect(sidePanel).toContain("? '측면 패널 숨기기'");
   });
 
   it('does not let a hidden help dialog permanently block Trust Drawer Escape', () => {

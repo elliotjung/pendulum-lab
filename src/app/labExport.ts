@@ -14,15 +14,46 @@ export interface TrajectorySample {
   state: ArrayLike<number>;
 }
 
+export interface TrajectoryRetentionMetadata {
+  schemaVersion: 'pendulum-trajectory-retention/v1';
+  policy: 'bounded-most-recent';
+  capacity: number;
+  totalSamples: number;
+  retainedSamples: number;
+  droppedSamples: number;
+  firstRetainedTime: number | null;
+  lastRetainedTime: number | null;
+  completeFromReset: boolean;
+  sampling: 'one sample per rendered frame that advanced at least one fixed step';
+}
+
 /** Trajectory CSV: time then one column per state component. */
-export function trajectoryCsv(samples: readonly TrajectorySample[], system: LabConfig['system']): string {
+export function trajectoryCsv(
+  samples: readonly TrajectorySample[],
+  system: LabConfig['system'],
+  retention?: TrajectoryRetentionMetadata
+): string {
   const header = system === 'triple' ? 't,th1,th2,th3,w1,w2,w3' : 't,th1,th2,w1,w2';
   const rows = samples.map((s) => {
     const values = [s.time];
     for (let i = 0; i < s.state.length; i += 1) values.push(s.state[i] ?? 0);
     return values.map((v) => v.toPrecision(10)).join(',');
   });
-  return [header, ...rows].join('\n');
+  const metadata = retention
+    ? [
+        `# retention_schema=${retention.schemaVersion}`,
+        `# retention_policy=${retention.policy}`,
+        `# retained_samples=${retention.retainedSamples}`,
+        `# total_samples_since_reset=${retention.totalSamples}`,
+        `# dropped_earlier_samples=${retention.droppedSamples}`,
+        `# capacity=${retention.capacity}`,
+        `# complete_from_reset=${retention.completeFromReset}`,
+        `# first_retained_time=${retention.firstRetainedTime ?? ''}`,
+        `# last_retained_time=${retention.lastRetainedTime ?? ''}`,
+        `# sampling=${retention.sampling}`
+      ]
+    : [];
+  return [...metadata, header, ...rows].join('\n');
 }
 
 function hasCrossingMetadata(point: Point2D): point is PoincareCrossingPoint {
@@ -70,6 +101,8 @@ export interface RunExport {
   runtimeSnapshot: RuntimeSnapshot;
   /** UI locale active when the artifact was created (scientific columns stay stable). */
   locale: 'en' | 'ko';
+  /** Present for interactive exports whose replay/CSV buffer has a bounded retention window. */
+  trajectoryRetention?: TrajectoryRetentionMetadata;
 }
 
 export interface RunExportOptions {
@@ -78,6 +111,7 @@ export interface RunExportOptions {
   seed?: number | null;
   hash?: string;
   locale?: 'en' | 'ko';
+  trajectoryRetention?: TrajectoryRetentionMetadata;
 }
 
 function stateHash(state: ArrayLike<number>): string {
@@ -133,6 +167,7 @@ export function runJson(
     energy,
     drift,
     locale: options.locale === 'ko' ? 'ko' : 'en',
+    ...(options.trajectoryRetention ? { trajectoryRetention: { ...options.trajectoryRetention } } : {}),
     runtimeSnapshot
   };
 }

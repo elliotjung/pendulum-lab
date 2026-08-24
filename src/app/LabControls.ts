@@ -4,6 +4,7 @@ import type { LabConfig } from './LabSimulation';
 import { pageDom as dom } from './DomBinder';
 import { LAB_CONTROLS_COMMITTED_EVENT, type LabControlCommitDetail } from './controlCommit';
 import { LAB_CONTROL_BOUNDS, LAB_INTEGRATOR_IDS, inBounds } from '../validation/sessionConstraints';
+import { integratorRegistry } from '../physics/integratorRegistry';
 
 interface Size2D {
   width: number;
@@ -28,6 +29,7 @@ export interface LabControlBindings {
   clearTrail(): void;
   clearPoincare(): void;
   toggleRunning(): void;
+  refreshPresentation(): void;
   exportTrajectory(): void;
   exportPoincare(): void;
   exportJson(): void;
@@ -184,6 +186,7 @@ export class LabControls {
     dom.el('clearTrailBtn')?.addEventListener('click', () => actions.clearTrail(), listenerOptions);
     dom.el('clearPoincBtn')?.addEventListener('click', () => actions.clearPoincare(), listenerOptions);
     dom.el('pauseBtn')?.addEventListener('click', () => actions.toggleRunning(), listenerOptions);
+    document.addEventListener('pendulum:ui-locale-changed', () => actions.refreshPresentation(), listenerOptions);
 
     this.wireExport(actions);
     this.wireScrubber(actions);
@@ -240,11 +243,21 @@ export class LabControls {
       scrubber.addEventListener(
         'input',
         () => {
-          const max = Math.max(0, actions.scrubLength() - 1);
-          const value = Math.min(max, Math.round(Number(scrubber.value)));
-          const nextIndex = value >= max ? -1 : value;
+          // The live position is an explicit sentinel one past the newest
+          // recorded frame. Keeping it separate from the final frame makes
+          // live -> rewind -> live round-trips unambiguous.
+          const presentedLiveSentinel = Number(scrubber.max);
+          const raw = Number(scrubber.value);
+          const liveSentinel = Math.max(0, actions.scrubLength());
+          scrubber.max = String(liveSentinel);
+          const value = Number.isFinite(raw) ? Math.max(0, Math.min(liveSentinel, Math.round(raw))) : liveSentinel;
+          // A frame may be recorded between pointer movement and this input
+          // handler. The max the user actually selected remains the live
+          // sentinel even if the underlying ring grew by one meanwhile.
+          const requestedLive = Number.isFinite(presentedLiveSentinel) && raw >= presentedLiveSentinel;
+          const nextIndex = requestedLive || value >= liveSentinel ? -1 : value;
           actions.setScrubIndex(nextIndex);
-          if (scrubVal) scrubVal.textContent = actions.scrubLabel(value);
+          if (scrubVal) scrubVal.textContent = actions.scrubLabel(nextIndex);
         },
         options
       );
@@ -419,7 +432,33 @@ function updateIntegratorGuidance(method: HTMLSelectElement | null): void {
     en: 'Run a dt-halving comparison and inspect residual, drift, and limitations before treating this trajectory as evidence.',
     ko: '이 궤적을 근거로 사용하기 전에 dt 절반 비교를 실행하고 잔차, 오차와 한계를 점검하세요.'
   };
-  host.textContent = korean ? guidance.ko : guidance.en;
+  const metadata = integratorRegistry[method.value as IntegratorId];
+  const order = metadata
+    ? typeof metadata.order === 'number'
+      ? korean
+        ? `공칭 ${metadata.order}차`
+        : `declared order ${metadata.order}`
+      : korean
+        ? '암시적 방법 — 측정 차수 확인 필요'
+        : 'implicit method — inspect measured order'
+    : korean
+      ? '메타데이터 없음'
+      : 'metadata unavailable';
+  const methodSummary = metadata
+    ? `${metadata.name}; ${order}; ${korean ? '구조 분류' : 'structure class'} ${metadata.symplectic}; ${korean ? '권장 dt' : 'recommended dt'} ${metadata.recommendedDt[0]}–${metadata.recommendedDt[1]} s. `
+    : '';
+  const evidence = document.createElement('a');
+  evidence.id = 'methodEvidenceLink';
+  evidence.className = 'control-theory-link';
+  evidence.href = '?tab=validate#runConvergence';
+  evidence.textContent = korean ? '측정 차수 검증' : 'Measured-order evidence';
+  evidence.setAttribute(
+    'aria-label',
+    korean
+      ? `${metadata?.name ?? method.value} 측정 차수 검증 열기`
+      : `Open measured-order validation for ${metadata?.name ?? method.value}`
+  );
+  host.replaceChildren(document.createTextNode(`${methodSummary}${korean ? guidance.ko : guidance.en} `), evidence);
 }
 
 function toCanvas(

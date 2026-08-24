@@ -6,10 +6,12 @@ const useProductionPreview = process.env.PLAYWRIGHT_USE_PREVIEW === '1';
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore:
-    process.env.PLAYWRIGHT_PRODUCTION_GATE === '1'
+  testIgnore: [
+    '**/pwa-production-lifecycle.spec.ts',
+    ...(process.env.PLAYWRIGHT_PRODUCTION_GATE === '1'
       ? ['**/visual-regression.spec.ts', '**/webgpu-hardware-reductions.spec.ts']
-      : [],
+      : [])
+  ],
   timeout: 30_000,
   expect: {
     timeout: 5_000,

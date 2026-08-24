@@ -73,18 +73,15 @@
    observer callback on every animation frame while still giving the canvas
    the full final width. These selectors intentionally follow the structural
    `display:none` rules in 00-base/03-instrument-workbench. */
-body.panel-motion-ready .tabpanel.active .layout > .controls {
+body.panel-transitioning .tabpanel.active .layout > .controls {
+  display: block !important;
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
+  transform: none;
+  pointer-events: none;
   transform-origin: right center;
   transition:
     opacity 180ms ease,
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-body.panel-transitioning .tabpanel.active .layout > .controls {
-  display: block !important;
-  pointer-events: none;
   will-change: opacity, transform;
 }
 

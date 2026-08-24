@@ -226,7 +226,9 @@ describe('service worker behavior', () => {
     await event.settle();
 
     const shell = await harness.caches.open(SHELL_CACHE);
-    expect(shell.addAllCalls).toEqual([['./', './index.html', './app.html', './manifest.webmanifest']]);
+    expect(shell.addAllCalls).toEqual([
+      ['./', './index.html', './app.html', './offline.html', './manifest.webmanifest']
+    ]);
     expect(harness.skipWaiting).not.toHaveBeenCalled();
   });
 
@@ -388,6 +390,19 @@ describe('service worker behavior', () => {
 
     const event = harness.dispatch('fetch', request('/lab', 'navigate'));
     expect(await event.response).toBe(fallback);
+    await event.settle();
+  });
+
+  test('serves the explicit recovery page when no application route is cached', async () => {
+    const harness = createHarness(async () => {
+      throw new TypeError('offline');
+    });
+    const currentShell = await harness.caches.open(SHELL_CACHE);
+    const recovery = new Response('offline recovery');
+    await currentShell.put('./offline.html', recovery);
+
+    const event = harness.dispatch('fetch', request('/uncached-route', 'navigate'));
+    expect(await event.response).toBe(recovery);
     await event.settle();
   });
 

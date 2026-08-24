@@ -133,6 +133,42 @@ describe('SimulationClock', () => {
     expect(third.timingDebtSeconds).toBeLessThan(second.timingDebtSeconds);
   });
 
+  it('uses the adaptive steps-per-frame value as the default wall-clock work budget', () => {
+    const sim = new LabSimulation(DOUBLE);
+    const clock = new SimulationClock();
+
+    clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_000,
+      stepsPerFrame: 8,
+      bobsScratch: [],
+      onStep: () => {}
+    });
+    const shed = clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_100,
+      stepsPerFrame: 2,
+      bobsScratch: [],
+      onStep: () => {}
+    });
+
+    expect(shed.stepsAdvanced).toBe(2);
+    expect(shed.timingDebtSeconds).toBeGreaterThan(0);
+
+    const fastForward = clock.advance({
+      sim,
+      mode: 'wall-clock',
+      timestampMs: 1_200,
+      speedMultiplier: 3,
+      stepsPerFrame: 2,
+      bobsScratch: [],
+      onStep: () => {}
+    });
+    expect(fastForward.stepsAdvanced).toBe(6);
+  });
+
   it.each([
     [{ stepsPerFrame: Number.NaN }, /stepsPerFrame/],
     [{ stepsPerFrame: -1 }, /stepsPerFrame/],

@@ -38,6 +38,38 @@ describe('labExport', () => {
     expect(csv.split('\n')[0]).toBe('t,th1,th2,th3,w1,w2,w3');
   });
 
+  it('makes bounded trajectory retention explicit in CSV and run JSON exports', () => {
+    const retention = {
+      schemaVersion: 'pendulum-trajectory-retention/v1',
+      policy: 'bounded-most-recent',
+      capacity: 2,
+      totalSamples: 3,
+      retainedSamples: 2,
+      droppedSamples: 1,
+      firstRetainedTime: 1,
+      lastRetainedTime: 2,
+      completeFromReset: false,
+      sampling: 'one sample per rendered frame that advanced at least one fixed step'
+    } as const;
+    const csv = trajectoryCsv(
+      [
+        { time: 1, state: [2, 2.5, 0, 0] },
+        { time: 2, state: [2.1, 2.4, 0.1, -0.1] }
+      ],
+      'double',
+      retention
+    );
+
+    expect(csv).toContain('# retention_policy=bounded-most-recent');
+    expect(csv).toContain('# dropped_earlier_samples=1');
+    expect(csv.split('\n')).toContain('t,th1,th2,w1,w2');
+
+    const json = runJson(CONFIG, [2.1, 2.4, 0.1, -0.1], 2, -5.5, 1e-7, {
+      trajectoryRetention: retention
+    });
+    expect(json.trajectoryRetention).toEqual(retention);
+  });
+
   it('builds a Poincaré CSV', () => {
     const csv = poincareCsv([
       { x: 1.5, y: 4.0 },

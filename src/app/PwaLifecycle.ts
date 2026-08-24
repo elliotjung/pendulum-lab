@@ -1,6 +1,27 @@
 import { uiMessage } from './uiLocale';
-import { StateStore } from '../state/StateStore';
 import type { RuntimeSnapshot } from '../types/domain';
+import {
+  clearStoredPwaUpdateRecovery,
+  isBoundedRecoveryFocusId,
+  PWA_UPDATE_RECOVERY_SCHEMA,
+  PWA_UPDATE_RECOVERY_TTL_MS,
+  PWA_UPDATE_REQUESTED_KEY,
+  readStoredPwaUpdateRecovery,
+  storePwaUpdateRecovery,
+  type StoredUpdateRecovery,
+  type UpdateRecoveryV2,
+  type UpdateRecoveryValidation
+} from './PwaUpdateRecovery';
+
+export {
+  PWA_UPDATE_RECOVERY_MAX_BYTES,
+  PWA_UPDATE_RECOVERY_SCHEMA,
+  PWA_UPDATE_RECOVERY_TTL_MS,
+  serializePwaUpdateRecovery,
+  validatePwaUpdateRecovery,
+  type UpdateRecoveryV2,
+  type UpdateRecoveryValidation
+} from './PwaUpdateRecovery';
 
 interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -19,16 +40,6 @@ interface CacheStatus {
 type Toast = (message: string, timeout?: number) => void;
 
 const UPDATE_DISMISSED_KEY = 'pendulum-lab/pwa-update-dismissed';
-const UPDATE_REQUESTED_KEY = 'pendulum-lab/pwa-update-requested';
-const UPDATE_RECOVERY_KEY = 'pendulum-lab/pwa-update-recovery/v1';
-
-interface UpdateRecovery {
-  schemaVersion: 'pendulum-pwa-update-recovery/v1';
-  savedAt: string;
-  snapshot: RuntimeSnapshot;
-  wasRunning: boolean;
-  focusId: string | null;
-}
 
 function isViteDevelopmentShell(): boolean {
   return Boolean(document.querySelector('script[type="module"][src*="/src/main.ts"]'));
@@ -86,7 +97,7 @@ export function installPwaLifecycle(showToast: Toast): void {
     }
     let updateRequested = false;
     try {
-      updateRequested = window.sessionStorage.getItem(UPDATE_REQUESTED_KEY) === '1';
+      updateRequested = window.sessionStorage.getItem(PWA_UPDATE_REQUESTED_KEY) === '1';
     } catch {
       updateRequested = false;
     }
@@ -175,7 +186,7 @@ function showUpdate(registration: ServiceWorkerRegistration, showToast: Toast): 
     void persistUpdateRecovery()
       .then(() => {
         try {
-          window.sessionStorage.setItem(UPDATE_REQUESTED_KEY, '1');
+          window.sessionStorage.setItem(PWA_UPDATE_REQUESTED_KEY, '1');
         } catch {
           // Controller activation still succeeds; only automatic reload is unavailable.
         }
@@ -225,57 +236,192 @@ async function persistUpdateRecovery(): Promise<void> {
   await Promise.all([storage.flushResearchStateForUpdate(), design.flushDesignStudyForUpdate()]);
   const lab = (window as Window & { __modernLab?: { isRunning?(): boolean } }).__modernLab;
   const active = document.activeElement;
-  const recovery: UpdateRecovery = {
-    schemaVersion: 'pendulum-pwa-update-recovery/v1',
-    savedAt: new Date().toISOString(),
+  const savedAtMs = Date.now();
+  const candidateFocusId = active instanceof HTMLElement && active.id ? active.id : null;
+  const recovery: UpdateRecoveryV2 = {
+    schemaVersion: PWA_UPDATE_RECOVERY_SCHEMA,
+    savedAt: new Date(savedAtMs).toISOString(),
+    expiresAt: new Date(savedAtMs + PWA_UPDATE_RECOVERY_TTL_MS).toISOString(),
     snapshot: currentSnapshot(),
     wasRunning: lab?.isRunning?.() ?? false,
-    focusId: active instanceof HTMLElement && active.id ? active.id : null
+    focusId: isBoundedRecoveryFocusId(candidateFocusId) ? candidateFocusId : null,
+    restorePolicy: 'paused-safe-mode'
   };
-  window.sessionStorage.setItem(UPDATE_RECOVERY_KEY, JSON.stringify(recovery));
+  storePwaUpdateRecovery(recovery);
 }
 
-/** Restore the exact live snapshot after a user-approved service-worker update. */
-export function restorePwaUpdateRecovery(showToast: Toast): void {
-  let raw: string | null = null;
-  try {
-    raw = window.sessionStorage.getItem(UPDATE_RECOVERY_KEY);
-  } catch {
+function recoverySummary(validation: UpdateRecoveryValidation, korean: boolean): string {
+  const size = `${validation.bytes.toLocaleString(korean ? 'ko-KR' : 'en-US')} B`;
+  if (validation.status !== 'valid' && validation.status !== 'expired') {
+    return korean
+      ? `상태: ${validation.status}\n크기: ${size}\n이유: ${validation.reason}`
+      : `Status: ${validation.status}\nSize: ${size}\nReason: ${validation.reason}`;
+  }
+  const recovery = validation.recovery;
+  const saved = new Intl.DateTimeFormat(korean ? 'ko-KR' : 'en', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(new Date(recovery.savedAt));
+  const expiration = new Intl.DateTimeFormat(korean ? 'ko-KR' : 'en', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(new Date(recovery.expiresAt));
+  const lines = korean
+    ? [
+        `상태: ${validation.status}`,
+        `저장: ${saved}`,
+        `만료: ${expiration}`,
+        `시스템/방법: ${recovery.snapshot.systemType} / ${recovery.snapshot.method}`,
+        `시뮬레이션 시간: ${recovery.snapshot.simTime.toPrecision(6)} s`,
+        `업데이트 전 실행 중: ${recovery.wasRunning ? '예' : '아니요'}`,
+        `크기: ${size}`
+      ]
+    : [
+        `Status: ${validation.status}`,
+        `Saved: ${saved}`,
+        `Expires: ${expiration}`,
+        `System/method: ${recovery.snapshot.systemType} / ${recovery.snapshot.method}`,
+        `Simulation time: ${recovery.snapshot.simTime.toPrecision(6)} s`,
+        `Running before update: ${recovery.wasRunning ? 'yes' : 'no'}`,
+        `Size: ${size}`
+      ];
+  if (validation.reason) lines.push(`${korean ? '이유' : 'Reason'}: ${validation.reason}`);
+  return lines.join('\n');
+}
+
+function restoreFocusOnce(focusId: string | null): void {
+  if (!isBoundedRecoveryFocusId(focusId) || focusId === null) return;
+  window.setTimeout(() => {
+    const target = document.getElementById(focusId);
+    if (
+      !(target instanceof HTMLElement) ||
+      !target.isConnected ||
+      target.hidden ||
+      target.matches(':disabled,[aria-hidden="true"]') ||
+      target.closest('[inert]')
+    )
+      return;
+    try {
+      target.focus({ preventScroll: true });
+    } catch {
+      // Focus recovery is best-effort and attempted at most once.
+    }
+  }, 0);
+}
+
+function applySafeUpdateRecovery(recovery: UpdateRecoveryV2, banner: HTMLElement, showToast: Toast): void {
+  const korean = document.documentElement.lang === 'ko';
+  const lab = (
+    window as Window & {
+      __modernLab?: { restoreSnapshot(snapshot: RuntimeSnapshot): void; isRunning(): boolean; stop?(): void };
+    }
+  ).__modernLab;
+  if (!lab) {
+    showToast(
+      korean
+        ? '시뮬레이터가 준비되지 않아 복구 데이터를 유지했습니다.'
+        : 'The Lab is not ready; recovery data was retained.',
+      5200
+    );
     return;
   }
-  if (!raw) return;
   try {
-    const recovery = JSON.parse(raw) as Partial<UpdateRecovery>;
-    if (recovery.schemaVersion !== 'pendulum-pwa-update-recovery/v1') throw new Error('unsupported recovery schema');
-    const validation = StateStore.validate(recovery.snapshot);
-    if (!validation.ok || !validation.value) throw new Error(validation.problems.join('; '));
-    const lab = (
-      window as Window & {
-        __modernLab?: { restoreSnapshot(snapshot: RuntimeSnapshot): void; isRunning(): boolean };
-      }
-    ).__modernLab;
-    if (!lab) return;
-    lab.restoreSnapshot(validation.value);
-    if (!recovery.wasRunning && lab.isRunning()) document.getElementById('pauseBtn')?.click();
-    const focusId = typeof recovery.focusId === 'string' ? recovery.focusId : null;
-    if (focusId) window.setTimeout(() => document.getElementById(focusId)?.focus({ preventScroll: true }), 0);
-    window.sessionStorage.removeItem(UPDATE_RECOVERY_KEY);
-    window.sessionStorage.removeItem(UPDATE_REQUESTED_KEY);
+    if (lab.isRunning()) {
+      document.getElementById('pauseBtn')?.click();
+      if (lab.isRunning()) lab.stop?.();
+    }
+    lab.restoreSnapshot({ ...recovery.snapshot, mode: 'recovery' });
+    if (lab.isRunning()) {
+      document.getElementById('pauseBtn')?.click();
+      if (lab.isRunning()) lab.stop?.();
+    }
+    if (lab.isRunning()) throw new Error('The restored simulation could not be paused.');
+    if (!clearStoredPwaUpdateRecovery()) throw new Error('Recovery storage could not be cleared safely.');
+    banner.remove();
+    restoreFocusOnce(recovery.focusId);
     showToast(
-      document.documentElement.lang === 'ko'
-        ? '업데이트를 적용하고 실행 상태를 복원했습니다.'
-        : 'Update applied and your run state was restored.',
-      4200
+      korean
+        ? '복구 지점을 안전 모드로 적용했습니다. 시뮬레이션은 일시정지 상태입니다.'
+        : 'Recovery was applied in safe mode. The simulation remains paused.',
+      4800
     );
   } catch (error) {
-    console.warn('Pendulum Lab update recovery remains available for a later retry.', error);
+    console.warn('Pendulum Lab update recovery remains available for inspection or a later retry.', error);
     showToast(
-      document.documentElement.lang === 'ko'
-        ? '업데이트는 적용됐지만 실행 상태 복원에 실패했습니다. 복구 데이터는 유지됩니다.'
-        : 'The update applied, but run-state recovery failed. Recovery data was retained.',
+      korean
+        ? '안전 복구에 실패했습니다. 검사와 재시도를 위해 복구 데이터는 유지됩니다.'
+        : 'Safe recovery failed. Recovery data was retained for inspection or retry.',
       5200
     );
   }
+}
+
+function renderUpdateRecoverySurface(stored: StoredUpdateRecovery, showToast: Toast): void {
+  if (document.getElementById('pwaRecoveryBanner')) return;
+  const korean = document.documentElement.lang === 'ko';
+  const { validation } = stored;
+  const canRestore = validation.status === 'valid';
+  const banner = document.createElement('section');
+  banner.id = 'pwaRecoveryBanner';
+  banner.className = 'pwa-update-banner pwa-recovery-banner';
+  banner.setAttribute('role', 'region');
+  banner.setAttribute('aria-label', korean ? '업데이트 복구 지점' : 'Update recovery point');
+
+  const status = document.createElement('span');
+  status.setAttribute('role', 'status');
+  status.textContent = canRestore
+    ? korean
+      ? '검증된 복구 지점이 있습니다. 안전 모드는 자동 재생하지 않습니다.'
+      : 'A validated recovery point is available. Safe mode will not auto-play.'
+    : korean
+      ? '복구 지점은 적용되지 않았습니다. 요약을 확인하거나 삭제하세요.'
+      : 'The recovery point was not applied. Review its summary or delete it.';
+
+  const summaryId = 'pwaRecoverySummary';
+  const view = document.createElement('button');
+  view.type = 'button';
+  view.textContent = korean ? '요약 보기' : 'View summary';
+  view.setAttribute('aria-controls', summaryId);
+  view.setAttribute('aria-expanded', 'false');
+  const summary = document.createElement('pre');
+  summary.id = summaryId;
+  summary.className = 'pwa-recovery-summary';
+  summary.hidden = true;
+  summary.textContent = recoverySummary(validation, korean);
+  view.addEventListener('click', () => {
+    summary.hidden = !summary.hidden;
+    view.setAttribute('aria-expanded', String(!summary.hidden));
+    view.textContent = summary.hidden ? (korean ? '요약 보기' : 'View summary') : korean ? '요약 닫기' : 'Hide summary';
+  });
+
+  banner.append(status, view);
+  if (canRestore) {
+    const restore = document.createElement('button');
+    restore.type = 'button';
+    restore.textContent = korean ? '일시정지로 복구' : 'Restore paused';
+    restore.addEventListener('click', () => applySafeUpdateRecovery(validation.recovery, banner, showToast));
+    banner.append(restore);
+  }
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.textContent = korean ? '복구 데이터 삭제' : 'Delete recovery';
+  remove.addEventListener('click', () => {
+    if (!clearStoredPwaUpdateRecovery()) {
+      showToast(korean ? '복구 데이터를 삭제하지 못했습니다.' : 'Recovery data could not be deleted.', 4200);
+      return;
+    }
+    banner.remove();
+    showToast(korean ? '복구 데이터를 삭제했습니다.' : 'Recovery data was deleted.', 3200);
+  });
+  banner.append(remove, summary);
+  document.body.append(banner);
+}
+
+/** Offer a validated, paused safe-mode recovery after an approved update. */
+export function restorePwaUpdateRecovery(showToast: Toast): void {
+  const stored = readStoredPwaUpdateRecovery();
+  if (!stored) return;
+  renderUpdateRecoverySurface(stored, showToast);
 }
 
 async function queryCacheStatus(registration: ServiceWorkerRegistration): Promise<void> {

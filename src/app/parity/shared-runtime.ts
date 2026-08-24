@@ -40,6 +40,12 @@ export function currentMode(): RunMode {
 }
 
 export function currentSnapshot(): RuntimeSnapshot {
+  const live = modernLab()?.runtimeSnapshot?.();
+  if (live) {
+    // Research/workbench mode is parity UI state; every scientific field,
+    // including state/time/hash, comes atomically from the live Lab runtime.
+    return { ...live, mode: currentMode() };
+  }
   const synced = stateStore.syncFromLegacy();
   const diagnostics = modernLab()?.diagnostics?.();
   const system = currentSystem();

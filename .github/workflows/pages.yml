@@ -26,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # Mainline already built this artifact, ran the scientific gates, and
-      # exercised the same bytes in Chromium/Firefox/WebKit/mobile. Download
-      # that exact artifact instead of rebuilding and retesting a second time.
+      # Mainline creates this final artifact only after the scientific,
+      # cross-platform, browser, and release-report jobs have all succeeded.
+      # Download those exact bytes instead of rebuilding a second time.
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: mainline-validated-build
@@ -44,9 +44,63 @@ jobs:
         run: |
           current_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${VALIDATED_BRANCH}" --jq .sha)"
           test "$VALIDATED_SHA" = "$current_sha"
-      - name: Confirm the validated Pages entrypoint exists
+      - name: Verify source binding and every deployed payload hash
         shell: bash
-        run: test -s validated/dist/index.html
+        env:
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          test -s validated/dist/index.html
+          test -s validated/dist/deployment-manifest.json
+          test -s validated/dist/deployment-files.sha256
+
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFile } from 'node:fs/promises';
+
+          const root = 'validated/dist';
+          const expectedCommit = process.env.VALIDATED_SHA ?? '';
+          const manifest = JSON.parse(await readFile(`${root}/deployment-manifest.json`, 'utf8'));
+          if (manifest?.schemaVersion !== 'pendulum-pages-deployment/v1') {
+            throw new Error('unsupported Pages deployment manifest');
+          }
+          if (manifest?.sourceCommit !== expectedCommit) {
+            throw new Error('Pages artifact sourceCommit does not match the successful mainline run');
+          }
+          if (manifest?.entrypoint?.path !== 'index.html') throw new Error('unexpected Pages entrypoint path');
+          if (manifest?.fileInventory?.path !== 'deployment-files.sha256') {
+            throw new Error('unexpected Pages inventory path');
+          }
+
+          const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+          const inventory = await readFile(`${root}/deployment-files.sha256`);
+          if (manifest?.fileInventory?.sha256 !== sha256(inventory)) {
+            throw new Error('Pages deployment inventory hash mismatch');
+          }
+          const fileCount = inventory.toString('utf8').trim().split('\n').filter(Boolean).length;
+          if (manifest?.fileInventory?.fileCount !== fileCount) {
+            throw new Error('Pages deployment inventory count mismatch');
+          }
+
+          const entrypoint = await readFile(`${root}/index.html`);
+          if (manifest?.entrypoint?.sha256 !== sha256(entrypoint)) {
+            throw new Error('Pages entrypoint hash mismatch');
+          }
+          const evidence = JSON.parse(await readFile(`${root}/reports/evidence-summary.json`, 'utf8'));
+          if (manifest?.evidenceSourceCommit !== evidence?.provenance?.sourceCommit) {
+            throw new Error('deployed evidence provenance does not match the Pages manifest');
+          }
+          NODE
+
+          (
+            cd validated/dist
+            find . -type f \
+              ! -name deployment-files.sha256 \
+              ! -name deployment-manifest.json \
+              -print0 | LC_ALL=C sort -z | xargs -0 sha256sum > /tmp/current-deployment-files.sha256
+            cmp deployment-files.sha256 /tmp/current-deployment-files.sha256
+            sha256sum --check deployment-files.sha256
+          )
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: validated/dist
@@ -63,6 +117,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy the exact artifact that passed Mainline Full Validation
+      - name: Deploy the exact source-bound artifact that passed Mainline Full Validation
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

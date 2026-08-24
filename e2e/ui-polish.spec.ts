@@ -13,6 +13,8 @@ test('side-panel toggle collapses, persists, and restores', async ({ page }) => 
   await expect(labControls).toBeVisible();
   await expect(panelToggle).toHaveAttribute('aria-expanded', 'true');
   expect(await panelToggle.getAttribute('aria-controls')).toContain('tab-lab-controls');
+  await expect.poll(() => labControls.evaluate((element) => getComputedStyle(element).transform)).toBe('none');
+  await expect.poll(() => labControls.evaluate((element) => getComputedStyle(element).willChange)).toBe('auto');
   const expandedIconTransform = await panelToggle
     .locator('.panel-toggle-icon')
     .evaluate((element) => getComputedStyle(element).transform);
@@ -70,6 +72,8 @@ test('side-panel motion reverses cleanly under rapid toggles', async ({ page }) 
   await expect(controls).toBeVisible();
   await expect(controls).not.toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('body')).not.toHaveClass(/panel-(collapsed|transitioning|closing|opening)/);
+  await expect.poll(() => controls.evaluate((element) => getComputedStyle(element).transform)).toBe('none');
+  await expect.poll(() => controls.evaluate((element) => getComputedStyle(element).willChange)).toBe('auto');
   await page.waitForTimeout(400);
   await expect(controls).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('pendulum-lab/ui/panel-collapsed'))).toBe('0');

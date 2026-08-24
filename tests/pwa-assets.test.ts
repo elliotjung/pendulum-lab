@@ -60,16 +60,27 @@ describe('PWA assets', () => {
     expect(source).toContain('trimQueue.catch(() => undefined)');
     expect(source).toContain("event.data?.type === 'SKIP_WAITING'");
     expect(source).toContain("url.search = ''");
+    expect(source).toContain('const BUILD_ASSETS = [/* __BUILD_ASSETS__ */]');
+    const buildConfig = await readFile('vite.config.ts', 'utf8');
+    expect(buildConfig).toContain("fileName.startsWith('assets/')");
+    expect(buildConfig).toContain("replace('/* __BUILD_ASSETS__ */'");
   });
 
   test('client updates require explicit consent and preserve a validated recovery point', async () => {
     const source = await readFile('src/app/PwaLifecycle.ts', 'utf8');
-    expect(source).toContain('UPDATE_RECOVERY_KEY');
-    expect(source).toContain('UPDATE_REQUESTED_KEY');
+    const recovery = await readFile('src/app/PwaUpdateRecovery.ts', 'utf8');
+    expect(recovery).toContain('UPDATE_RECOVERY_KEY');
+    expect(source).toContain('PWA_UPDATE_REQUESTED_KEY');
     expect(source).toContain('persistUpdateRecovery()');
     expect(source).toContain('storage.flushResearchStateForUpdate()');
     expect(source).toContain('design.flushDesignStudyForUpdate()');
-    expect(source).toContain('StateStore.validate(recovery.snapshot)');
+    expect(recovery).toContain('StateStore.validate(record.snapshot)');
+    expect(recovery).toContain("PWA_UPDATE_RECOVERY_SCHEMA = 'pendulum-pwa-update-recovery/v2'");
+    expect(recovery).toContain('PWA_UPDATE_RECOVERY_MAX_BYTES');
+    expect(recovery).toContain('PWA_UPDATE_RECOVERY_TTL_MS');
+    expect(source).toContain("restorePolicy: 'paused-safe-mode'");
+    expect(source).toContain("view.textContent = korean ? '요약 보기' : 'View summary'");
+    expect(source).toContain("remove.textContent = korean ? '복구 데이터 삭제' : 'Delete recovery'");
     expect(source).toContain("registration.waiting?.postMessage({ type: 'SKIP_WAITING' })");
     expect(source).toContain('if (updateRequested && !reloading)');
     expect(source).not.toContain(

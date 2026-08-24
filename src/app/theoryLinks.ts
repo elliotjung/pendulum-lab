@@ -33,6 +33,7 @@ export const THEORY_LINK_IDS = [
   'trust-validation',
   'trust-provenance',
   'double-source',
+  'compound-source',
   'canonical-source',
   'derivations-document',
   'invariant-tests',
@@ -101,6 +102,16 @@ export const THEORY_LINKS: Readonly<Record<TheoryLinkId, TheoryLink>> = {
     description: {
       en: 'Mass matrix, Euler-Lagrange right-hand side, analytic Jacobian, and energy.',
       ko: '질량행렬, 오일러-라그랑주 우변, 해석적 야코비안과 에너지 구현입니다.'
+    }
+  },
+  'compound-source': {
+    kind: 'source',
+    external: true,
+    href: repositoryHref('src/physics/compoundDouble.ts'),
+    label: { en: 'Open the uniform-rod model', ko: '균일 막대 모델 구현 보기' },
+    description: {
+      en: 'COM translation, center-of-mass inertia, scaled mass-matrix solve, energy, and diagnostics.',
+      ko: '질량중심 병진, 질량중심 관성, 스케일 질량행렬 풀이, 에너지와 진단 구현입니다.'
     }
   },
   'canonical-source': {

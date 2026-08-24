@@ -26,7 +26,7 @@ export class LabCanvasLifecycle {
     this.resizeCoordinator.observe([
       dom.el('tab-lab'),
       dom.el('main'),
-      ...['energy', 'lyap', 'phase', 'poincare', 'fft'].map((id) => dom.el(id))
+      ...['energy', 'lyap', 'phase', 'thetaProjection', 'angleTime', 'poincare', 'fft'].map((id) => dom.el(id))
     ]);
   }
 

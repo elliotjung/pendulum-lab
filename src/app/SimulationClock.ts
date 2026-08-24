@@ -104,7 +104,15 @@ export class SimulationClock {
     const timestampMs = finiteNonNegative('timestampMs', options.timestampMs ?? now());
     const dt = Math.max(Number.EPSILON, options.sim.config.dt);
     const speed = finiteNonNegative('speedMultiplier', options.speedMultiplier ?? 1);
-    const requestedMaxSteps = options.maxWallClockSteps ?? 180;
+    // In wall-clock mode `stepsPerFrame` is the adaptive per-frame physics
+    // budget.  Previously it was used only to seed the first elapsed-time
+    // quantum while every later frame silently fell back to a fixed cap of
+    // 180.  That made LabQualityBudget's SPF shedding a no-op under the
+    // default real-time mode. Scale the budget for explicit fast-forward so
+    // the speed control retains its range, while still letting auto-quality
+    // reduce work predictably.
+    const requestedMaxSteps =
+      options.maxWallClockSteps ?? Math.max(1, Math.round(options.stepsPerFrame * Math.max(1, speed)));
     if (!Number.isSafeInteger(requestedMaxSteps) || requestedMaxSteps < 1 || requestedMaxSteps > MAX_FRAME_STEPS) {
       throw new RangeError(`maxWallClockSteps must be a safe integer in [1, ${MAX_FRAME_STEPS}]`);
     }

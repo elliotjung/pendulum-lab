@@ -67,7 +67,7 @@ npm ci
 npm run dev               # Vite serves app.html at the printed local URL
 npm run typecheck         # strict TypeScript check
 npm run test:quick        # browser-free fast regression tier
-npm test           # 1487 unit tests
+npm test           # 1549 unit tests
 npm run build             # production GitHub Pages bundle in dist/
 npm run build:standalone  # portable standalone/index.html
 npm run verify            # policy, lint, types, tests, docs and formatting gate
@@ -199,7 +199,7 @@ Final publication checklist:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `standalone/index.html` (opens via `file://`; Git tracks only its SHA-256 manifest) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1487 tests across 204 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1549 tests across 213 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

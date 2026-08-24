@@ -57,6 +57,7 @@ jobs:
       - run: npm run smoke
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+      - run: npm run test:e2e:pwa
       - run: npx playwright test e2e/accessibility.spec.ts e2e/research-storage.spec.ts e2e/research-bundle-zip.spec.ts e2e/ui-polish.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'

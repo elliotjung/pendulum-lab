@@ -113,6 +113,15 @@ describe('LabRecording', () => {
       [1, [3, 4]],
       [2, [5, 6]]
     ]);
+    expect(recording.retentionMetadata()).toMatchObject({
+      capacity: 2,
+      totalSamples: 3,
+      retainedSamples: 2,
+      droppedSamples: 1,
+      firstRetainedTime: 1,
+      lastRetainedTime: 2,
+      completeFromReset: false
+    });
   });
 
   it.each([0, 1.5, Number.NaN, 1_000_001])('rejects an invalid capacity (%s)', (capacity) => {
@@ -128,6 +137,22 @@ describe('LabRecording', () => {
     const returned = recording.at(0)!;
     returned.state[0] = 99;
     expect(recording.at(0)?.state[0]).toBe(1);
+    expect(recording.timeAt(0)).toBe(0);
+    expect(recording.timeAt(0.5)).toBeUndefined();
     expect(recording.at(0.5)).toBeUndefined();
+  });
+
+  it('resets retention provenance when a new run is built', () => {
+    const recording = new LabRecording(2);
+    recording.push(1, [1, 2]);
+    recording.clear();
+    expect(recording.retentionMetadata()).toMatchObject({
+      totalSamples: 0,
+      retainedSamples: 0,
+      droppedSamples: 0,
+      firstRetainedTime: null,
+      lastRetainedTime: null,
+      completeFromReset: true
+    });
   });
 });

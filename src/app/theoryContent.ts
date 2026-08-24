@@ -38,12 +38,12 @@ export const THEORY_OVERVIEW = {
   eyebrow: { en: 'FROM MODEL TO EVIDENCE', ko: '모델에서 근거까지' },
   title: { en: 'Double-pendulum theory', ko: '이중진자 이론' },
   summary: {
-    en: 'Follow one point-mass model from its physical assumptions to the equations that run in the Lab, then inspect the evidence used to validate it.',
-    ko: '하나의 질점 모델을 물리적 가정부터 실험실에서 실행되는 운동방정식까지 따라가고, 그 식을 검증하는 근거를 확인합니다.'
+    en: 'Follow the live point-mass model from assumptions to implementation, then compare it with the separately verified uniform-rod model and inspect the evidence for each claim.',
+    ko: '실시간 질점 모델을 가정부터 구현까지 따라가고, 별도로 검증된 균일 막대 모델과 비교한 뒤 각 주장의 근거를 확인합니다.'
   },
   scope: {
-    en: 'Scope: planar point masses on massless rigid links. This explanation does not describe the rope, spring, spherical, or distributed-mass models.',
-    ko: '범위: 질량이 없는 강체 링크 끝의 평면 질점 모델입니다. 줄, 스프링, 구면 또는 분포질량 모델에는 이 설명을 그대로 적용하지 않습니다.'
+    en: 'Primary live scope: planar point masses on massless rigid links. Uniform-rod callouts use a distinct compound model; rope, spring, and spherical models require their own equations.',
+    ko: '주 실시간 범위: 질량 없는 강체 링크 끝의 평면 질점입니다. 균일 막대 설명은 별도 복합 모델을 사용하며 줄, 스프링과 구면 모델에는 각각 다른 식이 필요합니다.'
   }
 } as const satisfies Record<string, TheoryLocalizedText>;
 
@@ -68,10 +68,14 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
       {
         en: 'When damping γ is zero the model is conservative. When γ is positive, the generalized damping torque is Qᵢ = −γωᵢ, so mechanical energy is expected to decay.',
         ko: '감쇠 γ가 0이면 보존계입니다. γ가 양수이면 일반화 감쇠 토크는 Qᵢ = −γωᵢ이며 역학적 에너지는 감소해야 합니다.'
+      },
+      {
+        en: 'The alternate compound model treats each link as a uniform massive rod. Its center-of-mass translation and I_cm = ML²/12 rotation are included exactly once; it is not the same physical model as the live point-mass default.',
+        ko: '대안 복합 모델은 각 링크를 질량이 분포된 균일 막대로 취급합니다. 질량중심 병진과 I_cm = ML²/12 회전을 정확히 한 번씩 포함하며, 실시간 기본 질점 모델과는 다른 물리 모델입니다.'
       }
     ],
     equations: [],
-    links: ['derivations-document'],
+    links: ['derivations-document', 'compound-source'],
     caveat: {
       en: 'This is an idealized model: joint friction, link mass, air drag, elasticity, and out-of-plane motion require different equations.',
       ko: '이 모델은 이상화되어 있습니다. 관절 마찰, 링크 질량, 공기 저항, 탄성, 평면 밖 운동에는 다른 방정식이 필요합니다.'
@@ -163,9 +167,19 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
           en: 'Adding a constant to V would not change the equations of motion.',
           ko: 'V에 상수를 더해도 운동방정식은 바뀌지 않습니다.'
         }
+      },
+      {
+        id: 'compound-rod-energy',
+        label: { en: 'Uniform-rod alternative', ko: '균일 막대 대안 모델' },
+        expression:
+          'Tᵣ = ½[(m₁/3+m₂)l₁²ω₁² + m₂l₁l₂ cos(θ₁−θ₂)ω₁ω₂ + (m₂/3)l₂²ω₂²]\nVᵣ = −(m₁/2+m₂)gl₁ cosθ₁ − (m₂/2)gl₂ cosθ₂',
+        explanation: {
+          en: 'These coefficients come from COM translation plus I_cm for each rod. Do not add a second hinge inertia.',
+          ko: '각 계수는 막대별 질량중심 병진과 I_cm에서 나옵니다. 별도의 힌지 관성을 다시 더하지 않습니다.'
+        }
       }
     ],
-    links: ['double-source']
+    links: ['double-source', 'compound-source']
   },
   {
     id: 'formulations',
@@ -223,6 +237,10 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
       {
         en: 'The implementation scales the matrix before solving and checks a norm-relative determinant, so unit rescaling alone does not decide whether the solve is safe.',
         ko: '구현은 풀이 전에 행렬을 스케일링하고 노름 상대 행렬식을 검사하므로 단위 스케일 변화만으로 풀이 안전성이 결정되지 않습니다.'
+      },
+      {
+        en: 'For uniform rods the corresponding coefficients are M₁₁=(m₁/3+m₂)l₁², M₁₂=(m₂/2)l₁l₂cosΔ, and M₂₂=(m₂/3)l₂². The production formula is checked against an independent Cartesian-Jacobian virtual-work reference.',
+        ko: '균일 막대에서는 M₁₁=(m₁/3+m₂)l₁², M₁₂=(m₂/2)l₁l₂cosΔ, M₂₂=(m₂/3)l₂²입니다. 구현식은 독립적인 직교좌표 야코비안 가상일 기준식과 비교합니다.'
       }
     ],
     equations: [
@@ -236,6 +254,16 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
         }
       },
       {
+        id: 'compound-mass-matrix',
+        label: { en: 'Uniform-rod mass matrix', ko: '균일 막대 질량행렬' },
+        expression:
+          'Mᵣ(θ) = [ M₁₁=(m₁/3+m₂)l₁²       M₁₂=(m₂/2)l₁l₂ cos Δ ]\n        [ M₂₁=M₁₂                  M₂₂=(m₂/3)l₂²       ]',
+        explanation: {
+          en: 'This belongs to the separately implemented compound-rod model, not the live point-mass default.',
+          ko: '이 행렬은 별도로 구현된 복합 막대 모델의 것이며 실시간 질점 기본 모델과는 다릅니다.'
+        }
+      },
+      {
         id: 'equations-of-motion',
         label: { en: 'Coupled acceleration solve', ko: '결합 각가속도 풀이' },
         expression:
@@ -246,7 +274,7 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
         }
       }
     ],
-    links: ['double-source'],
+    links: ['double-source', 'compound-source'],
     caveat: {
       en: 'Damping is a generalized torque inside the coupled solve, not an independent velocity decay applied after a step.',
       ko: '감쇠는 결합 풀이 안의 일반화 토크이며, 한 스텝 뒤 속도에 별도로 곱하는 감쇠가 아닙니다.'
@@ -318,12 +346,19 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
     },
     paragraphs: [
       {
-        en: 'The explicit θ–ω right-hand side, energy, and analytic Jacobian live in double.ts. Canonical transforms and the Hamiltonian path live in canonical.ts. The derivation and tests remain separate evidence, not hidden implementation details.',
-        ko: '명시적 θ–ω 우변, 에너지와 해석적 야코비안은 double.ts에 있습니다. 정준변환과 해밀토니안 경로는 canonical.ts에 있습니다. 유도 문서와 테스트는 숨겨진 구현 세부사항이 아니라 별도의 근거입니다.'
+        en: 'The point-mass θ–ω path lives in double.ts, canonical transforms in canonical.ts, and the separately derived uniform-rod path in compoundDouble.ts. Derivations, independent references, and tests remain separate evidence rather than hidden implementation detail.',
+        ko: '질점 θ–ω 경로는 double.ts, 정준변환은 canonical.ts, 별도로 유도한 균일 막대 경로는 compoundDouble.ts에 있습니다. 유도, 독립 기준식과 테스트는 숨겨진 구현 세부사항이 아니라 별도의 근거입니다.'
       }
     ],
     equations: [],
-    links: ['double-source', 'canonical-source', 'derivations-document', 'lab-workspace', 'trust-provenance']
+    links: [
+      'double-source',
+      'compound-source',
+      'canonical-source',
+      'derivations-document',
+      'lab-workspace',
+      'trust-provenance'
+    ]
   }
 ];
 

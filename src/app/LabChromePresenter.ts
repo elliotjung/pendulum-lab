@@ -28,6 +28,7 @@ export interface LabChromeSnapshot {
   longTaskMs: number;
   phasePoints: number;
   spectrumSamples: number;
+  angleTimeSamples: number;
   modeLabel: string;
 }
 

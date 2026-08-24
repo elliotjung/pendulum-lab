@@ -71,26 +71,28 @@ deprecated debug alias. Public scripting uses `window.PendulumLab`.
 
 ## Research Workbench Boundary
 
-`src/app/parity/research-workbench.ts` is still a known-large UI orchestrator,
-but its extraction boundary is now explicit:
+`src/app/parity/research-workbench.ts` is now a small compatibility barrel. The
+workbench implementation is split by user workflow rather than retained in one
+UI orchestrator:
 
 - Pure, reusable research primitives live in `src/research/` and are exported
   through the grouped `research` public API.
 - Local-storage and IndexedDB schema normalization live in
   `src/app/parity/storage-sync.ts` and `src/research/researchDb.ts`.
-- Visual card/table helpers belong in `research-ui-components.ts` and
-  `research-renderers.ts`; comparison matrix assembly belongs in
-  `research-comparison.ts`; superpack analysis panels belong in
+- Visual card/table helpers live in `research-ui-components.ts` and
+  `research-renderers.ts`; comparison matrix assembly lives in
+  `research-comparison.ts`; superpack analysis panels live in
   `superpack-panels.ts`.
 - The run-log renderer now lives in `research-run-log.ts`, keeping table-only
   rendering out of the main workbench orchestrator.
 - Workspace/session persistence and run recording live in
   `research-workspace-controller.ts`; batch target/spec helpers live in
-  `research-batch-runner.ts`; design-study parsing and budget logic live in
-  `research-design-controller.ts`. Remaining extraction candidates are the
-  design-study render loop, adaptive batch UI state, and export-panel wiring.
-  Those should leave `research-workbench.ts` one at a time with focused unit or
-  e2e coverage so persisted study/run-log behavior does not drift.
+  `research-batch-runner.ts`; design-study parsing, rendering, and interaction
+  are divided among `research-design-controller.ts`,
+  `research-design-renderers.ts`, and `research-workbench-design-study.ts`.
+  Experiment-library, parameter-study, rendering, and export-panel workflows
+  likewise have dedicated `research-workbench-*` or `research-export-panels.ts`
+  modules with focused unit or e2e coverage.
 - Canvas capture, figure captions, portable PNG/SVG paths, and the figure
   manifest model live in the unit-tested `paper-figure-capture.ts`; artifact
   orchestration remains in `figure-export.ts`. Command registration likewise
@@ -98,16 +100,13 @@ but its extraction boundary is now explicit:
 
 ## Module Size Ratchet
 
-`npm run audit:modules` prevents new oversized source files and caps the known
-large modules while they are being split. The current ratchet targets are:
-`app/parity/research-workbench.ts`, `app/parity/figure-export.ts`,
-`app/parity/governance-ui.ts`, `app/ExpansionLabTab.ts`,
-`workers/chaosProtocol.ts`, `app/parity/runtime-diagnostics.ts`,
-`app/parity/shared.ts`, and `app/parity/storage-sync.ts`.
-`physics/expandedModels.ts` has already left this list after being split into
-types, factory, suite-runner, Lyapunov, and research-matrix modules. A module
-should leave the known-large list only after its responsibilities have been
-extracted into smaller, tested units.
+`npm run audit:modules` walks every non-declaration TypeScript source file and
+fails when a module exceeds the 650-line default. The current source tree has no
+known-large exceptions: former orchestrators were split into smaller, tested
+workflow, rendering, protocol, storage, and physics modules. Any future
+exception must be added explicitly with an owner and a tighter ratchet; the
+preferred response remains extracting a coherent responsibility before the
+module grows past the default.
 
 ## Public API Surface (minimized)
 

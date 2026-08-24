@@ -228,3 +228,70 @@ validated-vs-caveat credibility badge; the sweep kernel uses the two-trajectory
 (finite-separation) Benettin estimator and the FTLE kernel the Shadden-style
 finite-difference flow-map gradient, both of which differ in method from the
 variational CPU references and are documented as such.
+
+## 10. Uniform-rigid-rod compound double pendulum (`compoundDouble.ts`)
+
+This model has two uniform rods joined serially. The generalized coordinates
+θ₁ and θ₂ are the rods' absolute angles from the downward vertical. Their
+centres of mass are
+
+```
+r₁c = ( (l₁/2) sinθ₁,                    −(l₁/2) cosθ₁ )
+r₂c = ( l₁ sinθ₁ + (l₂/2) sinθ₂, −l₁ cosθ₁ − (l₂/2) cosθ₂ ) .
+```
+
+The kinetic energy is assembled from COM translation plus rotation about each
+COM,
+
+```
+T = ½m₁|ṙ₁c|² + ½I₁c θ̇₁² + ½m₂|ṙ₂c|² + ½I₂c θ̇₂²,
+Iᵢc = mᵢlᵢ²/12,
+```
+
+so a hinge inertia is never added on top of COM translation. This avoids the
+common double-counting error. With Δ = θ₁ − θ₂, the result is
+
+```
+T = ½ M₁₁ θ̇₁² + M₁₂ θ̇₁θ̇₂ + ½ M₂₂ θ̇₂²,
+
+M₁₁ = l₁²(m₁/3 + m₂),
+M₁₂ = (m₂l₁l₂/2) cosΔ,
+M₂₂ = m₂l₂²/3.
+```
+
+Taking zero height at the hinge gives
+
+```
+V = −(m₁/2 + m₂)gl₁ cosθ₁ − (m₂gl₂/2) cosθ₂.
+```
+
+Define `B = m₂l₁l₂/2`, `G₁ = (m₁/2 + m₂)gl₁`, and
+`G₂ = m₂gl₂/2`. Euler–Lagrange then gives the explicit linear solve
+
+```
+[ M₁₁  M₁₂ ] [ θ̈₁ ] = [ −B sinΔ θ̇₂² − G₁ sinθ₁ − γθ̇₁ ]
+[ M₁₂  M₂₂ ] [ θ̈₂ ]   [ +B sinΔ θ̇₁² − G₂ sinθ₂ − γθ̇₂ ] .
+```
+
+Here γ is the existing generalized-coordinate damping convention: each joint
+receives `−γθ̇ᵢ`. The implementation scales the 2×2 system before solving and
+reports the raw determinant, a scale-free relative determinant, matrix scale,
+positive-definiteness, and the numerical-singularity verdict. For all strictly
+positive physical masses and lengths,
+
+```
+det M ≥ m₂l₁²l₂²(m₁/9 + m₂/12) > 0,
+```
+
+because the minimum occurs at `cos²Δ = 1`; therefore a singular verdict for
+valid inputs indicates numerical ill-scaling rather than a physical
+configuration singularity.
+
+`compoundDoubleReference.ts` supplies an independent check based on Cartesian
+virtual work. It constructs every inertia term as `Σ m JᵀJ + I_cm`, writes each
+COM acceleration as `Jq̈ + b`, projects gravity and the Cartesian acceleration
+bias through `Jᵀ`, and only then solves for `q̈`. It does not reuse the closed
+Euler–Lagrange RHS above. Regression coverage compares both routes and checks
+undamped energy conservation, the two generalized small-angle normal modes,
+reflection and 2π periodicity, the `m₂ → 0` uniform-single-rod limit, the
+zero-gravity static limit, and invalid/ill-scaled parameter diagnostics.

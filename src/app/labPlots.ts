@@ -19,6 +19,19 @@ export interface PhasePortraitOptions {
   background?: string;
 }
 
+function wrapAngle(value: number): number {
+  const period = 2 * Math.PI;
+  const wrapped = (value + Math.PI) % period;
+  return (wrapped < 0 ? wrapped + period : wrapped) - Math.PI;
+}
+
+export {
+  renderAngleProjection,
+  renderAngleTimeSeries,
+  type AngleProjectionOptions,
+  type AngleTimeSeriesOptions
+} from './studentAnglePlots';
+
 export function renderPhasePortrait(
   ctx: Ctx2D,
   rect: Rect,
@@ -26,9 +39,10 @@ export function renderPhasePortrait(
   options: PhasePortraitOptions = {}
 ): void {
   const [xmin, xmax] = options.thetaRange ?? [-Math.PI, Math.PI];
-  const [ymin, ymax] = options.omegaRange ?? [-25, 25];
+  const [ymin, ymax] = options.omegaRange ?? phaseOmegaRange(samples);
   const mapX = (t: number) => rect.x + ((t - xmin) / (xmax - xmin)) * rect.width;
   const mapY = (w: number) => rect.y + rect.height - ((w - ymin) / (ymax - ymin)) * rect.height;
+  const wrapDefaultTheta = options.thetaRange === undefined;
 
   ctx.save();
   ctx.fillStyle = options.background ?? '#05080d';
@@ -38,10 +52,14 @@ export function renderPhasePortrait(
   ctx.strokeStyle = 'rgba(255,255,255,0.06)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(mapX(0), rect.y);
-  ctx.lineTo(mapX(0), rect.y + rect.height);
-  ctx.moveTo(rect.x, mapY(0));
-  ctx.lineTo(rect.x + rect.width, mapY(0));
+  if (xmin <= 0 && xmax >= 0) {
+    ctx.moveTo(mapX(0), rect.y);
+    ctx.lineTo(mapX(0), rect.y + rect.height);
+  }
+  if (ymin <= 0 && ymax >= 0) {
+    ctx.moveTo(rect.x, mapY(0));
+    ctx.lineTo(rect.x + rect.width, mapY(0));
+  }
   ctx.stroke();
 
   if (samples.length >= 2) {
@@ -50,19 +68,44 @@ export function renderPhasePortrait(
     ctx.lineJoin = 'round';
     ctx.beginPath();
     let started = false;
+    let previousTheta = Number.NaN;
     for (const s of samples) {
-      const px = mapX(s.theta);
+      if (!Number.isFinite(s.theta) || !Number.isFinite(s.omega)) continue;
+      const theta = wrapDefaultTheta ? wrapAngle(s.theta) : s.theta;
+      const px = mapX(theta);
       const py = mapY(s.omega);
-      if (!started) {
+      // A rotating pendulum crosses the -pi/pi chart seam. Restarting the
+      // path there preserves the cylindrical phase-space topology and avoids
+      // a false full-width chord.
+      const seam = wrapDefaultTheta && started && Math.abs(theta - previousTheta) > Math.PI;
+      if (!started || seam) {
         ctx.moveTo(px, py);
         started = true;
       } else {
         ctx.lineTo(px, py);
       }
+      previousTheta = theta;
     }
     ctx.stroke();
   }
   ctx.restore();
+}
+
+function phaseOmegaRange(samples: readonly PhaseSample[]): [number, number] {
+  let minimum = Infinity;
+  let maximum = -Infinity;
+  for (const sample of samples) {
+    if (!Number.isFinite(sample.omega)) continue;
+    minimum = Math.min(minimum, sample.omega);
+    maximum = Math.max(maximum, sample.omega);
+  }
+  if (!Number.isFinite(minimum) || !Number.isFinite(maximum)) return [-1, 1];
+  if (maximum - minimum < 1e-9) {
+    const radius = Math.max(1, Math.abs(maximum) * 0.1);
+    return [minimum - radius, maximum + radius];
+  }
+  const padding = Math.max(0.1, (maximum - minimum) * 0.08);
+  return [minimum - padding, maximum + padding];
 }
 
 export interface SpectrumPlotOptions {

@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "pendulum-claim-registry/v1",
+  "evidenceArtifact": "reports/evidence-summary.json",
+  "claims": [
+    {
+      "id": "tests.unit",
+      "owner": "quality-engineering",
+      "scope": {
+        "category": "software-verification",
+        "statement": "Vitest pass totals recorded for the exact source commit and dependency lock named by the evidence summary."
+      },
+      "sourceArtifact": "reports/vitest-results.json",
+      "reproduce": "npm run verify",
+      "caveat": null,
+      "invalidatedBy": [
+        "Any failed or incomplete Vitest result invalidates the pass total.",
+        "A different source commit or dependency lock requires a newly generated evidence summary."
+      ]
+    },
+    {
+      "id": "validation.scipy.regular",
+      "owner": "scientific-validation",
+      "scope": {
+        "category": "scientific-validation",
+        "statement": "Maximum trajectory divergence observed only across the regular SciPy reference cases in the cross-validation report."
+      },
+      "sourceArtifact": "reports/cross-validation.json",
+      "reproduce": "npm run validate:cross",
+      "caveat": "Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.",
+      "invalidatedBy": [
+        "A regular reference case exceeding its configured tolerance invalidates passed status.",
+        "Changes to the model equations, solver policy, or reference environment require reproduction."
+      ]
+    },
+    {
+      "id": "testing.mutation",
+      "owner": "quality-engineering",
+      "scope": {
+        "category": "software-verification",
+        "statement": "Aggregate mutation score for the committed mutation shards under the repository's 65 percent regression floor."
+      },
+      "sourceArtifact": "reports/mutation-aggregate.json",
+      "reproduce": "npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85",
+      "caveat": "Below the 70% quality target; the 65% regression floor is enforced.",
+      "invalidatedBy": [
+        "A score below the configured 65 percent floor invalidates the regression gate.",
+        "Missing, stale, or differently configured mutation shards require a new aggregate."
+      ]
+    },
+    {
+      "id": "benchmark.energy.methods",
+      "owner": "numerical-validation",
+      "scope": {
+        "category": "numerical-benchmark",
+        "statement": "Count of integrator methods profiled by the committed energy benchmark at its recorded horizon and step policy."
+      },
+      "sourceArtifact": "reports/energy-benchmark.json",
+      "reproduce": "npm run benchmark:energy",
+      "caveat": "Compare each method against its documented order and structure-preservation behavior.",
+      "invalidatedBy": [
+        "Changing the benchmark horizon, initial state, method registry, or step policy requires reproduction.",
+        "The lowest drift in one profile does not establish universal accuracy or stability."
+      ]
+    },
+    {
+      "id": "gpu.vendor-matrix",
+      "owner": "gpu-validation",
+      "scope": {
+        "category": "hardware-validation",
+        "statement": "Physical GPU vendors with accepted evidence rows under the committed adapter-matrix promotion contract."
+      },
+      "sourceArtifact": "reports/gpu-adapter-matrix.json",
+      "reproduce": "npm run benchmark:gpu-matrix",
+      "caveat": "The matrix is intentionally incomplete until missing physical vendor runners upload evidence. Software adapters do not satisfy this contract.",
+      "invalidatedBy": [
+        "Software adapters, missing provenance, or failed promotion thresholds cannot count as physical vendor evidence.",
+        "Kernel, driver, adapter, or promotion-contract changes require new hardware evidence."
+      ]
+    },
+    {
+      "id": "publication.release",
+      "owner": "release-engineering",
+      "scope": {
+        "category": "publication-status",
+        "statement": "Public availability status of the exact package version, GitHub release, reviewer Pages site, and Zenodo record."
+      },
+      "sourceArtifact": "reports/publication-status.json",
+      "reproduce": "npm run release:status",
+      "caveat": "npm registry does not resolve this exact package version. No matching public Zenodo DOI record resolves for Pendulum Lab.",
+      "invalidatedBy": [
+        "A failed public endpoint probe invalidates availability for that publication channel.",
+        "A package-version or release-tag change requires a newly generated publication status report."
+      ]
+    }
+  ]
+}

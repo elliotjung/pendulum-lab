@@ -70,7 +70,7 @@ jobs:
       - name: Hand the exact validated build to browser and release checks
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: mainline-validated-build
+          name: mainline-build-candidate
           path: |
             dist/
             dist-lib/
@@ -93,7 +93,7 @@ jobs:
       - run: python -m pip install --require-hashes -r requirements.lock
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: mainline-validated-build
+          name: mainline-build-candidate
           path: .
       - run: npx playwright install --with-deps chromium firefox webkit
       - name: Audit CSS selector coverage
@@ -160,16 +160,14 @@ jobs:
           MEMORY_FAIL_ON_REGRESSION: ${{ hashFiles('reports/memory-baseline.json') != '' && '1' || '0' }}
       - run: npm run flagship:certify
       - run: npm run flagship:external
-      - run: npm run release:package
-      - run: npm run reviewer:kit
-      # The world-class scorecard reads generated benchmark, memory, reviewer-kit,
-      # release, flagship, external-check, and GPU-scale artifacts, so keep it after those producers.
-      - run: npm run audit:worldclass
       # Mainline browser suite: smoke, accessibility, research workspace,
       # Trust Inspector, and long-run performance coverage.
       - run: npm run test:e2e:mainline
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+      # Chromium exposes the service-worker registration/update handles needed
+      # to prove the built artifact's offline and waiting-update lifecycle.
+      - run: npm run test:e2e:pwa
       - run: npx playwright test e2e/main-canvas-worker.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
@@ -201,6 +199,21 @@ jobs:
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+      - name: Assemble release-facing reports after browser validation
+        run: |
+          npm run release:package
+          npm run reviewer:kit
+          npm run audit:worldclass
+          node scripts/copy-legacy-assets.mjs
+      - name: Preserve the browser-validated Pages candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-validated-pages-candidate
+          path: |
+            dist/
+            package.json
+          if-no-files-found: error
+          retention-days: 2
 
   cross-validate:
     runs-on: ubuntu-latest
@@ -294,3 +307,98 @@ jobs:
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+
+  finalize-pages-artifact:
+    needs:
+      - science-and-build
+      - browser-and-release-validation
+      - cross-validate
+      - julia-reference
+      - independent-validation-scope
+      - os-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: browser-validated-pages-candidate
+          path: validated
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: independent-validation-scope
+          path: fresh-independent-scope
+      - name: Assemble and fingerprint the exact Pages payload
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -s validated/dist/index.html
+
+          scope_report="$(find fresh-independent-scope -type f -name independent-validation-scope.json -print -quit)"
+          test -n "$scope_report"
+          install -m 0644 "$scope_report" validated/dist/reports/independent-validation-scope.json
+
+          rm -f validated/dist/deployment-files.sha256 validated/dist/deployment-manifest.json
+          (
+            cd validated/dist
+            find . -type f \
+              ! -name deployment-files.sha256 \
+              ! -name deployment-manifest.json \
+              -print0 | LC_ALL=C sort -z | xargs -0 sha256sum > deployment-files.sha256
+            test -s deployment-files.sha256
+            sha256sum --check deployment-files.sha256
+          )
+
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFile, writeFile } from 'node:fs/promises';
+
+          const root = 'validated/dist';
+          const sourceCommit = process.env.SOURCE_SHA ?? '';
+          if (!/^[0-9a-f]{40}$/.test(sourceCommit)) throw new Error('SOURCE_SHA must be a full lowercase Git SHA');
+
+          const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+          const inventory = await readFile(`${root}/deployment-files.sha256`);
+          const entrypoint = await readFile(`${root}/index.html`);
+          const evidence = JSON.parse(await readFile(`${root}/reports/evidence-summary.json`, 'utf8'));
+          const evidenceSourceCommit = evidence?.provenance?.sourceCommit ?? '';
+          if (!/^[0-9a-f]{40}$/.test(evidenceSourceCommit)) {
+            throw new Error('deployed evidence sourceCommit must be a full lowercase Git SHA');
+          }
+          if (evidence?.provenance?.dirtyWorktree !== false) {
+            throw new Error('refusing to deploy evidence generated from a dirty worktree');
+          }
+          const evidenceExpiry = Date.parse(evidence?.provenance?.expiresAt ?? '');
+          if (!Number.isFinite(evidenceExpiry) || evidenceExpiry <= Date.now()) {
+            throw new Error('refusing to deploy expired evidence');
+          }
+
+          const fileCount = inventory.toString('utf8').trim().split('\n').filter(Boolean).length;
+          const manifest = {
+            schemaVersion: 'pendulum-pages-deployment/v1',
+            sourceCommit,
+            evidenceSourceCommit,
+            sourceRef: process.env.GITHUB_REF ?? '',
+            workflowRunId: process.env.GITHUB_RUN_ID ?? '',
+            generatedAt: new Date().toISOString(),
+            entrypoint: { path: 'index.html', sha256: sha256(entrypoint) },
+            fileInventory: {
+              path: 'deployment-files.sha256',
+              sha256: sha256(inventory),
+              fileCount
+            }
+          };
+          await writeFile(`${root}/deployment-manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`);
+          NODE
+      - name: Publish the final validated Pages artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: mainline-validated-build
+          path: validated/
+          if-no-files-found: error
+          retention-days: 2

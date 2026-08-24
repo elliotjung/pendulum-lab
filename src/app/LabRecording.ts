@@ -1,3 +1,5 @@
+import type { TrajectoryRetentionMetadata } from './labExport';
+
 export interface LabRecordedFrame {
   time: number;
   state: Float64Array;
@@ -10,6 +12,7 @@ export class LabRecording {
   private readonly frames: LabRecordedFrame[] = [];
   private start = 0;
   private count = 0;
+  private totalSamples = 0;
 
   constructor(readonly capacity: number) {
     if (!Number.isSafeInteger(capacity) || capacity < 1 || capacity > MAX_RECORDING_CAPACITY) {
@@ -25,6 +28,7 @@ export class LabRecording {
     this.frames.length = 0;
     this.start = 0;
     this.count = 0;
+    this.totalSamples = 0;
   }
 
   push(time: number, state: ArrayLike<number>): void {
@@ -52,12 +56,35 @@ export class LabRecording {
     } else {
       this.start = (this.start + 1) % this.capacity;
     }
+    this.totalSamples += 1;
   }
 
   at(index: number): LabRecordedFrame | undefined {
     if (!Number.isSafeInteger(index) || index < 0 || index >= this.count) return undefined;
     const frame = this.frames[(this.start + index) % this.capacity];
     return frame ? { time: frame.time, state: frame.state.slice() } : undefined;
+  }
+
+  /** Read replay metadata without cloning the recorded state vector. */
+  timeAt(index: number): number | undefined {
+    if (!Number.isSafeInteger(index) || index < 0 || index >= this.count) return undefined;
+    return this.frames[(this.start + index) % this.capacity]?.time;
+  }
+
+  retentionMetadata(): TrajectoryRetentionMetadata {
+    const droppedSamples = Math.max(0, this.totalSamples - this.count);
+    return {
+      schemaVersion: 'pendulum-trajectory-retention/v1',
+      policy: 'bounded-most-recent',
+      capacity: this.capacity,
+      totalSamples: this.totalSamples,
+      retainedSamples: this.count,
+      droppedSamples,
+      firstRetainedTime: this.timeAt(0) ?? null,
+      lastRetainedTime: this.timeAt(this.count - 1) ?? null,
+      completeFromReset: droppedSamples === 0,
+      sampling: 'one sample per rendered frame that advanced at least one fixed step'
+    };
   }
 
   samples(): LabRecordedFrame[] {

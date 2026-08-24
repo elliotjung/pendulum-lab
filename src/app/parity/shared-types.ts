@@ -18,6 +18,7 @@ export interface ModernLabHandle {
     fps: number;
     physicsMsPerFrame: number;
   };
+  runtimeSnapshot?: () => RuntimeSnapshot;
   reset?: () => void;
 }
 

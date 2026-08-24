@@ -96,6 +96,14 @@ export function canonicalizeVelocityAliases(href: string, accepted: ReadonlyMap<
 export interface AppliedNumericControlParams {
   acceptedCount: number;
   canonicalHref: string | null;
+  rejected: RejectedNumericControlParam[];
+}
+
+export interface RejectedNumericControlParam {
+  id: (typeof NUMERIC_CONTROL_IDS)[number];
+  source: 'canonical' | 'legacy';
+  value: string;
+  reason: NonNullable<NumericControlParseResult['reason']>;
 }
 
 function isNumericInput(value: unknown): value is HTMLInputElement {
@@ -114,6 +122,7 @@ export function applyNumericControlParams(
   const url = new URL(href);
   const acceptedAliases = new Map<'w1' | 'w2', string>();
   let acceptedCount = 0;
+  const rejected: RejectedNumericControlParam[] = [];
   for (const id of NUMERIC_CONTROL_IDS) {
     const legacyAlias = id === 'iw1' ? 'w1' : id === 'iw2' ? 'w2' : null;
     const canonicalValue = url.searchParams.get(id);
@@ -122,10 +131,42 @@ export function applyNumericControlParams(
     const input = root.getElementById(id);
     if (!isNumericInput(input)) continue;
     const parsed = parseNumericControlParam(value, numericInputContract(input));
-    if (!parsed.ok || parsed.value === undefined) continue;
+    if (!parsed.ok || parsed.value === undefined) {
+      rejected.push({
+        id,
+        source: canonicalValue === null ? 'legacy' : 'canonical',
+        value,
+        reason: parsed.reason ?? 'range'
+      });
+      continue;
+    }
     apply(id, parsed.value);
     acceptedCount += 1;
     if (canonicalValue === null && legacyAlias) acceptedAliases.set(legacyAlias, value);
   }
-  return { acceptedCount, canonicalHref: canonicalizeVelocityAliases(href, acceptedAliases) };
+  return { acceptedCount, canonicalHref: canonicalizeVelocityAliases(href, acceptedAliases), rejected };
+}
+
+function visibleParamValue(value: string): string {
+  const normalized = value.replace(/[\u0000-\u001f\u007f]/gu, '�');
+  return normalized.length <= 32 ? normalized : `${normalized.slice(0, 29)}…`;
+}
+
+/** Human-readable, bounded explanation for URL values that were ignored. */
+export function formatNumericControlRejections(
+  rejected: readonly RejectedNumericControlParam[],
+  korean: boolean
+): string {
+  const reason = korean
+    ? { syntax: '숫자 형식', range: '허용 범위', step: '허용 간격' }
+    : { syntax: 'number syntax', range: 'allowed range', step: 'allowed increment' };
+  const details = rejected
+    .slice(0, 4)
+    .map((entry) => `${entry.id}="${visibleParamValue(entry.value)}" (${reason[entry.reason]})`)
+    .join(', ');
+  const remaining = Math.max(0, rejected.length - 4);
+  const suffix = remaining > 0 ? (korean ? ` 외 ${remaining}개` : ` and ${remaining} more`) : '';
+  return korean
+    ? `URL 제어값을 적용하지 않았습니다: ${details}${suffix}. 완전한 유한 소수이고 표시된 범위 안이어야 합니다.`
+    : `Ignored URL control value${rejected.length === 1 ? '' : 's'}: ${details}${suffix}. Values must be complete finite decimals inside the displayed control ranges.`;
 }

@@ -31,6 +31,7 @@ function serveAppShellAtRoot(): Plugin {
 /** Stamp the public service-worker template with the exact emitted bundle. */
 function stampServiceWorkerRevision(): Plugin {
   let revision = 'development';
+  let buildAssets: string[] = [];
   return {
     name: 'stamp-service-worker-revision',
     apply: 'build',
@@ -41,11 +42,19 @@ function stampServiceWorkerRevision(): Plugin {
         hash.update(file.type === 'chunk' ? file.code : typeof file.source === 'string' ? file.source : file.source);
       }
       revision = hash.digest('hex').slice(0, 16);
+      buildAssets = Object.values(bundle)
+        .map((file) => file.fileName)
+        .filter((fileName) => fileName.startsWith('assets/'))
+        .sort((a, b) => a.localeCompare(b))
+        .map((fileName) => `./${fileName}`);
     },
     async writeBundle(options) {
       const outputDirectory = resolve(process.cwd(), options.dir ?? 'dist');
       const template = await readFile(resolve(process.cwd(), 'public/sw.js'), 'utf8');
-      await writeFile(resolve(outputDirectory, 'sw.js'), template.replaceAll('__BUILD_REVISION__', revision), 'utf8');
+      const worker = template
+        .replaceAll('__BUILD_REVISION__', revision)
+        .replace('/* __BUILD_ASSETS__ */', buildAssets.map((asset) => JSON.stringify(asset)).join(', '));
+      await writeFile(resolve(outputDirectory, 'sw.js'), worker, 'utf8');
     }
   };
 }

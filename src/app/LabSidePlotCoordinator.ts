@@ -51,7 +51,12 @@ export class LabSidePlotCoordinator {
     private readonly sources: LabSidePlotSources,
     onFallback?: () => void
   ) {
-    this.worker = new LabSidePlotWorkerClient({ onFallback: () => onFallback?.() });
+    this.worker = new LabSidePlotWorkerClient({
+      onFallback: () => {
+        this.releaseWorkerControl();
+        onFallback?.();
+      }
+    });
   }
 
   /** Render one plot slice (0..4), via the worker when possible. */
@@ -72,13 +77,61 @@ export class LabSidePlotCoordinator {
 
   dispose(): void {
     this.worker.dispose();
+    this.releaseWorkerControl();
   }
 
   private ensureWorker(): boolean {
+    // transferControlToOffscreen permanently moves these canvas backing
+    // stores to the worker for the lifetime of the nodes. Once that happens,
+    // sending a later frame through drawOnMain cannot work: getContext('2d')
+    // rejects on the transferred elements and all five plots appear frozen.
+    // Keep the established backend authoritative and make the page-lifetime
+    // ownership visible in the control instead of pretending it is a live
+    // toggle.
+    if (this.worker.usesWorker()) {
+      this.lockWorkerControl();
+      return true;
+    }
     if (!dom.bool('useWorker', true)) return false;
     const canvases: Partial<Record<LabSidePlotId, HTMLCanvasElement | undefined>> = {};
     for (const id of SIDE_PLOT_IDS) canvases[id] = dom.el<HTMLCanvasElement>(id) ?? undefined;
-    return this.worker.ensure(canvases);
+    const enabled = this.worker.ensure(canvases);
+    if (enabled) this.lockWorkerControl();
+    return enabled;
+  }
+
+  private lockWorkerControl(): void {
+    const control = dom.el<HTMLInputElement>('useWorker');
+    if (!control) return;
+    control.checked = true;
+    control.disabled = true;
+    control.dataset.workerOwnership = 'locked';
+    const korean = document.documentElement.lang === 'ko';
+    const reason = korean
+      ? '이 페이지에서 그래프 캔버스를 워커로 이전했습니다. 렌더러를 바꾸려면 페이지를 새로고침하세요.'
+      : 'Plot canvases are owned by the worker for this page. Reload to change the renderer.';
+    control.title = reason;
+    control.setAttribute('aria-description', reason);
+    const label = control.closest('label');
+    label?.setAttribute('title', reason);
+    let note = label?.querySelector<HTMLElement>('.worker-lock-note');
+    if (!note && label) {
+      note = document.createElement('small');
+      note.className = 'worker-lock-note';
+      label.append(note);
+    }
+    if (note) note.textContent = korean ? ' — 이 페이지에서 고정됨' : ' — locked for this page';
+  }
+
+  private releaseWorkerControl(): void {
+    const control = dom.el<HTMLInputElement>('useWorker');
+    if (!control) return;
+    control.disabled = false;
+    delete control.dataset.workerOwnership;
+    control.removeAttribute('aria-description');
+    control.removeAttribute('title');
+    control.closest('label')?.removeAttribute('title');
+    control.closest('label')?.querySelector('.worker-lock-note')?.remove();
   }
 
   private payload(plotIndex: number): LabSidePlotPayload | null {

@@ -6,7 +6,8 @@ const RUNTIME_META_KEY = './__pendulum_runtime_metadata__';
 const RUNTIME_CACHE_LIMIT = 96;
 const MAX_RUNTIME_RESPONSE_BYTES = 25 * 1024 * 1024;
 const RUNTIME_CACHE_MAX_BYTES = 64 * 1024 * 1024;
-const SHELL = ['./', './index.html', './app.html', './manifest.webmanifest'];
+const BUILD_ASSETS = [/* __BUILD_ASSETS__ */];
+const SHELL = ['./', './index.html', './app.html', './offline.html', './manifest.webmanifest', ...BUILD_ASSETS];
 const CACHE_BYPASS_MODES = new Set(['no-store', 'reload', 'no-cache']);
 const STATIC_DESTINATIONS = new Set(['script', 'style', 'image', 'font', 'manifest', 'worker']);
 const STATIC_PATH = /\.(?:avif|css|gif|html?|ico|jpe?g|m?js|otf|png|svg|ttf|wasm|webmanifest|webp|woff2?)$/i;
@@ -163,6 +164,8 @@ async function navigationFallback(cacheKey) {
     (await matchCurrentCaches('./index.html')) ||
     (await matchRetainedPreviousCaches(cacheKey)) ||
     (await matchRetainedPreviousCaches('./index.html')) ||
+    (await matchCurrentCaches('./offline.html')) ||
+    (await matchRetainedPreviousCaches('./offline.html')) ||
     Response.error()
   );
 }

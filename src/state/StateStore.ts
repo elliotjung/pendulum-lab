@@ -187,7 +187,8 @@ function sanitizeSchemaVersion(value: unknown, problems: string[]): string {
   return value;
 }
 
-function stateHash(state: ArrayLike<number>): string {
+/** Canonical hash used by persisted and live runtime snapshots. */
+export function stateHash(state: ArrayLike<number>): string {
   if (typeof window !== 'undefined' && typeof window.hashState === 'function') {
     return window.hashState(Array.from(state));
   }
