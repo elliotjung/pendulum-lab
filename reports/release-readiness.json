@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-08-26T00:38:18.993Z",
+  "generatedAt": "2026-08-26T01:16:24.434Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
     "Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.",
@@ -66,7 +66,7 @@
       "path": "reports/portfolio-korean-pdf-validation.json",
       "required": true,
       "available": true,
-      "hash": "144a7b6ce2be24",
+      "hash": "1c0453a91f8897",
       "note": "Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed."
     },
     {
@@ -74,7 +74,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "1cae582d1ac465",
+      "hash": "0665a76473ce30",
       "note": "Reviewer kit manifest exists."
     },
     {
