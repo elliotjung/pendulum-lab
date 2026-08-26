@@ -149,15 +149,15 @@ test('tab routes follow rail navigation and browser back/forward', async ({ page
   await page.locator('.rail-menu-button[data-rail-section-button="sim"]').click();
   await page.locator('#rail-panel-sim .tab[data-tab="compare"]').click();
   await expect(page.locator('#tab-compare')).toHaveClass(/active/);
-  await expect(page).toHaveURL(/\?ref=landing&tab=compare#motion$/);
+  await expect(page).toHaveURL(/\?ref=landing&tab=compare&audience=research#motion$/);
 
   await page.evaluate(() => window.history.back());
   await expect(page.locator('#tab-lab')).toHaveClass(/active/);
-  await expect(page).toHaveURL(/\?ref=landing&tab=lab#motion$/);
+  await expect(page).toHaveURL(/\?ref=landing&tab=lab&audience=research#motion$/);
 
   await page.evaluate(() => window.history.forward());
   await expect(page.locator('#tab-compare')).toHaveClass(/active/);
-  await expect(page).toHaveURL(/\?ref=landing&tab=compare#motion$/);
+  await expect(page).toHaveURL(/\?ref=landing&tab=compare&audience=research#motion$/);
 });
 
 test('lazy workspace replacement does not manufacture a history entry', async ({ page }) => {
