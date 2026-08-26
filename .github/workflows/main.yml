@@ -26,6 +26,17 @@ jobs:
       - name: Reject unexpected tracked rewrites from verification
         shell: bash
         run: git diff --exit-code
+      # The kernel manifest writer rejects dirty source trees. Stamp and verify
+      # the exact source SHA before coverage and report producers rewrite tracked
+      # evidence files; the generated kernel directory itself is ignored.
+      - name: Build and verify the authoritative Landing demo kernel
+        run: npm run landing:kernel:build && npm run landing:kernel:check
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lab-built-landing-kernel
+          path: reports/landing-kernel/
+          if-no-files-found: error
+          retention-days: 90
       - run: npm run test:slow
       - run: npm run test:coverage
       - run: npm run audit:legacy
@@ -49,14 +60,6 @@ jobs:
           path: |
             src/runtime/wasm/pendulum-kernel.wasm
             reports/wasm-sync.json
-          if-no-files-found: error
-          retention-days: 90
-      - name: Build and verify the authoritative Landing demo kernel
-        run: npm run landing:kernel:build && npm run landing:kernel:check
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: lab-built-landing-kernel
-          path: reports/landing-kernel/
           if-no-files-found: error
           retention-days: 90
       - run: npm run build:lib

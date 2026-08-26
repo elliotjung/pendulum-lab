@@ -104,10 +104,15 @@ describe('generated-drift workflow contract', () => {
     const standaloneCheck = scienceJob.indexOf('- run: npm run check:standalone-sync');
     const freshBenchmark = scienceJob.indexOf('- run: npm run benchmark:energy');
     const hostedBuild = scienceJob.search(/^\s+- run: npm run build\r?$/m);
+    const cleanSourceCheck = scienceJob.indexOf('Reject unexpected tracked rewrites from verification');
+    const kernelBuild = scienceJob.indexOf('npm run landing:kernel:build && npm run landing:kernel:check');
+    const reportProducers = scienceJob.indexOf('- run: npm run test:slow');
     expect(standaloneBuild).toBeGreaterThanOrEqual(0);
     expect(standaloneCheck).toBeGreaterThan(standaloneBuild);
     expect(freshBenchmark).toBeGreaterThan(standaloneCheck);
     expect(hostedBuild).toBeGreaterThan(freshBenchmark);
+    expect(kernelBuild).toBeGreaterThan(cleanSourceCheck);
+    expect(reportProducers).toBeGreaterThan(kernelBuild);
   });
 
   test('Pages build exports every Lab report required by the product release manifest', async () => {
