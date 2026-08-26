@@ -16,8 +16,15 @@ import { LabControls, readLabConfig, readLabStepsPerFrame } from './LabControls'
 import { LabQualityBudget } from './LabQualityBudget';
 import type { RuntimeSnapshot } from '../types/domain';
 import { stateHash, stateStore } from '../state/StateStore';
+import { SESSION_SCHEMA_VERSION } from '../state/sessionSchema';
 import { legacyApp } from '../runtime/legacyCompat';
-import { canonicalLabSnapshot, labConfigFromSnapshot } from './LabSnapshotRestore';
+import {
+  canonicalLabSnapshot,
+  exactRecoveryLabSnapshot,
+  labConfigFromSnapshot,
+  recoveryControlSnapshot
+} from './LabSnapshotRestore';
+import { projectSnapshotControls } from '../browser/savedRunImport';
 import { bobsFromState } from './LabRenderHelpers';
 import { LabHistory } from './LabHistory';
 import { presentSimulationControl, uiMessage } from './uiLocale';
@@ -419,7 +426,7 @@ export class LabApp {
     const state = Array.from(this.sim.stateView());
     const seed = dom.num('seed', Number.NaN);
     return {
-      schemaVersion: 'pendulum-session/v10-ts',
+      schemaVersion: SESSION_SCHEMA_VERSION,
       systemType: config.system,
       method: config.method,
       mode: legacyApp()?.runMode ?? stateStore.snapshot().mode,
@@ -512,6 +519,16 @@ export class LabApp {
   /** Continue from a saved session only when store and interactive-Lab contracts agree. */
   restoreSnapshot(snapshot: RuntimeSnapshot): void {
     this.build(canonicalLabSnapshot(snapshot));
+    this.replay.syncPresentation();
+    this.setRunningState(true);
+  }
+
+  /** Restore an authenticated update checkpoint while retaining exact solver winding. */
+  restoreRecoverySnapshot(snapshot: RuntimeSnapshot): void {
+    const exact = exactRecoveryLabSnapshot(snapshot);
+    const controls = projectSnapshotControls(recoveryControlSnapshot(exact));
+    if (!controls.ok) throw new Error(`recovery controls could not be projected: ${controls.problems.join('; ')}`);
+    this.build(exact);
     this.replay.syncPresentation();
     this.setRunningState(true);
   }

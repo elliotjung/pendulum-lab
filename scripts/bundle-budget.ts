@@ -35,7 +35,11 @@ const BUDGETS = {
   initialCssRaw: 140 * KiB,
   initialCssGzip: 32 * KiB,
   initialCssBrotli: 26 * KiB,
-  standaloneRaw: 1300 * KiB,
+  // The v10.36 claim-evidence evaluator, compound-double UI, and exact PWA
+  // recovery path add source text to the intentionally single-file artifact.
+  // Keep only a narrow raw ratchet here; compressed delivery ceilings remain
+  // unchanged and are the binding network budgets.
+  standaloneRaw: 1450 * KiB,
   standaloneGzip: 430 * KiB,
   standaloneBrotli: 360 * KiB
 };

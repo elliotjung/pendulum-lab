@@ -72,7 +72,7 @@ describe('JSON import validation', () => {
 
   test('rejects unsupported session schemas and invalid runtime fields', () => {
     const cases: Array<[Record<string, unknown>, string]> = [
-      [{ ...valid, schemaVersion: 'pendulum-session/v11-ts' }, 'newer'],
+      [{ ...valid, schemaVersion: 'pendulum-session/v12-ts' }, 'newer'],
       [{ ...valid, schemaVersion: 'pendulum-session/v9-ts' }, 'migration'],
       [{ ...valid, tolerance: -1 }, 'tolerance'],
       [{ ...valid, stepsPerFrame: 1.5 }, 'stepsPerFrame'],

@@ -1,5 +1,7 @@
 import { uiMessage } from './uiLocale';
 import type { RuntimeSnapshot } from '../types/domain';
+import { clearRuntimeClaimEvidence, setRuntimeClaimEvidence } from '../research/claimEvidenceSurfaces';
+import { hasActiveModalSurface } from './modalSurface';
 import {
   clearStoredPwaUpdateRecovery,
   isBoundedRecoveryFocusId,
@@ -47,6 +49,16 @@ function isViteDevelopmentShell(): boolean {
 
 /** Install/update/offline state with explicit freshness and cache diagnostics. */
 export function installPwaLifecycle(showToast: Toast): void {
+  // Evidence trust is independent of service-worker support. Load it before
+  // any PWA-only early return so development, unsupported browsers, and the
+  // installed app all use the same fail-closed claim evaluator.
+  window.addEventListener('offline', () => showToast(uiMessage('offline'), 4000));
+  window.addEventListener('online', () => {
+    showToast(uiMessage('online'), 3200);
+    void updateEvidenceFreshness();
+  });
+  void updateEvidenceFreshness();
+
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
   const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   if (!window.isSecureContext && !loopback) return;
@@ -79,13 +91,6 @@ export function installPwaLifecycle(showToast: Toast): void {
     installPrompt = null;
     installButton?.setAttribute('hidden', '');
   });
-
-  window.addEventListener('offline', () => showToast(uiMessage('offline'), 4000));
-  window.addEventListener('online', () => {
-    showToast(uiMessage('online'), 3200);
-    void updateEvidenceFreshness();
-  });
-  void updateEvidenceFreshness();
 
   const scope = new URL('./', location.href).pathname;
   let reloading = false;
@@ -140,8 +145,9 @@ function updatePromptMustWait(): boolean {
   const lab = (window as Window & { __modernLab?: { isRunning?(): boolean } }).__modernLab;
   if (!lab || lab.isRunning?.()) return true;
   if (
-    document.body.matches('.audience-chooser-open,.command-palette-open,[data-modal-depth]') ||
-    document.querySelector('[role="dialog"]:not([hidden]),[aria-modal="true"]:not([hidden])')
+    hasActiveModalSurface() ||
+    document.getElementById('onboardingTour') ||
+    document.body.matches('.audience-chooser-open,.command-palette-open')
   )
     return true;
   const active = document.activeElement;
@@ -313,7 +319,11 @@ function applySafeUpdateRecovery(recovery: UpdateRecoveryV2, banner: HTMLElement
   const korean = document.documentElement.lang === 'ko';
   const lab = (
     window as Window & {
-      __modernLab?: { restoreSnapshot(snapshot: RuntimeSnapshot): void; isRunning(): boolean; stop?(): void };
+      __modernLab?: {
+        restoreRecoverySnapshot(snapshot: RuntimeSnapshot): void;
+        isRunning(): boolean;
+        stop?(): void;
+      };
     }
   ).__modernLab;
   if (!lab) {
@@ -330,7 +340,7 @@ function applySafeUpdateRecovery(recovery: UpdateRecoveryV2, banner: HTMLElement
       document.getElementById('pauseBtn')?.click();
       if (lab.isRunning()) lab.stop?.();
     }
-    lab.restoreSnapshot({ ...recovery.snapshot, mode: 'recovery' });
+    lab.restoreRecoverySnapshot({ ...recovery.snapshot, mode: 'recovery' });
     if (lab.isRunning()) {
       document.getElementById('pauseBtn')?.click();
       if (lab.isRunning()) lab.stop?.();
@@ -462,6 +472,8 @@ async function updateEvidenceFreshness(): Promise<void> {
       provenance?: { expiresAt?: unknown; sourceCommit?: unknown };
       tests?: { success?: unknown };
     };
+    const claimSurface = setRuntimeClaimEvidence(report);
+    if (claimSurface.loadState !== 'loaded') throw new Error('canonical claim evidence unavailable');
     const generatedAt = typeof report.generatedAt === 'string' ? Date.parse(report.generatedAt) : Number.NaN;
     const expiresAt =
       typeof report.provenance?.expiresAt === 'string' ? Date.parse(report.provenance.expiresAt) : Number.NaN;
@@ -474,14 +486,21 @@ async function updateEvidenceFreshness(): Promise<void> {
     const source =
       typeof report.provenance?.sourceCommit === 'string' ? report.provenance.sourceCommit.slice(0, 12) : 'unknown';
     const passed = report.tests?.success === true;
+    const claimDetail =
+      document.documentElement.lang === 'ko'
+        ? `검증됨 ${claimSurface.counts.validated} · 측정됨 ${claimSurface.counts.measured} · 정보용 ${claimSurface.counts.informational} · 보류 ${claimSurface.counts.withheld}`
+        : `${claimSurface.counts.validated} validated · ${claimSurface.counts.measured} measured · ${claimSurface.counts.informational} informational · ${claimSurface.counts.withheld} withheld`;
+    document.documentElement.dataset.claimEvidence = claimSurface.loadState;
     setText(
       'dPwaEvidence',
       document.documentElement.lang === 'ko'
-        ? `${expired ? '공식 근거 만료' : passed ? '검증 근거 유효' : '검증 상태 불완전'} · ${date} · ${source}`
-        : `${expired ? 'official evidence expired' : passed ? 'evidence current' : 'validation incomplete'} · ${date} · ${source}`
+        ? `${expired ? '공식 근거 만료' : passed ? '검증 근거 유효' : '검증 상태 불완전'} · ${claimDetail} · ${date} · ${source}`
+        : `${expired ? 'official evidence expired' : passed ? 'evidence current' : 'validation incomplete'} · ${claimDetail} · ${date} · ${source}`
     );
   } catch {
+    clearRuntimeClaimEvidence();
     document.documentElement.dataset.evidenceFreshness = 'unknown';
+    document.documentElement.dataset.claimEvidence = 'unavailable';
     setText('dPwaEvidence', document.documentElement.lang === 'ko' ? '온라인에서 확인 필요' : 'check online');
   }
 }

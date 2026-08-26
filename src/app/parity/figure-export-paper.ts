@@ -19,6 +19,11 @@ import {
 import { collectPaperFigures } from './paper-figure-capture';
 import { buildMethodsText } from './figure-export';
 import { buildPaperFigureManifest } from './figure-export';
+import {
+  claimEvidenceMarkdown,
+  currentClaimEvidenceSurface,
+  type ClaimEvidenceSurface
+} from '../../research/claimEvidenceSurfaces';
 
 export function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -97,6 +102,7 @@ export function exportPaperFigureManifestJson(): void {
 
 export function buildPaperExportPack(): unknown {
   const snapshot = currentSnapshot();
+  const claimEvidence = currentClaimEvidenceSurface();
   const comparisonRows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows();
   const figures = collectPaperFigures();
   const figureManifest = buildPaperFigureManifest(figures, snapshot);
@@ -116,7 +122,8 @@ export function buildPaperExportPack(): unknown {
     figures,
     figureManifest,
     currentSnapshot: snapshot,
-    manifest: createSubmissionManifest(snapshot),
+    manifest: createSubmissionManifest(snapshot, claimEvidence),
+    claimEvidence,
     experiments: state.research.experiments,
     runLog: state.research.runLog,
     parameterStudy: state.research.parameterStudy,
@@ -148,7 +155,10 @@ export function exportPaperMethodsMarkdown(): void {
   );
 }
 
-export function buildPaperMethodsMarkdown(snapshot = currentSnapshot()): string {
+export function buildPaperMethodsMarkdown(
+  snapshot = currentSnapshot(),
+  claimEvidence: ClaimEvidenceSurface = currentClaimEvidenceSurface()
+): string {
   const comparisonRows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows();
   const rows = comparisonRows
     .map(
@@ -163,7 +173,9 @@ export function buildPaperMethodsMarkdown(snapshot = currentSnapshot()): string 
     '',
     '| Source | Label | Method | Drift | Lambda proxy | Score |',
     '| --- | --- | --- | --- | --- | --- |',
-    rows || '| current | no comparison rows yet | - | - | - | - |'
+    rows || '| current | no comparison rows yet | - | - | - | - |',
+    '',
+    claimEvidenceMarkdown(claimEvidence)
   ].join('\n');
 }
 
@@ -175,7 +187,10 @@ export function escapeLatex(text: string): string {
     .replace(/~/g, '\\textasciitilde{}');
 }
 
-export function buildPaperMethodsLatex(snapshot = currentSnapshot()): string {
+export function buildPaperMethodsLatex(
+  snapshot = currentSnapshot(),
+  claimEvidence: ClaimEvidenceSurface = currentClaimEvidenceSurface()
+): string {
   const method = integratorRegistry[snapshot.method];
   const comparisonRows = state.research.comparisonRows.length ? state.research.comparisonRows : buildComparisonRows();
   const study = state.research.parameterStudy;
@@ -226,8 +241,14 @@ export function buildPaperMethodsLatex(snapshot = currentSnapshot()): string {
     tableRows || 'current & no comparison rows yet & -- & -- & -- & -- \\\\',
     '\\bottomrule',
     '\\end{longtable}',
+    '\\section*{Effective Claim Evidence}',
+    ...claimEvidence.claims.map((claim) => {
+      const value = claim.displayValue ?? 'withheld';
+      const caveat = claim.caveats.join(' ') || 'No additional caveat.';
+      return `\\noindent \\texttt{${escapeLatex(claim.id)}}: ${escapeLatex(claim.effectiveVisibleLevel)} (${escapeLatex(claim.validity)}), ${escapeLatex(value)}. ${escapeLatex(caveat)}\\\\`;
+    }),
     '\\section*{Limitations}',
-    createSubmissionManifest(snapshot)
+    createSubmissionManifest(snapshot, claimEvidence)
       .limitations.map((item) => `\\noindent ${escapeLatex(item)}\\\\`)
       .join('\n'),
     '\\end{document}'

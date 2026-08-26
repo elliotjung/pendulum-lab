@@ -74,7 +74,8 @@ describe('PWA assets', () => {
     expect(source).toContain('persistUpdateRecovery()');
     expect(source).toContain('storage.flushResearchStateForUpdate()');
     expect(source).toContain('design.flushDesignStudyForUpdate()');
-    expect(recovery).toContain('StateStore.validate(record.snapshot)');
+    expect(recovery).toContain('exactRecoveryLabSnapshot(record.snapshot');
+    expect(source).toContain('restoreRecoverySnapshot({ ...recovery.snapshot');
     expect(recovery).toContain("PWA_UPDATE_RECOVERY_SCHEMA = 'pendulum-pwa-update-recovery/v2'");
     expect(recovery).toContain('PWA_UPDATE_RECOVERY_MAX_BYTES');
     expect(recovery).toContain('PWA_UPDATE_RECOVERY_TTL_MS');

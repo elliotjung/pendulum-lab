@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   RESULT_BADGES,
+  attachBadge,
   classifyEstimate,
   classifyExport,
   classifyValidation,
@@ -8,6 +9,8 @@ import {
   trustInspectionSummary
 } from '../src/app/resultBadges';
 import { AUDIENCE_MODES, normalizeAudienceMode, visibleRailSections } from '../src/app/audienceMode';
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe('result badge classification', () => {
   it('defines all five levels with labels and descriptions', () => {
@@ -49,6 +52,51 @@ describe('result badge classification', () => {
     expect(trust.note).toBe('period-1 branch');
     expect(trust.externalValidation).toContain('Baker');
     expect(trustInspectionSummary(trust)).toContain('npm run validate:literature');
+  });
+
+  it('retains an unchanged focused badge across a diagnostics refresh', () => {
+    class FakeElement {
+      className = '';
+      textContent = '';
+      title = '';
+      id = '';
+      previousElementSibling: FakeElement | null = null;
+      readonly attributes = new Map<string, string>();
+      readonly classList = { contains: (value: string) => this.className.split(/\s+/u).includes(value) };
+      constructor(private readonly owner: { activeElement: FakeElement | null }) {}
+      setAttribute(name: string, value: string): void {
+        this.attributes.set(name, value);
+      }
+      addEventListener(): void {}
+      before(node: FakeElement): void {
+        this.previousElementSibling = node;
+      }
+      remove(): void {}
+      focus(): void {
+        this.owner.activeElement = this;
+      }
+    }
+
+    class FakeDocument {}
+    const fakeDocument = {
+      activeElement: null as FakeElement | null,
+      head: { append: () => {} },
+      createElement: () => new FakeElement(fakeDocument),
+      getElementById: (id: string) => (id === 'status' ? target : null)
+    };
+    const target = new FakeElement(fakeDocument);
+    vi.stubGlobal('Document', FakeDocument);
+    vi.stubGlobal('HTMLElement', FakeElement);
+    vi.stubGlobal('document', fakeDocument);
+
+    const inspection = { source: 'runtime', parameters: { dt: 0.003, method: 'rk4' } };
+    attachBadge('status', 'validated', 'stable', inspection);
+    const first = target.previousElementSibling;
+    first?.focus();
+    attachBadge('status', 'validated', 'stable', { source: 'runtime', parameters: { method: 'rk4', dt: 0.003 } });
+
+    expect(target.previousElementSibling).toBe(first);
+    expect(fakeDocument.activeElement).toBe(first);
   });
 });
 

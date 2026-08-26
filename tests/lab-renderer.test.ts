@@ -94,6 +94,23 @@ describe('LabRenderer', () => {
     expect(ctx.arcs[2]!.y).toBeCloseTo(pivotY + 2.2 * 100, 6);
   });
 
+  it('distinguishes uniform rods with distributed-mass and hollow joint markers', () => {
+    const ctx = makeStubCtx();
+    const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
+    renderer.draw(
+      [
+        { x: 0, y: 1.2 },
+        { x: 0, y: 2.2 }
+      ],
+      { uniformRods: true }
+    );
+
+    // Pivot + two rod-centre mass markers + two hollow joints. Point-mass
+    // rendering has only the pivot and two filled endpoint bobs.
+    expect(ctx.arcs.map(({ r }) => r)).toEqual([4, 2.5, 2.5, 3.25, 3.25]);
+    expect(ctx.calls.stroke).toBeGreaterThanOrEqual(3);
+  });
+
   it('preserves the main trail across logical resize', () => {
     const ctx = makeStubCtx();
     const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });

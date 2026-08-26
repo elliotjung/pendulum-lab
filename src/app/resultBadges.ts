@@ -326,9 +326,22 @@ export function badgeElement(level: ResultBadgeLevel, note?: string, inspection?
   return span;
 }
 
+const attachedBadgeIdentity = new WeakMap<HTMLElement, string>();
+
+function badgeIdentity(level: ResultBadgeLevel, note?: string, inspection?: TrustInspection): string {
+  const trust = normalizeTrustInspection(level, note, inspection);
+  return JSON.stringify({
+    ...trust,
+    parameters: Object.fromEntries(
+      Object.entries(trust.parameters).sort(([left], [right]) => left.localeCompare(right))
+    )
+  });
+}
+
 /**
- * Attach (or update) the badge in front of a status element. Idempotent per
- * element: re-attaching replaces the previous badge.
+ * Attach (or update) the badge in front of a status element. Identical
+ * re-renders retain the existing node so a focused badge is not discarded by
+ * the periodic diagnostics refresh.
  */
 export function attachBadge(
   statusElementId: string,
@@ -340,6 +353,12 @@ export function attachBadge(
   const target = document.getElementById(statusElementId);
   if (!target) return;
   const existing = target.previousElementSibling;
-  if (existing instanceof HTMLElement && existing.classList.contains('rb-badge')) existing.remove();
-  target.before(badgeElement(level, note, inspection));
+  const identity = badgeIdentity(level, note, inspection);
+  if (existing instanceof HTMLElement && existing.classList.contains('rb-badge')) {
+    if (attachedBadgeIdentity.get(existing) === identity) return;
+    existing.remove();
+  }
+  const badge = badgeElement(level, note, inspection);
+  attachedBadgeIdentity.set(badge, identity);
+  target.before(badge);
 }

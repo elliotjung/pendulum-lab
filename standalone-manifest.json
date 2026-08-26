@@ -3,8 +3,8 @@
   "artifacts": [
     {
       "path": "standalone/chaos.worker.js",
-      "bytes": 128422,
-      "sha256": "41647c7467d366cac3bfa03fd4b7db00ed96b01ece4f29999223bfe18c6ef40d"
+      "bytes": 131136,
+      "sha256": "ac71c130aa965c4e1a22371d108f445a83fbae6a38892a4ca7be568a84413265"
     },
     {
       "path": "standalone/expansion.worker.js",
@@ -13,18 +13,18 @@
     },
     {
       "path": "standalone/index.html",
-      "bytes": 1303904,
-      "sha256": "873f69318980a408b1668e1f8c65657ba4e340366a4523f1c5887cb0a7cc24b2"
+      "bytes": 1449376,
+      "sha256": "29b455f35ce6f24812a51cc756a6fd6c16ac1519e07f9a791283d9ee4f0c218b"
     },
     {
       "path": "standalone/labSidePlots.worker.js",
-      "bytes": 15324,
-      "sha256": "4f2e67f3966b2e5faea839447eab32d9b4789ceca90ff4f9c276eb6f3d554820"
+      "bytes": 15852,
+      "sha256": "6e219c86b1349da7140bb858a37ffce0bf558e8eceb706ec0b5ec4fe03a43b0d"
     },
     {
       "path": "standalone/mainCanvas.worker.js",
-      "bytes": 17618,
-      "sha256": "a4e97f05b19decf03a3ce766b5074b9f2814de19a4d50adc9815a37689628880"
+      "bytes": 18103,
+      "sha256": "d407b264eed2e6cea5b26831c379fa1a993a88ce90ee21d934c3ef7d608ece8c"
     }
   ]
 }

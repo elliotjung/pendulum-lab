@@ -44,6 +44,8 @@ export interface LabDrawExtras {
   /** Repaint the stored trail without adding or discarding a sample (used after a canvas resize). */
   preserveTrail?: boolean;
   glow?: boolean;
+  /** Render distributed-mass rods with centre-of-mass and joint markers instead of point-mass bobs. */
+  uniformRods?: boolean;
   /** Experimental long-trail backend. WebGL2 failures stay on Canvas2D. */
   trailBackend?: 'canvas2d' | 'webgl2';
 }
@@ -237,8 +239,8 @@ export class LabRenderer {
     }
 
     ctx.save();
-    ctx.strokeStyle = this.opts.rodColor;
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = extras.uniformRods ? 'rgba(116,190,220,0.78)' : this.opts.rodColor;
+    ctx.lineWidth = extras.uniformRods ? 7 : 2;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(pivot.x, pivot.y);
@@ -253,17 +255,43 @@ export class LabRenderer {
     ctx.fill();
     ctx.restore();
 
-    const colors = pixels.length >= 3 ? TRIPLE_BOB_COLORS : BOB_COLORS;
-    pixels.forEach((p, i) => {
-      ctx.save();
-      const color = colors[i] ?? '#00d4ff';
-      this.setShadow(color, extras.glow ? 24 : 0);
-      ctx.fillStyle = color;
+    if (extras.uniformRods) this.drawUniformRodMarkers(pivot, pixels);
+    else {
+      const colors = pixels.length >= 3 ? TRIPLE_BOB_COLORS : BOB_COLORS;
+      pixels.forEach((p, i) => {
+        ctx.save();
+        const color = colors[i] ?? '#00d4ff';
+        this.setShadow(color, extras.glow ? 24 : 0);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, this.bobRadius(i, pixels.length), 0, FULL_CIRCLE);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+  }
+
+  private drawUniformRodMarkers(pivot: Point2D, joints: readonly Point2D[]): void {
+    const ctx = this.ctx;
+    let start = pivot;
+    ctx.save();
+    ctx.fillStyle = '#f0c419';
+    for (const end of joints) {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, this.bobRadius(i, pixels.length), 0, FULL_CIRCLE);
+      ctx.arc((start.x + end.x) / 2, (start.y + end.y) / 2, 2.5, 0, FULL_CIRCLE);
       ctx.fill();
-      ctx.restore();
-    });
+      start = end;
+    }
+    ctx.fillStyle = this.opts.background;
+    ctx.strokeStyle = '#9fe5f2';
+    ctx.lineWidth = 1.5;
+    for (const joint of joints) {
+      ctx.beginPath();
+      ctx.arc(joint.x, joint.y, 3.25, 0, FULL_CIRCLE);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   private bobRadius(index: number, count: number): number {

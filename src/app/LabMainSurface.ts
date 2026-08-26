@@ -95,7 +95,7 @@ export class LabMainSurface {
         style: { ...labMainFrameStyle(config, quality, frameCount), skipTrail: true }
       });
     } else {
-      this.ensureRenderer(config)?.draw(bobs, { skipTrail: true });
+      this.ensureRenderer(config)?.draw(bobs, { ...labMainFrameStyle(config, quality, frameCount), skipTrail: true });
     }
   }
 

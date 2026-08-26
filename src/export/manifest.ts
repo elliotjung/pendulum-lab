@@ -1,5 +1,6 @@
 import type { RuntimeSnapshot } from '../types/domain';
 import { integratorRegistry } from '../physics/integrators';
+import { currentClaimEvidenceSurface, type ClaimEvidenceSurface } from '../research/claimEvidenceSurfaces';
 
 export interface SubmissionManifest {
   schemaVersion: 'pendulum-submission/v10-ts';
@@ -19,10 +20,15 @@ export interface SubmissionManifest {
     horizonPolicy: string;
     precisionCaveat: string;
   };
+  /** Canonical, fail-closed public-claim visibility at export time. */
+  claimEvidence: ClaimEvidenceSurface;
   limitations: string[];
 }
 
-export function createSubmissionManifest(runtime: RuntimeSnapshot): SubmissionManifest {
+export function createSubmissionManifest(
+  runtime: RuntimeSnapshot,
+  claimEvidence = currentClaimEvidenceSurface()
+): SubmissionManifest {
   return {
     schemaVersion: 'pendulum-submission/v10-ts',
     generatedAt: new Date().toISOString(),
@@ -45,6 +51,7 @@ export function createSubmissionManifest(runtime: RuntimeSnapshot): SubmissionMa
       precisionCaveat:
         'Browser JavaScript uses float64 for CPU paths; WebGPU paths may use f32 and must carry their own validation/caveat metadata.'
     },
+    claimEvidence,
     limitations: [
       'Browser floating point and scheduling can affect exact reproducibility.',
       'Symplectic claims require canonical coordinates, gamma = 0, and residual/step metadata.',

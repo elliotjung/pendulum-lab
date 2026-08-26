@@ -11,7 +11,8 @@ import {
   experimentShareUrl,
   restoreSharedExperiment,
   type SharedExperimentV1,
-  type SharedExperimentV2
+  type SharedExperimentV2,
+  type SharedExperimentV3
 } from '../src/app/experimentShare';
 
 const setupV1: SharedExperimentV1 = {
@@ -26,15 +27,15 @@ const setupV1: SharedExperimentV1 = {
   tab: 'bifurc'
 };
 
-function setupV2(): SharedExperimentV2 {
-  const setup: SharedExperimentV2 = {
-    v: 2,
+function setupV3(): SharedExperimentV3 {
+  const setup: SharedExperimentV3 = {
+    v: 3,
     scope: { kind: 'setup-only', includesResults: false, omittedUnsafeControls: ['audioOn', 'backgroundSim'] },
     provenance: {
       packageName: '@elliotjung/pendulum-lab',
       packageVersion: '10.36.0',
       physicsVersion: '10.36.0',
-      physicsSchema: 'pendulum-session/v10-ts',
+      physicsSchema: 'pendulum-session/v11-ts',
       sourceCommit: 'a'.repeat(40),
       parameterHash: { algorithm: 'fnv1a32-canonical-json', value: '' }
     },
@@ -70,11 +71,21 @@ function setupV2(): SharedExperimentV2 {
   return setup;
 }
 
+function setupV2(): SharedExperimentV2 {
+  const latest = setupV3();
+  return {
+    ...latest,
+    v: 2,
+    provenance: { ...latest.provenance, physicsSchema: 'pendulum-session/v10-ts' },
+    physics: { ...latest.physics, system: 'triple' }
+  };
+}
+
 afterEach(() => vi.unstubAllGlobals());
 
 describe('versioned experiment share hashes', () => {
-  it('round-trips V2 physics, execution, render, scope, and provenance', () => {
-    const setup = setupV2();
+  it('round-trips V3 physics, execution, render, scope, and provenance', () => {
+    const setup = setupV3();
     const hash = encodeSharedExperiment(setup);
     const decoded = decodeSharedExperiment(hash);
 
@@ -88,8 +99,18 @@ describe('versioned experiment share hashes', () => {
     });
   });
 
+  it('round-trips the uniform-rod model without downgrading it to point masses', () => {
+    const setup = setupV3();
+    setup.physics.system = 'compound-double';
+    setup.provenance.parameterHash.value = canonicalSharedExperimentParameterHash(setup);
+    const decoded = decodeSharedExperiment(encodeSharedExperiment(setup));
+    expect(decoded.ok).toBe(true);
+    expect(decoded.payload?.physics.system).toBe('compound-double');
+    expect(decoded.diagnostics).toEqual([]);
+  });
+
   it('makes a stored persona and locale explicit without dropping attribution', () => {
-    const setup = setupV2();
+    const setup = setupV3();
     const url = experimentShareUrl(
       'https://example.test/lab?mode=beginner&tab=lab&utm_source=landing',
       setup,
@@ -107,7 +128,7 @@ describe('versioned experiment share hashes', () => {
     const decoded = decodeSharedExperiment(encodeSharedExperiment(setupV1));
 
     expect(decoded.ok).toBe(true);
-    expect(decoded.payload?.v).toBe(2);
+    expect(decoded.payload?.v).toBe(3);
     expect(decoded.payload?.physics).toEqual({
       system: setupV1.system,
       method: setupV1.method,
@@ -129,6 +150,16 @@ describe('versioned experiment share hashes', () => {
     expect(decoded.diagnostics.map((entry) => entry.code)).toContain('migrated-v1');
   });
 
+  it('migrates historical V2 point-mass shares to V3 and the v11 physics schema', () => {
+    const decoded = decodeSharedExperiment(encodeSharedExperiment(setupV2()));
+
+    expect(decoded.ok).toBe(true);
+    expect(decoded.payload?.v).toBe(3);
+    expect(decoded.payload?.provenance.physicsSchema).toBe('pendulum-session/v11-ts');
+    expect(decoded.payload?.physics.system).toBe('triple');
+    expect(decoded.diagnostics.map((entry) => entry.code)).toContain('migrated-v2');
+  });
+
   it('returns coded failures instead of silently defaulting malformed or future hashes', () => {
     expect(decodeSharedExperiment('#motion').diagnostics[0]?.code).toBe('not-share-hash');
     expect(decodeSharedExperiment('#experiment=%%%').diagnostics[0]?.code).toBe('malformed-base64');
@@ -136,7 +167,7 @@ describe('versioned experiment share hashes', () => {
     const invalidJson = `#experiment=${btoa('{').replace(/=+$/u, '')}`;
     expect(decodeSharedExperiment(invalidJson).diagnostics[0]?.code).toBe('invalid-json');
 
-    const future = `#experiment=${btoa(JSON.stringify({ ...setupV2(), v: 3 })).replace(/=+$/u, '')}`;
+    const future = `#experiment=${btoa(JSON.stringify({ ...setupV3(), v: 4 })).replace(/=+$/u, '')}`;
     expect(decodeSharedExperiment(future).diagnostics[0]?.code).toBe('unsupported-version');
 
     const tooLong = decodeSharedExperiment(`#experiment=${'A'.repeat(MAX_SHARE_HASH_LENGTH)}`);
@@ -144,8 +175,8 @@ describe('versioned experiment share hashes', () => {
     expect(tooLong.diagnostics[0]?.code).toBe('hash-too-long');
   });
 
-  it('sanitizes unsafe V2 fields and reports both repairs and fingerprint mismatch', () => {
-    const unsafe = setupV2() as unknown as Record<string, unknown>;
+  it('sanitizes unsafe V3 fields and reports both repairs and fingerprint mismatch', () => {
+    const unsafe = setupV3() as unknown as Record<string, unknown>;
     unsafe.physics = {
       ...(unsafe.physics as Record<string, unknown>),
       method: 'eval-javascript',
@@ -160,7 +191,7 @@ describe('versioned experiment share hashes', () => {
       stepsPerFrame: 1.5,
       ensemble: { count: 999, epsilonExponent: -99 }
     };
-    const decoded = decodeSharedExperiment(encodeSharedExperiment(unsafe as unknown as SharedExperimentV2));
+    const decoded = decodeSharedExperiment(encodeSharedExperiment(unsafe as unknown as SharedExperimentV3));
 
     expect(decoded.ok).toBe(true);
     expect(decoded.payload?.physics.method).toBe('rk4');
@@ -181,7 +212,7 @@ describe('versioned experiment share hashes', () => {
   });
 
   it('reports portable, warning, and rejected URL lengths and enforces the hard limit', () => {
-    const setup = setupV2();
+    const setup = setupV3();
     const portable = experimentShareUrl('https://example.test/lab', setup, 'research', 'en');
     expect(diagnoseExperimentShareUrl(portable).status).toBe('portable');
 
@@ -222,9 +253,9 @@ class FakeControl extends EventTarget {
 
 describe('atomic shared setup restoration', () => {
   it('updates every available control before one semantic commit and emits no native event storm', () => {
-    const setup = setupV2();
+    const setup = setupV3();
     const selectValues: Record<string, string[]> = {
-      sysType: ['double', 'triple'],
+      sysType: ['double', 'compound-double', 'triple'],
       method: ['rk4', 'yoshida4'],
       timeMode: ['deterministic', 'wall-clock'],
       trailMode: ['rainbow', 'ice'],

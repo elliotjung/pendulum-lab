@@ -24,6 +24,7 @@ const IGNORED_DIRS = new Set([
   'reports/coverage',
   'reports/mutation',
   'reports/playwright',
+  'reports/playwright-pwa',
   'standalone',
   'test-results'
 ]);
@@ -114,6 +115,7 @@ function lineLooksLikeCode(relativePath: string, lineText: string): boolean {
     trimmed.startsWith('http://') ||
     trimmed.startsWith('https://') ||
     trimmed.includes('${') ||
+    trimmed.includes('process.env.') ||
     trimmed.includes('=>') ||
     /\b(?:const|let|var|return|if|for|while|switch|case|type|interface|export|import)\b/.test(trimmed) ||
     ((trimmed.includes('??') || trimmed.includes('?.')) && /[`=;(){}[\]]/.test(trimmed))

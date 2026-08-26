@@ -9,6 +9,8 @@
  * from one traversal, so this tool never edits CSS and never fails on findings.
  */
 import { mkdir, writeFile } from 'node:fs/promises';
+import { spawn, type ChildProcess } from 'node:child_process';
+import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { chromium, type Page } from '@playwright/test';
 
@@ -202,6 +204,44 @@ function argument(name: string, fallback: string): string {
   return index >= 0 ? (process.argv[index + 1] ?? fallback) : fallback;
 }
 
+async function reachable(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok || response.status < 500;
+  } catch {
+    return false;
+  }
+}
+
+async function waitForServer(url: string, timeoutMs = 20_000): Promise<void> {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (await reachable(url)) return;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`Timed out waiting for the CSS coverage preview at ${url}. Run npm run build first.`);
+}
+
+/** Start a local Vite preview only when the requested local origin is absent. */
+async function ensureLocalPreview(url: string): Promise<ChildProcess | null> {
+  const parsed = new URL(url);
+  if (!['127.0.0.1', 'localhost'].includes(parsed.hostname) || (await reachable(parsed.origin))) return null;
+  const port = parsed.port || (parsed.protocol === 'https:' ? '443' : '80');
+  const viteCli = join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js');
+  const server = spawn(
+    process.execPath,
+    [viteCli, 'preview', '--host', parsed.hostname, '--port', port, '--strictPort'],
+    { stdio: 'ignore', shell: false, windowsHide: true }
+  );
+  try {
+    await waitForServer(parsed.origin);
+    return server;
+  } catch (error) {
+    server.kill();
+    throw error;
+  }
+}
+
 export async function runCssCoverageAudit(url: string): Promise<CssCoverageReport> {
   const browser = await chromium.launch({ headless: true });
   try {
@@ -245,14 +285,19 @@ async function main(): Promise<void> {
   const url = argument('--url', 'http://127.0.0.1:4173/app.html');
   const jsonPath = argument('--json', 'reports/css-coverage.json');
   const markdownPath = argument('--markdown', 'reports/css-coverage.md');
-  const report = await runCssCoverageAudit(url);
-  await mkdir('reports', { recursive: true });
-  await writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await writeFile(markdownPath, reportMarkdown(report), 'utf8');
-  console.log(
-    `CSS coverage: ${report.totals.usedPercent.toFixed(2)}% bytes used; ${report.totals.unusedCandidateRules} review candidates.`
-  );
-  console.log(`${jsonPath} and ${markdownPath} written (no CSS changed).`);
+  const server = await ensureLocalPreview(url);
+  try {
+    const report = await runCssCoverageAudit(url);
+    await mkdir('reports', { recursive: true });
+    await writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+    await writeFile(markdownPath, reportMarkdown(report), 'utf8');
+    console.log(
+      `CSS coverage: ${report.totals.usedPercent.toFixed(2)}% bytes used; ${report.totals.unusedCandidateRules} review candidates.`
+    );
+    console.log(`${jsonPath} and ${markdownPath} written (no CSS changed).`);
+  } finally {
+    server?.kill();
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

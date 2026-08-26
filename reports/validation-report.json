@@ -16,7 +16,7 @@
     {
       "id": "json-import-rejects-non-finite",
       "status": "PASS",
-      "measured": "state contains non-finite or extreme values",
+      "measured": "state[1] must be finite",
       "threshold": "reject"
     },
     {

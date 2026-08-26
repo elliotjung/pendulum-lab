@@ -1,4 +1,4 @@
-import { cp, mkdir, copyFile, access } from 'node:fs/promises';
+import { cp, mkdir, copyFile, access, readFile } from 'node:fs/promises';
 
 // The legacy `js/` runtime has been archived (git tag legacy-js-archive); the
 // modern build is entirely TypeScript under src/. We still ship the hand-written
@@ -6,28 +6,18 @@ import { cp, mkdir, copyFile, access } from 'node:fs/promises';
 await mkdir('dist/css', { recursive: true });
 await cp('css', 'dist/css', { recursive: true });
 
-const reviewerReports = [
-  'worldclass-scorecard.json',
-  'flagship-certification.json',
-  'flagship-external-check.json',
-  'webgpu-hardware-validation.json',
-  'gpu-benchmark-ladder.json',
-  'gpu-adapter-matrix.json',
-  'release-readiness.json',
-  'publication-status.json',
-  'zenodo-deposition.json',
-  'attestation-verification.json',
-  'npm-pack-dry-run.json',
-  'reviewer-kit-manifest.json',
-  'mutation-aggregate.json',
-  // The product-release manifest verifies this exact public Pages artifact.
-  'evidence-summary.json',
-  'independent-validation-scope.json',
-  'flagship-figure1.svg',
-  'coverage-badge.json',
-  'coverage-badge.svg',
-  'modern-demo-screenshot.png'
-];
+// This inventory is also consumed by the fail-closed public-artifact privacy
+// audit. Keeping one machine-readable list prevents a newly copied report from
+// silently bypassing the scanner.
+const inventory = JSON.parse(await readFile('config/public-report-inventory.json', 'utf8'));
+if (
+  inventory?.schemaVersion !== 'pendulum-public-report-inventory/v1' ||
+  !Array.isArray(inventory.reports) ||
+  inventory.reports.some((report) => typeof report !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(report))
+) {
+  throw new Error('config/public-report-inventory.json is invalid');
+}
+const reviewerReports = inventory.reports;
 await mkdir('dist/reports', { recursive: true });
 for (const report of reviewerReports) {
   try {
@@ -35,6 +25,11 @@ for (const report of reviewerReports) {
   } catch {
     // Generation commands may not have run in a minimal source build.
   }
+}
+try {
+  await copyFile('config/claim-registry.json', 'dist/reports/claim-registry.json');
+} catch {
+  // The registry is optional only for deliberately minimal source builds.
 }
 try {
   await mkdir('dist/paper', { recursive: true });

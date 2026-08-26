@@ -67,7 +67,7 @@ npm ci
 npm run dev               # Vite serves app.html at the printed local URL
 npm run typecheck         # strict TypeScript check
 npm run test:quick        # browser-free fast regression tier
-npm test           # 1549 unit tests
+npm test           # 1595 unit tests
 npm run build             # production GitHub Pages bundle in dist/
 npm run build:standalone  # portable standalone/index.html
 npm run verify            # policy, lint, types, tests, docs and formatting gate
@@ -137,7 +137,7 @@ UI modes (rail footer): **Beginner** (simulator only) · **Student** (+ analysis
 | 4 | Period-doubling onset matches literature | Floquet multiplier −1 crossing on the stroboscopic map | driven pendulum γ=0.5, ω=2/3; A_PD measured 1.0664 vs published 1.0663 | `npm run validate:literature` | `reports/literature-anchors.json` | onset localized to continuation tolerance 1e-10 |
 | 5 | Melnikov chaos threshold A_c = (4γ/πω)cosh(πω/2) | analytic Melnikov integral, pinned by quadrature + 0–1 test | ω=2/3, γ sweep; dt=1e-3 RK4 | `npm run paper:study` | `reports/paper-study.json` | perturbative — first-order in (A, γ) |
 | 6 | A_PD/A_c ratio reverses at γ ≈ 0.69 | claims 4+5 swept over γ | γ grid in `scripts/paper-study.ts` | `npm run paper:study && npm run paper:build` | `paper/index.html`, `paper/paper.pdf` | finite γ grid; refine grid to sharpen the crossing |
-| 7 | Spherical N-chain conserves E and L_z in 3D chaos | manipulator-form EOM (`documents/derivations.md` §3) | N=2/3, dt=1e-3 RK4, drift <1e-7 over test horizons | `npm test` (`spherical-chain`, `chain-validation-hardening`) | `reports/vitest-results.json` | chart limit at poles: L_z≠0 grazes fail loudly (documented) |
+| 7 | Spherical N-chain conserves E and L_z in 3D chaos | manipulator-form EOM (`documents/derivations.md` §3) | N=2/3, dt=1e-3 RK4, drift <1e-7 over test horizons | `npm test` (`spherical-chain`, `chain-validation-hardening`) | `reports/vitest-public-results.json` | chart limit at poles: L_z≠0 grazes fail loudly (documented) |
 | 8 | N≥4 mass matrix is symmetric positive definite | suffix-mass closed form + Cholesky | seeded random states, planar N=4/6, spherical N=3 | `npm test` (`chain-validation-hardening`) | same | PD away from chart-regularised poles |
 | 9 | Lab Poincaré crossings sit on the section, not the step grid | event refinement: RK4 sub-step + secant root-find | analytic-crossing fixture, dt=0.05 | `npm test` (`poincare-event-refinement`) | same | refined point accurate to ~1e-7 at 50 ms steps |
 | 10 | Exported ZIP bundles are integrity-verifiable | SHA-256 per file (WebCrypto, FIPS-vector tested) | any Research-tab ZIP export | `npm run test:e2e` (`research-bundle-zip`) | `manifest/checksums.json` in any bundle | crc32+fnv kept for legacy v1 readers |
@@ -199,7 +199,7 @@ Final publication checklist:
 | `npm run dev` / `build` / `preview` | Dev server · production build · serve build |
 | `npm run build:standalone` | Self-contained `standalone/index.html` (opens via `file://`; Git tracks only its SHA-256 manifest) |
 | `npm run build:lib` / `docs:api` | Headless core library + TypeDoc API docs |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1549 tests across 213 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1595 tests across 219 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Playwright E2E (Chromium/Firefox/WebKit/mobile Chrome) · smoke subset |
 | `npm run typecheck` / `lint` / `verify` | Strict tsc · source-policy lint · full gate |
 | `npm run validate:reference` / `cross` / `sympy` / `literature` / `julia` | Validation ladder (see claims table) |

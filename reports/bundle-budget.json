@@ -1,113 +1,113 @@
 {
   "schemaVersion": "pendulum-bundle-budget/v1",
   "status": "pass",
-  "artifactSetSha256": "bcb2454f84af64a6d4b908ad0d17506b2be17f955e955a0158f7de062c210e63",
+  "artifactSetSha256": "cd5bb75a1b1e0865a76f9ccb946dd6afca259ee7275bd5d9565f34f4cd3c25bf",
   "artifactSet": {
-    "sha256": "bcb2454f84af64a6d4b908ad0d17506b2be17f955e955a0158f7de062c210e63",
-    "files": 83,
-    "bytes": 4317886
+    "sha256": "cd5bb75a1b1e0865a76f9ccb946dd6afca259ee7275bd5d9565f34f4cd3c25bf",
+    "files": 97,
+    "bytes": 5398674
   },
   "rows": [
     {
       "label": "initial JS raw",
-      "bytes": 171177,
+      "bytes": 247348,
       "budget": 778240,
       "ok": true,
-      "ratio": 0.21995399876644736,
-      "remainingBytes": 607063
+      "ratio": 0.31782997532894736,
+      "remainingBytes": 530892
     },
     {
       "label": "initial JS gzip",
-      "bytes": 56143,
+      "bytes": 80323,
       "budget": 215040,
       "ok": true,
-      "ratio": 0.2610816592261905,
-      "remainingBytes": 158897
+      "ratio": 0.37352585565476193,
+      "remainingBytes": 134717
     },
     {
       "label": "initial JS brotli",
-      "bytes": 47693,
+      "bytes": 66671,
       "budget": 184320,
       "ok": true,
-      "ratio": 0.25875108506944444,
-      "remainingBytes": 136627
+      "ratio": 0.3617133246527778,
+      "remainingBytes": 117649
     },
     {
       "label": "largest non-initial JS raw",
-      "bytes": 343958,
+      "bytes": 387892,
       "budget": 532480,
       "ok": true,
-      "ratio": 0.6459547776442308,
-      "remainingBytes": 188522
+      "ratio": 0.7284630408653846,
+      "remainingBytes": 144588
     },
     {
       "label": "largest non-initial JS gzip",
-      "bytes": 108098,
+      "bytes": 121411,
       "budget": 138240,
       "ok": true,
-      "ratio": 0.781958912037037,
-      "remainingBytes": 30142
+      "ratio": 0.8782624421296297,
+      "remainingBytes": 16829
     },
     {
       "label": "largest non-initial JS brotli",
-      "bytes": 88120,
+      "bytes": 98399,
       "budget": 117760,
       "ok": true,
-      "ratio": 0.7483016304347826,
-      "remainingBytes": 29640
+      "ratio": 0.8355893342391304,
+      "remainingBytes": 19361
     },
     {
       "label": "initial CSS raw",
-      "bytes": 102299,
+      "bytes": 113183,
       "budget": 143360,
       "ok": true,
-      "ratio": 0.7135811941964286,
-      "remainingBytes": 41061
+      "ratio": 0.789501953125,
+      "remainingBytes": 30177
     },
     {
       "label": "initial CSS gzip",
-      "bytes": 19005,
+      "bytes": 20791,
       "budget": 32768,
       "ok": true,
-      "ratio": 0.579986572265625,
-      "remainingBytes": 13763
+      "ratio": 0.634490966796875,
+      "remainingBytes": 11977
     },
     {
       "label": "initial CSS brotli",
-      "bytes": 16092,
+      "bytes": 17477,
       "budget": 26624,
       "ok": true,
-      "ratio": 0.6044170673076923,
-      "remainingBytes": 10532
+      "ratio": 0.6564378004807693,
+      "remainingBytes": 9147
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1226685,
-      "budget": 1331200,
+      "bytes": 1449376,
+      "budget": 1484800,
       "ok": true,
-      "ratio": 0.9214881310096154,
-      "remainingBytes": 104515
+      "ratio": 0.9761422413793104,
+      "remainingBytes": 35424
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 359011,
+      "bytes": 427059,
       "budget": 440320,
       "ok": true,
-      "ratio": 0.8153411155523256,
-      "remainingBytes": 81309
+      "ratio": 0.9698832667151163,
+      "remainingBytes": 13261
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 284148,
+      "bytes": 334324,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.77080078125,
-      "remainingBytes": 84492
+      "ratio": 0.9069118923611111,
+      "remainingBytes": 34316
     }
   ],
   "nonInitialJsTotal": {
-    "raw": 1111467,
-    "gzip": 363666,
-    "brotli": 308908
+    "raw": 1246774,
+    "gzip": 404685,
+    "brotli": 342801
   }
 }

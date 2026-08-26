@@ -1,25 +1,292 @@
 {
-  "schemaVersion": "pendulum-claim-registry/v1",
+  "schemaVersion": "pendulum-claim-registry/v2",
   "evidenceArtifact": "reports/evidence-summary.json",
+  "maturityDefinitions": {
+    "educational": "Conceptually correct for guided learning, without a claim of independent research-grade validation.",
+    "validated": "Covered by declared numerical or external oracles inside an explicit parameter and environment scope.",
+    "research": "Suitable for reproducible investigation when its linked caveats, limitations, and uncertainty are retained.",
+    "experimental": "Implemented and tested, but not promoted beyond exploratory use or its explicitly measured evidence."
+  },
+  "systemCountDefinition": {
+    "claimId": "product.physical-system-families",
+    "publicCount": 8,
+    "unit": "physical-system-families",
+    "statement": "Pendulum Lab publicly documents eight physical-system families under this exact counting rule.",
+    "countingRule": "Count the eight stable public pendulum-family entry points listed by countedModelIds; do not add SystemSpec variants, Expansion Lab families, stochastic schemes, or analysis-only models to this headline.",
+    "countedModelIds": [
+      "double-pendulum",
+      "triple-pendulum",
+      "planar-n-chain",
+      "driven-pendulum",
+      "elastic-pendulum",
+      "rope-string-pendulum",
+      "double-string-pendulum",
+      "spherical-n-chain"
+    ],
+    "systemSpecKindCount": 8,
+    "systemSpecKinds": [
+      "double",
+      "compound-double",
+      "triple",
+      "chain",
+      "driven",
+      "spring",
+      "spherical-chain",
+      "double-string"
+    ],
+    "exclusions": [
+      "Point-mass double and compound uniform-rod double are two SystemSpec variants inside the single public double-pendulum family; the variant does not inflate the eight-family headline.",
+      "RopePendulum is a dedicated stateful hybrid API rather than a SystemSpec kind, which is why eight public families and eight SystemSpec dispatch kinds are both correct.",
+      "Expansion Lab families and independent research modules are intentionally excluded because they use separate maturity and execution contracts.",
+      "Aliases, presets, stochastic forcing schemes, and integrator variants never create an additional physical-system family."
+    ]
+  },
+  "models": [
+    {
+      "id": "double-pendulum",
+      "label": "Double pendulum",
+      "implementation": "src/physics/double.ts",
+      "maturity": "validated",
+      "limitationIds": ["L05"]
+    },
+    {
+      "id": "compound-double-pendulum",
+      "label": "Compound double pendulum with uniform rods",
+      "implementation": "src/physics/compoundDouble.ts",
+      "maturity": "experimental",
+      "limitationIds": []
+    },
+    {
+      "id": "triple-pendulum",
+      "label": "Triple pendulum",
+      "implementation": "src/physics/triple.ts",
+      "maturity": "experimental",
+      "limitationIds": []
+    },
+    {
+      "id": "planar-n-chain",
+      "label": "Planar N-chain pendulum",
+      "implementation": "src/physics/nPendulum.ts",
+      "maturity": "validated",
+      "limitationIds": ["L02", "L03"]
+    },
+    {
+      "id": "driven-pendulum",
+      "label": "Driven pendulum",
+      "implementation": "src/physics/driven.ts",
+      "maturity": "research",
+      "limitationIds": ["L08", "L15"]
+    },
+    {
+      "id": "elastic-pendulum",
+      "label": "Elastic spring pendulum",
+      "implementation": "src/physics/spring.ts",
+      "maturity": "educational",
+      "limitationIds": []
+    },
+    {
+      "id": "rope-string-pendulum",
+      "label": "Rope or string pendulum",
+      "implementation": "src/physics/rope.ts",
+      "maturity": "research",
+      "limitationIds": []
+    },
+    {
+      "id": "double-string-pendulum",
+      "label": "Double-string pendulum",
+      "implementation": "src/physics/doubleString.ts",
+      "maturity": "research",
+      "limitationIds": []
+    },
+    {
+      "id": "spherical-n-chain",
+      "label": "Spherical N-chain pendulum",
+      "implementation": "src/physics/sphericalChain.ts",
+      "maturity": "research",
+      "limitationIds": ["L10"]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "L01",
+      "statement": "Physical GPU evidence currently covers Intel only; NVIDIA or AMD behavior and complete vendor certification must not be inferred.",
+      "appliesTo": ["gpu-vendor-matrix", "webgpu"]
+    },
+    {
+      "id": "L02",
+      "statement": "The N-chain GPU path is planar N at most eight and hybrid; nonlinear trajectories and Jacobian tapes remain CPU f64, so it is not a full-GPU trajectory implementation.",
+      "appliesTo": ["planar-n-chain", "webgpu"]
+    },
+    {
+      "id": "L03",
+      "statement": "The AssemblyScript f64 SIMD N-chain path remains an unpromoted candidate until parity and speedup evidence satisfy its promotion gate.",
+      "appliesTo": ["planar-n-chain", "wasm-n-chain"]
+    },
+    {
+      "id": "L04",
+      "statement": "SharedArrayBuffer side-plot claims require Cloudflare mirror COOP and COEP headers plus a positive crossOriginIsolated deployment probe.",
+      "appliesTo": ["deployment", "shared-array-buffer"]
+    },
+    {
+      "id": "L05",
+      "statement": "Double-double arithmetic is a short-horizon validation reference and is not presented as a real-time interactive arithmetic path.",
+      "appliesTo": ["double-pendulum", "double-double"]
+    },
+    {
+      "id": "L06",
+      "statement": "Kuramoto and Huygens use phase reduction rather than a full escapement, contact, and clock model; finite-size chimera results remain candidates.",
+      "appliesTo": ["kuramoto", "huygens"]
+    },
+    {
+      "id": "L07",
+      "statement": "Coulomb and Stribeck regularization does not solve the exact static-friction complementarity cone.",
+      "appliesTo": ["friction", "hybrid-dynamics"]
+    },
+    {
+      "id": "L08",
+      "statement": "Pyragas delay dynamics use fixed-step RK4 with linear history interpolation and delay at least one step; stability boundaries require step refinement.",
+      "appliesTo": ["driven-pendulum", "pyragas-dde"]
+    },
+    {
+      "id": "L09",
+      "statement": "Non-commutative matrix noise has no Levy-area construction here, so a strong-order-one claim is prohibited.",
+      "appliesTo": ["stochastic-noise", "matrix-noise"]
+    },
+    {
+      "id": "L10",
+      "statement": "Spherical polar coordinates are singular at the poles; near-pole fidelity requires an embedded chart and an explicit caveat.",
+      "appliesTo": ["spherical-n-chain", "spherical-chart"]
+    },
+    {
+      "id": "L11",
+      "statement": "Neimark-Sacker collocation assumes smooth conjugacy inside its supported regime; Arnold-tongue fallbacks must state their source.",
+      "appliesTo": ["neimark-sacker", "arnold-tongue"]
+    },
+    {
+      "id": "L12",
+      "statement": "Arclength continuation does not automatically choose the intended branch after a bifurcation.",
+      "appliesTo": ["continuation", "branch-switching"]
+    },
+    {
+      "id": "L13",
+      "statement": "The video-tracker core is headless and tested, while live camera permission, calibration, occlusion recovery, and webcam UX remain incomplete.",
+      "appliesTo": ["video-tracker", "camera"]
+    },
+    {
+      "id": "L14",
+      "statement": "Cycle expansion is truncated; without coefficient-tail and maximum-period refinement it cannot support a definitive claim.",
+      "appliesTo": ["cycle-expansion", "periodic-orbits"]
+    },
+    {
+      "id": "L15",
+      "statement": "The flagship study centers one frequency, uses a restricted scan and warm-started attractor branch, may miss coexisting basins, and uses first-order Melnikov theory.",
+      "appliesTo": ["driven-pendulum", "flagship-study"]
+    },
+    {
+      "id": "L16",
+      "statement": "The independent Python check uses coarser steps and finite-difference monodromy, supporting tolerance-level reproduction rather than bitwise equality.",
+      "appliesTo": ["scipy-validation", "python-reference"]
+    },
+    {
+      "id": "L17",
+      "statement": "MATLAB validation is optional and unpinned; any release claim using it must pin release, toolbox, script, and checksum manifests.",
+      "appliesTo": ["matlab-reference", "publication"]
+    },
+    {
+      "id": "L18",
+      "statement": "Windows headless WebKit audio instability is environment evidence; user-facing audio needs a fallback and an explicit browser matrix.",
+      "appliesTo": ["webkit", "audio", "browser-evidence"]
+    }
+  ],
+  "incidentPolicy": {
+    "process": [
+      "Triage the numerical discrepancy and assign a severity without changing public artifacts.",
+      "Embargo exploitable or misleading details while preserving an immutable incident identifier.",
+      "Correct code and regenerate evidence from the exact reviewed source commit.",
+      "Revoke every affected artifact digest and force its visible claim to withheld.",
+      "Notify affected users and publication channels with impact, correction, and reproduction details.",
+      "Close only after the corrected artifact and notification record are independently verified."
+    ],
+    "severityDefinitions": {
+      "sev-1": "A result-changing physics error that can invalidate published conclusions or safety-relevant interpretation.",
+      "sev-2": "A material numerical error affecting a supported model, evidence status, or a substantial set of exported results.",
+      "sev-3": "A bounded correctness defect with a documented workaround and no known published-conclusion impact.",
+      "sev-4": "A presentation or provenance defect that does not change computed numerical values but still needs correction."
+    },
+    "revokedVisibleLevel": "withheld",
+    "drillFixture": "tests/fixtures/claim-registry-revocation-drill.json"
+  },
   "claims": [
     {
       "id": "tests.unit",
       "owner": "quality-engineering",
+      "maturity": "validated",
       "scope": {
         "category": "software-verification",
         "statement": "Vitest pass totals recorded for the exact source commit and dependency lock named by the evidence summary."
       },
-      "sourceArtifact": "reports/vitest-results.json",
+      "sourceArtifact": "reports/vitest-public-results.json",
       "reproduce": "npm run verify",
       "caveat": null,
       "invalidatedBy": [
         "Any failed or incomplete Vitest result invalidates the pass total.",
         "A different source commit or dependency lock requires a newly generated evidence summary."
-      ]
+      ],
+      "limitationIds": ["L18"],
+      "validity": {
+        "evidenceClasses": ["browser", "dependency-lock"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "validated",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated test evidence cannot retain a validated public level."
+          },
+          {
+            "input": "claim-status",
+            "when": ["failed", "missing", "unknown"],
+            "to": "withheld",
+            "reason": "Failed, missing, or indeterminate test results cannot support a public pass-total claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked test artifact cannot support a public pass-total claim."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents validated display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     },
     {
       "id": "validation.scipy.regular",
       "owner": "scientific-validation",
+      "maturity": "validated",
       "scope": {
         "category": "scientific-validation",
         "statement": "Maximum trajectory divergence observed only across the regular SciPy reference cases in the cross-validation report."
@@ -30,11 +297,62 @@
       "invalidatedBy": [
         "A regular reference case exceeding its configured tolerance invalidates passed status.",
         "Changes to the model equations, solver policy, or reference environment require reproduction."
-      ]
+      ],
+      "limitationIds": ["L15", "L16", "L17"],
+      "validity": {
+        "evidenceClasses": ["dependency-lock", "external-reference"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "validated",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated external-reference evidence cannot retain validated status."
+          },
+          {
+            "input": "claim-status",
+            "when": ["failed", "missing", "unknown"],
+            "to": "withheld",
+            "reason": "Failed, missing, or indeterminate SciPy comparison results cannot support a public agreement claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked cross-validation artifact cannot support a public divergence claim."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents validated display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     },
     {
       "id": "testing.mutation",
       "owner": "quality-engineering",
+      "maturity": "research",
       "scope": {
         "category": "software-verification",
         "statement": "Aggregate mutation score for the committed mutation shards under the repository's 65 percent regression floor."
@@ -45,11 +363,68 @@
       "invalidatedBy": [
         "A score below the configured 65 percent floor invalidates the regression gate.",
         "Missing, stale, or differently configured mutation shards require a new aggregate."
-      ]
+      ],
+      "limitationIds": [],
+      "validity": {
+        "evidenceClasses": ["dependency-lock"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "validated",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated mutation evidence cannot retain a validated public level."
+          },
+          {
+            "input": "mutation-status",
+            "when": ["low"],
+            "to": "measured",
+            "reason": "A mutation score below the quality target remains a measurement, not a validated quality claim."
+          },
+          {
+            "input": "mutation-status",
+            "when": ["failed", "unknown"],
+            "to": "withheld",
+            "reason": "Failed or unavailable mutation evidence cannot support a visible quality claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked mutation artifact cannot support a public score claim."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents validated display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     },
     {
       "id": "benchmark.energy.methods",
       "owner": "numerical-validation",
+      "maturity": "research",
       "scope": {
         "category": "numerical-benchmark",
         "statement": "Count of integrator methods profiled by the committed energy benchmark at its recorded horizon and step policy."
@@ -60,11 +435,62 @@
       "invalidatedBy": [
         "Changing the benchmark horizon, initial state, method registry, or step policy requires reproduction.",
         "The lowest drift in one profile does not establish universal accuracy or stability."
-      ]
+      ],
+      "limitationIds": [],
+      "validity": {
+        "evidenceClasses": ["browser", "dependency-lock"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "measured",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated benchmark evidence is retained only as historical information."
+          },
+          {
+            "input": "claim-status",
+            "when": ["failed", "missing", "unknown"],
+            "to": "withheld",
+            "reason": "Failed, missing, or indeterminate energy benchmark results cannot support a public method-count claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked benchmark artifact cannot support a public method-count claim."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents measured display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     },
     {
       "id": "gpu.vendor-matrix",
       "owner": "gpu-validation",
+      "maturity": "experimental",
       "scope": {
         "category": "hardware-validation",
         "statement": "Physical GPU vendors with accepted evidence rows under the committed adapter-matrix promotion contract."
@@ -75,11 +501,68 @@
       "invalidatedBy": [
         "Software adapters, missing provenance, or failed promotion thresholds cannot count as physical vendor evidence.",
         "Kernel, driver, adapter, or promotion-contract changes require new hardware evidence."
-      ]
+      ],
+      "limitationIds": ["L01", "L02", "L03", "L04"],
+      "validity": {
+        "evidenceClasses": ["browser", "gpu-driver"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "validated",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated driver evidence cannot retain a validated hardware level."
+          },
+          {
+            "input": "gpu-status",
+            "when": ["partial"],
+            "to": "measured",
+            "reason": "Partial vendor coverage is a measured subset and cannot imply complete GPU certification."
+          },
+          {
+            "input": "gpu-status",
+            "when": ["failed", "unknown"],
+            "to": "withheld",
+            "reason": "Failed or unavailable hardware evidence cannot support a vendor-coverage claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked GPU artifact cannot support a public vendor-matrix claim."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents validated hardware display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     },
     {
       "id": "publication.release",
       "owner": "release-engineering",
+      "maturity": "research",
       "scope": {
         "category": "publication-status",
         "statement": "Public availability status of the exact package version, GitHub release, reviewer Pages site, and Zenodo record."
@@ -90,7 +573,63 @@
       "invalidatedBy": [
         "A failed public endpoint probe invalidates availability for that publication channel.",
         "A package-version or release-tag change requires a newly generated publication status report."
-      ]
+      ],
+      "limitationIds": ["L04", "L17", "L18"],
+      "validity": {
+        "evidenceClasses": ["external-reference"],
+        "validForDays": 14
+      },
+      "visibility": {
+        "defaultLevel": "publication-ready",
+        "downgradeRules": [
+          {
+            "input": "evidence-freshness",
+            "when": ["expired", "unknown"],
+            "to": "informational",
+            "reason": "Expired or undated endpoint evidence cannot retain a publication-ready level."
+          },
+          {
+            "input": "publication-status",
+            "when": ["partial"],
+            "to": "informational",
+            "reason": "Missing npm or DOI publication channels must remain visibly partial."
+          },
+          {
+            "input": "publication-status",
+            "when": ["failed", "unknown"],
+            "to": "withheld",
+            "reason": "Failed or unavailable endpoint evidence cannot support a publication claim."
+          },
+          {
+            "input": "artifact-status",
+            "when": ["revoked"],
+            "to": "withheld",
+            "reason": "A revoked publication artifact cannot support public availability."
+          },
+          {
+            "input": "incident-status",
+            "when": ["investigating", "correction-pending"],
+            "to": "informational",
+            "reason": "An open investigation or pending correction prevents publication-ready display until resolution."
+          },
+          {
+            "input": "incident-status",
+            "when": ["embargoed", "revoked"],
+            "to": "withheld",
+            "reason": "An embargoed or revoked numerical incident withholds the affected claim."
+          }
+        ]
+      },
+      "incident": {
+        "status": "clear",
+        "incidentId": null,
+        "severity": null,
+        "detectedAt": null,
+        "embargoUntil": null,
+        "correctionArtifact": null,
+        "revokedArtifactSha256": null,
+        "userNotification": null
+      }
     }
   ]
 }

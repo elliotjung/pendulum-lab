@@ -23,7 +23,8 @@ export function currentParameters(): PendulumParameters {
 }
 
 export function currentSystem(): SystemType {
-  return selectValue('sysType', 'double') === 'triple' ? 'triple' : 'double';
+  const value = selectValue('sysType', 'double');
+  return value === 'triple' ? 'triple' : value === 'compound-double' ? 'compound-double' : 'double';
 }
 
 export function currentMethod(): IntegratorId {

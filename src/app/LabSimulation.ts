@@ -8,9 +8,10 @@ import type { Derivative, StateVector, StepDiagnostics, StepOptions } from '../p
  * integrators used everywhere else — so the modern Lab is byte-for-byte
  * consistent with the engine rather than carrying its own copy of the physics.
  *
- * State layout matches the engine: double = [θ1, θ2, ω1, ω2], triple = [θ1, θ2,
- * θ3, ω1, ω2, ω3]. Positions are reported in physical metres with the pivot at
- * the origin and +y pointing down (gravity), which the renderer maps to pixels.
+ * State layout matches the engine: point-mass and compound doubles =
+ * [θ1, θ2, ω1, ω2], triple = [θ1, θ2, θ3, ω1, ω2, ω3]. Positions are reported
+ * in physical metres with the pivot at the origin and +y pointing down
+ * (gravity), which the renderer maps to pixels.
  */
 
 export interface LabConfig {
@@ -94,8 +95,8 @@ function positive(name: string, value: number): number {
 }
 
 function validatedConfig(config: LabConfig): LabConfig {
-  if (config.system !== 'double' && config.system !== 'triple') {
-    throw new RangeError('LabSimulation supports only double and triple pendulum systems');
+  if (config.system !== 'double' && config.system !== 'compound-double' && config.system !== 'triple') {
+    throw new RangeError('LabSimulation supports only double, compound-double, and triple pendulum systems');
   }
   if (!SUPPORTED_METHODS.has(config.method)) throw new RangeError('LabSimulation integrator is unsupported');
   const dt = positive('dt', config.dt);

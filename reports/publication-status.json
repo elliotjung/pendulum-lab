@@ -1,33 +1,49 @@
 {
   "schemaVersion": "pendulum-publication-status/v1",
-  "generatedAt": "2026-08-19T09:50:32.355Z",
-  "status": "partial",
+  "status": "failed",
   "npm": {
     "package": "@elliotjung/pendulum-lab",
     "version": "10.36.0",
     "published": false,
+    "identityMatches": false,
     "registryStatus": 404,
+    "integrity": null,
+    "shasum": null,
     "url": "https://www.npmjs.com/package/@elliotjung/pendulum-lab/v/10.36.0"
   },
   "zenodo": {
     "published": false,
     "apiStatus": 200,
+    "version": null,
+    "versionMatches": false,
     "doi": null,
     "recordId": null
   },
   "githubRelease": {
-    "published": true,
-    "apiStatus": 200,
-    "tag": "v10.35.0",
-    "url": "https://github.com/elliotjung/pendulum-lab/releases/tag/v10.35.0"
+    "published": false,
+    "apiStatus": 404,
+    "expectedTag": "v10.36.0",
+    "tag": null,
+    "tagMatches": false,
+    "sourceCommit": null,
+    "url": null
   },
   "pages": {
-    "published": true,
+    "published": false,
     "status": 200,
-    "url": "https://elliotjung.github.io/pendulum-lab/reviewer.html"
+    "url": "https://elliotjung.github.io/pendulum-lab/reviewer.html",
+    "manifestStatus": 404,
+    "evidenceStatus": 200,
+    "binding": "failed",
+    "sourceCommit": null,
+    "evidenceSourceCommit": "e569156565857216198fe8161615a04bf8f13183",
+    "packageVersion": "10.36.0"
   },
   "caveats": [
-    "npm registry does not resolve this exact package version.",
-    "No matching public Zenodo DOI record resolves for Pendulum Lab."
-  ]
+    "npm registry does not resolve metadata for this exact package name and version.",
+    "No public Pendulum Lab Zenodo DOI record has metadata.version matching this exact package version.",
+    "GitHub release v10.36.0 and its resolved source commit are not both publicly verifiable.",
+    "Published Pages manifest/evidence does not bind to the exact release source commit and package version."
+  ],
+  "generatedAt": "2026-08-25T03:33:16.654Z"
 }

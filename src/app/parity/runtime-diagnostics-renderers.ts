@@ -29,6 +29,12 @@ import {
 
 import { renderResearchWorkbench } from './research-workbench';
 import { capabilityText, featureDomOk } from './governance-ui';
+import { attachBadge, type ResultBadgeLevel } from '../resultBadges';
+import {
+  claimEvidenceRuntimeRows,
+  claimEvidenceWarnings,
+  currentClaimEvidenceSurface
+} from '../../research/claimEvidenceSurfaces';
 
 export function toggleFloatingDiag(): void {
   const diag = $('ueFloatingDiag');
@@ -63,6 +69,12 @@ export function renderRuntimePanels(): void {
   const diag = modernLab()?.diagnostics?.();
   const method = integratorRegistry[snapshot.method];
   const drift = diag?.drift ?? 0;
+  const claimSurface = currentClaimEvidenceSurface();
+  const runtimeWarnings = [...warnings(snapshot, method), ...claimEvidenceWarnings(claimSurface)];
+  const claimHeadline =
+    claimSurface.loadState === 'loaded'
+      ? `${claimSurface.counts.withheld} withheld · ${claimSurface.counts.informational} info · ${claimSurface.counts.measured} measured`
+      : 'unavailable (fail-closed)';
   setMetric('siFps', diag?.fps ? diag.fps.toFixed(0) : '-');
   setMetric('siPhys', diag?.physicsMsPerFrame ? `${diag.physicsMsPerFrame.toFixed(2)} ms` : '-');
   setMetric('siDrift', Number.isFinite(drift) ? drift.toExponential(2) : '-');
@@ -72,9 +84,35 @@ export function renderRuntimePanels(): void {
     `${currentMode() === 'research' || currentMode() === 'benchmark' ? 'Status: strict mode, auto-actions disabled.' : 'Status: runtime assist ready.'}`
   );
   setText('v10MethodCard', `${method.name} | order ${method.order} | symplectic: ${method.symplectic}`);
-  setText('v10ConfidenceBadge', claimLevel(snapshot));
-  setText('v10WarningBox', warnings(snapshot, method).join('\n'));
-  setText('rgv7ValidityLine', warnings(snapshot, method).join(' '));
+  setText('v10ConfidenceBadge', `${claimLevel(snapshot)} · evidence ${claimHeadline}`);
+  const evidenceBadgeLevel: ResultBadgeLevel =
+    claimSurface.loadState !== 'loaded' || claimSurface.counts.withheld > 0 || claimSurface.counts.informational > 0
+      ? 'caveat'
+      : claimSurface.counts.measured > 0
+        ? 'finite-time-estimate'
+        : claimSurface.counts['publication-ready'] > 0
+          ? 'publication-ready'
+          : 'validated';
+  attachBadge('v10ConfidenceBadge', evidenceBadgeLevel, claimHeadline, {
+    title: 'Canonical public-claim evidence',
+    source: 'config/claim-registry.json + reports/evidence-summary.json',
+    parameters: {
+      load: claimSurface.loadState,
+      withheld: claimSurface.counts.withheld,
+      informational: claimSurface.counts.informational,
+      measured: claimSurface.counts.measured,
+      validated: claimSurface.counts.validated,
+      publicationReady: claimSurface.counts['publication-ready']
+    },
+    uncertainty: `Evidence freshness is re-evaluated at runtime; expires ${claimSurface.evidenceExpiresAt ?? 'unknown'}.`,
+    externalValidation: 'Effective visibility is computed by the canonical claim-registry downgrade rules.',
+    reproduce: 'npm run claims:check && npm run evidence:summary',
+    caveat: claimEvidenceWarnings(claimSurface).join(' ') || 'No claim downgrade is active.',
+    artifact: 'reports/evidence-summary.json',
+    hash: claimSurface.evidenceSourceCommit ?? ''
+  });
+  setText('v10WarningBox', runtimeWarnings.join('\n'));
+  setText('rgv7ValidityLine', runtimeWarnings.join(' '));
   renderStats('riStatusGrid', [
     ['method', method.id],
     ['system', snapshot.systemType],
@@ -93,7 +131,8 @@ export function renderRuntimePanels(): void {
     ['schema', 'v10-ts'],
     ['privacy', 'local-only'],
     ['claim', claimLevel(snapshot)],
-    ['commands', String(commandRegistry.list().length)]
+    ['commands', String(commandRegistry.list().length)],
+    ...claimEvidenceRuntimeRows(claimSurface)
   ]);
   renderStats('sfv9Summary', [
     ['method', method.id],
@@ -342,6 +381,8 @@ export function renderFloatingDiag(
 export function claimLevel(snapshot: RuntimeSnapshot): string {
   if (!snapshot.state.every(Number.isFinite)) return 'invalid-after-fault';
   if (snapshot.systemType === 'triple') return 'experimental-triple';
+  if (snapshot.systemType === 'compound-double')
+    return snapshot.damping > 0 ? 'dissipative-compound-double' : 'validated-compound-double';
   if (snapshot.damping > 0) return 'dissipative';
   return 'validated-double';
 }
@@ -350,6 +391,8 @@ export function warnings(snapshot: RuntimeSnapshot, method: (typeof integratorRe
   const output: string[] = [];
   if (snapshot.damping > 0) output.push('gamma > 0: energy drift includes physical dissipation.');
   if (snapshot.systemType === 'triple') output.push('Triple mode remains experimental for research claims.');
+  if (snapshot.systemType === 'compound-double')
+    output.push('Uniform-rod model selected: point-mass equations and evidence do not apply to this run.');
   if (method.symplectic !== 'canonical-only' && method.symplectic !== 'no')
     output.push('Selected method is labelled approximate/pseudo-symplectic.');
   if (!output.length) output.push('No active scientific honesty warnings.');

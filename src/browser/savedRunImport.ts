@@ -124,7 +124,11 @@ function planSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult
  * snapshot to LabApp. Missing select options, clamping, and invalid numeric
  * readback still fail atomically.
  */
-export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult<string[]> {
+function applySnapshotControlsWithCommit(
+  snapshot: RuntimeSnapshot,
+  commit: boolean,
+  allowDisplayProjection = false
+): ImportValidationResult<string[]> {
   const plan = planSnapshotControls(snapshot);
   if (!plan.ok || !plan.value) return { ok: false, problems: plan.problems };
   const previous = plan.value.map(({ element }) => ({
@@ -156,12 +160,18 @@ export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidati
         }
       }
       element.value = value;
+      const projectedNumber = element instanceof HTMLInputElement ? element.valueAsNumber : Number.NaN;
+      const projectionTolerance =
+        numericValue === null
+          ? 0
+          : Number.EPSILON * Math.max(Math.abs(numericValue), Math.abs(projectedNumber), Number.MIN_VALUE) * 8;
       const readBackMatches =
         numericValue === null
           ? element.value === value
           : element instanceof HTMLInputElement &&
-            Number.isFinite(element.valueAsNumber) &&
-            element.valueAsNumber === numericValue;
+            Number.isFinite(projectedNumber) &&
+            (projectedNumber === numericValue ||
+              (allowDisplayProjection && Math.abs(projectedNumber - numericValue) <= projectionTolerance));
       if (!readBackMatches) {
         rollback();
         return { ok: false, problems: [`Lab control #${id} changed ${value} to ${element.value}`] };
@@ -169,7 +179,7 @@ export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidati
       applied.push(id);
     }
     for (const { element } of plan.value) element.dispatchEvent(new Event('input', { bubbles: true }));
-    commitLabControls('saved-run-import', applied, snapshot);
+    if (commit) commitLabControls('saved-run-import', applied, snapshot);
   } catch (error: unknown) {
     rollback();
     return {
@@ -178,6 +188,15 @@ export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidati
     };
   }
   return { ok: true, problems: [], value: applied };
+}
+
+export function applySnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult<string[]> {
+  return applySnapshotControlsWithCommit(snapshot, true);
+}
+
+/** Update the visible controls atomically without rebuilding the simulation. */
+export function projectSnapshotControls(snapshot: RuntimeSnapshot): ImportValidationResult<string[]> {
+  return applySnapshotControlsWithCommit(snapshot, false, true);
 }
 
 function notify(message: string, timeout = 3000): void {

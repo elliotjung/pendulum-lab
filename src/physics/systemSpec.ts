@@ -1,6 +1,7 @@
 import type { Derivative, Jacobian, JacobianProvenance, JacobianTrustMetadata } from './types';
 import type { DampingConvention } from './constants';
 import { rhsDouble, energyDouble, jacobianDouble } from './double';
+import { energyCompoundDouble, rhsCompoundDouble } from './compoundDouble';
 import {
   createChainJacobianWorkspace,
   createSphericalChainJacobianWorkspace,
@@ -24,6 +25,7 @@ import type { EnergyBreakdown } from '../types/domain';
  */
 export type SystemSpec =
   | { kind: 'double'; m1: number; m2: number; l1: number; l2: number; g: number }
+  | { kind: 'compound-double'; m1: number; m2: number; l1: number; l2: number; g: number; damping: number }
   | { kind: 'triple'; m1: number; m2: number; m3: number; l1: number; l2: number; l3: number; g: number }
   | { kind: 'chain'; masses: number[]; lengths: number[]; g: number }
   | { kind: 'driven'; g: number; length: number; damping: number; driveAmplitude: number; driveFrequency: number }
@@ -42,6 +44,18 @@ export type SystemSpec =
    */
   | { kind: 'double-string'; m1: number; m2: number; l1: number; l2: number; g: number; damping: number };
 
+/** Runtime source of truth used by claim/catalog validation. */
+export const SYSTEM_SPEC_KINDS: readonly SystemSpec['kind'][] = [
+  'double',
+  'compound-double',
+  'triple',
+  'chain',
+  'driven',
+  'spring',
+  'spherical-chain',
+  'double-string'
+];
+
 /**
  * How linear damping enters each system's equations of motion (see
  * {@link DampingConvention}). Cross-system damping comparisons are only
@@ -51,6 +65,7 @@ export type SystemSpec =
 export function dampingConventionFor(kind: SystemSpec['kind']): DampingConvention {
   switch (kind) {
     case 'double':
+    case 'compound-double':
     case 'triple':
     case 'chain':
     case 'double-string':
@@ -82,6 +97,7 @@ function jacobianProvenanceForSpec(spec: SystemSpec): JacobianProvenance | undef
     case 'spherical-chain':
       return 'automatic-differentiation';
     case 'spring':
+    case 'compound-double':
       return undefined;
     default: {
       const exhaustive: never = spec;
@@ -102,7 +118,9 @@ export function jacobianTrustForSpec(spec: SystemSpec): JacobianTrustMetadata {
       provenance: 'central-difference',
       confidence: 'numerical-fallback',
       caveat:
-        'Spring-pendulum tangent dynamics use the central-difference fallback; Lyapunov/FTLE uncertainty includes perturbation-scale sensitivity.'
+        spec.kind === 'compound-double'
+          ? 'Uniform-rod compound-double tangent dynamics use the central-difference fallback; Lyapunov uncertainty includes perturbation-scale sensitivity.'
+          : 'Spring-pendulum tangent dynamics use the central-difference fallback; Lyapunov/FTLE uncertainty includes perturbation-scale sensitivity.'
     };
   }
   return {
@@ -132,6 +150,12 @@ export function buildRhs(spec: SystemSpec): Derivative {
       const p = spec;
       return withSpecJacobian(spec, (s, o) => {
         rhsDouble(s, p, 0, o);
+      });
+    }
+    case 'compound-double': {
+      const p = spec;
+      return withSpecJacobian(spec, (s, o) => {
+        rhsCompoundDouble(s, p, p.damping, o);
       });
     }
     case 'triple': {
@@ -197,7 +221,9 @@ export function buildRhs(spec: SystemSpec): Derivative {
  * driven pendulum is trivial. Only the spring pendulum falls back to the
  * central-difference Jacobian (`undefined`). Supplying this to the Lyapunov /
  * variational pipeline removes the finite-difference error floor, and to
- * Newton-based implicit steppers restores quadratic convergence.
+ * Newton-based implicit steppers restores quadratic convergence. Spring and
+ * compound-double currently expose no exact tangent and therefore use the
+ * explicit central-difference fallback metadata above.
  */
 export function buildJacobian(spec: SystemSpec): Jacobian | undefined {
   switch (spec.kind) {
@@ -246,6 +272,7 @@ export function buildJacobian(spec: SystemSpec): Jacobian | undefined {
       };
     }
     case 'spring':
+    case 'compound-double':
       return undefined;
     default: {
       const exhaustive: never = spec;
@@ -259,6 +286,8 @@ export function energyForSpec(spec: SystemSpec, state: ArrayLike<number>): Energ
   switch (spec.kind) {
     case 'double':
       return energyDouble(state, spec);
+    case 'compound-double':
+      return energyCompoundDouble(state, spec);
     case 'triple':
       return energyTriple(state, spec);
     case 'chain':

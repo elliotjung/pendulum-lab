@@ -39,6 +39,18 @@ export function studySpecFromSnapshot(snapshot: RuntimeSnapshot): { spec: System
     };
     return { spec, state0: snapshot.state.slice(0, 6) };
   }
+  if (snapshot.systemType === 'compound-double') {
+    const spec: SystemSpec = {
+      kind: 'compound-double',
+      m1: p.m1,
+      m2: p.m2,
+      l1: p.l1,
+      l2: p.l2,
+      g: p.g,
+      damping: snapshot.damping
+    };
+    return { spec, state0: snapshot.state.slice(0, 4) };
+  }
   const spec: SystemSpec = { kind: 'double', m1: p.m1, m2: p.m2, l1: p.l1, l2: p.l2, g: p.g };
   return { spec, state0: snapshot.state.slice(0, 4) };
 }

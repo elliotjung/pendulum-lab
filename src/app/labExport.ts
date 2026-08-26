@@ -2,6 +2,7 @@ import type { LabConfig } from './LabSimulation';
 import type { PoincareCrossingPoint } from './PoincareAccumulator';
 import type { Point2D } from '../viz/poincare';
 import type { RunMode, RuntimeSnapshot } from '../types/domain';
+import { SESSION_SCHEMA_VERSION } from '../state/sessionSchema';
 
 /**
  * Pure builders for the Lab data exports (trajectory CSV, Poincaré CSV, run
@@ -12,6 +13,13 @@ import type { RunMode, RuntimeSnapshot } from '../types/domain';
 export interface TrajectorySample {
   time: number;
   state: ArrayLike<number>;
+}
+
+export type LabPhysicalModel = 'point-masses-on-massless-links' | 'uniform-rigid-rods';
+
+/** Human- and machine-readable physical assumption behind a Lab system id. */
+export function labPhysicalModel(system: LabConfig['system']): LabPhysicalModel {
+  return system === 'compound-double' ? 'uniform-rigid-rods' : 'point-masses-on-massless-links';
 }
 
 export interface TrajectoryRetentionMetadata {
@@ -53,7 +61,8 @@ export function trajectoryCsv(
         `# sampling=${retention.sampling}`
       ]
     : [];
-  return [...metadata, header, ...rows].join('\n');
+  const modelMetadata = system === 'compound-double' ? [`# physical_model=${labPhysicalModel(system)}`] : [];
+  return [...modelMetadata, ...metadata, header, ...rows].join('\n');
 }
 
 function hasCrossingMetadata(point: Point2D): point is PoincareCrossingPoint {
@@ -88,6 +97,7 @@ export interface RunExport {
   schemaVersion: 2;
   generator: string;
   system: LabConfig['system'];
+  physicalModel: LabPhysicalModel;
   method: LabConfig['method'];
   dt: number;
   gamma: number;
@@ -139,7 +149,7 @@ export function runJson(
       : 6;
   const seed = Number.isSafeInteger(options.seed) ? Number(options.seed) : null;
   const runtimeSnapshot: RuntimeSnapshot = {
-    schemaVersion: 'pendulum-session/v10-ts',
+    schemaVersion: SESSION_SCHEMA_VERSION,
     systemType: config.system,
     method: config.method,
     mode: options.mode ?? 'demo',
@@ -157,6 +167,7 @@ export function runJson(
     schemaVersion: 2,
     generator: 'pendulum-lab-modern-lab',
     system: config.system,
+    physicalModel: labPhysicalModel(config.system),
     method: config.method,
     dt: config.dt,
     gamma: config.gamma,

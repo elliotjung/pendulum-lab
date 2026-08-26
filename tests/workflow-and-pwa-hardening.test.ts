@@ -63,6 +63,15 @@ describe('generated-drift workflow contract', () => {
     expect(source).toContain('github-token: ${{ github.token }}');
     expect(source).toContain('test "$VALIDATED_SHA" = "$current_sha"');
     expect(source).toContain('path: validated/dist');
+    expect(source).toContain("claimSurface?.schemaVersion !== 'pendulum-claim-evidence-surface/v1'");
+    expect(source).toContain('claim.sourceArtifactSha256 !== evidence.sourceReportSha256[claim.sourceArtifact]');
+    expect(source).toContain("claim.effectiveVisibleLevel === 'withheld' && claim.displayValue !== null");
+    expect(source).toContain('name: Assemble the exact deployed evidence handoff');
+    expect(source).toContain("schemaVersion: 'pendulum-deployed-evidence-handoff/v1'");
+    expect(source).toContain("coordinatePolicy: 'continuous-pages-artifact'");
+    expect(source).toContain("kernel: 'validated/reports/landing-kernel/pendulum-demo-kernel.js'");
+    expect(source).toContain('name: deployed-evidence-handoff');
+    expect(source).toContain('retention-days: 7');
     expect(source).toContain('group: pages-${{ github.event.workflow_run.head_branch }}');
     expect(source).not.toContain('group: pages-${{ github.event.workflow_run.head_sha }}');
     expect(source).not.toMatch(/^\s{2}push:/m);
@@ -84,27 +93,49 @@ describe('generated-drift workflow contract', () => {
 
   test('Pages build exports every Lab report required by the product release manifest', async () => {
     const buildCopy = await readFile('scripts/copy-legacy-assets.mjs', 'utf8');
+    const publicInventory = JSON.parse(await readFile('config/public-report-inventory.json', 'utf8')) as {
+      reports?: string[];
+    };
     const releaseConfig = JSON.parse(await readFile('config/product-release.json', 'utf8')) as {
       lab: { evidencePath: string; validationScopePath: string };
     };
 
+    expect(buildCopy).toContain("readFile('config/public-report-inventory.json', 'utf8')");
+
     for (const path of [releaseConfig.lab.evidencePath, releaseConfig.lab.validationScopePath]) {
       expect(path).toMatch(/^reports\/[^/]+$/);
-      expect(buildCopy).toContain(`'${path.slice('reports/'.length)}'`);
+      expect(publicInventory.reports).toContain(path.slice('reports/'.length));
     }
   });
 
-  test('evidence dispatch fails closed, validates provenance, and bounds network waits', async () => {
+  test('evidence dispatch sends only the exact artifact observed live after successful Pages', async () => {
     const source = await readFile('.github/workflows/evidence-dispatch.yml', 'utf8');
+    expect(source).toContain('workflows: [Deploy verified build to GitHub Pages]');
+    expect(source).toContain("github.event.workflow_run.conclusion == 'success'");
+    expect(source).toContain('name: deployed-evidence-handoff');
+    expect(source).toContain('run-id: ${{ github.event.workflow_run.id || inputs.pages_run_id }}');
+    expect(source).toContain("handoff?.schemaVersion !== 'pendulum-deployed-evidence-handoff/v1'");
+    expect(source).toContain("handoff?.coordinatePolicy !== 'continuous-pages-artifact'");
+    expect(source).toContain('handoff.files[name].sha256 !== sha256(value)');
+    expect(source).toContain('sha256(evidenceBytes) !== handoff.files.evidence.sha256');
+    expect(source).toContain('live evidence bytes have not converged to the handoff');
+    expect(source).toContain("event_type: 'evidence-updated'");
+    expect(source).toContain('mainline_run_id: handoff.mainlineRunId');
+    expect(source).toContain('pages_run_id: handoff.pagesRunId');
+    expect(source).toContain("evidence.toString('base64')");
+    expect(source).toContain("kernel.toString('base64')");
+    expect(source).toContain('repository dispatch payload exceeds the bounded 60 KB contract');
     expect(source).toContain('LANDING_DISPATCH_TOKEN is required');
-    expect(source).toContain('/^[0-9a-f]{40}$/i');
-    expect(source).toContain('p?.dirtyWorktree!==false');
-    expect(source).toContain('t?.failed!==0');
-    expect(source).toContain('t?.passed!==t?.total');
-    expect(source).toContain('t?.success!==true');
-    expect(source).toContain("Date.parse(p?.expiresAt??'')");
-    expect(source).toContain('refusing to dispatch expired evidence');
+    expect(source).toContain('evidence?.provenance?.dirtyWorktree !== false');
+    expect(source).toContain("Date.parse(evidence?.provenance?.expiresAt ?? '')");
+    expect(source).toContain("claimSurface?.schemaVersion !== 'pendulum-claim-evidence-surface/v1'");
+    expect(source).toContain('claim.sourceArtifactSha256 !== evidence.sourceReportSha256[claim.sourceArtifact]');
+    expect(source).toContain("claim.effectiveVisibleLevel === 'withheld' && claim.displayValue !== null");
+    expect(source).not.toContain('raw.githubusercontent.com/elliotjung/pendulum-lab');
+    expect(source).not.toMatch(/^\s{2}push:/m);
     expect(source).toContain('--retry-all-errors');
+    expect(source).toContain("--proto '=https' --proto-redir '=https'");
+    expect(source).toContain('--connect-timeout 10 --max-time 30');
     expect(source).toContain('--connect-timeout 10 --max-time 60');
   });
 
@@ -144,12 +175,15 @@ describe('generated-drift workflow contract', () => {
 
   test('local evidence checks reject dirty or expired release coordinates', async () => {
     const source = await readFile('scripts/evidence-summary.ts', 'utf8');
+    const kernel = await readFile('scripts/landing-kernel-sync.ts', 'utf8');
     expect(source).toContain('assertReleaseReadyEvidence(committed)');
     expect(source).toContain('evidenceWorktreeIsDirty()');
     expect(source).toContain('assertEvidenceSourceCommit(sourceCommit)');
     expect(source).toContain('evidence.provenance?.dirtyWorktree !== false');
     expect(source).toContain('expiresAt <= Date.now()');
     expect(source).toContain('expiresAt <= generatedAt');
+    expect(kernel).toContain('evidenceWorktreeIsDirty()');
+    expect(kernel).toContain('Refusing to stamp a Landing kernel manifest from a dirty worktree');
   });
 
   test('evidence provenance counts untracked files and permits only evidence-only descendant commits', async () => {
@@ -491,5 +525,25 @@ describe('production PWA policy contract', () => {
     expect(source).toContain('matchRetainedPreviousCaches');
     expect(source).toContain('matchAvailableCaches');
     expect(source).not.toContain('const outcome = caches.match(request)');
+  });
+
+  test('PWA evidence status fails closed and exposes canonical claim-level counts', async () => {
+    const source = await readFile('src/app/PwaLifecycle.ts', 'utf8');
+    expect(source).toContain(
+      "if (claimSurface.loadState !== 'loaded') throw new Error('canonical claim evidence unavailable')"
+    );
+    expect(source).toContain('claimSurface.counts.validated');
+    expect(source).toContain('claimSurface.counts.measured');
+    expect(source).toContain('claimSurface.counts.informational');
+    expect(source).toContain('claimSurface.counts.withheld');
+    expect(source).toContain("document.documentElement.dataset.claimEvidence = 'unavailable'");
+  });
+
+  test('PWA update deferral uses active modal ownership, not hidden descendant dialogs', async () => {
+    const source = await readFile('src/app/PwaLifecycle.ts', 'utf8');
+    expect(source).toContain('hasActiveModalSurface()');
+    expect(source).toContain("document.getElementById('onboardingTour')");
+    expect(source).not.toContain('document.querySelector(\'[role="dialog"]:not([hidden])');
+    expect(source).not.toContain('[aria-modal="true"]:not([hidden])');
   });
 });

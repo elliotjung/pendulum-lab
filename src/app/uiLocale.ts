@@ -77,6 +77,11 @@ const ELEMENT_TEXT_KO: Record<string, string> = {
 };
 
 const OPTION_LABELS: Record<string, Record<string, { en: string; ko: string }>> = {
+  sysType: {
+    double: { en: 'Double — point masses', ko: '이중 — 질점' },
+    'compound-double': { en: 'Double — uniform rods', ko: '이중 — 균일 막대' },
+    triple: { en: 'Triple pendulum ★', ko: '삼중 진자 ★' }
+  },
   timeMode: {
     deterministic: { en: 'Deterministic replay', ko: '결정론적 재생' },
     'wall-clock': { en: 'Real-time fixed-dt', ko: '실시간 고정 dt' }

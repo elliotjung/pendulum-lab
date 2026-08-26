@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-gpu-adapter-matrix/v1",
-  "generatedAt": "2026-08-19T09:50:21.293Z",
+  "generatedAt": "2026-08-25T03:30:47.159Z",
   "status": "partial",
   "requiredVendors": [
     "intel",
@@ -17,7 +17,7 @@
     {
       "vendor": "intel",
       "status": "pass",
-      "source": "C:/Users/junge/Desktop/pendulum_lab_modular/reports/gpu-benchmark-ladder.json",
+      "source": "reports/gpu-benchmark-ladder.json",
       "generatedAt": "2026-07-10T09:29:21.172Z",
       "adapter": {
         "vendor": "intel",

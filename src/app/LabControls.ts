@@ -94,7 +94,8 @@ export function readLabStepsPerFrame(): number {
 
 export function readLabConfig(): LabConfig {
   const rawSystem = dom.str('sysType', 'double');
-  const system: SystemType = rawSystem === 'triple' ? 'triple' : 'double';
+  const system: SystemType =
+    rawSystem === 'triple' ? 'triple' : rawSystem === 'compound-double' ? 'compound-double' : 'double';
   if (rawSystem !== system) {
     dom.setValue('sysType', system);
     reportControlValidation('sysType', choiceMessage('system', system));

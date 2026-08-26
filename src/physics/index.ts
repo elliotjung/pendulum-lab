@@ -1,6 +1,7 @@
 import type { PendulumParameters, SystemType } from '../types/domain';
 import { energyDouble, energyTriple } from './energy';
 import { rhsDouble } from './double';
+import { energyCompoundDouble, rhsCompoundDouble } from './compoundDouble';
 import { rhsTriple } from './triple';
 import { step } from './integrators';
 import type { Derivative, PhysicsAdapter, StateVector, StepOptions } from './types';
@@ -32,6 +33,7 @@ export const physicsAdapter: PhysicsAdapter = Object.freeze({
     out: StateVector
   ): StateVector {
     if (system === 'triple') return rhsTripleFallback(state, parameters, gamma, out);
+    if (system === 'compound-double') return rhsCompoundDouble(state, parameters, gamma, out);
     if (system === 'double') return rhsDouble(state, parameters, gamma, out);
     throw new Error(
       `physicsAdapter.derivative: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`
@@ -39,6 +41,7 @@ export const physicsAdapter: PhysicsAdapter = Object.freeze({
   },
   energy(system: SystemType, state: StateVector, parameters: PendulumParameters) {
     if (system === 'triple') return energyTriple(state, parameters);
+    if (system === 'compound-double') return energyCompoundDouble(state, parameters);
     if (system === 'double') return energyDouble(state, parameters);
     throw new Error(
       `physicsAdapter.energy: ${system} is not supported by the 2D Lab adapter; use a SystemSpec or dedicated physics module.`

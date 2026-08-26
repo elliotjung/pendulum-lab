@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applySnapshotControls, snapshotControlValues } from '../src/browser/savedRunImport';
+import { applySnapshotControls, projectSnapshotControls, snapshotControlValues } from '../src/browser/savedRunImport';
 import { StateStore } from '../src/state/StateStore';
+import { SESSION_SCHEMA_VERSION } from '../src/state/sessionSchema';
 import type { RuntimeSnapshot } from '../src/types/domain';
 import {
   LAB_CONTROL_BOUNDS,
@@ -76,6 +77,26 @@ describe('session safety and interactive Lab contracts', () => {
     expect(parsed.value?.method).toBe('leapfrog');
     expect(parsed.value?.state[0]).toBeCloseTo(Math.PI, 12);
     expect(parsed.value?.state[1]).toBeCloseTo(0, 12);
+    expect(parsed.value?.schemaVersion).toBe(SESSION_SCHEMA_VERSION);
+  });
+
+  it('accepts and restores the four-state uniform-rod Lab model explicitly', () => {
+    const compound = { ...BASE, schemaVersion: SESSION_SCHEMA_VERSION, systemType: 'compound-double' as const };
+    const validated = StateStore.validate(compound);
+    expect(validated.ok).toBe(true);
+    expect(validated.value?.systemType).toBe('compound-double');
+    expect(validateLabSnapshot(validated.value!).ok).toBe(true);
+    expect(snapshotControlValues(validated.value!)).toContainEqual(['sysType', 'compound-double']);
+  });
+
+  it('rejects a compound model mislabeled as historical v10 while migrating valid v10 point-mass sessions', () => {
+    const migrated = StateStore.validate(BASE);
+    expect(migrated.ok).toBe(true);
+    expect(migrated.value?.schemaVersion).toBe(SESSION_SCHEMA_VERSION);
+
+    const mislabeled = StateStore.validate({ ...BASE, systemType: 'compound-double' });
+    expect(mislabeled.ok).toBe(false);
+    expect(mislabeled.problems.join(' ')).toContain('did not define compound-double');
   });
 
   it('applies one canonical snapshot to StateStore and the adopted runtime', () => {
@@ -127,6 +148,9 @@ describe('session safety and interactive Lab contracts', () => {
     const options = new Set(Array.from(methodMarkup.matchAll(/<option value="([^"]+)"/g), (match) => match[1]));
     for (const method of LAB_INTEGRATOR_IDS) expect(options.has(method), `missing #method option ${method}`).toBe(true);
     expect([...options].sort()).toEqual([...LAB_INTEGRATOR_IDS].sort());
+    const systemMarkup = html.match(/<select[\s\S]*?id="sysType"[\s\S]*?>([\s\S]*?)<\/select>/)?.[1] ?? '';
+    const systems = Array.from(systemMarkup.matchAll(/<option value="([^"]+)"/g), (match) => match[1]);
+    expect(systems).toEqual(['double', 'compound-double', 'triple']);
     expect(
       Object.keys(integratorRegistry)
         .filter((method) => method !== 'verlet')
@@ -144,13 +168,22 @@ class FakeInput {
   readonly dispatchEvent = vi.fn(() => true);
   readonly addEventListener = vi.fn();
   readonly dataset: Record<string, string> = {};
+  private readonly numericProjection: (value: number) => number;
 
-  constructor(value: string, type = 'range', min = '', max = '', step = '') {
+  constructor(
+    value: string,
+    type = 'range',
+    min = '',
+    max = '',
+    step = '',
+    numericProjection: (value: number) => number = (candidate) => candidate
+  ) {
     this.current = value;
     this.type = type;
     this.min = min;
     this.max = max;
     this.step = step;
+    this.numericProjection = numericProjection;
   }
 
   get value(): string {
@@ -171,7 +204,7 @@ class FakeInput {
       const base = Number.isFinite(min) ? min : 0;
       projected = Math.min(max, Math.max(min, base + Math.round((projected - base) / numericStep) * numericStep));
     }
-    this.current = String(projected);
+    this.current = String(this.numericProjection(projected));
   }
 
   get valueAsNumber(): number {
@@ -220,7 +253,7 @@ function fakeControls(snapshot: RuntimeSnapshot): Map<string, FakeInput | FakeSe
   };
   const controls = new Map<string, FakeInput | FakeSelect>();
   for (const [id, value] of snapshotControlValues(snapshot)) {
-    if (id === 'sysType') controls.set(id, new FakeSelect('double', ['double', 'triple']));
+    if (id === 'sysType') controls.set(id, new FakeSelect('double', ['double', 'compound-double', 'triple']));
     else if (id === 'method') controls.set(id, new FakeSelect('rk4', LAB_INTEGRATOR_IDS));
     else {
       const bound = bounds[id];
@@ -310,5 +343,22 @@ describe('saved-run DOM application', () => {
     expect((controls.get('th1') as FakeInput).step).toBe('any');
     const commit = dispatchEvent.mock.calls.at(-1)?.[0] as CustomEvent<{ snapshot: RuntimeSnapshot }>;
     expect(commit.detail.snapshot.state).toEqual(snapshot.state);
+  });
+
+  it('allows only ulp-scale browser rounding for a non-committing recovery display projection', () => {
+    const snapshot = { ...BASE, state: [-0.5295974206389124, 0.25, 0, 0] };
+    const controls = fakeControls(snapshot);
+    controls.set(
+      'th1',
+      new FakeInput('2', 'range', String(-Math.PI), String(Math.PI), '0.001', (value) => value + Number.EPSILON * 2)
+    );
+    const dispatchEvent = installFakeDom(controls);
+
+    const result = projectSnapshotControls(snapshot);
+
+    expect(result.ok).toBe(true);
+    expect(Number(controls.get('th1')?.value)).not.toBe(snapshot.state[0]);
+    expect(Math.abs(Number(controls.get('th1')?.value) - snapshot.state[0]!)).toBeLessThan(Number.EPSILON * 3);
+    expect(dispatchEvent).not.toHaveBeenCalled();
   });
 });

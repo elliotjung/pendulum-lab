@@ -38,6 +38,17 @@ describe('labExport', () => {
     expect(csv.split('\n')[0]).toBe('t,th1,th2,th3,w1,w2,w3');
   });
 
+  it('labels uniform-rod trajectories and run JSON without changing state columns', () => {
+    const compound = { ...CONFIG, system: 'compound-double' as const };
+    const csv = trajectoryCsv([{ time: 0, state: compound.initialState }], compound.system);
+    expect(csv.split('\n')[0]).toBe('# physical_model=uniform-rigid-rods');
+    expect(csv.split('\n')[1]).toBe('t,th1,th2,w1,w2');
+    const json = runJson(compound, [...compound.initialState], 0, -1, 0);
+    expect(json.system).toBe('compound-double');
+    expect(json.physicalModel).toBe('uniform-rigid-rods');
+    expect(json.runtimeSnapshot.systemType).toBe('compound-double');
+  });
+
   it('makes bounded trajectory retention explicit in CSV and run JSON exports', () => {
     const retention = {
       schemaVersion: 'pendulum-trajectory-retention/v1',
@@ -89,9 +100,10 @@ describe('labExport', () => {
     expect(json.schemaVersion).toBe(2);
     expect(json.method).toBe('rk4');
     expect(json.system).toBe('double');
+    expect(json.physicalModel).toBe('point-masses-on-massless-links');
     expect(json.gamma).toBe(0);
     expect(json.runtimeSnapshot).toMatchObject({
-      schemaVersion: 'pendulum-session/v10-ts',
+      schemaVersion: 'pendulum-session/v11-ts',
       mode: 'research',
       systemType: 'double',
       damping: 0,
@@ -165,7 +177,7 @@ describe('labExport', () => {
     const imported = parseStrictJsonImport(JSON.stringify(historical));
     expect(imported.ok).toBe(true);
     expect(imported.value).toMatchObject({
-      schemaVersion: 'pendulum-session/v10-ts',
+      schemaVersion: 'pendulum-session/v11-ts',
       systemType: 'double',
       state: historical.finalState,
       simTime: historical.simTime

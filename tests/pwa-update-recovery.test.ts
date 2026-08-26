@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { RuntimeSnapshot } from '../src/types/domain';
+import { stateHash, StateStore } from '../src/state/StateStore';
+import { SESSION_SAFETY_BOUNDS } from '../src/validation/sessionConstraints';
 import {
   PWA_UPDATE_RECOVERY_MAX_BYTES,
   PWA_UPDATE_RECOVERY_SCHEMA,
@@ -12,6 +14,7 @@ import {
 const now = Date.parse('2026-08-24T06:00:00.000Z');
 
 function snapshot(): RuntimeSnapshot {
+  const state = [1, 0.8, 0, 0];
   return {
     schemaVersion: 'pendulum-session/v10-ts',
     systemType: 'double',
@@ -22,10 +25,10 @@ function snapshot(): RuntimeSnapshot {
     stepsPerFrame: 6,
     damping: 0,
     parameters: { m1: 1, m2: 1, l1: 1.2, l2: 1, g: 9.81 },
-    state: [1, 0.8, 0, 0],
+    state,
     simTime: 12.5,
     seed: 42,
-    hash: 'test-hash'
+    hash: stateHash(state)
   };
 }
 
@@ -53,6 +56,23 @@ describe('PWA update recovery validation', () => {
     expect(result.migratedFromV1).toBe(false);
     expect(result.recovery.restorePolicy).toBe('paused-safe-mode');
     expect(result.recovery.snapshot).toMatchObject({ method: 'rk4', simTime: 12.5, seed: 42 });
+  });
+
+  test('preserves exact winding only for a hash-bound recovery snapshot', () => {
+    const state = [1, 1.75 * Math.PI, 0.25, -0.5];
+    const exact = { ...snapshot(), state, hash: stateHash(state) };
+    const result = validatePwaUpdateRecovery(JSON.stringify(currentRecovery({ snapshot: exact })), now);
+
+    expect(result.status).toBe('valid');
+    if (result.status !== 'valid') throw new Error(result.reason);
+    expect(result.recovery.snapshot.state).toEqual(state);
+    expect(StateStore.validate(exact).value?.state[1]).not.toBe(state[1]);
+
+    const tampered = currentRecovery({ snapshot: { ...exact, hash: '00000000' } });
+    expect(validatePwaUpdateRecovery(JSON.stringify(tampered), now)).toMatchObject({
+      status: 'corrupt',
+      reason: expect.stringContaining('hash')
+    });
   });
 
   test('migrates a valid v1 record and assigns the bounded current TTL', () => {
@@ -113,11 +133,16 @@ describe('PWA update recovery validation', () => {
       expiresAt: new Date(now + PWA_UPDATE_RECOVERY_TTL_MS + 1).toISOString()
     });
     const malformedSnapshot = currentRecovery({ snapshot: { ...snapshot(), dt: Number.NaN } });
+    const excessiveWindingState = [0, SESSION_SAFETY_BOUNDS.angleWinding.max + 1, 0, 0];
+    const excessiveWinding = currentRecovery({
+      snapshot: { ...snapshot(), state: excessiveWindingState, hash: stateHash(excessiveWindingState) }
+    });
     const unboundedFocus = currentRecovery({ focusId: 'x'.repeat(129) });
 
     expect(validatePwaUpdateRecovery(JSON.stringify(nonCanonicalDate), now).status).toBe('corrupt');
     expect(validatePwaUpdateRecovery(JSON.stringify(overlongTtl), now).status).toBe('corrupt');
     expect(validatePwaUpdateRecovery(JSON.stringify(malformedSnapshot), now).status).toBe('corrupt');
+    expect(validatePwaUpdateRecovery(JSON.stringify(excessiveWinding), now).status).toBe('corrupt');
     expect(validatePwaUpdateRecovery(JSON.stringify(unboundedFocus), now).status).toBe('corrupt');
   });
 

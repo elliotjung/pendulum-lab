@@ -194,11 +194,12 @@ describe('Theory renderer contract', () => {
       ]);
       new TheoryTab(new DomBinder(fakeDocument as unknown as Document)).install();
 
-      expect(fakeDocument.host.children).toHaveLength(5);
+      expect(fakeDocument.host.children).toHaveLength(6);
       expect(fakeDocument.host.className).toContain('theory-workspace');
       expect(fakeDocument.created.some((element) => element.textContent === 'Double-pendulum theory')).toBe(true);
       expect(fakeDocument.created.filter((element) => element.className === 'theory-section')).toHaveLength(9);
       expect(fakeDocument.created.some((element) => element.className === 'theory-geometry-figure')).toBe(true);
+      expect(fakeDocument.created.filter((element) => element.className === 'theory-model-card')).toHaveLength(2);
       expect(fakeDocument.created.some((element) => element.id === 'theoryCompareElState')).toBe(true);
       expect(fakeDocument.created.some((element) => element.id === 'theoryCompareHState')).toBe(true);
       expect(fakeDocument.head.children).toHaveLength(1);

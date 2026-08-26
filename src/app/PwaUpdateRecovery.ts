@@ -1,5 +1,5 @@
-import { StateStore } from '../state/StateStore';
 import type { RuntimeSnapshot } from '../types/domain';
+import { exactRecoveryLabSnapshot } from './LabSnapshotRestore';
 
 export const PWA_UPDATE_RECOVERY_SCHEMA = 'pendulum-pwa-update-recovery/v2' as const;
 export const PWA_UPDATE_RECOVERY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -171,13 +171,15 @@ export function validatePwaUpdateRecovery(raw: string, nowMs = Date.now()): Upda
     };
   }
 
-  const snapshotValidation = StateStore.validate(record.snapshot);
-  if (!snapshotValidation.ok || !snapshotValidation.value) {
+  let snapshot: RuntimeSnapshot;
+  try {
+    snapshot = exactRecoveryLabSnapshot(record.snapshot as RuntimeSnapshot);
+  } catch (error) {
     return {
       status: 'corrupt',
       bytes,
       migratedFromV1: false,
-      reason: snapshotValidation.problems.join('; ') || 'Recovery snapshot is invalid.'
+      reason: error instanceof Error ? error.message : 'Recovery snapshot is invalid.'
     };
   }
 
@@ -185,7 +187,7 @@ export function validatePwaUpdateRecovery(raw: string, nowMs = Date.now()): Upda
     schemaVersion: PWA_UPDATE_RECOVERY_SCHEMA,
     savedAt: new Date(savedAtMs).toISOString(),
     expiresAt: new Date(expiresAtMs).toISOString(),
-    snapshot: snapshotValidation.value,
+    snapshot,
     wasRunning: record.wasRunning,
     focusId: record.focusId,
     restorePolicy: 'paused-safe-mode'

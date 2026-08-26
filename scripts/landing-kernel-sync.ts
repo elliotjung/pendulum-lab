@@ -4,7 +4,7 @@ import { constants } from 'node:fs';
 import { copyFile, lstat, open, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { assertEvidenceSourceCommit } from './evidence-provenance';
+import { assertEvidenceSourceCommit, evidenceWorktreeIsDirty } from './evidence-provenance';
 
 const kernelDirectory = 'reports/landing-kernel';
 const kernelName = 'pendulum-demo-kernel.js';
@@ -191,6 +191,9 @@ async function main(): Promise<void> {
   const manifestPath = join(kernelDirectory, manifestName);
 
   if (process.argv.includes('--write-manifest')) {
+    if (evidenceWorktreeIsDirty()) {
+      throw new Error('Refusing to stamp a Landing kernel manifest from a dirty worktree. Commit the source first.');
+    }
     await atomicWrite(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
   } else {
     const existing = JSON.parse(await readFile(manifestPath, 'utf8')) as LandingKernelManifest;

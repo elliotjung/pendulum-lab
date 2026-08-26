@@ -114,7 +114,7 @@ export function installResearchStatusCards(): void {
       button('v10RunValidation', 'Run validation suite', () => runLegacyValidationSurface(), 'primary'),
       button('v10ExportManifest', 'Research Export', () => exportManifest('pendulum_manifest_v10_ts.json')),
       button('v10ExportSession', 'Session Export', () =>
-        downloadJson('pendulum_session_v10_ts.json', currentSnapshot())
+        downloadJson('pendulum_session_v11_ts.json', currentSnapshot())
       ),
       button('v10ExportValidation', 'Validation JSON', () => exportValidationJson())
     );

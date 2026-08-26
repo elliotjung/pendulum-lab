@@ -60,6 +60,14 @@ function validateSystemSpec(value: unknown, label: string): { spec: SystemSpec; 
       positive(spec.l2, `${label}.l2`);
       finite(spec.g, `${label}.g`, 0);
       return { spec: spec as unknown as Extract<SystemSpec, { kind: 'double' }>, dimension: 4 };
+    case 'compound-double':
+      positive(spec.m1, `${label}.m1`);
+      positive(spec.m2, `${label}.m2`);
+      positive(spec.l1, `${label}.l1`);
+      positive(spec.l2, `${label}.l2`);
+      finite(spec.g, `${label}.g`, 0);
+      finite(spec.damping, `${label}.damping`, 0);
+      return { spec: spec as unknown as Extract<SystemSpec, { kind: 'compound-double' }>, dimension: 4 };
     case 'triple':
       positive(spec.m1, `${label}.m1`);
       positive(spec.m2, `${label}.m2`);

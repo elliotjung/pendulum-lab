@@ -6,6 +6,27 @@ landing repository has synchronized the exact release evidence, passed its
 static/browser/accessibility/Lighthouse gates, created the matching tag, and
 deployed the same commit to Pages.
 
+## Coordinate policy
+
+Two coordinates exist and they are deliberately not interchangeable:
+
+- **Continuous Pages evidence** is identified by the Lab source commit, the
+  successful Mainline run id, the successful Pages run id and attempt, plus
+  SHA-256 values for the deployed evidence, Landing kernel, kernel manifest,
+  and Lab deployment manifest. `Evidence Dispatch` waits until the exact
+  evidence and deployment-manifest bytes are observable on public Lab Pages,
+  then sends those validated bytes to Landing. Landing has no branch-tip,
+  scheduled, or committed `reports/evidence-summary.json` fallback.
+- **Immutable release evidence** is identified by the annotated `v*` tag,
+  release commit, orchestrator run id, and dispatched evidence/kernel hashes.
+  Only `release.yml` and Landing's `pendulum-release` workflow may create that
+  coordinated tag. Later continuous evidence can advance default branches but
+  cannot rewrite an existing release coordinate.
+
+If a continuous dispatch is missed, manually run Lab `Evidence Dispatch` with
+the successful Pages run id. The workflow re-downloads that run's handoff and
+will resend it only if its exact bytes are still the live Pages deployment.
+
 ## Automated chain
 
 1. The simulator tag starts `.github/workflows/release.yml`.
@@ -17,8 +38,8 @@ deployed the same commit to Pages.
    ZIP, and the English/Korean one-page PDFs.
 4. The workflow sends `pendulum-release` to `elliotjung/pendulum-landing` with
    the tag, release commit, evidence source commit, and orchestrator run id.
-5. Landing's `cross-repo-release.yml` fetches evidence by the immutable simulator
-   commit SHA, realigns the demo-kernel manifest and changelog highlights,
+5. Landing's `cross-repo-release.yml` materializes the exact base64 evidence and
+   demo-kernel pair whose hashes were dispatched by the release run, then realigns changelog highlights,
    rewrites the static copy counts (meta descriptions, OG alt text, no-JS
    fallbacks, Korean dictionary), regenerates the OG card image from the same
    evidence, rebuilds Korean content, and runs `check`, Playwright smoke/axe,

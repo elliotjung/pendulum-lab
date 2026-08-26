@@ -1,6 +1,6 @@
 # External owner checklist
 
-`lastVerified: 2026-07-13`
+`lastVerified: 2026-08-25`
 
 `staleAfterDays: 30`
 `owner: repository maintainer unless a row names another owner`
@@ -37,7 +37,7 @@ dist.integrity` resolves, and `npm run release:status` reports the new scoped
 - [ ] Sign in at <https://jsr.io/new>, claim/confirm scope `@elliotjung`, create
       package `pendulum-lab`, and link it to `elliotjung/pendulum-lab` in package
       settings. JSR's official flow is
-      <https://jsr.io/documents/publishing-packages>.
+      <https://jsr.io/docs/publishing-packages>.
 - [ ] Run `npm run jsr:check`; review every included source file and fix slow
       types or portability errors rather than bypassing them.
 - [ ] Dispatch `.github/workflows/publish-jsr.yml` with `dry_run=true`. For the
@@ -78,7 +78,7 @@ dist.integrity` resolves, and `npm run release:status` reports the new scoped
 - [ ] After a Zenodo DOI exists, rebuild/review `paper/paper.pdf`; verify title,
       author identity, references, figure legibility, caveats, and the category
       choice `nlin.CD` (with `physics.comp-ph` only if appropriate). Use the current
-      submission instructions at <https://info.arxiv.org/help/submit/>.
+      submission instructions at <https://info.arxiv.org/help/submit/index.html>.
 - [ ] Submit the PDF-only path already selected by the project. Complete arXiv's
       metadata/licensing screens manually and inspect the generated preview before
       finalizing.

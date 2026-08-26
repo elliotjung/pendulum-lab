@@ -583,8 +583,12 @@
                   <div class="acc-sub">System</div>
                   <div class="row">
                     <label for="sysType">Type</label>
-                    <select id="sysType">
-                      <option value="double">Double Pendulum</option>
+                    <select
+                      id="sysType"
+                      title="Point masses concentrate m₁/m₂ at link ends; uniform rods distribute each listed mass along its full link."
+                    >
+                      <option value="double">Double — point masses</option>
+                      <option value="compound-double">Double — uniform rods</option>
                       <option value="triple">Triple Pendulum ★</option>
                     </select>
                   </div>

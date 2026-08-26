@@ -8,6 +8,7 @@ import {
 } from '../src/physics/compoundDouble';
 import { PhysicsEvaluationError } from '../src/physics/errors';
 import { rk4Step } from '../src/physics/integrators';
+import { buildRhs, energyForSpec, jacobianTrustForSpec, type SystemSpec } from '../src/physics/systemSpec';
 import {
   compoundDoubleReferenceEnergy,
   compoundDoubleReferenceMassMatrix,
@@ -17,12 +18,54 @@ import type { PendulumParameters } from '../src/types/domain';
 
 const PARAMETERS: PendulumParameters = { m1: 1.7, m2: 0.9, l1: 1.2, l2: 0.8, g: 9.81 };
 
+const GOLDEN_TRAJECTORY = Object.freeze({
+  provenance: 'independent Cartesian virtual-work RHS; fixed RK4; dt=1/65536 s',
+  initialState: [0.6, -0.35, 0.15, -0.2] as const,
+  horizon: 1,
+  finalState: [-0.17822784340643172, -1.1610229658243056, 0.25012750559678876, -4.0269910974547845] as const
+});
+
 function expectClose(actual: number, expected: number, relativeTolerance = 2e-12): void {
   const scale = Math.max(1, Math.abs(actual), Math.abs(expected));
   expect(Math.abs(actual - expected)).toBeLessThanOrEqual(relativeTolerance * scale);
 }
 
+function integrateCompoundGoldenFixture(dt: number): number[] {
+  const state = Float64Array.from(GOLDEN_TRAJECTORY.initialState);
+  const next = new Float64Array(4);
+  const derivative = createCompoundDoublePendulumDerivative(PARAMETERS);
+  const steps = Math.round(GOLDEN_TRAJECTORY.horizon / dt);
+  expect(steps * dt).toBeCloseTo(GOLDEN_TRAJECTORY.horizon, 14);
+  for (let step = 0; step < steps; step += 1) {
+    rk4Step(state, dt, derivative, next);
+    state.set(next);
+  }
+  return Array.from(state);
+}
+
+function trajectoryError(actual: readonly number[]): number {
+  return Math.hypot(...actual.map((value, index) => value - GOLDEN_TRAJECTORY.finalState[index]!));
+}
+
 describe('uniform-rod compound double pendulum derivation', () => {
+  it('reconstructs the same model from the worker-safe SystemSpec', () => {
+    const spec: Extract<SystemSpec, { kind: 'compound-double' }> = {
+      kind: 'compound-double',
+      ...PARAMETERS,
+      damping: 0.17
+    };
+    const state = Float64Array.from([0.8, -0.5, 1.1, -0.7]);
+    const actual = new Float64Array(4);
+    buildRhs(spec)(state, actual);
+    const expected = rhsCompoundDouble(state, PARAMETERS, spec.damping, new Float64Array(4));
+    expect(Array.from(actual)).toEqual(Array.from(expected));
+    expect(energyForSpec(spec, state)).toEqual(energyCompoundDouble(state, PARAMETERS));
+    expect(jacobianTrustForSpec(spec)).toMatchObject({
+      provenance: 'central-difference',
+      confidence: 'numerical-fallback'
+    });
+  });
+
   it('builds the COM-plus-I_cm mass matrix without double-counting hinge inertia', () => {
     const state = [0.7, -0.4, 0, 0];
     const matrix = compoundDoubleMassMatrix(state, PARAMETERS);
@@ -86,6 +129,20 @@ describe('uniform-rod compound double pendulum derivation', () => {
 });
 
 describe('compound double pendulum physical invariants', () => {
+  it('matches a frozen bounded trajectory from the independent Cartesian reference', () => {
+    const actual = integrateCompoundGoldenFixture(0.0025);
+    expect(actual.every((value) => Number.isFinite(value) && Math.abs(value) < 5)).toBe(true);
+    expect(trajectoryError(actual), GOLDEN_TRAJECTORY.provenance).toBeLessThan(1e-8);
+  });
+
+  it('converges toward the independent golden trajectory under dt halving', () => {
+    const errors = [0.01, 0.005, 0.0025].map((dt) => trajectoryError(integrateCompoundGoldenFixture(dt)));
+    expect(errors[0]).toBeGreaterThan(errors[1]!);
+    expect(errors[1]).toBeGreaterThan(errors[2]!);
+    expect(errors[0]! / errors[1]!).toBeGreaterThan(8);
+    expect(errors[1]! / errors[2]!).toBeGreaterThan(12);
+  });
+
   it('conserves mechanical energy in a bounded undamped RK4 trajectory', () => {
     const state = new Float64Array([1.1, -0.7, 0.3, -0.2]);
     const next = new Float64Array(4);

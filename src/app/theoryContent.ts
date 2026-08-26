@@ -38,12 +38,12 @@ export const THEORY_OVERVIEW = {
   eyebrow: { en: 'FROM MODEL TO EVIDENCE', ko: '모델에서 근거까지' },
   title: { en: 'Double-pendulum theory', ko: '이중진자 이론' },
   summary: {
-    en: 'Follow the live point-mass model from assumptions to implementation, then compare it with the separately verified uniform-rod model and inspect the evidence for each claim.',
-    ko: '실시간 질점 모델을 가정부터 구현까지 따라가고, 별도로 검증된 균일 막대 모델과 비교한 뒤 각 주장의 근거를 확인합니다.'
+    en: 'Follow the selectable point-mass and uniform-rod models from assumptions to implementation, compare their distinct mechanics, and inspect the evidence for each claim.',
+    ko: '선택 가능한 질점 모델과 균일 막대 모델을 가정부터 구현까지 따라가고, 서로 다른 역학을 비교한 뒤 각 주장의 근거를 확인합니다.'
   },
   scope: {
-    en: 'Primary live scope: planar point masses on massless rigid links. Uniform-rod callouts use a distinct compound model; rope, spring, and spherical models require their own equations.',
-    ko: '주 실시간 범위: 질량 없는 강체 링크 끝의 평면 질점입니다. 균일 막대 설명은 별도 복합 모델을 사용하며 줄, 스프링과 구면 모델에는 각각 다른 식이 필요합니다.'
+    en: 'Live scope: planar point masses on massless rigid links or two serial uniform massive rods. These are distinct physical models; rope, spring, and spherical systems require their own equations.',
+    ko: '실시간 범위: 질량 없는 강체 링크 끝의 평면 질점 또는 직렬로 연결된 두 균일 유질량 막대입니다. 둘은 서로 다른 물리 모델이며 줄, 스프링과 구면 시스템에는 각각 다른 식이 필요합니다.'
   }
 } as const satisfies Record<string, TheoryLocalizedText>;
 
@@ -70,8 +70,8 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
         ko: '감쇠 γ가 0이면 보존계입니다. γ가 양수이면 일반화 감쇠 토크는 Qᵢ = −γωᵢ이며 역학적 에너지는 감소해야 합니다.'
       },
       {
-        en: 'The alternate compound model treats each link as a uniform massive rod. Its center-of-mass translation and I_cm = ML²/12 rotation are included exactly once; it is not the same physical model as the live point-mass default.',
-        ko: '대안 복합 모델은 각 링크를 질량이 분포된 균일 막대로 취급합니다. 질량중심 병진과 I_cm = ML²/12 회전을 정확히 한 번씩 포함하며, 실시간 기본 질점 모델과는 다른 물리 모델입니다.'
+        en: 'The selectable compound model treats each link as a uniform massive rod. Its center-of-mass translation and I_cm = ML²/12 rotation are included exactly once; it is not the same physical model as the point-mass default.',
+        ko: '선택 가능한 복합 모델은 각 링크를 질량이 분포된 균일 막대로 취급합니다. 질량중심 병진과 I_cm = ML²/12 회전을 정확히 한 번씩 포함하며, 기본 질점 모델과는 다른 물리 모델입니다.'
       }
     ],
     equations: [],
@@ -259,8 +259,8 @@ export const THEORY_SECTIONS: readonly TheorySection[] = [
         expression:
           'Mᵣ(θ) = [ M₁₁=(m₁/3+m₂)l₁²       M₁₂=(m₂/2)l₁l₂ cos Δ ]\n        [ M₂₁=M₁₂                  M₂₂=(m₂/3)l₂²       ]',
         explanation: {
-          en: 'This belongs to the separately implemented compound-rod model, not the live point-mass default.',
-          ko: '이 행렬은 별도로 구현된 복합 막대 모델의 것이며 실시간 질점 기본 모델과는 다릅니다.'
+          en: 'This belongs to the separately implemented, live-selectable compound-rod model, not the point-mass default.',
+          ko: '이 행렬은 별도로 구현되어 실시간 선택 가능한 복합 막대 모델의 것이며 기본 질점 모델과는 다릅니다.'
         }
       },
       {

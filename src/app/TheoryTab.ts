@@ -11,6 +11,7 @@ import {
   type TheorySectionId
 } from './theoryContent';
 import { THEORY_LINKS, type TheoryLink } from './theoryLinks';
+import { geometryFigureElement } from './theoryGeometryFigure';
 import { openTrustDrawer } from './trustDrawer';
 
 export const THEORY_CONTENT_HOST_ID = 'theoryContent';
@@ -23,6 +24,7 @@ function styles(): string {
 .theory-eyebrow,.theory-step{font:650 10px/1.3 var(--font-mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--workbench-live,#72d6e5)}
 .theory-title{margin:0;color:var(--workbench-text,#f1f3f8);font:700 clamp(24px,4vw,42px)/1.05 var(--font-sans,system-ui)}
 .theory-lead,.theory-scope{max-width:76ch;margin:0;line-height:1.6}.theory-lead{font-size:14px;color:var(--workbench-text-secondary,#a8b0c2)}.theory-scope{font-size:11px;color:var(--workbench-text-muted,#737e92)}
+.theory-model-compare{display:grid;gap:12px;margin:16px 0;padding:16px;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.16));border-radius:14px;background:var(--workbench-panel,#10141f)}.theory-model-head{display:grid;gap:5px}.theory-model-title{margin:0;color:var(--workbench-text,#f1f3f8);font:650 16px/1.35 var(--font-sans,system-ui)}.theory-model-copy{max-width:82ch;margin:0;color:var(--workbench-text-muted,#737e92);font-size:11px;line-height:1.55}.theory-model-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.theory-model-card{display:grid;gap:9px;align-content:start;padding:13px;border:1px solid var(--workbench-border,rgba(205,214,245,.1));border-radius:10px;background:var(--workbench-raised,#0b0e17)}.theory-model-card h4{margin:0;color:var(--workbench-text,#f1f3f8);font:650 13px/1.35 var(--font-sans,system-ui)}.theory-model-card p{margin:0;color:var(--workbench-text-secondary,#a8b0c2);font-size:11px;line-height:1.55}.theory-model-facts{display:grid;gap:5px;margin:0;padding-left:18px;color:var(--workbench-text-muted,#737e92);font-size:10px;line-height:1.5}.theory-model-select{justify-self:start;min-height:38px;padding:7px 11px;border:1px solid color-mix(in srgb,var(--workbench-live,#72d6e5) 48%,transparent);border-radius:8px;background:color-mix(in srgb,var(--workbench-live,#72d6e5) 10%,var(--workbench-raised,#0b0e17));color:var(--workbench-text,#f1f3f8);font-weight:650}
 .theory-compare{display:grid;gap:14px;margin:16px 0;padding:16px;border:1px solid var(--workbench-border-strong,rgba(205,214,245,.16));border-radius:14px;background:var(--workbench-panel,#10141f)}.theory-compare-head{display:grid;gap:5px}.theory-compare-title{margin:0;color:var(--workbench-text,#f1f3f8);font:650 16px/1.35 var(--font-sans,system-ui)}.theory-compare-copy,.theory-compare-note{max-width:82ch;margin:0;font-size:11px;line-height:1.55;color:var(--workbench-text-muted,#737e92)}
 .theory-compare-controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px}.theory-compare-field{display:grid;gap:5px;min-width:130px;font:600 10px/1.3 var(--font-mono,monospace);color:var(--workbench-text-muted,#737e92)}.theory-compare-field input,.theory-compare-field select{width:100%;min-height:38px;padding:7px 9px;border:1px solid var(--workbench-border,rgba(205,214,245,.12));border-radius:8px;background:var(--workbench-raised,#0b0e17);color:var(--workbench-text,#f1f3f8);font:12px/1.3 var(--font-mono,monospace)}.theory-compare-run{min-height:38px;padding:7px 13px;border:1px solid color-mix(in srgb,var(--workbench-live,#72d6e5) 48%,transparent);border-radius:8px;background:color-mix(in srgb,var(--workbench-live,#72d6e5) 12%,var(--workbench-raised,#0b0e17));color:var(--workbench-text,#f1f3f8);font-weight:650}.theory-compare-run:disabled{opacity:.58;cursor:wait}
 .theory-compare-status{margin:0;padding:9px 11px;border-radius:8px;background:var(--workbench-raised,#0b0e17);color:var(--workbench-text-secondary,#a8b0c2);font:600 11px/1.45 var(--font-mono,monospace)}.theory-compare-status[data-verdict="agreement"]{color:var(--workbench-success,#70db9b)}.theory-compare-status[data-verdict="review"]{color:var(--workbench-warning,#f6c96a)}.theory-compare-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0}.theory-compare-metric{display:grid;gap:4px;padding:10px;border:1px solid var(--workbench-border,rgba(205,214,245,.08));border-radius:8px;background:var(--workbench-raised,#0b0e17)}.theory-compare-metric dt{font-size:9px;line-height:1.35;color:var(--workbench-text-muted,#737e92)}.theory-compare-metric dd{margin:0;color:var(--workbench-text,#f1f3f8);font:600 11px/1.4 var(--font-mono,monospace)}
@@ -40,10 +42,10 @@ function styles(): string {
 .theory-equations{display:grid;gap:9px}.theory-equation{margin:0;padding:12px 13px;border-left:2px solid var(--workbench-info,#7ca8f6);border-radius:8px;background:var(--workbench-raised,#0b0e17)}.theory-equation figcaption{margin-bottom:8px;color:var(--workbench-text,#f1f3f8);font:650 11px/1.35 var(--font-sans,system-ui)}.theory-equation pre{max-width:100%;margin:0;overflow:auto;padding:10px;border-radius:6px;background:rgba(0,0,0,.2)}.theory-equation code{white-space:pre;font:12px/1.65 var(--font-mono,monospace);color:var(--workbench-live,#72d6e5)}.theory-equation p{margin:8px 0 0;font-size:11px;line-height:1.55;color:var(--workbench-text-muted,#737e92)}
 .theory-caveat{margin:0;padding:10px 12px;border:1px solid color-mix(in srgb,var(--workbench-warning,#f6c96a) 32%,transparent);border-radius:8px;background:color-mix(in srgb,var(--workbench-warning,#f6c96a) 7%,transparent);font-size:11px;line-height:1.55;color:var(--workbench-text-secondary,#a8b0c2)}.theory-caveat strong{color:var(--workbench-warning,#f6c96a)}
 .theory-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}.theory-link{display:grid;gap:3px;height:100%;padding:10px 11px;border:1px solid var(--workbench-border,rgba(205,214,245,.08));border-radius:8px;background:var(--workbench-raised,#0b0e17);color:var(--workbench-text,#f1f3f8);text-decoration:none}.theory-link:hover,.theory-link:focus-visible{border-color:var(--workbench-border-selected,rgba(139,124,246,.55));background:var(--workbench-selected,#242a3d)}.theory-link-label{font-size:11px;font-weight:650}.theory-link-description{font-size:10px;line-height:1.45;color:var(--workbench-text-muted,#737e92)}
-@media(max-width:760px){.theory-outline-list{grid-template-columns:repeat(2,minmax(0,1fr))}.theory-links{grid-template-columns:1fr}.theory-section-body{padding-left:16px}.theory-compare-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.theory-compare-states{grid-template-columns:1fr}}
+@media(max-width:760px){.theory-outline-list{grid-template-columns:repeat(2,minmax(0,1fr))}.theory-links{grid-template-columns:1fr}.theory-section-body{padding-left:16px}.theory-model-grid{grid-template-columns:1fr}.theory-compare-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.theory-compare-states{grid-template-columns:1fr}}
 @media(max-width:480px){.theory-workspace{padding:10px}.theory-outline-list{grid-template-columns:1fr}.theory-summary{grid-template-columns:auto minmax(0,1fr);padding:13px 12px}.theory-summary::after{display:none}.theory-toolbar{align-items:flex-start;flex-direction:column}.theory-toggle-all{width:100%}}
 @media(prefers-reduced-motion:reduce){.theory-section,.theory-link,.theory-outline a{scroll-behavior:auto;transition:none}}
-@media(forced-colors:active){.theory-hero,.theory-outline,.theory-section,.theory-equation,.theory-caveat,.theory-link,.theory-geometry-figure,.theory-state-card{forced-color-adjust:auto;border-color:CanvasText;background:Canvas;color:CanvasText;box-shadow:none}}
+@media(forced-colors:active){.theory-hero,.theory-model-compare,.theory-model-card,.theory-outline,.theory-section,.theory-equation,.theory-caveat,.theory-link,.theory-geometry-figure,.theory-state-card{forced-color-adjust:auto;border-color:CanvasText;background:Canvas;color:CanvasText;box-shadow:none}}
 `;
 }
 
@@ -59,86 +61,6 @@ function createElement<K extends keyof HTMLElementTagNameMap>(
 
 function setText(element: HTMLElement, text: string): void {
   element.textContent = text;
-}
-
-const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
-
-function svgElement<K extends keyof SVGElementTagNameMap>(document: Document, tag: K): SVGElementTagNameMap[K] {
-  return document.createElementNS(SVG_NAMESPACE, tag);
-}
-
-function setAttributes(element: Element, values: Readonly<Record<string, string>>): void {
-  for (const [name, value] of Object.entries(values)) element.setAttribute(name, value);
-}
-
-function geometryFigureElement(document: Document, locale: TheoryLocale): HTMLElement {
-  const figure = createElement(document, 'figure', 'theory-geometry-figure');
-  figure.dataset.theoryFigure = 'point-mass-geometry';
-  const svg = svgElement(document, 'svg');
-  setAttributes(svg, {
-    viewBox: '0 0 520 280',
-    role: 'img',
-    'aria-labelledby': 'theoryGeometryTitle theoryGeometryDescription'
-  });
-  const title = svgElement(document, 'title');
-  title.id = 'theoryGeometryTitle';
-  title.textContent =
-    locale === 'ko' ? '이중진자 좌표와 질점 위치' : 'Double-pendulum coordinates and point-mass positions';
-  const description = svgElement(document, 'desc');
-  description.id = 'theoryGeometryDescription';
-  description.textContent =
-    locale === 'ko'
-      ? '고정축에서 아래쪽 수직선을 기준으로 θ1과 θ2를 측정하며, 길이 l1과 l2의 질량 없는 링크 끝에 m1과 m2가 있습니다.'
-      : 'Theta one and theta two are measured from the downward vertical at the fixed pivot; point masses m1 and m2 sit at the ends of massless links l1 and l2.';
-  const axis = svgElement(document, 'line');
-  axis.classList.add('theory-geometry-axis');
-  setAttributes(axis, { x1: '260', y1: '26', x2: '260', y2: '260' });
-  const link1 = svgElement(document, 'line');
-  link1.classList.add('theory-geometry-link');
-  setAttributes(link1, { x1: '260', y1: '32', x2: '170', y2: '140' });
-  const link2 = svgElement(document, 'line');
-  link2.classList.add('theory-geometry-link');
-  setAttributes(link2, { x1: '170', y1: '140', x2: '335', y2: '235' });
-  const angle1 = svgElement(document, 'path');
-  angle1.classList.add('theory-geometry-angle');
-  setAttributes(angle1, { d: 'M260 88 A56 56 0 0 1 224 75' });
-  const angle2 = svgElement(document, 'path');
-  angle2.classList.add('theory-geometry-angle');
-  setAttributes(angle2, { d: 'M170 198 A58 58 0 0 0 221 169' });
-  const pivot = svgElement(document, 'circle');
-  pivot.classList.add('theory-geometry-bob');
-  setAttributes(pivot, { cx: '260', cy: '32', r: '8' });
-  const bob1 = svgElement(document, 'circle');
-  bob1.classList.add('theory-geometry-bob');
-  setAttributes(bob1, { cx: '170', cy: '140', r: '15' });
-  const bob2 = svgElement(document, 'circle');
-  bob2.classList.add('theory-geometry-bob');
-  setAttributes(bob2, { cx: '335', cy: '235', r: '17' });
-  const labels: ReadonlyArray<readonly [string, string, string]> = [
-    ['θ₁', '214', '78'],
-    ['θ₂', '218', '184'],
-    ['l₁', '196', '92'],
-    ['l₂', '267', '185'],
-    ['m₁', '132', '139'],
-    ['m₂', '364', '242']
-  ];
-  const labelNodes = labels.map(([text, x, y]) => {
-    const label = svgElement(document, 'text');
-    label.classList.add('theory-geometry-label');
-    setAttributes(label, { x, y });
-    label.textContent = text;
-    return label;
-  });
-  svg.append(title, description, axis, link1, link2, angle1, angle2, pivot, bob1, bob2, ...labelNodes);
-  const caption = createElement(document, 'figcaption');
-  setText(
-    caption,
-    locale === 'ko'
-      ? '좌표 계약: θ₁, θ₂는 각각 아래쪽 수직선에서 측정합니다. m₂의 위치는 첫 링크 끝에서 두 번째 링크를 더해 얻습니다.'
-      : 'Coordinate contract: each angle is measured from downward vertical; the m2 position adds the second link to the end of the first.'
-  );
-  figure.append(svg, caption);
-  return figure;
 }
 
 function stateCardElement(document: Document, title: string, description: string, valueId: string): HTMLElement {
@@ -314,6 +236,97 @@ export class TheoryTab extends TabController {
     });
   }
 
+  private modelComparisonElement(document: Document, locale: TheoryLocale): HTMLElement {
+    const section = createElement(document, 'section', 'theory-model-compare');
+    section.setAttribute('aria-labelledby', 'theoryModelCompareTitle');
+    const head = createElement(document, 'div', 'theory-model-head');
+    const title = createElement(document, 'h3', 'theory-model-title');
+    title.id = 'theoryModelCompareTitle';
+    setText(title, locale === 'ko' ? '질점 대 균일 막대' : 'Point masses vs uniform rods');
+    const copy = createElement(document, 'p', 'theory-model-copy');
+    setText(
+      copy,
+      locale === 'ko'
+        ? 'm₁, m₂가 무엇을 뜻하는지에 따라 관성행렬과 에너지가 달라집니다. 같은 초기 각도라도 두 모델의 궤적을 같은 물리계로 해석하면 안 됩니다.'
+        : 'The inertia matrix and energy change with what m₁ and m₂ represent. Even from identical angles, these trajectories must not be interpreted as the same physical system.'
+    );
+    head.append(title, copy);
+
+    const grid = createElement(document, 'div', 'theory-model-grid');
+    const modelCard = (
+      system: 'double' | 'compound-double',
+      heading: string,
+      description: string,
+      facts: readonly string[],
+      buttonLabel: string
+    ): HTMLElement => {
+      const card = createElement(document, 'article', 'theory-model-card');
+      card.dataset.theoryModel = system;
+      const cardTitle = createElement(document, 'h4');
+      setText(cardTitle, heading);
+      const paragraph = createElement(document, 'p');
+      setText(paragraph, description);
+      const list = createElement(document, 'ul', 'theory-model-facts');
+      for (const fact of facts) {
+        const item = createElement(document, 'li');
+        setText(item, fact);
+        list.append(item);
+      }
+      const button = createElement(document, 'button', 'theory-model-select');
+      button.type = 'button';
+      button.dataset.selectSystem = system;
+      setText(button, buttonLabel);
+      button.addEventListener('click', () => {
+        const select = document.getElementById('sysType');
+        if (select instanceof HTMLSelectElement && select.value !== system) {
+          select.value = system;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        activateWorkspace('lab');
+      });
+      card.append(cardTitle, paragraph, list, button);
+      return card;
+    };
+    grid.append(
+      modelCard(
+        'double',
+        locale === 'ko' ? '질점 이중진자' : 'Point-mass double',
+        locale === 'ko'
+          ? 'm₁과 m₂는 질량 없는 링크 끝에 집중된 질점입니다.'
+          : 'm₁ and m₂ are concentrated at the ends of massless links.',
+        locale === 'ko'
+          ? ['기본 Lab 모델', '질량행렬: 끝점 질량의 병진 관성', '정준 q–p 형식 비교 지원']
+          : [
+              'Default Lab model',
+              'Mass matrix: endpoint translational inertia',
+              'Supports the canonical q–p formulation comparison'
+            ],
+        locale === 'ko' ? 'Lab에서 질점 모델 사용' : 'Use point masses in Lab'
+      ),
+      modelCard(
+        'compound-double',
+        locale === 'ko' ? '균일 막대 복합 이중진자' : 'Uniform-rod compound double',
+        locale === 'ko'
+          ? 'm₁과 m₂는 각 링크 전체에 균일하게 분포한 막대의 총질량입니다.'
+          : 'm₁ and m₂ are the total masses distributed uniformly along each full rod.',
+        locale === 'ko'
+          ? [
+              '질량중심 병진 + I_cm = ML²/12',
+              '독립 직교좌표 가상일 기준식으로 검증',
+              '질점 모델의 정준 비교는 적용되지 않음'
+            ]
+          : [
+              'COM translation + I_cm = ML²/12',
+              'Checked against an independent Cartesian virtual-work reference',
+              'Point-mass canonical comparison does not apply'
+            ],
+        locale === 'ko' ? 'Lab에서 균일 막대 사용' : 'Use uniform rods in Lab'
+      )
+    );
+    section.append(head, grid);
+    return section;
+  }
+
   private comparisonElement(document: Document, locale: TheoryLocale): HTMLElement {
     const card = createElement(document, 'section', 'theory-compare');
     card.setAttribute('aria-labelledby', 'theoryCompareTitle');
@@ -435,8 +448,8 @@ export class TheoryTab extends TabController {
           if (this.dom.str('sysType', 'double') !== 'double') {
             throw new RangeError(
               locale === 'ko'
-                ? '이 비교는 이중진자 모델 전용입니다. Lab에서 Double Pendulum을 선택하세요.'
-                : 'This comparison is for the double-pendulum model. Select Double Pendulum in the Lab.'
+                ? '이 비교는 질점 이중진자 전용입니다. Lab에서 Double — point masses를 선택하세요.'
+                : 'This comparison is for the point-mass double. Select Double — point masses in the Lab.'
             );
           }
           const result = compareDoublePendulumFormulations({
@@ -581,7 +594,14 @@ export class TheoryTab extends TabController {
     });
     updateToggleAll();
 
-    host.append(hero, this.comparisonElement(document, locale), toolbar, outline, sections);
+    host.append(
+      hero,
+      this.modelComparisonElement(document, locale),
+      this.comparisonElement(document, locale),
+      toolbar,
+      outline,
+      sections
+    );
     this.revealLinkedSection(document);
   }
 

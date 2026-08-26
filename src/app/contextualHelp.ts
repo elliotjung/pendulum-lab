@@ -40,8 +40,8 @@ const HELP_BY_ID: Readonly<Record<string, HelpCopy>> = {
     ko: '결정론적 재생은 고정된 단계 수만큼 진행하고, 실시간 모드는 실제 경과 시간을 따릅니다.'
   },
   sysType: {
-    en: 'Choose a double or triple pendulum. The triple model adds a third coupled arm and state pair.',
-    ko: '이중 또는 삼중 진자를 선택합니다. 삼중 모델에는 세 번째 결합 팔과 상태 쌍이 추가됩니다.'
+    en: 'Choose the physical model explicitly. Point-mass doubles concentrate m₁/m₂ at massless-link ends; uniform-rod doubles distribute each listed mass along its full link. Triple adds a third point mass and state pair.',
+    ko: '물리 모델을 명시적으로 선택합니다. 질점 이중진자는 질량 없는 링크 끝에 m₁/m₂를 집중시키고, 균일 막대 이중진자는 각 질량을 링크 전체에 분포시킵니다. 삼중 모델에는 세 번째 질점과 상태 쌍이 추가됩니다.'
   },
   method: {
     en: 'Numerical integrator used to advance the equations of motion. Accuracy and long-run energy behavior differ by method.',

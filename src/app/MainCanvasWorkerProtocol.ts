@@ -7,6 +7,7 @@ export interface MainCanvasFrameStyle {
   trailMode: string;
   trailLength: number;
   glow: boolean;
+  uniformRods?: boolean;
   trailBackend: 'canvas2d' | 'webgl2';
   /** Total physical chain length used for viewport-safe projection. */
   worldRadius?: number;
@@ -66,6 +67,7 @@ function validStyle(value: unknown): value is MainCanvasFrameStyle {
     style.trailLength! >= 0 &&
     style.trailLength! <= MAX_TRAIL_LENGTH &&
     typeof style.glow === 'boolean' &&
+    (style.uniformRods === undefined || typeof style.uniformRods === 'boolean') &&
     (style.worldRadius === undefined || finiteInRange(style.worldRadius, Number.EPSILON, 1_000_000)) &&
     (style.trailBackend === 'canvas2d' || style.trailBackend === 'webgl2') &&
     (style.skipTrail === undefined || typeof style.skipTrail === 'boolean')

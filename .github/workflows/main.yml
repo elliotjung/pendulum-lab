@@ -31,6 +31,7 @@ jobs:
       - run: npm run audit:legacy
       - run: npm run audit:mojibake:strict
       - run: npm run reports
+      - run: npm run benchmark:energy
       - run: npm run validate:gpu-scale
       - run: npm run build
       - run: npm run build:standalone
@@ -201,16 +202,19 @@ jobs:
           PLAYWRIGHT_USE_PREVIEW: '1'
       - name: Assemble release-facing reports after browser validation
         run: |
+          npm run release:status
           npm run release:package
           npm run reviewer:kit
           npm run audit:worldclass
           node scripts/copy-legacy-assets.mjs
+          npm run audit:public-artifacts -- --root dist/reports
       - name: Preserve the browser-validated Pages candidate
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: browser-validated-pages-candidate
           path: |
             dist/
+            reports/
             package.json
           if-no-files-found: error
           retention-days: 2
@@ -231,7 +235,9 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: scipy-validation-evidence
-          path: reports/cross-validation.json
+          path: |
+            reports/cross-validation.json
+            reports/literature-anchors.json
           if-no-files-found: error
 
   julia-reference:
@@ -274,7 +280,11 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: independent-validation-scope
-          path: reports/independent-validation-scope.json
+          path: |
+            reports/cross-validation.json
+            reports/literature-anchors.json
+            reports/julia-comparison.json
+            reports/independent-validation-scope.json
           if-no-files-found: error
           retention-days: 90
 
@@ -322,6 +332,8 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node-project
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: browser-validated-pages-candidate
@@ -339,9 +351,28 @@ jobs:
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           test -s validated/dist/index.html
 
-          scope_report="$(find fresh-independent-scope -type f -name independent-validation-scope.json -print -quit)"
-          test -n "$scope_report"
-          install -m 0644 "$scope_report" validated/dist/reports/independent-validation-scope.json
+          mkdir -p validated/reports validated/dist/reports
+          for report_name in cross-validation.json literature-anchors.json julia-comparison.json independent-validation-scope.json; do
+            report_path="$(find fresh-independent-scope -type f -name "$report_name" -print -quit)"
+            test -n "$report_path"
+            install -m 0644 "$report_path" "validated/reports/$report_name"
+            install -m 0644 "$report_path" "validated/dist/reports/$report_name"
+          done
+
+          PENDULUM_EVIDENCE_CI_ARTIFACT=1 \
+          PENDULUM_EVIDENCE_SOURCE_COMMIT="$SOURCE_SHA" \
+          PENDULUM_EVIDENCE_REPORT_ROOT=validated \
+          PENDULUM_EVIDENCE_OUTPUT=validated/dist/reports/evidence-summary.json \
+          PENDULUM_EVIDENCE_PACKAGE_JSON=validated/package.json \
+          PENDULUM_EVIDENCE_LOCKFILE=package-lock.json \
+            npm run evidence:refresh
+
+          PENDULUM_EVIDENCE_BINDING_SUMMARY=validated/dist/reports/evidence-summary.json \
+          PENDULUM_EVIDENCE_BINDING_ROOT=validated/dist \
+          PENDULUM_EVIDENCE_CI_ARTIFACT=1 \
+            npm run evidence:bindings
+          PENDULUM_CLAIM_EVIDENCE=validated/dist/reports/evidence-summary.json \
+            npm run claims:check
 
           rm -f validated/dist/deployment-files.sha256 validated/dist/deployment-manifest.json
           (
@@ -369,6 +400,9 @@ jobs:
           const evidenceSourceCommit = evidence?.provenance?.sourceCommit ?? '';
           if (!/^[0-9a-f]{40}$/.test(evidenceSourceCommit)) {
             throw new Error('deployed evidence sourceCommit must be a full lowercase Git SHA');
+          }
+          if (evidenceSourceCommit !== sourceCommit) {
+            throw new Error('deployed evidence sourceCommit must equal the validated source commit');
           }
           if (evidence?.provenance?.dirtyWorktree !== false) {
             throw new Error('refusing to deploy evidence generated from a dirty worktree');

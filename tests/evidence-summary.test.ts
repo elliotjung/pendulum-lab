@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { approxScientific, buildEvidenceSummary } from '../src/research/evidenceSummary';
+import {
+  acceptedGpuEvidenceGeneratedAt,
+  approxScientific,
+  buildEvidenceSummary,
+  type EvidenceSummaryInput
+} from '../src/research/evidenceSummary';
 
 describe('evidence summary', () => {
   it('formats the shared pass count and external blockers from report JSON', () => {
-    const summary = buildEvidenceSummary({
+    const input: EvidenceSummaryInput = {
       generatedAt: '2026-07-07T00:00:00.000Z',
-      sourceReports: { vitestResults: 'reports/vitest-results.json' },
+      sourceReports: { vitestResults: 'reports/vitest-public-results.json' },
       vitestResults: {
         numTotalTests: 959,
         numPassedTests: 959,
@@ -25,6 +30,7 @@ describe('evidence summary', () => {
         missingRecommended: []
       },
       publicationStatus: {
+        generatedAt: '2026-07-06T00:00:00.000Z',
         status: 'partial',
         npm: { published: false },
         zenodo: { published: false, doi: null },
@@ -40,19 +46,25 @@ describe('evidence summary', () => {
         ]
       },
       crossValidation: {
+        generatedAt: '2026-07-05T00:00:00.000Z',
         cases: [
-          { name: 'regular small-angle', maxDivergence: 4.1e-14 },
-          { name: 'chaotic', maxDivergence: 1e-8 }
+          { name: 'regular small-angle', maxDivergence: 4.1e-14, pass: true },
+          { name: 'chaotic', maxDivergence: 1e-8, pass: true }
         ]
       },
       gpuAdapterMatrix: {
+        generatedAt: '2026-07-07T00:00:00.000Z',
         status: 'partial',
         coverage: { passed: 1, required: 3 },
-        rows: [{ vendor: 'nvidia', status: 'missing' }],
+        rows: [
+          { vendor: 'intel', status: 'pass', generatedAt: '2026-06-30T00:00:00.000Z' },
+          { vendor: 'nvidia', status: 'missing', generatedAt: null }
+        ],
         reproduce: 'npm run benchmark:gpu-matrix',
         caveat: 'Physical evidence only.'
       },
       mutationAggregate: {
+        generatedAt: '2026-07-04T00:00:00.000Z',
         status: 'passed',
         mutationScore: 65.32,
         coveredMutationScore: 68.34,
@@ -60,6 +72,7 @@ describe('evidence summary', () => {
         statusCounts: { Survived: 2006, NoCoverage: 293 }
       },
       energyBenchmark: {
+        generatedAt: '2026-07-03T00:00:00.000Z',
         steps: 100000,
         rows: [
           { name: 'RK4', maxRelDrift: 5.4e-8 },
@@ -74,7 +87,8 @@ describe('evidence summary', () => {
         expiresAfterDays: 14,
         expiresAt: '2026-07-21T00:00:00.000Z'
       }
-    });
+    };
+    const summary = buildEvidenceSummary(input);
 
     expect(summary.tests.passLabel).toBe('959 / 959 pass');
     expect(summary.validation.scipyAgreement.display).toBe('~4e-14');
@@ -84,6 +98,52 @@ describe('evidence summary', () => {
     expect(summary.energy.profiledMethods).toBe(2);
     expect(summary.energy.bestMethod).toBe('GBS');
     expect(summary.provenance.sourceCommit).toBe('abc123');
+    expect(summary.claims.find((claim) => claim.id === 'tests.unit')?.status).toBe('passed');
+    expect(summary.claims.find((claim) => claim.id === 'validation.scipy.regular')?.status).toBe('passed');
+    expect(summary.claims.find((claim) => claim.id === 'gpu.vendor-matrix')?.evidenceGeneratedAt).toBe(
+      '2026-06-30T00:00:00.000Z'
+    );
+
+    const failed = buildEvidenceSummary({
+      ...input,
+      vitestResults: {
+        numTotalTests: 2,
+        numPassedTests: 1,
+        numFailedTests: 1,
+        success: false,
+        startTime: Date.parse('2026-07-07T00:00:00.000Z')
+      },
+      crossValidation: {
+        generatedAt: '2026-07-05T00:00:00.000Z',
+        cases: [{ name: 'regular small-angle', maxDivergence: 1, pass: false }]
+      }
+    });
+    expect(failed.claims.find((claim) => claim.id === 'tests.unit')?.status).toBe('failed');
+    expect(failed.claims.find((claim) => claim.id === 'validation.scipy.regular')?.status).toBe('failed');
+
+    const missing = buildEvidenceSummary({ ...input, vitestResults: {}, crossValidation: { cases: [] } });
+    expect(missing.claims.find((claim) => claim.id === 'tests.unit')?.status).toBe('missing');
+    expect(missing.claims.find((claim) => claim.id === 'validation.scipy.regular')?.status).toBe('missing');
+  });
+
+  it('uses the oldest accepted physical GPU row and fails closed on inconsistent coverage', () => {
+    expect(
+      acceptedGpuEvidenceGeneratedAt({
+        generatedAt: '2026-08-20T00:00:00.000Z',
+        coverage: { passed: 2 },
+        rows: [
+          { status: 'pass', generatedAt: '2026-08-10T00:00:00.000Z' },
+          { status: 'pass', generatedAt: '2026-08-01T00:00:00.000Z' }
+        ]
+      })
+    ).toBe('2026-08-01T00:00:00.000Z');
+    expect(
+      acceptedGpuEvidenceGeneratedAt({
+        generatedAt: '2026-08-20T00:00:00.000Z',
+        coverage: { passed: 2 },
+        rows: [{ status: 'pass', generatedAt: '2026-08-10T00:00:00.000Z' }]
+      })
+    ).toBeNull();
   });
 
   it('uses a compact approximate scientific notation for display values', () => {

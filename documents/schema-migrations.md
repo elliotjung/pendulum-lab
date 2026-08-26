@@ -43,6 +43,8 @@ versions evolve and the compatibility matrix for reading old archives.
 | Paper figures/pack | `pendulum-paper-figures/v2`, `pendulum-paper-pack/v2` | figure-export | consumers of the pack |
 | Notebook | `pendulum-research-notebook/v2` | `buildNotebookV2` | `npm run notebook:validate` |
 | Snapshot | `pendulum-snapshot/v2` | `currentSnapshot` export | `StateStore.validate` |
+| Live session | `pendulum-session/v11-ts` | `currentSnapshot` / session export | `StateStore.validate` (`v10-ts` point-mass migration) |
+| Shared experiment URL | share payload `v3` | `captureSharedExperiment` | `decodeSharedExperiment` (`v1`/`v2` migration) |
 | Provenance | `pendulum-provenance/v1` | `ProvenanceBuilder` | viewers |
 | 3D diagnostics | `pendulum-3d-diagnostics/v1` | lab3d snapshot exports | external |
 | Batch checkpoint | `pendulum-batch-checkpoint/v1` | study batch runner | `sanitizeBatchCheckpoint` |
@@ -58,20 +60,33 @@ manifest metadata on top of the v3 workspace-profile shape; older readers ignore
 those additive fields, while the current sanitizer synthesizes them for older
 payloads.
 
+The live-session writer now emits `pendulum-session/v11-ts`: this is the first
+session version that defines `compound-double`. A v10 point-mass session is
+migrated to v11; a v10 payload that claims `compound-double` is rejected because
+that model identifier had no valid meaning in v10. Shared setup links follow the
+same boundary: v1/v2 point-mass payloads migrate to share v3, while new compound
+setups are emitted only as v3 with v11 physics provenance.
+
 Rows: artifact version found in a file. Columns: app build reading it.
 
 | Stored artifact | ≤ v10.28 build | v10.29–10.30 build | v10.31-10.34 build | current build |
 |---|---|---|---|---|
-| workbench `legacy` (no version) | ✅ native | ✅ sanitized + migrated → v2 | ✅ sanitized + migrated → v2 | ✅ sanitized + migrated → v3 |
-| workbench `/v1` | ✅ native | ✅ migrated → v2 (logged) | ✅ migrated → v2 (logged) | ✅ migrated → v3 (logged) |
-| workbench `/v2` | ❌ unknown fields dropped | ✅ native | ✅ native | ✅ migrated → v3; `workspaces[]` synthesized from active workspace |
-| workbench `/v3` | ❌ unknown fields dropped | ⚠️ unknown `workspaces[]` ignored | ⚠️ unknown `workspaces[]` ignored | ✅ native |
+| workbench `legacy` (no version) | ✅ native | ✅ sanitized + migrated → v2 | ✅ sanitized + migrated → v2 | ✅ sanitized + migrated → v4 |
+| workbench `/v1` | ✅ native | ✅ migrated → v2 (logged) | ✅ migrated → v2 (logged) | ✅ migrated → v4 (logged) |
+| workbench `/v2` | ❌ unknown fields dropped | ✅ native | ✅ native | ✅ migrated → v4; workspace/project metadata synthesized |
+| workbench `/v3` | ❌ unknown fields dropped | ⚠️ unknown `workspaces[]` ignored | ⚠️ unknown `workspaces[]` ignored | ✅ migrated → v4; project/session/artifact metadata synthesized |
+| workbench `/v4` | ❌ unknown fields dropped | ⚠️ unknown fields ignored | ⚠️ unknown fields ignored | ✅ native |
 | research-db `/v1` archive | — (store absent) | ✅ native | ✅ native | ✅ native |
 | workspace `/v1` | — | ✅ native | ✅ native | ✅ native |
 | design-study `/v1` | — | ✅ native | ✅ native | ✅ native |
 | checksums `/v1` (crc32+fnv) | n/a (external) | ✅ verifiable | ✅ verifiable (legacy algorithm noted) | ✅ verifiable (legacy algorithm noted) |
 | checksums `/v2` (sha256+crc32+fnv) | n/a | ⚠️ extra field ignored | ✅ native | ✅ native |
 | snapshot `/v2` | ✅ | ✅ | ✅ | ✅ |
+| session `v10-ts` point-mass | ✅ native | ✅ native | ✅ native | ✅ migrated → `v11-ts` |
+| session `v10-ts` + `compound-double` | ❌ undefined model | ❌ undefined model | ❌ undefined model | ❌ rejected as historically invalid |
+| session `v11-ts` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ native |
+| share payload `v1`/`v2` | ✅ native | ✅ native | ✅ native | ✅ migrated → v3 (point-mass only) |
+| share payload `v3` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ native; compound model allowed |
 | 3d-diagnostics `/v1` | — | ✅ | ✅ | ✅ |
 
 Legend: ✅ reads cleanly · ⚠️ reads, ignores unknown fields · ❌ not supported

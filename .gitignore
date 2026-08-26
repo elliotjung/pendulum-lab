@@ -4,6 +4,7 @@ standalone/
 coverage/
 reports/*.tmp
 reports/vitest-results.json
+reports/vitest-public-results.json
 reports/playwright/
 reports/playwright-pwa/
 reports/coverage/

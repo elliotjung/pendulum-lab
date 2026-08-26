@@ -16,7 +16,16 @@ function frozenBounds(min: number, max: number): Readonly<NumericBounds> {
  */
 export const SESSION_SAFETY_BOUNDS: Readonly<
   Record<
-    'dt' | 'tolerance' | 'stepsPerFrame' | 'damping' | 'simTime' | 'mass' | 'length' | 'gravity' | 'angularVelocity',
+    | 'dt'
+    | 'tolerance'
+    | 'stepsPerFrame'
+    | 'damping'
+    | 'simTime'
+    | 'mass'
+    | 'length'
+    | 'gravity'
+    | 'angleWinding'
+    | 'angularVelocity',
     Readonly<NumericBounds>
   >
 > = Object.freeze({
@@ -28,6 +37,10 @@ export const SESSION_SAFETY_BOUNDS: Readonly<
   mass: frozenBounds(1e-6, 1e6),
   length: frozenBounds(1e-6, 1e6),
   gravity: frozenBounds(0, 1e6),
+  // Update recovery preserves solver winding, unlike ordinary imports. Keep
+  // that trusted path finite and below the range where trigonometric argument
+  // reduction loses all useful phase precision.
+  angleWinding: frozenBounds(-1e12, 1e12),
   angularVelocity: frozenBounds(-1e6, 1e6)
 });
 

@@ -9,6 +9,7 @@ export interface LabMainFrameStyle {
   trailMode: string;
   trailLength: number;
   glow: boolean;
+  uniformRods: boolean;
   trailBackend: 'canvas2d' | 'webgl2';
   worldRadius: number;
 }
@@ -22,6 +23,7 @@ export function labMainFrameStyle(config: LabConfig, quality: LabQualityBudget, 
     trailMode,
     trailLength: quality.effectiveTrailLength(),
     glow: dom.bool('glowMode') && quality.profile().glow && quality.allowDecorativeEffects,
+    uniformRods: config.system === 'compound-double',
     trailBackend:
       quality.mode === 'cinematic' && quality.allowDecorativeEffects && webGLTrailRequested() ? 'webgl2' : 'canvas2d',
     worldRadius: labChainLength(config)

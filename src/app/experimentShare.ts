@@ -3,44 +3,32 @@ import { APP_VERSION } from '../runtime/version';
 import type { IntegratorId } from '../types/domain';
 import { LAB_CONTROL_BOUNDS } from '../validation/sessionConstraints';
 import { currentAudienceMode, type AudienceMode } from './audienceMode';
+import { decodeBase64UrlText as decode64, encodeBase64UrlText as encode64 } from './base64UrlText';
 import { commitLabControls } from './controlCommit';
-
-type Parameters = { m1: number; m2: number; m3: number; l1: number; l2: number; l3: number; g: number };
-type Initial = { theta: [number, number, number]; omega: [number, number, number] };
-export type SharedTimingMode = 'deterministic' | 'wall-clock';
-export type SharedQualityMode = 'performance' | 'balanced' | 'cinematic';
-export type SharedTrailMode = 'rainbow' | 'heat' | 'ice' | 'plasma' | 'white' | 'green';
-export type SharedPhaseAxis = '1' | '2' | 'both';
-
-/** Legacy URL payload. Decode remains supported and migrates it to V2. */
-// prettier-ignore
-export interface SharedExperimentV1 { v: 1; system: 'double' | 'triple'; method: IntegratorId; dt: number; damping: number; toleranceExponent: number; parameters: Parameters; initial: Initial; tab: string }
-// Null execution values mean a migrated payload omitted the setting; restore leaves its control unchanged.
-// prettier-ignore
-export interface SharedExperimentV2 { v: 2; scope: { kind: 'setup-only'; includesResults: false; omittedUnsafeControls: ['audioOn', 'backgroundSim'] }; provenance: { packageName: string; packageVersion: string; physicsVersion: string; physicsSchema: 'pendulum-session/v10-ts'; sourceCommit: string | null; parameterHash: { algorithm: 'fnv1a32-canonical-json'; value: string } }; physics: { system: 'double' | 'triple'; method: IntegratorId; dt: number; damping: number; toleranceExponent: number; parameters: Parameters; initial: Initial }; execution: { seed: number | null; timingMode: SharedTimingMode | null; speed: number | null; stepsPerFrame: number | null; ensemble: { count: number; epsilonExponent: number } | null }; render: { trailMode: SharedTrailMode; trailLength: number; phaseAxis: SharedPhaseAxis; qualityMode: SharedQualityMode; glow: boolean; longExposure: boolean; interpolate: boolean; autoQuality: boolean } | null; tab: string }
-export type SharedExperimentPayload = SharedExperimentV1 | SharedExperimentV2;
-// prettier-ignore
-export interface SharedExperimentDiagnostic { severity: 'info' | 'warning' | 'error'; code: string; message: string; fields?: string[] }
-// prettier-ignore
-export interface SharedExperimentDecodeResult { ok: boolean; payload: SharedExperimentV2 | null; diagnostics: SharedExperimentDiagnostic[] }
-// prettier-ignore
-export interface SharedExperimentRestoreResult { ok: boolean; appliedControlIds: string[]; changedControlIds: string[]; skippedControlIds: string[]; diagnostics: SharedExperimentDiagnostic[] }
-// prettier-ignore
-export interface SharedExperimentUrlDiagnostics { status: 'portable' | 'warning' | 'rejected'; length: number; warningLength: number; maximumLength: number; diagnostics: SharedExperimentDiagnostic[] }
-
+import {
+  SHARED_EXPERIMENT_TABS,
+  type SharedExperimentDecodeResult,
+  type SharedExperimentDiagnostic,
+  type SharedExperimentPayload,
+  type SharedExperimentRestoreResult,
+  type SharedExperimentUrlDiagnostics,
+  type SharedExperimentV2,
+  type SharedExperimentV3
+} from './experimentShareTypes';
+export type * from './experimentShareTypes';
 const HASH_PREFIX = '#experiment=';
 export const SHARE_URL_WARNING_LENGTH = 2_048;
 export const MAX_SHARE_URL_LENGTH = 8_192;
 export const MAX_SHARE_HASH_LENGTH = 8_192;
 const PACKAGE_NAME = '@elliotjung/pendulum-lab';
-const PHYSICS_SCHEMA = 'pendulum-session/v10-ts' as const;
+const LEGACY_PHYSICS_SCHEMA = 'pendulum-session/v10-ts' as const;
+const PHYSICS_SCHEMA = 'pendulum-session/v11-ts' as const;
 const HASH_ALGORITHM = 'fnv1a32-canonical-json' as const;
 const UINT32_MAX = 0xffff_ffff;
 const SHA = /^[0-9a-f]{40}$/u;
 const SAFE_TEXT = /^[A-Za-z0-9@/._+-]{1,96}$/u;
-const BASE64URL = /^[A-Za-z0-9_-]+$/u;
 // prettier-ignore
-const TABS = ['lab', 'compare', 'lyap', 'sweep', 'bifurc', 'phase3d', 'density', 'expansion', 'matrix', 'validate', 'golden', 'zeroone', 'clv', 'basin', 'rqa', 'ftle', 'architecture', 'research', 'lab3d', 'canonical', 'aplus', 'docs', 'theory'] as const;
+const TABS = SHARED_EXPERIMENT_TABS;
 const TIMING = ['deterministic', 'wall-clock'] as const;
 const QUALITY = ['performance', 'balanced', 'cinematic'] as const;
 const TRAILS = ['rainbow', 'heat', 'ice', 'plasma', 'white', 'green'] as const;
@@ -64,7 +52,11 @@ function bool(value: unknown, fallback: boolean, field: string, changed: Set<str
 function text(value: unknown, fallback: string, field: string, changed: Set<string>): string { if (typeof value === 'string' && SAFE_TEXT.test(value)) return value; changed.add(field); return fallback; }
 // prettier-ignore
 function tuple(value: unknown, fallback: [number, number, number], min: number, max: number, field: string, changed: Set<string>): [number, number, number] { const source = Array.isArray(value) ? value : []; if (source.length !== 3) changed.add(field); return source.length === 3 ? source.map((item, index) => numberValue(item, fallback[index]!, min, max, `${field}[${index}]`, changed)) as [number, number, number] : fallback; }
-function physicsFrom(source: Record<string, unknown>, changed: Set<string>): SharedExperimentV2['physics'] {
+function physicsFrom(
+  source: Record<string, unknown>,
+  changed: Set<string>,
+  allowCompound: boolean
+): SharedExperimentV3['physics'] {
   const p = object(source.parameters) ?? (changed.add('parameters'), {});
   const initial = object(source.initial) ?? (changed.add('initial'), {});
   const mass = (key: 'm1' | 'm2' | 'm3', fallback: number) =>
@@ -86,7 +78,13 @@ function physicsFrom(source: Record<string, unknown>, changed: Set<string>): Sha
       changed
     );
   return {
-    system: pick(source.system, ['double', 'triple'], 'double', 'physics.system', changed),
+    system: pick(
+      source.system,
+      allowCompound ? ['double', 'compound-double', 'triple'] : ['double', 'triple'],
+      'double',
+      'physics.system',
+      changed
+    ),
     method:
       typeof source.method === 'string' && Object.hasOwn(integratorRegistry, source.method)
         ? (source.method as IntegratorId)
@@ -112,20 +110,8 @@ function physicsFrom(source: Record<string, unknown>, changed: Set<string>): Sha
 // prettier-ignore
 function appendChanges(diagnostics: SharedExperimentDiagnostic[], changed: Set<string>): void { if (changed.size) diagnostics.push(diag('warning', 'sanitized-fields', 'Unsafe, unsupported, or malformed shared fields were replaced, clamped, or left unchanged.', changed)); }
 
-function encode64(textValue: string): string {
-  let binary = '';
-  for (const byte of new TextEncoder().encode(textValue)) binary += String.fromCharCode(byte);
-  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '');
-}
-function decode64(value: string): string {
-  if (!BASE64URL.test(value) || value.length % 4 === 1) throw new Error('invalid base64url');
-  const base64 = value.replaceAll('-', '+').replaceAll('_', '/');
-  const binary = atob(`${base64}${'='.repeat((4 - (value.length % 4)) % 4)}`);
-  return new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(binary, (item) => item.charCodeAt(0)));
-}
-
 /** Stable and explicitly non-cryptographic fingerprint of physics and execution inputs. */
-export function canonicalSharedExperimentParameterHash(payload: SharedExperimentV2): string {
+export function canonicalSharedExperimentParameterHash(payload: SharedExperimentV2 | SharedExperimentV3): string {
   const canonical = JSON.stringify({ physics: payload.physics, execution: payload.execution });
   let hash = 0x811c9dc5;
   for (const byte of new TextEncoder().encode(canonical)) {
@@ -134,7 +120,7 @@ export function canonicalSharedExperimentParameterHash(payload: SharedExperiment
   }
   return hash.toString(16).padStart(8, '0');
 }
-function hashed(payload: SharedExperimentV2): SharedExperimentV2 {
+function hashed(payload: SharedExperimentV3): SharedExperimentV3 {
   return {
     ...payload,
     provenance: {
@@ -144,14 +130,14 @@ function hashed(payload: SharedExperimentV2): SharedExperimentV2 {
   };
 }
 function basePayload(
-  physics: SharedExperimentV2['physics'],
+  physics: SharedExperimentV3['physics'],
   tab: string,
-  provenance: Omit<SharedExperimentV2['provenance'], 'parameterHash'>,
-  execution: SharedExperimentV2['execution'],
-  render: SharedExperimentV2['render']
-): SharedExperimentV2 {
+  provenance: Omit<SharedExperimentV3['provenance'], 'parameterHash'>,
+  execution: SharedExperimentV3['execution'],
+  render: SharedExperimentV3['render']
+): SharedExperimentV3 {
   return hashed({
-    v: 2,
+    v: 3,
     scope: { kind: 'setup-only', includesResults: false, omittedUnsafeControls: ['audioOn', 'backgroundSim'] },
     provenance: { ...provenance, parameterHash: { algorithm: HASH_ALGORITHM, value: '' } },
     physics,
@@ -160,7 +146,11 @@ function basePayload(
     tab
   });
 }
-function sanitizeV2(source: Record<string, unknown>, diagnostics: SharedExperimentDiagnostic[]): SharedExperimentV2 {
+function sanitizeVersioned(
+  source: Record<string, unknown>,
+  diagnostics: SharedExperimentDiagnostic[],
+  sourceVersion: 2 | 3
+): SharedExperimentV3 {
   const changed = new Set<string>();
   const scope = object(source.scope);
   if (scope?.kind !== 'setup-only' || scope.includesResults !== false) changed.add('scope');
@@ -177,14 +167,14 @@ function sanitizeV2(source: Record<string, unknown>, diagnostics: SharedExperime
       : null;
   if (rawProvenance.sourceCommit != null && sourceCommit === null) changed.add('provenance.sourceCommit');
   const normalized = basePayload(
-    physicsFrom(rawPhysics, changed),
+    physicsFrom(rawPhysics, changed, sourceVersion === 3),
     pick(source.tab, TABS, 'lab', 'tab', changed),
     {
       packageName: text(rawProvenance.packageName, 'unknown', 'provenance.packageName', changed),
       packageVersion: text(rawProvenance.packageVersion, 'unknown', 'provenance.packageVersion', changed),
       physicsVersion: text(rawProvenance.physicsVersion, 'unknown', 'provenance.physicsVersion', changed),
       physicsSchema:
-        rawProvenance.physicsSchema === PHYSICS_SCHEMA
+        rawProvenance.physicsSchema === (sourceVersion === 2 ? LEGACY_PHYSICS_SCHEMA : PHYSICS_SCHEMA)
           ? PHYSICS_SCHEMA
           : (changed.add('provenance.physicsSchema'), PHYSICS_SCHEMA),
       sourceCommit
@@ -232,12 +222,21 @@ function sanitizeV2(source: Record<string, unknown>, diagnostics: SharedExperime
     );
   }
   appendChanges(diagnostics, changed);
+  if (sourceVersion === 2) {
+    diagnostics.push(
+      diag(
+        'warning',
+        'migrated-v2',
+        'V2 point-mass setup migrated to V3; the historical schema did not define compound rods.'
+      )
+    );
+  }
   return normalized;
 }
-function migrateV1(source: Record<string, unknown>, diagnostics: SharedExperimentDiagnostic[]): SharedExperimentV2 {
+function migrateV1(source: Record<string, unknown>, diagnostics: SharedExperimentDiagnostic[]): SharedExperimentV3 {
   const changed = new Set<string>();
   const payload = basePayload(
-    physicsFrom(source, changed),
+    physicsFrom(source, changed, false),
     pick(source.tab, TABS, 'lab', 'tab', changed),
     {
       packageName: PACKAGE_NAME,
@@ -294,7 +293,8 @@ export function decodeSharedExperiment(hash: string): SharedExperimentDecodeResu
   if (!source) return decodeFailure('invalid-payload', 'Shared setup must be a JSON object.');
   const diagnostics: SharedExperimentDiagnostic[] = [];
   if (source.v === 1) return { ok: true, payload: migrateV1(source, diagnostics), diagnostics };
-  if (source.v === 2) return { ok: true, payload: sanitizeV2(source, diagnostics), diagnostics };
+  if (source.v === 2) return { ok: true, payload: sanitizeVersioned(source, diagnostics, 2), diagnostics };
+  if (source.v === 3) return { ok: true, payload: sanitizeVersioned(source, diagnostics, 3), diagnostics };
   return decodeFailure('unsupported-version', `Shared setup version ${String(source.v ?? 'missing')} is unsupported.`);
 }
 
@@ -354,13 +354,13 @@ function sourceCommit(): string | null {
   const value = document.querySelector<HTMLMetaElement>('meta[name="pendulum-source-commit"]')?.content ?? '';
   return SHA.test(value) ? value : null;
 }
-export function captureSharedExperiment(): SharedExperimentV2 {
+export function captureSharedExperiment(): SharedExperimentV3 {
   const methodValue = (document.getElementById('method') as HTMLSelectElement | null)?.value ?? 'rk4';
   const seed = controlNumber('seed', Number.NaN);
   const panel = document.querySelector<HTMLElement>('.tabpanel.active');
   return basePayload(
     {
-      system: selected('sysType', ['double', 'triple'], 'double'),
+      system: selected('sysType', ['double', 'compound-double', 'triple'], 'double'),
       method: Object.hasOwn(integratorRegistry, methodValue) ? (methodValue as IntegratorId) : 'rk4',
       dt: controlNumber('dt', 0.003),
       damping: controlNumber('gamma', 0),
@@ -471,7 +471,9 @@ function applyChecked(
   control.checked = value;
 }
 /** Populate controls atomically, then emit exactly one semantic Lab commit and no native input storm. */
-export function restoreSharedExperiment(payload: SharedExperimentV2): SharedExperimentRestoreResult {
+export function restoreSharedExperiment(
+  payload: SharedExperimentV2 | SharedExperimentV3
+): SharedExperimentRestoreResult {
   if (typeof document === 'undefined')
     return {
       ok: false,
@@ -481,7 +483,7 @@ export function restoreSharedExperiment(payload: SharedExperimentV2): SharedExpe
       diagnostics: [diag('error', 'document-unavailable', 'Shared setup restoration requires a document.')]
     };
   const diagnostics: SharedExperimentDiagnostic[] = [];
-  const setup = sanitizeV2(payload as unknown as Record<string, unknown>, diagnostics);
+  const setup = sanitizeVersioned(payload as unknown as Record<string, unknown>, diagnostics, payload.v);
   const applied = new Set<string>(),
     changed = new Set<string>(),
     skipped = new Set<string>();

@@ -11,12 +11,18 @@ import { eventBus } from '../runtime/EventBus';
 import { legacyApp } from '../runtime/legacyCompat';
 import type { PendulumLegacyApp } from '../types/globals';
 import { inBounds, principalAngle, SESSION_SAFETY_BOUNDS } from '../validation/sessionConstraints';
+import { LEGACY_SESSION_SCHEMA_V10, SESSION_SCHEMA_VERSION } from './sessionSchema';
 
-const schemaVersion = 'pendulum-session/v10-ts';
+const schemaVersion = SESSION_SCHEMA_VERSION;
 const schemaPattern = /^pendulum-session\/v(\d+)-ts$/;
-const currentSchemaDigits = '10';
-const systemTypes = new Set<SystemType>(['double', 'triple']);
+const currentSchemaDigits = '11';
+const systemTypes = new Set<SystemType>(['double', 'compound-double', 'triple']);
 const modes = new Set<RunMode>(['demo', 'education', 'research', 'benchmark', 'performance', 'recovery']);
+
+export interface StateValidationOptions {
+  /** Preserve finite solver angle winding for a separately authenticated recovery record. */
+  preserveAngleWinding?: boolean;
+}
 
 function finite(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
@@ -143,7 +149,12 @@ function sanitizeParameters(value: unknown, problems: string[]): PendulumParamet
   return parameters;
 }
 
-function sanitizeState(value: unknown, systemType: unknown, problems: string[]): number[] | undefined {
+function sanitizeState(
+  value: unknown,
+  systemType: unknown,
+  problems: string[],
+  options: Readonly<StateValidationOptions>
+): number[] | undefined {
   const expectedLength = systemType === 'triple' ? 6 : 4;
   const source = ownArrayData(value, expectedLength, 'state', problems);
   if (!source) return undefined;
@@ -155,11 +166,19 @@ function sanitizeState(value: unknown, systemType: unknown, problems: string[]):
       problems.push(`state[${index}] must be finite`);
       continue;
     }
+    if (
+      index < angleCount &&
+      options.preserveAngleWinding &&
+      !inBounds(component, SESSION_SAFETY_BOUNDS.angleWinding)
+    ) {
+      problems.push(`state[${index}] is outside solver-safe angle-winding bounds`);
+      continue;
+    }
     if (index >= angleCount && !inBounds(component, SESSION_SAFETY_BOUNDS.angularVelocity)) {
       problems.push(`state[${index}] is outside solver-safe angular-velocity bounds`);
       continue;
     }
-    state.push(index < angleCount ? principalAngle(component) : component);
+    state.push(index < angleCount && !options.preserveAngleWinding ? principalAngle(component) : component);
   }
   return state.length === expectedLength ? state : undefined;
 }
@@ -181,6 +200,8 @@ function sanitizeSchemaVersion(value: unknown, problems: string[]): string {
     (versionDigits.length === currentSchemaDigits.length && versionDigits > currentSchemaDigits);
   if (isFuture) {
     problems.push(`schemaVersion ${value} is newer than the supported ${schemaVersion}`);
+  } else if (value === LEGACY_SESSION_SCHEMA_V10) {
+    return schemaVersion;
   } else if (value !== schemaVersion) {
     problems.push(`schemaVersion ${value} requires an explicit migration to ${schemaVersion}`);
   }
@@ -286,7 +307,10 @@ export class StateStore {
     return this.snapshot();
   }
 
-  static validate(value: unknown): ImportValidationResult<RuntimeSnapshot> {
+  static validate(
+    value: unknown,
+    options: Readonly<StateValidationOptions> = {}
+  ): ImportValidationResult<RuntimeSnapshot> {
     const problems: string[] = [];
     const v = ownDataRecord(
       value,
@@ -314,7 +338,13 @@ export class StateStore {
     const method = v.method;
     const canonicalMethod = method === 'verlet' ? 'leapfrog' : method;
     const mode = v.mode ?? 'demo';
-    if (systemType !== 'double' && systemType !== 'triple') problems.push('systemType must be double or triple');
+    if (v.schemaVersion === LEGACY_SESSION_SCHEMA_V10 && systemType === 'compound-double') {
+      problems.push(
+        `schemaVersion ${LEGACY_SESSION_SCHEMA_V10} did not define compound-double; export it with ${SESSION_SCHEMA_VERSION}`
+      );
+    }
+    if (systemType !== 'double' && systemType !== 'compound-double' && systemType !== 'triple')
+      problems.push('systemType must be double, compound-double, or triple');
     if (typeof canonicalMethod !== 'string' || !Object.hasOwn(integratorRegistry, canonicalMethod))
       problems.push('method must be a known integrator');
     if (typeof mode !== 'string' || !modes.has(mode as RunMode)) problems.push('mode is not allowed');
@@ -337,7 +367,7 @@ export class StateStore {
       if (!finite(v.seed)) problems.push('seed must be finite or null');
       else if (!Number.isSafeInteger(v.seed)) problems.push('seed must be a safe integer');
     }
-    const state = sanitizeState(v.state, systemType, problems);
+    const state = sanitizeState(v.state, systemType, problems, options);
     const parameters = sanitizeParameters(v.parameters, problems);
     if (systemType === 'triple' && parameters && (parameters.m3 === undefined || parameters.l3 === undefined)) {
       problems.push('triple parameters require positive m3 and l3');

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "pendulum-claim-incident-drill/v1",
+  "synthetic": true,
+  "description": "Synthetic drill only: retract the committed mutation artifact and verify that every consumer withholds its claim.",
+  "evaluatedAt": "2026-08-25T00:00:00.000Z",
+  "claimId": "testing.mutation",
+  "revokedArtifactSha256": "df55d143213c022db1bb8058a24d2d198fa228c81e660acfb31c9c913acee9fb",
+  "incident": {
+    "status": "revoked",
+    "incidentId": "INC-DRILL-2026-001",
+    "severity": "sev-1",
+    "detectedAt": "2026-08-25T00:00:00.000Z",
+    "embargoUntil": null,
+    "correctionArtifact": "synthetic corrected artifact pending independent verification",
+    "revokedArtifactSha256": "df55d143213c022db1bb8058a24d2d198fa228c81e660acfb31c9c913acee9fb",
+    "userNotification": "synthetic notification records the affected claim and revoked digest"
+  },
+  "expectedEffectiveVisibleLevel": "withheld"
+}

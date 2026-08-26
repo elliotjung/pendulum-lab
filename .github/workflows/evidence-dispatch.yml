@@ -1,47 +1,262 @@
 name: Evidence Dispatch
 
-# Structural fix for cross-repo evidence drift: whenever the committed
-# evidence summary changes on the default branch, tell the landing repo so its
-# evidence-sync workflow can pull, re-verify, and auto-commit the new summary.
-# Releases additionally dispatch `pendulum-release` from release.yml; this
-# lane covers the ordinary between-release cadence.
+# Continuous evidence uses the exact artifact that Mainline validated and the
+# Pages workflow deployed. Its coordinate is the Lab source commit + Mainline
+# run id + Pages run id/attempt + evidence/claim-registry/kernel SHA-256 values. The committed
+# reports/evidence-summary.json is intentionally not a fallback. Immutable v*
+# releases remain a separate pendulum-release coordinate owned by release.yml.
 
 on:
-  push:
-    branches: [main, master]
-    paths:
-      - reports/evidence-summary.json
+  workflow_run:
+    workflows: [Deploy verified build to GitHub Pages]
+    types: [completed]
   workflow_dispatch:
+    inputs:
+      pages_run_id:
+        description: Successful Pages workflow run id whose exact handoff artifact should be resent
+        required: true
+        type: string
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
-  group: evidence-dispatch
-  cancel-in-progress: true
+  group: evidence-dispatch-${{ github.event.workflow_run.id || inputs.pages_run_id }}
+  cancel-in-progress: false
 
 jobs:
   dispatch:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'master') &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      PAGES_RUN_ID: ${{ github.event.workflow_run.id || inputs.pages_run_id }}
+      EXPECTED_SOURCE_COMMIT: ${{ github.event.workflow_run.head_sha || '' }}
+      LIVE_LAB_BASE_URL: https://elliotjung.github.io/pendulum-lab/
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - name: Notify landing evidence sync
+      - name: Download the handoff produced by the successful Pages run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: deployed-evidence-handoff
+          path: handoff
+          run-id: ${{ github.event.workflow_run.id || inputs.pages_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify the exact validated handoff coordinate
+        shell: bash
+        run: |
+          set -euo pipefail
+          PAGES_RUN_ID="$PAGES_RUN_ID" EXPECTED_SOURCE_COMMIT="$EXPECTED_SOURCE_COMMIT" node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFile } from 'node:fs/promises';
+
+          const handoff = JSON.parse(await readFile('handoff/handoff-manifest.json', 'utf8'));
+          if (handoff?.schemaVersion !== 'pendulum-deployed-evidence-handoff/v1') {
+            throw new Error('unsupported deployed evidence handoff schema');
+          }
+          if (handoff?.coordinatePolicy !== 'continuous-pages-artifact') {
+            throw new Error('unexpected evidence coordinate policy');
+          }
+          if (handoff?.pagesRunId !== process.env.PAGES_RUN_ID) throw new Error('Pages run id mismatch');
+          for (const name of ['mainlineRunId', 'pagesRunId', 'pagesRunAttempt']) {
+            if (!/^[1-9][0-9]*$/.test(handoff?.[name] ?? '')) throw new Error(`${name} is malformed`);
+          }
+          if (!/^[0-9a-f]{40}$/.test(handoff?.sourceCommit ?? '')) throw new Error('source commit is malformed');
+          if (process.env.EXPECTED_SOURCE_COMMIT && handoff.sourceCommit !== process.env.EXPECTED_SOURCE_COMMIT) {
+            throw new Error('handoff source commit does not match the completed Pages workflow');
+          }
+
+          const fixedPaths = {
+            evidence: 'evidence-summary.json',
+            claimRegistry: 'claim-registry.json',
+            kernel: 'pendulum-demo-kernel.js',
+            kernelManifest: 'demo-kernel-manifest.json',
+            deploymentManifest: 'deployment-manifest.json'
+          };
+          const bytes = {};
+          const sha256 = (value) => createHash('sha256').update(value).digest('hex');
+          for (const [name, path] of Object.entries(fixedPaths)) {
+            if (handoff?.files?.[name]?.path !== path) throw new Error(`${name} handoff path mismatch`);
+            const value = await readFile(`handoff/${path}`);
+            if (handoff.files[name].bytes !== value.length) throw new Error(`${name} byte length mismatch`);
+            if (handoff.files[name].sha256 !== sha256(value)) throw new Error(`${name} SHA-256 mismatch`);
+            bytes[name] = value;
+          }
+
+          const parseJson = (name, value) => {
+            try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(value)); }
+            catch (error) { throw new Error(`${name} is not valid UTF-8 JSON`, { cause: error }); }
+          };
+          const evidence = parseJson('evidence', bytes.evidence);
+          const claimRegistry = parseJson('claim registry', bytes.claimRegistry);
+          const kernelManifest = parseJson('kernel manifest', bytes.kernelManifest);
+          const deploymentManifest = parseJson('deployment manifest', bytes.deploymentManifest);
+          if (evidence?.schemaVersion !== 'pendulum-evidence-summary/v1') throw new Error('unsupported evidence schema');
+          if (
+            claimRegistry?.schemaVersion !== 'pendulum-claim-registry/v2' ||
+            claimRegistry?.evidenceArtifact !== 'reports/evidence-summary.json' ||
+            !Array.isArray(claimRegistry?.claims) || claimRegistry.claims.length === 0
+          ) {
+            throw new Error('unsupported or empty claim registry');
+          }
+          const claimSurface = evidence?.claimEvidence;
+          const claimDefinitions = new Map(claimRegistry.claims.map((claim) => [claim.id, claim]));
+          if (
+            claimSurface?.schemaVersion !== 'pendulum-claim-evidence-surface/v1' ||
+            claimSurface?.loadState !== 'loaded' ||
+            claimSurface?.evidenceSourceCommit !== handoff.sourceCommit ||
+            claimSurface?.evidenceExpiresAt !== evidence?.provenance?.expiresAt ||
+            !Array.isArray(claimSurface?.claims) ||
+            claimSurface.claims.length !== claimDefinitions.size
+          ) {
+            throw new Error('refusing evidence without a canonical source-bound claim surface');
+          }
+          const dispatchedClaimIds = new Set();
+          for (const claim of claimSurface.claims) {
+            const definition = claimDefinitions.get(claim?.id);
+            if (
+              !definition || dispatchedClaimIds.has(claim.id) ||
+              claim.sourceArtifact !== definition.sourceArtifact ||
+              !/^[a-f0-9]{64}$/.test(evidence?.sourceReportSha256?.[claim.sourceArtifact] ?? '') ||
+              claim.sourceArtifactSha256 !== evidence.sourceReportSha256[claim.sourceArtifact] ||
+              (claim.effectiveVisibleLevel === 'withheld' && claim.displayValue !== null)
+            ) {
+              throw new Error(`refusing malformed canonical claim ${String(claim?.id ?? 'unknown')}`);
+            }
+            dispatchedClaimIds.add(claim.id);
+          }
+          if (evidence?.provenance?.sourceCommit !== handoff.sourceCommit) throw new Error('evidence source mismatch');
+          if (evidence?.provenance?.packageVersion !== handoff.packageVersion) throw new Error('evidence package mismatch');
+          if (evidence?.provenance?.dirtyWorktree !== false) throw new Error('refusing dirty evidence');
+          if (evidence?.tests?.success !== true || evidence?.tests?.failed !== 0 || evidence?.tests?.passed !== evidence?.tests?.total) {
+            throw new Error('refusing unsuccessful or incomplete evidence');
+          }
+          const expiry = Date.parse(evidence?.provenance?.expiresAt ?? '');
+          if (!Number.isFinite(expiry) || expiry <= Date.now()) throw new Error('refusing expired evidence');
+          if (deploymentManifest?.schemaVersion !== 'pendulum-pages-deployment/v1') throw new Error('bad deployment schema');
+          if (deploymentManifest?.sourceCommit !== handoff.sourceCommit || deploymentManifest?.evidenceSourceCommit !== handoff.sourceCommit) {
+            throw new Error('deployment manifest source mismatch');
+          }
+          const expectedKernel = {
+            schemaVersion: 'pendulum-demo-kernel-manifest/v1',
+            kernel: 'assets/pendulum-demo-kernel.js',
+            kernelVersion: 'pendulum-demo-kernel/v3',
+            sourcePackageVersion: handoff.packageVersion,
+            sourceCommit: handoff.sourceCommit,
+            sha256: sha256(bytes.kernel)
+          };
+          for (const [name, value] of Object.entries(expectedKernel)) {
+            if (kernelManifest?.[name] !== value) throw new Error(`kernel manifest ${name} mismatch`);
+          }
+          NODE
+      - name: Wait for the exact handoff bytes to be live on Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          live_verified=false
+          for attempt in $(seq 1 18); do
+            nonce="${PAGES_RUN_ID}-${attempt}"
+            if ! curl --fail --silent --show-error --retry 3 --retry-all-errors --location \
+              --proto '=https' --proto-redir '=https' --connect-timeout 10 --max-time 30 \
+              --output /tmp/live-deployment-manifest.json \
+              "${LIVE_LAB_BASE_URL}deployment-manifest.json?__pendulum_handoff=${nonce}"; then
+              sleep 10
+              continue
+            fi
+            if ! curl --fail --silent --show-error --retry 3 --retry-all-errors --location \
+              --proto '=https' --proto-redir '=https' --connect-timeout 10 --max-time 30 \
+              --output /tmp/live-evidence-summary.json \
+              "${LIVE_LAB_BASE_URL}reports/evidence-summary.json?__pendulum_handoff=${nonce}"; then
+              sleep 10
+              continue
+            fi
+            if node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFile } from 'node:fs/promises';
+          const handoff = JSON.parse(await readFile('handoff/handoff-manifest.json', 'utf8'));
+          const deploymentBytes = await readFile('/tmp/live-deployment-manifest.json');
+          const evidenceBytes = await readFile('/tmp/live-evidence-summary.json');
+          const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+          if (sha256(deploymentBytes) !== handoff.files.deploymentManifest.sha256) {
+            throw new Error('live deployment manifest has not converged to the handoff');
+          }
+          if (sha256(evidenceBytes) !== handoff.files.evidence.sha256) {
+            throw new Error('live evidence bytes have not converged to the handoff');
+          }
+          const deployment = JSON.parse(deploymentBytes.toString('utf8'));
+          const evidence = JSON.parse(evidenceBytes.toString('utf8'));
+          if (deployment?.sourceCommit !== handoff.sourceCommit || deployment?.evidenceSourceCommit !== handoff.sourceCommit) {
+            throw new Error('live deployment source coordinate mismatch');
+          }
+          if (evidence?.provenance?.sourceCommit !== handoff.sourceCommit) {
+            throw new Error('live evidence source coordinate mismatch');
+          }
+          NODE
+            then
+              live_verified=true
+              break
+            fi
+            sleep 10
+          done
+          if [ "$live_verified" != true ]; then
+            echo "Lab Pages never converged to exact handoff run ${PAGES_RUN_ID}" >&2
+            exit 1
+          fi
+      - name: Notify Landing with the exact deployed evidence bytes
         env:
           LANDING_DISPATCH_TOKEN: ${{ secrets.LANDING_DISPATCH_TOKEN }}
         shell: bash
         run: |
+          set -euo pipefail
           if [ -z "$LANDING_DISPATCH_TOKEN" ]; then
             printf '## Evidence dispatch: blocked\n\n`LANDING_DISPATCH_TOKEN` is required; no synchronization was claimed.\n' >> "$GITHUB_STEP_SUMMARY"
-            echo "LANDING_DISPATCH_TOKEN is required; landing evidence sync did not run." >&2
+            echo "LANDING_DISPATCH_TOKEN is required; Landing evidence sync did not run." >&2
             exit 1
           fi
-          evidence_source_commit="$(node -e "const r=require('./reports/evidence-summary.json'); const p=r?.provenance; const t=r?.tests; const v=p?.sourceCommit; if(t?.failed!==0) throw new Error('refusing to dispatch evidence with failed tests'); if(t?.passed!==t?.total) throw new Error('refusing to dispatch incomplete test evidence'); if(t?.success!==true) throw new Error('refusing to dispatch unsuccessful test evidence'); if(!/^[0-9a-f]{40}$/i.test(v)) throw new Error('evidence sourceCommit must be a full Git SHA'); if(p?.dirtyWorktree!==false) throw new Error('refusing to dispatch evidence generated from a dirty worktree'); const expiry=Date.parse(p?.expiresAt??''); if(!Number.isFinite(expiry)||expiry<=Date.now()) throw new Error('refusing to dispatch expired evidence'); process.stdout.write(v)")"
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from 'node:fs/promises';
+          const handoff = JSON.parse(await readFile('handoff/handoff-manifest.json', 'utf8'));
+          const evidence = await readFile('handoff/evidence-summary.json');
+          const kernel = await readFile('handoff/pendulum-demo-kernel.js');
+          const kernelManifest = await readFile('handoff/demo-kernel-manifest.json');
+          const payload = {
+            event_type: 'evidence-updated',
+            client_payload: {
+              schema_version: handoff.schemaVersion,
+              coordinate: {
+                policy: handoff.coordinatePolicy,
+                source_commit: handoff.sourceCommit,
+                package_version: handoff.packageVersion,
+                mainline_run_id: handoff.mainlineRunId,
+                pages_run_id: handoff.pagesRunId,
+                pages_run_attempt: handoff.pagesRunAttempt
+              },
+              evidence: {
+                sha256: handoff.files.evidence.sha256,
+                base64: evidence.toString('base64')
+              },
+              kernel: {
+                sha256: handoff.files.kernel.sha256,
+                base64: kernel.toString('base64'),
+                manifest_sha256: handoff.files.kernelManifest.sha256,
+                manifest_base64: kernelManifest.toString('base64')
+              },
+              deployment: { manifest_sha256: handoff.files.deploymentManifest.sha256 }
+            }
+          };
+          const serialized = `${JSON.stringify(payload)}\n`;
+          if (Buffer.byteLength(serialized) > 60_000) throw new Error('repository dispatch payload exceeds the bounded 60 KB contract');
+          await writeFile('/tmp/landing-evidence-dispatch.json', serialized);
+          NODE
           curl --fail-with-body --retry 3 --retry-all-errors --connect-timeout 10 --max-time 60 \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $LANDING_DISPATCH_TOKEN" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/elliotjung/pendulum-landing/dispatches \
-            -d "{\"event_type\":\"evidence-updated\",\"client_payload\":{\"source_commit\":\"$evidence_source_commit\",\"pushed_commit\":\"$GITHUB_SHA\"}}"
-          printf '## Evidence dispatch: sent\n\nLanding synchronization was requested for `%s`.\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+            --data-binary @/tmp/landing-evidence-dispatch.json
+          printf '## Evidence dispatch: sent\n\nLanding received exact Lab Pages handoff run `%s`.\n' "$PAGES_RUN_ID" >> "$GITHUB_STEP_SUMMARY"

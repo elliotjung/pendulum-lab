@@ -19,6 +19,24 @@ test('Theory deep link runs the bounded Euler-Lagrange/Hamiltonian comparison', 
   await page.locator('#theoryCompareRun').click();
   await expect(page.locator('#theoryComparePolicy')).toContainText('reference≤1.0e-7');
   await expect(page.locator('[data-theory-figure="point-mass-geometry"]')).toHaveCount(1);
+
+  await expect(page.locator('[data-theory-model="double"]')).toContainText('Point-mass double');
+  await expect(page.locator('[data-theory-model="compound-double"]')).toContainText('Uniform-rod compound double');
+  await page.locator('[data-select-system="compound-double"]').click();
+  await expect(page.locator('#tab-lab')).toHaveClass(/active/);
+  await expect(page.locator('#sysType')).toHaveValue('compound-double');
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (
+          window as Window & { __modernLab?: { runtimeSnapshot(): { systemType: string; state: number[] } } }
+        ).__modernLab?.runtimeSnapshot()
+      )
+    )
+    .toMatchObject({
+      systemType: 'compound-double',
+      state: [expect.any(Number), expect.any(Number), expect.any(Number), expect.any(Number)]
+    });
 });
 
 test('Lab controls link directly to the governing theory and measured-order evidence', async ({ page }) => {

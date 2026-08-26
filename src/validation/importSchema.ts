@@ -1,5 +1,6 @@
 import type { ImportValidationResult, RuntimeSnapshot } from '../types/domain';
 import { StateStore } from '../state/StateStore';
+import { SESSION_SCHEMA_VERSION } from '../state/sessionSchema';
 
 export const MAX_JSON_BYTES = 5_000_000;
 export const MAX_JSON_DEPTH = 100;
@@ -144,7 +145,7 @@ function asLegacyRunSnapshot(value: unknown): unknown {
   // was embedded. Defaults match that exporter and remain explicit here so
   // old reproducibility artifacts continue to load after the format upgrade.
   return {
-    schemaVersion: 'pendulum-session/v10-ts',
+    schemaVersion: SESSION_SCHEMA_VERSION,
     systemType: run.system,
     method: run.method,
     mode: 'demo',

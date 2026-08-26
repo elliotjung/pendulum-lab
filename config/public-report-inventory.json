@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "pendulum-public-report-inventory/v1",
+  "reports": [
+    "worldclass-scorecard.json",
+    "flagship-certification.json",
+    "flagship-external-check.json",
+    "webgpu-hardware-validation.json",
+    "gpu-benchmark-ladder.json",
+    "gpu-adapter-matrix.json",
+    "release-readiness.json",
+    "publication-status.json",
+    "zenodo-deposition.json",
+    "attestation-verification.json",
+    "npm-pack-dry-run.json",
+    "reviewer-kit-manifest.json",
+    "mutation-aggregate.json",
+    "vitest-public-results.json",
+    "energy-benchmark.json",
+    "cross-validation.json",
+    "literature-anchors.json",
+    "evidence-summary.json",
+    "independent-validation-scope.json",
+    "flagship-figure1.svg",
+    "coverage-badge.json",
+    "coverage-badge.svg",
+    "modern-demo-screenshot.png"
+  ]
+}

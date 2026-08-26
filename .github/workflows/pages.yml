@@ -90,6 +90,29 @@ jobs:
           if (manifest?.evidenceSourceCommit !== evidence?.provenance?.sourceCommit) {
             throw new Error('deployed evidence provenance does not match the Pages manifest');
           }
+          if (manifest?.evidenceSourceCommit !== expectedCommit) {
+            throw new Error('deployed evidence provenance does not match the successful mainline commit');
+          }
+          const evidenceReports = Object.values(evidence?.sourceReports ?? {});
+          const evidenceHashes = evidence?.sourceReportSha256 ?? {};
+          if (evidenceReports.length === 0) throw new Error('deployed evidence declares no source reports');
+          for (const reportPath of evidenceReports) {
+            if (
+              typeof reportPath !== 'string' ||
+              !/^reports\/[a-z0-9][a-z0-9./-]*\.json$/.test(reportPath) ||
+              reportPath.includes('..')
+            ) {
+              throw new Error(`unsafe deployed evidence report path: ${String(reportPath)}`);
+            }
+            const expectedReportHash = evidenceHashes[reportPath];
+            if (!/^[0-9a-f]{64}$/.test(expectedReportHash ?? '')) {
+              throw new Error(`missing deployed evidence SHA-256: ${reportPath}`);
+            }
+            const reportBytes = await readFile(`${root}/${reportPath}`);
+            if (sha256(reportBytes) !== expectedReportHash) {
+              throw new Error(`deployed evidence SHA-256 mismatch: ${reportPath}`);
+            }
+          }
           NODE
 
           (
@@ -101,6 +124,147 @@ jobs:
             cmp deployment-files.sha256 /tmp/current-deployment-files.sha256
             sha256sum --check deployment-files.sha256
           )
+      - name: Assemble the exact deployed evidence handoff
+        shell: bash
+        env:
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
+          MAINLINE_RUN_ID: ${{ github.event.workflow_run.id }}
+          PAGES_RUN_ID: ${{ github.run_id }}
+          PAGES_RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+
+          const sourceCommit = process.env.VALIDATED_SHA ?? '';
+          const mainlineRunId = process.env.MAINLINE_RUN_ID ?? '';
+          const pagesRunId = process.env.PAGES_RUN_ID ?? '';
+          const pagesRunAttempt = process.env.PAGES_RUN_ATTEMPT ?? '';
+          if (!/^[0-9a-f]{40}$/.test(sourceCommit)) throw new Error('validated source commit is malformed');
+          for (const [name, value] of Object.entries({ mainlineRunId, pagesRunId, pagesRunAttempt })) {
+            if (!/^[1-9][0-9]*$/.test(value)) throw new Error(`${name} must be a positive integer string`);
+          }
+
+          const sourcePaths = {
+            evidence: 'validated/dist/reports/evidence-summary.json',
+            claimRegistry: 'validated/dist/reports/claim-registry.json',
+            kernel: 'validated/reports/landing-kernel/pendulum-demo-kernel.js',
+            kernelManifest: 'validated/reports/landing-kernel/demo-kernel-manifest.json',
+            deploymentManifest: 'validated/dist/deployment-manifest.json'
+          };
+          const entries = await Promise.all(
+            Object.entries(sourcePaths).map(async ([name, path]) => [name, { path, bytes: await readFile(path) }])
+          );
+          const source = Object.fromEntries(entries);
+          const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+          const parseJson = (name, bytes) => {
+            try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
+            catch (error) { throw new Error(`${name} is not valid UTF-8 JSON`, { cause: error }); }
+          };
+
+          const evidence = parseJson('deployed evidence', source.evidence.bytes);
+          const claimRegistry = parseJson('deployed claim registry', source.claimRegistry.bytes);
+          const kernelManifest = parseJson('Landing kernel manifest', source.kernelManifest.bytes);
+          const deploymentManifest = parseJson('Pages deployment manifest', source.deploymentManifest.bytes);
+          if (evidence?.schemaVersion !== 'pendulum-evidence-summary/v1') throw new Error('unsupported evidence schema');
+          if (
+            claimRegistry?.schemaVersion !== 'pendulum-claim-registry/v2' ||
+            claimRegistry?.evidenceArtifact !== 'reports/evidence-summary.json' ||
+            !Array.isArray(claimRegistry?.claims) || claimRegistry.claims.length === 0
+          ) {
+            throw new Error('unsupported or empty deployed claim registry');
+          }
+          const claimSurface = evidence?.claimEvidence;
+          const claimDefinitions = new Map(claimRegistry.claims.map((claim) => [claim.id, claim]));
+          if (
+            claimSurface?.schemaVersion !== 'pendulum-claim-evidence-surface/v1' ||
+            claimSurface?.loadState !== 'loaded' ||
+            claimSurface?.evidenceSourceCommit !== sourceCommit ||
+            claimSurface?.evidenceExpiresAt !== evidence?.provenance?.expiresAt ||
+            !Array.isArray(claimSurface?.claims) ||
+            claimSurface.claims.length !== claimDefinitions.size
+          ) {
+            throw new Error('deployed evidence has no canonical source-bound claim surface');
+          }
+          const deployedClaimIds = new Set();
+          for (const claim of claimSurface.claims) {
+            const definition = claimDefinitions.get(claim?.id);
+            if (
+              !definition || deployedClaimIds.has(claim.id) ||
+              claim.sourceArtifact !== definition.sourceArtifact ||
+              !/^[a-f0-9]{64}$/.test(evidence?.sourceReportSha256?.[claim.sourceArtifact] ?? '') ||
+              claim.sourceArtifactSha256 !== evidence.sourceReportSha256[claim.sourceArtifact] ||
+              (claim.effectiveVisibleLevel === 'withheld' && claim.displayValue !== null)
+            ) {
+              throw new Error(`invalid deployed canonical claim ${String(claim?.id ?? 'unknown')}`);
+            }
+            deployedClaimIds.add(claim.id);
+          }
+          if (evidence?.provenance?.sourceCommit !== sourceCommit) throw new Error('evidence source commit mismatch');
+          if (evidence?.provenance?.dirtyWorktree !== false) throw new Error('evidence came from a dirty worktree');
+          if (evidence?.tests?.success !== true || evidence?.tests?.failed !== 0 || evidence?.tests?.passed !== evidence?.tests?.total) {
+            throw new Error('evidence test result is not a successful complete run');
+          }
+          const expiry = Date.parse(evidence?.provenance?.expiresAt ?? '');
+          if (!Number.isFinite(expiry) || expiry <= Date.now()) throw new Error('evidence is expired');
+          if (deploymentManifest?.schemaVersion !== 'pendulum-pages-deployment/v1') {
+            throw new Error('unsupported Pages deployment manifest');
+          }
+          if (deploymentManifest?.sourceCommit !== sourceCommit || deploymentManifest?.evidenceSourceCommit !== sourceCommit) {
+            throw new Error('Pages deployment manifest source coordinate mismatch');
+          }
+
+          const kernelSha256 = sha256(source.kernel.bytes);
+          const expectedKernel = {
+            schemaVersion: 'pendulum-demo-kernel-manifest/v1',
+            kernel: 'assets/pendulum-demo-kernel.js',
+            kernelVersion: 'pendulum-demo-kernel/v3',
+            sourcePackageVersion: evidence?.provenance?.packageVersion,
+            sourceCommit,
+            sha256: kernelSha256
+          };
+          for (const [name, value] of Object.entries(expectedKernel)) {
+            if (kernelManifest?.[name] !== value) throw new Error(`Landing kernel manifest ${name} mismatch`);
+          }
+
+          const output = 'deployed-evidence-handoff';
+          await mkdir(output, { recursive: true });
+          const outputNames = {
+            evidence: 'evidence-summary.json',
+            claimRegistry: 'claim-registry.json',
+            kernel: 'pendulum-demo-kernel.js',
+            kernelManifest: 'demo-kernel-manifest.json',
+            deploymentManifest: 'deployment-manifest.json'
+          };
+          for (const [name, fileName] of Object.entries(outputNames)) {
+            await copyFile(source[name].path, `${output}/${fileName}`);
+          }
+          const files = Object.fromEntries(Object.entries(outputNames).map(([name, path]) => [name, {
+            path,
+            bytes: source[name].bytes.length,
+            sha256: sha256(source[name].bytes)
+          }]));
+          const handoff = {
+            schemaVersion: 'pendulum-deployed-evidence-handoff/v1',
+            coordinatePolicy: 'continuous-pages-artifact',
+            sourceCommit,
+            packageVersion: evidence.provenance.packageVersion,
+            mainlineRunId,
+            pagesRunId,
+            pagesRunAttempt,
+            createdAt: new Date().toISOString(),
+            files
+          };
+          await writeFile(`${output}/handoff-manifest.json`, `${JSON.stringify(handoff, null, 2)}\n`);
+          NODE
+      - name: Preserve the exact deployed evidence handoff
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: deployed-evidence-handoff
+          path: deployed-evidence-handoff/
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: validated/dist

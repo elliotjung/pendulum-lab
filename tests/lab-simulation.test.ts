@@ -80,6 +80,15 @@ describe('LabSimulation', () => {
     expect(Number.isFinite(sim.energy())).toBe(true);
   });
 
+  it('runs the uniform-rod compound double through the live adapter', () => {
+    const sim = new LabSimulation({ ...DOUBLE, system: 'compound-double' });
+    sim.step(500);
+    expect(sim.getState()).toHaveLength(4);
+    expect(sim.bobPositionsMeters()).toHaveLength(2);
+    expect(Number.isFinite(sim.energy())).toBe(true);
+    expect(sim.config.system).toBe('compound-double');
+  });
+
   it('produces a self-describing snapshot', () => {
     const sim = new LabSimulation(DOUBLE);
     sim.step(10);
@@ -96,7 +105,7 @@ describe('LabSimulation', () => {
     [{ ...DOUBLE, gamma: Number.NaN }, /gamma/],
     [{ ...DOUBLE, parameters: { ...DOUBLE.parameters, l1: 0 } }, /l1/],
     [{ ...DOUBLE, initialState: [0, Number.POSITIVE_INFINITY] }, /initialState/],
-    [{ ...DOUBLE, system: 'spherical' }, /only double and triple/]
+    [{ ...DOUBLE, system: 'spherical' }, /only double, compound-double, and triple/]
   ])('rejects malformed runtime configuration before integration', (config, expected) => {
     expect(() => new LabSimulation(config as LabConfig)).toThrow(expected as RegExp);
   });

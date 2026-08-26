@@ -1,5 +1,6 @@
 import { access, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { reportSafeSourcePath } from './report-source-path';
 
 type Vendor = 'intel' | 'nvidia' | 'amd';
 type MatrixStatus = 'pass' | 'partial' | 'fail';
@@ -125,7 +126,7 @@ const rows: VendorRow[] = vendors.map((vendor) => {
   return {
     vendor,
     status: passed ? 'pass' : 'fail',
-    source: selected.path.replace(/\\/g, '/'),
+    source: reportSafeSourcePath(selected.path, inputRoot),
     generatedAt: selected.evidence.generatedAt ?? null,
     adapter: selected.evidence.adapter ?? null,
     nChainPassed,

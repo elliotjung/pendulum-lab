@@ -71,7 +71,7 @@ export const RESEARCH_STUDY_STRATEGIES = new Set<ParameterStudyPlan['strategy']>
   'sobol',
   'chebyshev'
 ]);
-export const RESEARCH_SYSTEM_TYPES = new Set<SystemType>(['double', 'triple']);
+export const RESEARCH_SYSTEM_TYPES = new Set<SystemType>(['double', 'compound-double', 'triple']);
 export const RESEARCH_BATCH_STATUSES = new Set<ResearchBatchStatus>(['running', 'cancelled', 'complete', 'failed']);
 
 export function sanitizeRuntimeSnapshot(value: unknown): RuntimeSnapshot | null {

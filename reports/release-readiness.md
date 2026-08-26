@@ -1,6 +1,6 @@
 # Release Readiness Manifest
 
-Generated: 2026-07-13T03:08:56.416Z
+Generated: 2026-08-26T00:38:18.993Z
 
 Status: **ready-for-owner-publish**
 
@@ -33,6 +33,7 @@ Status: **ready-for-owner-publish**
 
 ## Owner Publish Steps
 
+- Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.
 - Bootstrap the npm package with owner credentials or configure its trusted publisher, then dispatch publish-npm.yml with dry_run=false.
 - Authenticate Zenodo, run npm run zenodo:publish, then run npm run doi:sync.
 

@@ -1,7 +1,13 @@
+import claimRegistryJson from '../../config/claim-registry.json';
+import { buildClaimEvidenceSurface, type ClaimEvidenceSurface } from './claimEvidenceSurfaces';
+import type { ClaimRegistry } from './claimRegistry';
+
 export interface EvidenceSummary {
   schemaVersion: 'pendulum-evidence-summary/v1';
   generatedAt: string;
   sourceReports: Record<string, string>;
+  /** SHA-256 of the exact bytes parsed for each sourceReports path. */
+  sourceReportSha256: Record<string, string>;
   provenance: {
     sourceCommit: string;
     packageVersion: string;
@@ -74,11 +80,14 @@ export interface EvidenceSummary {
     status: string;
     uncertainty: string | null;
     sourceReport: string;
+    evidenceGeneratedAt: string | null;
     sourceCommit: string;
     caveat: string | null;
     reproduce: string;
     publicUrl: string | null;
   }>;
+  /** Canonical, registry-evaluated view consumed by every public surface. */
+  claimEvidence: ClaimEvidenceSurface;
   finalization: Array<{
     id: string;
     label: string;
@@ -100,6 +109,7 @@ interface LiteratureAnchorSummary {
 export interface EvidenceSummaryInput {
   generatedAt: string;
   sourceReports: Record<string, string>;
+  sourceReportSha256?: Record<string, string>;
   vitestResults: unknown;
   reviewerKitManifest: unknown;
   publicationStatus: unknown;
@@ -144,6 +154,15 @@ function stringArray(value: unknown): string[] {
   return array(value).filter((item): item is string => typeof item === 'string');
 }
 
+function reportGeneratedAt(report: JsonObject): string | null {
+  const generatedAt = stringValue(report.generatedAt);
+  if (generatedAt && Number.isFinite(Date.parse(generatedAt))) return generatedAt;
+  if (typeof report.startTime === 'number' && Number.isFinite(report.startTime)) {
+    return new Date(report.startTime).toISOString();
+  }
+  return null;
+}
+
 export function approxScientific(value: number | null, significant = 1): string {
   if (value === null || !Number.isFinite(value)) return 'n/a';
   const exponential = value.toExponential(Math.max(0, significant - 1)).replace('e', 'e');
@@ -172,13 +191,45 @@ function findAnchor(literatureAnchors: JsonObject, id: string): LiteratureAnchor
 }
 
 function regularScipyAgreement(crossValidation: JsonObject): number | null {
-  const regularCases = array(crossValidation.cases)
-    .map(object)
-    .filter((item) => stringValue(item.name).toLowerCase().includes('regular'));
+  const regularCases = regularScipyCases(crossValidation);
   const divergences = regularCases
     .map((item) => numberValue(item.maxDivergence, NaN))
     .filter((value) => Number.isFinite(value));
   return divergences.length > 0 ? Math.max(...divergences) : null;
+}
+
+function regularScipyCases(crossValidation: JsonObject): JsonObject[] {
+  return array(crossValidation.cases)
+    .map(object)
+    .filter((item) => stringValue(item.name).toLowerCase().includes('regular'));
+}
+
+function regularScipyStatus(crossValidation: JsonObject): 'passed' | 'failed' | 'missing' | 'unknown' {
+  const regularCases = regularScipyCases(crossValidation);
+  if (regularCases.length === 0) return 'missing';
+  if (regularCases.some((item) => item.pass === false)) return 'failed';
+  if (
+    regularCases.every(
+      (item) => item.pass === true && typeof item.maxDivergence === 'number' && Number.isFinite(item.maxDivergence)
+    )
+  ) {
+    return 'passed';
+  }
+  return 'unknown';
+}
+
+/** Oldest accepted physical-adapter row; regenerating the wrapper must not renew hardware evidence. */
+export function acceptedGpuEvidenceGeneratedAt(gpuAdapterMatrixValue: unknown): string | null {
+  const gpuAdapterMatrix = object(gpuAdapterMatrixValue);
+  const acceptedRows = array(gpuAdapterMatrix.rows)
+    .map(object)
+    .filter((row) => row.status === 'pass');
+  const coverage = object(gpuAdapterMatrix.coverage);
+  const declaredPassed = numberValue(coverage.passed, Number.NaN);
+  if (!Number.isInteger(declaredPassed) || declaredPassed < 1 || acceptedRows.length !== declaredPassed) return null;
+  const timestamps = acceptedRows.map((row) => stringValue(row.generatedAt));
+  if (timestamps.some((timestamp) => !timestamp || !Number.isFinite(Date.parse(timestamp)))) return null;
+  return timestamps.sort((left, right) => Date.parse(left) - Date.parse(right))[0] ?? null;
 }
 
 function availableArtifacts(artifacts: unknown[], priority: string): number {
@@ -225,11 +276,21 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
   const mutationScore = numberValue(mutation.mutationScore);
   const mutationStatus = stringValue(mutation.status, 'unknown');
   const profiledMethods = energyRows.length;
+  const testStatus =
+    total <= 0
+      ? 'missing'
+      : booleanValue(vitest.success) && failed === 0 && passed === total
+        ? 'passed'
+        : failed > 0 || passed !== total || vitest.success === false
+          ? 'failed'
+          : 'unknown';
+  const scipyStatus = regularScipyStatus(crossValidation);
 
-  return {
+  const summary = {
     schemaVersion: 'pendulum-evidence-summary/v1',
     generatedAt: input.generatedAt,
     sourceReports: input.sourceReports,
+    sourceReportSha256: input.sourceReportSha256 ?? {},
     provenance: input.provenance ?? {
       sourceCommit: 'unknown',
       packageVersion: 'unknown',
@@ -303,9 +364,10 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
       {
         id: 'tests.unit',
         displayValue: `${passed} / ${total} pass`,
-        status: failed === 0 ? 'passed' : 'failed',
+        status: testStatus,
         uncertainty: null,
-        sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-results.json',
+        sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-public-results.json',
+        evidenceGeneratedAt: reportGeneratedAt(vitest),
         sourceCommit,
         caveat: null,
         reproduce: 'npm run verify',
@@ -314,9 +376,10 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
       {
         id: 'validation.scipy.regular',
         displayValue: approxScientific(regularAgreement),
-        status: regularAgreement === null ? 'unknown' : 'passed',
+        status: scipyStatus,
         uncertainty: 'Maximum observed divergence for regular reference cases',
         sourceReport: input.sourceReports.crossValidation ?? 'reports/cross-validation.json',
+        evidenceGeneratedAt: reportGeneratedAt(crossValidation),
         sourceCommit,
         caveat: 'Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.',
         reproduce: 'npm run validate:cross',
@@ -328,6 +391,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         status: mutationStatus,
         uncertainty: null,
         sourceReport: input.sourceReports.mutationAggregate ?? 'reports/mutation-aggregate.json',
+        evidenceGeneratedAt: reportGeneratedAt(mutation),
         sourceCommit,
         caveat: mutationStatus === 'low' ? 'Below the 70% quality target; the 65% regression floor is enforced.' : null,
         reproduce:
@@ -340,6 +404,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         status: profiledMethods > 0 ? 'measured' : 'missing',
         uncertainty: 'Method-specific drift; no universal pass envelope',
         sourceReport: input.sourceReports.energyBenchmark ?? 'reports/energy-benchmark.json',
+        evidenceGeneratedAt: reportGeneratedAt(energy),
         sourceCommit,
         caveat: 'Compare each method against its documented order and structure-preservation behavior.',
         reproduce: 'npm run benchmark:energy',
@@ -351,6 +416,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         status: stringValue(gpuAdapterMatrix.status, 'unknown'),
         uncertainty: null,
         sourceReport: input.sourceReports.gpuAdapterMatrix ?? 'reports/gpu-adapter-matrix.json',
+        evidenceGeneratedAt: acceptedGpuEvidenceGeneratedAt(gpuAdapterMatrix),
         sourceCommit,
         caveat: typeof gpuAdapterMatrix.caveat === 'string' ? gpuAdapterMatrix.caveat : null,
         reproduce:
@@ -363,6 +429,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         status: stringValue(publication.status, 'unknown'),
         uncertainty: null,
         sourceReport: input.sourceReports.publicationStatus ?? 'reports/publication-status.json',
+        evidenceGeneratedAt: reportGeneratedAt(publication),
         sourceCommit,
         caveat: stringArray(publication.caveats).join(' ') || null,
         reproduce: 'npm run release:status',
@@ -405,5 +472,12 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
             : 'Requires a published GitHub release.'
       }
     ]
+  } satisfies Omit<EvidenceSummary, 'claimEvidence'>;
+
+  return {
+    ...summary,
+    claimEvidence: buildClaimEvidenceSurface(claimRegistryJson as unknown as ClaimRegistry, summary, {
+      now: input.generatedAt
+    })
   };
 }

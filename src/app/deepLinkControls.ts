@@ -148,7 +148,7 @@ export function applyNumericControlParams(
 }
 
 function visibleParamValue(value: string): string {
-  const normalized = value.replace(/[\u0000-\u001f\u007f]/gu, '�');
+  const normalized = value.replace(/[\u0000-\u001f\u007f]/gu, '\uFFFD');
   return normalized.length <= 32 ? normalized : `${normalized.slice(0, 29)}…`;
 }
 
