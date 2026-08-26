@@ -1,11 +1,11 @@
 {
   "schemaVersion": "pendulum-bundle-budget/v1",
   "status": "pass",
-  "artifactSetSha256": "cd5bb75a1b1e0865a76f9ccb946dd6afca259ee7275bd5d9565f34f4cd3c25bf",
+  "artifactSetSha256": "36875eef327111489d6ddfe8fb50acff83f83ce2e4a8e01d54728a75a1dc6ff6",
   "artifactSet": {
-    "sha256": "cd5bb75a1b1e0865a76f9ccb946dd6afca259ee7275bd5d9565f34f4cd3c25bf",
+    "sha256": "36875eef327111489d6ddfe8fb50acff83f83ce2e4a8e01d54728a75a1dc6ff6",
     "files": 97,
-    "bytes": 5398674
+    "bytes": 5443032
   },
   "rows": [
     {
@@ -18,43 +18,43 @@
     },
     {
       "label": "initial JS gzip",
-      "bytes": 80323,
+      "bytes": 80326,
       "budget": 215040,
       "ok": true,
-      "ratio": 0.37352585565476193,
-      "remainingBytes": 134717
+      "ratio": 0.37353980654761904,
+      "remainingBytes": 134714
     },
     {
       "label": "initial JS brotli",
-      "bytes": 66671,
+      "bytes": 66683,
       "budget": 184320,
       "ok": true,
-      "ratio": 0.3617133246527778,
-      "remainingBytes": 117649
+      "ratio": 0.36177842881944444,
+      "remainingBytes": 117637
     },
     {
       "label": "largest non-initial JS raw",
-      "bytes": 387892,
+      "bytes": 387900,
       "budget": 532480,
       "ok": true,
-      "ratio": 0.7284630408653846,
-      "remainingBytes": 144588
+      "ratio": 0.7284780649038461,
+      "remainingBytes": 144580
     },
     {
       "label": "largest non-initial JS gzip",
-      "bytes": 121411,
+      "bytes": 121405,
       "budget": 138240,
       "ok": true,
-      "ratio": 0.8782624421296297,
-      "remainingBytes": 16829
+      "ratio": 0.8782190393518519,
+      "remainingBytes": 16835
     },
     {
       "label": "largest non-initial JS brotli",
-      "bytes": 98399,
+      "bytes": 98469,
       "budget": 117760,
       "ok": true,
-      "ratio": 0.8355893342391304,
-      "remainingBytes": 19361
+      "ratio": 0.8361837635869566,
+      "remainingBytes": 19291
     },
     {
       "label": "initial CSS raw",
@@ -82,32 +82,32 @@
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1449376,
+      "bytes": 1449384,
       "budget": 1484800,
       "ok": true,
-      "ratio": 0.9761422413793104,
-      "remainingBytes": 35424
+      "ratio": 0.9761476293103448,
+      "remainingBytes": 35416
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 427059,
+      "bytes": 427056,
       "budget": 440320,
       "ok": true,
-      "ratio": 0.9698832667151163,
-      "remainingBytes": 13261
+      "ratio": 0.9698764534883721,
+      "remainingBytes": 13264
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 334324,
+      "bytes": 334475,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.9069118923611111,
-      "remainingBytes": 34316
+      "ratio": 0.9073215060763888,
+      "remainingBytes": 34165
     }
   ],
   "nonInitialJsTotal": {
-    "raw": 1246774,
-    "gzip": 404685,
-    "brotli": 342801
+    "raw": 1246782,
+    "gzip": 404708,
+    "brotli": 342911
   }
 }

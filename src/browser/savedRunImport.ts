@@ -161,20 +161,27 @@ function applySnapshotControlsWithCommit(
       }
       element.value = value;
       const projectedNumber = element instanceof HTMLInputElement ? element.valueAsNumber : Number.NaN;
+      const projectedValue = element.value;
+      // Chromium serializes range values to roughly 15 significant decimal
+      // digits even when step="any". Keep the exact solver state in the
+      // snapshot, but accept that bounded display-only round-trip at a small,
+      // explicit ULP envelope. A unit-scale floor also covers values near zero.
       const projectionTolerance =
         numericValue === null
           ? 0
-          : Number.EPSILON * Math.max(Math.abs(numericValue), Math.abs(projectedNumber), Number.MIN_VALUE) * 8;
+          : Number.EPSILON * Math.max(Math.abs(numericValue), Math.abs(projectedNumber), 1) * 32;
       const readBackMatches =
         numericValue === null
           ? element.value === value
           : element instanceof HTMLInputElement &&
             Number.isFinite(projectedNumber) &&
             (projectedNumber === numericValue ||
-              (allowDisplayProjection && Math.abs(projectedNumber - numericValue) <= projectionTolerance));
+              (allowDisplayProjection &&
+                element.type === 'range' &&
+                Math.abs(projectedNumber - numericValue) <= projectionTolerance));
       if (!readBackMatches) {
         rollback();
-        return { ok: false, problems: [`Lab control #${id} changed ${value} to ${element.value}`] };
+        return { ok: false, problems: [`Lab control #${id} changed ${value} to ${projectedValue}`] };
       }
       applied.push(id);
     }

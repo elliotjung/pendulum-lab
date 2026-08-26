@@ -345,12 +345,12 @@ describe('saved-run DOM application', () => {
     expect(commit.detail.snapshot.state).toEqual(snapshot.state);
   });
 
-  it('allows only ulp-scale browser rounding for a non-committing recovery display projection', () => {
+  it('allows Chromium range serialization while preserving the exact recovery snapshot', () => {
     const snapshot = { ...BASE, state: [-0.5295974206389124, 0.25, 0, 0] };
     const controls = fakeControls(snapshot);
     controls.set(
       'th1',
-      new FakeInput('2', 'range', String(-Math.PI), String(Math.PI), '0.001', (value) => value + Number.EPSILON * 2)
+      new FakeInput('2', 'range', String(-Math.PI), String(Math.PI), '0.001', (value) => Number(value.toPrecision(15)))
     );
     const dispatchEvent = installFakeDom(controls);
 
@@ -358,7 +358,23 @@ describe('saved-run DOM application', () => {
 
     expect(result.ok).toBe(true);
     expect(Number(controls.get('th1')?.value)).not.toBe(snapshot.state[0]);
-    expect(Math.abs(Number(controls.get('th1')?.value) - snapshot.state[0]!)).toBeLessThan(Number.EPSILON * 3);
+    expect(Math.abs(Number(controls.get('th1')?.value) - snapshot.state[0]!)).toBeLessThan(Number.EPSILON * 32);
     expect(dispatchEvent).not.toHaveBeenCalled();
+  });
+
+  it('rejects a display projection outside the explicit floating-point envelope', () => {
+    const snapshot = { ...BASE, state: [-0.5295974206389124, 0.25, 0, 0] };
+    const controls = fakeControls(snapshot);
+    controls.set(
+      'th1',
+      new FakeInput('2', 'range', '-3.142', '3.142', '0.001', (value) => (value === 2 ? value : value + 1e-10))
+    );
+    installFakeDom(controls);
+
+    const result = projectSnapshotControls(snapshot);
+
+    expect(result.ok).toBe(false);
+    expect(result.problems.join(' ')).toContain('changed -0.5295974206389124 to -0.5295974205389123');
+    expect(Number(controls.get('th1')?.value)).toBeCloseTo(2, 8);
   });
 });

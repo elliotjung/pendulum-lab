@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-portfolio-pdf-validation/v1",
-  "generatedAt": "2026-08-26T01:16:24.375Z",
+  "generatedAt": "2026-08-26T01:47:05.435Z",
   "status": "passed",
   "sourcePath": "documents/portfolio-korean.md",
   "outputPath": "reports/portfolio-korean.pdf",
@@ -10,8 +10,8 @@
     "preview": "Poppler pdftoppm 120dpi"
   },
   "pdf": {
-    "bytes": 462021,
-    "sha256": "1581dad09ae189aef3565fada0ba5d798e9da3bb9e31fdeddd1a83624c28bb3e",
+    "bytes": 462356,
+    "sha256": "4d98b11ecfed895cbd3a3fc9bfc48f242ab3351f0214ca35c0dbe39a87eecb4d",
     "pages": 2
   },
   "domAudit": {
@@ -25,10 +25,10 @@
   "previews": [
     {
       "path": "tmp/pdfs/portfolio-korean-page-1.png",
-      "bytes": 144427,
+      "bytes": 144393,
       "width": 992,
       "height": 1404,
-      "sha256": "ccc96edb605e267aa4738dea7a629ac5c5ec6574ad43ef311cf26410af839135"
+      "sha256": "c07de8a22001851581625bfe7a65334b19d28878776081c2da0788ff091c6d3b"
     },
     {
       "path": "tmp/pdfs/portfolio-korean-page-2.png",

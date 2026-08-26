@@ -1,6 +1,6 @@
 {
   "schemaVersion": "pendulum-release-readiness/v1",
-  "generatedAt": "2026-08-26T01:16:24.434Z",
+  "generatedAt": "2026-08-26T01:47:05.520Z",
   "status": "ready-for-owner-publish",
   "externalPublishSteps": [
     "Deploy reviewer.html through GitHub Pages and verify reports/publication-status.json.",
@@ -66,7 +66,7 @@
       "path": "reports/portfolio-korean-pdf-validation.json",
       "required": true,
       "available": true,
-      "hash": "1c0453a91f8897",
+      "hash": "1b91528723d3b4",
       "note": "Poppler-rendered page previews, dimensions, hashes, and structural PDF checks passed."
     },
     {
@@ -74,7 +74,7 @@
       "path": "reports/reviewer-kit-manifest.json",
       "required": true,
       "available": true,
-      "hash": "0665a76473ce30",
+      "hash": "0bf8661250d297",
       "note": "Reviewer kit manifest exists."
     },
     {
@@ -138,7 +138,7 @@
       "path": "reports/npm-pack-dry-run.json",
       "required": true,
       "available": true,
-      "hash": "0900994cfb3f67",
+      "hash": "1de7661022b11b",
       "note": "Exact npm tarball integrity, size, and included-file inventory from a successful dry run."
     },
     {

@@ -19,7 +19,7 @@ BT
 72 748 Td
 (Pendulum Lab Certified Chaotic Dynamics Workbench) Tj
 /F1 9.5 Tf
-0 -16 Td (Generated: 2026-08-26T01:16:22.578Z) Tj
+0 -16 Td (Generated: 2026-08-26T01:47:03.585Z) Tj
 0 -16 Td () Tj
 0 -16 Td (Flagship: Melnikov threshold vs period-doubling onset gap map.) Tj
 0 -16 Td (Reviewer path: npm run validate:gpu-scale; npm run validate:webgpu-hardware; npm run) Tj
@@ -31,8 +31,8 @@ BT
 0 -16 Td (Release surfaces: Pages reviewer console, npm OIDC provenance, Zenodo deposition API,) Tj
 0 -16 Td (SLSA/SBOM attestations, and paper PDF.) Tj
 0 -16 Td () Tj
-0 -16 Td (Reviewer manifest hash: 0665a76473ce30) Tj
-0 -16 Td (Scorecard hash: 07760a09e1fdb4) Tj
+0 -16 Td (Reviewer manifest hash: 0bf8661250d297) Tj
+0 -16 Td (Scorecard hash: 1e3b361c5db9c2) Tj
 0 -16 Td (Flagship certification hash: 0b07c018203651) Tj
 ET
 endstream
