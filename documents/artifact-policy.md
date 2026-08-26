@@ -12,8 +12,10 @@ or durable evidence for a README claim.
 - `standalone/index.html` and its worker siblings are release-only generated
   output. The repository tracks `standalone-manifest.json` (file sizes and
   SHA-256 hashes), not the ~850 KB HTML/worker blobs. Regenerate with
+  the exact Node version in `.node-version`, then run
   `npm run build:standalone && npm run standalone:manifest` and review the hash
-  diff; releases attach both the direct HTML and a complete ZIP.
+  diff. Generate volatile wall-clock benchmarks only after this exact-byte
+  check; releases attach both the direct HTML and a complete ZIP.
 
 ## Tracked Evidence
 

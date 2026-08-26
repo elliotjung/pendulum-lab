@@ -31,12 +31,16 @@ jobs:
       - run: npm run audit:legacy
       - run: npm run audit:mojibake:strict
       - run: npm run reports
-      - run: npm run benchmark:energy
       - run: npm run validate:gpu-scale
-      - run: npm run build
+      # The standalone manifest pins exact bytes. Build it from the committed
+      # deterministic benchmark input under the repository-pinned Node runtime;
+      # the fresh wall-clock benchmark is intentionally produced only afterward.
       - run: npm run build:standalone
       # Committed standalone bundle must match what the current source builds.
       - run: npm run check:standalone-sync
+      - run: npm run benchmark:energy
+      # The hosted build intentionally includes the fresh mainline benchmark.
+      - run: npm run build
       # Same drift contract for the committed WASM ensemble kernel.
       - run: npm run check:wasm-sync
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

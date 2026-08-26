@@ -238,6 +238,10 @@ async function pinLabControlAccordions(page: Page, controls: Locator): Promise<v
 async function boundLabControlCaptureSurface(page: Page, controls: Locator): Promise<void> {
   const captureHeight = 600;
   await controls.evaluate((panel, height) => {
+    // The production mobile layout deliberately uses `display: contents` so
+    // its children interleave with plots. An element screenshot needs a real
+    // box, so establish that box before Playwright tries to scroll the target.
+    panel.style.setProperty('display', 'block', 'important');
     panel.style.setProperty('height', `${height}px`, 'important');
     panel.style.setProperty('min-height', '0', 'important');
     panel.style.setProperty('max-height', `${height}px`, 'important');
@@ -259,6 +263,7 @@ async function boundLabControlCaptureSurface(page: Page, controls: Locator): Pro
         if (
           Math.abs(rect.height - height) > 1 ||
           panel.scrollTop !== 0 ||
+          style.display !== 'block' ||
           style.overflow !== 'hidden' ||
           style.overflowX !== 'hidden' ||
           style.overflowY !== 'hidden'
@@ -271,6 +276,7 @@ async function boundLabControlCaptureSurface(page: Page, controls: Locator): Pro
           panel.clientHeight,
           panel.scrollTop,
           panel.scrollHeight,
+          style.display,
           style.height,
           style.overflow
         ].join('|');
@@ -301,8 +307,12 @@ test('rail sidebar renders correctly', async ({ page }) => {
 test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
   await page.goto('/');
   await page.waitForFunction(() => Boolean((window as unknown as { __modernShell?: unknown }).__modernShell));
-  const labBtn = page.locator('.rail-menu-button[data-rail-section-button="lab"]').first();
-  if (await labBtn.isVisible()) await labBtn.click();
+  // Compact layouts collapse the rail button, so a conditional click can leave
+  // the Lab panel hidden forever. Exercise the shell's canonical tab API on
+  // every viewport and assert visibility before attempting any component crop.
+  await page.evaluate(() => {
+    (window as unknown as { __modernShell?: { switchTo(name: string): void } }).__modernShell?.switchTo('lab');
+  });
   // The parity layer installs this floating overlay asynchronously. Wait for
   // its completed audit result so it cannot appear midway through capture.
   const integrityBadge = page.locator('#figBadge');
@@ -318,11 +328,10 @@ test('lab tab control panel renders correctly', async ({ page }, testInfo) => {
     });
   });
   const controls = page.getByRole('region', { name: 'controls' });
-  // Settle the panel under the normal mobile media state before installing the
-  // bounded fixture and taking one prepared capture below.
-  await controls.scrollIntoViewIfNeeded();
+  await expect(controls).toBeAttached();
   await pinLabControlAccordions(page, controls);
   await boundLabControlCaptureSurface(page, controls);
+  await expect(controls).toBeVisible();
   // The fixture now fits in both visual projects' viewports, so this affects
   // only page scroll and cannot select a different internal panel segment.
   await controls.scrollIntoViewIfNeeded();

@@ -91,6 +91,25 @@ describe('generated-drift workflow contract', () => {
     }
   });
 
+  test('exact standalone bytes use the pinned runtime before volatile benchmark regeneration', async () => {
+    const setup = await readFile('.github/actions/setup-node-project/action.yml', 'utf8');
+    const nodeVersion = await readFile('.node-version', 'utf8');
+    const mainline = await readFile('.github/workflows/main.yml', 'utf8');
+    const scienceJob = workflowJob(mainline, 'science-and-build');
+
+    expect(nodeVersion.trim()).toBe('26.3.0');
+    expect(setup).toContain("default: '26.3.0'");
+
+    const standaloneBuild = scienceJob.indexOf('- run: npm run build:standalone');
+    const standaloneCheck = scienceJob.indexOf('- run: npm run check:standalone-sync');
+    const freshBenchmark = scienceJob.indexOf('- run: npm run benchmark:energy');
+    const hostedBuild = scienceJob.search(/^\s+- run: npm run build\r?$/m);
+    expect(standaloneBuild).toBeGreaterThanOrEqual(0);
+    expect(standaloneCheck).toBeGreaterThan(standaloneBuild);
+    expect(freshBenchmark).toBeGreaterThan(standaloneCheck);
+    expect(hostedBuild).toBeGreaterThan(freshBenchmark);
+  });
+
   test('Pages build exports every Lab report required by the product release manifest', async () => {
     const buildCopy = await readFile('scripts/copy-legacy-assets.mjs', 'utf8');
     const publicInventory = JSON.parse(await readFile('config/public-report-inventory.json', 'utf8')) as {

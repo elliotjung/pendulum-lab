@@ -5,7 +5,7 @@ inputs:
   node-version:
     description: Node.js major or exact version accepted by actions/setup-node.
     required: false
-    default: '22'
+    default: '26.3.0'
 
 runs:
   using: composite
