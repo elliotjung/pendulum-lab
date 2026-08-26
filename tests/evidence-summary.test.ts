@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import claimRegistryJson from '../config/claim-registry.json';
 import {
   acceptedGpuEvidenceGeneratedAt,
   approxScientific,
@@ -89,6 +90,7 @@ describe('evidence summary', () => {
       }
     };
     const summary = buildEvidenceSummary(input);
+    const canonicalCaveats = new Map(claimRegistryJson.claims.map((claim) => [claim.id, claim.caveat]));
 
     expect(summary.tests.passLabel).toBe('959 / 959 pass');
     expect(summary.validation.scipyAgreement.display).toBe('~4e-14');
@@ -103,6 +105,8 @@ describe('evidence summary', () => {
     expect(summary.claims.find((claim) => claim.id === 'gpu.vendor-matrix')?.evidenceGeneratedAt).toBe(
       '2026-06-30T00:00:00.000Z'
     );
+    expect(summary.publication.caveats).toEqual(['No DOI yet.']);
+    for (const claim of summary.claims) expect(claim.caveat).toBe(canonicalCaveats.get(claim.id));
 
     const failed = buildEvidenceSummary({
       ...input,

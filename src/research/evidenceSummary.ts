@@ -2,6 +2,8 @@ import claimRegistryJson from '../../config/claim-registry.json';
 import { buildClaimEvidenceSurface, type ClaimEvidenceSurface } from './claimEvidenceSurfaces';
 import type { ClaimRegistry } from './claimRegistry';
 
+const canonicalClaimRegistry = claimRegistryJson as unknown as ClaimRegistry;
+
 export interface EvidenceSummary {
   schemaVersion: 'pendulum-evidence-summary/v1';
   generatedAt: string;
@@ -152,6 +154,12 @@ function booleanValue(value: unknown, fallback = false): boolean {
 
 function stringArray(value: unknown): string[] {
   return array(value).filter((item): item is string => typeof item === 'string');
+}
+
+function canonicalClaimCaveat(id: string): string | null {
+  const claim = canonicalClaimRegistry.claims.find((entry) => entry.id === id);
+  if (!claim) throw new Error(`Canonical claim registry is missing ${id}`);
+  return claim.caveat;
 }
 
 function reportGeneratedAt(report: JsonObject): string | null {
@@ -369,7 +377,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.vitestResults ?? 'reports/vitest-public-results.json',
         evidenceGeneratedAt: reportGeneratedAt(vitest),
         sourceCommit,
-        caveat: null,
+        caveat: canonicalClaimCaveat('tests.unit'),
         reproduce: 'npm run verify',
         publicUrl: null
       },
@@ -381,7 +389,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.crossValidation ?? 'reports/cross-validation.json',
         evidenceGeneratedAt: reportGeneratedAt(crossValidation),
         sourceCommit,
-        caveat: 'Chaotic trajectories use time-amplified tolerances and are not claimed bitwise-identical.',
+        caveat: canonicalClaimCaveat('validation.scipy.regular'),
         reproduce: 'npm run validate:cross',
         publicUrl: null
       },
@@ -393,7 +401,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.mutationAggregate ?? 'reports/mutation-aggregate.json',
         evidenceGeneratedAt: reportGeneratedAt(mutation),
         sourceCommit,
-        caveat: mutationStatus === 'low' ? 'Below the 70% quality target; the 65% regression floor is enforced.' : null,
+        caveat: canonicalClaimCaveat('testing.mutation'),
         reproduce:
           'npm run mutation:aggregate -- reports/mutation-shards --out-dir reports --break 65 --low 70 --high 85',
         publicUrl: null
@@ -406,7 +414,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.energyBenchmark ?? 'reports/energy-benchmark.json',
         evidenceGeneratedAt: reportGeneratedAt(energy),
         sourceCommit,
-        caveat: 'Compare each method against its documented order and structure-preservation behavior.',
+        caveat: canonicalClaimCaveat('benchmark.energy.methods'),
         reproduce: 'npm run benchmark:energy',
         publicUrl: null
       },
@@ -418,7 +426,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.gpuAdapterMatrix ?? 'reports/gpu-adapter-matrix.json',
         evidenceGeneratedAt: acceptedGpuEvidenceGeneratedAt(gpuAdapterMatrix),
         sourceCommit,
-        caveat: typeof gpuAdapterMatrix.caveat === 'string' ? gpuAdapterMatrix.caveat : null,
+        caveat: canonicalClaimCaveat('gpu.vendor-matrix'),
         reproduce:
           typeof gpuAdapterMatrix.reproduce === 'string' ? gpuAdapterMatrix.reproduce : 'npm run benchmark:gpu-matrix',
         publicUrl: null
@@ -431,7 +439,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
         sourceReport: input.sourceReports.publicationStatus ?? 'reports/publication-status.json',
         evidenceGeneratedAt: reportGeneratedAt(publication),
         sourceCommit,
-        caveat: stringArray(publication.caveats).join(' ') || null,
+        caveat: canonicalClaimCaveat('publication.release'),
         reproduce: 'npm run release:status',
         publicUrl: typeof pages.url === 'string' ? pages.url : null
       }
@@ -476,7 +484,7 @@ export function buildEvidenceSummary(input: EvidenceSummaryInput): EvidenceSumma
 
   return {
     ...summary,
-    claimEvidence: buildClaimEvidenceSurface(claimRegistryJson as unknown as ClaimRegistry, summary, {
+    claimEvidence: buildClaimEvidenceSurface(canonicalClaimRegistry, summary, {
       now: input.generatedAt
     })
   };
