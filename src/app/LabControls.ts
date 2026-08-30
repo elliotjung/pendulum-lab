@@ -5,6 +5,7 @@ import { pageDom as dom } from './DomBinder';
 import { LAB_CONTROLS_COMMITTED_EVENT, type LabControlCommitDetail } from './controlCommit';
 import { LAB_CONTROL_BOUNDS, LAB_INTEGRATOR_IDS, inBounds } from '../validation/sessionConstraints';
 import { integratorRegistry } from '../physics/integratorRegistry';
+import { precisionCanonicalValue } from './precisionControls';
 
 interface Size2D {
   width: number;
@@ -73,7 +74,11 @@ const labIntegratorIds = new Set<string>(LAB_INTEGRATOR_IDS);
 
 function boundedControl(id: string, fallback: number, bounds: { min: number; max: number }): number {
   const input = dom.el<HTMLInputElement>(id);
-  const raw = input ? Number.parseFloat(input.value) : fallback;
+  const raw = input
+    ? input.type === 'range' && input.dataset.precisionKeyboardStep !== undefined
+      ? precisionCanonicalValue(input, fallback)
+      : Number.parseFloat(input.value)
+    : fallback;
   const value = inBounds(raw, bounds) ? raw : Math.min(bounds.max, Math.max(bounds.min, fallback));
   if (raw !== value) {
     dom.setValue(id, value);

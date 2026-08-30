@@ -124,3 +124,4 @@ jobs:
           path: |
             reports/mutation-aggregate.*
             reports/mutation-survivor-triage.*
+            reports/mutation-timeout-triage.*

@@ -3,8 +3,28 @@ import { EDUCATION_CARDS, FIRST_EXPERIMENTS } from '../src/app/educationCards';
 
 describe('education cards', () => {
   it('covers the main chaos diagnostic tabs with experiment actions', () => {
-    expect(EDUCATION_CARDS.map((card) => card.tab)).toEqual(['lyap', 'sweep', 'bifurc', 'zeroone', 'rqa', 'ftle']);
-    expect(EDUCATION_CARDS.every((card) => card.body.length > 40 && card.preset.length > 0)).toBe(true);
+    expect(EDUCATION_CARDS.map((card) => card.tab)).toEqual([
+      'lyap',
+      'compare',
+      'sweep',
+      'bifurc',
+      'zeroone',
+      'rqa',
+      'ftle'
+    ]);
+    expect(
+      EDUCATION_CARDS.every(
+        (card) =>
+          card.question.en.endsWith('?') &&
+          card.question.ko.endsWith('?') &&
+          card.method.en.length > 20 &&
+          card.measurement.en.length > 20 &&
+          card.interpretation.en.length > 20 &&
+          card.caveat.en.length > 20 &&
+          card.evidenceHref.length > 0 &&
+          card.preset.length > 0
+      )
+    ).toBe(true);
   });
 
   it('offers a bilingual first-ten-minute path with distinct observation goals', () => {

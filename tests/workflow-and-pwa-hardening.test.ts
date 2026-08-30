@@ -141,8 +141,13 @@ describe('generated-drift workflow contract', () => {
     expect(source).toContain("handoff?.schemaVersion !== 'pendulum-deployed-evidence-handoff/v1'");
     expect(source).toContain("handoff?.coordinatePolicy !== 'continuous-pages-artifact'");
     expect(source).toContain('handoff.files[name].sha256 !== sha256(value)');
-    expect(source).toContain('sha256(evidenceBytes) !== handoff.files.evidence.sha256');
+    expect(source).toContain('currentEvidenceSha256 !== handoff.files.evidence.sha256');
     expect(source).toContain('live evidence bytes have not converged to the handoff');
+    expect(source).toContain('deploymentEtag: headerValue');
+    expect(source).toContain('evidenceEtag: headerValue');
+    expect(source).toContain('observedAt: new Date().toISOString()');
+    expect(source).toContain('expected: {');
+    expect(source).toContain('current: {');
     expect(source).toContain("event_type: 'evidence-updated'");
     expect(source).toContain('mainline_run_id: handoff.mainlineRunId');
     expect(source).toContain('pages_run_id: handoff.pagesRunId');

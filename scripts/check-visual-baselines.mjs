@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -8,6 +9,8 @@ const projects = (argument('--projects') ?? 'chromium,mobile-chrome')
   .map((value) => value.trim())
   .filter(Boolean);
 const snapshots = ['rail-sidebar', 'lab-controls', 'research-experiment-card'];
+const metadataDirectory = argument('--metadata-dir') ?? 'e2e/visual-baseline-metadata';
+const requireMetadata = process.argv.includes('--require-metadata');
 
 if (!/^[a-z0-9-]+$/u.test(platform)) fail(`invalid platform: ${platform}`);
 if (projects.length === 0 || projects.some((project) => !/^[a-z0-9-]+$/u.test(project))) {
@@ -30,12 +33,67 @@ for (const file of expected) {
   }
 }
 
+const metadataPath = join(metadataDirectory, `${platform}.json`);
+try {
+  const metadata = JSON.parse(await readFile(metadataPath, 'utf8'));
+  const recorded = new Map(
+    Array.isArray(metadata.snapshots) ? metadata.snapshots.map((entry) => [entry?.path, entry]) : []
+  );
+  if (
+    metadata.schemaVersion !== 'pendulum-visual-baseline-fingerprint/v1' ||
+    metadata.authority !== 'github-hosted-native' ||
+    metadata.platform !== platform
+  ) {
+    failures.push(`${platform}.json: unsupported or mismatched fingerprint metadata`);
+  }
+  if (!/^[a-f0-9]{40}$/u.test(metadata.sourceCommit ?? '')) {
+    failures.push(`${platform}.json: missing full source commit`);
+  }
+  if (
+    !/^[a-f0-9]{64}$/u.test(metadata.browser?.executableSha256 ?? '') ||
+    !/^[a-f0-9]{64}$/u.test(metadata.fonts?.sha256 ?? '') ||
+    !(metadata.fonts?.fileCount > 0) ||
+    !metadata.runner?.imageOS ||
+    !metadata.runner?.imageVersion
+  ) {
+    failures.push(`${platform}.json: incomplete browser/font/hosted-runner fingerprint`);
+  }
+  const projectNames = new Set((metadata.rendering?.projects ?? []).map((entry) => entry?.name));
+  if (projects.some((project) => !projectNames.has(project))) {
+    failures.push(`${platform}.json: missing project DPI/deviceScaleFactor metadata`);
+  }
+  for (const file of expected) {
+    const entry = recorded.get(file);
+    if (!entry || !/^[a-f0-9]{64}$/u.test(entry.sha256 ?? '')) {
+      failures.push(`${platform}.json: missing snapshot digest for ${file}`);
+      continue;
+    }
+    const bytes = await readFile(join(snapshotDirectory, file));
+    const actual = createHash('sha256').update(bytes).digest('hex');
+    if (entry.bytes !== bytes.length || entry.sha256 !== actual) {
+      failures.push(`${platform}.json: snapshot digest mismatch for ${file}`);
+    }
+  }
+} catch (error) {
+  if (requireMetadata) {
+    failures.push(
+      `${platform}.json: fingerprint metadata missing or unreadable (${error instanceof Error ? error.message : String(error)})`
+    );
+  } else {
+    console.warn(
+      `Visual-baseline fingerprint is not promoted for ${platform}; current images remain legacy hosted baselines until the next reviewed promotion.`
+    );
+  }
+}
+
 if (failures.length > 0) {
   console.error(`Visual-baseline contract failed for ${platform}:`);
   for (const failure of failures) console.error(`- ${failure}`);
   process.exitCode = 1;
 } else {
-  console.log(`Visual-baseline contract passed: ${expected.length} ${platform} PNGs (${projects.join(', ')})`);
+  console.log(
+    `Visual-baseline contract passed: ${expected.length} ${platform} PNGs (${projects.join(', ')})${requireMetadata ? ' with hosted fingerprint' : ''}`
+  );
 }
 
 function argument(name) {

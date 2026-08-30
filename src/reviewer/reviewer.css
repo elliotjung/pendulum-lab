@@ -75,7 +75,7 @@ a {
 }
 .reviewer-summary {
   display: grid;
-  grid-template-columns: minmax(220px, 1.2fr) repeat(3, minmax(120px, 0.55fr));
+  grid-template-columns: minmax(220px, 1.2fr) repeat(4, minmax(120px, 0.55fr));
   border: 1px solid #cbd5d8;
   background: #fff;
 }
@@ -107,6 +107,32 @@ a {
   margin: 7px 0 0;
   color: #5f6f74;
   font-size: 12px;
+}
+
+.reviewer-scope-note {
+  margin-top: 16px;
+  padding: 15px 18px;
+  border: 1px solid #cbd5d8;
+  border-left: 4px solid #d79a2b;
+  background: #fff;
+}
+.reviewer-scope-note h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+.reviewer-scope-note dl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+.reviewer-scope-note .evidence-field {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+.reviewer-scope-note dt {
+  margin-bottom: 4px;
 }
 
 .reviewer-tabs {
@@ -225,18 +251,22 @@ a {
   text-transform: uppercase;
 }
 .status-pass,
-.status-passed {
+.status-passed,
+.status-published {
   color: #17613b;
   border-color: #8fc5aa;
   background: #eff9f3;
 }
 .status-partial,
-.status-ready-for-owner-publish {
+.status-ready-for-owner-publish,
+.status-stale,
+.status-unknown {
   color: #78510a;
   border-color: #ddc17f;
   background: #fff8e8;
 }
 .status-fail,
+.status-failed,
 .status-missing {
   color: #8a2d2d;
   border-color: #d8a1a1;
@@ -348,6 +378,9 @@ a {
   .evidence-grid {
     grid-template-columns: 1fr 1fr;
   }
+  .reviewer-scope-note dl {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 620px) {
@@ -367,6 +400,9 @@ a {
   }
   .reviewer-summary,
   .evidence-grid {
+    grid-template-columns: 1fr;
+  }
+  .reviewer-scope-note dl {
     grid-template-columns: 1fr;
   }
   .summary-stat {

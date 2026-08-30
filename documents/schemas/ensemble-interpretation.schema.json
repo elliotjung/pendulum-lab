@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elliotjung.github.io/pendulum-lab/schemas/ensemble-interpretation/v1",
+  "title": "Finite-time reference-to-ensemble interpretation",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "stages",
+    "referenceInitialState",
+    "perturbation",
+    "members",
+    "horizon",
+    "numerics",
+    "summary",
+    "interpretation"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "pendulum-ensemble-interpretation/v1" },
+    "stages": {
+      "type": "array",
+      "prefixItems": [{ "const": "reference" }, { "const": "single-perturbation" }, { "const": "ensemble" }],
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "referenceInitialState": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "number" }
+    },
+    "perturbation": {
+      "type": "object",
+      "required": ["component", "componentIndex", "delta", "unit", "model", "seed"],
+      "properties": {
+        "component": { "type": "string", "minLength": 1 },
+        "componentIndex": { "type": "integer", "minimum": 0 },
+        "delta": { "type": "number", "not": { "const": 0 } },
+        "unit": { "enum": ["rad", "deg", "rad/s", "deg/s"] },
+        "model": { "type": "string", "minLength": 1 },
+        "seed": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "members": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "initialState", "color", "legend"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": { "enum": ["reference", "perturbation"] },
+          "initialState": { "type": "array", "minItems": 1, "items": { "type": "number" } },
+          "color": { "type": "string", "minLength": 1 },
+          "legend": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "horizon": {
+      "type": "object",
+      "required": ["duration", "unit", "finiteTime"],
+      "properties": {
+        "duration": { "type": "number", "exclusiveMinimum": 0 },
+        "unit": { "const": "s" },
+        "finiteTime": { "const": true }
+      }
+    },
+    "numerics": {
+      "type": "object",
+      "required": ["integrator", "stepPolicy"],
+      "properties": {
+        "integrator": { "type": "string", "minLength": 1 },
+        "stepPolicy": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "summary": {
+      "type": "object",
+      "required": ["observable", "quantiles", "uncertaintyMethod"],
+      "properties": {
+        "observable": { "type": "string", "minLength": 1 },
+        "quantiles": {
+          "type": "object",
+          "required": ["p05", "p50", "p95"],
+          "properties": {
+            "p05": { "type": "number" },
+            "p50": { "type": "number" },
+            "p95": { "type": "number" }
+          }
+        },
+        "uncertaintyMethod": { "type": "string", "minLength": 1 }
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "required": ["question", "nonClaim"],
+      "properties": {
+        "question": { "type": "string", "minLength": 1 },
+        "nonClaim": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

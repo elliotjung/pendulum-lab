@@ -1,49 +1,222 @@
 {
-  "schemaVersion": "css-coverage/v1",
-  "generatedAt": "2026-08-26T00:30:01.718Z",
+  "schemaVersion": "css-coverage/v2",
+  "generatedAt": "2026-08-28T03:30:53.433Z",
   "url": "http://127.0.0.1:4173/app.html",
-  "traversal": "desktop Chromium: load, visit every workspace tab, reopen Lab, expand details",
+  "traversal": "two independent Chromium launches; union of locale/mode/theme/viewport/media/state matrix",
+  "provenance": {
+    "engine": "chromium",
+    "independentPasses": 2,
+    "scenariosPerPass": 5,
+    "passes": [
+      {
+        "id": "pass-1",
+        "scenarios": [
+          {
+            "id": "research-en-dark-desktop",
+            "locale": "en",
+            "audienceMode": "research",
+            "theme": "dark",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-tabs",
+              "details-open",
+              "hover",
+              "focus",
+              "delayed-mount"
+            ]
+          },
+          {
+            "id": "student-ko-light-mobile",
+            "locale": "ko",
+            "audienceMode": "student",
+            "theme": "light",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-visible-tabs",
+              "details-open",
+              "compact-viewport"
+            ]
+          },
+          {
+            "id": "beginner-en-dark-reduced-mobile",
+            "locale": "en",
+            "audienceMode": "beginner",
+            "theme": "dark",
+            "viewport": {
+              "width": 320,
+              "height": 640
+            },
+            "media": "screen",
+            "reducedMotion": "reduce",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "beginner-surface",
+              "compact-viewport",
+              "reduced-motion"
+            ]
+          },
+          {
+            "id": "research-ko-light-forced-colors",
+            "locale": "ko",
+            "audienceMode": "research",
+            "theme": "light",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "active",
+            "exercisedStates": [
+              "all-tabs",
+              "forced-colors",
+              "pwa-update",
+              "error-overlay"
+            ]
+          },
+          {
+            "id": "research-en-dark-print",
+            "locale": "en",
+            "audienceMode": "research",
+            "theme": "dark",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "media": "print",
+            "reducedMotion": "reduce",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-tabs",
+              "print",
+              "reduced-motion"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pass-2",
+        "scenarios": [
+          {
+            "id": "research-en-dark-desktop",
+            "locale": "en",
+            "audienceMode": "research",
+            "theme": "dark",
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-tabs",
+              "details-open",
+              "hover",
+              "focus",
+              "delayed-mount"
+            ]
+          },
+          {
+            "id": "student-ko-light-mobile",
+            "locale": "ko",
+            "audienceMode": "student",
+            "theme": "light",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-visible-tabs",
+              "details-open",
+              "compact-viewport"
+            ]
+          },
+          {
+            "id": "beginner-en-dark-reduced-mobile",
+            "locale": "en",
+            "audienceMode": "beginner",
+            "theme": "dark",
+            "viewport": {
+              "width": 320,
+              "height": 640
+            },
+            "media": "screen",
+            "reducedMotion": "reduce",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "beginner-surface",
+              "compact-viewport",
+              "reduced-motion"
+            ]
+          },
+          {
+            "id": "research-ko-light-forced-colors",
+            "locale": "ko",
+            "audienceMode": "research",
+            "theme": "light",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "media": "screen",
+            "reducedMotion": "no-preference",
+            "forcedColors": "active",
+            "exercisedStates": [
+              "all-tabs",
+              "forced-colors",
+              "pwa-update",
+              "error-overlay"
+            ]
+          },
+          {
+            "id": "research-en-dark-print",
+            "locale": "en",
+            "audienceMode": "research",
+            "theme": "dark",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "media": "print",
+            "reducedMotion": "reduce",
+            "forcedColors": "none",
+            "exercisedStates": [
+              "all-tabs",
+              "print",
+              "reduced-motion"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "totals": {
     "stylesheets": 1,
     "cssBytes": 113179,
-    "usedBytes": 48114,
-    "usedPercent": 42.511419963067354,
-    "unusedCandidateRules": 572
+    "usedBytes": 71863,
+    "usedPercent": 63.49499465448537,
+    "unusedCandidateRules": 360
   },
   "unusedCandidates": [
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light]",
-      "line": 1,
-      "bytes": 1875
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] header,:root[data-color-theme=light] .diag-row>span,:root[data-color-theme=light] .presets,:root[data-color-theme=light] .workflow-strip,:root[data-color-theme=light] .controls,:root[data-color-theme=light] .main-wrap,:root[data-color-theme=light] .plot-cell,:root[data-color-theme=light] .scrub-row,:root[data-color-theme=light] :where(.si-panel,.plx-card,.plx-panel,.v10-card,.rgv7-card,.rgv8-card,.rg-card,.ri-panel,.research-card,.fig-panel,.education-card,.exp-shell,.matrix-shell,.golden-card,.energy-benchmark-view)",
-      "line": 1,
-      "bytes": 678
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .rail-menu-button[aria-expanded=true],:root[data-color-theme=light] .rail-submenu .tab[aria-selected=true],:root[data-color-theme=light] .workflow-strip button[aria-current=step],:root[data-color-theme=light] .workflow-strip button[aria-pressed=true],:root[data-color-theme=light] .trust-drawer-tabs [role=tab][aria-selected=true],:root[data-color-theme=light] .rgv8-cmd-row.is-active,:root[data-color-theme=light] .audience-choice[aria-pressed=true]",
-      "line": 1,
-      "bytes": 592
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .badge,:root[data-color-theme=light] #qualBadge,:root[data-color-theme=light] #fpsBadge,:root[data-color-theme=light] .rail-kbd,:root[data-color-theme=light] .val,:root[data-color-theme=light] .acc-count,:root[data-color-theme=light] .chip,:root[data-color-theme=light] .fig-badge,:root[data-color-theme=light] .plx-badge,:root[data-color-theme=light] .v10-badge,:root[data-color-theme=light] .rgv7-badge,:root[data-color-theme=light] .rgv8-badge",
-      "line": 1,
-      "bytes": 512
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".pwa-update-banner",
-      "line": 1,
-      "bytes": 487
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] button,:root[data-color-theme=light] input,:root[data-color-theme=light] select,:root[data-color-theme=light] textarea,:root[data-color-theme=light] .pbtn,:root[data-color-theme=light] .dev-tool-btn,:root[data-color-theme=light] .panel-toggle,:root[data-color-theme=light] .trust-toggle,:root[data-color-theme=light] .trust-launcher",
       "line": 1,
       "bytes": 487
     },
@@ -58,18 +231,6 @@
       "selector": ".dev-flyout",
       "line": 1,
       "bytes": 430
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab",
-      "line": 1,
-      "bytes": 418
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] h1,:root[data-color-theme=light] h2,:root[data-color-theme=light] h3,:root[data-color-theme=light] .diag-val,:root[data-color-theme=light] .trust-drawer-title,:root[data-color-theme=light] .rgv8-cmd-title span,:root[data-color-theme=light] .audience-chooser-title,:root[data-color-theme=light] .shortcut-help-title,:root[data-color-theme=light] .tour-title",
-      "line": 1,
-      "bytes": 415
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -97,31 +258,13 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-palette-launcher",
-      "line": 1,
-      "bytes": 361
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] #rgv8Cmd,:root[data-color-theme=light] .rgv8-overlay,:root[data-color-theme=light] .si-help-backdrop,:root[data-color-theme=light] .trust-inspector-backdrop,:root[data-color-theme=light] .audience-chooser,:root[data-color-theme=light] .shortcut-help-backdrop,:root[data-color-theme=light] .tour-overlay",
-      "line": 1,
-      "bytes": 354
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .rail,:root[data-color-theme=light] .rail-submenu,:root[data-color-theme=light] .trust-drawer,:root[data-color-theme=light] .trust-drawer-head,:root[data-color-theme=light] .trust-drawer-tabs,:root[data-color-theme=light] .trust-drawer-body,:root[data-color-theme=light] .ctrl-sticky",
-      "line": 1,
-      "bytes": 349
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-trigger[data-tip]:hover:after",
       "line": 1,
       "bytes": 340
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] button:hover,:root[data-color-theme=light] input:hover,:root[data-color-theme=light] select:hover,:root[data-color-theme=light] textarea:hover,:root[data-color-theme=light] .pbtn:hover,:root[data-color-theme=light] .dev-tool-btn:hover",
+      "selector": ".rgv8-cmd-panel,.rgv8-modal,.si-help,.shortcut-help,.tour-card,.audience-chooser-card",
       "line": 1,
       "bytes": 333
     },
@@ -130,18 +273,6 @@
       "selector": ".pwa-recovery-summary",
       "line": 1,
       "bytes": 333
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section[data-rail-section] .rail-submenu:before",
-      "line": 1,
-      "bytes": 299
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-palette-launcher",
-      "line": 1,
-      "bytes": 298
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -157,27 +288,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail",
-      "line": 1,
-      "bytes": 286
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rail-submenu .tab:hover,.rail-submenu .tab:focus-visible,.rail-submenu .dev-tool-btn.rail-action:hover,.rail-submenu .dev-tool-btn.rail-action:focus-visible",
       "line": 1,
       "bytes": 281
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .beginner-research-hint",
-      "line": 1,
-      "bytes": 281
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section[data-rail-section] .rail-submenu",
-      "line": 1,
-      "bytes": 280
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -193,24 +306,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-desc",
-      "line": 1,
-      "bytes": 271
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab,.rail-submenu .dev-tool-btn.rail-action",
-      "line": 1,
-      "bytes": 268
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button:hover,.rail-menu-button[aria-expanded=true],.rail-palette-launcher:hover,.rail-palette-launcher:focus-visible",
-      "line": 1,
-      "bytes": 267
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-item",
       "line": 1,
       "bytes": 265
@@ -220,24 +315,6 @@
       "selector": ".rail-logo:active,.rail-menu-button:active,.rail-submenu .tab:active,.rail-submenu .dev-tool-btn.rail-action:active,.pbtn:active,.btnrow button:active,.workflow-strip button:active,.panel-toggle:active,.audience-choice:active",
       "line": 1,
       "bytes": 263
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .row input[type=range]",
-      "line": 1,
-      "bytes": 252
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] canvas,:root[data-color-theme=light] .main-wrap canvas,:root[data-color-theme=light] .plot-cell canvas,:root[data-color-theme=light] #energyBenchmarkCanvas",
-      "line": 1,
-      "bytes": 249
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab,.rail-submenu .dev-tool-btn.rail-action",
-      "line": 1,
-      "bytes": 248
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -259,33 +336,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button[aria-expanded=true]:before",
-      "line": 1,
-      "bytes": 238
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-card .plx-title",
       "line": 1,
       "bytes": 235
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root",
-      "line": 1,
-      "bytes": 235
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab[aria-selected=true]:before",
-      "line": 1,
-      "bytes": 223
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] #toast,:root[data-color-theme=light] .pwa-update-banner",
-      "line": 1,
-      "bytes": 223
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -307,21 +360,15 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".audience-choice:hover,.audience-choice:focus-visible,.audience-choice[aria-pressed=true]",
+      "line": 1,
+      "bytes": 216
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-badge",
       "line": 1,
       "bytes": 214
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plots-row",
-      "line": 1,
-      "bytes": 207
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".patch-changelog",
-      "line": 1,
-      "bytes": 206
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -334,6 +381,12 @@
       "selector": ".diag-row>span",
       "line": 1,
       "bytes": 206
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".rgv8-cmd-title span,.audience-chooser-title,.shortcut-help-title,.tour-title,.si-help h2",
+      "line": 1,
+      "bytes": 205
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -367,12 +420,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] #nanOverlay,:root[data-color-theme=light] .rgv7-fault",
-      "line": 1,
-      "bytes": 201
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer #ueFloatingDiag",
       "line": 1,
       "bytes": 198
@@ -385,15 +432,15 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":where(.rail-logo,.rail-menu-button,.rail-submenu .tab,.rail-submenu .dev-tool-btn.rail-action,.pbtn,.btnrow button,.workflow-strip button,.panel-toggle,.audience-choice)",
-      "line": 1,
-      "bytes": 196
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".grp-title",
       "line": 1,
       "bytes": 195
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".rgv8-cmd-title small,.rgv8-cmd-status,.rgv8-cmd-hint,.audience-chooser-copy,.audience-chooser-eyebrow,.tour-step-tag",
+      "line": 1,
+      "bytes": 194
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -406,18 +453,6 @@
       "selector": "#qualBadge.low",
       "line": 1,
       "bytes": 193
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rgv7-fault pre",
-      "line": 1,
-      "bytes": 192
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button:hover,.rail-menu-button[aria-expanded=true]",
-      "line": 1,
-      "bytes": 191
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -439,13 +474,13 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".dev-item-icon",
+      "selector": ".audience-choice",
       "line": 1,
-      "bytes": 185
+      "bytes": 187
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] body,:root[data-color-theme=light] .app-shell,:root[data-color-theme=light] .main-col",
+      "selector": ".dev-item-icon",
       "line": 1,
       "bytes": 185
     },
@@ -454,12 +489,6 @@
       "selector": "#modern-lab-probe.modern-lab-probe",
       "line": 1,
       "bytes": 185
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-wrap,.plot-cell,.controls,.rail,.rail-submenu,.trust-drawer,.rgv8-cmd-panel,.audience-chooser-card",
-      "line": 1,
-      "bytes": 184
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -472,18 +501,6 @@
       "selector": ".rgv8-cmd-row:hover,.rgv8-cmd-row:focus-visible,.rgv8-cmd-row.is-active",
       "line": 1,
       "bytes": 183
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab[aria-selected=true]",
-      "line": 1,
-      "bytes": 182
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".pbtn:hover,button:hover,.dev-tool-btn:hover",
-      "line": 1,
-      "bytes": 182
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -502,18 +519,6 @@
       "selector": "#rgv8Cmd input",
       "line": 1,
       "bytes": 180
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plx-panel",
-      "line": 1,
-      "bytes": 179
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plots-row",
-      "line": 1,
-      "bytes": 179
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -541,12 +546,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button:hover .rail-icon-svg,.rail-menu-button[aria-expanded=true] .rail-icon-svg,.rail-submenu .tab:hover .rail-icon-svg",
-      "line": 1,
-      "bytes": 171
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".diag-row",
       "line": 1,
       "bytes": 168
@@ -554,12 +553,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".custom-select-option:hover,.custom-select-option.is-active",
-      "line": 1,
-      "bytes": 168
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".custom-select-listbox,.custom-select-button,.custom-select-option,.context-tooltip",
       "line": 1,
       "bytes": 168
     },
@@ -619,19 +612,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail,.controls,.main-wrap,.rail-submenu,.trust-drawer,.si-help,.pwa-update-banner",
-      "line": 1,
-      "bytes": 162
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-tabs [role=tab][aria-selected=true]",
-      "line": 1,
-      "bytes": 161
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .acc>summary:hover,:root[data-color-theme=light] .acc[open]>summary",
       "line": 1,
       "bytes": 161
     },
@@ -673,12 +654,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "*,:before,:after",
-      "line": 1,
-      "bytes": 159
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "body.panel-closing .tabpanel.active .layout>.controls,body.panel-motion-prep .tabpanel.active .layout>.controls",
       "line": 1,
       "bytes": 159
@@ -700,18 +675,6 @@
       "selector": ".rgv7-kv",
       "line": 1,
       "bytes": 157
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .acc>summary,:root[data-color-theme=light] .acc-body",
-      "line": 1,
-      "bytes": 155
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tabpanel,#toast,.rail-logo,.rail-menu-button,.rail-palette-launcher,.rail-submenu .tab,.pbtn,button,input,select,textarea",
-      "line": 1,
-      "bytes": 154
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -739,18 +702,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":where(button,select,input,textarea,summary,[role=button],[role=tab]):focus-visible",
-      "line": 1,
-      "bytes": 151
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab[aria-selected=true]",
-      "line": 1,
-      "bytes": 150
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".custom-select-button:hover,.custom-select-button[aria-expanded=true]",
       "line": 1,
       "bytes": 150
@@ -758,12 +709,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-card",
-      "line": 1,
-      "bytes": 149
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail,.workflow-strip,.presets,.controls,.trust-toggle,.trust-drawer,#toast,#nanOverlay,.scrub-row,.btnrow,.pwa-update-banner",
       "line": 1,
       "bytes": 149
     },
@@ -788,12 +733,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-trigger:hover,.dev-hub:hover .dev-trigger",
-      "line": 1,
-      "bytes": 146
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "[aria-selected=true],[aria-pressed=true],[aria-current=step],.rail-section.open>.rail-menu-button",
       "line": 1,
       "bytes": 146
     },
@@ -835,12 +774,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu",
-      "line": 1,
-      "bytes": 142
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".v10-warning",
       "line": 1,
       "bytes": 141
@@ -860,12 +793,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rgv7-kv span:last-child",
-      "line": 1,
-      "bytes": 139
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".controls,.trust-inspector-panel,.rgv8-cmd-panel,.audience-chooser-card,.shortcut-help,.tour-card",
       "line": 1,
       "bytes": 139
     },
@@ -895,27 +822,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .canvas-label",
-      "line": 1,
-      "bytes": 136
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#audienceModeChooser,#rgv8Cmd,#shortcutHelpDialog,.trust-inspector-backdrop,.si-help-backdrop,.pwa-update-banner",
-      "line": 1,
-      "bytes": 136
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rgv7-fault h3",
       "line": 1,
       "bytes": 134
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-wrap,.plot-cell,.research-card,.ri-panel,.rg-card",
-      "line": 1,
-      "bytes": 133
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -926,12 +835,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".matrix-metric,.golden-card",
-      "line": 1,
-      "bytes": 132
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "canvas",
       "line": 1,
       "bytes": 132
     },
@@ -949,19 +852,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] button.primary",
-      "line": 1,
-      "bytes": 130
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".control-theory-link:hover,.control-theory-link:focus-visible",
-      "line": 1,
-      "bytes": 130
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-logo,.rail-menu-button,.rail-submenu .tab,.rail-submenu .dev-tool-btn,.workflow-strip button",
       "line": 1,
       "bytes": 130
     },
@@ -970,12 +861,6 @@
       "selector": ":root[data-color-theme=light] body .audience-select select",
       "line": 1,
       "bytes": 129
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .ctrl-sticky",
-      "line": 1,
-      "bytes": 128
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -991,18 +876,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] .row input[type=range]::-webkit-slider-thumb",
-      "line": 1,
-      "bytes": 127
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab[data-tip]:after,.dev-trigger[data-tip]:after,.dev-tool-btn[data-tip]:after",
-      "line": 1,
-      "bytes": 126
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-search-controls",
       "line": 1,
       "bytes": 126
@@ -1010,12 +883,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-title",
-      "line": 1,
-      "bytes": 125
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] h1:before,:root[data-color-theme=light] .diag-row>span:before",
       "line": 1,
       "bytes": 125
     },
@@ -1045,33 +912,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "*,:before,:after",
-      "line": 1,
-      "bytes": 121
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button[aria-expanded=true]",
-      "line": 1,
-      "bytes": 121
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-metric b",
       "line": 1,
       "bytes": 120
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section[data-rail-section=govern] .rail-submenu",
-      "line": 1,
-      "bytes": 119
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "button:hover",
-      "line": 1,
-      "bytes": 118
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -1093,7 +936,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".custom-select-chevron,.panel-toggle-icon,body.panel-motion-ready .tabpanel.active .layout>.controls",
+      "selector": "body[data-modal-depth],body.command-palette-open,body.audience-chooser-open",
       "line": 1,
       "bytes": 117
     },
@@ -1120,18 +963,6 @@
       "selector": ".trust-drawer-tabs",
       "line": 1,
       "bytes": 114
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plx-panel h2",
-      "line": 1,
-      "bytes": 113
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plx-panel h3",
-      "line": 1,
-      "bytes": 113
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -1171,12 +1002,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab",
-      "line": 1,
-      "bytes": 111
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".matrix-metric strong,.golden-card strong",
       "line": 1,
       "bytes": 111
@@ -1192,18 +1017,6 @@
       "selector": ".control-validation",
       "line": 1,
       "bytes": 110
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-label",
-      "line": 1,
-      "bytes": 109
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".row",
-      "line": 1,
-      "bytes": 109
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -1244,18 +1057,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-help h2",
-      "line": 1,
-      "bytes": 108
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab[aria-selected=true]:before",
-      "line": 1,
-      "bytes": 108
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-desc,.rail-submenu-hint",
       "line": 1,
       "bytes": 108
     },
@@ -1303,19 +1104,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "html,body,.app-shell,.main-col",
-      "line": 1,
-      "bytes": 105
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".exp-lyap-spectrum",
-      "line": 1,
-      "bytes": 104
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "input[type=text],input[type=search],input[type=number],textarea,.si-search,#rgv8CmdInput",
       "line": 1,
       "bytes": 104
     },
@@ -1339,18 +1128,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab[aria-selected=true]:before",
-      "line": 1,
-      "bytes": 102
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open:after",
-      "line": 1,
-      "bytes": 102
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-head",
       "line": 1,
       "bytes": 102
@@ -1358,12 +1135,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-table th",
-      "line": 1,
-      "bytes": 101
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail",
       "line": 1,
       "bytes": 101
     },
@@ -1447,30 +1218,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open .rail-submenu",
-      "line": 1,
-      "bytes": 94
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "button,input,select,textarea,.tab,.trust-drawer,.trust-launcher",
-      "line": 1,
-      "bytes": 92
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-label",
-      "line": 1,
-      "bytes": 92
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "select,input,textarea,button",
-      "line": 1,
-      "bytes": 92
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "body .audience-select select:hover",
       "line": 1,
       "bytes": 91
@@ -1490,12 +1237,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-metric span",
-      "line": 1,
-      "bytes": 90
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-icon",
       "line": 1,
       "bytes": 90
     },
@@ -1543,39 +1284,15 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "h1",
-      "line": 1,
-      "bytes": 88
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".diag-row>span:before",
       "line": 1,
       "bytes": 88
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button:hover,.rail-menu-button[aria-expanded=true]",
-      "line": 1,
-      "bytes": 87
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-inspector-panel",
       "line": 1,
       "bytes": 87
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-icon",
-      "line": 1,
-      "bytes": 86
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-palette-launcher",
-      "line": 1,
-      "bytes": 86
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -1634,12 +1351,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".grp",
-      "line": 1,
-      "bytes": 83
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".matrix-visual-grid,.matrix-metrics,.golden-preset-cards",
       "line": 1,
       "bytes": 83
     },
@@ -1723,18 +1434,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-palette-launcher .tab-label,.rail-palette-launcher .rail-kbd",
-      "line": 1,
-      "bytes": 80
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section[data-rail-section=govern] .rail-submenu",
-      "line": 1,
-      "bytes": 80
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-toggle[aria-expanded=true]",
       "line": 1,
       "bytes": 80
@@ -1760,12 +1459,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-badge.good",
-      "line": 1,
-      "bytes": 79
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plx-panel p,.plx-panel li",
       "line": 1,
       "bytes": 79
     },
@@ -1814,12 +1507,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-grid",
-      "line": 1,
-      "bytes": 77
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".honesty-note.warn",
       "line": 1,
       "bytes": 77
     },
@@ -1879,12 +1566,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":where(.warn,.degraded,.experimental)",
-      "line": 1,
-      "bytes": 76
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".chip.warn",
       "line": 1,
       "bytes": 75
@@ -1909,18 +1590,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab,.rail-submenu .dev-tool-btn.rail-action",
-      "line": 1,
-      "bytes": 75
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open .rail-submenu,.tabpanel.active",
-      "line": 1,
-      "bytes": 75
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rail-logo:focus-visible",
       "line": 1,
       "bytes": 74
@@ -1928,12 +1597,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-collapsible>.grp-title:before",
-      "line": 1,
-      "bytes": 74
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner header",
       "line": 1,
       "bytes": 74
     },
@@ -1951,12 +1614,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root[data-color-theme=light] select option",
-      "line": 1,
-      "bytes": 74
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".row input[type=range]::-webkit-slider-thumb:hover",
       "line": 1,
       "bytes": 73
@@ -1964,18 +1621,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "input[type=number]:focus,input[type=text]:focus",
-      "line": 1,
-      "bytes": 73
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip button",
-      "line": 1,
-      "bytes": 73
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".trust-drawer",
       "line": 1,
       "bytes": 73
     },
@@ -2011,19 +1656,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu",
-      "line": 1,
-      "bytes": 72
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "[aria-invalid=true]",
-      "line": 1,
-      "bytes": 72
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".beginner-research-hint button",
       "line": 1,
       "bytes": 72
     },
@@ -2065,18 +1698,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip",
-      "line": 1,
-      "bytes": 70
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button",
-      "line": 1,
-      "bytes": 69
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-collapsible.si-collapsed>:not(.grp-title)",
       "line": 1,
       "bytes": 69
@@ -2089,25 +1710,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-logo,.rail-sep,.rail-group-sep,.rail-group-label",
-      "line": 1,
-      "bytes": 68
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-hub:focus-within .dev-flyout",
-      "line": 1,
-      "bytes": 68
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".canvas-label",
-      "line": 1,
-      "bytes": 68
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-controls .btnrow",
       "line": 1,
       "bytes": 68
     },
@@ -2119,24 +1722,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 67
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".beginner-research-hint strong",
-      "line": 1,
-      "bytes": 67
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 66
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rgv7-test-body",
       "line": 1,
       "bytes": 66
@@ -2144,12 +1729,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".audience-select select",
-      "line": 1,
-      "bytes": 66
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip",
       "line": 1,
       "bytes": 66
     },
@@ -2180,12 +1759,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "body.panel-collapsed .layout",
-      "line": 1,
-      "bytes": 65
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-logo",
       "line": 1,
       "bytes": 65
     },
@@ -2227,51 +1800,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-wrap",
-      "line": 1,
-      "bytes": 64
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".presets",
-      "line": 1,
-      "bytes": 63
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .left-col,#tab-lab .layout>.controls",
-      "line": 1,
-      "bytes": 63
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".trust-drawer",
-      "line": 1,
-      "bytes": 63
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":focus-visible",
-      "line": 1,
-      "bytes": 62
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "button:disabled",
-      "line": 1,
-      "bytes": 62
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-badge.warn",
       "line": 1,
       "bytes": 62
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#toast.show",
-      "line": 1,
-      "bytes": 61
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -2302,12 +1833,6 @@
       "selector": "body.panel-collapsed #tab-lab .layout>.controls",
       "line": 1,
       "bytes": 61
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "canvas",
-      "line": 1,
-      "bytes": 60
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -2365,24 +1890,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".badge,#qualBadge,#fpsBadge",
-      "line": 1,
-      "bytes": 58
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip span,.workflow-strip small",
-      "line": 1,
-      "bytes": 57
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root",
-      "line": 1,
-      "bytes": 57
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".acc>summary:hover",
       "line": 1,
       "bytes": 56
@@ -2407,31 +1914,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open .rail-submenu",
-      "line": 1,
-      "bytes": 54
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rail-tab-list,.rail-action-grid",
-      "line": 1,
-      "bytes": 54
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-icon",
-      "line": 1,
-      "bytes": 54
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip button[hidden]",
-      "line": 1,
-      "bytes": 54
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".row label:has(input[type=checkbox])",
       "line": 1,
       "bytes": 54
     },
@@ -2467,18 +1950,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .ctrl-sticky",
-      "line": 1,
-      "bytes": 52
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .acc>summary",
-      "line": 1,
-      "bytes": 52
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-highlight",
       "line": 1,
       "bytes": 52
@@ -2491,19 +1962,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .layout",
-      "line": 1,
-      "bytes": 52
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-badge-row",
-      "line": 1,
-      "bytes": 51
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .presets",
       "line": 1,
       "bytes": 51
     },
@@ -2515,37 +1974,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#toast.show",
-      "line": 1,
-      "bytes": 51
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".diag-row,.presets,.workflow-strip",
-      "line": 1,
-      "bytes": 51
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".presets,.plots-row,.diag-row",
-      "line": 1,
-      "bytes": 51
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".acc>summary::-webkit-details-marker",
-      "line": 1,
-      "bytes": 50
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .main-col",
-      "line": 1,
-      "bytes": 50
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .controls",
       "line": 1,
       "bytes": 50
     },
@@ -2557,7 +1986,19 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".audience-choice-icon",
+      "line": 1,
+      "bytes": 50
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-search-wrap",
+      "line": 1,
+      "bytes": 49
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".audience-choice-grid,.rgv8-cmd-list",
       "line": 1,
       "bytes": 49
     },
@@ -2593,12 +2034,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plot-cell",
-      "line": 1,
-      "bytes": 47
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".matrix-metric-wide span",
       "line": 1,
       "bytes": 47
@@ -2611,25 +2046,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-button",
-      "line": 1,
-      "bytes": 46
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".pwa-update-dismiss",
-      "line": 1,
-      "bytes": 45
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-label",
-      "line": 1,
-      "bytes": 45
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".matrix-state-grid",
       "line": 1,
       "bytes": 45
     },
@@ -2659,43 +2076,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "body.audience-beginner .row",
-      "line": 1,
-      "bytes": 44
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".layout",
-      "line": 1,
-      "bytes": 44
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".audience-select",
-      "line": 1,
-      "bytes": 44
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-tool-btn[data-tip]:after",
-      "line": 1,
-      "bytes": 43
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-canvas-grid",
-      "line": 1,
-      "bytes": 43
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".trust-drawer",
-      "line": 1,
-      "bytes": 43
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "*,:before,:after",
       "line": 1,
       "bytes": 43
     },
@@ -2713,49 +2094,13 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".controls",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab-label,.rail-group-label",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".diag-row::-webkit-scrollbar",
       "line": 1,
       "bytes": 42
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-state-grid",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".matrix-state-grid",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-body>section>*",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 42
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip button",
       "line": 1,
       "bytes": 42
     },
@@ -2779,55 +2124,13 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tabpanel.active",
-      "line": 1,
-      "bytes": 41
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .left-col>.canvas-label",
-      "line": 1,
-      "bytes": 41
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip small",
-      "line": 1,
-      "bytes": 41
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-head",
       "line": 1,
       "bytes": 41
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".pbtn",
-      "line": 1,
-      "bytes": 40
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail",
-      "line": 1,
-      "bytes": 40
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rgv7-kv span:last-child",
-      "line": 1,
-      "bytes": 40
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open:after",
-      "line": 1,
-      "bytes": 40
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".row input[type=range]",
       "line": 1,
       "bytes": 40
     },
@@ -2851,37 +2154,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#fpsBadge",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".dev-flyout",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-icon",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-label",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-state-grid",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "a",
       "line": 1,
       "bytes": 39
     },
@@ -2911,12 +2184,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "html:focus-within",
-      "line": 1,
-      "bytes": 39
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "select:focus",
       "line": 1,
       "bytes": 38
@@ -2924,18 +2191,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": "button:active",
-      "line": 1,
-      "bytes": 38
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root",
-      "line": 1,
-      "bytes": 38
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section.open:after",
       "line": 1,
       "bytes": 38
     },
@@ -2971,12 +2226,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".scrub-row",
-      "line": 1,
-      "bytes": 38
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".trust-drawer-tabs",
       "line": 1,
       "bytes": 38
@@ -2984,24 +2233,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".pbtn:active",
-      "line": 1,
-      "bytes": 37
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".app-shell",
-      "line": 1,
-      "bytes": 37
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu .tab-desc",
-      "line": 1,
-      "bytes": 37
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-section",
       "line": 1,
       "bytes": 37
     },
@@ -3020,12 +2251,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-grid",
-      "line": 1,
-      "bytes": 36
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tab-icon",
       "line": 1,
       "bytes": 36
     },
@@ -3061,30 +2286,6 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail",
-      "line": 1,
-      "bytes": 35
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#fpsBadge",
-      "line": 1,
-      "bytes": 35
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".layout",
-      "line": 1,
-      "bytes": 34
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 34
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-top",
       "line": 1,
       "bytes": 34
@@ -3097,39 +2298,9 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 33
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tabs",
-      "line": 1,
-      "bytes": 33
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".tabpanel",
-      "line": 1,
-      "bytes": 33
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 33
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".pwa-update-banner",
       "line": 1,
       "bytes": 33
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".plx-panel ul",
-      "line": 1,
-      "bytes": 32
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
@@ -3140,12 +2311,6 @@
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-panel *",
-      "line": 1,
-      "bytes": 32
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .controls>.acc",
       "line": 1,
       "bytes": 32
     },
@@ -3175,43 +2340,13 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rgv7-fault.show",
-      "line": 1,
-      "bytes": 31
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".diag-row>span,.pbtn",
-      "line": 1,
-      "bytes": 31
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root",
-      "line": 1,
-      "bytes": 31
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-menu-label",
-      "line": 1,
-      "bytes": 30
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-submenu",
-      "line": 1,
-      "bytes": 30
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 30
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".si-help ul",
+      "line": 1,
+      "bytes": 30
+    },
+    {
+      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
+      "selector": ".audience-choice-grid",
       "line": 1,
       "bytes": 30
     },
@@ -3223,61 +2358,7 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".controls",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".ctrl-sticky",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".acc>summary",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".matrix-topline",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-col",
-      "line": 1,
-      "bytes": 29
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".plx-card",
-      "line": 1,
-      "bytes": 28
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .main-wrap",
-      "line": 1,
-      "bytes": 28
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .scrub-row",
-      "line": 1,
-      "bytes": 28
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#tab-lab .plots-row",
       "line": 1,
       "bytes": 28
     },
@@ -3289,163 +2370,19 @@
     },
     {
       "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".matrix-shell",
-      "line": 1,
-      "bytes": 27
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".controls",
-      "line": 1,
-      "bytes": 26
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-topline",
-      "line": 1,
-      "bytes": 26
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".controls",
-      "line": 1,
-      "bytes": 26
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 26
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".presets",
-      "line": 1,
-      "bytes": 25
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".exp-shell",
-      "line": 1,
-      "bytes": 24
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "#fpsBadge",
-      "line": 1,
-      "bytes": 24
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".workflow-strip",
-      "line": 1,
-      "bytes": 24
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".main-wrap",
-      "line": 1,
-      "bytes": 23
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
       "selector": ".rgv8-cmd-list",
       "line": 1,
       "bytes": 23
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".layout",
-      "line": 1,
-      "bytes": 22
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".row label",
-      "line": 1,
-      "bytes": 21
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".h1-sub",
-      "line": 1,
-      "bytes": 21
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".h1-sub",
-      "line": 1,
-      "bytes": 21
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ":root",
-      "line": 1,
-      "bytes": 20
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".rail-logo",
-      "line": 1,
-      "bytes": 20
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 19
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "h1",
-      "line": 1,
-      "bytes": 18
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".layout",
-      "line": 1,
-      "bytes": 17
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".pbtn",
-      "line": 1,
-      "bytes": 16
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": ".val",
-      "line": 1,
-      "bytes": 16
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 15
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "header",
-      "line": 1,
-      "bytes": 15
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "h1",
-      "line": 1,
-      "bytes": 14
-    },
-    {
-      "source": "http://127.0.0.1:4173/assets/app-DJPr63IY.css",
-      "selector": "h1",
-      "line": 1,
-      "bytes": 14
     }
   ],
+  "deletionPolicy": {
+    "eligibleCandidateRules": 360,
+    "requirement": "A rule must remain unused across both independent full state-matrix passes; removal still requires a small reviewed change.",
+    "visualGate": "Linux, Windows, and macOS hosted-runner visual baselines must pass after any deletion."
+  },
   "caveats": [
     "Candidates are not deletion instructions.",
-    "Hover/focus, print, reduced-motion, compact viewport, delayed jobs, and browser-specific selectors may be valid but uncovered."
+    "The matrix covers hover/focus, print, reduced-motion, forced-colors, compact viewports, delayed mounts, and representative overlays.",
+    "Chromium coverage cannot establish Firefox/WebKit-only selector reachability; vendor-specific rules require source review."
   ]
 }

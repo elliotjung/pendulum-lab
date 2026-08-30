@@ -47,6 +47,7 @@ if (reports.length === 0) {
 const statusCounts = new Map();
 const files = [];
 const survivors = [];
+const timeouts = [];
 let total = 0;
 let killedLike = 0;
 let coveredTotal = 0;
@@ -117,6 +118,19 @@ for (const reportPath of reports) {
           suggestionBasis: suggestion.basis
         });
       }
+      if (status === 'Timeout') {
+        timeouts.push({
+          reportPath: normalized(reportPath),
+          filePath: normalized(filePath),
+          id: String(mutant.id ?? ''),
+          mutatorName: String(mutant.mutatorName ?? 'Unknown'),
+          line: Number(mutant.location?.start?.line ?? 0),
+          coveredBy: Array.isArray(mutant.coveredBy) ? mutant.coveredBy.map(String).sort() : [],
+          classification: 'unclassified',
+          reviewQuestion:
+            'Determine whether the timeout exposes expensive failure behavior, an infinite-loop mutation, or insufficient shard isolation before changing a timeout.'
+        });
+      }
     }
     files.push({
       reportPath: normalized(reportPath),
@@ -158,13 +172,20 @@ const triageGroups = [...survivorGroups.values()]
 const mutationScore = total > 0 ? (100 * killedLike) / total : 0;
 const coveredScore = coveredTotal > 0 ? (100 * coveredKilledLike) / coveredTotal : 0;
 const gatePassed = mutationScore >= thresholds.break;
-const status = mutationScore >= thresholds.high ? 'high' : mutationScore >= thresholds.low ? 'standard' : 'low';
+const qualityTargetPassed = mutationScore >= thresholds.low && coveredScore >= thresholds.low;
+const status =
+  mutationScore >= thresholds.high && coveredScore >= thresholds.high
+    ? 'high'
+    : qualityTargetPassed
+      ? 'standard'
+      : 'low';
 const generatedAt = new Date().toISOString();
 const summary = {
   schemaVersion: 'pendulum-mutation-aggregate/v1',
   generatedAt,
   status,
   gatePassed,
+  qualityTargetPassed,
   thresholds,
   reportCount: reports.length,
   total,
@@ -173,6 +194,10 @@ const summary = {
   coveredKilledEquivalent: coveredKilledLike,
   mutationScore: Number(mutationScore.toFixed(2)),
   coveredMutationScore: Number(coveredScore.toFixed(2)),
+  distanceToQualityTarget: {
+    mutationScorePoints: Number(Math.max(0, thresholds.low - mutationScore).toFixed(2)),
+    coveredMutationScorePoints: Number(Math.max(0, thresholds.low - coveredScore).toFixed(2))
+  },
   statusCounts: Object.fromEntries([...statusCounts].sort()),
   files
 };
@@ -191,6 +216,7 @@ writeFileSync(
     'Covered score: ' + summary.coveredMutationScore + '%',
     'Quality band: ' + status,
     'Regression floor: ' + thresholds.break + '% (' + (gatePassed ? 'passed' : 'failed') + ')',
+    '70% quality target (total and covered): ' + (qualityTargetPassed ? 'passed' : 'not yet met'),
     '',
     '```json',
     JSON.stringify(summary.statusCounts, null, 2),
@@ -211,6 +237,58 @@ const triage = {
   survivors
 };
 writeFileSync(path.join(outDir, 'mutation-survivor-triage.json'), JSON.stringify(triage, null, 2) + '\n');
+
+const timeoutGroups = Object.values(
+  timeouts.reduce((groups, timeout) => {
+    const key = `${timeout.filePath}\u0000${timeout.mutatorName}`;
+    const group = groups[key] ?? { filePath: timeout.filePath, mutatorName: timeout.mutatorName, count: 0, lines: [] };
+    group.count += 1;
+    if (timeout.line > 0 && !group.lines.includes(timeout.line)) group.lines.push(timeout.line);
+    groups[key] = group;
+    return groups;
+  }, {})
+).sort((left, right) => right.count - left.count || left.filePath.localeCompare(right.filePath));
+const timeoutTriage = {
+  schemaVersion: 'pendulum-mutation-timeout-triage/v1',
+  generatedAt,
+  timeoutCount: timeouts.length,
+  policy: {
+    classificationRequired: true,
+    allowedClassifications: [
+      'expensive-valid-kill',
+      'infinite-loop-kill',
+      'shard-isolation-defect',
+      'test-harness-defect'
+    ],
+    note: 'Timeouts count as killed for the Stryker score but are not silently treated as healthy evidence. Raising timeouts requires a reviewed classification.'
+  },
+  groups: timeoutGroups,
+  timeouts
+};
+writeFileSync(path.join(outDir, 'mutation-timeout-triage.json'), JSON.stringify(timeoutTriage, null, 2) + '\n');
+writeFileSync(
+  path.join(outDir, 'mutation-timeout-triage.md'),
+  [
+    '# Mutation Timeout Triage',
+    '',
+    `Timeout mutants awaiting classification: ${timeouts.length}.`,
+    '',
+    '| File | Mutator | Count | Lines |',
+    '| --- | --- | ---: | --- |',
+    ...timeoutGroups.slice(0, 100).map(
+      (group) =>
+        `| \`${group.filePath.replaceAll('|', '\\|')}\` | ${group.mutatorName.replaceAll('|', '\\|')} | ${group.count} | ${
+          group.lines
+            .sort((a, b) => a - b)
+            .slice(0, 12)
+            .join(', ') || '-'
+        } |`
+    ),
+    '',
+    '> Do not increase a shard timeout until its rows have a human-reviewed classification.',
+    ''
+  ].join('\n')
+);
 
 function csvCell(value) {
   const text = Array.isArray(value) ? value.join(';') : String(value ?? '');
@@ -276,6 +354,8 @@ console.log(
     reports.length +
     ' shard reports; ' +
     survivors.length +
-    ' survivors written to triage JSON/CSV/MD.'
+    ' survivors and ' +
+    timeouts.length +
+    ' timeouts written to separate triage reports.'
 );
 if (!gatePassed) process.exit(1);

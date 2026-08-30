@@ -27,6 +27,28 @@ If a continuous dispatch is missed, manually run Lab `Evidence Dispatch` with
 the successful Pages run id. The workflow re-downloads that run's handoff and
 will resend it only if its exact bytes are still the live Pages deployment.
 
+## Which push is allowed to block which deployment
+
+An ordinary Landing commit validates the Landing's own static files, links,
+local evidence shape, browser journeys, accessibility checks, and performance
+budgets. It must not invent an expected Lab commit from the current Lab branch
+tip and then fail merely because public Lab Pages still serves an older valid
+deployment. The Landing can render that evidence as stale or unknown, but a
+normal copy or layout change is not a cross-repository release transaction.
+
+Exact Lab/Landing convergence is strict only after this repository has proved
+that a particular Pages handoff is public and sent the `evidence-updated` or
+`pendulum-release` coordinate. That receiver job must compare the dispatched
+source commit and SHA-256 values with the materialized files and public
+deployment; it may not silently substitute the receiver's branch tip. The Lab
+polling log records, on every attempt, expected and observed source commits,
+both payload hashes, response ETags, last-modified values, and the observation
+time so cache convergence can be diagnosed without guessing.
+
+This repository implements the sending half of that contract. The companion
+Landing workflow and repository settings are independently required evidence;
+their behavior is not claimed complete by a green Lab-only test.
+
 ## Automated chain
 
 1. The simulator tag starts `.github/workflows/release.yml`.

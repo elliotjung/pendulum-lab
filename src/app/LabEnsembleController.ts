@@ -2,6 +2,7 @@ import type { Point2D } from '../viz/poincare';
 import { physicsAdapter } from '../physics';
 import type { LabConfig } from './LabSimulation';
 import type { LabRenderer } from './LabRenderer';
+import { buildPerturbedStates, type EnsemblePerturbationSpec } from './ensemblePerturbation';
 
 /**
  * Owns the ensemble of perturbed initial states behind the chaos-divergence
@@ -14,23 +15,27 @@ export class LabEnsembleController {
   private scratch: Float64Array[] = [];
   private tipScratch: Point2D[] = [];
   private meterTipScratch: Point2D[] = [];
+  private firstDelta: Float64Array | null = null;
+  private spec: EnsemblePerturbationSpec = { variable: 'th1', pattern: 'alternating', epsilon: 1e-4, seed: 1 };
 
   /** Build N perturbed copies of the initial state for the ensemble view. */
-  build(config: LabConfig, dim: number, requested: number, cap: number, epsExponent: number): void {
-    const n = Math.max(0, Math.min(cap, Math.round(requested)));
-    const eps = 10 ** epsExponent;
-    this.members = [];
-    this.scratch = [];
+  build(config: LabConfig, dim: number, requested: number, cap: number, spec: EnsemblePerturbationSpec): void {
+    const built = buildPerturbedStates(config.initialState, dim, requested, cap, config.system, spec);
+    this.spec = { ...spec };
+    this.members = built.members;
+    this.firstDelta = built.firstDelta;
+    this.scratch = this.members.map(() => new Float64Array(dim));
     this.tipScratch = [];
     this.meterTipScratch = [];
-    for (let i = 0; i < n; i += 1) {
-      const st = new Float64Array(dim);
-      for (let j = 0; j < dim; j += 1) st[j] = config.initialState[j] ?? 0;
-      // Perturb the first angle by a small ± multiple of eps.
-      st[0] = (config.initialState[0] ?? 0) + eps * (i + 1) * (i % 2 === 0 ? 1 : -1);
-      this.members.push(st);
-      this.scratch.push(new Float64Array(dim));
-    }
+  }
+
+  /** Reproducible rule and first displacement used by UI/readout tooling. */
+  description(): { count: number; spec: EnsemblePerturbationSpec; firstDelta: Float64Array | null } {
+    return {
+      count: this.members.length,
+      spec: { ...this.spec },
+      firstDelta: this.firstDelta ? this.firstDelta.slice() : null
+    };
   }
 
   /** Advance every ensemble member by `steps` integrator steps. */
@@ -94,5 +99,6 @@ export class LabEnsembleController {
     this.scratch.length = cap;
     this.tipScratch.length = cap;
     this.meterTipScratch.length = cap;
+    if (cap <= 0) this.firstDelta = null;
   }
 }

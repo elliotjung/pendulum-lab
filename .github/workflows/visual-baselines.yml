@@ -1,19 +1,22 @@
 # Visual snapshots are operating-system-specific. This workflow regenerates
 # each platform on its native hosted runner, proves the images without update
-# mode, and combines only those native artifacts into one reviewable PR.
+# mode, and combines only those native artifacts into a read-only review package.
+# An explicitly selected final job may open a PR when repository policy permits.
 name: Visual Baselines (Linux, Windows, macOS)
 
 on:
   workflow_dispatch:
     inputs:
-      create_pr:
-        description: Open one pull request containing all native baselines
-        type: boolean
-        default: true
+      promotion_mode:
+        description: Produce a review artifact, or also open a pull request when repository policy permits it
+        type: choice
+        options:
+          - review-artifact
+          - pull-request
+        default: review-artifact
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   regenerate:
@@ -53,6 +56,10 @@ jobs:
         run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
+      - name: Fingerprint native runner, Chromium, fonts, scale, locale, and snapshot bytes
+        run: node scripts/visual-baseline-fingerprint.mjs --platform=${{ matrix.platform }} --source-commit=${{ github.sha }}
+      - name: Require fingerprint-bound native baselines
+        run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome --require-metadata
       # Preserve Playwright's actual and diff PNGs even when regeneration or
       # the no-update proof fails. These files are diagnostic-only: promotion
       # still consumes exclusively the native baseline artifacts below.
@@ -66,42 +73,100 @@ jobs:
           retention-days: 14
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: visual-baselines-${{ matrix.platform }}
+          name: visual-baseline-package-${{ matrix.platform }}
           # The checkout also contains the other platforms' committed images.
           # Uploading the directory would let merge-multiple overwrite a newly
           # generated native image with a stale image from another artifact.
           # Platform suffices are unique, so the promote job can safely merge
           # these three native-only artifact sets into the canonical directory.
-          path: e2e/visual-regression.spec.ts-snapshots/*-${{ matrix.platform }}.png
+          path: |
+            e2e/visual-regression.spec.ts-snapshots/*-${{ matrix.platform }}.png
+            e2e/visual-baseline-metadata/${{ matrix.platform }}.json
           if-no-files-found: error
           retention-days: 30
 
-  promote:
+  package-review:
     needs: regenerate
-    if: ${{ inputs.create_pr }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          pattern: visual-baselines-*
-          path: e2e/visual-regression.spec.ts-snapshots
+          pattern: visual-baseline-package-*
+          path: promotion-input
           merge-multiple: true
+      - name: Assemble the review candidate without repository write permission
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p e2e/visual-regression.spec.ts-snapshots e2e/visual-baseline-metadata
+          find promotion-input -type f -name '*.png' -exec cp {} e2e/visual-regression.spec.ts-snapshots/ \;
+          find promotion-input -type f -name '*.json' -exec cp {} e2e/visual-baseline-metadata/ \;
       - name: Require all three native baseline sets before promotion
         run: |
-          node scripts/check-visual-baselines.mjs --platform=linux --projects=chromium,mobile-chrome
-          node scripts/check-visual-baselines.mjs --platform=win32 --projects=chromium,mobile-chrome
-          node scripts/check-visual-baselines.mjs --platform=darwin --projects=chromium,mobile-chrome
-      - name: Open baseline-promotion PR
+          node scripts/check-visual-baselines.mjs --platform=linux --projects=chromium,mobile-chrome --require-metadata
+          node scripts/check-visual-baselines.mjs --platform=win32 --projects=chromium,mobile-chrome --require-metadata
+          node scripts/check-visual-baselines.mjs --platform=darwin --projects=chromium,mobile-chrome --require-metadata
+      - name: Build a human-reviewable patch and checksum manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p visual-baseline-review
+          git add e2e/visual-regression.spec.ts-snapshots/ e2e/visual-baseline-metadata/
+          git diff --cached --binary > visual-baseline-review/baselines.patch
+          git diff --cached --stat > visual-baseline-review/change-stat.txt
+          cp -R e2e/visual-regression.spec.ts-snapshots visual-baseline-review/
+          cp -R e2e/visual-baseline-metadata visual-baseline-review/
+          (
+            cd visual-baseline-review
+            find visual-regression.spec.ts-snapshots visual-baseline-metadata -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          printf '%s\n' \
+            '# Native visual baseline review package' \
+            '' \
+            '1. Inspect every PNG and its platform fingerprint JSON.' \
+            '2. Apply with `git apply --binary baselines.patch` from the repository root.' \
+            '3. Run the three `check-visual-baselines.mjs --require-metadata` commands documented in `documents/visual-baseline-promotion.md`.' \
+            '4. Commit only after human review.' > visual-baseline-review/README.md
+      - name: Upload the manual-review promotion package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: visual-baseline-review-${{ github.run_id }}
+          path: visual-baseline-review/
+          if-no-files-found: error
+          retention-days: 30
+
+  open-pr:
+    needs: package-review
+    if: ${{ inputs.promotion_mode == 'pull-request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: visual-baseline-review-${{ github.run_id }}
+          path: visual-baseline-review
+      - name: Apply the verified review patch and open a PR
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
+          set -euo pipefail
+          if [ ! -s visual-baseline-review/baselines.patch ]; then
+            echo "Native baselines are unchanged - nothing to promote."
+            exit 0
+          fi
+          git apply --binary visual-baseline-review/baselines.patch
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           branch="ci/visual-baselines-all-${GITHUB_RUN_ID}"
           git checkout -b "$branch"
-          git add e2e/visual-regression.spec.ts-snapshots/
+          git add e2e/visual-regression.spec.ts-snapshots/ e2e/visual-baseline-metadata/
           if git diff --cached --quiet; then
             echo "Baselines unchanged - nothing to promote."
             exit 0
@@ -110,4 +175,4 @@ jobs:
           git push origin "$branch"
           gh pr create \
             --title "ci: promote native cross-platform visual baselines" \
-            --body "Regenerated and re-verified on native ubuntu-latest, windows-latest, and macos-latest runners (run ${GITHUB_RUN_ID}). Review every PNG before merging; no platform image was copied or relabeled."
+            --body "Regenerated and re-verified on native ubuntu-latest, windows-latest, and macos-latest runners (run ${GITHUB_RUN_ID}). Review every PNG and fingerprint before merging; no platform image was copied or relabeled."

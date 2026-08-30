@@ -34,6 +34,8 @@ import { LabRenderInterpolator } from './renderInterpolation';
 import { LabReplayController } from './LabReplayController';
 import { LAB_DIAGNOSTIC_PLOT_COUNT, LabDiagnosticPlots } from './LabDiagnosticPlots';
 import { LabMainSurface } from './LabMainSurface';
+import { normalizePerturbationPattern, normalizePerturbationVariableForSystem } from './ensemblePerturbation';
+import { epsilonCanonicalValue, setPrecisionCanonicalValue } from './precisionControls';
 
 /** Simulation orchestration; rendering policy, lifecycle, plots, and chrome are collaborators. */
 
@@ -69,7 +71,6 @@ export class LabApp {
 
   private readonly ensemble = new LabEnsembleController();
   private rhs: ((s: Float64Array, o: Float64Array) => void) | null = null;
-
   private readonly sidePlots = new LabSidePlotCoordinator(
     {
       energy: () => this.history.energy(),
@@ -138,13 +139,12 @@ export class LabApp {
     this.simulationClock.reset();
     this.quality.resetTrailScale();
     this.diagnosticsScheduler.reset();
-    this.ensemble.build(
-      activeConfig,
-      dim,
-      dom.num('ensN', 0),
-      this.quality.profile().ensembleCap,
-      dom.num('ensEps', -4)
-    );
+    this.ensemble.build(activeConfig, dim, dom.num('ensN', 0), this.quality.profile().ensembleCap, {
+      variable: normalizePerturbationVariableForSystem(dom.str('ensVariable', 'th1'), activeConfig.system),
+      pattern: normalizePerturbationPattern(dom.str('ensPattern', 'alternating')),
+      epsilon: epsilonCanonicalValue(dom.el<HTMLInputElement>('ensEps'), 1e-4),
+      seed: Math.max(0, Math.min(0xffff_ffff, Math.round(dom.num('ensSeed', 1))))
+    });
 
     this.mainSurface.configure(activeConfig, this.quality);
     this.frameCount = 0;
@@ -541,7 +541,10 @@ export class LabApp {
       if (angles[i] === undefined) return;
       const el = dom.el<HTMLInputElement>(id);
       const out = dom.el(`${id}V`);
-      if (el) el.value = String(angles[i]);
+      if (el) {
+        if (el.dataset.precisionKeyboardStep !== undefined) setPrecisionCanonicalValue(el, angles[i]!);
+        else el.value = String(angles[i]);
+      }
       if (out) out.textContent = angles[i]!.toFixed(3);
     });
     this.reset();

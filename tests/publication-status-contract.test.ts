@@ -62,6 +62,25 @@ describe('publication status network contract', () => {
     expect(source).toContain('reports/evidence-summary.json');
   });
 
+  it('keeps stale source snapshots from becoming current Reviewer success badges', () => {
+    const reviewer = readFileSync(resolve('src/reviewer/main.ts'), 'utf8');
+    const styles = readFileSync(resolve('src/reviewer/reviewer.css'), 'utf8');
+    expect(reviewer).toContain("publicationDeployment: './reports/deployment-publication-status.json'");
+    expect(reviewer).toContain("deploymentManifest: './deployment-manifest.json'");
+    expect(reviewer).toContain("type PublicationFreshness = 'current' | 'stale' | 'unknown'");
+    expect(reviewer).toContain("schemaVersion !== 'pendulum-publication-status/v2'");
+    expect(reviewer).toContain('checkedSourceCommit');
+    expect(reviewer).toContain('report.checkedSourceCommit === deployedSourceCommit');
+    expect(reviewer).toContain("freshness === 'current'");
+    expect(reviewer).toContain('current status unknown');
+    expect(reviewer).toContain('How to read this evidence');
+    expect(reviewer).toContain('Finite-time agreement does not guarantee identical long-horizon chaotic trajectories');
+    expect(styles).toContain('.status-published');
+    expect(styles).toContain('.status-failed');
+    expect(styles).toContain('.status-stale');
+    expect(styles).toContain('.status-unknown');
+  });
+
   it('publishes only when npm, Zenodo, GitHub, and Pages bind the exact version and source', () => {
     const report = evaluatePublicationStatus(fixture());
     expect(report.status).toBe('published');

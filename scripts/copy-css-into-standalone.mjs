@@ -1,4 +1,5 @@
 import { readFile, writeFile, rm, readdir } from 'node:fs/promises';
+import { minifyStandaloneHtml } from './standalone-html-minify.mjs';
 
 // The standalone build inlines all JS into one HTML file, but the hand-written
 // CSS is linked statically (not a Vite asset), so the single-file plugin leaves
@@ -26,7 +27,7 @@ for (const m of matches) {
   html = html.replace(m[0], `<style data-inlined-from="${cssPath}">\n${css}\n</style>`);
 }
 
-await writeFile('standalone/index.html', html, 'utf8');
+await writeFile('standalone/index.html', minifyStandaloneHtml(html), 'utf8');
 // Remove the intermediate so only the canonical index.html remains in standalone/.
 await rm(builtPath, { force: true });
 

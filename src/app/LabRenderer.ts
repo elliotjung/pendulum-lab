@@ -12,8 +12,9 @@ import {
  * Canvas renderer for the Lab pendulum. Geometry reproduces the legacy `#main`
  * view: pivot at (width/2, height*0.38), 110 px/m by default, and theta=0
  * hanging straight down. The visual treatment intentionally mirrors the
- * original single-file renderer: long colored trail buckets, cyan ensemble
- * traces, translucent rods, and glowing bobs.
+ * original single-file renderer while assigning stable visual roles: the
+ * reference is solid, the first perturbation is dashed with a diamond marker,
+ * and the remaining ensemble uses dotted traces and circular markers.
  */
 
 export interface LabRenderOptions {
@@ -541,8 +542,10 @@ export class LabRenderer {
       if (trail.filled > 1) {
         const cap = trail.buf.length / 2;
         const start = (trail.idx - trail.filled + cap) % cap;
-        ctx.strokeStyle = 'rgba(0,212,255,0.25)';
-        ctx.lineWidth = 0.8;
+        const firstPerturbation = n === 0;
+        ctx.setLineDash(firstPerturbation ? [7, 4] : [2, 4]);
+        ctx.strokeStyle = firstPerturbation ? 'rgba(255,194,92,0.9)' : 'rgba(0,212,255,0.25)';
+        ctx.lineWidth = firstPerturbation ? 1.6 : 0.8;
         ctx.beginPath();
         for (let i = 0; i < trail.filled; i += 1) {
           const ix = (start + i) % cap;
@@ -553,10 +556,22 @@ export class LabRenderer {
         }
         ctx.stroke();
       }
-      ctx.fillStyle = 'rgba(0,212,255,0.4)';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3, 0, FULL_CIRCLE);
-      ctx.fill();
+      if (n === 0) {
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(255,194,92,0.95)';
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - 4.5);
+        ctx.lineTo(p.x + 4.5, p.y);
+        ctx.lineTo(p.x, p.y + 4.5);
+        ctx.lineTo(p.x - 4.5, p.y);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.fillStyle = 'rgba(0,212,255,0.4)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, FULL_CIRCLE);
+        ctx.fill();
+      }
     }
     ctx.restore();
   }

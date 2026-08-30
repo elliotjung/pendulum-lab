@@ -284,3 +284,38 @@ jobs:
       - name: Deploy the exact source-bound artifact that passed Mainline Full Validation
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+  probe-deployed-publication:
+    needs: [stage-validated-artifact, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: ./.github/actions/setup-node-project
+      - name: Probe the deployed source coordinate separately from the committed source snapshot
+        shell: bash
+        env:
+          PENDULUM_PUBLICATION_REPORT_KIND: deployment-probe
+          PENDULUM_PUBLICATION_SOURCE_COMMIT: ${{ github.event.workflow_run.head_sha }}
+          PENDULUM_PUBLICATION_OUTPUT: reports/deployment-publication-status.json
+          PENDULUM_PUBLICATION_REQUIRE_DEPLOYMENT_BINDING: '1'
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 12); do
+            if npm run release:status; then
+              exit 0
+            fi
+            [ "$attempt" -lt 12 ] || exit 1
+            sleep 10
+          done
+      - name: Preserve the post-deployment publication probe
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: deployment-publication-status
+          path: reports/deployment-publication-status.json
+          if-no-files-found: error
+          retention-days: 30

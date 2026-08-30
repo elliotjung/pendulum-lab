@@ -12,3 +12,14 @@
   permissions, a timeout, and explicit artifact retention/failure behavior.
 - Release workflows consume the exact tarball they attest; rebuilding between
   attestation and publication is prohibited.
+- `.node-version` is the runtime source of truth. The local Actions validator
+  requires the composite setup action's default to match it; a Node runtime
+  change must be reviewed together with standalone `file://` smoke and native
+  visual-baseline jobs because browser/build behavior can change across majors.
+- A GitHub warning about an action's embedded Node runtime is an upstream fact,
+  not something a local YAML scan can clear. Review the upstream release and
+  pinned commit, update the SHA if appropriate, and retain the warning as open
+  until a fresh hosted run no longer reports it.
+- Visual baseline regeneration defaults to a read-only review artifact. Enabling
+  the optional pull-request promotion mode is a repository-policy decision and
+  grants write permissions only to that final job.

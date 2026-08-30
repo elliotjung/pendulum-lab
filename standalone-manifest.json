@@ -13,8 +13,8 @@
     },
     {
       "path": "standalone/index.html",
-      "bytes": 1449384,
-      "sha256": "09b0fbd65f0adab36b7cd4f716d5266bcea8e271051658d5c9f2c40e3da82543"
+      "bytes": 1470285,
+      "sha256": "3b0edd3e09d973446ad69f9f1a4a5e7cf0e08e5abc24ae59e237a675c49db6b4"
     },
     {
       "path": "standalone/labSidePlots.worker.js",
@@ -23,8 +23,8 @@
     },
     {
       "path": "standalone/mainCanvas.worker.js",
-      "bytes": 18103,
-      "sha256": "d407b264eed2e6cea5b26831c379fa1a993a88ce90ee21d934c3ef7d608ece8c"
+      "bytes": 18362,
+      "sha256": "b1c5ece011d23c5d19b17b2eb98dd759840fe7c9349d35c335c6db902ce505c1"
     }
   ]
 }

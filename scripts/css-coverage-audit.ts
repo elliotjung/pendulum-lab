@@ -8,11 +8,12 @@
  * uncommon states, print rules, and browser-specific branches can be absent
  * from one traversal, so this tool never edits CSS and never fails on findings.
  */
+import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { chromium, type Page } from '@playwright/test';
+import { chromium, type Browser, type BrowserContextOptions, type Page } from '@playwright/test';
 
 export interface CoverageRange {
   start: number;
@@ -40,10 +41,16 @@ export interface CssCoverageEntry {
 }
 
 export interface CssCoverageReport {
-  schemaVersion: 'css-coverage/v1';
+  schemaVersion: 'css-coverage/v2';
   generatedAt: string;
   url: string;
   traversal: string;
+  provenance: {
+    engine: 'chromium';
+    independentPasses: number;
+    scenariosPerPass: number;
+    passes: Array<{ id: string; scenarios: CssCoverageScenario[] }>;
+  };
   totals: {
     stylesheets: number;
     cssBytes: number;
@@ -52,7 +59,24 @@ export interface CssCoverageReport {
     unusedCandidateRules: number;
   };
   unusedCandidates: CssUnusedCandidate[];
+  deletionPolicy: {
+    eligibleCandidateRules: number;
+    requirement: string;
+    visualGate: string;
+  };
   caveats: string[];
+}
+
+export interface CssCoverageScenario {
+  id: string;
+  locale: 'en' | 'ko';
+  audienceMode: 'beginner' | 'student' | 'research';
+  theme: 'light' | 'dark';
+  viewport: { width: number; height: number };
+  media: 'screen' | 'print';
+  reducedMotion: 'reduce' | 'no-preference';
+  forcedColors: 'active' | 'none';
+  exercisedStates: string[];
 }
 
 function matchingBrace(text: string, open: number, limit = text.length): number {
@@ -182,6 +206,149 @@ async function representativeTraversal(page: Page): Promise<void> {
   await page.waitForTimeout(150);
 }
 
+const COVERAGE_SCENARIOS: readonly CssCoverageScenario[] = [
+  {
+    id: 'research-en-dark-desktop',
+    locale: 'en',
+    audienceMode: 'research',
+    theme: 'dark',
+    viewport: { width: 1440, height: 1000 },
+    media: 'screen',
+    reducedMotion: 'no-preference',
+    forcedColors: 'none',
+    exercisedStates: ['all-tabs', 'details-open', 'hover', 'focus', 'delayed-mount']
+  },
+  {
+    id: 'student-ko-light-mobile',
+    locale: 'ko',
+    audienceMode: 'student',
+    theme: 'light',
+    viewport: { width: 390, height: 844 },
+    media: 'screen',
+    reducedMotion: 'no-preference',
+    forcedColors: 'none',
+    exercisedStates: ['all-visible-tabs', 'details-open', 'compact-viewport']
+  },
+  {
+    id: 'beginner-en-dark-reduced-mobile',
+    locale: 'en',
+    audienceMode: 'beginner',
+    theme: 'dark',
+    viewport: { width: 320, height: 640 },
+    media: 'screen',
+    reducedMotion: 'reduce',
+    forcedColors: 'none',
+    exercisedStates: ['beginner-surface', 'compact-viewport', 'reduced-motion']
+  },
+  {
+    id: 'research-ko-light-forced-colors',
+    locale: 'ko',
+    audienceMode: 'research',
+    theme: 'light',
+    viewport: { width: 1280, height: 900 },
+    media: 'screen',
+    reducedMotion: 'no-preference',
+    forcedColors: 'active',
+    exercisedStates: ['all-tabs', 'forced-colors', 'pwa-update', 'error-overlay']
+  },
+  {
+    id: 'research-en-dark-print',
+    locale: 'en',
+    audienceMode: 'research',
+    theme: 'dark',
+    viewport: { width: 1280, height: 900 },
+    media: 'print',
+    reducedMotion: 'reduce',
+    forcedColors: 'none',
+    exercisedStates: ['all-tabs', 'print', 'reduced-motion']
+  }
+];
+
+function scenarioContext(scenario: CssCoverageScenario): BrowserContextOptions {
+  return {
+    viewport: scenario.viewport,
+    colorScheme: scenario.theme,
+    reducedMotion: scenario.reducedMotion,
+    forcedColors: scenario.forcedColors,
+    // A coverage traversal must measure one source snapshot. An older local
+    // service worker can otherwise activate mid-pass and replace the document,
+    // destroying the CDP execution context while tabs are being exercised.
+    serviceWorkers: 'block'
+  };
+}
+
+async function exerciseScenario(page: Page, url: string, scenario: CssCoverageScenario): Promise<CssCoverageEntry[]> {
+  await page.addInitScript(({ audienceMode, theme, locale }) => {
+    localStorage.setItem('pendulum-lab/ui/audience-mode', audienceMode);
+    localStorage.setItem('pendulum-lab/ui/color-theme', theme);
+    localStorage.setItem('pendulum-lab/ui/nav-locale', locale);
+  }, scenario);
+  await page.emulateMedia({
+    media: scenario.media,
+    colorScheme: scenario.theme,
+    reducedMotion: scenario.reducedMotion,
+    forcedColors: scenario.forcedColors
+  });
+  await page.coverage.startCSSCoverage({ resetOnNavigation: false });
+  const target = new URL(url);
+  target.searchParams.set('lang', scenario.locale);
+  await page.goto(target.href, { waitUntil: 'domcontentloaded' });
+  await representativeTraversal(page);
+  const focusable = page.locator('button:not([disabled]), input:not([disabled]), select:not([disabled])').first();
+  if (await focusable.isVisible().catch(() => false)) {
+    await focusable.focus();
+    await focusable.hover().catch(() => undefined);
+  }
+  await page.evaluate(() => {
+    document.querySelector<HTMLElement>('.pwa-update-banner')?.removeAttribute('hidden');
+    document.querySelector<HTMLElement>('.rgv7-fault')?.classList.add('show');
+    document.querySelector<HTMLElement>('#nanOverlay')?.removeAttribute('hidden');
+  });
+  await page.waitForTimeout(250);
+  return (await page.coverage.stopCSSCoverage()).map((entry) => ({
+    url: entry.url,
+    ...(entry.text === undefined ? {} : { text: entry.text }),
+    ranges: entry.ranges
+  }));
+}
+
+function stylesheetKey(entry: CssCoverageEntry): string {
+  return createHash('sha256')
+    .update(entry.text ?? '')
+    .digest('hex');
+}
+
+function mergeCoverageEntries(entries: readonly CssCoverageEntry[]): CssCoverageEntry[] {
+  const merged = new Map<string, CssCoverageEntry>();
+  for (const entry of entries) {
+    const key = stylesheetKey(entry);
+    const current = merged.get(key);
+    if (!current) {
+      merged.set(key, {
+        url: entry.url,
+        ...(entry.text === undefined ? {} : { text: entry.text }),
+        ranges: [...entry.ranges]
+      });
+    } else {
+      current.ranges.push(...entry.ranges);
+    }
+  }
+  return [...merged.values()].map((entry) => ({ ...entry, ranges: mergeRanges(entry.ranges) }));
+}
+
+async function collectPass(browser: Browser, url: string): Promise<CssCoverageEntry[]> {
+  const entries: CssCoverageEntry[] = [];
+  for (const scenario of COVERAGE_SCENARIOS) {
+    const context = await browser.newContext(scenarioContext(scenario));
+    try {
+      entries.push(...(await exerciseScenario(await context.newPage(), url, scenario)));
+    } finally {
+      await context.close();
+    }
+  }
+  return mergeCoverageEntries(entries);
+}
+
 function reportMarkdown(report: CssCoverageReport): string {
   const rows = report.unusedCandidates
     .map(
@@ -192,8 +359,8 @@ function reportMarkdown(report: CssCoverageReport): string {
   return (
     `# CSS coverage audit\n\n` +
     `Generated: ${report.generatedAt}\n\n` +
-    `Representative tab traversal used ${report.totals.usedPercent.toFixed(2)}% of ${report.totals.cssBytes} CSS bytes across ${report.totals.stylesheets} stylesheet entries. ` +
-    `${report.totals.unusedCandidateRules} rules are review candidates only.\n\n` +
+    `${report.provenance.independentPasses} independent state-matrix passes used ${report.totals.usedPercent.toFixed(2)}% of ${report.totals.cssBytes} CSS bytes across ${report.totals.stylesheets} stylesheet entries. ` +
+    `${report.totals.unusedCandidateRules} rules remained unused in the union and are review candidates only.\n\n` +
     `> ${report.caveats.join(' ')}\n\n` +
     `| Selector candidate | Source | Line | Rule bytes |\n|---|---|---:|---:|\n${rows || '| _None_ | | | |'}\n`
   );
@@ -243,42 +410,62 @@ async function ensureLocalPreview(url: string): Promise<ChildProcess | null> {
 }
 
 export async function runCssCoverageAudit(url: string): Promise<CssCoverageReport> {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    await page.coverage.startCSSCoverage({ resetOnNavigation: false });
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
-    await representativeTraversal(page);
-    const entries = await page.coverage.stopCSSCoverage();
-    const cssBytes = entries.reduce((sum, entry) => sum + (entry.text?.length ?? 0), 0);
-    const usedBytes = entries.reduce(
-      (sum, entry) => sum + mergeRanges(entry.ranges).reduce((inner, range) => inner + range.end - range.start, 0),
-      0
-    );
-    const unusedCandidates = entries
-      .flatMap((entry) => unusedCandidatesForEntry(entry))
-      .sort((a, b) => b.bytes - a.bytes || a.source.localeCompare(b.source) || a.line - b.line);
-    return {
-      schemaVersion: 'css-coverage/v1',
-      generatedAt: new Date().toISOString(),
-      url,
-      traversal: 'desktop Chromium: load, visit every workspace tab, reopen Lab, expand details',
-      totals: {
-        stylesheets: entries.length,
-        cssBytes,
-        usedBytes,
-        usedPercent: cssBytes > 0 ? (usedBytes / cssBytes) * 100 : 0,
-        unusedCandidateRules: unusedCandidates.length
-      },
-      unusedCandidates,
-      caveats: [
-        'Candidates are not deletion instructions.',
-        'Hover/focus, print, reduced-motion, compact viewport, delayed jobs, and browser-specific selectors may be valid but uncovered.'
-      ]
-    };
-  } finally {
-    await browser.close();
+  const independentPasses = 2;
+  const passEntries: CssCoverageEntry[][] = [];
+  for (let pass = 0; pass < independentPasses; pass += 1) {
+    const browser = await chromium.launch({ headless: true });
+    try {
+      passEntries.push(await collectPass(browser, url));
+    } finally {
+      await browser.close();
+    }
   }
+  const entries = mergeCoverageEntries(passEntries.flat());
+  const cssBytes = entries.reduce((sum, entry) => sum + (entry.text?.length ?? 0), 0);
+  const usedBytes = entries.reduce(
+    (sum, entry) => sum + mergeRanges(entry.ranges).reduce((inner, range) => inner + range.end - range.start, 0),
+    0
+  );
+  const unusedCandidates = entries
+    .flatMap((entry) => unusedCandidatesForEntry(entry))
+    .sort((a, b) => b.bytes - a.bytes || a.source.localeCompare(b.source) || a.line - b.line);
+  return {
+    schemaVersion: 'css-coverage/v2',
+    generatedAt: new Date().toISOString(),
+    url,
+    traversal: 'two independent Chromium launches; union of locale/mode/theme/viewport/media/state matrix',
+    provenance: {
+      engine: 'chromium',
+      independentPasses,
+      scenariosPerPass: COVERAGE_SCENARIOS.length,
+      passes: Array.from({ length: independentPasses }, (_value, index) => ({
+        id: `pass-${index + 1}`,
+        scenarios: COVERAGE_SCENARIOS.map((scenario) => ({
+          ...scenario,
+          exercisedStates: [...scenario.exercisedStates]
+        }))
+      }))
+    },
+    totals: {
+      stylesheets: entries.length,
+      cssBytes,
+      usedBytes,
+      usedPercent: cssBytes > 0 ? (usedBytes / cssBytes) * 100 : 0,
+      unusedCandidateRules: unusedCandidates.length
+    },
+    unusedCandidates,
+    deletionPolicy: {
+      eligibleCandidateRules: unusedCandidates.length,
+      requirement:
+        'A rule must remain unused across both independent full state-matrix passes; removal still requires a small reviewed change.',
+      visualGate: 'Linux, Windows, and macOS hosted-runner visual baselines must pass after any deletion.'
+    },
+    caveats: [
+      'Candidates are not deletion instructions.',
+      'The matrix covers hover/focus, print, reduced-motion, forced-colors, compact viewports, delayed mounts, and representative overlays.',
+      'Chromium coverage cannot establish Firefox/WebKit-only selector reachability; vendor-specific rules require source review.'
+    ]
+  };
 }
 
 async function main(): Promise<void> {

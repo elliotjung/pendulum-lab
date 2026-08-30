@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "pendulum-ensemble-interpretation/v1",
+  "stages": ["reference", "single-perturbation", "ensemble"],
+  "referenceInitialState": [2, 2.0943951023931953, 0, 0],
+  "perturbation": {
+    "component": "theta2",
+    "componentIndex": 1,
+    "delta": 0.0001,
+    "unit": "rad",
+    "model": "deterministic signed offsets",
+    "seed": null
+  },
+  "members": [
+    {
+      "id": "reference",
+      "role": "reference",
+      "initialState": [2, 2.0943951023931953, 0, 0],
+      "color": "reference-cyan",
+      "legend": "Reference: no perturbation"
+    },
+    {
+      "id": "theta2-plus-1e-4",
+      "role": "perturbation",
+      "initialState": [2, 2.0944951023931955, 0, 0],
+      "color": "perturbation-magenta",
+      "legend": "theta2 + 1e-4 rad"
+    },
+    {
+      "id": "theta2-minus-1e-4",
+      "role": "perturbation",
+      "initialState": [2, 2.094295102393195, 0, 0],
+      "color": "perturbation-amber",
+      "legend": "theta2 - 1e-4 rad"
+    }
+  ],
+  "horizon": { "duration": 30, "unit": "s", "finiteTime": true },
+  "numerics": { "integrator": "rk4", "stepPolicy": "fixed dt = 0.001 s" },
+  "summary": {
+    "observable": "absolute wrapped theta2 separation at t = 30 s",
+    "quantiles": { "p05": 0.2, "p50": 0.7, "p95": 1.8 },
+    "uncertaintyMethod": "descriptive empirical quantiles; three members are illustrative, not inferential"
+  },
+  "interpretation": {
+    "question": "How quickly do explicit theta2 perturbations separate over this finite horizon?",
+    "nonClaim": "This small deterministic ensemble does not establish an asymptotic Lyapunov exponent or a population distribution."
+  }
+}

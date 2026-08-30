@@ -2,9 +2,15 @@ import { takeOverElement } from './domTakeover';
 import { commitLabControls } from './controlCommit';
 import { canAccessAudienceTab, currentAudienceMode } from './audienceMode';
 import { TabRouting, type TabHistoryMode, type TabRequestedDetail } from './tabRouting';
-import { applyNumericControlParams, formatNumericControlRejections } from './deepLinkControls';
+import {
+  applyNumericControlParams,
+  formatIntegratorControlRejection,
+  formatNumericControlRejections
+} from './deepLinkControls';
 import { compactRail, positionRailSubmenu } from './railSubmenuPositioning';
 import { SidePanelController } from './SidePanelController';
+import { setPrecisionCanonicalValue } from './precisionControls';
+import { EXPERIMENT_HANDOFF_SCHEMA } from './experimentWorkflowContract';
 
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
@@ -234,6 +240,20 @@ export class Shell {
     this.tabRouting.switchTo(name, historyMode);
   }
 
+  openTarget(name: string, focusId?: string): void {
+    this.switchTo(name);
+    if (!focusId) return;
+    let attempts = 60;
+    const reveal = () => {
+      const target = document.getElementById(focusId);
+      if (target?.closest<HTMLElement>('.tabpanel')?.inert && attempts-- > 0) return requestAnimationFrame(reveal);
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      target?.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+      target?.focus({ preventScroll: true });
+    };
+    reveal();
+  }
+
   private openRailSection(name: string): void {
     document.querySelectorAll<HTMLElement>('.rail-section[data-rail-section]').forEach((section) => {
       const open = section.dataset.railSection === name;
@@ -263,7 +283,8 @@ export class Shell {
     if (!el) return;
     const next = String(value);
     if (el.value !== next) changed.add(id);
-    el.value = next;
+    if (el.dataset?.precisionKeyboardStep !== undefined) setPrecisionCanonicalValue(el, value);
+    else el.value = next;
     const span = document.getElementById(`${id}V`);
     const fmt = SLIDERS[id];
     if (span && fmt) span.textContent = fmt(el.value);
@@ -498,14 +519,10 @@ export class Shell {
     document.querySelectorAll<HTMLElement>('[data-workflow-tab], [data-workflow-section]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.workflowTab;
-        if (tab && KNOWN_TABS.includes(tab)) this.switchTo(tab);
+        const focusId = btn.dataset.workflowFocus;
+        if (tab && KNOWN_TABS.includes(tab)) this.openTarget(tab, focusId);
         const section = btn.dataset.workflowSection;
         if (section && !compactRail()) this.openRailSection(section);
-        const focusId = btn.dataset.workflowFocus;
-        const focusTarget = focusId ? document.getElementById(focusId) : null;
-        const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-        focusTarget?.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
-        if (focusTarget instanceof HTMLElement) focusTarget.focus({ preventScroll: true });
       });
     });
   }
@@ -548,7 +565,17 @@ export class Shell {
   }
 
   private applyUrlDeepLink(): void {
+    const url = new URL(window.location.href);
+    // A versioned share hash is a complete, later snapshot. Do not briefly
+    // apply stale Landing query controls (or their tab) before hash restore.
+    if (url.hash.startsWith('#experiment=')) return;
+    const handoffSchema = url.searchParams.get('experimentSchema');
+    if (handoffSchema && handoffSchema !== EXPERIMENT_HANDOFF_SCHEMA) {
+      this.tabRouting.applyInitialUrl();
+      return;
+    }
     const changed = new Set<string>();
+    const warnings: string[] = [];
     let hasControlOverride = false;
     const preset = urlParam('preset');
     if (preset && PRESETS[preset]) hasControlOverride = this.applyPresetValues(preset, changed);
@@ -559,14 +586,25 @@ export class Shell {
       systemSelect.value = sysType;
       hasControlOverride = true;
     }
+    const methodText = url.searchParams.get('method');
+    const methodSelect = document.getElementById('method') as HTMLSelectElement | null;
+    if (methodText !== null && methodSelect && Array.from(methodSelect.options).some((o) => o.value === methodText)) {
+      if (methodSelect.value !== methodText) changed.add('method');
+      methodSelect.value = methodText;
+      hasControlOverride = true;
+    } else if (methodText !== null) {
+      warnings.push(formatIntegratorControlRejection(methodText, document.documentElement.lang === 'ko'));
+    }
     const numeric = applyNumericControlParams(window.location.href, document, (id, value) =>
       this.setSlider(id, value, changed)
     );
     if (numeric.acceptedCount > 0) hasControlOverride = true;
     if (hasControlOverride) commitLabControls('deep-link', changed);
     if (numeric.canonicalHref) window.history.replaceState(window.history.state, '', numeric.canonicalHref);
-    if (numeric.rejected.length > 0) {
-      const message = formatNumericControlRejections(numeric.rejected, document.documentElement.lang === 'ko');
+    if (numeric.rejected.length > 0)
+      warnings.push(formatNumericControlRejections(numeric.rejected, document.documentElement.lang === 'ko'));
+    if (warnings.length > 0) {
+      const message = warnings.join(' ');
       if (typeof window.toast === 'function') window.toast(message, 6200);
       else {
         const toast = document.getElementById('toast');

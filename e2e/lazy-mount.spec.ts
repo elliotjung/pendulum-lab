@@ -12,7 +12,9 @@ test('student startup defers research and mounts one analysis controller on dema
     elements: document.querySelectorAll('*').length
   }));
   expect(startup.controllers).toEqual([]);
-  expect(startup.controls).toBeLessThan(250);
+  // Exact-entry mirrors and the six-step guided experiment are intentional
+  // startup controls; keep a narrow ceiling while research tabs stay lazy.
+  expect(startup.controls).toBeLessThan(320);
   expect(startup.elements).toBeLessThan(1_800);
 
   await openModernTab(page, 'lyap', '#tab-lyap');

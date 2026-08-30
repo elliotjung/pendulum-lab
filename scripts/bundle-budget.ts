@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { brotliCompressSync, gzipSync } from 'node:zlib';
+import { writeStandaloneByteAttribution } from './standalone-byte-attribution';
 
 /**
  * Bundle budget gate. Run after `npm run build` and `build:standalone`.
@@ -35,14 +36,24 @@ const BUDGETS = {
   initialCssRaw: 140 * KiB,
   initialCssGzip: 32 * KiB,
   initialCssBrotli: 26 * KiB,
-  // The v10.36 claim-evidence evaluator, compound-double UI, and exact PWA
-  // recovery path add source text to the intentionally single-file artifact.
-  // Keep only a narrow raw ratchet here; compressed delivery ceilings remain
-  // unchanged and are the binding network budgets.
+  // The v10.36 precision-entry, reproducible experiment, and claim-evidence
+  // paths add scoped source text to the intentionally single-file artifact.
+  // ADR 0003 records the measured 5 KiB gzip ratchet and keeps the 85%
+  // headroom target explicitly unmet rather than hiding it with a broad cap.
   standaloneRaw: 1450 * KiB,
-  standaloneGzip: 430 * KiB,
+  standaloneGzip: 435 * KiB,
   standaloneBrotli: 360 * KiB
 };
+
+const STANDALONE_HEADROOM_POLICY = {
+  targetRatio: 0.85,
+  exceptionAdr: 'documents/adr/0003-standalone-budget-headroom.md',
+  acceptedCeilings: {
+    raw: 1_484_800,
+    gzip: 445_440,
+    brotli: 368_640
+  }
+} as const;
 
 interface SizeSet {
   raw: number;
@@ -140,7 +151,12 @@ function assetRefsFromIndex(indexHtml: string): Set<string> {
   return refs;
 }
 
-function budgetMarkdown(results: readonly BudgetResult[], chunkJsTotal: SizeSet, status: 'pass' | 'fail'): string {
+function budgetMarkdown(
+  results: readonly BudgetResult[],
+  chunkJsTotal: SizeSet,
+  status: 'pass' | 'fail',
+  standaloneHeadroom: { exceeded: boolean; accepted: boolean; adr: string }
+): string {
   const kib = (bytes: number): string => (bytes / KiB).toFixed(1);
   const lines = [
     '# Bundle Budget',
@@ -162,6 +178,15 @@ function budgetMarkdown(results: readonly BudgetResult[], chunkJsTotal: SizeSet,
     `- Raw: ${kib(chunkJsTotal.raw)} KiB`,
     `- Gzip: ${kib(chunkJsTotal.gzip)} KiB`,
     `- Brotli: ${kib(chunkJsTotal.brotli)} KiB`,
+    '',
+    '## Standalone 15% headroom policy',
+    '',
+    standaloneHeadroom.exceeded
+      ? `- Status: **${standaloneHeadroom.accepted ? 'ACCEPTED EXCEPTION' : 'UNAPPROVED EXCEPTION'}**`
+      : '- Status: **WITHIN TARGET**',
+    `- Decision record: \`${standaloneHeadroom.adr}\``,
+    '- Raw, gzip, and Brotli are all evaluated; an accepted exception is not reported as target compliance.',
+    '- Exact attribution: `reports/standalone-byte-attribution.json` and `.md`.',
     '',
     'This report is deterministic for a fixed build: it intentionally contains no timestamp or runner-specific path.',
     ''
@@ -206,11 +231,21 @@ async function main(): Promise<void> {
   rows.push({ label: 'initial CSS brotli', bytes: initialCss.brotli, budget: BUDGETS.initialCssBrotli });
 
   const standaloneBytes = await fileBytes('standalone/index.html').catch(() => null);
+  let standaloneAttribution: Awaited<ReturnType<typeof writeStandaloneByteAttribution>> | null = null;
   if (standaloneBytes) {
     const standalone = compressedSizes(standaloneBytes);
     rows.push({ label: 'standalone HTML raw', bytes: standalone.raw, budget: BUDGETS.standaloneRaw });
     rows.push({ label: 'standalone HTML gzip', bytes: standalone.gzip, budget: BUDGETS.standaloneGzip });
     rows.push({ label: 'standalone HTML brotli', bytes: standalone.brotli, budget: BUDGETS.standaloneBrotli });
+    standaloneAttribution = await writeStandaloneByteAttribution();
+    if (
+      standaloneAttribution.artifact.size.raw !== standalone.raw ||
+      standaloneAttribution.artifact.size.gzip !== standalone.gzip ||
+      standaloneAttribution.artifact.size.brotli !== standalone.brotli ||
+      standaloneAttribution.exactHtmlAttribution.coverage !== 1
+    ) {
+      throw new Error('standalone byte attribution does not bind to the exact budgeted artifact');
+    }
   }
 
   const results: BudgetResult[] = rows.map((row) => ({
@@ -219,7 +254,20 @@ async function main(): Promise<void> {
     ratio: row.budget > 0 ? row.bytes / row.budget : 0,
     remainingBytes: row.budget - row.bytes
   }));
-  const failed = results.filter((row) => !row.ok).length;
+  const standaloneRows = new Map(
+    results.filter((row) => row.label.startsWith('standalone HTML ')).map((row) => [row.label, row])
+  );
+  const headroomExceeded = ['standalone HTML raw', 'standalone HTML gzip', 'standalone HTML brotli'].some(
+    (label) => (standaloneRows.get(label)?.ratio ?? 0) > STANDALONE_HEADROOM_POLICY.targetRatio
+  );
+  const adrText = await readFile(STANDALONE_HEADROOM_POLICY.exceptionAdr, 'utf8').catch(() => '');
+  const acceptedCeilingsMatch =
+    BUDGETS.standaloneRaw === STANDALONE_HEADROOM_POLICY.acceptedCeilings.raw &&
+    BUDGETS.standaloneGzip === STANDALONE_HEADROOM_POLICY.acceptedCeilings.gzip &&
+    BUDGETS.standaloneBrotli === STANDALONE_HEADROOM_POLICY.acceptedCeilings.brotli;
+  const acceptedAdr = /^\s*- Status: Accepted\s*$/mu.test(adrText) && acceptedCeilingsMatch;
+  const headroomPolicyOk = !headroomExceeded || (acceptedAdr && standaloneAttribution !== null);
+  const failed = results.filter((row) => !row.ok).length + (headroomPolicyOk ? 0 : 1);
   const status = failed > 0 ? 'fail' : 'pass';
   const artifactSet = await artifactSetFingerprint(['dist', 'standalone']);
   await mkdir('reports', { recursive: true });
@@ -232,14 +280,39 @@ async function main(): Promise<void> {
         artifactSetSha256: artifactSet.sha256,
         artifactSet,
         rows: results,
-        nonInitialJsTotal: chunkJsTotal
+        nonInitialJsTotal: chunkJsTotal,
+        standaloneHeadroom: {
+          targetRatio: STANDALONE_HEADROOM_POLICY.targetRatio,
+          status: headroomExceeded
+            ? headroomPolicyOk
+              ? 'accepted-exception'
+              : 'unapproved-exception'
+            : 'within-target',
+          exceptionAdr: headroomExceeded ? STANDALONE_HEADROOM_POLICY.exceptionAdr : null,
+          acceptedCeilingsMatch,
+          attribution: standaloneAttribution
+            ? {
+                path: 'reports/standalone-byte-attribution.json',
+                artifactSha256: standaloneAttribution.artifact.sha256,
+                coverage: standaloneAttribution.exactHtmlAttribution.coverage
+              }
+            : null
+        }
       },
       null,
       2
     )}\n`,
     'utf8'
   );
-  await writeFile('reports/bundle-budget.md', budgetMarkdown(results, chunkJsTotal, status), 'utf8');
+  await writeFile(
+    'reports/bundle-budget.md',
+    budgetMarkdown(results, chunkJsTotal, status, {
+      exceeded: headroomExceeded,
+      accepted: headroomPolicyOk,
+      adr: STANDALONE_HEADROOM_POLICY.exceptionAdr
+    }),
+    'utf8'
+  );
 
   for (const row of results) {
     const kb = (n: number): string => `${(n / KiB).toFixed(1)} KiB`;
@@ -249,6 +322,11 @@ async function main(): Promise<void> {
   console.log(
     `INFO  total non-initial JS: raw ${kb(chunkJsTotal.raw)}, gzip ${kb(chunkJsTotal.gzip)}, brotli ${kb(chunkJsTotal.brotli)}`
   );
+  if (headroomExceeded) {
+    console.log(
+      `WARN  standalone raw/gzip/Brotli headroom is below the 15% target; accepted exception: ${headroomPolicyOk ? 'yes' : 'no'}`
+    );
+  }
   if (failed > 0) {
     console.error(`bundle budget exceeded in ${failed} row(s); raise the budget intentionally or shrink the bundle`);
     process.exitCode = 1;

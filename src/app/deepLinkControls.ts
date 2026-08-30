@@ -1,3 +1,6 @@
+import type { IntegratorId } from '../types/domain';
+import { LAB_INTEGRATOR_IDS } from '../validation/sessionConstraints';
+
 export interface NumericControlContract {
   min?: number;
   max?: number;
@@ -15,7 +18,7 @@ export interface NumericControlParseResult {
 // such as `1abc`; this grammar accepts one complete decimal/scientific token.
 const DECIMAL_TOKEN = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/;
 
-const NUMERIC_CONTROL_IDS = [
+export const NUMERIC_CONTROL_IDS = [
   'th1',
   'th2',
   'th3',
@@ -52,6 +55,11 @@ export function parseNumericControlParam(
     if (Math.abs(steps - nearest) > tolerance) return { ok: false, reason: 'step' };
   }
   return { ok: true, value };
+}
+
+/** Parse an untrusted public handoff method against the integrators exposed by the Lab UI. */
+export function parseLabIntegratorParam(raw: string): IntegratorId | null {
+  return LAB_INTEGRATOR_IDS.includes(raw as IntegratorId) ? (raw as IntegratorId) : null;
 }
 
 export function numericInputContract(input: HTMLInputElement): NumericControlContract {
@@ -150,6 +158,14 @@ export function applyNumericControlParams(
 function visibleParamValue(value: string): string {
   const normalized = value.replace(/[\u0000-\u001f\u007f]/gu, '\uFFFD');
   return normalized.length <= 32 ? normalized : `${normalized.slice(0, 29)}…`;
+}
+
+/** Human-readable, bounded explanation for an unsupported public integrator id. */
+export function formatIntegratorControlRejection(raw: string, korean: boolean): string {
+  const value = visibleParamValue(raw);
+  return korean
+    ? `URL 적분기 method="${value}"를 적용하지 않았습니다. Lab에서 제공하는 적분기 ID여야 합니다.`
+    : `Ignored URL integrator method="${value}". It must be an integrator id exposed by the Lab.`;
 }
 
 /** Human-readable, bounded explanation for URL values that were ignored. */

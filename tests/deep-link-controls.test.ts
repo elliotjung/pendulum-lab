@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   applyNumericControlParams,
   canonicalizeVelocityAliases,
+  formatIntegratorControlRejection,
   formatNumericControlRejections,
   numericInputContract,
+  parseLabIntegratorParam,
   parseNumericControlParam
 } from '../src/app/deepLinkControls';
 import { audienceModeUrl } from '../src/app/audienceMode';
@@ -69,6 +71,23 @@ describe('numeric deep-link controls', () => {
     expect(message).toContain('g="99999999999999999999999999999…" (allowed range)');
     expect(message).toContain('dt="1oops" (number syntax)');
     expect(message.length).toBeLessThan(320);
+  });
+});
+
+describe('integrator deep-link control', () => {
+  it('accepts only exact ids from the Lab integrator allowlist', () => {
+    expect(parseLabIntegratorParam('rk4')).toBe('rk4');
+    expect(parseLabIntegratorParam('yoshida4')).toBe('yoshida4');
+    expect(parseLabIntegratorParam('verlet')).toBeNull();
+    expect(parseLabIntegratorParam('RK4')).toBeNull();
+    expect(parseLabIntegratorParam(' rk4')).toBeNull();
+    expect(parseLabIntegratorParam('eval-javascript')).toBeNull();
+  });
+
+  it('bounds the rejected value shown to the user', () => {
+    const message = formatIntegratorControlRejection(`bad\u0000${'x'.repeat(80)}`, false);
+    expect(message).toContain('method="bad�xxxxxxxxxxxxxxxxxxxxxxxxx…"');
+    expect(message.length).toBeLessThan(180);
   });
 });
 

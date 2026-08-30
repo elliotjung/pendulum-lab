@@ -362,6 +362,24 @@ describe('saved-run DOM application', () => {
     expect(dispatchEvent).not.toHaveBeenCalled();
   });
 
+  it('commits an exact snapshot through a precision-managed Chromium range projection', () => {
+    const exact = (2 * Math.PI) / 3;
+    const snapshot = { ...BASE, state: [exact, Math.PI / 2, 0, 0] };
+    const controls = fakeControls(snapshot);
+    const theta = new FakeInput('2', 'range', '-3.142', '3.142', 'any', (value) => Number(value.toPrecision(15)));
+    theta.dataset.precisionKeyboardStep = '0.001';
+    controls.set('th1', theta);
+    const dispatchEvent = installFakeDom(controls);
+
+    const result = applySnapshotControls(snapshot);
+
+    expect(result.ok).toBe(true);
+    expect(Number(theta.value)).not.toBe(exact);
+    expect(theta.dataset.precisionCanonical).toBe(String(exact));
+    const commit = dispatchEvent.mock.calls.at(-1)?.[0] as CustomEvent<{ snapshot: RuntimeSnapshot }>;
+    expect(commit.detail.snapshot.state[0]).toBe(exact);
+  });
+
   it('rejects a display projection outside the explicit floating-point envelope', () => {
     const snapshot = { ...BASE, state: [-0.5295974206389124, 0.25, 0, 0] };
     const controls = fakeControls(snapshot);

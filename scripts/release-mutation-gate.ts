@@ -24,6 +24,11 @@ export function validateReleaseMutation(
   if (!Number.isFinite(report.mutationScore) || report.mutationScore! < minimumScore) {
     throw new Error(`release mutation score must be at least ${minimumScore}% (got ${String(report.mutationScore)})`);
   }
+  if (!Number.isFinite(report.coveredMutationScore) || report.coveredMutationScore! < minimumScore) {
+    throw new Error(
+      `release covered mutation score must be at least ${minimumScore}% (got ${String(report.coveredMutationScore)})`
+    );
+  }
   const generatedAt = Date.parse(report.generatedAt ?? '');
   if (!Number.isFinite(generatedAt) || generatedAt > now || now - generatedAt > maximumAgeDays * 86_400_000) {
     throw new Error(`mutation evidence must be no older than ${maximumAgeDays} days`);

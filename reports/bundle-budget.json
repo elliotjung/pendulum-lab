@@ -1,60 +1,60 @@
 {
   "schemaVersion": "pendulum-bundle-budget/v1",
   "status": "pass",
-  "artifactSetSha256": "36875eef327111489d6ddfe8fb50acff83f83ce2e4a8e01d54728a75a1dc6ff6",
+  "artifactSetSha256": "1a8cee24b2675d41741e28d1b69f29000b7194f4006565164a86e668ecb24d8f",
   "artifactSet": {
-    "sha256": "36875eef327111489d6ddfe8fb50acff83f83ce2e4a8e01d54728a75a1dc6ff6",
+    "sha256": "1a8cee24b2675d41741e28d1b69f29000b7194f4006565164a86e668ecb24d8f",
     "files": 97,
-    "bytes": 5443032
+    "bytes": 5543701
   },
   "rows": [
     {
       "label": "initial JS raw",
-      "bytes": 247348,
+      "bytes": 308260,
       "budget": 778240,
       "ok": true,
-      "ratio": 0.31782997532894736,
-      "remainingBytes": 530892
+      "ratio": 0.3960988898026316,
+      "remainingBytes": 469980
     },
     {
       "label": "initial JS gzip",
-      "bytes": 80326,
+      "bytes": 100512,
       "budget": 215040,
       "ok": true,
-      "ratio": 0.37353980654761904,
-      "remainingBytes": 134714
+      "ratio": 0.4674107142857143,
+      "remainingBytes": 114528
     },
     {
       "label": "initial JS brotli",
-      "bytes": 66683,
+      "bytes": 81574,
       "budget": 184320,
       "ok": true,
-      "ratio": 0.36177842881944444,
-      "remainingBytes": 117637
+      "ratio": 0.44256727430555554,
+      "remainingBytes": 102746
     },
     {
       "label": "largest non-initial JS raw",
-      "bytes": 387900,
+      "bytes": 388281,
       "budget": 532480,
       "ok": true,
-      "ratio": 0.7284780649038461,
-      "remainingBytes": 144580
+      "ratio": 0.7291935847355769,
+      "remainingBytes": 144199
     },
     {
       "label": "largest non-initial JS gzip",
-      "bytes": 121405,
+      "bytes": 121483,
       "budget": 138240,
       "ok": true,
-      "ratio": 0.8782190393518519,
-      "remainingBytes": 16835
+      "ratio": 0.878783275462963,
+      "remainingBytes": 16757
     },
     {
       "label": "largest non-initial JS brotli",
-      "bytes": 98469,
+      "bytes": 98562,
       "budget": 117760,
       "ok": true,
-      "ratio": 0.8361837635869566,
-      "remainingBytes": 19291
+      "ratio": 0.8369735054347827,
+      "remainingBytes": 19198
     },
     {
       "label": "initial CSS raw",
@@ -82,32 +82,43 @@
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1449384,
+      "bytes": 1470285,
       "budget": 1484800,
       "ok": true,
-      "ratio": 0.9761476293103448,
-      "remainingBytes": 35416
+      "ratio": 0.9902242726293103,
+      "remainingBytes": 14515
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 427056,
-      "budget": 440320,
+      "bytes": 444657,
+      "budget": 445440,
       "ok": true,
-      "ratio": 0.9698764534883721,
-      "remainingBytes": 13264
+      "ratio": 0.9982421875,
+      "remainingBytes": 783
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 334475,
+      "bytes": 346700,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.9073215060763888,
-      "remainingBytes": 34165
+      "ratio": 0.9404839409722222,
+      "remainingBytes": 21940
     }
   ],
   "nonInitialJsTotal": {
-    "raw": 1246782,
-    "gzip": 404708,
-    "brotli": 342911
+    "raw": 1249741,
+    "gzip": 405801,
+    "brotli": 343890
+  },
+  "standaloneHeadroom": {
+    "targetRatio": 0.85,
+    "status": "accepted-exception",
+    "exceptionAdr": "documents/adr/0003-standalone-budget-headroom.md",
+    "acceptedCeilingsMatch": true,
+    "attribution": {
+      "path": "reports/standalone-byte-attribution.json",
+      "artifactSha256": "3b0edd3e09d973446ad69f9f1a4a5e7cf0e08e5abc24ae59e237a675c49db6b4",
+      "coverage": 1
+    }
   }
 }

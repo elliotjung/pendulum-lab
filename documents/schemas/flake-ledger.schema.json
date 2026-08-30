@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elliotjung.github.io/pendulum-lab/schemas/flake-ledger/v1",
+  "title": "Thirty-day browser flake ledger",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "windowDays",
+    "suite",
+    "totalRuns",
+    "thresholdRate",
+    "retryPolicy",
+    "events",
+    "alert"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "pendulum-flake-ledger/v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "windowDays": { "const": 30 },
+    "suite": { "type": "string", "minLength": 1 },
+    "totalRuns": { "type": "integer", "minimum": 1 },
+    "thresholdRate": { "const": 0.01 },
+    "retryPolicy": {
+      "type": "object",
+      "required": ["preserveOriginalFailure"],
+      "properties": { "preserveOriginalFailure": { "const": true } }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["occurredAt", "browser", "step", "traceArtifact"],
+        "properties": {
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "browser": { "type": "string", "minLength": 1 },
+          "step": { "type": "string", "minLength": 1 },
+          "traceArtifact": { "type": "string", "minLength": 1 },
+          "knownUpstream": { "type": ["string", "null"] },
+          "expiresAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    },
+    "alert": { "type": "boolean" }
+  }
+}

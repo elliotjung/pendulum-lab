@@ -1,8 +1,23 @@
 # Pendulum Lab Documentation
 
-Use this page as the table of contents for the repository. The app is a browser
-simulation surface, a typed TypeScript library, and a reproducible research
-package; the docs are grouped by those jobs.
+Use this page as the table of contents for the repository. Start with the job
+you are trying to do; the subject index below is the second level when you need
+more detail.
+
+## Choose by purpose
+
+| If you want to… | Read this first | Then |
+| --- | --- | --- |
+| Run and interpret an experiment | [`scientific-accountability.md`](scientific-accountability.md#reading-a-chaotic-trajectory) | [`known-limitations.md`](known-limitations.md) |
+| Understand equations or numerical methods | [`derivations.md`](derivations.md) | [`scientific-accountability.md`](scientific-accountability.md#numerical-method-accountability) |
+| Check a claim or review evidence | [`scientific-accountability.md`](scientific-accountability.md#claims-tests-and-understanding) | [`reviewer-kit.md`](reviewer-kit.md) |
+| Reproduce the paper | [`tutorial-reproduce-paper.md`](tutorial-reproduce-paper.md) | [`flagship-result.md`](flagship-result.md) |
+| Use the library | [`api-overview.md`](api-overview.md) | generated TypeDoc via `npm run docs:api` |
+| Contribute code | [`architecture.md`](architecture.md) | [`testing-strategy.md`](testing-strategy.md) |
+| Audit quality gates | [`quality-evidence-contracts.md`](quality-evidence-contracts.md) | [`artifact-policy.md`](artifact-policy.md) |
+| Publish or coordinate both repositories | [`public-release-routine.md`](public-release-routine.md) | [`cross-project-release.md`](cross-project-release.md) |
+| See the complete inventory and command map | [`project-reference.md`](project-reference.md) | this subject index |
+| Understand work that still needs external evidence | [`expansion-gates.md`](expansion-gates.md) | [`external-owner-checklist.md`](external-owner-checklist.md) |
 
 For the two-repository product boundary, shared physics/link contract, local
 verification and Pages workflow, start with
@@ -15,6 +30,9 @@ The item-by-item implementation, release-gate, and external-evidence record is
 
 ## Start Here
 
+- [`project-reference.md`](project-reference.md) - detailed repository boundary,
+  capability inventory, command catalogue, deployment outline, and portfolio
+  context moved out of the top-level README.
 - [`architecture.md`](architecture.md) - runtime shape, TypeScript boot flow,
   module boundaries, and the legacy-removal history.
 - [`api-overview.md`](api-overview.md) - public package/API stability policy.
@@ -26,6 +44,9 @@ The item-by-item implementation, release-gate, and external-evidence record is
 
 ## Numerics And Physics
 
+- [`scientific-accountability.md`](scientific-accountability.md) -
+  implemented/tested/understood distinctions, numerical assumptions and
+  failures, non-claims, and reference-to-ensemble interpretation.
 - [`numerics.md`](numerics.md) - integrator behavior, convergence expectations,
   and diagnostics.
 - [`derivations.md`](derivations.md) - equations of motion and conserved
@@ -37,6 +58,9 @@ The item-by-item implementation, release-gate, and external-evidence record is
 
 ## Validation And Reproducibility
 
+- [`quality-evidence-contracts.md`](quality-evidence-contracts.md) - standalone
+  attribution, publication freshness, baseline fingerprints, mutation/CSS,
+  performance, flake, and Actions policy contracts.
 - [`testing-strategy.md`](testing-strategy.md) - the ordered verify gate, test
   tiers, oracle ladder, and which gate catches which regression class.
 - [`flagship-result.md`](flagship-result.md) - Melnikov threshold vs
@@ -51,8 +75,9 @@ The item-by-item implementation, release-gate, and external-evidence record is
   isolated one-time NVIDIA/AMD guest-runner procedure.
 - [`reference-manifest.md`](reference-manifest.md) - report and artifact
   manifest conventions.
-- [`visual-baseline-promotion.md`](visual-baseline-promotion.md) - Ubuntu
-  snapshot generation, review, complete-set validation, and mainline promotion.
+- [`visual-baseline-promotion.md`](visual-baseline-promotion.md) - native
+  Linux/Windows/macOS regeneration, runner fingerprints, manual review artifact,
+  complete-set validation, and optional policy-compatible PR promotion.
 
 ## Research Workbench
 
@@ -63,6 +88,9 @@ The item-by-item implementation, release-gate, and external-evidence record is
   committed, regenerated, or kept out of git.
 - [`deferred-work.md`](deferred-work.md) - intentionally deferred scope and the
   reason each item is not claimed as complete.
+- [`expansion-gates.md`](expansion-gates.md) - explicit physical GPU,
+  representative performance, camera, independent-formulation, large-data, and
+  education/user-study evidence gates.
 
 ## Release And Portfolio
 

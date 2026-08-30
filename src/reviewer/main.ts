@@ -22,6 +22,8 @@ const sources = {
   matrix: './reports/gpu-adapter-matrix.json',
   release: './reports/release-readiness.json',
   publication: './reports/publication-status.json',
+  publicationDeployment: './reports/deployment-publication-status.json',
+  deploymentManifest: './deployment-manifest.json',
   reviewer: './reports/reviewer-kit-manifest.json',
   mutation: './reports/mutation-aggregate.json',
   validationScope: './reports/independent-validation-scope.json'
@@ -56,6 +58,56 @@ function format(value: unknown, digits = 4): string {
 }
 function json(value: unknown): string {
   return JSON.stringify(value, null, 2);
+}
+
+type PublicationFreshness = 'current' | 'stale' | 'unknown';
+
+/**
+ * Publication reports are observations, not timeless release metadata.  Keep
+ * this small browser-side guard independent from the report generator so a
+ * stale committed snapshot can never be rendered as a current success badge.
+ */
+function publicationFreshness(report: Json, nowMs = Date.now()): PublicationFreshness {
+  if (report.schemaVersion !== 'pendulum-publication-status/v2') return 'unknown';
+  if (!['source-snapshot', 'deployment-probe'].includes(text(report.reportKind, ''))) return 'unknown';
+  if (report.freshnessTtl !== 'PT24H') return 'unknown';
+  if (report.generatedAt !== report.snapshotGeneratedAt) return 'unknown';
+  if (!/^[a-f0-9]{40}$/u.test(text(report.checkedSourceCommit, ''))) return 'unknown';
+  const environment = object(report.environment);
+  if (!['local', 'github-actions'].includes(text(environment.execution, ''))) return 'unknown';
+  const generatedAt = Date.parse(text(report.snapshotGeneratedAt, ''));
+  const expiresAt = Date.parse(text(report.expiresAt, ''));
+  if (!Number.isFinite(generatedAt) || !Number.isFinite(expiresAt) || expiresAt !== generatedAt + 24 * 60 * 60 * 1000)
+    return 'unknown';
+  // Reject reports generated implausibly far in the future rather than
+  // extending their apparent lifetime because of a bad runner clock.
+  if (generatedAt > nowMs + 5 * 60 * 1000) return 'unknown';
+  return nowMs < expiresAt ? 'current' : 'stale';
+}
+
+function publicationForDisplay(
+  source: Json,
+  deployment: Json,
+  deployedSourceCommit: string | null
+): {
+  report: Json;
+  freshness: PublicationFreshness;
+  status: string;
+} {
+  const boundFreshness = (report: Json): PublicationFreshness => {
+    const freshness = publicationFreshness(report);
+    if (freshness !== 'current') return freshness;
+    return deployedSourceCommit !== null && report.checkedSourceCommit === deployedSourceCommit ? 'current' : 'unknown';
+  };
+  const deploymentFreshness = boundFreshness(deployment);
+  const sourceFreshness = boundFreshness(source);
+  const report = deploymentFreshness === 'current' ? deployment : source;
+  const freshness = deploymentFreshness === 'current' ? deploymentFreshness : sourceFreshness;
+  return {
+    report,
+    freshness,
+    status: freshness === 'current' ? text(report.status, 'unknown') : freshness
+  };
 }
 
 async function fetchJson(path: string): Promise<Json> {
@@ -166,11 +218,15 @@ function table(headers: string[], rows: string[][]): HTMLElement {
 async function render(): Promise<void> {
   const root = document.querySelector<HTMLElement>('#reviewer-root');
   if (!root) return;
-  const requiredSourceEntries = Object.entries(sources).filter(([key]) => key !== 'mutation');
+  const requiredSourceEntries = Object.entries(sources).filter(
+    ([key]) => key !== 'mutation' && key !== 'publicationDeployment' && key !== 'deploymentManifest'
+  );
   const data = Object.fromEntries(
     await Promise.all(requiredSourceEntries.map(async ([key, path]) => [key, await fetchJson(path)]))
   ) as Record<keyof typeof sources, Json>;
   data.mutation = await fetchOptionalJson(sources.mutation);
+  data.publicationDeployment = await fetchOptionalJson(sources.publicationDeployment);
+  data.deploymentManifest = await fetchOptionalJson(sources.deploymentManifest);
   const scoreTotals = object(data.scorecard.totals);
   const crossing = object(data.flagship.crossing);
   const ladderNChain = object(data.ladder.nChainVariational);
@@ -184,6 +240,16 @@ async function render(): Promise<void> {
   const coveredMutationScore = number(data.mutation.coveredMutationScore);
   const validationSummary = object(data.validationScope.summary);
   const validationRuntimes = array(data.validationScope.runtimes).map(object);
+  const deploymentSourceCommit = text(data.deploymentManifest.sourceCommit, '');
+  const publication = publicationForDisplay(
+    data.publication,
+    data.publicationDeployment,
+    /^[a-f0-9]{40}$/u.test(deploymentSourceCommit) ? deploymentSourceCommit : null
+  );
+  const publicationNpm = object(publication.report.npm);
+  const publicationZenodo = object(publication.report.zenodo);
+  const publicationRelease = object(publication.report.githubRelease);
+  const publicationPages = object(publication.report.pages);
 
   const evidence: Evidence[] = [
     {
@@ -295,14 +361,24 @@ async function render(): Promise<void> {
     {
       id: 'publication',
       title: 'Public identifiers',
-      status: text(data.publication.status),
-      primary: `${object(data.publication.npm).published === true ? 'npm live' : 'npm pending'} / ${object(data.publication.zenodo).published === true ? 'DOI live' : 'DOI pending'}`,
-      detail: `Release=${text(object(data.publication.githubRelease).published)}, Pages=${text(object(data.publication.pages).published)}.`,
-      source: sources.publication,
-      parameters: `package=${text(object(data.publication.npm).package)}, version=${text(object(data.publication.npm).version)}`,
-      validation: json(data.publication),
+      status: publication.status,
+      primary:
+        publication.freshness === 'current'
+          ? `${publicationNpm.published === true ? 'npm live' : 'npm pending'} / ${publicationZenodo.published === true ? 'DOI live' : 'DOI pending'}`
+          : 'current status unknown',
+      detail:
+        publication.freshness === 'current'
+          ? `Release=${text(publicationRelease.published)}, Pages=${text(publicationPages.published)}.`
+          : `The ${text(publication.report.reportKind, 'publication')} observation is ${publication.freshness}; measured status ${text(publication.report.status, 'unavailable')} is not promoted.`,
+      source:
+        publication.report.reportKind === 'deployment-probe' ? sources.publicationDeployment : sources.publication,
+      parameters: `package=${text(publicationNpm.package)}, version=${text(publicationNpm.version)}, observed=${text(publication.report.snapshotGeneratedAt)}, expires=${text(publication.report.expiresAt)}`,
+      validation: json(publication.report),
       reproduce: 'npm run release:status',
-      caveat: array(data.publication.caveats).map(String).join(' ') || 'All public identifiers resolve.'
+      caveat:
+        publication.freshness === 'current'
+          ? array(publication.report.caveats).map(String).join(' ') || 'All public identifiers resolve.'
+          : 'Publication evidence is stale or malformed. Run a fresh deployment probe before treating any public identifier as live.'
     }
   ];
 
@@ -350,6 +426,22 @@ async function render(): Promise<void> {
     );
     summary.append(item);
   });
+
+  const scopeNote = element('section', 'reviewer-scope-note');
+  scopeNote.setAttribute('aria-labelledby', 'reviewerScopeTitle');
+  const scopeTitle = element('h2', undefined, 'How to read this evidence');
+  scopeTitle.id = 'reviewerScopeTitle';
+  const scopeList = element('dl');
+  [
+    ['Implemented', 'The code path exists in this source version.'],
+    ['Tested', 'The named cases passed; untested parameter regimes are not implied.'],
+    ['Validated', 'An identified independent method or runtime agreed within the stated tolerance.'],
+    [
+      'Not claimed',
+      'Finite-time agreement does not guarantee identical long-horizon chaotic trajectories, and energy conservation is not a correctness metric for damped runs.'
+    ]
+  ].forEach(([label, description]) => addField(scopeList, label!, description!));
+  scopeNote.append(scopeTitle, scopeList);
 
   const tabs = element('div', 'reviewer-tabs');
   tabs.setAttribute('role', 'tablist');
@@ -424,7 +516,7 @@ async function render(): Promise<void> {
   ]);
   artifacts.content.append(table(['Priority', 'Available', 'ID', 'Path', 'Reproduce', 'Description'], artifactRows));
 
-  main.append(summary, tabs, overview.section, gpu.section, validation.section, artifacts.section);
+  main.append(summary, scopeNote, tabs, overview.section, gpu.section, validation.section, artifacts.section);
   shell.append(header, main);
   root.replaceChildren(shell);
 }

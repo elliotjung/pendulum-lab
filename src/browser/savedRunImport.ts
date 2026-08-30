@@ -133,12 +133,16 @@ function applySnapshotControlsWithCommit(
   if (!plan.ok || !plan.value) return { ok: false, problems: plan.problems };
   const previous = plan.value.map(({ element }) => ({
     value: element.value,
-    step: element instanceof HTMLInputElement ? element.step : ''
+    step: element instanceof HTMLInputElement ? element.step : '',
+    precisionCanonical: element instanceof HTMLInputElement ? element.dataset.precisionCanonical : undefined
   }));
   const rollback = (): void => {
     plan.value!.forEach(({ element }, index) => {
       if (element instanceof HTMLInputElement) {
         element.step = previous[index]?.step ?? element.step;
+        const canonical = previous[index]?.precisionCanonical;
+        if (canonical === undefined) delete element.dataset.precisionCanonical;
+        else element.dataset.precisionCanonical = canonical;
         delete element.dataset.importStep;
       }
       element.value = previous[index]?.value ?? '';
@@ -159,6 +163,13 @@ function applySnapshotControlsWithCommit(
           });
         }
       }
+      if (
+        element instanceof HTMLInputElement &&
+        element.type === 'range' &&
+        element.dataset.precisionKeyboardStep !== undefined &&
+        numericValue !== null
+      )
+        element.dataset.precisionCanonical = String(numericValue);
       element.value = value;
       const projectedNumber = element instanceof HTMLInputElement ? element.valueAsNumber : Number.NaN;
       const projectedValue = element.value;
@@ -176,7 +187,7 @@ function applySnapshotControlsWithCommit(
           : element instanceof HTMLInputElement &&
             Number.isFinite(projectedNumber) &&
             (projectedNumber === numericValue ||
-              (allowDisplayProjection &&
+              ((allowDisplayProjection || element.dataset.precisionKeyboardStep !== undefined) &&
                 element.type === 'range' &&
                 Math.abs(projectedNumber - numericValue) <= projectionTolerance));
       if (!readBackMatches) {

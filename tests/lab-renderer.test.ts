@@ -15,10 +15,12 @@ function makeStubCtx(): Ctx2D & {
   calls: Record<string, number>;
   arcs: ArcCall[];
   lineTos: Array<{ x: number; y: number }>;
+  lineDashes: number[][];
 } {
   const calls: Record<string, number> = {};
   const arcs: ArcCall[] = [];
   const lineTos: Array<{ x: number; y: number }> = [];
+  const lineDashes: number[][] = [];
   const bump = (k: string) => {
     calls[k] = (calls[k] ?? 0) + 1;
   };
@@ -26,6 +28,7 @@ function makeStubCtx(): Ctx2D & {
     calls,
     arcs,
     lineTos,
+    lineDashes,
     fillStyle: '#000',
     strokeStyle: '#000',
     lineWidth: 1,
@@ -54,7 +57,10 @@ function makeStubCtx(): Ctx2D & {
     fillRect: () => bump('fillRect'),
     clearRect: () => bump('clearRect'),
     fillText: () => bump('fillText'),
-    setLineDash: () => bump('setLineDash'),
+    setLineDash: (segments) => {
+      lineDashes.push([...segments]);
+      bump('setLineDash');
+    },
     createLinearGradient: () => ({ addColorStop: () => bump('addColorStop') })
   };
 }
@@ -109,6 +115,26 @@ describe('LabRenderer', () => {
     // rendering has only the pivot and two filled endpoint bobs.
     expect(ctx.arcs.map(({ r }) => r)).toEqual([4, 2.5, 2.5, 3.25, 3.25]);
     expect(ctx.calls.stroke).toBeGreaterThanOrEqual(3);
+  });
+
+  it('uses dashed-diamond and dotted-circle roles instead of color alone for nearby trajectories', () => {
+    const ctx = makeStubCtx();
+    const renderer = new LabRenderer(ctx, { width: 400, height: 400, scale: 100 });
+    const bobs = [
+      { x: 0, y: 1.2 },
+      { x: 0.1, y: 2.2 }
+    ];
+    const ensemble = [
+      { x: 205, y: 350 },
+      { x: 207, y: 352 }
+    ];
+    renderer.draw(bobs, { ensembleTips: ensemble });
+    renderer.draw(bobs, { ensembleTips: ensemble });
+
+    expect(ctx.lineDashes).toContainEqual([7, 4]);
+    expect(ctx.lineDashes).toContainEqual([2, 4]);
+    expect(ctx.lineDashes).toContainEqual([]);
+    expect(ctx.calls.closePath).toBeGreaterThan(0); // first perturbation diamond
   });
 
   it('preserves the main trail across logical resize', () => {

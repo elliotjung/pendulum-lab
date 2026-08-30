@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elliotjung.github.io/pendulum-lab/schemas/frontend-performance/v1",
+  "title": "Cold and warm frontend performance evidence",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "sourceCommit",
+    "runnerFingerprint",
+    "cold",
+    "warm",
+    "longTasks",
+    "regressionFixture"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "pendulum-frontend-performance/v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sourceCommit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "runnerFingerprint": {
+      "type": "object",
+      "required": ["osImage", "browserRevision", "nodeVersion"],
+      "properties": {
+        "osImage": { "type": "string", "minLength": 1 },
+        "browserRevision": { "type": "string", "minLength": 1 },
+        "nodeVersion": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "cold": { "$ref": "#/$defs/lane" },
+    "warm": { "$ref": "#/$defs/lane" },
+    "longTasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lane", "durationMs", "attribution"],
+        "properties": {
+          "lane": { "enum": ["cold", "warm"] },
+          "durationMs": { "type": "number", "minimum": 0 },
+          "attribution": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "regressionFixture": {
+      "type": "object",
+      "required": ["name", "coldFailed", "warmFailed"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "coldFailed": { "type": "boolean" },
+        "warmFailed": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "lane": {
+      "type": "object",
+      "required": ["samples", "thresholds", "status"],
+      "properties": {
+        "samples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["lcpMs", "tbtMs"],
+            "properties": {
+              "lcpMs": { "type": "number", "minimum": 0 },
+              "tbtMs": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "required": ["lcpMs", "tbtMs"],
+          "properties": {
+            "lcpMs": { "type": "number", "exclusiveMinimum": 0 },
+            "tbtMs": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        "status": { "enum": ["pass", "fail"] }
+      }
+    }
+  }
+}

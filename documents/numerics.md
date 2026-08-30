@@ -1,5 +1,10 @@
 # Numerical Method Notes
 
+For the explicit implemented/tested/understood matrix, adaptive error formula,
+failure modes, and statements that the tests do not prove, read
+[`scientific-accountability.md`](scientific-accountability.md#numerical-method-accountability)
+alongside these implementation notes.
+
 ## Integrator Claims
 
 `rk4` is the recommended general baseline for browser runs. It is not symplectic, so energy behavior is a numerical diagnostic rather than a preservation guarantee.
@@ -30,11 +35,11 @@ The adaptive framework in `src/physics/adaptive.ts` adds a Dormand-Prince 5(4) e
 
 `dopri5` is Dormand-Prince 5(4): the fifth-order solution advances while the embedded fourth-order pair supplies the error estimate (the method behind MATLAB `ode45`).
 
-`dop853` is the fixed-step Dormand-Prince 8(5,3) tableau used by Hairer and by SciPy's `solve_ivp(DOP853)`. The eighth-order solution advances, while the embedded fifth-order pair is exposed through `previousError` as an error monitor. It is deliberately kept as a high-accuracy macro-step reference inside the browser engine; SciPy remains the independent external oracle for cross-validation rather than a circular in-repo reference.
+`dop853` is the fixed-step Dormand-Prince 8(5,3) tableau used by Hairer and by SciPy's `solve_ivp(DOP853)`. The eighth-order solution advances, while the combined E5/E3 estimator is exposed through `previousError` (and optional component errors) as an error monitor. It is deliberately kept as a high-accuracy macro-step reference inside the browser engine; it is not an adaptive SciPy clone. SciPy remains the independent external oracle for cross-validation rather than a circular in-repo reference.
 
-`gbs` is a Gragg-Bulirsch-Stoer extrapolation method (modified-midpoint substeps plus polynomial extrapolation in the squared substep size). Its effective order grows with the number of stages; the long-term energy benchmark shows it reaching machine-precision energy conservation. The extrapolation weights are *computed* from the substep ratios rather than transcribed from a tableau, while DOP853's larger tableau is separately test-pinned against order and error-monitor behavior.
+`gbs` is a Gragg-Bulirsch-Stoer extrapolation method (modified-midpoint substeps plus polynomial extrapolation in the squared substep size). Its effective order grows with the number of stages; selected smooth benchmark fixtures reach errors near floating-point resolution. That observation is not an exact-conservation or all-problems claim. The extrapolation weights are *computed* from the substep ratios rather than transcribed from a tableau, while DOP853's larger tableau is separately test-pinned against order and error-monitor behavior.
 
-`bdf2` is TR-BDF2: a one-step, self-starting, L-stable, second-order method for stiff systems, solved with Newton iteration and a finite-difference Jacobian. Because it is L-stable it adds numerical damping, so its energy "drift" in the benchmark reflects intentional dissipation, not instability; use it for stiff regimes, not for conservative long-horizon claims. A classical multistep BDF is intentionally not provided because it cannot fit the history-free single-step `step()` contract.
+`bdf2` is TR-BDF2: a one-step, self-starting, L-stable, second-order method for stiff systems. Both stages use Newton iteration, prefer `options.jacobian` or `rhs.jacobian`, and otherwise fall back to a scaled central-difference Jacobian. Non-finite RHS/Jacobian, a singular Newton matrix, or iteration exhaustion fails closed by preserving the prior state and reporting retry guidance. Because it is L-stable it adds numerical damping, so its energy "drift" in the benchmark reflects intentional dissipation, not instability; use it for stiff regimes, not for conservative long-horizon claims. A classical multistep BDF is intentionally not provided because it cannot fit the history-free single-step `step()` contract.
 
 ## Generalized Systems
 

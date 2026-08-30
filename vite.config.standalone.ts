@@ -32,7 +32,11 @@ function relaxCspForFileProtocol(): Plugin {
 
 export default defineConfig({
   base: './',
-  plugins: [relaxCspForFileProtocol(), viteSingleFile()],
+  // Every application chunk is inlined by the plugin, so the Vite preload
+  // loader would be dead code in the portable artifact.  Removing it keeps
+  // the `file://` release semantically identical while avoiding a duplicate
+  // runtime bootstrap.
+  plugins: [relaxCspForFileProtocol(), viteSingleFile({ removeViteModuleLoader: true })],
   worker: {
     format: 'iife',
     // Deterministic, hash-free worker filenames. The standalone build emits the
@@ -50,9 +54,17 @@ export default defineConfig({
     outDir: 'standalone',
     emptyOutDir: true,
     target: 'es2022',
+    modulePreload: false,
     assetsInlineLimit: 100_000_000,
     rollupOptions: {
-      input: 'app.html'
+      input: 'app.html',
+      output: {
+        minify: {
+          compress: { target: 'es2022', maxIterations: 20 },
+          mangle: { toplevel: true },
+          codegen: { removeWhitespace: true, legalComments: 'none' }
+        }
+      }
     }
   }
 });

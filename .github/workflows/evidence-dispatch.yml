@@ -162,6 +162,7 @@ jobs:
             nonce="${PAGES_RUN_ID}-${attempt}"
             if ! curl --fail --silent --show-error --retry 3 --retry-all-errors --location \
               --proto '=https' --proto-redir '=https' --connect-timeout 10 --max-time 30 \
+              --dump-header /tmp/live-deployment-manifest.headers \
               --output /tmp/live-deployment-manifest.json \
               "${LIVE_LAB_BASE_URL}deployment-manifest.json?__pendulum_handoff=${nonce}"; then
               sleep 10
@@ -169,26 +170,56 @@ jobs:
             fi
             if ! curl --fail --silent --show-error --retry 3 --retry-all-errors --location \
               --proto '=https' --proto-redir '=https' --connect-timeout 10 --max-time 30 \
+              --dump-header /tmp/live-evidence-summary.headers \
               --output /tmp/live-evidence-summary.json \
               "${LIVE_LAB_BASE_URL}reports/evidence-summary.json?__pendulum_handoff=${nonce}"; then
               sleep 10
               continue
             fi
-            if node --input-type=module <<'NODE'
+            if ATTEMPT="$attempt" node --input-type=module <<'NODE'
           import { createHash } from 'node:crypto';
           import { readFile } from 'node:fs/promises';
           const handoff = JSON.parse(await readFile('handoff/handoff-manifest.json', 'utf8'));
           const deploymentBytes = await readFile('/tmp/live-deployment-manifest.json');
           const evidenceBytes = await readFile('/tmp/live-evidence-summary.json');
+          const deploymentHeaders = await readFile('/tmp/live-deployment-manifest.headers', 'utf8');
+          const evidenceHeaders = await readFile('/tmp/live-evidence-summary.headers', 'utf8');
           const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
-          if (sha256(deploymentBytes) !== handoff.files.deploymentManifest.sha256) {
-            throw new Error('live deployment manifest has not converged to the handoff');
-          }
-          if (sha256(evidenceBytes) !== handoff.files.evidence.sha256) {
-            throw new Error('live evidence bytes have not converged to the handoff');
-          }
+          const headerValue = (headers, name) => {
+            const matches = [...headers.matchAll(new RegExp(`^${name}:\\s*(.+)$`, 'gimu'))];
+            return matches.at(-1)?.[1]?.trim() ?? null;
+          };
+          const currentDeploymentSha256 = sha256(deploymentBytes);
+          const currentEvidenceSha256 = sha256(evidenceBytes);
           const deployment = JSON.parse(deploymentBytes.toString('utf8'));
           const evidence = JSON.parse(evidenceBytes.toString('utf8'));
+          console.log(JSON.stringify({
+            attempt: Number(process.env.ATTEMPT),
+            observedAt: new Date().toISOString(),
+            expected: {
+              sourceCommit: handoff.sourceCommit,
+              deploymentManifestSha256: handoff.files.deploymentManifest.sha256,
+              evidenceSha256: handoff.files.evidence.sha256
+            },
+            current: {
+              sourceCommit: deployment?.sourceCommit ?? null,
+              evidenceSourceCommit: evidence?.provenance?.sourceCommit ?? null,
+              deploymentManifestSha256: currentDeploymentSha256,
+              evidenceSha256: currentEvidenceSha256
+            },
+            cache: {
+              deploymentEtag: headerValue(deploymentHeaders, 'etag'),
+              evidenceEtag: headerValue(evidenceHeaders, 'etag'),
+              deploymentLastModified: headerValue(deploymentHeaders, 'last-modified'),
+              evidenceLastModified: headerValue(evidenceHeaders, 'last-modified')
+            }
+          }));
+          if (currentDeploymentSha256 !== handoff.files.deploymentManifest.sha256) {
+            throw new Error('live deployment manifest has not converged to the handoff');
+          }
+          if (currentEvidenceSha256 !== handoff.files.evidence.sha256) {
+            throw new Error('live evidence bytes have not converged to the handoff');
+          }
           if (deployment?.sourceCommit !== handoff.sourceCommit || deployment?.evidenceSourceCommit !== handoff.sourceCommit) {
             throw new Error('live deployment source coordinate mismatch');
           }

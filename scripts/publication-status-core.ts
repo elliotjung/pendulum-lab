@@ -23,6 +23,33 @@ export interface PublicationStatusInput {
   pagesEvidence: PublicationHttpProbe;
 }
 
+export type PublicationReportKind = 'source-snapshot' | 'deployment-probe';
+export type PublicationFreshness = 'current' | 'stale' | 'unknown';
+
+export interface PublicationSnapshotMetadata {
+  reportKind: PublicationReportKind;
+  snapshotGeneratedAt: string;
+  checkedSourceCommit: string | null;
+  environment: {
+    execution: 'local' | 'github-actions';
+    workflow: string | null;
+    runId: string | null;
+  };
+  freshnessTtl: string;
+}
+
+export interface PublicationStatusSnapshot {
+  schemaVersion?: string;
+  status?: string;
+  reportKind?: string;
+  generatedAt?: string;
+  snapshotGeneratedAt?: string;
+  checkedSourceCommit?: string | null;
+  freshnessTtl?: string;
+  expiresAt?: string;
+  environment?: unknown;
+}
+
 type JsonObject = Record<string, unknown>;
 
 function object(value: unknown): JsonObject | null {
@@ -79,6 +106,82 @@ function zenodoDoi(record: JsonObject | null): string | null {
   const metadata = object(record?.metadata);
   const candidate = text(record?.doi) ?? text(metadata?.doi);
   return candidate && /^10\.\d{4,9}\/zenodo\.\d+$/i.test(candidate) ? candidate : null;
+}
+
+function ttlMilliseconds(value: unknown): number | null {
+  return value === 'PT24H' ? 24 * 3_600_000 : null;
+}
+
+export function evaluatePublicationFreshness(
+  report: PublicationStatusSnapshot,
+  options: { now?: number } = {}
+): PublicationFreshness {
+  const generatedAt = Date.parse(report.snapshotGeneratedAt ?? '');
+  const expiresAt = Date.parse(report.expiresAt ?? '');
+  const ttl = ttlMilliseconds(report.freshnessTtl);
+  const now = options.now ?? Date.now();
+  const environment = object(report.environment);
+  if (
+    report.schemaVersion !== 'pendulum-publication-status/v2' ||
+    !['source-snapshot', 'deployment-probe'].includes(report.reportKind ?? '') ||
+    report.generatedAt !== report.snapshotGeneratedAt ||
+    !/^[a-f0-9]{40}$/u.test(report.checkedSourceCommit ?? '') ||
+    !environment ||
+    !['local', 'github-actions'].includes(String(environment.execution ?? '')) ||
+    !Object.hasOwn(environment, 'workflow') ||
+    !(environment.workflow === null || typeof environment.workflow === 'string') ||
+    !Object.hasOwn(environment, 'runId') ||
+    !(environment.runId === null || typeof environment.runId === 'string') ||
+    !Number.isFinite(generatedAt) ||
+    !Number.isFinite(expiresAt) ||
+    ttl === null ||
+    expiresAt !== generatedAt + ttl ||
+    generatedAt > now + 5 * 60_000
+  ) {
+    return 'unknown';
+  }
+  return now < expiresAt ? 'current' : 'stale';
+}
+
+export function publicationStatusForDisplay(
+  report: PublicationStatusSnapshot,
+  options: { now?: number } = {}
+): 'published' | 'failed' | 'partial' | 'unknown' {
+  if (evaluatePublicationFreshness(report, options) !== 'current') return 'unknown';
+  return report.status === 'published' || report.status === 'failed' || report.status === 'partial'
+    ? report.status
+    : 'unknown';
+}
+
+export function attachPublicationSnapshotMetadata<T extends Record<string, unknown>>(
+  evaluated: T,
+  metadata: PublicationSnapshotMetadata
+): Omit<T, 'schemaVersion' | 'generatedAt'> &
+  PublicationSnapshotMetadata & {
+    schemaVersion: 'pendulum-publication-status/v2';
+    generatedAt: string;
+    expiresAt: string;
+  } {
+  const generatedAt = Date.parse(metadata.snapshotGeneratedAt);
+  const ttl = ttlMilliseconds(metadata.freshnessTtl);
+  if (!Number.isFinite(generatedAt) || ttl === null) {
+    throw new Error('publication snapshot requires an ISO generation instant and an integer-hour freshness TTL');
+  }
+  if (metadata.checkedSourceCommit !== null && !/^[a-f0-9]{40}$/u.test(metadata.checkedSourceCommit)) {
+    throw new Error('publication snapshot checkedSourceCommit must be a full lowercase Git SHA or null');
+  }
+  const { schemaVersion: _legacySchemaVersion, generatedAt: _legacyGeneratedAt, ...status } = evaluated;
+  return {
+    ...status,
+    schemaVersion: 'pendulum-publication-status/v2',
+    reportKind: metadata.reportKind,
+    generatedAt: metadata.snapshotGeneratedAt,
+    snapshotGeneratedAt: metadata.snapshotGeneratedAt,
+    checkedSourceCommit: metadata.checkedSourceCommit,
+    environment: metadata.environment,
+    freshnessTtl: metadata.freshnessTtl,
+    expiresAt: new Date(generatedAt + ttl).toISOString()
+  };
 }
 
 export function evaluatePublicationStatus(input: PublicationStatusInput) {

@@ -189,4 +189,63 @@ describe('Shell batched control updates', () => {
     expect(commits).toBe(1);
     expect(th1.value).toBe('1.25');
   });
+
+  it('applies an allowlisted handoff method with numeric and system controls in one semantic commit', () => {
+    const sysType = new FakeControl('double');
+    sysType.options = [{ value: 'double' }, { value: 'triple' }];
+    const method = new FakeControl('rk4');
+    method.options = [{ value: 'rk4' }, { value: 'yoshida4' }];
+    const th1 = new FakeControl('0');
+    const controls = new Map<string, unknown>([
+      ['sysType', sysType],
+      ['method', method],
+      ['th1', th1],
+      ['th1V', { textContent: '' }]
+    ]);
+    const documentEvents = new EventTarget();
+    vi.stubGlobal('document', {
+      getElementById: (id: string) => controls.get(id) ?? null,
+      dispatchEvent: documentEvents.dispatchEvent.bind(documentEvents)
+    });
+    vi.stubGlobal('window', {
+      location: { href: 'https://example.test/app?sysType=triple&method=yoshida4&th1=1.25' }
+    });
+    const commits: Array<{ controlIds: string[] }> = [];
+    documentEvents.addEventListener(LAB_CONTROLS_COMMITTED_EVENT, (event) => {
+      commits.push((event as CustomEvent<{ controlIds: string[] }>).detail);
+    });
+
+    (new Shell() as unknown as { applyUrlDeepLink(): void }).applyUrlDeepLink();
+
+    expect(method.value).toBe('yoshida4');
+    expect(sysType.value).toBe('triple');
+    expect(th1.value).toBe('1.25');
+    expect(commits).toHaveLength(1);
+    expect(commits[0]?.controlIds).toEqual(expect.arrayContaining(['method', 'sysType', 'th1']));
+  });
+
+  it('leaves the default method unchanged and warns for an unsupported handoff id', () => {
+    const method = new FakeControl('rk4');
+    method.options = [{ value: 'rk4' }, { value: 'yoshida4' }];
+    const controls = new Map<string, unknown>([['method', method]]);
+    const documentEvents = new EventTarget();
+    const toast = vi.fn();
+    vi.stubGlobal('document', {
+      documentElement: { lang: 'en' },
+      getElementById: (id: string) => controls.get(id) ?? null,
+      dispatchEvent: documentEvents.dispatchEvent.bind(documentEvents)
+    });
+    vi.stubGlobal('window', {
+      location: { href: 'https://example.test/app?method=eval-javascript' },
+      toast
+    });
+    let commits = 0;
+    documentEvents.addEventListener(LAB_CONTROLS_COMMITTED_EVENT, () => (commits += 1));
+
+    (new Shell() as unknown as { applyUrlDeepLink(): void }).applyUrlDeepLink();
+
+    expect(method.value).toBe('rk4');
+    expect(commits).toBe(0);
+    expect(toast).toHaveBeenCalledWith(expect.stringContaining('method="eval-javascript"'), 6200);
+  });
 });

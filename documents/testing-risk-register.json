@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "pendulum-testing-risk-register/v1",
+  "coverageTargets": {
+    "lines": 65,
+    "statements": 65,
+    "branches": 60,
+    "functions": 60,
+    "policy": "Targets are release-quality objectives, not claims about the current report. Risk-area failure injection takes priority over low-value line filling."
+  },
+  "riskAreas": [
+    {
+      "id": "job-protocol-lifecycle",
+      "sourcePaths": ["src/workers/jobProtocol.ts", "src/workers/JobEngine.ts", "src/runtime/JobClient.ts"],
+      "testPaths": ["tests/job-protocol.test.ts"],
+      "requiredAssertions": [
+        "cancel-during-run stops",
+        "resumes from a checkpoint",
+        "postMessage throws",
+        "backpressure beyond maxQueued"
+      ],
+      "failureModes": [
+        "cancel before start",
+        "cancel during run",
+        "deadline while paused",
+        "worker replacement",
+        "queue backpressure"
+      ]
+    },
+    {
+      "id": "research-db-migration",
+      "sourcePaths": ["src/app/parity/storage-schema.ts", "src/app/parity/storage-import-guards.ts"],
+      "testPaths": ["tests/storage-import-hardening.test.ts"],
+      "requiredAssertions": [
+        "sparse historical archive fixtures",
+        "duplicate decoded keys",
+        "whole-archive",
+        "corrupted JSON"
+      ],
+      "failureModes": [
+        "historical sparse schema",
+        "duplicate keys",
+        "prototype pollution",
+        "oversized archive",
+        "corrupt JSON"
+      ]
+    },
+    {
+      "id": "import-export-atomicity",
+      "sourcePaths": ["src/app/parity/workspace-import-transaction.ts", "src/app/parity/workspace-import-runtime.ts"],
+      "testPaths": ["tests/workspace-import-transaction.test.ts", "tests/import-export-roundtrip.test.ts"],
+      "requiredAssertions": [
+        "rolls every staged mutation back",
+        "compensation itself cannot be verified",
+        "round-trip"
+      ],
+      "failureModes": ["backup failure", "mid-apply failure", "post-apply verification failure", "rollback failure"]
+    },
+    {
+      "id": "worker-boundary",
+      "sourcePaths": [
+        "src/runtime/WorkerBridge.ts",
+        "src/app/MainCanvasWorkerClient.ts",
+        "src/workers/protocolSafety.ts"
+      ],
+      "testPaths": ["tests/canvas-worker-clients.test.ts", "tests/main-canvas-worker-protocol.test.ts"],
+      "requiredAssertions": [
+        "malformed response",
+        "rejected shared initialization",
+        "round-trips projected ensemble tips"
+      ],
+      "failureModes": [
+        "malformed message",
+        "ownership mismatch",
+        "shared-memory initialization rejection",
+        "worker crash"
+      ]
+    },
+    {
+      "id": "evidence-fail-closed",
+      "sourcePaths": ["src/research/claimEvidenceSurfaces.ts", "scripts/validate-evidence-bindings.ts"],
+      "testPaths": ["tests/evidence-bindings.test.ts", "tests/claim-evidence-surfaces.test.ts"],
+      "requiredAssertions": ["rejects later report tampering", "leaked withheld values", "re-evaluates freshness"],
+      "failureModes": ["artifact tampering", "source-coordinate mismatch", "expired evidence", "withheld-value leak"]
+    },
+    {
+      "id": "pwa-schema-recovery",
+      "sourcePaths": ["src/app/PwaUpdateRecovery.ts", "src/app/PwaLifecycle.ts"],
+      "testPaths": ["tests/pwa-update-recovery.test.ts", "tests/service-worker-behavior.test.ts"],
+      "requiredAssertions": [
+        "preserves exact winding",
+        "oversized, corrupt, and unsupported records",
+        "poisoned trim queue"
+      ],
+      "failureModes": [
+        "expired checkpoint",
+        "hash mismatch",
+        "schema migration",
+        "quota/cache write failure",
+        "offline upgrade"
+      ]
+    },
+    {
+      "id": "compound-double-model",
+      "sourcePaths": ["src/physics/compoundDouble.ts", "src/validation/compoundDoubleReference.ts"],
+      "testPaths": ["tests/compound-double.test.ts"],
+      "requiredAssertions": [
+        "independent Cartesian virtual-work reference",
+        "converges toward the independent golden trajectory",
+        "numerical singularity threshold"
+      ],
+      "failureModes": [
+        "inertia double-counting",
+        "reference disagreement",
+        "order regression",
+        "singular mass matrix",
+        "invalid parameters"
+      ]
+    }
+  ]
+}

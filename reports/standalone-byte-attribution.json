@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "pendulum-standalone-byte-attribution/v1",
+  "artifact": {
+    "path": "standalone/index.html",
+    "sha256": "3b0edd3e09d973446ad69f9f1a4a5e7cf0e08e5abc24ae59e237a675c49db6b4",
+    "size": {
+      "raw": 1470285,
+      "gzip": 444657,
+      "brotli": 346700
+    }
+  },
+  "exactHtmlAttribution": {
+    "method": "Exact UTF-8 partition of complete script/style elements and the remaining HTML shell.",
+    "coverage": 1,
+    "attributedRawBytes": 1470285,
+    "parts": [
+      {
+        "id": "html-shell",
+        "role": "HTML markup and static copy",
+        "raw": 58611,
+        "gzip": 13278,
+        "brotli": 11270,
+        "shareOfStandaloneRaw": 0.03986369989491833
+      },
+      {
+        "id": "inline-javascript",
+        "role": "inlined application JavaScript",
+        "raw": 1298672,
+        "gzip": 410422,
+        "brotli": 320401,
+        "shareOfStandaloneRaw": 0.8832790921488011
+      },
+      {
+        "id": "inline-css",
+        "role": "inlined application styles",
+        "raw": 113002,
+        "gzip": 20724,
+        "brotli": 17406,
+        "shareOfStandaloneRaw": 0.07685720795628058
+      }
+    ]
+  },
+  "companionFiles": {
+    "method": "Exact bytes for every sibling file shipped beside standalone/index.html.",
+    "total": {
+      "raw": 385162,
+      "gzip": 205336,
+      "brotli": 194533
+    },
+    "parts": [
+      {
+        "id": "_headers",
+        "role": "standalone support file",
+        "raw": 987,
+        "gzip": 480,
+        "brotli": 409,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "chaos.worker.js",
+        "role": "worker JavaScript required by the standalone runtime",
+        "raw": 131136,
+        "gzip": 37793,
+        "brotli": 32499,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "expansion.worker.js",
+        "role": "worker JavaScript required by the standalone runtime",
+        "raw": 77217,
+        "gzip": 24111,
+        "brotli": 20638,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "icons/pendulum-lab-192.png",
+        "role": "icon or image asset",
+        "raw": 19143,
+        "gzip": 19146,
+        "brotli": 19077,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "icons/pendulum-lab-512.png",
+        "role": "icon or image asset",
+        "raw": 105964,
+        "gzip": 105604,
+        "brotli": 105969,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "icons/pendulum-lab-maskable.svg",
+        "role": "icon or image asset",
+        "raw": 875,
+        "gzip": 430,
+        "brotli": 375,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "labSidePlots.worker.js",
+        "role": "worker JavaScript required by the standalone runtime",
+        "raw": 15852,
+        "gzip": 5996,
+        "brotli": 5362,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "mainCanvas.worker.js",
+        "role": "worker JavaScript required by the standalone runtime",
+        "raw": 18362,
+        "gzip": 6207,
+        "brotli": 5614,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "manifest.ko.webmanifest",
+        "role": "offline/PWA support",
+        "raw": 1818,
+        "gzip": 743,
+        "brotli": 599,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "manifest.webmanifest",
+        "role": "offline/PWA support",
+        "raw": 1731,
+        "gzip": 628,
+        "brotli": 522,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "offline.html",
+        "role": "offline/PWA support",
+        "raw": 784,
+        "gzip": 515,
+        "brotli": 347,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "robots.txt",
+        "role": "standalone support file",
+        "raw": 87,
+        "gzip": 100,
+        "brotli": 85,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "sitemap.xml",
+        "role": "standalone support file",
+        "raw": 584,
+        "gzip": 262,
+        "brotli": 199,
+        "shareOfStandaloneRaw": null
+      },
+      {
+        "id": "sw.js",
+        "role": "offline/PWA support",
+        "raw": 10622,
+        "gzip": 3321,
+        "brotli": 2838,
+        "shareOfStandaloneRaw": null
+      }
+    ]
+  },
+  "modularBuildProxy": {
+    "method": "Role grouping of the same-source modular dist/assets JavaScript and CSS chunks.",
+    "caveat": "This proxy identifies functional contributors but is not additive to standalone HTML: single-file bundling changes chunk boundaries and compression dictionaries.",
+    "total": {
+      "raw": 1677045,
+      "gzip": 528910,
+      "brotli": 444470
+    },
+    "roles": [
+      {
+        "id": "research-workbench",
+        "role": "research workbench",
+        "raw": 401722,
+        "gzip": 126346,
+        "brotli": 102933,
+        "shareOfStandaloneRaw": 0.2395415746148732
+      },
+      {
+        "id": "initial-workbench-shell",
+        "role": "initial workbench shell",
+        "raw": 321526,
+        "gzip": 105378,
+        "brotli": 85759,
+        "shareOfStandaloneRaw": 0.1917217486710255
+      },
+      {
+        "id": "chaos-diagnostics-and-worker",
+        "role": "chaos diagnostics and worker",
+        "raw": 267837,
+        "gzip": 79518,
+        "brotli": 68379,
+        "shareOfStandaloneRaw": 0.15970770015115873
+      },
+      {
+        "id": "other-lazy-runtime-chunks",
+        "role": "other lazy/runtime chunks",
+        "raw": 174808,
+        "gzip": 64849,
+        "brotli": 57711,
+        "shareOfStandaloneRaw": 0.10423572414574445
+      },
+      {
+        "id": "specialized-analysis-panels",
+        "role": "specialized analysis panels",
+        "raw": 138109,
+        "gzip": 45790,
+        "brotli": 40051,
+        "shareOfStandaloneRaw": 0.08235259041945804
+      },
+      {
+        "id": "application-styles",
+        "role": "application styles",
+        "raw": 119044,
+        "gzip": 22597,
+        "brotli": 19006,
+        "shareOfStandaloneRaw": 0.07098438026409548
+      },
+      {
+        "id": "validation-surface",
+        "role": "validation surface",
+        "raw": 91305,
+        "gzip": 30625,
+        "brotli": 23849,
+        "shareOfStandaloneRaw": 0.05444397735302273
+      },
+      {
+        "id": "physics-kernels",
+        "role": "physics kernels",
+        "raw": 78478,
+        "gzip": 24802,
+        "brotli": 21617,
+        "shareOfStandaloneRaw": 0.04679540501298415
+      },
+      {
+        "id": "theory-surface",
+        "role": "theory surface",
+        "raw": 50002,
+        "gzip": 16802,
+        "brotli": 14189,
+        "shareOfStandaloneRaw": 0.02981553864088322
+      },
+      {
+        "id": "worker-runtime",
+        "role": "worker runtime",
+        "raw": 34214,
+        "gzip": 12203,
+        "brotli": 10976,
+        "shareOfStandaloneRaw": 0.0204013607267545
+      }
+    ]
+  }
+}

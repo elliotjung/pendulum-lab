@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://elliotjung.github.io/pendulum-lab/schemas/publication-status/v2",
+  "title": "Source-bound publication status snapshot",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "status",
+    "reportKind",
+    "generatedAt",
+    "snapshotGeneratedAt",
+    "checkedSourceCommit",
+    "environment",
+    "freshnessTtl",
+    "expiresAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "pendulum-publication-status/v2" },
+    "status": { "enum": ["published", "failed", "partial"] },
+    "reportKind": { "enum": ["source-snapshot", "deployment-probe"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "snapshotGeneratedAt": { "type": "string", "format": "date-time" },
+    "checkedSourceCommit": { "type": ["string", "null"], "pattern": "^[a-f0-9]{40}$" },
+    "environment": {
+      "type": "object",
+      "required": ["execution", "workflow", "runId"],
+      "properties": {
+        "execution": { "enum": ["local", "github-actions"] },
+        "workflow": { "type": ["string", "null"] },
+        "runId": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "freshnessTtl": { "const": "PT24H" },
+    "expiresAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

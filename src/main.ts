@@ -40,6 +40,8 @@ import { installPwaLifecycle, restorePwaUpdateRecovery } from './app/PwaLifecycl
 import { installThemePreference } from './app/themePreference';
 import { installContextualHelp } from './app/contextualHelp';
 import { installCustomSelects } from './app/customSelect';
+import { installPrecisionControls } from './app/precisionControls';
+import { installExperimentWorkflow } from './app/experimentWorkflow';
 
 function showToast(message: string, timeout = 2200): void {
   if (typeof window.toast === 'function') {
@@ -264,12 +266,18 @@ function armResearchOnDemand(): void {
  * input-modality, and range-progress synchronization observes the built DOM.
  */
 function bootShell(): void {
+  // Install exact-value range semantics before Shell applies URL controls;
+  // Chromium otherwise quantizes an off-step value such as 2π/3 to 2.094.
+  installPrecisionControls();
   maybeMountModernShell();
   initNavLocale(); // restore the guide language before the menus are decorated
   installAudienceMode();
   installLocaleSelect(() => applyAudienceMode(currentAudienceMode(), false));
   installThemePreference();
   applyStructuralLocale();
+  // Precision companions and generated workflow fields must exist before a
+  // shared hash is restored so one semantic commit can reconstruct everything.
+  installExperimentWorkflow();
   installExperimentShare();
   installShortcutHelp();
   installEducationCards();
