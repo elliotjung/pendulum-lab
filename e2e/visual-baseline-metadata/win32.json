@@ -2,10 +2,10 @@
   "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
   "authority": "github-hosted-native",
   "platform": "win32",
-  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "sourceCommit": "a3e60b704b75776e40248d4fd33c05dc8536ac28",
   "workflow": {
     "name": "Visual Baselines (Linux, Windows, macOS)",
-    "runId": "33378158630",
+    "runId": "33398032415",
     "runAttempt": "1"
   },
   "runner": {
@@ -170,13 +170,13 @@
     },
     {
       "path": "rail-sidebar-chromium-win32.png",
-      "bytes": 9243,
-      "sha256": "4fc7fc041a73b52200c62df110236ce363d700b55911d5d1197f56e36341e021"
+      "bytes": 8312,
+      "sha256": "0ec127526d769ec8d0893a0ed05d4dcd1bf2ece7b9ab5387cc27589ee9455dc4"
     },
     {
       "path": "rail-sidebar-mobile-chrome-win32.png",
-      "bytes": 7708,
-      "sha256": "0febcdbb6dacf3e5072d36251a455038a50c45f32729e9cf994459e5b772c9ae"
+      "bytes": 6448,
+      "sha256": "96eb7c6338a220b1e4fc63883e42c00dadaa266a54ea093a10f0977da931e234"
     },
     {
       "path": "research-experiment-card-chromium-win32.png",
@@ -185,8 +185,8 @@
     },
     {
       "path": "research-experiment-card-mobile-chrome-win32.png",
-      "bytes": 28799,
-      "sha256": "e327975a84364417790641e367c80e30b998b325c8e1e592c45ddee61b2d515f"
+      "bytes": 27551,
+      "sha256": "eab330a59a31cb3ac1b4b6ca1c3c51698091b9f91ae0fac68ca16e86d781b30c"
     }
   ]
 }

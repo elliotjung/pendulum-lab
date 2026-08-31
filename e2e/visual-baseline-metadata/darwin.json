@@ -2,10 +2,10 @@
   "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
   "authority": "github-hosted-native",
   "platform": "darwin",
-  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "sourceCommit": "a3e60b704b75776e40248d4fd33c05dc8536ac28",
   "workflow": {
     "name": "Visual Baselines (Linux, Windows, macOS)",
-    "runId": "33378158630",
+    "runId": "33398032415",
     "runAttempt": "1"
   },
   "runner": {
@@ -675,8 +675,8 @@
   "snapshots": [
     {
       "path": "lab-controls-chromium-darwin.png",
-      "bytes": 28185,
-      "sha256": "b1e65d19eee792b4d9e3285d4b06e59edc96fcb41ca5482db4e517cbd946354a"
+      "bytes": 28169,
+      "sha256": "184938be7c9dca4ec23f73532f92e636cf4896d4d275e4ae67f13ce14fa058f6"
     },
     {
       "path": "lab-controls-mobile-chrome-darwin.png",
@@ -685,13 +685,13 @@
     },
     {
       "path": "rail-sidebar-chromium-darwin.png",
-      "bytes": 10093,
-      "sha256": "885fa5c2599bce653237dc3ddc4b18f6ad02acd5f1198c877e74dd447ce0e3e7"
+      "bytes": 9324,
+      "sha256": "d0d51fa6bdc48459e2bddab900df05c9fb9670cafaf7db2c754b65121192dae5"
     },
     {
       "path": "rail-sidebar-mobile-chrome-darwin.png",
-      "bytes": 8090,
-      "sha256": "9ef5fc4f34af9115a1d0ede3d63798d2db936b4f1183217dee3d4d3e93b32b12"
+      "bytes": 6854,
+      "sha256": "13408a28bedd973664bef042563126dcdab2e22921ebc74e5c157e9ba0ffc940"
     },
     {
       "path": "research-experiment-card-chromium-darwin.png",

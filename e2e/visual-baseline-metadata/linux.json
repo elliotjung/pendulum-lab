@@ -2,10 +2,10 @@
   "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
   "authority": "github-hosted-native",
   "platform": "linux",
-  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "sourceCommit": "a3e60b704b75776e40248d4fd33c05dc8536ac28",
   "workflow": {
     "name": "Visual Baselines (Linux, Windows, macOS)",
-    "runId": "33378158630",
+    "runId": "33398032415",
     "runAttempt": "1"
   },
   "runner": {
@@ -135,13 +135,13 @@
     },
     {
       "path": "rail-sidebar-chromium-linux.png",
-      "bytes": 10017,
-      "sha256": "c722d91656e1e64a0b8a56b16ea125d56a6882d0aecc96335e345a6745b8e122"
+      "bytes": 9086,
+      "sha256": "85c0cfcaf2724a197b8f98a9e2d1c9fac2cefb93c3634329d530fdedeb648904"
     },
     {
       "path": "rail-sidebar-mobile-chrome-linux.png",
-      "bytes": 8102,
-      "sha256": "a5735d372b78afddffd28d1bba9f57382e6df67500c221c7e81242fc21a183e3"
+      "bytes": 6895,
+      "sha256": "dd318b64c83b6af3790fc5c10c4f8b93cf5e8892df6c692fa5dbf21adb275b46"
     },
     {
       "path": "research-experiment-card-chromium-linux.png",
