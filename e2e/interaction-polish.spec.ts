@@ -80,7 +80,7 @@ test('custom selects stay anchored, keyboard accessible, and synchronized with n
   await expect(dynamicSelect.locator('..').locator('.custom-select-button')).toBeVisible();
 });
 
-test('graphs expose collision-aware contextual help and surfaces use calm entrance motion', async ({ page }) => {
+test('graphs expose collision-aware contextual help and overlays use restrained state motion', async ({ page }) => {
   await page.goto('/');
   await waitForModernShell(page);
 
@@ -120,7 +120,7 @@ test('graphs expose collision-aware contextual help and surfaces use calm entran
   await expect(page.locator('#tab-lab .controls')).toBeVisible();
   await expect
     .poll(() => page.locator('#tab-lab .controls').evaluate((element) => getComputedStyle(element).transitionProperty))
-    .toContain('transform');
+    .toBe('none');
   await expect(page.locator('body')).not.toHaveClass(/panel-transitioning/);
 
   await page.locator('#trustDrawerToggle').click();

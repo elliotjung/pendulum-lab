@@ -12,7 +12,7 @@ import {
   type PerturbationPattern,
   type PerturbationVariable
 } from './ensemblePerturbation';
-import { EXPERIMENT_RECIPES, experimentRecipe, type ExperimentGoal } from './experimentRecipes';
+import { experimentRecipe, type ExperimentGoal } from './experimentRecipes';
 import {
   EXPERIMENT_HANDOFF_SCHEMA,
   normalizeTrajectoryStage as normalizeStage,
@@ -24,7 +24,6 @@ import {
   type TrajectoryStage
 } from './experimentWorkflowContract';
 import {
-  addLocalizedOption as option,
   EXPERIMENT_WORKFLOW_CSS,
   exactExperimentRecipeCopy,
   localize as local,
@@ -48,6 +47,7 @@ import {
 } from './experimentWorkflowControls';
 import { openWorkflowTarget } from './experimentWorkflowNavigation';
 import { nextGoalWorkflowStep, normalizeGoalWorkflowState, trajectoryStageCount } from './experimentWorkflowPolicy';
+import { mountEnsembleControls, mountGuidedExperiment } from './experimentWorkflowView';
 
 export { EXPERIMENT_HANDOFF_SCHEMA, TRAJECTORY_STAGES, WORKFLOW_STEPS } from './experimentWorkflowContract';
 export type { ExperimentWorkflowStep, TrajectoryStage } from './experimentWorkflowContract';
@@ -133,231 +133,6 @@ function runStepAction(step: ExperimentWorkflowStep): void {
       break;
     }
   }
-}
-
-function mountEnsembleControls(): void {
-  const epsilonRow = document.getElementById('ensEps')?.closest('.row');
-  const body = epsilonRow?.parentElement;
-  if (!body || document.getElementById('ensVariable')) return;
-  const createRow = (labelEn: string, labelKo: string, control: HTMLElement): HTMLDivElement => {
-    const row = document.createElement('div');
-    row.className = 'row';
-    const label = document.createElement('label');
-    label.htmlFor = control.id;
-    label.dataset.en = labelEn;
-    label.dataset.ko = labelKo;
-    row.append(label, control);
-    return row;
-  };
-  const variable = document.createElement('select');
-  variable.id = 'ensVariable';
-  variable.dataset.testid = 'perturbation-variable';
-  const names: Record<PerturbationVariable, string> = {
-    th1: 'θ₁',
-    th2: 'θ₂',
-    th3: 'θ₃',
-    iw1: 'ω₁',
-    iw2: 'ω₂',
-    iw3: 'ω₃'
-  };
-  for (const value of PERTURBATION_VARIABLES) option(variable, value, names[value], names[value]);
-
-  const pattern = document.createElement('select');
-  pattern.id = 'ensPattern';
-  pattern.dataset.testid = 'perturbation-pattern';
-  const patterns: Record<PerturbationPattern, readonly [string, string]> = {
-    alternating: ['Alternating ±kε', '교대 ±kε'],
-    symmetric: ['Symmetric pairs ±kε', '대칭 쌍 ±kε'],
-    random: ['Seeded random', '시드 기반 무작위'],
-    normalized: ['Canonical-coordinate normalized', '정준 좌표 정규화']
-  };
-  for (const value of PERTURBATION_PATTERNS) option(pattern, value, patterns[value][0], patterns[value][1]);
-
-  const seed = document.createElement('input');
-  seed.id = 'ensSeed';
-  seed.type = 'number';
-  seed.min = '0';
-  seed.max = String(UINT32_MAX);
-  seed.step = '1';
-  seed.value = '1';
-  seed.inputMode = 'numeric';
-  seed.dataset.testid = 'perturbation-seed';
-
-  const readout = document.createElement('p');
-  readout.id = 'ensembleRuleReadout';
-  readout.className = 'ensemble-rule-readout';
-  readout.setAttribute('role', 'status');
-  readout.setAttribute('aria-live', 'polite');
-  body.append(
-    createRow('Perturb variable', '교란 변수', variable),
-    createRow('Pattern', '패턴', pattern),
-    createRow('Pattern seed', '패턴 시드', seed),
-    readout
-  );
-  syncPerturbationVariableOptions();
-  for (const control of [variable, pattern, seed]) {
-    control.addEventListener('change', () => {
-      const trigger = document.getElementById('ensEps');
-      trigger?.dispatchEvent(new Event('change', { bubbles: true }));
-      refreshTrajectoryReadout();
-    });
-  }
-}
-
-function mountGuidedExperiment(anchor: Element): void {
-  if (document.getElementById('guidedExperiment')) return;
-  const root = document.createElement('section');
-  root.id = 'guidedExperiment';
-  root.className = 'guided-experiment';
-  root.setAttribute('aria-labelledby', 'guidedExperimentTitle');
-
-  const goal = document.createElement('select');
-  goal.id = 'experimentGoal';
-  goal.dataset.testid = 'experiment-goal';
-  for (const recipe of EXPERIMENT_RECIPES) option(goal, recipe.id, recipe.title.en, recipe.title.ko);
-
-  const step = document.createElement('input');
-  step.type = 'hidden';
-  step.id = 'workflowStep';
-  step.dataset.testid = 'workflow-step';
-  step.value = 'choose';
-  const stage = document.createElement('input');
-  stage.type = 'hidden';
-  stage.id = 'trajectoryStage';
-  stage.dataset.testid = 'trajectory-stage';
-  const initialEnsembleCount = Number((document.getElementById('ensN') as HTMLInputElement | null)?.value);
-  stage.value =
-    Number.isFinite(initialEnsembleCount) && initialEnsembleCount > 1
-      ? 'ensemble'
-      : initialEnsembleCount === 1
-        ? 'perturbed'
-        : 'reference';
-  const remembered = document.createElement('input');
-  remembered.type = 'hidden';
-  remembered.id = 'ensembleRequestedCount';
-  remembered.value =
-    Number.isFinite(initialEnsembleCount) && initialEnsembleCount > 1
-      ? String(Math.min(80, Math.round(initialEnsembleCount)))
-      : '12';
-
-  const head = document.createElement('div');
-  head.className = 'guided-head';
-  const copy = document.createElement('div');
-  const eyebrow = document.createElement('div');
-  eyebrow.className = 'guided-eyebrow';
-  eyebrow.dataset.en = 'Guided chaos experiment · about 5 minutes';
-  eyebrow.dataset.ko = '안내형 혼돈 실험 · 약 5분';
-  const title = document.createElement('h2');
-  title.id = 'guidedExperimentTitle';
-  const intro = document.createElement('p');
-  copy.append(eyebrow, title, intro);
-  head.append(copy, goal);
-
-  const progress = document.createElement('div');
-  progress.className = 'workflow-progress';
-  progress.setAttribute('aria-label', 'Experiment progress');
-  for (const value of WORKFLOW_STEPS) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'workflow-step';
-    button.dataset.workflowStepButton = value;
-    button.addEventListener('click', () => setStep(value));
-    progress.append(button);
-  }
-
-  const current = document.createElement('div');
-  current.className = 'workflow-current';
-  const currentCopy = document.createElement('div');
-  const currentTitle = document.createElement('strong');
-  currentTitle.id = 'workflowCurrentTitle';
-  const currentBody = document.createElement('span');
-  currentBody.id = 'workflowCurrentBody';
-  const measurement = document.createElement('small');
-  measurement.id = 'workflowMeasurement';
-  measurement.className = 'workflow-measurement';
-  measurement.dataset.en = 'Use the diagnostic card for value, meaning, and trust conditions.';
-  measurement.dataset.ko = '값, 의미, 신뢰 조건은 진단 카드를 확인하세요.';
-  currentCopy.append(currentTitle, currentBody, measurement);
-  const actions = document.createElement('div');
-  actions.className = 'workflow-actions';
-  const action = document.createElement('button');
-  action.type = 'button';
-  action.id = 'workflowPrimaryAction';
-  action.dataset.testid = 'workflow-primary-action';
-  action.addEventListener('click', () => runStepAction(readStep()));
-  const skip = document.createElement('button');
-  skip.type = 'button';
-  skip.id = 'workflowSkip';
-  skip.addEventListener('click', () => {
-    setStep(nextGoalWorkflowStep(experimentRecipe(readGoal()), readStep()));
-  });
-  actions.append(action, skip);
-  current.append(currentCopy, actions);
-
-  const roles = document.createElement('section');
-  roles.className = 'trajectory-role-panel';
-  roles.setAttribute('aria-labelledby', 'trajectoryRolesTitle');
-  const roleTitle = document.createElement('strong');
-  roleTitle.id = 'trajectoryRolesTitle';
-  roleTitle.dataset.en = 'What is on the canvas?';
-  roleTitle.dataset.ko = '캔버스에는 무엇이 있나요?';
-  const stageButtons = document.createElement('div');
-  stageButtons.className = 'trajectory-stage-buttons';
-  const stageCopy: Record<TrajectoryStage, readonly [string, string]> = {
-    reference: ['Reference only', '기준 궤적만'],
-    perturbed: ['+ one perturbation', '+ 교란 하나'],
-    ensemble: ['+ ensemble', '+ 앙상블']
-  };
-  for (const value of TRAJECTORY_STAGES) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.dataset.trajectoryStageButton = value;
-    button.dataset.en = stageCopy[value][0];
-    button.dataset.ko = stageCopy[value][1];
-    button.addEventListener('click', () => setTrajectoryStage(value));
-    stageButtons.append(button);
-  }
-  const legend = document.createElement('div');
-  legend.className = 'trajectory-legend';
-  for (const [role, en, ko] of [
-    ['reference', 'Reference · solid, thick', '기준 · 굵은 실선'],
-    ['perturbed', 'Perturbed · dashed, diamond', '교란 · 파선, 마름모'],
-    ['ensemble', 'Ensemble · dotted, circles', '앙상블 · 점선, 원']
-  ] as const) {
-    const entry = document.createElement('span');
-    const sample = document.createElement('i');
-    sample.className = `role-line role-${role}`;
-    sample.setAttribute('aria-hidden', 'true');
-    const label = document.createElement('b');
-    label.dataset.en = en;
-    label.dataset.ko = ko;
-    entry.append(sample, label);
-    legend.append(entry);
-  }
-  const readout = document.createElement('p');
-  readout.id = 'trajectoryReadout';
-  readout.className = 'trajectory-readout';
-  const why = document.createElement('p');
-  why.className = 'trajectory-why';
-  why.id = 'trajectoryWhy';
-  roles.append(roleTitle, stageButtons, legend, readout, why);
-
-  const next = document.createElement('button');
-  next.type = 'button';
-  next.id = 'workflowNextAction';
-  next.className = 'next-action-note';
-  next.addEventListener('click', () => {
-    const target = next.dataset.target;
-    if (target === 'share') (document.getElementById('shareUrl') as HTMLButtonElement | null)?.click();
-    else if (target) openWorkflowTarget(target, next.dataset.focus || undefined);
-  });
-  root.append(step, stage, remembered, head, progress, current, roles, next);
-  anchor.insertAdjacentElement('afterend', root);
-
-  goal.addEventListener('change', () => {
-    applyRecipe(readGoal(), 'reference');
-    setStep('reference');
-  });
 }
 
 function refreshTrajectoryReadout(): void {
@@ -584,9 +359,24 @@ export function installExperimentWorkflow(): void {
       applyAudienceMode(persona.mode);
       openWorkflowTarget(persona.tab);
     });
-  mountEnsembleControls();
+  mountEnsembleControls(refreshTrajectoryReadout);
   const presets = document.querySelector('.presets');
-  if (presets) mountGuidedExperiment(presets);
+  if (presets)
+    mountGuidedExperiment(presets, {
+      setStep,
+      setTrajectoryStage,
+      runCurrentStep: () => runStepAction(readStep()),
+      skipCurrentStep: () => setStep(nextGoalWorkflowStep(experimentRecipe(readGoal()), readStep())),
+      selectGoal: () => {
+        applyRecipe(readGoal(), 'reference');
+        setStep('reference');
+      },
+      openNextAction: (target, focus) => {
+        if (target === 'share') (document.getElementById('shareUrl') as HTMLButtonElement | null)?.click();
+        else openWorkflowTarget(target, focus);
+      },
+      refresh: refreshWorkflow
+    });
   document.getElementById('ensN')?.addEventListener('input', () => {
     let count = numeric('ensN', 0);
     if (!experimentRecipe(readGoal()).perturbation.count && count !== 0) {

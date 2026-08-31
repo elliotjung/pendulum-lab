@@ -4,24 +4,24 @@ Status: **PASS**
 
 | Delivery role | Actual KiB | Budget KiB | Usage | Status |
 | --- | ---: | ---: | ---: | :---: |
-| initial JS raw | 301.0 | 760.0 | 39.6% | PASS |
-| initial JS gzip | 98.2 | 210.0 | 46.7% | PASS |
-| initial JS brotli | 79.7 | 180.0 | 44.3% | PASS |
-| largest non-initial JS raw | 379.2 | 520.0 | 72.9% | PASS |
+| initial JS raw | 308.7 | 760.0 | 40.6% | PASS |
+| initial JS gzip | 100.4 | 210.0 | 47.8% | PASS |
+| initial JS brotli | 81.6 | 180.0 | 45.3% | PASS |
+| largest non-initial JS raw | 379.1 | 520.0 | 72.9% | PASS |
 | largest non-initial JS gzip | 118.6 | 135.0 | 87.9% | PASS |
 | largest non-initial JS brotli | 96.3 | 115.0 | 83.7% | PASS |
-| initial CSS raw | 110.5 | 140.0 | 79.0% | PASS |
-| initial CSS gzip | 20.3 | 32.0 | 63.4% | PASS |
-| initial CSS brotli | 17.1 | 26.0 | 65.6% | PASS |
-| standalone HTML raw | 1435.8 | 1450.0 | 99.0% | PASS |
-| standalone HTML gzip | 434.2 | 435.0 | 99.8% | PASS |
-| standalone HTML brotli | 338.6 | 360.0 | 94.0% | PASS |
+| initial CSS raw | 102.0 | 140.0 | 72.9% | PASS |
+| initial CSS gzip | 18.8 | 32.0 | 58.6% | PASS |
+| initial CSS brotli | 16.0 | 26.0 | 61.5% | PASS |
+| standalone HTML raw | 1434.1 | 1450.0 | 98.9% | PASS |
+| standalone HTML gzip | 434.7 | 435.0 | 99.9% | PASS |
+| standalone HTML brotli | 339.2 | 360.0 | 94.2% | PASS |
 
 ## Non-initial JavaScript total
 
-- Raw: 1220.5 KiB
+- Raw: 1220.4 KiB
 - Gzip: 396.3 KiB
-- Brotli: 335.8 KiB
+- Brotli: 335.9 KiB
 
 ## Standalone 15% headroom policy
 

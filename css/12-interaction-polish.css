@@ -1,5 +1,10 @@
-/* Interaction polish: anchored flyouts, calm surface motion, contextual help,
-   and the custom select layer. Geometry stays deliberately restrained. */
+/* Final interaction and editorial surface layer.
+   Motion is reserved for state changes; ordinary content does not arrive,
+   float, glow, or lift. */
+
+:root[data-color-theme='dark'] {
+  color-scheme: dark;
+}
 
 @media (min-width: 561px) {
   .rail-section[data-rail-section] .rail-submenu {
@@ -9,50 +14,20 @@
     bottom: auto;
     transform-origin: left var(--rail-submenu-anchor, 22px);
   }
-
-  .rail-section[data-rail-section] .rail-submenu::before {
-    content: '';
-    position: absolute;
-    left: -5px;
-    top: calc(var(--rail-submenu-anchor, 22px) - 5px);
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--workbench-border-strong);
-    border-top: 0;
-    border-right: 0;
-    background: var(--workbench-elevated);
-    transform: rotate(45deg);
-  }
 }
 
+/* A short opacity cue keeps the drawer state legible without ornamental travel. */
 @keyframes surface-arrive-right {
   from {
     opacity: 0;
-    transform: translate3d(12px, 0, 0) scale(0.992);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
   }
 }
-
-@keyframes surface-arrive-up {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 8px, 0) scale(0.992);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-@keyframes surface-backdrop-arrive {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+@media (prefers-reduced-motion: no-preference) {
+  .trust-drawer:not([hidden]) {
+    animation: surface-arrive-right 100ms linear both;
   }
 }
 
@@ -61,18 +36,11 @@
   font-size: 20px;
   line-height: 1;
   transform: rotate(0deg);
-  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 100ms linear;
 }
-
 .panel-toggle[aria-expanded='false'] .panel-toggle-icon {
   transform: rotate(180deg);
 }
-
-/* The panel itself uses compositor-only motion. The grid commits its final
-   width exactly once after a close (or before an open), avoiding a resize
-   observer callback on every animation frame while still giving the canvas
-   the full final width. These selectors intentionally follow the structural
-   `display:none` rules in 00-base/03-instrument-workbench. */
 body.panel-transitioning .tabpanel.active .layout > .controls {
   display: block !important;
   opacity: 1;
@@ -80,69 +48,35 @@ body.panel-transitioning .tabpanel.active .layout > .controls {
   pointer-events: none;
   transform-origin: right center;
   transition:
-    opacity 180ms ease,
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 100ms linear,
+    transform 100ms linear;
   will-change: opacity, transform;
 }
-
 body.panel-closing .tabpanel.active .layout > .controls,
 body.panel-motion-prep .tabpanel.active .layout > .controls {
   opacity: 0;
-  transform: translate3d(18px, 0, 0) scale(0.992);
+  transform: translate3d(8px, 0, 0);
 }
-
 @media (max-width: 1100px) {
   body.panel-closing .tabpanel.active .layout > .controls,
   body.panel-motion-prep .tabpanel.active .layout > .controls {
-    transform: translate3d(0, 8px, 0) scale(0.996);
+    transform: translate3d(0, 6px, 0);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .trust-drawer:not([hidden]) {
-    animation: surface-arrive-right 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .trust-drawer [data-trust-panel]:not([hidden]),
-  .audience-preference-fields:not([hidden]),
-  #ueFloatingDiag:not(.collapsed) .ue-fbody,
-  #toast.show,
-  .pwa-update-banner:not([hidden]),
-  .rgv7-fault.show,
-  #nanOverlay,
-  #figBadge {
-    animation: surface-arrive-up 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .trust-inspector-backdrop {
-    animation: surface-backdrop-arrive 180ms ease-out both;
-  }
-
-  .trust-inspector-panel {
-    animation: surface-arrive-up 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-
-:root[data-color-theme='dark'] {
-  color-scheme: dark;
-}
-
+/* Custom selects retain native semantics and use a flat, measured popup. */
 .custom-select-host {
   position: relative;
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
 }
-
 .audience-field:has(.custom-select-host)::after {
   display: none;
 }
-
 .audience-field .custom-select-button {
-  /* Preserve a true 44px+ touch target after fractional browser rounding. */
   min-height: 45px;
 }
-
 .custom-select-native {
   position: absolute !important;
   inset: 0 !important;
@@ -154,45 +88,40 @@ body.panel-motion-prep .tabpanel.active .layout > .controls {
   pointer-events: none !important;
   border: 0 !important;
 }
-
 .custom-select-button {
-  width: 100%;
-  min-width: 0;
-  min-height: 38px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 18px;
   align-items: center;
   gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
   padding: 7px 9px 7px 11px;
   border: 1px solid var(--workbench-border-strong);
-  border-radius: var(--workbench-radius-md);
+  border-radius: 2px;
   background: var(--workbench-control);
   color: var(--workbench-text);
   text-align: left;
   box-shadow: none;
 }
-
 .custom-select-button:hover,
 .custom-select-button[aria-expanded='true'] {
   border-color: var(--workbench-border-selected);
   background: var(--workbench-hover);
 }
-
 .custom-select-value {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .custom-select-chevron {
-  width: 16px;
-  height: 16px;
   display: grid;
   place-items: center;
+  width: 16px;
+  height: 16px;
   color: var(--workbench-text-muted);
-  transition: transform var(--workbench-motion-fast);
+  transition: transform 80ms linear;
 }
-
 .custom-select-chevron::before {
   content: '';
   width: 6px;
@@ -201,89 +130,76 @@ body.panel-motion-prep .tabpanel.active .layout > .controls {
   border-bottom: 1.5px solid currentColor;
   transform: translateY(-2px) rotate(45deg);
 }
-
 .custom-select-button[aria-expanded='true'] .custom-select-chevron {
   transform: rotate(180deg);
 }
-
 .custom-select-listbox {
   position: fixed;
   z-index: 14000;
   min-width: 160px;
   max-height: min(320px, calc(var(--ui-viewport-height, 100dvh) - 24px));
-  padding: 5px;
+  padding: 4px;
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   border: 1px solid var(--workbench-border-strong);
-  border-radius: var(--workbench-radius-lg);
+  border-radius: 2px;
   background: var(--workbench-elevated);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.36);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   color: var(--workbench-text-secondary);
-  transform-origin: var(--custom-select-origin, top) center;
 }
-
 .custom-select-listbox[hidden] {
   display: none !important;
 }
-
 .custom-select-option {
-  width: 100%;
-  min-height: 38px;
   display: flex;
   align-items: center;
   gap: 9px;
+  width: 100%;
+  min-height: 38px;
   padding: 7px 10px;
-  border: 1px solid transparent;
-  border-radius: var(--workbench-radius-sm);
+  border: 0;
+  border-bottom: 1px solid var(--workbench-border);
+  border-radius: 0;
   background: transparent;
   color: var(--workbench-text-secondary);
   text-align: left;
 }
-
+.custom-select-option:last-child {
+  border-bottom: 0;
+}
 .custom-select-option:hover,
 .custom-select-option.is-active {
-  border-color: var(--workbench-border-strong);
   background: var(--workbench-control);
   color: var(--workbench-text);
 }
-
 .custom-select-option[aria-selected='true'] {
-  border-color: var(--workbench-border-selected);
+  border-inline-start: 2px solid var(--workbench-live);
   background: var(--workbench-selected);
   color: var(--workbench-text);
 }
-
 .custom-select-option[aria-selected='true']::before {
   content: '';
-  width: 6px;
-  height: 6px;
-  flex: 0 0 6px;
-  border-radius: 50%;
-  background: var(--workbench-primary);
+  width: 5px;
+  height: 5px;
+  flex: 0 0 5px;
+  border-radius: 0;
+  background: var(--workbench-live);
 }
-
 .custom-select-option:disabled,
 .custom-select-option[aria-disabled='true'] {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .custom-select-listbox:not([hidden]) {
-    animation: surface-arrive-up 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-}
-
+/* Contextual help is an anchored note, not a decorative bubble. */
 .context-help-anchor {
   cursor: help;
 }
-
 .has-tip.context-help-anchor::after {
   display: none !important;
   content: none !important;
 }
-
 .context-tooltip {
   position: fixed;
   z-index: 15000;
@@ -291,22 +207,224 @@ body.panel-motion-prep .tabpanel.active .layout > .controls {
   max-width: min(320px, calc(100vw - 24px));
   padding: 8px 10px;
   border: 1px solid var(--workbench-border-strong);
-  border-radius: var(--workbench-radius-md);
+  border-radius: 2px;
   background: var(--workbench-elevated);
   color: var(--workbench-text-secondary);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.26);
   font: 500 11px/1.5 var(--font-sans);
   pointer-events: none;
 }
-
 .context-tooltip[hidden] {
   display: none !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .context-tooltip:not([hidden]) {
-    animation: surface-arrive-up 140ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+/* Editorial correction layer: one shell, rules instead of stacked cards. */
+:where(
+  .rail-logo,
+  .rail-menu-button,
+  .rail-palette-launcher,
+  .rail-submenu,
+  .rail-submenu .tab,
+  .rail-submenu .dev-tool-btn,
+  .pbtn,
+  .btnrow button,
+  .panel-toggle,
+  .trust-toggle,
+  .workflow-strip,
+  .workflow-strip button,
+  .presets,
+  .controls,
+  .main-wrap,
+  .plot-cell,
+  .audience-chooser-card,
+  .audience-choice,
+  .audience-preference-fields,
+  .shortcut-help,
+  .tour-card,
+  .trust-inspector-panel,
+  .rgv8-cmd-panel,
+  .rgv8-modal,
+  .si-help,
+  .acc,
+  .guided-experiment,
+  .workflow-role-panel,
+  .workflow-persona,
+  .workflow-statistics,
+  #toast,
+  .pwa-update-banner
+) {
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.rail-logo,
+.rail-menu-button,
+.rail-palette-launcher {
+  background: transparent;
+  border-color: var(--workbench-border);
+}
+.rail-menu-button:hover,
+.rail-menu-button[aria-expanded='true'],
+.rail-menu-button[aria-current='page'] {
+  background: var(--workbench-control);
+  border-color: var(--workbench-border-selected);
+  transform: none;
+}
+.rail-menu-button[aria-expanded='true']::before,
+.rail-menu-button[aria-current='page']::before {
+  width: 2px;
+  border-radius: 0;
+  background: var(--workbench-live);
+  box-shadow: none;
+}
+.rail-submenu {
+  border-color: var(--workbench-border-strong);
+  background: var(--workbench-elevated);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24) !important;
+}
+.rail-submenu::before {
+  display: none !important;
+}
+.rail-submenu .tab,
+.rail-submenu .dev-tool-btn {
+  border: 0;
+  border-bottom: 1px solid var(--workbench-border);
+  background: transparent;
+}
+.rail-submenu .tab:last-of-type,
+.rail-submenu .dev-tool-btn:last-of-type {
+  border-bottom: 0;
+}
+.rail-submenu .tab:hover,
+.rail-submenu .tab[aria-selected='true'],
+.rail-submenu .dev-tool-btn:hover {
+  background: var(--workbench-control);
+  transform: none;
+}
+
+.workflow-strip {
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border-color: var(--workbench-border-strong);
+}
+.workflow-strip button {
+  border: 0;
+  border-right: 1px solid var(--workbench-border);
+  border-radius: 0 !important;
+}
+.workflow-strip button:last-child {
+  border-right: 0;
+}
+.workflow-strip button[aria-current='step'],
+.workflow-strip button[aria-pressed='true'] {
+  border-bottom: 2px solid var(--workbench-live);
+  background: var(--workbench-selected);
+}
+.presets {
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border-color: var(--workbench-border-strong);
+}
+.presets .pbtn {
+  border: 0;
+  border-right: 1px solid var(--workbench-border);
+  border-radius: 0 !important;
+}
+.presets .pbtn:last-child {
+  border-right: 0;
+}
+.pbtn:hover,
+.btnrow button:hover,
+.panel-toggle:hover,
+.trust-toggle:hover {
+  transform: none;
+  background: var(--workbench-hover);
+}
+
+.main-wrap,
+.controls,
+.plot-cell {
+  border-color: var(--workbench-border-strong);
+}
+.controls {
+  transition: none;
+}
+.main-wrap {
+  padding: 0;
+  background: transparent;
+}
+.controls {
+  background: var(--workbench-panel);
+}
+.plot-cell {
+  background: var(--workbench-bg);
+}
+
+.audience-chooser-card {
+  border-color: var(--workbench-border-strong);
+  background: var(--workbench-elevated);
+}
+.audience-choice-grid {
+  gap: 0;
+  border-top: 1px solid var(--workbench-border-strong);
+  border-left: 1px solid var(--workbench-border-strong);
+}
+.audience-choice {
+  border: 0;
+  border-right: 1px solid var(--workbench-border-strong);
+  border-bottom: 1px solid var(--workbench-border-strong);
+  border-radius: 0 !important;
+  background: transparent;
+}
+.audience-choice:hover,
+.audience-choice:focus-visible {
+  background: var(--workbench-control);
+  transform: none;
+}
+.audience-choice[aria-pressed='true'] {
+  border-inline-start: 3px solid var(--workbench-live);
+  background: var(--workbench-selected);
+}
+.audience-choice[aria-pressed='true']::after {
+  border-radius: 1px;
+  background: transparent;
+  color: var(--workbench-live);
+}
+
+.guided-experiment,
+.workflow-role-panel,
+.workflow-persona,
+.workflow-statistics {
+  background: transparent;
+  border-color: var(--workbench-border-strong);
+}
+.rail-section.open .rail-submenu,
+.tabpanel.active {
+  animation: none !important;
+}
+.rail-logo:hover .pendulum-logo-svg,
+.rail-menu-button:hover,
+.rail-menu-button[aria-expanded='true'],
+.rail-menu-button:hover .rail-icon-svg,
+.rail-menu-button[aria-expanded='true'] .rail-icon-svg,
+.rail-submenu .tab:hover,
+.rail-submenu .dev-tool-btn.rail-action:hover,
+.pbtn:hover,
+.btnrow button:hover,
+.workflow-strip button:hover,
+.panel-toggle:hover,
+.audience-choice:hover {
+  transform: none !important;
+}
+.guided-experiment {
+  border-top: 2px solid var(--workbench-live);
+}
+.workflow-role-panel {
+  border-top: 1px solid var(--workbench-border-strong);
 }
 
 .acc-icon .rail-icon-svg,
@@ -315,7 +433,6 @@ body.panel-motion-prep .tabpanel.active .layout > .controls {
   width: 18px;
   height: 18px;
 }
-
 .acc-icon {
   color: var(--workbench-text-muted);
 }
@@ -330,20 +447,18 @@ body.panel-motion-prep .tabpanel.active .layout > .controls {
     color: CanvasText;
     forced-color-adjust: auto;
   }
-
-  /* The native select is deliberately hidden after enhancement. Keep the
-     visible combobox unmistakably focused even when focus was restored by
-     script rather than a keyboard-originated :focus-visible event. */
   .custom-select-button:focus {
     outline: 3px solid Highlight !important;
     outline-offset: 3px !important;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   .custom-select-chevron,
   .panel-toggle-icon,
   body.panel-motion-ready .tabpanel.active .layout > .controls {
     transition: none;
+  }
+  .trust-drawer:not([hidden]) {
+    animation: none;
   }
 }

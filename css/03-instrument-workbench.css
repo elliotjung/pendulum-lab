@@ -7,31 +7,31 @@
 
 :root {
   color-scheme: dark;
-  --workbench-bg: #070910;
-  --workbench-raised: #0b0e17;
-  --workbench-panel: #10141f;
-  --workbench-elevated: #151a28;
-  --workbench-control: #181d2b;
-  --workbench-hover: #1d2332;
-  --workbench-selected: #242a3d;
-  --workbench-text: #f1f3f8;
-  --workbench-text-secondary: #a8b0c2;
-  --workbench-text-muted: #7f899e;
-  --workbench-border: rgba(205, 214, 245, 0.08);
-  --workbench-border-strong: rgba(205, 214, 245, 0.14);
-  --workbench-border-selected: rgba(139, 124, 246, 0.55);
-  --workbench-primary: #8b7cf6;
-  --workbench-live: #72d6e5;
+  --workbench-bg: #0b0f14;
+  --workbench-raised: #0d1218;
+  --workbench-panel: #111820;
+  --workbench-elevated: #151d26;
+  --workbench-control: #18212b;
+  --workbench-hover: #1b2630;
+  --workbench-selected: #1e2d38;
+  --workbench-text: #edf1f3;
+  --workbench-text-secondary: #b7c0c8;
+  --workbench-text-muted: #87939e;
+  --workbench-border: rgba(190, 204, 214, 0.11);
+  --workbench-border-strong: rgba(190, 204, 214, 0.2);
+  --workbench-border-selected: rgba(117, 184, 199, 0.58);
+  --workbench-primary: #789eaf;
+  --workbench-live: #75b8c7;
   --workbench-green: #58c99b;
   --workbench-amber: #e0ae68;
   --workbench-red: #ef6f7d;
   --workbench-info: #7ca8f6;
-  --workbench-radius-sm: 5px;
-  --workbench-radius-md: 8px;
-  --workbench-radius-lg: 12px;
-  --workbench-motion-fast: 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  --workbench-motion-base: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  --workbench-motion-slow: 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --workbench-radius-sm: 2px;
+  --workbench-radius-md: 2px;
+  --workbench-radius-lg: 3px;
+  --workbench-motion-fast: 80ms linear;
+  --workbench-motion-base: 100ms linear;
+  --workbench-motion-slow: 140ms linear;
   --rail-w: 80px;
   --controls-w: 320px;
 }
@@ -47,7 +47,7 @@ body {
 }
 
 ::selection {
-  background: rgba(139, 124, 246, 0.32);
+  background: rgba(117, 184, 199, 0.34);
   color: var(--workbench-text);
 }
 
@@ -535,7 +535,7 @@ button.primary {
 
 button.primary:hover {
   border-color: color-mix(in srgb, var(--workbench-primary) 78%, white);
-  background: #9a8df8;
+  background: color-mix(in srgb, var(--workbench-primary) 82%, white);
   color: #090b11;
 }
 
@@ -675,7 +675,9 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--workbench-border-selected);
-  box-shadow: 0 0 0 2px rgba(139, 124, 246, 0.14);
+  outline: 2px solid color-mix(in srgb, var(--workbench-live) 42%, transparent);
+  outline-offset: 1px;
+  box-shadow: none;
 }
 
 .row input[type='range'] {

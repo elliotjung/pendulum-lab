@@ -10,14 +10,14 @@
   --workbench-elevated: #f8f9fc;
   --workbench-control: #e9edf4;
   --workbench-hover: #e2e7f0;
-  --workbench-selected: #e4e2f6;
+  --workbench-selected: #dce7eb;
   --workbench-text: #171a24;
   --workbench-text-secondary: #475064;
   --workbench-text-muted: #6d768a;
   --workbench-border: rgba(34, 43, 67, 0.1);
   --workbench-border-strong: rgba(34, 43, 67, 0.18);
-  --workbench-border-selected: rgba(98, 84, 202, 0.52);
-  --workbench-primary: #6254ca;
+  --workbench-border-selected: rgba(65, 111, 130, 0.58);
+  --workbench-primary: #416f82;
   --workbench-live: #167b8e;
   --workbench-green: #247c5b;
   --workbench-amber: #96651c;
@@ -56,12 +56,12 @@
   --yellow: var(--workbench-amber);
   --red: var(--workbench-red);
   --info: var(--workbench-info);
-  --focus: #5144ba;
+  --focus: #365f70;
   --lux-ice: var(--workbench-primary);
-  --shadow-xs: 0 1px 2px rgba(32, 40, 60, 0.08);
-  --shadow-sm: 0 4px 12px rgba(32, 40, 60, 0.08);
-  --shadow-md: 0 12px 30px rgba(32, 40, 60, 0.1);
-  --shadow-lg: 0 24px 56px rgba(32, 40, 60, 0.14);
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: 0 8px 24px rgba(32, 40, 60, 0.1);
+  --shadow-lg: 0 14px 36px rgba(32, 40, 60, 0.12);
 }
 
 :root[data-color-theme='light'] body,
@@ -176,7 +176,7 @@
 }
 
 :root[data-color-theme='light'] button.primary:hover {
-  background: #5548bc;
+  background: #365f70;
   color: #ffffff;
 }
 

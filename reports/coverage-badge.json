@@ -1,32 +1,32 @@
 {
   "schemaVersion": 1,
   "label": "coverage",
-  "message": "58.8%",
+  "message": "58.6%",
   "color": "#cf222e",
   "metrics": {
     "lines": {
-      "total": 33182,
-      "covered": 19517,
+      "total": 33340,
+      "covered": 19528,
       "skipped": 0,
-      "pct": 58.81
+      "pct": 58.57
     },
     "statements": {
-      "total": 38383,
-      "covered": 22353,
+      "total": 38564,
+      "covered": 22368,
       "skipped": 0,
-      "pct": 58.23
+      "pct": 58
     },
     "functions": {
-      "total": 5292,
-      "covered": 2740,
+      "total": 5315,
+      "covered": 2742,
       "skipped": 0,
-      "pct": 51.77
+      "pct": 51.58
     },
     "branches": {
-      "total": 23661,
-      "covered": 11757,
+      "total": 23790,
+      "covered": 11767,
       "skipped": 0,
-      "pct": 49.68
+      "pct": 49.46
     },
     "branchesTrue": {
       "total": 0,

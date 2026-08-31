@@ -31,6 +31,7 @@ export interface LabControlBindings {
   clearPoincare(): void;
   toggleRunning(): void;
   refreshPresentation(): void;
+  refreshEnsembleRendering(): void;
   exportTrajectory(): void;
   exportPoincare(): void;
   exportJson(): void;
@@ -193,6 +194,11 @@ export class LabControls {
     dom.el('clearPoincBtn')?.addEventListener('click', () => actions.clearPoincare(), listenerOptions);
     dom.el('pauseBtn')?.addEventListener('click', () => actions.toggleRunning(), listenerOptions);
     document.addEventListener('pendulum:ui-locale-changed', () => actions.refreshPresentation(), listenerOptions);
+    document.addEventListener(
+      'pendulum:ensemble-render-mode-changed',
+      () => actions.refreshEnsembleRendering(),
+      listenerOptions
+    );
 
     this.wireExport(actions);
     this.wireScrubber(actions);

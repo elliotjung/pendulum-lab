@@ -15,7 +15,7 @@ import { EXPERIMENT_HANDOFF_SCHEMA } from './experimentWorkflowContract';
 /**
  * Modern application shell — owns the responsibilities the legacy `js/` runtime
  * used to provide, so the legacy scripts can be removed entirely:
- *   - tab navigation (the `.tab` rail + the dev-hub tab actions),
+ *   - tab navigation in the `.tab` rail,
  *   - slider value-display updates,
  *   - keyboard shortcuts,
  *   - presets (set the controls, then let the Lab/analysis modules rebuild).

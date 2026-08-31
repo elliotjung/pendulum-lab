@@ -1,114 +1,114 @@
 {
   "schemaVersion": "pendulum-bundle-budget/v1",
   "status": "pass",
-  "artifactSetSha256": "1a8cee24b2675d41741e28d1b69f29000b7194f4006565164a86e668ecb24d8f",
+  "artifactSetSha256": "92889ac10924b61ba9cc38520b35b72ed0f22d82f1d49ea1ac929eacdc7f3e10",
   "artifactSet": {
-    "sha256": "1a8cee24b2675d41741e28d1b69f29000b7194f4006565164a86e668ecb24d8f",
+    "sha256": "92889ac10924b61ba9cc38520b35b72ed0f22d82f1d49ea1ac929eacdc7f3e10",
     "files": 97,
-    "bytes": 5543701
+    "bytes": 5528514
   },
   "rows": [
     {
       "label": "initial JS raw",
-      "bytes": 308260,
+      "bytes": 316101,
       "budget": 778240,
       "ok": true,
-      "ratio": 0.3960988898026316,
-      "remainingBytes": 469980
+      "ratio": 0.4061741879111842,
+      "remainingBytes": 462139
     },
     {
       "label": "initial JS gzip",
-      "bytes": 100512,
+      "bytes": 102831,
       "budget": 215040,
       "ok": true,
-      "ratio": 0.4674107142857143,
-      "remainingBytes": 114528
+      "ratio": 0.4781947544642857,
+      "remainingBytes": 112209
     },
     {
       "label": "initial JS brotli",
-      "bytes": 81574,
+      "bytes": 83525,
       "budget": 184320,
       "ok": true,
-      "ratio": 0.44256727430555554,
-      "remainingBytes": 102746
+      "ratio": 0.4531521267361111,
+      "remainingBytes": 100795
     },
     {
       "label": "largest non-initial JS raw",
-      "bytes": 388281,
+      "bytes": 388248,
       "budget": 532480,
       "ok": true,
-      "ratio": 0.7291935847355769,
-      "remainingBytes": 144199
+      "ratio": 0.7291316105769231,
+      "remainingBytes": 144232
     },
     {
       "label": "largest non-initial JS gzip",
-      "bytes": 121483,
+      "bytes": 121476,
       "budget": 138240,
       "ok": true,
-      "ratio": 0.878783275462963,
-      "remainingBytes": 16757
+      "ratio": 0.8787326388888889,
+      "remainingBytes": 16764
     },
     {
       "label": "largest non-initial JS brotli",
-      "bytes": 98562,
+      "bytes": 98576,
       "budget": 117760,
       "ok": true,
-      "ratio": 0.8369735054347827,
-      "remainingBytes": 19198
+      "ratio": 0.8370923913043479,
+      "remainingBytes": 19184
     },
     {
       "label": "initial CSS raw",
-      "bytes": 113183,
+      "bytes": 104443,
       "budget": 143360,
       "ok": true,
-      "ratio": 0.789501953125,
-      "remainingBytes": 30177
+      "ratio": 0.7285365513392857,
+      "remainingBytes": 38917
     },
     {
       "label": "initial CSS gzip",
-      "bytes": 20791,
+      "bytes": 19217,
       "budget": 32768,
       "ok": true,
-      "ratio": 0.634490966796875,
-      "remainingBytes": 11977
+      "ratio": 0.586456298828125,
+      "remainingBytes": 13551
     },
     {
       "label": "initial CSS brotli",
-      "bytes": 17477,
+      "bytes": 16370,
       "budget": 26624,
       "ok": true,
-      "ratio": 0.6564378004807693,
-      "remainingBytes": 9147
+      "ratio": 0.6148587740384616,
+      "remainingBytes": 10254
     },
     {
       "label": "standalone HTML raw",
-      "bytes": 1470285,
+      "bytes": 1468487,
       "budget": 1484800,
       "ok": true,
-      "ratio": 0.9902242726293103,
-      "remainingBytes": 14515
+      "ratio": 0.9890133351293103,
+      "remainingBytes": 16313
     },
     {
       "label": "standalone HTML gzip",
-      "bytes": 444657,
+      "bytes": 445174,
       "budget": 445440,
       "ok": true,
-      "ratio": 0.9982421875,
-      "remainingBytes": 783
+      "ratio": 0.9994028376436782,
+      "remainingBytes": 266
     },
     {
       "label": "standalone HTML brotli",
-      "bytes": 346700,
+      "bytes": 347358,
       "budget": 368640,
       "ok": true,
-      "ratio": 0.9404839409722222,
-      "remainingBytes": 21940
+      "ratio": 0.9422688802083333,
+      "remainingBytes": 21282
     }
   ],
   "nonInitialJsTotal": {
-    "raw": 1249741,
-    "gzip": 405801,
-    "brotli": 343890
+    "raw": 1249728,
+    "gzip": 405786,
+    "brotli": 343925
   },
   "standaloneHeadroom": {
     "targetRatio": 0.85,
@@ -117,7 +117,7 @@
     "acceptedCeilingsMatch": true,
     "attribution": {
       "path": "reports/standalone-byte-attribution.json",
-      "artifactSha256": "3b0edd3e09d973446ad69f9f1a4a5e7cf0e08e5abc24ae59e237a675c49db6b4",
+      "artifactSha256": "f9d32207e0316d72e7dbc5bd791f07912fd948a21665123986037544655f4cf3",
       "coverage": 1
     }
   }

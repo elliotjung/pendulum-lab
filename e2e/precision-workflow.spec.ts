@@ -1,5 +1,28 @@
 import { expect, test } from '@playwright/test';
 
+test('IME composition does not commit an intermediate scientific value', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const before = await page.locator('#th1').getAttribute('data-precision-canonical');
+  await page.getByTestId('precision-th1').evaluate((element) => {
+    const input = element as HTMLInputElement;
+    input.focus();
+    input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true, data: '2' }));
+    input.value = '2';
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key: 'Enter', isComposing: true })
+    );
+  });
+  await expect(page.locator('#th1')).toHaveAttribute('data-precision-canonical', before ?? '2');
+
+  await page.getByTestId('precision-th1').evaluate((element) => {
+    const input = element as HTMLInputElement;
+    input.value = '2π/3';
+    input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '2π/3' }));
+    input.blur();
+  });
+  await expect(page.locator('#th1')).toHaveAttribute('data-precision-canonical', String((2 * Math.PI) / 3));
+});
+
 test('fresh guided Lab progresses from reference to one perturbation to the remembered ensemble', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#th1')).toHaveAttribute('data-precision-canonical', '2');

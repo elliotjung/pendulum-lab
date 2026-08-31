@@ -70,10 +70,18 @@ export class LabMainSurface {
 
   drawLive(frame: LiveFrame): void {
     const style = labMainFrameStyle(frame.config, frame.quality, frame.frameCount);
+    const showIndividualTraces =
+      (document.getElementById('ensembleSpaghetti') as HTMLInputElement | null)?.checked ?? false;
+    const canvas = document.getElementById('main');
+    if (canvas instanceof HTMLCanvasElement) {
+      canvas.dataset.ensembleTraces = showIndividualTraces ? 'individual' : 'summary';
+      canvas.dataset.frameSource = 'live';
+    }
     if (this.worker?.isActive()) {
+      if (frame.preserveTrail) return;
       this.worker.draw({
         bobs: frame.bobs,
-        ensembleBobs: frame.ensemble.tipPositionsMeters(frame.config),
+        ensembleBobs: frame.ensemble.tipPositionsMeters(frame.config, showIndividualTraces),
         style
       });
       return;
@@ -81,13 +89,15 @@ export class LabMainSurface {
     const renderer = !this.renderer || frame.frameCount % 30 === 0 ? this.ensureRenderer(frame.config) : this.renderer;
     if (!renderer) return;
     renderer.draw(frame.bobs, {
-      ensembleTips: frame.ensemble.tips(frame.config, renderer),
+      ensembleTips: frame.ensemble.tips(frame.config, renderer, showIndividualTraces),
       ...style,
       ...(frame.preserveTrail ? { preserveTrail: true } : {})
     });
   }
 
   drawReplay(bobs: BobPosition[], config: LabConfig, quality: LabQualityBudget, frameCount: number): void {
+    const canvas = document.getElementById('main');
+    if (canvas instanceof HTMLCanvasElement) canvas.dataset.frameSource = 'replay';
     if (this.worker?.isActive()) {
       this.worker.draw({
         bobs,
@@ -99,11 +109,14 @@ export class LabMainSurface {
     }
   }
 
-  repaintAfterResize(frame: LiveFrame): void {
-    if (this.worker?.isActive()) {
-      this.worker.resize();
+  repaintAfterResize(frame: LiveFrame, replayBobs?: BobPosition[]): void {
+    const workerActive = this.worker?.isActive() ?? false;
+    if (workerActive) this.worker?.resize();
+    if (replayBobs) {
+      this.drawReplay(replayBobs, frame.config, frame.quality, frame.frameCount);
       return;
     }
+    if (workerActive) return;
     this.drawLive({ ...frame, preserveTrail: true });
   }
 

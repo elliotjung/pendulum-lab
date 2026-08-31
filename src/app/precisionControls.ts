@@ -405,11 +405,23 @@ function installCompanion(spec: PrecisionControlSpec): void {
     input.value = formatPreciseDecimal(displayed());
     return true;
   };
-  input.addEventListener('change', () => void commit());
+  let composing = false;
+  input.addEventListener('compositionstart', () => {
+    composing = true;
+  });
+  input.addEventListener('compositionend', () => {
+    composing = false;
+    if (document.activeElement !== input) void commit();
+  });
+  input.addEventListener('change', () => {
+    if (!composing) void commit();
+  });
   input.addEventListener('blur', () => {
+    if (composing) return;
     if (!commit()) sync();
   });
   input.addEventListener('keydown', (event) => {
+    if (composing || event.isComposing) return;
     if (event.key === 'Enter') {
       event.preventDefault();
       if (commit()) input.select();

@@ -48,7 +48,6 @@ export function audienceModeCss(): string {
   return `
 ${beginnerHidden}{display:none!important}
 ${studentHidden}{display:none!important}
-body.audience-beginner .dev-hub,
 body.audience-beginner #ueFloatingDiag,
 body.audience-beginner .diag-row,
 body.audience-beginner header .badge,

@@ -509,7 +509,7 @@ test('Korean control search defers IME filtering, reports zero, and Escape clear
   const search = page.locator('#siControlSearch');
   await expect(search).toBeVisible({ timeout: 30_000 });
   await expect(search).toHaveAttribute('placeholder', '조절기를 검색하세요');
-  await expect(search).toHaveAttribute('aria-controls', 'labControlSurface');
+  await expect(search).toHaveAttribute('aria-controls', 'tab-lab-controls');
   await expect(page.locator('#siControlSearchClear')).toHaveAttribute('aria-label', '조절기 검색어 지우기');
 
   const hiddenBefore = await page.locator('#tab-lab .controls .si-row-hidden').count();

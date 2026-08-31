@@ -13,8 +13,8 @@
     },
     {
       "path": "standalone/index.html",
-      "bytes": 1470285,
-      "sha256": "3b0edd3e09d973446ad69f9f1a4a5e7cf0e08e5abc24ae59e237a675c49db6b4"
+      "bytes": 1468487,
+      "sha256": "f9d32207e0316d72e7dbc5bd791f07912fd948a21665123986037544655f4cf3"
     },
     {
       "path": "standalone/labSidePlots.worker.js",

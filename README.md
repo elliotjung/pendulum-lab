@@ -22,7 +22,7 @@ Use Node.js `>=22 <27` and a clean lockfile install:
 ```bash
 npm ci
 npm run dev        # open app.html at the printed local URL
-npm test           # 1647 unit tests
+npm test           # 1651 unit tests
 ```
 
 For a double-clickable build, download `standalone/index.html` from a GitHub
@@ -75,7 +75,7 @@ is documented in [cross-project release](documents/cross-project-release.md).
 | --- | --- |
 | `npm run dev` / `build` / `preview` | Develop · build the hosted app · serve the exact build |
 | `npm run build:standalone` | Build the portable single-file application |
-| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1647 tests across 229 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
+| `npm test` / `test:quick` / `test:slow` | Vitest unit suite (1651 tests across 230 files; synced from `reports/vitest-results.json`) plus quick/slow tiers for local and CI iteration |
 | `npm run test:e2e` / `smoke` | Cross-browser Playwright suite · focused browser smoke |
 | `npm run typecheck` / `lint` / `verify` | Strict types · source policy · complete local gate |
 | `npm run validate:reference` / `cross` / `sympy` | In-repo envelopes · independent SciPy · independent symbolic comparison |

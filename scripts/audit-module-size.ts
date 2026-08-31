@@ -3,6 +3,10 @@ import { join } from 'node:path';
 
 const SOURCE_ROOT = 'src';
 const DEFAULT_MAX_LINES = 650;
+const TARGETED_MAX_LINES: Record<string, number> = {
+  'src/app/LabApp.ts': 550,
+  'src/app/experimentWorkflow.ts': 550
+};
 
 // Intentional exceptions belong here only when a module genuinely cannot be
 // kept under DEFAULT_MAX_LINES. The current source tree has none.
@@ -44,7 +48,7 @@ const files = await walk(SOURCE_ROOT);
 for (const file of files) {
   const lines = await lineCount(file);
   const known = KNOWN_LARGE_MODULES[file];
-  const limit = known?.maxLines ?? DEFAULT_MAX_LINES;
+  const limit = TARGETED_MAX_LINES[file] ?? known?.maxLines ?? DEFAULT_MAX_LINES;
   if (lines > limit) {
     findings.push({
       file,

@@ -2,22 +2,16 @@ import { physicsAdapter } from '../physics';
 import { LabSimulation, type BobPosition, type LabConfig } from './LabSimulation';
 import { PoincareAccumulator } from './PoincareAccumulator';
 import { LyapunovEstimator } from './LyapunovEstimator';
-import { downloadText, poincareCsv, runJson, trajectoryCsv } from './labExport';
 import { pageDom as dom } from './DomBinder';
 import { AudioSonifier } from './AudioSonifier';
-import { canvasQualityDiagnostics } from './canvasQuality';
 import { DiagnosticsScheduler } from './DiagnosticsScheduler';
 import { LabSidePlotCoordinator } from './LabSidePlotCoordinator';
 import { LabEnsembleController } from './LabEnsembleController';
-import { presentLabChrome } from './LabChromePresenter';
 import { RenderScheduler } from './RenderScheduler';
 import { SimulationClock, type SimulationTimingMode } from './SimulationClock';
 import { LabControls, readLabConfig, readLabStepsPerFrame } from './LabControls';
 import { LabQualityBudget } from './LabQualityBudget';
 import type { RuntimeSnapshot } from '../types/domain';
-import { stateHash, stateStore } from '../state/StateStore';
-import { SESSION_SCHEMA_VERSION } from '../state/sessionSchema';
-import { legacyApp } from '../runtime/legacyCompat';
 import {
   canonicalLabSnapshot,
   exactRecoveryLabSnapshot,
@@ -36,6 +30,9 @@ import { LAB_DIAGNOSTIC_PLOT_COUNT, LabDiagnosticPlots } from './LabDiagnosticPl
 import { LabMainSurface } from './LabMainSurface';
 import { normalizePerturbationPattern, normalizePerturbationVariableForSystem } from './ensemblePerturbation';
 import { epsilonCanonicalValue, setPrecisionCanonicalValue } from './precisionControls';
+import { presentEnsembleStatistics } from './ensembleStatisticsPresenter';
+import { LabRuntimeReporter, type LabRuntimeReportSource } from './LabRuntimeReporter';
+import { createLabControlBindings } from './LabControlBindingFactory';
 
 /** Simulation orchestration; rendering policy, lifecycle, plots, and chrome are collaborators. */
 
@@ -90,6 +87,27 @@ export class LabApp {
   private audio = new AudioSonifier();
   private canvasLifecycle: LabCanvasLifecycle | null = null;
   private disposed = false;
+  private readonly runtimeReporter = new LabRuntimeReporter((): LabRuntimeReportSource => ({
+    sim: this.sim,
+    lyap: this.lyap,
+    poincare: this.poincare,
+    history: this.history,
+    quality: this.quality,
+    sidePlots: this.sidePlots,
+    mainSurface: this.mainSurface,
+    diagnosticsScheduler: this.diagnosticsScheduler,
+    renderScheduler: this.renderScheduler,
+    lastTime: this.lastTime,
+    lastDrift: this.lastDrift,
+    lastPhysicsMs: this.lastPhysicsMs,
+    spf: this.spf,
+    requestedSpf: this.requestedSpf,
+    lastAdvancedSteps: this.lastAdvancedSteps,
+    lastTimingDebtSeconds: this.lastTimingDebtSeconds,
+    droppedSimulationSeconds: this.droppedSimulationSeconds,
+    modeLabel: this.currentModeLabel(),
+    timingMode: this.timingMode()
+  }));
   private readonly onVisibilityChange = (): void => {
     if (!this.running) return;
     if (document.hidden && !dom.bool('backgroundSim', false)) {
@@ -149,6 +167,7 @@ export class LabApp {
     this.mainSurface.configure(activeConfig, this.quality);
     this.frameCount = 0;
     this.renderScheduler.reset();
+    presentEnsembleStatistics(this.ensemble);
   }
 
   /** One animation frame: advance spf steps, update histories, render everything. */
@@ -165,6 +184,7 @@ export class LabApp {
     const timingMode = this.timingMode();
     const effectiveStepsPerFrame =
       timingMode === 'wall-clock' ? Math.max(0, this.spf) : Math.max(0, Math.round(this.spf * speedMultiplier));
+    let ensembleSampled = false;
     const frame = this.simulationClock.advance({
       sim,
       stepsPerFrame: effectiveStepsPerFrame,
@@ -177,8 +197,9 @@ export class LabApp {
         this.poincare.push(state);
         this.lyap.step(state);
         this.history.pushStep(state, w1Index, w2Index);
-      },
-      afterSteps: (stepsAdvanced) => this.ensemble.step(stepsAdvanced, sim.config, this.rhs)
+        this.ensemble.step(1, sim.config, this.rhs);
+        if (this.ensemble.sample(sim.time, state, sim.config)) ensembleSampled = true;
+      }
     });
     this.lastAdvancedSteps = frame.stepsAdvanced;
     this.lastTimingDebtSeconds = frame.timingDebtSeconds;
@@ -218,6 +239,7 @@ export class LabApp {
       });
     });
 
+    if (ensembleSampled) presentEnsembleStatistics(this.ensemble);
     if (diag) {
       this.diagnosticsScheduler.schedule({
         frameCount: this.frameCount,
@@ -261,14 +283,15 @@ export class LabApp {
     this.mainSurface.drawReplay(bobs, this.sim.config, this.quality, this.frameCount);
   }
 
-  private renderLiveFrame(): void {
+  private renderLiveFrame(preserveTrail = false): void {
     const bobs = this.sim.bobPositionsInto(this.bobsScratch);
     this.mainSurface.drawLive({
       bobs,
       config: this.sim.config,
       quality: this.quality,
       frameCount: this.frameCount,
-      ensemble: this.ensemble
+      ensemble: this.ensemble,
+      preserveTrail
     });
   }
 
@@ -350,96 +373,22 @@ export class LabApp {
     this.syncRunPresentation();
   }
 
-  /** Refresh the header/diagnostics chrome from the latest frame snapshot. */
   private updateChrome(
     snapshot: { time: number; energy: number; drift: number; state: ArrayLike<number> },
     w1Index: number,
     w2Index: number
   ): void {
-    const longTasks = this.renderScheduler.longTaskSnapshot();
-    presentLabChrome({
-      ...snapshot,
-      initialEnergy: this.sim.initialEnergy,
-      damping: this.sim.config.gamma,
-      w1Index,
-      w2Index,
-      fps: this.renderScheduler.fps,
-      physicsMs: this.lastPhysicsMs,
-      renderMs: this.renderScheduler.renderMs,
-      workerMs: this.sidePlots.renderMs(),
-      qualityMode: this.quality.mode,
-      qualityReason: this.quality.reason,
-      dprCap: this.quality.dprCap,
-      backend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
-      lambdaMax: this.lyap.value(),
-      poincare: { size: this.poincare.size, ...this.poincare.policy() },
-      timingDebtSeconds: this.lastTimingDebtSeconds,
-      droppedSimulationSeconds: this.droppedSimulationSeconds,
-      longTaskCount: longTasks.count,
-      longTaskMs: longTasks.totalDurationMs,
-      phasePoints: this.history.phasePoints,
-      spectrumSamples: this.history.spectrumSamples,
-      angleTimeSamples: this.history.angleTimeSamples,
-      modeLabel: this.currentModeLabel()
-    });
+    this.runtimeReporter.present(snapshot, w1Index, w2Index);
   }
 
   /** Live diagnostics for tooling/tests. */
   diagnostics(): LabDiagnostics {
-    const longTasks = this.renderScheduler.longTaskSnapshot();
-    return {
-      time: this.lastTime,
-      drift: this.lastDrift,
-      poincarePoints: this.poincare.size,
-      lambdaMax: this.lyap.value(),
-      fps: this.renderScheduler.fps,
-      physicsMsPerFrame: this.lastPhysicsMs,
-      renderMsPerFrame: this.renderScheduler.renderMs,
-      sidePlotMsPerFrame: this.sidePlots.renderMs(),
-      trailPoints: this.mainSurface.trailPointCount(),
-      qualityMode: this.quality.mode,
-      qualityReason: this.quality.reason,
-      dprCap: this.quality.dprCap,
-      stepsPerFrame: this.spf,
-      stepsAdvanced: this.lastAdvancedSteps,
-      timingMode: this.timingMode(),
-      requestedStepsPerFrame: this.requestedSpf,
-      trailQualityScale: this.quality.trailQualityScale,
-      sidePlotBackend: this.sidePlots.usesWorker() ? 'offscreen' : 'main',
-      mainCanvasBackend: this.mainSurface.canvasBackend(),
-      mainTrailBackend: this.mainSurface.trailBackend(),
-      pendingUiTasks: this.diagnosticsScheduler.pendingCount(),
-      longTaskCount: longTasks.count,
-      longTaskMs: longTasks.totalDurationMs,
-      longestTaskMs: longTasks.maxDurationMs,
-      timingDebtSeconds: this.lastTimingDebtSeconds,
-      droppedSimulationSeconds: this.droppedSimulationSeconds,
-      backgroundPolicy: dom.bool('backgroundSim', false) ? 'continue-when-hidden' : 'pause-when-hidden',
-      decorativeEffects: this.quality.allowDecorativeEffects,
-      canvasQualityEvents: canvasQualityDiagnostics()
-    };
+    return this.runtimeReporter.diagnostics();
   }
 
   /** Atomic, directly restorable description of the actual live solver state. */
   runtimeSnapshot(): RuntimeSnapshot {
-    const config = this.sim.config;
-    const state = Array.from(this.sim.stateView());
-    const seed = dom.num('seed', Number.NaN);
-    return {
-      schemaVersion: SESSION_SCHEMA_VERSION,
-      systemType: config.system,
-      method: config.method,
-      mode: legacyApp()?.runMode ?? stateStore.snapshot().mode,
-      dt: config.dt,
-      tolerance: config.tolerance ?? 1e-7,
-      stepsPerFrame: this.requestedSpf,
-      damping: config.gamma,
-      parameters: { ...config.parameters },
-      state,
-      simTime: this.sim.time,
-      seed: Number.isSafeInteger(seed) ? seed : null,
-      hash: stateHash(state)
-    };
+    return this.runtimeReporter.runtimeSnapshot();
   }
 
   private loop = (): void => {
@@ -551,95 +500,45 @@ export class LabApp {
     if (!resume) this.setRunningState(false);
   }
 
-  private pauseForDrag(): boolean {
-    const wasRunning = this.running;
-    this.setRunningState(false);
-    return wasRunning;
-  }
-
-  private finishDrag(resume: boolean): void {
-    this.setRunningState(resume);
-  }
-
   private wireControls(): void {
-    const cfg = () => this.sim.config;
-    this.controls.wire({
-      reset: () => this.reset(),
-      restoreSnapshot: (snapshot) => this.restoreSnapshot(snapshot),
-      applyQualityMode: () => this.quality.setMode(this.quality.readMode(), 'manual'),
-      trimEnsembleToQuality: () => this.ensemble.trimToCap(this.quality.profile().ensembleCap),
-      clearTrail: () => {
-        this.mainSurface.clear();
-      },
-      clearPoincare: () => this.poincare.clear(),
-      toggleRunning: () => {
-        if (this.replay.active) {
-          this.replay.forceResumeOnExit();
-          this.setScrubIndex(-1);
-        } else {
-          this.setRunningState(!this.running);
-        }
-      },
-      refreshPresentation: () => this.syncRunPresentation(),
-      exportTrajectory: () =>
-        downloadText(
-          'pendulum_modern_trajectory.csv',
-          trajectoryCsv(this.replay.samples(), cfg().system, this.replay.retentionMetadata()),
-          'text/csv'
-        ),
-      exportPoincare: () => downloadText('pendulum_modern_poincare.csv', poincareCsv(this.poincare.list()), 'text/csv'),
-      exportJson: () => {
-        const snap = this.sim.snapshot();
-        const seed = dom.num('seed', Number.NaN);
-        downloadText(
-          'pendulum_modern_run.json',
-          JSON.stringify(
-            runJson(cfg(), snap.state, snap.time, snap.energy, snap.drift, {
-              mode: legacyApp()?.runMode ?? stateStore.snapshot().mode,
-              stepsPerFrame: this.requestedSpf,
-              seed: Number.isFinite(seed) ? seed : null,
-              locale: document.documentElement.lang === 'ko' ? 'ko' : 'en',
-              trajectoryRetention: this.replay.retentionMetadata()
-            }),
-            null,
-            2
-          ),
-          'application/json'
-        );
-      },
-      exportPng: () => this.mainSurface.exportPng(),
-      scrubLength: () => this.replay.length,
-      setScrubIndex: (index) => this.setScrubIndex(index),
-      scrubLabel: (index) => this.replay.label(index),
-      rewindScrub: () => {
-        if (this.replay.length > 0) this.setScrubIndex(0);
-      },
-      setAudioEnabled: (enabled) => this.audio.setEnabled(enabled),
-      setAudioVolume: (volume) => this.audio.setVolume(volume),
-      drag: {
-        rendererSize: () => this.mainSurface.rendererSize(),
-        bobPixels: () => this.mainSurface.bobPixels(this.sim.config, this.sim.stateView()),
-        pivot: () => this.mainSurface.pivot(),
-        stateAngles: () => {
-          const state = this.sim.stateView();
-          return this.sim.config.system === 'triple' ? [state[0]!, state[1]!, state[2]!] : [state[0]!, state[1]!];
-        },
+    this.controls.wire(
+      createLabControlBindings({
+        sim: () => this.sim,
+        requestedStepsPerFrame: () => this.requestedSpf,
+        isRunning: () => this.running,
+        setRunning: (running) => this.setRunningState(running),
+        reset: () => this.reset(),
+        restoreSnapshot: (snapshot) => this.restoreSnapshot(snapshot),
+        setScrubIndex: (index) => this.setScrubIndex(index),
         setAngles: (angles, resume) => this.setAngles(angles, resume),
-        beginDrag: () => this.pauseForDrag(),
-        endDrag: (resume) => this.finishDrag(resume)
-      }
-    });
+        refreshPresentation: () => {
+          this.syncRunPresentation();
+          presentEnsembleStatistics(this.ensemble);
+        },
+        refreshEnsembleRendering: () => (this.replay.active ? this.renderScrubFrame() : this.renderLiveFrame(true)),
+        quality: this.quality,
+        ensemble: this.ensemble,
+        mainSurface: this.mainSurface,
+        poincare: this.poincare,
+        replay: this.replay,
+        audio: this.audio
+      })
+    );
   }
 
   private handleCanvasResize(): void {
     if (this.disposed || !this.sim) return;
-    this.mainSurface.repaintAfterResize({
-      bobs: this.sim.bobPositionsInto(this.bobsScratch),
-      config: this.sim.config,
-      quality: this.quality,
-      frameCount: this.frameCount,
-      ensemble: this.ensemble
-    });
+    const replayFrame = this.replay.frame;
+    this.mainSurface.repaintAfterResize(
+      {
+        bobs: this.sim.bobPositionsInto(this.bobsScratch),
+        config: this.sim.config,
+        quality: this.quality,
+        frameCount: this.frameCount,
+        ensemble: this.ensemble
+      },
+      replayFrame ? bobsFromState(this.sim.config, replayFrame.state) : undefined
+    );
     for (let plot = 0; plot < LAB_DIAGNOSTIC_PLOT_COUNT; plot += 1) this.diagnosticPlots.draw(plot);
   }
 }
