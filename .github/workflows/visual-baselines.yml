@@ -50,16 +50,19 @@ jobs:
         run: npx playwright test e2e/visual-regression.spec.ts --update-snapshots=all --project=chromium --project=mobile-chrome
         env:
           PLAYWRIGHT_USE_PREVIEW: '1'
-      - name: Validate the complete ${{ matrix.platform }} baseline set
-        run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome
-      - name: Prove regenerated baselines without update mode
-        run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
-        env:
-          PLAYWRIGHT_USE_PREVIEW: '1'
+      # Refresh the committed fingerprint before any contract check. Existing
+      # metadata necessarily becomes stale when update-snapshots=all rewrites
+      # even a visually equivalent PNG on a native runner.
       - name: Fingerprint native runner, Chromium, fonts, scale, locale, and snapshot bytes
         run: node scripts/visual-baseline-fingerprint.mjs --platform=${{ matrix.platform }} --source-commit=${{ github.sha }}
       - name: Format native baseline metadata
         run: npx prettier --write e2e/visual-baseline-metadata/${{ matrix.platform }}.json
+      - name: Validate the complete ${{ matrix.platform }} baseline set
+        run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome --require-metadata
+      - name: Prove regenerated baselines without update mode
+        run: npx playwright test e2e/visual-regression.spec.ts --project=chromium --project=mobile-chrome
+        env:
+          PLAYWRIGHT_USE_PREVIEW: '1'
       - name: Require fingerprint-bound native baselines
         run: node scripts/check-visual-baselines.mjs --platform=${{ matrix.platform }} --projects=chromium,mobile-chrome --require-metadata
       # Preserve Playwright's actual and diff PNGs even when regeneration or
