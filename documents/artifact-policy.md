@@ -38,7 +38,7 @@ or durable evidence for a README claim.
   `reports/coverage/`, `reports/mutation/`, `test-results/`, and
   `reports/vitest-results.json` are transient outputs.
 - Visual-regression snapshots should be committed only after an intentional
-  `npx playwright test --update-snapshots` review.
+  `npx playwright test --update-snapshots=all` review.
 
 ## Release Checklist
 

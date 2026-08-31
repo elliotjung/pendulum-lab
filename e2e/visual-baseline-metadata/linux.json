@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
+  "authority": "github-hosted-native",
+  "platform": "linux",
+  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "workflow": {
+    "name": "Visual Baselines (Linux, Windows, macOS)",
+    "runId": "33378158630",
+    "runAttempt": "1"
+  },
+  "runner": {
+    "os": "Linux",
+    "arch": "X64",
+    "release": "6.17.0-1022-azure",
+    "imageOS": "ubuntu24",
+    "imageVersion": "20260823.283.1"
+  },
+  "browser": {
+    "engine": "chromium",
+    "playwrightVersion": "1.61.1",
+    "executableName": "chrome",
+    "executableBytes": 278568152,
+    "executableSha256": "2d18db9d8608b052b6a552ee00ec1e830f93692e928b65ecc67d693bd33fe801"
+  },
+  "rendering": {
+    "locale": "C.UTF-8",
+    "timezone": "runner-default",
+    "colorScheme": "dark",
+    "projects": [
+      {
+        "name": "chromium",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "deviceScaleFactor": 1,
+        "effectiveDpi": 96,
+        "isMobile": false
+      },
+      {
+        "name": "mobile-chrome",
+        "viewport": {
+          "width": 393,
+          "height": 727
+        },
+        "deviceScaleFactor": 2.75,
+        "effectiveDpi": 264,
+        "isMobile": true
+      }
+    ]
+  },
+  "fonts": {
+    "roots": ["fonts", "fonts"],
+    "fileCount": 251,
+    "bytes": 116263136,
+    "sha256": "0c5acd234cb2982a39c442f8a45f13df1bc80ae933e436873a9b5f44fa5a7e29",
+    "relevantFiles": [
+      {
+        "name": "truetype/liberation/LiberationMono-Bold.ttf",
+        "bytes": 308068,
+        "sha256": "626655e94dd82f3f42549daf995c921b0915fa8ab1f4b839559e8892ea41d240"
+      },
+      {
+        "name": "truetype/liberation/LiberationMono-BoldItalic.ttf",
+        "bytes": 284184,
+        "sha256": "15eb161953e3ecc7fc05a3fec8a59e0f4e0a54a4e375736adf8e98d65981f813"
+      },
+      {
+        "name": "truetype/liberation/LiberationMono-Italic.ttf",
+        "bytes": 281608,
+        "sha256": "a71b2c25c89da05cf0e7c4dbba8d473fdead0b181ae56165217747d2c1f39215"
+      },
+      {
+        "name": "truetype/liberation/LiberationMono-Regular.ttf",
+        "bytes": 319624,
+        "sha256": "395fa5ab8d40c8eba390ced528744ea75a7f69aabf3e68b6f925ca0e39a27370"
+      },
+      {
+        "name": "truetype/liberation/LiberationSans-Bold.ttf",
+        "bytes": 414568,
+        "sha256": "3973aa5054fb467dd5627245d3dc82e37bf16fe075756156a570455871351582"
+      },
+      {
+        "name": "truetype/liberation/LiberationSans-BoldItalic.ttf",
+        "bytes": 409108,
+        "sha256": "c80fa7f2ffa0e01d4d8dcd6a6d1e43eda665222d1b4db597dde1174c456006cf"
+      },
+      {
+        "name": "truetype/liberation/LiberationSans-Italic.ttf",
+        "bytes": 415920,
+        "sha256": "830c5fa600505fb4c1a271b4271c53c44bae43f492b2a240d0e98a3a7a380121"
+      },
+      {
+        "name": "truetype/liberation/LiberationSans-Regular.ttf",
+        "bytes": 410820,
+        "sha256": "4659bc0c58c5028dd488ec928d41d9265db43d9b669fc14ca8b0832daca7b144"
+      },
+      {
+        "name": "truetype/liberation/LiberationSerif-Bold.ttf",
+        "bytes": 370196,
+        "sha256": "9e66c25e20868756bf12eb24a520a4552727c9cd108f577f7ae33e3c0110e39c"
+      },
+      {
+        "name": "truetype/liberation/LiberationSerif-BoldItalic.ttf",
+        "bytes": 376892,
+        "sha256": "379010e87421a883f7bbfa7936d23dfe0257a54ce850819b74556e9f2c615a8a"
+      },
+      {
+        "name": "truetype/liberation/LiberationSerif-Italic.ttf",
+        "bytes": 375760,
+        "sha256": "eaeaf7f2b12544ecde64290c1fa7ec403ff70fd58b313637b265400b20249242"
+      },
+      {
+        "name": "truetype/liberation/LiberationSerif-Regular.ttf",
+        "bytes": 393692,
+        "sha256": "705903ae1382f0150f115d6f10a30f5b2f3d6ade649c474afe6366c39174fb65"
+      },
+      {
+        "name": "truetype/noto/NotoColorEmoji.ttf",
+        "bytes": 10788068,
+        "sha256": "93cdc4ee9aa40e2afceecc63da0ca05ec7aab4bec991ece51a6b52389f48a477"
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "path": "lab-controls-chromium-linux.png",
+      "bytes": 27351,
+      "sha256": "3745eb947f8c18f3aa736655ad8c0c17402b7d17d481db2745c45724c14fc9ec"
+    },
+    {
+      "path": "lab-controls-mobile-chrome-linux.png",
+      "bytes": 29262,
+      "sha256": "42fc930ec7440a69659eab4a014014ca913634b78d0de28d70e3b15a4da566f9"
+    },
+    {
+      "path": "rail-sidebar-chromium-linux.png",
+      "bytes": 10017,
+      "sha256": "c722d91656e1e64a0b8a56b16ea125d56a6882d0aecc96335e345a6745b8e122"
+    },
+    {
+      "path": "rail-sidebar-mobile-chrome-linux.png",
+      "bytes": 8102,
+      "sha256": "a5735d372b78afddffd28d1bba9f57382e6df67500c221c7e81242fc21a183e3"
+    },
+    {
+      "path": "research-experiment-card-chromium-linux.png",
+      "bytes": 33706,
+      "sha256": "a64b038d48f2f3f707aa6695531b5f0ecd3114a15109d92c6e94d4e55e4c1ad5"
+    },
+    {
+      "path": "research-experiment-card-mobile-chrome-linux.png",
+      "bytes": 40848,
+      "sha256": "931daada1ded324acb9be1f0cad6b63323984929c7f086b759194d04fc925d38"
+    }
+  ]
+}

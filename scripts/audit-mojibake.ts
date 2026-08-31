@@ -26,7 +26,8 @@ const IGNORED_DIRS = new Set([
   'reports/playwright',
   'reports/playwright-pwa',
   'standalone',
-  'test-results'
+  'test-results',
+  'tmp'
 ]);
 
 const IGNORED_FILES = new Set(['reports/mojibake-audit.json', 'reports/mojibake-audit.md']);
@@ -118,6 +119,7 @@ function lineLooksLikeCode(relativePath: string, lineText: string): boolean {
     trimmed.includes('process.env.') ||
     trimmed.includes('=>') ||
     /\b(?:const|let|var|return|if|for|while|switch|case|type|interface|export|import)\b/.test(trimmed) ||
+    /^\w[\w-]*:\s+.*(?:\?\?|\?\.)/.test(trimmed) ||
     ((trimmed.includes('??') || trimmed.includes('?.')) && /[`=;(){}[\]]/.test(trimmed))
   );
 }

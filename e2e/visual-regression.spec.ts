@@ -4,7 +4,7 @@
  * simulation-state-dependent and not deterministic across runs.
  *
  * Generate initial golden snapshots with:
- *   npx playwright test e2e/visual-regression.spec.ts --update-snapshots --project=chromium
+ *   npx playwright test e2e/visual-regression.spec.ts --update-snapshots=all --project=chromium
  */
 import { expect, test, type Locator, type Page } from '@playwright/test';
 

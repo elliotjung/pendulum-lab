@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
+  "authority": "github-hosted-native",
+  "platform": "win32",
+  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "workflow": {
+    "name": "Visual Baselines (Linux, Windows, macOS)",
+    "runId": "33378158630",
+    "runAttempt": "1"
+  },
+  "runner": {
+    "os": "Windows",
+    "arch": "X64",
+    "release": "10.0.26100",
+    "imageOS": "win25-vs2026",
+    "imageVersion": "20260824.214.3"
+  },
+  "browser": {
+    "engine": "chromium",
+    "playwrightVersion": "1.61.1",
+    "executableName": "chrome.exe",
+    "executableBytes": 4059648,
+    "executableSha256": "b798f9e53a98d29eb7f36f8c409f905d3184780a04d2bcb56989067194784bd1"
+  },
+  "rendering": {
+    "locale": "unknown",
+    "timezone": "runner-default",
+    "colorScheme": "dark",
+    "projects": [
+      {
+        "name": "chromium",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "deviceScaleFactor": 1,
+        "effectiveDpi": 96,
+        "isMobile": false
+      },
+      {
+        "name": "mobile-chrome",
+        "viewport": {
+          "width": 393,
+          "height": 727
+        },
+        "deviceScaleFactor": 2.75,
+        "effectiveDpi": 264,
+        "isMobile": true
+      }
+    ]
+  },
+  "fonts": {
+    "roots": ["Fonts"],
+    "fileCount": 346,
+    "bytes": 428713410,
+    "sha256": "ff55be0fccc1a9e8ac0a767f44edecba56acd307c5bb8cf8aec3e0290c5b3db0",
+    "relevantFiles": [
+      {
+        "name": "arial.ttf",
+        "bytes": 1016724,
+        "sha256": "5f9f2d8104ad5e69e1be8107224063dc8c36f9e24680b2f9be324244c0b424a1"
+      },
+      {
+        "name": "arialbd.ttf",
+        "bytes": 960832,
+        "sha256": "3680a1bbffab914f36b27d5fd97b193de5bccfab882c41b41b5f8f99457b4820"
+      },
+      {
+        "name": "arialbi.ttf",
+        "bytes": 696792,
+        "sha256": "77a0b63c5f73eb85923f10359e68b8fc768487ae88ad902a1ea21276954e205b"
+      },
+      {
+        "name": "ariali.ttf",
+        "bytes": 693452,
+        "sha256": "c30c71d614e143c0d4e42aaf04d9a1f50f90b365a2654eb3f2c6598e5655af08"
+      },
+      {
+        "name": "consola.ttf",
+        "bytes": 453088,
+        "sha256": "cf00b507b3286870cc5064ebd0633c303f70b491a4af25eec2d32df413db0179"
+      },
+      {
+        "name": "consolab.ttf",
+        "bytes": 391756,
+        "sha256": "7e8de70c92a891722bd3fbd623db005caab2bfe267e5dab5be46b95a44e0c7f1"
+      },
+      {
+        "name": "consolai.ttf",
+        "bytes": 461496,
+        "sha256": "0b5b0484cf69ae973bd39380069f141271a4c9299b8885fa2d13f42aadbefef9"
+      },
+      {
+        "name": "consolaz.ttf",
+        "bytes": 401732,
+        "sha256": "9bc225ec52aa8f4b88b98bb735b1908bd72c9e31a12139fafcc1bd6c86bed3b4"
+      },
+      {
+        "name": "GlobalUserInterface.CompositeFont",
+        "bytes": 43318,
+        "sha256": "b637a0f9031088d08147f397836fe1c16b15c70db696db4ddea05ec5b95b4f91"
+      },
+      {
+        "name": "SegoeIcons.ttf",
+        "bytes": 462408,
+        "sha256": "6085f6426804a0faea69c06095c48f940a770a3d9b28b7a8e48b8b4662a0448f"
+      },
+      {
+        "name": "segoepr.ttf",
+        "bytes": 168404,
+        "sha256": "91046862e08fbade0bdd648e81c4efbe6a963947f8b6e32b64a28fe39073c468"
+      },
+      {
+        "name": "segoeprb.ttf",
+        "bytes": 167800,
+        "sha256": "3cced0162ddb9e5f1e63ee1b36fd6e581c090318dce1a0af01b77f5ea9952c80"
+      },
+      {
+        "name": "segoesc.ttf",
+        "bytes": 597476,
+        "sha256": "b24aa49a4bcb99a0ffc60cad77f00941e4b121153d8b0a519c03719d9be6004e"
+      },
+      {
+        "name": "segoescb.ttf",
+        "bytes": 593028,
+        "sha256": "6cd482205e1390b32a2b6327e1e5039424e346172c187074eac12006bc51935e"
+      },
+      {
+        "name": "segoeui.ttf",
+        "bytes": 959752,
+        "sha256": "8134dbcd09e7b123c9a7f229d49cffbcb01352cc72ea5e1076b65d0dca9f73cd"
+      },
+      {
+        "name": "segoeuib.ttf",
+        "bytes": 947092,
+        "sha256": "aeb9e4a6ec5cc59f4d72df8189032d7dbb28f45161cf1552174818b5465dac4e"
+      },
+      {
+        "name": "segoeuii.ttf",
+        "bytes": 530616,
+        "sha256": "be525b9a6d307d73c23908cd269be9be754210a9d93c0c1eaaa126d2a174290a"
+      },
+      {
+        "name": "segoeuil.ttf",
+        "bytes": 910144,
+        "sha256": "866557576dfc772395301b581eccef4c0daf1dbb75f9667f26784b260bce7da1"
+      },
+      {
+        "name": "segoeuisl.ttf",
+        "bytes": 848220,
+        "sha256": "3432de66f335c7e3058154f7cbb13ef051195653a544b49b1992267e558b33ef"
+      },
+      {
+        "name": "segoeuiz.ttf",
+        "bytes": 542140,
+        "sha256": "c886161fa6d102090ff992519b6fdc73057a0e838e9d40b27e187e9e61300a92"
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "path": "lab-controls-chromium-win32.png",
+      "bytes": 23956,
+      "sha256": "26eadbd7d9f96a81898745f7ad4736db3ec042e981c13e1995eda75aaea61be9"
+    },
+    {
+      "path": "lab-controls-mobile-chrome-win32.png",
+      "bytes": 24363,
+      "sha256": "303cb9e74185f757c540ebeb61b68edae144d6d1662c2da531a90d5140df3615"
+    },
+    {
+      "path": "rail-sidebar-chromium-win32.png",
+      "bytes": 9243,
+      "sha256": "4fc7fc041a73b52200c62df110236ce363d700b55911d5d1197f56e36341e021"
+    },
+    {
+      "path": "rail-sidebar-mobile-chrome-win32.png",
+      "bytes": 7708,
+      "sha256": "0febcdbb6dacf3e5072d36251a455038a50c45f32729e9cf994459e5b772c9ae"
+    },
+    {
+      "path": "research-experiment-card-chromium-win32.png",
+      "bytes": 24571,
+      "sha256": "ae7b482c13648afac71c61c752cfd0956b777467dca0676cd0cb4746be684b15"
+    },
+    {
+      "path": "research-experiment-card-mobile-chrome-win32.png",
+      "bytes": 28799,
+      "sha256": "e327975a84364417790641e367c80e30b998b325c8e1e592c45ddee61b2d515f"
+    }
+  ]
+}

@@ -1,0 +1,707 @@
+{
+  "schemaVersion": "pendulum-visual-baseline-fingerprint/v1",
+  "authority": "github-hosted-native",
+  "platform": "darwin",
+  "sourceCommit": "87219c3a1e7742059fe23fc7fafcb306a9e6beb1",
+  "workflow": {
+    "name": "Visual Baselines (Linux, Windows, macOS)",
+    "runId": "33378158630",
+    "runAttempt": "1"
+  },
+  "runner": {
+    "os": "macOS",
+    "arch": "ARM64",
+    "release": "25.5.0",
+    "imageOS": "macos26",
+    "imageVersion": "20260728.0273.1"
+  },
+  "browser": {
+    "engine": "chromium",
+    "playwrightVersion": "1.61.1",
+    "executableName": "Google Chrome for Testing",
+    "executableBytes": 52112,
+    "executableSha256": "b1b9e2dd063115031f08eadc10ed381ca0fa05b2284baff8f721d87f5f0f61b7"
+  },
+  "rendering": {
+    "locale": "en_US.UTF-8",
+    "timezone": "runner-default",
+    "colorScheme": "dark",
+    "projects": [
+      {
+        "name": "chromium",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "deviceScaleFactor": 1,
+        "effectiveDpi": 96,
+        "isMobile": false
+      },
+      {
+        "name": "mobile-chrome",
+        "viewport": {
+          "width": 393,
+          "height": 727
+        },
+        "deviceScaleFactor": 2.75,
+        "effectiveDpi": 264,
+        "isMobile": true
+      }
+    ]
+  },
+  "fonts": {
+    "roots": ["Fonts", "Fonts"],
+    "fileCount": 372,
+    "bytes": 815707598,
+    "sha256": "039938cb70ea70682138e5bca50b0b0bb12e8eded8bdf21c007ddb27ffbe0b1c",
+    "relevantFiles": [
+      {
+        "name": "ArialHB.ttc",
+        "bytes": 459376,
+        "sha256": "45844259d86c0f2ea1b2446ecf34be47491b09d868f2f996672396ffe505f3f3"
+      },
+      {
+        "name": "Menlo.ttc",
+        "bytes": 2156036,
+        "sha256": "dc256e0b39c2a6fec947129d421fef41b8b429f58f9b6e5d1b148c87f775c1f6"
+      },
+      {
+        "name": "NotoNastaliq.ttc",
+        "bytes": 920420,
+        "sha256": "c6b75b3b3ca434c69e4a1d44205c35de0c57f314cb14c3fc33f1ef0cf0455aa7"
+      },
+      {
+        "name": "NotoSansArmenian.ttc",
+        "bytes": 171832,
+        "sha256": "2780f67be4688ae6a3e0810c400b5f489ce1a51cc8dfe2672bc27180520450b2"
+      },
+      {
+        "name": "NotoSansKannada.ttc",
+        "bytes": 1048500,
+        "sha256": "165162cd71aebb8172df78a1371dd47f3d630eb195db8dae871fff73e1c8f45b"
+      },
+      {
+        "name": "NotoSansMyanmar.ttc",
+        "bytes": 1727576,
+        "sha256": "52189a3758c54cb0f37d6452d029d24a866fb1ef89bab970e320fe72cd7b0741"
+      },
+      {
+        "name": "NotoSansOriya.ttc",
+        "bytes": 318288,
+        "sha256": "5cdd527c8ffa2f2d403ae700d4955294156edc8b75d258e7e8f6079229dcc6ee"
+      },
+      {
+        "name": "NotoSerifMyanmar.ttc",
+        "bytes": 1150952,
+        "sha256": "ba99aa062aac7a52ee36ba641fe1984176637852f3fcd2317f6d9d022e6cd737"
+      },
+      {
+        "name": "Supplemental/Arial Black.ttf",
+        "bytes": 122556,
+        "sha256": "7d7db3ad96a31373c1437c6ab14266f6605495544c8e663558b047521174c42e"
+      },
+      {
+        "name": "Supplemental/Arial Bold Italic.ttf",
+        "bytes": 558672,
+        "sha256": "374b0190a9844343110d8f8ed1818117a4591803d022bbb2bd189d63a681e731"
+      },
+      {
+        "name": "Supplemental/Arial Bold.ttf",
+        "bytes": 750984,
+        "sha256": "d72db21f9242aedd6b917d8549ad5921766b24d5f8d0becfda2ff4c620b3c2e0"
+      },
+      {
+        "name": "Supplemental/Arial Italic.ttf",
+        "bytes": 553284,
+        "sha256": "ce1d2f1ab89db45f9796100eee960f5702a40e84c225c2b48c3ec3e81d153f98"
+      },
+      {
+        "name": "Supplemental/Arial Narrow Bold Italic.ttf",
+        "bytes": 183932,
+        "sha256": "035cfb8b776e7ce27f4c0ea0dc3ca3ccf85c8da5d59595cecddf02de966fb985"
+      },
+      {
+        "name": "Supplemental/Arial Narrow Bold.ttf",
+        "bytes": 184420,
+        "sha256": "fcf34b330033e26c06e9bd466bea5a3e4b2f39272972275369beb7d8b257ed57"
+      },
+      {
+        "name": "Supplemental/Arial Narrow Italic.ttf",
+        "bytes": 184944,
+        "sha256": "f3d0827024939f01f134668c1d25709e56c5a085bd560e33dc598e86203d31d9"
+      },
+      {
+        "name": "Supplemental/Arial Narrow.ttf",
+        "bytes": 179492,
+        "sha256": "9e1d881c4e43b51868f5e235ea5a12c838e23cc8df6277df1a3c94e158999826"
+      },
+      {
+        "name": "Supplemental/Arial Rounded Bold.ttf",
+        "bytes": 49296,
+        "sha256": "a74ea71c366f15c81f9ce00a757cefb938cda21c0d32e51037d9a038e5ebc14b"
+      },
+      {
+        "name": "Supplemental/Arial Unicode.ttf",
+        "bytes": 23278008,
+        "sha256": "876af2cd4854644e7f3e7feb2f688997fdb3343c6df6693611209c9dfb47ccec"
+      },
+      {
+        "name": "Supplemental/Arial.ttf",
+        "bytes": 773236,
+        "sha256": "525979822591a3447cfc49d943d6f7683508e25543407871c0ed8fed05fd2bd9"
+      },
+      {
+        "name": "Supplemental/NotoSansAdlam-Regular.ttf",
+        "bytes": 61236,
+        "sha256": "4ca58c4f467db4ca8df06ce40f7cc8b27ded41963984f8a4d441285335626dab"
+      },
+      {
+        "name": "Supplemental/NotoSansAvestan-Regular.ttf",
+        "bytes": 12888,
+        "sha256": "2a7dc1aba3bc403fa830c90d5755583ae6bdec8284ad6b5309001f16e00a4bbc"
+      },
+      {
+        "name": "Supplemental/NotoSansBamum-Regular.ttf",
+        "bytes": 148664,
+        "sha256": "ac11fedc2a73d0a9bfc3fc72ecd2e3e833107a1156797f3677945e320fd499d7"
+      },
+      {
+        "name": "Supplemental/NotoSansBassaVah-Regular.ttf",
+        "bytes": 7740,
+        "sha256": "b2cb12dafa67d0a4aca432aa598b2e947361a3738d79cf9652c25b599e985f7d"
+      },
+      {
+        "name": "Supplemental/NotoSansBatak-Regular.ttf",
+        "bytes": 22084,
+        "sha256": "a32831ffc38301991b631bb0fb1aa9dc5dd96f4047c84635bb031dd682d3c594"
+      },
+      {
+        "name": "Supplemental/NotoSansBhaiksuki-Regular.ttf",
+        "bytes": 220044,
+        "sha256": "ab4dd380c621508d510b80309fd2ecde63818fc4dee9140e36e70d118db18beb"
+      },
+      {
+        "name": "Supplemental/NotoSansBrahmi-Regular.ttf",
+        "bytes": 39428,
+        "sha256": "c13211e5b1738428afbab18e77a21d859888738e75246891dae51641253db487"
+      },
+      {
+        "name": "Supplemental/NotoSansBuginese-Regular.ttf",
+        "bytes": 7236,
+        "sha256": "1ade06c5d328f0978d173c18a061ec3b157ba7ced3f4449ad73e16add4f24eef"
+      },
+      {
+        "name": "Supplemental/NotoSansBuhid-Regular.ttf",
+        "bytes": 5612,
+        "sha256": "ce3f9e3c785f84fa29246e690e7ccccfe8daf07eb727f1feddec5fa10465a256"
+      },
+      {
+        "name": "Supplemental/NotoSansCanadianAboriginal-Regular.otf",
+        "bytes": 41468,
+        "sha256": "b7f8287bb749f2a1ff4910e3ddbe2c7a8b22cb3947d8ac7b80f9b6d7e483a117"
+      },
+      {
+        "name": "Supplemental/NotoSansCarian-Regular.ttf",
+        "bytes": 6688,
+        "sha256": "d1631100e9b431e672401397465f00300acf1002a10e35d08d4fd0e7a416abae"
+      },
+      {
+        "name": "Supplemental/NotoSansCaucasianAlbanian-Regular.ttf",
+        "bytes": 26828,
+        "sha256": "6c83cbe4540aed2e976169674e0dcdcee9d6aa7d4dc286fb2559cf4a4e46d418"
+      },
+      {
+        "name": "Supplemental/NotoSansChakma-Regular.ttf",
+        "bytes": 41592,
+        "sha256": "69a99548a7a1f36ec3ba6fe93f88749b66cf091087eba7a0d1934d27784dba91"
+      },
+      {
+        "name": "Supplemental/NotoSansCham-Regular.ttf",
+        "bytes": 30208,
+        "sha256": "a02e3a71a31f6e38f504976ebbca80add502006a04d3ad62833ffc4e59142b4d"
+      },
+      {
+        "name": "Supplemental/NotoSansCoptic-Regular.ttf",
+        "bytes": 28084,
+        "sha256": "28b6686a032e98205dfec91dcfe196eb4169ad758696b7c2932968b7cd5b6f66"
+      },
+      {
+        "name": "Supplemental/NotoSansCuneiform-Regular.ttf",
+        "bytes": 820316,
+        "sha256": "bae49e30a541479cdc8040d6ed2aefe2e75570b3ac303ebece0f25d90fe25e1d"
+      },
+      {
+        "name": "Supplemental/NotoSansCypriot-Regular.ttf",
+        "bytes": 8332,
+        "sha256": "3e2f2c2a051547937876ca00f43544450489e16e24501d0362c621dae9923b8b"
+      },
+      {
+        "name": "Supplemental/NotoSansDuployan-Regular.ttf",
+        "bytes": 18724,
+        "sha256": "081cfdc3be05bf0280aebf360723d0606ae4b571fa3f1fde12058cc63f3eb24c"
+      },
+      {
+        "name": "Supplemental/NotoSansEgyptianHieroglyphs-Regular.ttf",
+        "bytes": 585444,
+        "sha256": "93889bf8a5563f87f70269fc546ca51cbbda6c617c6f3b417792bfe65d6b1165"
+      },
+      {
+        "name": "Supplemental/NotoSansElbasan-Regular.ttf",
+        "bytes": 11172,
+        "sha256": "15489bca9803de2a8777c1f478d41dd6de1f81703af34abfb1275afae4857478"
+      },
+      {
+        "name": "Supplemental/NotoSansGlagolitic-Regular.ttf",
+        "bytes": 23264,
+        "sha256": "fce75abc3b73e537d92e0bef60dc93d65a5cf9ae4d5b8bbb77222b30dc8125c4"
+      },
+      {
+        "name": "Supplemental/NotoSansGothic-Regular.ttf",
+        "bytes": 6152,
+        "sha256": "8638a2c56f231dddb5c4a5be06cd62855718913275f5bc0af5113a87f227f3b5"
+      },
+      {
+        "name": "Supplemental/NotoSansGunjalaGondi-Regular.otf",
+        "bytes": 32372,
+        "sha256": "896b11b131c7edd23ae97765c16f0c9abb78a9aa322338bacd296ea81357899c"
+      },
+      {
+        "name": "Supplemental/NotoSansHanifiRohingya-Regular.ttf",
+        "bytes": 19400,
+        "sha256": "2c3b37dbaf80f240b432a5805160add5a4307a9d3adb4a632a1ce52a3e53f894"
+      },
+      {
+        "name": "Supplemental/NotoSansHanunoo-Regular.ttf",
+        "bytes": 7896,
+        "sha256": "3f54af33b23863e6cbccdbadc206d3e1c8f3d04ac7154442b8635df5468d9cc4"
+      },
+      {
+        "name": "Supplemental/NotoSansHatran-Regular.ttf",
+        "bytes": 5020,
+        "sha256": "3b72a1ced0b9a018dbe77408f3fa505f65dad5682ba81f9a560af1f3d1b2dec7"
+      },
+      {
+        "name": "Supplemental/NotoSansImperialAramaic-Regular.ttf",
+        "bytes": 6500,
+        "sha256": "1d8dec133932014d3baceae6ece503aa52ecce3b17c64b2dff6ccd691d81c478"
+      },
+      {
+        "name": "Supplemental/NotoSansInscriptionalPahlavi-Regular.ttf",
+        "bytes": 6032,
+        "sha256": "e571797e882fd8a93874f6a75810dd8016120f8112d6ffb469c5d45e56c2da5a"
+      },
+      {
+        "name": "Supplemental/NotoSansInscriptionalParthian-Regular.ttf",
+        "bytes": 7792,
+        "sha256": "1a9c98df07720413e51fd29bec966a4e0c9edcc0fba8e45038ef4974b255c074"
+      },
+      {
+        "name": "Supplemental/NotoSansJavanese-Regular.otf",
+        "bytes": 86944,
+        "sha256": "18254c5855aa9ec145cbcbf3c2db69daf52f323e3ac2b049d137b6ec85c50a28"
+      },
+      {
+        "name": "Supplemental/NotoSansKaithi-Regular.ttf",
+        "bytes": 62716,
+        "sha256": "75b74f45f121e9fc7cf4a3b5fb765101d51d74a8b321f755b938c9f6f2bdc58e"
+      },
+      {
+        "name": "Supplemental/NotoSansKayahLi-Regular.ttf",
+        "bytes": 9464,
+        "sha256": "8e3a92a485f062923f221f043c292d7bb8b0715617aabc5e4c88591f865a2307"
+      },
+      {
+        "name": "Supplemental/NotoSansKharoshthi-Regular.ttf",
+        "bytes": 25388,
+        "sha256": "bfe057992a0f4e60b61a4cc977d10badb9036b635f184b28307192df1a1a4b76"
+      },
+      {
+        "name": "Supplemental/NotoSansKhojki-Regular.ttf",
+        "bytes": 42632,
+        "sha256": "d743510e9c5a045f14890e694e98b623beb36294a9a10420e6d4ef3723f8dcfc"
+      },
+      {
+        "name": "Supplemental/NotoSansKhudawadi-Regular.ttf",
+        "bytes": 19032,
+        "sha256": "37406ba2413ad4753fba389822a203e55359e32eb028ac15be587b2541d11090"
+      },
+      {
+        "name": "Supplemental/NotoSansLepcha-Regular.ttf",
+        "bytes": 24500,
+        "sha256": "6019ed0497ddf6d07bd9310976e591898f46ea3f4a45782b6e3e901ab3a53bdc"
+      },
+      {
+        "name": "Supplemental/NotoSansLimbu-Regular.ttf",
+        "bytes": 12912,
+        "sha256": "2c225a605c5a8aae3c05cf4e8aa710eedf3fa20d59578b1facb127e08ee47191"
+      },
+      {
+        "name": "Supplemental/NotoSansLinearA-Regular.ttf",
+        "bytes": 58140,
+        "sha256": "a133c2e91206a17e5354f5ea16656a6d8ecb46dcf29a1d17dba62653eee8c51e"
+      },
+      {
+        "name": "Supplemental/NotoSansLinearB-Regular.ttf",
+        "bytes": 64828,
+        "sha256": "23275e2c7aacf0740c08e184525aa50d8312f9d3235be582549114e2ae2c506e"
+      },
+      {
+        "name": "Supplemental/NotoSansLisu-Regular.ttf",
+        "bytes": 6516,
+        "sha256": "f78f3387e505fa6fbbe19fa1c6d20f2d96c141b17dacab33b9dfd45a5289ecd1"
+      },
+      {
+        "name": "Supplemental/NotoSansLycian-Regular.ttf",
+        "bytes": 4556,
+        "sha256": "1a06d8d62b5d7e616c1caed04e2351f7d03d7e691f9a0ee9f4b5bf529014149d"
+      },
+      {
+        "name": "Supplemental/NotoSansLydian-Regular.ttf",
+        "bytes": 4592,
+        "sha256": "1ccad3ff44c94446a65e5c15be2714acf12487d4e11a3dd39481f62667f43173"
+      },
+      {
+        "name": "Supplemental/NotoSansMahajani-Regular.ttf",
+        "bytes": 14144,
+        "sha256": "87b29271c0485e5ded2b65e15bea5ff205e4a2e12b61c0c9678cb41d45c790a9"
+      },
+      {
+        "name": "Supplemental/NotoSansMandaic-Regular.ttf",
+        "bytes": 18908,
+        "sha256": "4d17d30a0c47a4b2dc87a61f4751e9e54740d4fb3631a991e1c0369ee38c4f73"
+      },
+      {
+        "name": "Supplemental/NotoSansManichaean-Regular.ttf",
+        "bytes": 31448,
+        "sha256": "f30038aeca2c7d0f44c085df4c7ecb598e04732b70daab8219ae29be6861011d"
+      },
+      {
+        "name": "Supplemental/NotoSansMarchen-Regular.ttf",
+        "bytes": 125956,
+        "sha256": "6b55b9e8bc50d2f71e211821840c02d29675419608ed981cb1907e50c3fc1e2c"
+      },
+      {
+        "name": "Supplemental/NotoSansMasaramGondi-Regular.otf",
+        "bytes": 23052,
+        "sha256": "ea4a6ecb03bf46fd3b8ceb79c8aef5cadcd23d4bc0fd2da9aedea87ab0501bd1"
+      },
+      {
+        "name": "Supplemental/NotoSansMeeteiMayek-Regular.ttf",
+        "bytes": 16044,
+        "sha256": "cb3bf6030dfeaa765fc0b97469a98444ae6eff937162c1221b3cb368f7c6388a"
+      },
+      {
+        "name": "Supplemental/NotoSansMendeKikakui-Regular.ttf",
+        "bytes": 35360,
+        "sha256": "04ee7b18ca85d6d7e5d093e2c9c5494994a7d8ce1bddfeee8712490e4a8f08ed"
+      },
+      {
+        "name": "Supplemental/NotoSansMeroitic-Regular.ttf",
+        "bytes": 33644,
+        "sha256": "b3158127a35076b87deac06b13a29df6c397fb2d2562f5d40f7e47a389b43be1"
+      },
+      {
+        "name": "Supplemental/NotoSansMiao-Regular.ttf",
+        "bytes": 36236,
+        "sha256": "e66141c65237edecb22a32e4051516e33ea32548d5aa83a5c70edde9ff5f6be6"
+      },
+      {
+        "name": "Supplemental/NotoSansModi-Regular.ttf",
+        "bytes": 42688,
+        "sha256": "be1dbe9c189e98ac2df4dc497148b81585865457c8c8f53f1698cc3fac6e0a27"
+      },
+      {
+        "name": "Supplemental/NotoSansMongolian-Regular.ttf",
+        "bytes": 253932,
+        "sha256": "df8e76675870a47f7dd97ea7e224fcf870713f43ebe6fe4ae6c260d0ee838a0d"
+      },
+      {
+        "name": "Supplemental/NotoSansMro-Regular.ttf",
+        "bytes": 6904,
+        "sha256": "611858696f30b442bf6405f4bad0a8dfc0810763441d804890a736aa6f902a2d"
+      },
+      {
+        "name": "Supplemental/NotoSansMultani-Regular.ttf",
+        "bytes": 9856,
+        "sha256": "fce81e8f9a463f40793136cc446653085a46aa82e635d9520e31a70ee6f629f3"
+      },
+      {
+        "name": "Supplemental/NotoSansNabataean-Regular.ttf",
+        "bytes": 8400,
+        "sha256": "f4c55f60942c3b21d7e449b96ac240e19a1e5510618ef310b20ea97a079c8d5a"
+      },
+      {
+        "name": "Supplemental/NotoSansNagMundari-Regular.ttf",
+        "bytes": 17152,
+        "sha256": "94789e3ed944ce32f1757e23df8ae3bd4d4d3c46539e8f986b02a5f8fe5954fc"
+      },
+      {
+        "name": "Supplemental/NotoSansNewa-Regular.ttf",
+        "bytes": 149024,
+        "sha256": "6eb7557d0b7b40f22556c1d90afe011e628df457191830355577da6157ea443e"
+      },
+      {
+        "name": "Supplemental/NotoSansNewTaiLue-Regular.ttf",
+        "bytes": 17000,
+        "sha256": "f622c16e1e452905bbe8d94347b9bcec071a49cdc187e1a74e4dffc6d526dbeb"
+      },
+      {
+        "name": "Supplemental/NotoSansNKo-Regular.ttf",
+        "bytes": 24608,
+        "sha256": "72107ca6885331147fb0ca4d7a71f96e6b3e989a75d66ef979a96966b28f8526"
+      },
+      {
+        "name": "Supplemental/NotoSansOlChiki-Regular.ttf",
+        "bytes": 8860,
+        "sha256": "42020ef6e4bb0ebde8ecea0c85877fac817a49b69670d5ab755ac6cc16a351f1"
+      },
+      {
+        "name": "Supplemental/NotoSansOldHungarian-Regular.ttf",
+        "bytes": 54020,
+        "sha256": "9a926369d7e44450c9c4e211f38829f880ecce16f6325e699eb29ce3851bfc7b"
+      },
+      {
+        "name": "Supplemental/NotoSansOldItalic-Regular.ttf",
+        "bytes": 7524,
+        "sha256": "411ef5004b1978f51878394bec0971811e28f81cd4184ac2282dcb6996b27c87"
+      },
+      {
+        "name": "Supplemental/NotoSansOldNorthArabian-Regular.ttf",
+        "bytes": 7284,
+        "sha256": "6d4e0f32ab4bc7bee8954e21ee80c3e20dc50b7b0961668a9455e7a809e78cf0"
+      },
+      {
+        "name": "Supplemental/NotoSansOldPermic-Regular.ttf",
+        "bytes": 9984,
+        "sha256": "8897b1d76fa4d872add20b23244ec351e80cb8df1e2a9434aabfc778a1a247e8"
+      },
+      {
+        "name": "Supplemental/NotoSansOldPersian-Regular.ttf",
+        "bytes": 13180,
+        "sha256": "fd46d52e32b296b6f2db73ed02c423d4384f3ae5c2f7e1de4f2df3ff4dbf0eb1"
+      },
+      {
+        "name": "Supplemental/NotoSansOldSouthArabian-Regular.ttf",
+        "bytes": 5232,
+        "sha256": "5d0b9191b80d23fbc22b4ea48d50e6cd53ffb6cbeea86644127ebe836ab96bb3"
+      },
+      {
+        "name": "Supplemental/NotoSansOldTurkic-Regular.ttf",
+        "bytes": 8372,
+        "sha256": "02f35911c7249d2412f819b013a4705a5477fa44d0912e70212313ec7f7ae2a2"
+      },
+      {
+        "name": "Supplemental/NotoSansOsage-Regular.ttf",
+        "bytes": 12512,
+        "sha256": "93b97cbfe440cdedc69014b775faab9b44f9cf4a3cf801851278486d15e9cfe3"
+      },
+      {
+        "name": "Supplemental/NotoSansOsmanya-Regular.ttf",
+        "bytes": 8604,
+        "sha256": "42b8ef4101c6cb45c85ea98c69d75be5838b6f86622bf8449e07312f9fa5db62"
+      },
+      {
+        "name": "Supplemental/NotoSansPahawhHmong-Regular.ttf",
+        "bytes": 18272,
+        "sha256": "6033e882e304ab204b55bbf75032c87f7cce516e59a26df7633264bfa077c545"
+      },
+      {
+        "name": "Supplemental/NotoSansPalmyrene-Regular.ttf",
+        "bytes": 15684,
+        "sha256": "0303c0e1a6653b05035a74255423e812529f89b8ef3d006513ce48b1756a2365"
+      },
+      {
+        "name": "Supplemental/NotoSansPauCinHau-Regular.ttf",
+        "bytes": 9816,
+        "sha256": "e0850630f6affd48b4d077b55ed7160e80616bf8ff69c62c6d873245cfffac2b"
+      },
+      {
+        "name": "Supplemental/NotoSansPhagsPa-Regular.ttf",
+        "bytes": 34176,
+        "sha256": "dc6975773e7c2707d36cd1018ec1c93a396a19d68ae484360b551ec5157dac2d"
+      },
+      {
+        "name": "Supplemental/NotoSansPhoenician-Regular.ttf",
+        "bytes": 6252,
+        "sha256": "47709d5c78988406ccada0d83d60a3dd58eb292e21bf0ef58d0212d20802d1b7"
+      },
+      {
+        "name": "Supplemental/NotoSansPsalterPahlavi-Regular.ttf",
+        "bytes": 21676,
+        "sha256": "08553bb6205276d6e96ecee2c31b626f3f3e5774dbfb83011fdd1095ec3d68cd"
+      },
+      {
+        "name": "Supplemental/NotoSansRejang-Regular.ttf",
+        "bytes": 7620,
+        "sha256": "d4692c20ee33dadb2d1187dd2a6022e087dec011ccef869ab6553ff5771fb6fe"
+      },
+      {
+        "name": "Supplemental/NotoSansSamaritan-Regular.ttf",
+        "bytes": 11164,
+        "sha256": "4740b58fe07816db1fc838a3004b62dd978b6ac20dbb43a792bef7f28debe0c5"
+      },
+      {
+        "name": "Supplemental/NotoSansSaurashtra-Regular.ttf",
+        "bytes": 19792,
+        "sha256": "892db68ca8f826b6af8d13c8a4249e1fd74598c8dba73a478d6c3ad0efb23cb3"
+      },
+      {
+        "name": "Supplemental/NotoSansSharada-Regular.ttf",
+        "bytes": 44108,
+        "sha256": "0ad26fc89ef2be580c1e6ae10450878f2fddbe2c3b3c9e6bb3dd11ff1c9cbeb2"
+      },
+      {
+        "name": "Supplemental/NotoSansSiddham-Regular.otf",
+        "bytes": 94408,
+        "sha256": "6062ee98c26cb38b34d43ef71bf95aa962024e725a9138d861661f8a237bae41"
+      },
+      {
+        "name": "Supplemental/NotoSansSoraSompeng-Regular.ttf",
+        "bytes": 8108,
+        "sha256": "84db8313949e266e43740eab6a93c69f6deaf090aa9fa01739a0ad99b63f6cbd"
+      },
+      {
+        "name": "Supplemental/NotoSansSundanese-Regular.ttf",
+        "bytes": 11512,
+        "sha256": "44116238e4f55dedf5a0232f6d6eadbeedd8896b8bee6a63fe949e4c2ec1cf29"
+      },
+      {
+        "name": "Supplemental/NotoSansSylotiNagri-Regular.ttf",
+        "bytes": 16576,
+        "sha256": "e45262b5d2a31db47cc177ddd1c466e241a8ccd5bbff6ba6166e1bd97d9c0635"
+      },
+      {
+        "name": "Supplemental/NotoSansSyriac-Regular.ttf",
+        "bytes": 115268,
+        "sha256": "d75500075158475aa8d9c5d586196945a0d92d1c27c5d66ecfb0c4f4af35ffe8"
+      },
+      {
+        "name": "Supplemental/NotoSansTagalog-Regular.ttf",
+        "bytes": 7012,
+        "sha256": "69087a0b8ad9a405b065aefefe0c298d9aa7f61b0de345566baf282c9e8282e0"
+      },
+      {
+        "name": "Supplemental/NotoSansTagbanwa-Regular.ttf",
+        "bytes": 6648,
+        "sha256": "7dedb32bfc8dc5ef05a222bc05ad4fc8f72e0e3fca2a9eb9841591102c040c48"
+      },
+      {
+        "name": "Supplemental/NotoSansTaiLe-Regular.ttf",
+        "bytes": 12072,
+        "sha256": "396016aacf92e480f369ba41ed9958bcceb002eaf057da65647ae9250d02b491"
+      },
+      {
+        "name": "Supplemental/NotoSansTaiTham-Regular.ttf",
+        "bytes": 51040,
+        "sha256": "8b58452015baffee6ba520dcd3396f79d23cdc39392a13f5e784e72ac29d0d22"
+      },
+      {
+        "name": "Supplemental/NotoSansTaiViet-Regular.ttf",
+        "bytes": 18220,
+        "sha256": "4d3bd3ab7a8f0dd7276f8f8020a1f628098cd27f95a02966d4959af2cb50a8e3"
+      },
+      {
+        "name": "Supplemental/NotoSansTakri-Regular.ttf",
+        "bytes": 16652,
+        "sha256": "a541ceccf0b2f3c733f362373e3cc2ad4b7b834160a889b4ad44bf0d2ddbbab9"
+      },
+      {
+        "name": "Supplemental/NotoSansThaana-Regular.ttf",
+        "bytes": 18792,
+        "sha256": "d518c8161d9ae68470c9ef5080f9c9aae887dd93bf3c1529a9913ba059ae60e4"
+      },
+      {
+        "name": "Supplemental/NotoSansTifinagh-Regular.otf",
+        "bytes": 24956,
+        "sha256": "8396ced3cf679a82b5ac2f18639b8a5676b8cd25cfaa833adea8dacbd5a97052"
+      },
+      {
+        "name": "Supplemental/NotoSansTirhuta-Regular.ttf",
+        "bytes": 69944,
+        "sha256": "a4fed705f990f3cc11403d41a673941def5e65f211dcc7871b13d27bf089ed22"
+      },
+      {
+        "name": "Supplemental/NotoSansUgaritic-Regular.ttf",
+        "bytes": 7656,
+        "sha256": "4cab9c4e616e162fef49211db26dcd2d4452a6bf945770330d8571c4e7e6841e"
+      },
+      {
+        "name": "Supplemental/NotoSansVai-Regular.ttf",
+        "bytes": 57764,
+        "sha256": "8730386f446879e610c2aa0cc1b98c56031594fbe94c07f26e515cf7c07a32b2"
+      },
+      {
+        "name": "Supplemental/NotoSansWancho-Regular.ttf",
+        "bytes": 17992,
+        "sha256": "7a736f363686f9e88a38a1cc0ba8d68f6cba3da4149f320d91a1a42b2896d2e3"
+      },
+      {
+        "name": "Supplemental/NotoSansWarangCiti-Regular.ttf",
+        "bytes": 25304,
+        "sha256": "e9f7e9f0c581c467f6f0f942c8dfb494c87a1373cc1aea0d6ed93727804bad47"
+      },
+      {
+        "name": "Supplemental/NotoSansYi-Regular.ttf",
+        "bytes": 134064,
+        "sha256": "1744f6ebb56f63c9c2276362bf3fcad69d15afcdd199018238ff39558eadf06e"
+      },
+      {
+        "name": "Supplemental/NotoSerifAhom-Regular.ttf",
+        "bytes": 19512,
+        "sha256": "635cd17bfcbd37457c98f0f9e70c7a0aa520f7f202a2b267b09f18fe5e80223d"
+      },
+      {
+        "name": "Supplemental/NotoSerifBalinese-Regular.ttf",
+        "bytes": 51264,
+        "sha256": "009f6471b5d2f95172cf3e186d497386f1d2499d69daa6b188e04ced3def8aa1"
+      },
+      {
+        "name": "Supplemental/NotoSerifNyiakengPuachueHmong-Regular.ttf",
+        "bytes": 14888,
+        "sha256": "4727ad21c1c9e520ab244399c93014062856009c25fc4154066d9e5e3626b579"
+      },
+      {
+        "name": "Supplemental/NotoSerifYezidi-Regular.otf",
+        "bytes": 8664,
+        "sha256": "f8a3c04d1a0a872e2a522d07f1280369c30c680c40099eaf4471ee7c389ebde9"
+      },
+      {
+        "name": "Supplemental/SignPainter.ttc",
+        "bytes": 401228,
+        "sha256": "e8f0f3cfb574111cde25f63fa9bee3fe852554dd3ce4a3d2678ecae117bfe9d4"
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "path": "lab-controls-chromium-darwin.png",
+      "bytes": 28185,
+      "sha256": "b1e65d19eee792b4d9e3285d4b06e59edc96fcb41ca5482db4e517cbd946354a"
+    },
+    {
+      "path": "lab-controls-mobile-chrome-darwin.png",
+      "bytes": 28318,
+      "sha256": "010d10d4a67bcaf4801a798a2ecf5cca600656e79aa86c89a517d776a1b94b59"
+    },
+    {
+      "path": "rail-sidebar-chromium-darwin.png",
+      "bytes": 10093,
+      "sha256": "885fa5c2599bce653237dc3ddc4b18f6ad02acd5f1198c877e74dd447ce0e3e7"
+    },
+    {
+      "path": "rail-sidebar-mobile-chrome-darwin.png",
+      "bytes": 8090,
+      "sha256": "9ef5fc4f34af9115a1d0ede3d63798d2db936b4f1183217dee3d4d3e93b32b12"
+    },
+    {
+      "path": "research-experiment-card-chromium-darwin.png",
+      "bytes": 34718,
+      "sha256": "fb7fe6bc2a0fc19ee9e39e56605800660b87630dc1aa60ec13eed560caf2c8b4"
+    },
+    {
+      "path": "research-experiment-card-mobile-chrome-darwin.png",
+      "bytes": 41586,
+      "sha256": "354ab54293f1faf0f2a15b0768f8ae2a4d1974e21a7876b15ce41d41f00054f8"
+    }
+  ]
+}

@@ -86,7 +86,7 @@ describe('integrator deep-link control', () => {
 
   it('bounds the rejected value shown to the user', () => {
     const message = formatIntegratorControlRejection(`bad\u0000${'x'.repeat(80)}`, false);
-    expect(message).toContain('method="bad�xxxxxxxxxxxxxxxxxxxxxxxxx…"');
+    expect(message).toContain(`method="bad${String.fromCodePoint(0xfffd)}xxxxxxxxxxxxxxxxxxxxxxxxx…"`);
     expect(message.length).toBeLessThan(180);
   });
 });
