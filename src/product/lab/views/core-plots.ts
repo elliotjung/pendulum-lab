@@ -21,7 +21,11 @@ export function createPlot(
   xLabel: string,
   yLabel: string,
   series: readonly PlotSeries[],
-  scatter = false
+  scatter = false,
+  options?: {
+    readonly bounds?: { readonly xMin: number; readonly xMax: number; readonly yMin: number; readonly yMax: number };
+    readonly formatTick?: (value: number) => string;
+  }
 ): SVGSVGElement {
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('viewBox', '0 0 720 360');
@@ -57,8 +61,15 @@ export function createPlot(
     yMin -= 0.5;
     yMax += 0.5;
   }
+  const bounds = options?.bounds;
+  if (bounds) {
+    if (!Object.values(bounds).every(Number.isFinite) || bounds.xMin >= bounds.xMax || bounds.yMin >= bounds.yMax)
+      throw new RangeError('Plot bounds must be finite increasing ranges.');
+    ({ xMin, xMax, yMin, yMax } = bounds);
+  }
   const xPixel = (value: number) => 70 + ((value - xMin) / (xMax - xMin)) * 620;
   const yPixel = (value: number) => 295 - ((value - yMin) / (yMax - yMin)) * 235;
+  const tick = options?.formatTick ?? ((value: number) => value.toPrecision(4));
   svg.append(
     svgElement(document, 'path', { d: 'M70 55 V295 H690', fill: 'none', stroke: '#475569', 'stroke-width': '1.5' })
   );
@@ -66,10 +77,10 @@ export function createPlot(
     [70, 25, title],
     [350, 347, xLabel],
     [10, 48, yLabel],
-    [70, 317, xMin.toPrecision(4)],
-    [620, 317, xMax.toPrecision(4)],
-    [8, 290, yMin.toPrecision(4)],
-    [8, 68, yMax.toPrecision(4)]
+    [70, 317, tick(xMin)],
+    [620, 317, tick(xMax)],
+    [8, 290, tick(yMin)],
+    [8, 68, tick(yMax)]
   ];
   for (const [x, y, text] of texts)
     svg.append(

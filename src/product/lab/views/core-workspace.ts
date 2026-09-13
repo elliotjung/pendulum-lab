@@ -15,6 +15,7 @@ import { createCoreAnalysis } from './core-analysis';
 import { createCoreFiles } from './core-files';
 import { createScene } from './core-plots';
 import { loadCoreConfig } from './core-storage';
+import { focusSource } from '../../experiments/transfer';
 
 const sessions = new WeakMap<Document, Map<string, CoreModel>>();
 const labels: Record<CoreStatus, string> = {
@@ -69,6 +70,26 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     session.set(key, cached);
   }
   const model = cached;
+  const sourceUnit = experiment ? focusSource(experiment) : null;
+  if (sourceUnit) {
+    const source = element(document, 'aside', 'learn-notice');
+    source.append(
+      element(
+        document,
+        'p',
+        '',
+        `출처 단원 ${sourceUnit.unitId} · 콘텐츠 버전 ${sourceUnit.version}. 전용 실험의 초기조건·단위·분석 설정을 적용했습니다.`
+      ),
+      element(
+        document,
+        'p',
+        '',
+        '이곳에서 바꾼 조건은 실험실에 유지됩니다. 단원으로 돌아가면 보내기 전 전용 실험을 복원합니다.'
+      ),
+      link(document, '단원으로 돌아가기', sourceUnit.href, 'ds-button ds-button--secondary')
+    );
+    view.append(source);
+  }
   view.append(
     element(
       document,

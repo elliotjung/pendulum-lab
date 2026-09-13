@@ -269,7 +269,148 @@
   font-size: var(--ds-text-sm);
   color: var(--ds-color-text-secondary);
 }
+.focus-mount {
+  max-width: 64rem;
+  margin-inline: auto;
+}
+.focus-controls,
+.focus-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+.focus-actions {
+  display: flex;
+  gap: var(--ds-space-3);
+  flex-wrap: wrap;
+  margin-block: var(--ds-space-4);
+}
+.focus-experiment .core-scene {
+  max-width: 30rem;
+  margin-inline: auto;
+}
+.focus-experiment .core-scene svg,
+.focus-experiment .core-plot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.focus-result {
+  border-top: 1px solid var(--ds-color-border);
+  padding-block: var(--ds-space-4);
+}
+.focus-chart {
+  min-width: 0;
+  margin: var(--ds-space-4) 0;
+}
+.focus-chart__caption {
+  margin-bottom: var(--ds-space-3);
+  font-size: var(--ds-text-base);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.focus-chart__title {
+  display: block;
+  font-weight: var(--ds-weight-medium);
+}
+.focus-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2) var(--ds-space-4);
+  margin: var(--ds-space-2) 0;
+  padding: 0;
+  list-style: none;
+}
+.focus-chart__legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+}
+.focus-chart__swatch {
+  display: inline-block;
+  flex: 0 0 2rem;
+  border-top: 3px solid currentColor;
+}
+.focus-chart__swatch[data-line-style='dashed'] {
+  border-top-style: dashed;
+}
+.focus-chart__swatch[data-line-style='dotted'] {
+  border-top-style: dotted;
+}
+.focus-chart__swatch[data-line-style='point'] {
+  flex-basis: 0.5rem;
+  height: 0.5rem;
+  margin-inline: 0.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: currentColor;
+}
+.focus-chart__axes p {
+  margin-block: var(--ds-space-1);
+}
+.focus-values {
+  margin-block: var(--ds-space-4);
+}
+.focus-values dd {
+  margin: var(--ds-space-2) 0 0;
+  font-family: var(--ds-font-mono);
+}
+.focus-values dt {
+  font-weight: var(--ds-weight-medium);
+}
+.focus-result[data-focus-plot='energy-terms'] .focus-values > div {
+  border-left: 4px solid var(--ds-color-accent);
+  padding-left: var(--ds-space-3);
+}
+.focus-result[data-focus-plot='energy-terms'] .focus-values > div:nth-child(3n + 2) {
+  border-left-style: dashed;
+}
+.focus-result[data-focus-plot='energy-terms'] .focus-values > div:nth-child(3n) {
+  border-left-style: double;
+  border-left-width: 6px;
+}
+.focus-matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+.focus-matrix th,
+.focus-matrix td {
+  border: 1px solid var(--ds-color-border);
+  padding: var(--ds-space-3);
+}
+.focus-positive {
+  background: var(--ds-color-learn-surface);
+}
+.focus-negative {
+  background: var(--ds-color-surface-selected);
+}
+.focus-matrix caption {
+  padding-block: var(--ds-space-3);
+}
+.focus-time {
+  display: block;
+  font-family: var(--ds-font-mono);
+  margin-block: var(--ds-space-3);
+}
+.focus-storage-status {
+  color: var(--ds-color-text-secondary);
+}
+.focus-derivation {
+  border: 1px solid var(--ds-color-border);
+  padding: var(--ds-space-4);
+}
+.focus-task + .focus-task {
+  border-top: 1px solid var(--ds-color-border);
+}
 @media (max-width: 640px) {
+  /* The complete title, legend and numeric axis limits remain in the HTML caption. */
+  .focus-chart .core-plot text {
+    display: none;
+  }
+  .focus-controls,
+  .focus-values {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .learn-grid,
   .learn-symbols {
     grid-template-columns: minmax(0, 1fr);

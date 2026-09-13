@@ -5,6 +5,7 @@ import { createButton } from '../design-system/primitives';
 import { renderReferences, renderUnitBlocks, textNode } from './blocks';
 import { createCheckpoints } from './checkpoint-view';
 import { loadLearnUnit } from './loader';
+import { mountFocus } from './focus-mount';
 import type { LearnCourse, UnitSummary } from './schema';
 
 const actionClass = 'ds-button ds-button--secondary';
@@ -39,10 +40,10 @@ function showCourses(document: Document, root: HTMLElement): void {
       document,
       'p',
       '',
-      '8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 지금은 단원 1.1의 샘플을 읽고 확인 질문을 풀 수 있습니다. 전체 과정과 전용 실험은 준비 중입니다.'
+      '8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 과정 1의 8개 단원에서 식을 읽고 전용 실험으로 확인한 뒤 실험실에서 탐구를 이어 가세요. 나머지 과정은 준비 중입니다.'
     )
   );
-  intro.append(link(document, '샘플 단원 살펴보기', '#/learn/course-1/1.1', 'ds-button ds-button--primary'));
+  intro.append(link(document, '첫 단원 시작하기', '#/learn/course-1/1.1', 'ds-button ds-button--primary'));
   root.append(intro);
   const grid = element(document, 'div', 'learn-grid');
   for (const course of courses) {
@@ -51,12 +52,7 @@ function showCourses(document: Document, root: HTMLElement): void {
     card.append(textNode(document, 'h2', '', course.title));
     const available = course.units.filter((unit) => unit.availability !== 'planned').length;
     card.append(
-      element(
-        document,
-        'p',
-        '',
-        available ? `읽을 수 있는 샘플 ${available}개 · 전체 과정 준비 중` : '단원 콘텐츠 준비 중'
-      )
+      element(document, 'p', '', available ? `학습 가능한 단원 ${available}개 · 전용 실험 포함` : '단원 콘텐츠 준비 중')
     );
     card.append(link(document, `과정 ${course.order} 목차 보기`, `#/learn/${course.id}`, actionClass));
     grid.append(card);
@@ -100,7 +96,7 @@ function showCourse(document: Document, root: HTMLElement, course: LearnCourse):
           ? '콘텐츠 준비 중'
           : unit.availability === 'sample'
             ? '샘플 읽기 · 확인 질문과 진도 저장'
-            : '단원 읽기'
+            : '단원 읽기 · 전용 실험 · 실험실에서 계속'
       )
     );
     list.append(item);
@@ -137,6 +133,7 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
   let disposed = false;
   let generation = 0;
   let disposeChecks: (() => void) | undefined;
+  let disposeFocus: (() => void) | undefined;
 
   function planned(): void {
     body.dataset.contentState = 'planned';
@@ -148,7 +145,7 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
       )
     );
     body.append(
-      link(document, '샘플 단원 살펴보기', '#/learn/course-1/1.1', actionClass),
+      link(document, '첫 단원 살펴보기', '#/learn/course-1/1.1', actionClass),
       link(document, '실험실 열기', '#/lab', actionClass)
     );
   }
@@ -180,19 +177,28 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
       body.dataset.contentState = 'ready';
       const unit = result.unit;
       const notice = element(document, 'aside', 'learn-notice');
-      notice.append(element(document, 'h2', '', '단원 프레임 샘플'), textNode(document, 'p', '', unit.summary));
+      notice.append(
+        element(document, 'h2', '', unit.kind === 'sample' ? '단원 프레임 샘플' : '이번 단원의 질문'),
+        textNode(document, 'p', '', unit.summary)
+      );
       body.append(notice, renderUnitBlocks(document, unit));
+      if (unit.focusExperiment.status === 'ready') {
+        const focus = mountFocus(document, unit);
+        disposeFocus = focus.dispose;
+        body.append(focus.element);
+      }
       const checks = createCheckpoints(document, unit);
       disposeChecks = checks.dispose;
       body.append(checks.element);
       const footer = element(document, 'div', 'learn-unit-footer');
-      footer.append(
-        availabilityNote(
-          document,
-          '전용 실험은 준비 중입니다',
-          '이 샘플에서는 설명과 확인 질문을 제공합니다. 이중진자를 직접 움직여 보려면 실험실을 열어 조건을 설정할 수 있습니다.'
-        )
-      );
+      if (unit.focusExperiment.status !== 'ready')
+        footer.append(
+          availabilityNote(
+            document,
+            '전용 실험은 준비 중입니다',
+            '이 샘플에서는 설명과 확인 질문을 제공합니다. 이중진자를 직접 움직여 보려면 실험실을 열어 조건을 설정할 수 있습니다.'
+          )
+        );
       footer.append(
         link(document, '이중진자 실험실 열기', '#/lab/double', 'ds-button ds-button--primary'),
         renderReferences(document, unit)
@@ -238,6 +244,7 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
       generation += 1;
       controller?.abort();
       disposeChecks?.();
+      disposeFocus?.();
     }
   };
 }

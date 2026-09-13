@@ -24,6 +24,7 @@ async function openSample(page: Page): Promise<void> {
   await page.goto(`/next.html${sampleHash}`);
   await ready(page);
   await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute('data-content-state', 'ready');
+  await expect(page.locator('.focus-mount')).toHaveAttribute('data-focus-load', 'ready');
 }
 
 async function audit(page: Page): Promise<void> {
@@ -176,11 +177,10 @@ test.describe('S08 Learn content platform', () => {
       await page.locator(`#product-main a[href="#/learn/${course}/${index + 1}.1"]`).click();
       for (let order = 1; order <= expectedCounts[index]!; order += 1) {
         await ready(page);
-        const unitId = `${index + 1}.${order}`;
         await expect(page).toHaveURL(new RegExp(`#/learn/${course}/${index + 1}\\.${order}$`));
         await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute(
           'data-content-state',
-          unitId === '1.1' ? 'ready' : 'planned'
+          index === 0 ? 'ready' : 'planned'
         );
         const navigation = page.getByRole('navigation', { name: '단원 이동' });
         await expect(navigation.getByRole('link', { name: '과정 목차', exact: true })).toHaveAttribute(
@@ -387,7 +387,7 @@ test.describe('S08 Learn content platform', () => {
     await page.getByRole('button', { name: /다시/ }).click();
     await ready(page);
     await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute('data-content-state', 'ready');
-    await expect(page.getByRole('math')).toBeVisible();
+    await expect(page.getByRole('math').first()).toBeVisible();
   });
 
   test('rejects malformed unit content before rendering it or writing progress', async ({ page }) => {
@@ -473,19 +473,18 @@ test.describe('S08 Learn content platform', () => {
 
   test('shows accessible equation descriptions and keyboard navigation at 320px and 200% zoom', async ({ page }) => {
     await openSample(page);
-    const equation = page.getByRole('math');
-    await expect(equation).toHaveCount(1);
+    const equation = page.getByRole('math').first();
     await expect(equation).toHaveAccessibleName(/가로 위치 x1.*theta1의 사인.*세로 위치 y1/);
     await expect(equation.locator('[aria-hidden="true"]')).toContainText('x1 = l1');
-    await expect(page.locator('.learn-symbols')).toContainText('x1 [m]');
-    await expect(page.locator('.learn-symbols')).toContainText('theta1 [rad]');
-    await expect(page.getByRole('img', { name: /첫 질점.*두 번째 질점/ })).toBeVisible();
+    await expect(page.locator('.learn-symbols').first()).toContainText('x1 [m]');
+    await expect(page.locator('.learn-symbols').first()).toContainText('theta1 [rad]');
+    await expect(page.getByRole('img', { name: /첫 질점.*두 번째 질점/ }).first()).toBeVisible();
     await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
     await page.getByRole('link', { name: /본문으로/ }).focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('main')).toBeFocused();
     await page.setViewportSize({ width: 320, height: 800 });
-    const prerequisite = page.locator('summary').filter({ hasText: '선수 개념: 라디안과 좌표' });
+    const prerequisite = page.locator('summary').filter({ hasText: '필요한 개념과 좌표 약속' });
     await prerequisite.focus();
     await page.keyboard.press('Enter');
     await expect(page.locator('details').filter({ has: prerequisite })).toHaveAttribute('open', '');
@@ -522,18 +521,19 @@ test.describe('S08 Learn content platform', () => {
       await page.getByLabel('화면 테마').selectOption(theme);
       await audit(page);
       await withinViewport(page);
-      await expect(page).toHaveScreenshot(`learn-courses-${theme}.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`s09-learn-courses-${theme}.png`, { fullPage: true });
       await page.locator('#product-main a[href="#/learn/course-1"]').click();
       await ready(page);
       await audit(page);
       await withinViewport(page);
-      await expect(page).toHaveScreenshot(`learn-course-one-${theme}.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`s09-learn-course-one-${theme}.png`, { fullPage: true });
       await page.locator(`#product-main a[href="${sampleHash}"]`).click();
       await ready(page);
       await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute('data-content-state', 'ready');
+      await expect(page.locator('.focus-mount')).toHaveAttribute('data-focus-load', 'ready');
       await audit(page);
       await withinViewport(page);
-      await expect(page).toHaveScreenshot(`learn-sample-${theme}.png`, { fullPage: true });
+      await expect(page).toHaveScreenshot(`s09-learn-unit-one-${theme}.png`, { fullPage: true });
     });
   }
 });
