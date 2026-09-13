@@ -19,15 +19,15 @@
 |---|---|---|---|
 | CP0 | 진행 기록과 activeStage | plan check, preflight | 원격 확인 완료 |
 | CP1 | 8단원 계약/콘텐츠 + Focus 수치 모델/fixture | Learn schema, 관련 Vitest, typecheck, 출처 대조 | 원격 확인 완료 |
-| CP2 | 접근 가능한 Focus UI와 Lab 왕복, 브라우저 여정 | 관련 unit/E2E, keyboard/mobile/axe/시각, build | 검증 완료·push 대기 |
-| CP3 | 통합 검증·보존·검토 보고 | 전체 Vitest, required E+U, inventory/golden/secret, diff | 대기 |
+| CP2 | 접근 가능한 Focus UI와 Lab 왕복, 브라우저 여정 | 관련 unit/E2E, keyboard/mobile/axe/시각, build | 원격 확인 완료 |
+| CP3 | 통합 검증·보존·검토 보고 | 전체 Vitest, required E+U, inventory/golden/secret, diff | candidate-complete·최종 검증 대기 |
 | STATUS | 검증 후 완료 필드와 원격 확정 | 별도 status push/remote hash | 대기 |
 
 예정 경로: content/learn/course-1, curriculum/modules; src/product/learn; src/product/experiments; 최소 product physics 진단 adapter; Lab 출처 연결; css/product; tests/product; e2e/redesign; documents/redesign/stage-runs 및 S09 검토 보고.
 
 ## 검증·위험·원격 증거
 
-- 아직 S09 구현/검증/사용자 검토 완료를 주장하지 않는다.
+- 구현은 candidate-complete이며, 모든 구현·검토 문서 원격 확인 후 최종 필수 검증과 별도 status push가 남아 있다. 사용자·과학 전문가 검토 완료를 주장하지 않는다.
 - 기존 보안 보고(S01 npm/CodeQL, S08 별도 Dependabot 집계)는 미해결 기준선이며 이번 단계는 의존성 변경을 포함하지 않는다.
 - CP0 `2c933808c4d2fa823b4bfdee3800e6adb7805076` push 성공. `git ls-remote origin refs/heads/codex/redesign`가 같은 hash를 반환했다.
 - 재개(2026-09-14): fetch 후 CP0 로컬/원격 일치. 모든 미커밋 파일은 이 S09 구현으로 확인했다.
@@ -43,3 +43,5 @@
 - 새 Learn 12장과 Focus 12장을 직접 시각 검토했다. Focus 1.8 축 눈금 겹침을 지수 표기로 수정하고, 모바일에서 작아지는 제목·범례·축 범위를 본문 크기 HTML로 제공했다. 실선·파선·점선으로 구별하며 기존 Lab의 기본 plot과 이전 단계 PNG는 유지한다. 변경 전 S09 PNG는 `tmp/S09-visual-before`에 보존했다. 갱신 후 새 기준을 고정한 재검증을 진행한다.
 - S08 보고와 비교: 기존 257파일 2,315개 이름은 동일하다. content test의 Date/전체 단원 인자와 출판 상태 변경을 정규화하면 기존 2,403개 모두 보존된다. 신규 runtime 29/science 12/transfer 9/품질 26/sourceChecked 거부 1, 합계 77개다. 파일·분야 삭제나 누락은 없다.
 - CP2 최종 targeted 검증: 새 시각 기준/키보드 12/12, 기준을 변경하지 않는 frozen 시각 8/8 통과. 초기 실행과 회복을 합쳐 84개 고유 Learn/Focus 여정 모두 최종 통과이며, 단일 84개 clean run으로 표시하지 않는다. 수정된 Focus 8장과 Learn 1.1 4장을 다시 직접 읽어 두 시각 결함 해소를 확인했다. typecheck/scoped ESLint/production build/public artifact audit도 통과했다. 원격 구현 후 전체 필수 검증을 다시 수행한다.
+- CP2 `a2e0af0cedc88844e77468bc69b42b9601e6e964` commit/push 성공. `git ls-remote origin refs/heads/codex/redesign`와 일치한다. 스캔은 추적된 CP2 파일까지 포함하며 자격증명 패턴 발견 0이다. 별도 GitHub 기본 브랜치 집계는 high 7/moderate 3이며 해결이나 위험 수용을 주장하지 않는다.
+- CP3 산출물은 `course-one-focus-ko.md`의 사용자 review checklist와 `S09-verification.json`의 실제 report hash·실패/회복·수치/보존 증거다. S09 사용자 승인은 아직 없으며 `approvedReviewGates`는 [7]을 유지한다. 원격 CP3 후 전체 Vitest와 production Learn/Focus 및 기존 core/Lab/shell의 160개 여정을 고정된 소스로 최종 실행한다.

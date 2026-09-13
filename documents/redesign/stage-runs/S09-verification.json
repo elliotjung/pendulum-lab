@@ -1,0 +1,335 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 9,
+  "state": "candidate-complete",
+  "finalValidation": "pending-after-implementation-push",
+  "baselineCommit": "d21bc5b0a3a6a9f47f720e125b5e0f6484b3e862",
+  "implementationCommit": "a2e0af0cedc88844e77468bc69b42b9601e6e964",
+  "implementationRemotePresence": "Verified by git ls-remote after the CP2 push; status completion requires a later separate remote status commit.",
+  "environment": {
+    "platform": "win32",
+    "node": "v26.3.0",
+    "capturedAt": "2026-09-13T23:49:15.224Z",
+    "browserProjects": ["chromium", "mobile-chrome"],
+    "productionPreview": true,
+    "browserWorkers": 1,
+    "retries": 0
+  },
+  "checks": {
+    "preflight": "Fetch and matching clean codex/redesign; redesign:check and preflight -- 9 passed before CP0. S08 dependency artifacts and history verified.",
+    "targeted": {
+      "report": "tmp/S09-CP1-vitest.json",
+      "sha256": "faf4901ab13877088813e7fd18d4f18202593c8261a8af0cb1b6146c0c1e9186",
+      "files": 10,
+      "total": 332,
+      "passed": 332,
+      "failed": 0,
+      "pending": 0
+    },
+    "full": {
+      "report": "tmp/S09-full-vitest.json",
+      "sha256": "fd88b16b2722522fa09896bbc98545112240af6637d3f90f58ff9a46fe82c67e",
+      "files": 262,
+      "total": 2480,
+      "passed": 2480,
+      "failed": 0,
+      "pending": 0
+    },
+    "regression": {
+      "previousFiles": 258,
+      "previousTests": 2403,
+      "previousReport": {
+        "report": "tmp/S08-full-vitest.json",
+        "sha256": "683c907af5202a1d7ebb65334f62998d96cd805cec33a534e2970f504889bee3"
+      },
+      "unchangedNameFiles": 257,
+      "unchangedNameTests": 2315,
+      "missingPreviousTests": 0,
+      "addedTests": 77,
+      "explanation": "The remaining content.test cases preserve eight Date/whole-unit parameter cases by fixture position/type. Five title/expectation changes implement sample-to-published validation. Existing 88 cases remain and sourceChecked=false rejection adds one. New files add runtime29/science12/transfer9/quality26."
+    },
+    "productionInitial": {
+      "report": "tmp/S09-prod-learn-playwright.json",
+      "sha256": "994ad2dce80d42ba4bb89496ad1f74d5192fb226790c9889301bd75e1818716c",
+      "startTime": "2026-09-13T23:26:36.391Z",
+      "duration": 672693.5480000001,
+      "expected": 74,
+      "skipped": 0,
+      "unexpected": 10,
+      "flaky": 0,
+      "errors": 0
+    },
+    "visualCreationAndKeyboard": {
+      "report": "tmp/S09-prod-visual-update-playwright.json",
+      "sha256": "178e425a4b3fefe5e8416319d6d7daed280da087a237b99e8bcd21a92b58d34f",
+      "startTime": "2026-09-13T23:41:26.037Z",
+      "duration": 212767.72499999998,
+      "expected": 12,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "frozenVisual": {
+      "report": "tmp/S09-prod-visual-frozen-playwright.json",
+      "sha256": "a8951d96391aee68150578903b3fd9ccc556645d87f18d4cc50c96039fd52ab2",
+      "startTime": "2026-09-13T23:45:21.275Z",
+      "duration": 121508.05,
+      "expected": 8,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "commands": [
+      "npm test -- --reporter=json --outputFile=tmp/S09-final-vitest.json",
+      "npm run typecheck",
+      "npx eslint src/product/experiments src/product/learn src/product/adapters/physics/focus-diagnostics.ts src/product/lab/views/core-plots.ts src/product/lab/views/core-workspace.ts tests/product/experiments tests/product/learn e2e/redesign/learn.spec.ts e2e/redesign/focus-experiments.spec.ts --max-warnings 0",
+      "npm run build",
+      "npm run redesign:check",
+      "npm run redesign:learn:check",
+      "npm run redesign:catalog:check",
+      "npm run redesign:inventory:check",
+      "npx tsx scripts/redesign/secret-scan.ts",
+      "PLAYWRIGHT_USE_PREVIEW=1 PLAYWRIGHT_PORT=5189 npx playwright test e2e/redesign/learn.spec.ts e2e/redesign/focus-experiments.spec.ts e2e/redesign/core-pendulum.spec.ts e2e/redesign/lab-shell.spec.ts e2e/redesign/shell.spec.ts --project=chromium --project=mobile-chrome --reporter=list,json"
+    ],
+    "typecheck": "passed",
+    "scopedLint": "passed",
+    "build": {
+      "report": "tmp/S09-build-final.log",
+      "sha256": "13fb6c67820c184ee733bc93320fe65ebb8411f3c10ea379fc54aa1450ffde1e"
+    },
+    "publicArtifactAudit": {
+      "textArtifacts": 22,
+      "skippedBinary": 1,
+      "result": "passed"
+    },
+    "catalog": {
+      "total": 134,
+      "systems": 34,
+      "analyses": 51,
+      "integrators": 21,
+      "auxiliary": 28
+    },
+    "inventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    },
+    "secrets": {
+      "report": "tmp/S09-secret-scan.json",
+      "sha256": "812035ddb0edfee4e62a17cd519f2b41e49aa0c5e7d442fa7e0780de9abb24b9",
+      "trackedFiles": 1358,
+      "findings": 0,
+      "scope": "Tracked working-tree credential patterns; excludes history, ignored files and binary contents."
+    }
+  },
+  "failuresAndRecovery": [
+    {
+      "kind": "execution-environment",
+      "detail": "Initial sandbox EPERM and intermittent automatic approval usage-limit rejections prevented some launches. Identical authorized commands later ran successfully. Blocked launches are not counted as test passes."
+    },
+    {
+      "kind": "smoke-fixture",
+      "report": "tmp/S09-prod-smoke-playwright.json",
+      "sha256": "b228d36743c0526f67c92297f94da9343ad0943612b8be13f60dbdf92fb3eda3",
+      "startTime": "2026-09-13T23:24:50.846Z",
+      "duration": 61584.801999999996,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "errors": 0,
+      "detail": "4/5 passed. Queue-microtask restoration ran between capture and product click listeners, so the scheduler error was not injected. Restoring via the original timer in the next task fixed the fixture; all assertions remain and subsequent scheduler recovery passes."
+    },
+    {
+      "kind": "initial-production",
+      "detail": "74/84 passed. Eight screenshot tests recorded missing new S09 baselines; two keyboard tests still referenced the S08 prerequisite title. Updated the locator to the authored S09 title, retaining keyboard/axe/reflow assertions. Initial reports, trace and video remain in tmp/S09-prod-learn-artifacts."
+    },
+    {
+      "kind": "visual-defects",
+      "detail": "Actual screenshot review found 1.8 lower-axis tick overlap and unreadable mobile SVG labels. Focus-scoped exponent formatting and body-size HTML title/legend/exact axis ranges fixed both. Line styles distinguish curves. Before images remain in tmp/S09-visual-before; 12 update/keyboard cases and 8 frozen visual cases passed. Earlier-stage baselines were not updated."
+    }
+  ],
+  "content": {
+    "courses": 8,
+    "reservedUnits": 86,
+    "publishedUnits": 8,
+    "plannedUnits": 78,
+    "automatedVerified": 8,
+    "sourceChecked": 8,
+    "humanReviewed": 0,
+    "sourceReview": "S09-source-review.md",
+    "contentVersionOneAndSavedAnswersPreserved": true,
+    "duplicateEquationsOfMotion": 0,
+    "fixtures": [
+      "Cartesian velocities and rod constraints",
+      "symmetric positive mass matrix and energy terms",
+      "Lagrange force balance and zero-velocity/gravity limits",
+      "linear normal modes and nonlinear amplitude error",
+      "energy exchange and total-energy drift",
+      "nearby trajectories, dimensionless wrapped distance and finite-time rate"
+    ]
+  },
+  "preservation": {
+    "protectedPaths": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/product/contracts",
+      "src/product/persistence",
+      "package.json",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "changedProtectedPaths": [],
+    "existingSnapshotsModified": [],
+    "publicContractsAndUserDataMigration": "No public contract changes or user data migration. Only an isolated versioned Focus sessionStorage key was added.",
+    "transportCopies": [
+      {
+        "repository": "documents/redesign/master-roadmap-ko.md",
+        "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "sha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "matches": true
+      },
+      {
+        "repository": "documents/redesign/execution-plan-ko.md",
+        "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "sha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "matches": true
+      }
+    ]
+  },
+  "visualReview": {
+    "screenshots": [
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-course-one-dark-chromium-win32.png",
+        "sha256": "e5a129b61f86b9c3ce94ff4d7c850174e6ccbcb917d1c54724a38e55de499411"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-course-one-dark-mobile-chrome-win32.png",
+        "sha256": "77b5366d09e389715219d38738dad5ad083468d074b12a38d33ec0e445c19b2e"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-course-one-light-chromium-win32.png",
+        "sha256": "4d7ad160d89beb16fe8c964387049211b8c81a9b113c2a452483d67ad824360f"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-course-one-light-mobile-chrome-win32.png",
+        "sha256": "167b37d1e919eb620dc8affddbe64b4ad8737da37813a7599e06480ad6de5572"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+        "sha256": "385d8febb73a9dcc104bc7251f969a45b1c5d871b09452eb75e9f63c734b4d90"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+        "sha256": "bc3b996c85befd6c5da4d4a532360fddb9e70e4a3fed5a2cf489325c0b46ded1"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+        "sha256": "9332b6be18aa4673d0eb0c15385804eddb01eefea7e31210be40168742246ef0"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+        "sha256": "c71b8512a5d6b5d254b9ed2b21f8071b93c02089bd4afee18e208f1cf344a1b1"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-unit-one-dark-chromium-win32.png",
+        "sha256": "33928fedc737c082eea2cf78fa2c90e8f068ec4d86083bd632b7857f70503348"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-unit-one-dark-mobile-chrome-win32.png",
+        "sha256": "c55e20bd27bc1bf3e1efc257abe55d5aca41aed08784bf20d6cbea7632239485"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-unit-one-light-chromium-win32.png",
+        "sha256": "9b7dcbb535600e84fb1a2adc7a5f18b3f7eee222be1546f74b4809d1c6e7ee15"
+      },
+      {
+        "report": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-unit-one-light-mobile-chrome-win32.png",
+        "sha256": "b8f8b3f1a8c2d78d544e40a78e22334f904a92712dce62026a663aa119dda381"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-2-dark-chromium-win32.png",
+        "sha256": "eefaeb7cae43fe2645da86b67f90c4970542a8957b2198a67aa7fe6f697c8f01"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-2-dark-mobile-chrome-win32.png",
+        "sha256": "6bf0ca7ef66ea37877a973d59528670840c933978b7d54d55dc3560b8525138a"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-2-light-chromium-win32.png",
+        "sha256": "2c407e814f11956024daf787df9217be45f453158b9326b1877e39e6ccfcf13c"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-2-light-mobile-chrome-win32.png",
+        "sha256": "85278cefe2c1f43c258652be4985233bf4d02c9e25b20c30ac98d20273697ad7"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-5-dark-chromium-win32.png",
+        "sha256": "ddade8fe9ba5ba5a1f0aea5c3e1b1cb155c18ed987973c9883e8ec9b45985544"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-5-dark-mobile-chrome-win32.png",
+        "sha256": "ece3a736bd3367f8c1eed87c3720d244ff047f8aec2ca1e494d48023280f4c11"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-5-light-chromium-win32.png",
+        "sha256": "686fee9c659c193d5e58bdcd10398afdc27d9fe286670affd82e80c1c92061ee"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-5-light-mobile-chrome-win32.png",
+        "sha256": "f7efa6a3b47985a1e784733b9a2f8750b67e0e04758e4e3fff378440a1c7f202"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-8-dark-chromium-win32.png",
+        "sha256": "17f21850f9ede8f729e098cfbc28d1af1bcbf2f1409ee43ab473c6efc7d32844"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-8-dark-mobile-chrome-win32.png",
+        "sha256": "1463fe83231a426c86e4efbef8c200f5302e7280dabe46071f03e4380027b5a9"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-8-light-chromium-win32.png",
+        "sha256": "c3936bbe97f2d70e2d4a6d79f42e7ed46b51971a95f208916e588586fa8b9481"
+      },
+      {
+        "report": "e2e/redesign/focus-experiments.spec.ts-snapshots/s09-focus-1-8-light-mobile-chrome-win32.png",
+        "sha256": "b89f9bf4229f0079fe31610c0c0d3dfad6ed74f6cb2d962e6b3a660ba6564273"
+      }
+    ],
+    "inspected": 24,
+    "followupInspection": "Reviewed all 12 Learn and 12 Focus images. After chart fixes re-inspected all eight changed Focus1.2/1.8 images and four Learn1.1 images. No remaining clipping/overlap found in this scope.",
+    "coverage": "Windows Chromium desktop/Pixel5 emulation, light/dark, 320px and CSS zoom2; keyboard and axe checks.",
+    "limitations": "No actual screen-reader audio, physical mobile device, Firefox/WebKit or other OS verification."
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "historicalNpm": "S01 high2/moderate2 unresolved",
+    "historicalCodeQL": "S01 32 unresolved",
+    "latestObservedGithubPush": "CP1 push reported 10 default-branch vulnerabilities: high7/moderate3. This is a separate GitHub aggregate, not a fresh local npm audit.",
+    "riskAcceptance": false,
+    "review": "Bounded strict session parsing, fixed-field checks and safe source allowlist reviewed; malformed/oversize/future/source mismatch and unavailable/quota storage fixtures covered."
+  },
+  "review": {
+    "userGate": 9,
+    "userApprovalRecorded": false,
+    "approvedReviewGates": [7],
+    "checklist": "../course-one-focus-ko.md",
+    "nextValidStage": 10,
+    "rule": "Only a subsequent S10 request after the final S09 report records structure approval. It never implies human scientific review."
+  },
+  "limitations": [
+    "Focus reload restores restart settings, not completed trajectories; same-document navigation retains bounded results.",
+    "Focus transfer sends configured initial conditions, not the last animation point. Lab edits do not overwrite fixed Focus settings.",
+    "At most 20 simulated seconds, 20000 solver steps and 801 retained samples. Maximum error/drift readouts cover displayed samples only.",
+    "Finite-time sensitivity without renormalization is not a proof of asymptotic chaos. Human scientific review is pending.",
+    "Security baseline findings remain unresolved; no dependency remediation or risk acceptance occurred."
+  ],
+  "rollback": "Last prior completed stage is d21bc5b (S08); implementation checkpoints are preserved on codex/redesign. No reset, deletion, force-push, master merge or release was performed. Any rollback should be a separately reviewed revert preserving user data."
+}
