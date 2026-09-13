@@ -1,6 +1,6 @@
 import type { LearnCourse } from '../../src/product/learn/schema';
 
-/** Reserved metadata from curriculum-map-ko.md; planned entries are not published lessons. */
+/** Curriculum metadata; only completed lessons are published. */
 export const courses = [
   {
     schema: 'pendulum-learn-course/v1',
@@ -13,8 +13,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-1.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '두 각도에서 운동방정식·정상모드·초기조건 민감성까지, 8개 단원의 이론과 공용 엔진 전용 실험으로 탐구합니다.',
+      en: 'Explore eight lessons from coordinates to equations, normal modes and initial-condition sensitivity with focused shared-engine experiments.'
     },
     units: [
       {
@@ -25,7 +25,7 @@ export const courses = [
           ko: '이중진자의 일반화좌표와 구성공간',
           en: 'Generalized coordinates and configuration space'
         },
-        availability: 'sample',
+        availability: 'published',
         contentVersion: 1
       },
       {
@@ -36,8 +36,8 @@ export const courses = [
           ko: '질점 위치·속도와 기하학적 구속',
           en: 'Positions, velocities and geometric constraints'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.3',
@@ -47,8 +47,8 @@ export const courses = [
           ko: '운동에너지·위치에너지와 질량행렬',
           en: 'Kinetic energy, potential energy and the mass matrix'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.4',
@@ -58,8 +58,8 @@ export const courses = [
           ko: '라그랑주 방정식의 완전 유도',
           en: 'Full derivation of the Lagrange equations'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.5',
@@ -69,8 +69,8 @@ export const courses = [
           ko: '결합항·코리올리형 항·중력항',
           en: 'Coupling, Coriolis-type and gravitational terms'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.6',
@@ -80,8 +80,8 @@ export const courses = [
           ko: '작은 진동 근사와 정상모드',
           en: 'Small oscillations and normal modes'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.7',
@@ -91,8 +91,8 @@ export const courses = [
           ko: '에너지 교환과 모드 혼합',
           en: 'Energy exchange and mode mixing'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '1.8',
@@ -102,8 +102,8 @@ export const courses = [
           ko: '초기조건 민감성과 카오스의 출현',
           en: 'Sensitivity to initial conditions and the onset of chaos'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },

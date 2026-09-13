@@ -5,6 +5,9 @@ export const LEARN_COURSE_SCHEMA = 'pendulum-learn-course/v1' as const;
 export const LEARN_UNIT_SCHEMA = 'pendulum-learn-unit/v1' as const;
 /** Shared authoring/storage limit: every validated unit must fit the progress model. */
 export const MAX_LEARN_CHECKPOINTS = 64;
+/** Bounded instructional runs; longer work belongs in the full Lab. */
+export const MAX_LEARN_FOCUS_STEPS = 20_000;
+export const MAX_LEARN_FOCUS_SECONDS = 20;
 export type LearnLocale = 'ko' | 'en';
 export interface LearnText {
   readonly key: string;
@@ -83,8 +86,28 @@ export interface Citation {
   readonly accessedOn: string;
 }
 export interface FocusExperimentDefinition {
-  /** The S08 frame does not execute this declaration. S09 owns runtime and transfer integration. */
-  readonly status: 'planned';
+  readonly status: 'planned' | 'ready';
+  readonly kind:
+    | 'configuration'
+    | 'kinematics'
+    | 'energy-matrix'
+    | 'lagrange'
+    | 'term-balance'
+    | 'normal-modes'
+    | 'energy-exchange'
+    | 'sensitivity';
+  readonly plotIds: readonly (
+    | 'configuration'
+    | 'cartesian'
+    | 'angular'
+    | 'mass-matrix'
+    | 'energy-terms'
+    | 'derivation'
+    | 'acceleration'
+    | 'linear-modes'
+    | 'energy-exchange'
+    | 'sensitivity'
+  )[];
   readonly systemId: string;
   readonly exposedFields: readonly string[];
   readonly fixedFields: readonly { readonly id: string; readonly value: number; readonly unit: CanonicalUnit }[];
@@ -95,6 +118,13 @@ export interface FocusExperimentDefinition {
   readonly analysisIds: readonly string[];
   readonly guidance: readonly LearnText[];
   readonly successCriteria: readonly LearnText[];
+  readonly tasks: readonly {
+    readonly id: string;
+    readonly prediction: LearnText;
+    readonly action: LearnText;
+    readonly expected: LearnText;
+    readonly explanation: LearnText;
+  }[];
 }
 export interface LearnUnit {
   readonly schema: typeof LEARN_UNIT_SCHEMA;
@@ -113,7 +143,7 @@ export interface LearnUnit {
   readonly checks: readonly ChoiceCheckpoint[];
   readonly focusExperiment: FocusExperimentDefinition;
   readonly labTransfer: {
-    readonly status: 'planned';
+    readonly status: 'planned' | 'ready';
     readonly systemId: string;
     readonly sourceUnitId: string;
     readonly description: LearnText;

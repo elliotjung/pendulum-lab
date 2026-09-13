@@ -7,7 +7,7 @@ import {
   MAX_PLANAR_STEPS
 } from '../adapters/physics/planar-schema';
 import { inspectSafeData } from '../persistence/safe-data';
-import type { LearnCourse, LearnUnit } from './schema';
+import { MAX_LEARN_FOCUS_SECONDS, MAX_LEARN_FOCUS_STEPS, type LearnCourse, type LearnUnit } from './schema';
 import { array, courseShape, unitShape } from './validation-shapes';
 
 export type LearnValidation<T> =
@@ -186,16 +186,34 @@ export function validateLearnUnit(
       errors.push(`${check.id}: missing correct option.`);
   }
   checkExperiment(value, errors);
-  if (value.kind !== 'sample' || value.review.automatedVerified || value.review.humanReviewed)
+  if (
+    value.kind === 'published' &&
+    (value.focusExperiment.status !== 'ready' ||
+      value.labTransfer.status !== 'ready' ||
+      !value.review.automatedVerified ||
+      !value.review.sourceChecked)
+  )
     errors.push(
-      `${value.id}: S08 planned experiment cannot claim full publication, automated scientific verification or human review.`
+      `${value.id}: publication requires executable experiment, transfer, automated verification and source checks.`
     );
-  if (!value.review.schemaVerified) errors.push(`${value.id}: available sample requires schema verification.`);
+  if (value.focusExperiment.status === 'planned' && value.review.automatedVerified)
+    errors.push(`${value.id}: planned experiment cannot claim automated scientific verification.`);
+  // Human review requires a future explicit reviewer record; a boolean alone is not evidence.
+  if (value.review.humanReviewed) errors.push(`${value.id}: human review requires an attributable reviewer record.`);
+  if (!value.review.schemaVerified) errors.push(`${value.id}: available content requires schema verification.`);
   return errors.length ? { ok: false, errors } : { ok: true, value };
 }
 
 function checkExperiment(value: LearnUnit, errors: string[]): void {
   const focus = value.focusExperiment;
+  unique(focus.plotIds, 'focusExperiment.plotIds', errors);
+  unique(
+    focus.tasks.map((task) => task.id),
+    'focusExperiment.tasks',
+    errors
+  );
+  if (focus.status !== value.labTransfer.status)
+    errors.push('focusExperiment: execution and transfer readiness differ.');
   const system = catalog.systems.find((entry) => entry.id === focus.systemId);
   if (!system) errors.push(`focusExperiment: broken system reference ${focus.systemId}.`);
   const integrator = catalog.integrators.find((entry) => entry.id === focus.defaultPreset.integratorId);
@@ -213,7 +231,7 @@ function checkExperiment(value: LearnUnit, errors: string[]): void {
     if (!analysis || (system && !supportsSystem(analysis.compatibility, system)))
       errors.push(`focusExperiment: incompatible or missing analysis ${id}.`);
   }
-  // S08 declarations must refer to the existing S07 input schema; no engine is imported here.
+  // Declarations refer to the existing S07 input schema; no engine is imported here.
   if (!(PLANAR_SYSTEM_IDS as readonly string[]).includes(focus.systemId))
     errors.push('focusExperiment: no available product field schema for this system.');
   if (!(PLANAR_INTEGRATOR_IDS as readonly string[]).includes(focus.defaultPreset.integratorId))
@@ -242,6 +260,38 @@ function checkExperiment(value: LearnUnit, errors: string[]): void {
   }
   const preset = new Map(focus.defaultPreset.fields.map((field) => [field.id, field]));
   for (const id of known.keys()) if (!preset.has(id)) errors.push(`focusExperiment: preset missing field ${id}.`);
+  if (focus.status === 'ready') {
+    if (focus.systemId !== 'system:double')
+      errors.push('focusExperiment: course-one execution requires the point-mass double pendulum.');
+    const requiredPlots = {
+      configuration: ['configuration'],
+      kinematics: ['cartesian', 'angular'],
+      'energy-matrix': ['mass-matrix', 'energy-terms'],
+      lagrange: ['derivation', 'acceleration'],
+      'term-balance': ['acceleration'],
+      'normal-modes': ['linear-modes'],
+      'energy-exchange': ['energy-exchange'],
+      sensitivity: ['sensitivity']
+    } as const;
+    for (const plot of requiredPlots[focus.kind])
+      if (!focus.plotIds.includes(plot)) errors.push(`focusExperiment: ${focus.kind} requires plot ${plot}.`);
+    for (const id of known.keys())
+      if (!focus.exposedFields.includes(id) && !focus.fixedFields.some((field) => field.id === id))
+        errors.push(`focusExperiment: ready declaration must expose or fix ${id}.`);
+    if (
+      focus.kind === 'normal-modes' &&
+      ['m1', 'm2', 'l1', 'l2'].some((id) => !focus.fixedFields.some((field) => field.id === id && field.value === 1))
+    )
+      errors.push('focusExperiment: course-one normal modes require unit masses and lengths.');
+    if (!focus.fixedFields.some((field) => field.id === 'gamma' && field.value === 0))
+      errors.push('focusExperiment: course-one conservative observations require fixed zero damping.');
+    if (focus.kind === 'normal-modes' && (preset.get('g')?.value ?? 0) <= 0)
+      errors.push('focusExperiment: normal modes require positive gravity.');
+    const duration = preset.get('duration')?.value ?? 0;
+    const step = preset.get('step')?.value ?? 0;
+    if (duration > MAX_LEARN_FOCUS_SECONDS || Math.ceil(duration / step) > MAX_LEARN_FOCUS_STEPS)
+      errors.push('focusExperiment: ready declaration exceeds the bounded Focus execution budget.');
+  }
   for (const field of focus.fixedFields)
     if (preset.get(field.id)?.value !== field.value || preset.get(field.id)?.unit !== field.unit)
       errors.push(`focusExperiment: fixed field ${field.id} differs from preset.`);

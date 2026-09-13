@@ -29,6 +29,7 @@ export const id = test(
 export const courseId = pattern(/^course-[1-8]$/);
 export const unitId = pattern(/^[1-8]\.[1-9][0-9]?$/);
 const fieldId = pattern(/^[a-z][a-zA-Z0-9_]{0,63}$/);
+const symbolId = pattern(/^[a-zA-Z][a-zA-Z0-9_]{0,63}$/);
 const unit = enumeration(...CANONICAL_UNITS);
 export function array(check: Check, min = 0, max = 128): Check {
   return (value, path, errors) => {
@@ -91,7 +92,7 @@ export const unitShape = object({
       title: textShape,
       expression: string,
       accessibleText: textShape,
-      symbols: array(object({ symbol: fieldId, meaning: textShape, unit }), 1),
+      symbols: array(object({ symbol: symbolId, meaning: textShape, unit }), 1),
       citationIds: refs
     }),
     1
@@ -120,17 +121,46 @@ export const unitShape = object({
     MAX_LEARN_CHECKPOINTS
   ),
   focusExperiment: object({
-    status: enumeration('planned'),
+    status: enumeration('planned', 'ready'),
+    kind: enumeration(
+      'configuration',
+      'kinematics',
+      'energy-matrix',
+      'lagrange',
+      'term-balance',
+      'normal-modes',
+      'energy-exchange',
+      'sensitivity'
+    ),
+    plotIds: array(
+      enumeration(
+        'configuration',
+        'cartesian',
+        'angular',
+        'mass-matrix',
+        'energy-terms',
+        'derivation',
+        'acceleration',
+        'linear-modes',
+        'energy-exchange',
+        'sensitivity'
+      ),
+      1
+    ),
     systemId: pattern(/^system:[a-z][a-z0-9-]*$/),
     exposedFields: array(fieldId, 1),
     fixedFields: array(quantity),
     defaultPreset: object({ integratorId: pattern(/^integrator:[a-z][a-z0-9-]*$/), fields: array(quantity, 1) }),
     analysisIds: array(pattern(/^analysis:[a-z][a-z0-9-]*$/), 1),
     guidance: array(textShape, 1),
-    successCriteria: array(textShape, 1)
+    successCriteria: array(textShape, 1),
+    tasks: array(
+      object({ id, prediction: textShape, action: textShape, expected: textShape, explanation: textShape }),
+      1
+    )
   }),
   labTransfer: object({
-    status: enumeration('planned'),
+    status: enumeration('planned', 'ready'),
     systemId: pattern(/^system:[a-z][a-z0-9-]*$/),
     sourceUnitId: unitId,
     description: textShape

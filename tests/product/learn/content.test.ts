@@ -21,7 +21,12 @@ import { validateCurriculumMap, validateLearnContent } from '../../../scripts/re
 import { defaultPlanarConfig } from '../../../src/product/adapters/physics/planar-schema';
 import { planarPositions } from '../../../src/product/adapters/physics/planar';
 import { emptyLearnProgress, LEARN_PROGRESS_LIMITS } from '../../../src/product/learn/progress';
-import { learnText, MAX_LEARN_CHECKPOINTS, type ChoiceCheckpoint } from '../../../src/product/learn/schema';
+import {
+  learnText,
+  MAX_LEARN_CHECKPOINTS,
+  type ChoiceCheckpoint,
+  type UnitSummary
+} from '../../../src/product/learn/schema';
 
 function replace(path: string, value: unknown): unknown {
   const fixture = structuredClone(sample);
@@ -56,6 +61,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   writeFileSync(join(root, 'package.json'), '{"type":"module"}');
   writeFileSync(join(root, 'content/learn/curriculum.ts'), `export const courses = ${JSON.stringify(courses)};`);
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
+  cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
   writeFileSync(join(root, 'content/learn/course-1/1.1.ts'), `export default ${JSON.stringify(unit)};`);
   cpSync('documents/redesign/curriculum-map-ko.md', join(root, 'documents/redesign/curriculum-map-ko.md'));
   return root;
@@ -76,16 +82,16 @@ afterEach(() => {
 });
 
 describe('Learn content schema and authoritative curriculum', () => {
-  it('reserves exactly 8 courses and 86 units, with only the S08 sample available', () => {
+  it('reserves exactly 8 courses and 86 units, with the eight S09 course-one units available', () => {
     expect(validateLearnCourses(courses).ok).toBe(true);
     expect(courses).toHaveLength(8);
     expect(courses.map((course) => course.units.length)).toEqual([8, 9, 9, 10, 13, 12, 13, 12]);
     expect(
       courses
-        .flatMap((course) => course.units)
+        .flatMap<UnitSummary>((course) => course.units)
         .filter((unit) => unit.availability !== 'planned')
         .map((unit) => unit.id)
-    ).toEqual(['1.1']);
+    ).toEqual(['1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();
   });
@@ -167,7 +173,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     ],
     [
       'unavailable unit',
-      "export const learnModules = { 'course-1/1.2': () => import('./course-1/1.2') };",
+      "export const learnModules = { 'course-2/2.1': () => import('./course-2/2.1') };",
       'module is not an available curriculum unit'
     ],
     [
@@ -249,7 +255,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     ['courseId', '../course-1'],
     ['contentVersion', 0],
     ['contentVersion', 1.5],
-    ['kind', 'published'],
+    ['kind', 'sample'],
     ['summary.en', ''],
     ['summary.key', 'learn.wrong.key'],
     ['summary.key', sample.title.key],
@@ -285,14 +291,15 @@ describe('Learn content schema and authoritative curriculum', () => {
     ['focusExperiment.defaultPreset.fields.0.id', 'unknown'],
     ['focusExperiment.defaultPreset.fields', []],
     ['focusExperiment.defaultPreset.fields.10.value', 300],
-    ['focusExperiment.status', 'ready'],
+    ['focusExperiment.status', 'planned'],
     ['labTransfer.sourceUnitId', '1.2'],
     ['labTransfer.systemId', 'system:compound-double'],
     ['references.0.url', 'javascript:alert(1)'],
     ['references.0.url', 'https://u:p@example.org'],
     ['references.0.accessedOn', '2026-02-30'],
     ['review.humanReviewed', true],
-    ['review.automatedVerified', true],
+    ['review.automatedVerified', false],
+    ['review.sourceChecked', false],
     ['review.schemaVerified', false],
     ['unknownField', true]
   ])('rejects invalid %s = %s', (path, value) => {
@@ -339,7 +346,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     expect(validateLearnUnit(value).ok).toBe(false);
   });
 
-  it('checks the sample position answer against the shared S07 engine and exposes pending scientific review', () => {
+  it('preserves the former sample position answer and exposes pending human scientific review', () => {
     const positions = planarPositions(defaultPlanarConfig(), [0, 0, 0, 0]);
     expect(positions.first.x).toBeCloseTo(0, 14);
     expect(positions.first.y).toBe(-1);
@@ -347,7 +354,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     expect(sample.review).toMatchObject({
       schemaVerified: true,
       sourceChecked: true,
-      automatedVerified: false,
+      automatedVerified: true,
       humanReviewed: false
     });
   });
