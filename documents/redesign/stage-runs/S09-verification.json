@@ -2,14 +2,15 @@
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 9,
   "state": "candidate-complete",
-  "finalValidation": "pending-after-implementation-push",
+  "finalValidation": "passed-after-implementation-push",
   "baselineCommit": "d21bc5b0a3a6a9f47f720e125b5e0f6484b3e862",
   "implementationCommit": "a2e0af0cedc88844e77468bc69b42b9601e6e964",
   "implementationRemotePresence": "Verified by git ls-remote after the CP2 push; status completion requires a later separate remote status commit.",
+  "candidateDocumentCommit": "a0ff838b0c630bdf61413005e3c3c16e8ef3cc13",
   "environment": {
     "platform": "win32",
     "node": "v26.3.0",
-    "capturedAt": "2026-09-13T23:49:15.224Z",
+    "capturedAt": "2026-09-14T00:11:55.795Z",
     "browserProjects": ["chromium", "mobile-chrome"],
     "productionPreview": true,
     "browserWorkers": 1,
@@ -27,8 +28,8 @@
       "pending": 0
     },
     "full": {
-      "report": "tmp/S09-full-vitest.json",
-      "sha256": "fd88b16b2722522fa09896bbc98545112240af6637d3f90f58ff9a46fe82c67e",
+      "report": "tmp/S09-final-vitest.json",
+      "sha256": "f5aa98b880f45698ae61ce847ea9575524fc730f6ae6bc06df1d27907fdeb041",
       "files": 262,
       "total": 2480,
       "passed": 2480,
@@ -81,6 +82,17 @@
       "flaky": 0,
       "errors": 0
     },
+    "productionFinal": {
+      "report": "tmp/S09-final-playwright.json",
+      "sha256": "d94cd01915edca8712f73e60aaf260d1d78c625824c1136184477a020fe38002",
+      "startTime": "2026-09-13T23:52:28.495Z",
+      "duration": 1125167.47,
+      "expected": 160,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
     "commands": [
       "npm test -- --reporter=json --outputFile=tmp/S09-final-vitest.json",
       "npm run typecheck",
@@ -97,7 +109,7 @@
     "scopedLint": "passed",
     "build": {
       "report": "tmp/S09-build-final.log",
-      "sha256": "13fb6c67820c184ee733bc93320fe65ebb8411f3c10ea379fc54aa1450ffde1e"
+      "sha256": "a42e52379d2cfd309d76ef9b45b9323b7c050710d0845a85f3dca6f6f602769f"
     },
     "publicArtifactAudit": {
       "textArtifacts": 22,
@@ -118,8 +130,8 @@
     },
     "secrets": {
       "report": "tmp/S09-secret-scan.json",
-      "sha256": "812035ddb0edfee4e62a17cd519f2b41e49aa0c5e7d442fa7e0780de9abb24b9",
-      "trackedFiles": 1358,
+      "sha256": "c48ed4eab1f7536647105f07eb20bbbd96d2cadb94d2fc481f1b9a0f7f6159b4",
+      "trackedFiles": 1360,
       "findings": 0,
       "scope": "Tracked working-tree credential patterns; excludes history, ignored files and binary contents."
     }
@@ -180,6 +192,8 @@
       "src/runtime",
       "src/workers",
       "src/validation",
+      "src/lib",
+      "src/lib.ts",
       "src/product/contracts",
       "src/product/persistence",
       "package.json",
