@@ -12,10 +12,10 @@
   "nextStage": 10,
   "completedStages": [1, 2, 3, 4, 5, 6, 7, 8, 9],
   "blockedStage": null,
-  "activeStage": null,
-  "activeStageCheckpoint": null,
+  "activeStage": 10,
+  "activeStageCheckpoint": "CP0",
   "reviewGates": [7, 9, 17, 24, 28],
-  "approvedReviewGates": [7],
+  "approvedReviewGates": [7, 9],
   "notes": [
     "S09 publishes all eight course-one units with declarative Focus Experiments, unit-specific controls, plots, numerical readouts, observations and canonical Learn-to-Lab transfer. Eight courses and 86 routes remain: 8 published and 78 planned units. The S07 simulation and original physics evaluations are reused; no duplicate equations of motion were introduced. See course-one-focus-ko.md and stage-runs/S09-verification.json.",
     "After all implementation and review checkpoints were pushed, all 2480 Vitest tests in 262 files and all 160 production desktop/mobile Learn, Focus, core Lab and shell journeys passed, with zero failures, skipped cases or flaky retries. The 2403 previous unit cases are preserved after documented publication/parameter-title normalization, with 77 additions. Targeted 332/332, visual/keyboard recovery 12/12 and frozen visual 8/8 also passed. Original fixture and missing-baseline failures remain recorded. Typecheck, scoped lint, build, Learn/catalog/inventory checks and artifact audit passed.",
