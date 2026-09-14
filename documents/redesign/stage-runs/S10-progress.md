@@ -18,8 +18,8 @@
 
 | ID | 작업 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 진행 기록·S09 구조 승인 | plan, preflight, dependency/history | 준비 |
-| CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 대기 |
+| CP0 | 진행 기록·S09 구조 승인 | plan, preflight, dependency/history | 원격 확인 완료 |
+| CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 검증 완료·push 준비 |
 | CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 대기 |
 | CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 대기 |
 | STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 대기 |
@@ -31,3 +31,10 @@
 - 기존 보안 기준선의 미해결 npm/CodeQL/GitHub 경고는 이번 단계에서 해결 또는 위험 수용을 주장하지 않는다. 의존성 변경은 예정하지 않는다.
 - N-chain 기존 dense solver의 지원 범위는 1–128이다. 큰 N의 비용·메모리를 제한하고 worker로 실행하며, resize 시 각도/각속도 배열의 대응을 따로 보존해야 한다.
 - 진행 중. 구현 push 전에 완료 필드를 바꾸지 않는다.
+- CP0 `67c7b410852deb0e73019d88d1f31cfe28c2d705` commit/push 성공. ls-remote 동일 hash 확인. GitHub 기본 브랜치 취약점 집계 high7/moderate3가 출력됐으며 해결을 주장하지 않는다.
+- 병렬 agent 3개가 계정 사용량 한도로 중단되었다. 생성 파일을 확인하고 주 실행 세션에서 구현·검증을 이어갔다. 모델을 변경하지 않았다.
+- CP1: 기존 `rhsTriple`/`energyTriple`, `rhsChain`/`energyChain`을 실행별 workspace로 호출. N=1–128 전수 validation/한 단계/왕복, 3종 적분기 parity, N=1 해석식, triple와 chain N=3 동등성, legacy cascade preset 보존, 추가/중간삭제/bulk/resize 대응을 검사했다.
+- 새 canonical 모델/적분기 버전과 masses/lengths/theta/omega SI 벡터는 S03 계약을 그대로 사용한다. 새 저장 prefix는 `pendulum-product/chain/v1/`; 손상·미래 데이터는 읽기와 쓰기 모두 원본 보존한다.
+- worker는 요청당 최대64단계/8ms 경계, 한 요청만 전송 중, 타임아웃15초, 최대2001개 기록 표본, 초기·현재/최종 표본을 보존한다. 취소/실패/reset/dispose는 worker를 종료하며 pause는 같은 worker 상태를 유지한다. 한 물리 단계 자체는 분할 불가하나 terminate로 취소 가능하다.
+- 초기 physics 테스트는 존재하지 않는 matcher와 legacy 필드 이름을 사용한 test 작성 오류로 실패했다. 이를 수정한 뒤 신규193/193 통과; 기존 product/adapters/lab 및 n-pendulum/chain-hardening/S01 golden 포함 CP1 회귀355/355 통과(실패·skip0). 초기 보고서 `tmp/S10-physics-first.json` 보존. TypeScript 메시지 fixture 캐스팅 오류도 수정 후 전체 typecheck와 scoped ESLint 통과했다.
+- CP1 production build/public artifact audit와 catalog134개 검사 통과. CP2 UI는 작성 중이며 사용자 여정과 시각 검증은 아직 완료되지 않았다. CP1 보고서 `tmp/S10-CP1-regression.json`.
