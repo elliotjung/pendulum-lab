@@ -35,6 +35,36 @@ function fakeWorker() {
 }
 afterEach(() => vi.useRealTimers());
 describe('S10 bounded worker contract', () => {
+  it('a maximum-budget run records at most 2001 samples including its final state', () => {
+    const config = { ...defaultChainConfig('system:chain', 1), duration: 100, step: 0.001 };
+    const session = createChainWorkerSession(() => 0);
+    session.handle({ type: 'initialize', id: 'bounded', sequence: 0, config });
+    let count = 1,
+      sequence = 1,
+      done = false;
+    while (!done) {
+      const event = session.handle({ type: 'advance', id: 'bounded', sequence: sequence++, count: 64 });
+      if (event.type !== 'progress') throw new Error('progress');
+      count += event.samples.length;
+      done = event.done;
+    }
+    expect(count).toBe(2001);
+  });
+  it('physical failure returns the last valid sample and closes the worker session', () => {
+    const config = {
+      ...defaultChainConfig('system:triple'),
+      step: 0.05,
+      duration: 1,
+      initialState: [1, 2, 3, 10000, -10000, 10000]
+    };
+    const session = createChainWorkerSession(() => 0);
+    session.handle({ type: 'initialize', id: 'failure', sequence: 0, config });
+    const event = session.handle({ type: 'advance', id: 'failure', sequence: 1, count: 64 });
+    expect(event.type).toBe('error');
+    if (event.type !== 'error') throw new Error('error');
+    expect(event.snapshot?.sample.step).toBe(1);
+    expect(event.snapshot?.sample.time).toBe(0.05);
+  });
   it.each([1, 3, 16, 128])('worker N=%i matches direct stepping and retains the final sample', (n) => {
     const config = { ...defaultChainConfig('system:chain', n), duration: 0.01, step: 0.003 };
     const direct = createChainSimulation(config),

@@ -1,0 +1,60 @@
+.chain-link-tools,
+.chain-bulk-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-3);
+  align-items: end;
+  margin-block: var(--ds-space-4);
+}
+.chain-link-tools > *,
+.chain-bulk-tools > * {
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+.chain-link-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+.chain-state-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.chain-state-table th,
+.chain-state-table td {
+  padding: 0.55rem 0.35rem;
+  border-bottom: 1px solid var(--ds-color-border);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.chain-state-table caption {
+  text-align: start;
+  padding-block: 1rem;
+}
+.chain-plot-description {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.chain-analysis .core-plot {
+  max-width: 100%;
+}
+.chain-scene svg {
+  max-height: 26rem;
+}
+@media (max-width: 600px) {
+  .chain-link-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chain-state-table {
+    font-size: 0.8rem;
+  }
+  .chain-state-table th,
+  .chain-state-table td {
+    padding: 0.4rem 0.15rem;
+  }
+  .chain-analysis .core-plot text {
+    display: none;
+  }
+}

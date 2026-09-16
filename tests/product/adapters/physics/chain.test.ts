@@ -149,11 +149,17 @@ describe('S10 variable-DOF physical contract', () => {
     const c = {
       ...defaultChainConfig(),
       seed: { value: '42', generator: 'fixture', generatorVersion: 'v1' },
-      provenance: { source: { kind: 'manual' as const } }
+      provenance: {
+        createdByVersion: 's10-fixture-v1',
+        source: { kind: 'preset' as const, id: 'fixture-chain' },
+        parentExperimentIds: ['parent-1'],
+        sourceUnits: { 'initialConditions.theta': 'deg' as const }
+      }
     };
     // Seed preservation is independent of whether this deterministic engine consumes it.
-    const canonical = toCanonicalChain({ ...defaultChainConfig(), seed: c.seed });
+    const canonical = toCanonicalChain(c);
     if (!canonical.ok) throw new Error('state');
+    expect(fromCanonicalChain(canonical.value)).toEqual({ ok: true, value: c });
     const route = createExperimentRoute(canonical.value);
     if (!route.ok) throw new Error('route');
     const restored = resolveProductRoute(route.value);
@@ -185,6 +191,18 @@ describe('S10 variable-DOF physical contract', () => {
       out = new Float64Array(state.length);
     rk4Step(state, config.step, legacy.rhs, out);
     expect(createChainSimulation(config).step().state).toEqual(Array.from(out));
+  });
+  it('failed physical steps preserve the last valid time and state', () => {
+    const sim = createChainSimulation({
+      ...defaultChainConfig('system:triple'),
+      step: 0.05,
+      duration: 1,
+      initialState: [1, 2, 3, 10000, -10000, 10000]
+    });
+    sim.step();
+    const before = sim.snapshot();
+    expect(() => sim.step()).toThrow();
+    expect(sim.snapshot()).toEqual(before);
   });
 });
 describe('S10 atomic link correspondence', () => {

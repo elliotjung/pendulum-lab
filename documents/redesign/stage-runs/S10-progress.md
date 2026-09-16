@@ -19,8 +19,8 @@
 | ID | 작업 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 진행 기록·S09 구조 승인 | plan, preflight, dependency/history | 원격 확인 완료 |
-| CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 검증 완료·push 준비 |
-| CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 대기 |
+| CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 원격 확인 완료 |
+| CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 검증 완료·push 준비 |
 | CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 대기 |
 | STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 대기 |
 
@@ -38,3 +38,10 @@
 - worker는 요청당 최대64단계/8ms 경계, 한 요청만 전송 중, 타임아웃15초, 최대2001개 기록 표본, 초기·현재/최종 표본을 보존한다. 취소/실패/reset/dispose는 worker를 종료하며 pause는 같은 worker 상태를 유지한다. 한 물리 단계 자체는 분할 불가하나 terminate로 취소 가능하다.
 - 초기 physics 테스트는 존재하지 않는 matcher와 legacy 필드 이름을 사용한 test 작성 오류로 실패했다. 이를 수정한 뒤 신규193/193 통과; 기존 product/adapters/lab 및 n-pendulum/chain-hardening/S01 golden 포함 CP1 회귀355/355 통과(실패·skip0). 초기 보고서 `tmp/S10-physics-first.json` 보존. TypeScript 메시지 fixture 캐스팅 오류도 수정 후 전체 typecheck와 scoped ESLint 통과했다.
 - CP1 production build/public artifact audit와 catalog134개 검사 통과. CP2 UI는 작성 중이며 사용자 여정과 시각 검증은 아직 완료되지 않았다. CP1 보고서 `tmp/S10-CP1-regression.json`.
+- CP1 `79538237e7e4ce90699b06b6353b8d7d2da55df3` commit/push 성공, ls-remote 동일 hash 확인.
+- CP2: triple/chain lazy route, 선택 링크·중간 추가/삭제·N 변경·일괄 편집, 전체 링크 animation/수치 표, 선택 링크 시간/위상과 전체 에너지 그래프, 독립 저장·JSON/CSV/SVG·공유 왕복을 연결했다. 화면 이탈은 worker를 종료하고 설정만 보존한다.
+- CP2 targeted358/358, 전체 Vitest2676/2676(265파일), production 새 경로/기존 Lab 40/40 통과. 실패·skip·flaky0. 기존2480개 단위 사례는 Date 표시 문자열만 정규화한 다중집합 비교로 모두 보존됐다. 신규196개 추가.
+- 12개 새 S10 desktop/mobile 이미지를 직접 검사했다. 기본각 숫자 노이즈를 정리하고 실제 dark theme로 캡처했으며 좁은 화면에도 HTML 범례·단위·범위를 표시했다. 수정 전 이미지는 `tmp/S10-visual-before`에 보존했다. 기존 단계 이미지는 수정하지 않았다. 시각 갱신6/6 후 기준 고정40/40 통과.
+- typecheck, scoped ESLint, production build와 공개 산출물 검사(텍스트22·binary1), plan/catalog134/Learn8과정86경로8공개/inventory883·broken0·orphan0 통과. 기존 엔진·계약·저장·lockfile·S01 golden 경로의 기준 S09 대비 diff는 비어 있다.
+- N128 성능은 이 기기 Node 측정에서 RK4 50단계 중앙값1.65ms/최대2.64ms였으며 브라우저 FPS나 다른 기기 성능 보장이 아니다. 브라우저 첫 표본·취소 시간은 E2E 첨부로 보존했다.
+- 2026-09-16 재개 시 fetch 후 로컬/원격 모두 CP1 hash임을 확인했다. 미커밋 파일은 중단 전 S10 구현과 일치하고 무관한 사용자 변경은 없다. 최종 검증은 모든 구현·문서 checkpoint push 뒤 별도로 실행한다.

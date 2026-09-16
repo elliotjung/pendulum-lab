@@ -1,15 +1,5 @@
 import type { SystemRow } from './systems-helpers';
-import {
-  l,
-  p,
-  coupledLimit,
-  polarLimit,
-  projectionLimit,
-  nDof,
-  spatialDof,
-  state4,
-  pendulumParams
-} from './systems-helpers';
+import { l, p, coupledLimit, polarLimit, projectionLimit, spatialDof, state4, pendulumParams } from './systems-helpers';
 
 export const classicalRows: readonly SystemRow[] = [
   {
@@ -70,8 +60,11 @@ export const classicalRows: readonly SystemRow[] = [
     binding: p('nPendulum', 'rhsChain'),
     parameters: p('nPendulum', 'ChainParameters'),
     coordinates: l('[theta_0..N-1, omega_0..N-1] 길이 2N 벡터.', '[theta_0..N-1, omega_0..N-1] length-2N vector.'),
-    dof: nDof,
-    limitation: coupledLimit
+    dof: l('1–128개 링크, 각 링크당 1 자유도.', 'One to 128 links, one degree of freedom per link.'),
+    limitation: l(
+      'g>0, 양의 질량·길이가 필요하다. 밀집 질량행렬 메모리는 O(N²), 직접 해법은 O(N³)이며 큰 사슬은 worker에서 계산한다.',
+      'Requires g>0 and positive masses/lengths. Dense mass-matrix memory is O(N²), direct solving is O(N³); large chains run in a worker.'
+    )
   },
   {
     id: 'spring',

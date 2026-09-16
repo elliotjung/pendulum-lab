@@ -28,7 +28,9 @@ export function mountApplication(root: HTMLElement, window: Window) {
     load: (space, route) =>
       route.kind === 'lab-system' && ['system:double', 'system:compound-double'].includes(route.systemId)
         ? import('./views/core-lab')
-        : loaders[space](),
+        : route.kind === 'lab-system' && ['system:triple', 'system:chain'].includes(route.systemId)
+          ? import('./views/chain-lab')
+          : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

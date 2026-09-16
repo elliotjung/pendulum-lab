@@ -60,7 +60,10 @@ export function defaultChainConfig(
     systemId,
     parameters: { masses: Array<number>(n).fill(1), lengths: Array<number>(n).fill(1), g: 9.81 },
     gamma: 0,
-    initialState: [...Array.from({ length: n }, (_, i) => (0.4 * (n - i)) / n), ...Array<number>(n).fill(0)],
+    initialState: [
+      ...Array.from({ length: n }, (_, i) => Number((0.4 * ((n - i) / n)).toPrecision(12))),
+      ...Array<number>(n).fill(0)
+    ],
     integratorId: 'integrator:rk4',
     step: 0.002,
     duration: 10,
