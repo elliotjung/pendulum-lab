@@ -21,8 +21,8 @@
 | CP0 | 진행 기록·S09 구조 승인 | plan, preflight, dependency/history | 원격 확인 완료 |
 | CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 원격 확인 완료 |
 | CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 원격 확인 완료 |
-| CP2b | 화면 복귀 시 비교 보관함 보존 | typecheck/lint/build, 두 시스템 desktop/mobile 복귀·격리 | 검증 완료·push 준비 |
-| CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 대기 |
+| CP2b | 화면 복귀 시 비교 보관함 보존 | typecheck/lint/build, 두 시스템 desktop/mobile 복귀·격리 | 원격 확인 완료 |
+| CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 증거 작성 완료·push 준비 |
 | STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 대기 |
 
 예정 경로: `src/product/adapters/physics/chain*`, product worker/model, `src/product/lab/views/chain*`, product app route/catalog, `css/product`, `tests/product`, `e2e/redesign`, `documents/redesign/stage-runs/S10*`와 S10 보고.
@@ -49,3 +49,7 @@
 - CP2 `ce53ee57f0be2d4f480b8cc7ab7545ef4622c94e` commit/push 성공, ls-remote 동일 hash 확인.
 - CP2b: 독립 코드 검토에서 모델별 WeakMap 보관함이 화면 이탈 시 사라져 안내와 다른 결함을 찾았다. Document·시스템/공유 키별로 현재 설정과 비교 설정만 보존하도록 수정했다. 최근8개 실험·실험당12개 제한이며 worker/궤적을 보존하지 않는다. 두 시스템의 복귀·다른 시스템 격리·설정 복원·새로고침 소멸을 production desktop/mobile에서4/4 검증했다. typecheck/scoped lint/build 통과. 수정 후 독립 읽기 검토에서도 결함 해결을 확인했다.
 - 재개 중 계획 검사 스크립트 경로를 잘못 지정해 module-not-found가 발생했다. 공식 `npm run redesign:check`로 재실행해 통과했다. 실패한 호출은 검증 성공으로 계산하지 않았다.
+- CP2b `06750e94412f0f36a1fa52f954ed4a97d30e90d3` commit/push 성공, ls-remote 동일 hash 확인.
+- CP3: `triple-chain-lab-ko.md`에 물리·좌표·단위·worker·저장·성능·원본 보존·복구·검토 한계를 기록했다. `S10-verification.json`에 실제 보고서와 시각 기준 SHA-256, 기존2480사례 보존 비교, 엔진/계약 diff, 성능 첨부를 모았다. 추적1393파일 credential 패턴 검사에서 발견0이며 history/ignored/binary/임의 암호 검사를 의미하지 않는다.
+- 바탕화면 두 로드맵 사본의 SHA-256은 저장소 원본과 일치한다. 로드맵 본문은 변경하지 않았다. CP2 production N128 첫 표본/취소는 desktop209/75ms, mobile emulation192/85ms였으며 단일 환경 측정이다.
+- CP3 push 후 candidate-complete로 전환하고 전체 단위, 새 chain 및 기존 core/Lab/shell production 여정, typecheck/lint/build/catalog/Learn/inventory/secret 검사를 수행한다. 이후에만 별도 STATUS commit에서 완료 필드를 갱신한다.

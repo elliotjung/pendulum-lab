@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 10,
+  "state": "implementation-verified",
+  "finalValidation": "pending-after-document-checkpoint-push",
+  "baselineCommit": "4ba54ed9f52966f87f9de06e7f9a1e3bcad09ca6",
+  "implementationCommits": [
+    "67c7b410852deb0e73019d88d1f31cfe28c2d705",
+    "79538237e7e4ce90699b06b6353b8d7d2da55df3",
+    "ce53ee57f0be2d4f480b8cc7ab7545ef4622c94e",
+    "06750e94412f0f36a1fa52f954ed4a97d30e90d3"
+  ],
+  "candidateDocumentCommit": null,
+  "implementationRemotePresence": "Each listed checkpoint push succeeded and git ls-remote returned its exact hash. Completion requires a separate remote status commit.",
+  "environment": {
+    "platform": "win32",
+    "node": "v26.3.0",
+    "capturedAt": "2026-09-16T01:19:21.422Z",
+    "browserProjects": [
+      "chromium",
+      "mobile-chrome"
+    ],
+    "productionPreview": true,
+    "browserWorkers": 1,
+    "retries": 0
+  },
+  "checks": {
+    "preflight": "Initial clean codex/redesign matched S09 remote after fetch. Plan and preflight -- 10 passed; S09 status/history/artifacts checked. Sep16 resume fetch matched CP1 and all dirty files were identified as unfinished S10 work.",
+    "targeted": {
+      "report": "tmp/S10-CP2-targeted.json",
+      "sha256": "9cbc6f7e04a5e56b710d059e21d6ada9c3e31e1f50a290ef552f15989132e9f4",
+      "files": 11,
+      "total": 358,
+      "passed": 358,
+      "failed": 0,
+      "pending": 0
+    },
+    "full": {
+      "report": "tmp/S10-full-vitest.json",
+      "sha256": "f48e2fad3ddba463ef9390fc986d7f675fe8e7979b14fd7d638cf7f0c66fad92",
+      "files": 265,
+      "total": 2676,
+      "passed": 2676,
+      "failed": 0,
+      "pending": 0
+    },
+    "regression": {
+      "previousReport": {
+        "report": "tmp/S09-final-vitest.json",
+        "sha256": "f5aa98b880f45698ae61ce847ea9575524fc730f6ae6bc06df1d27907fdeb041"
+      },
+      "previousTests": 2480,
+      "previousFiles": 262,
+      "missingPreviousTests": 0,
+      "addedTests": 196,
+      "explanation": "Multiset comparison of file + complete assertion name, normalizing only the generated Date string in the malformed Learn content case. Original tests and fixtures were not removed or relaxed."
+    },
+    "productionInitial": {
+      "report": "tmp/S10-e2e-first.json",
+      "sha256": "33be59fd105336e5f250e770c2010cbb54926de8f4dc5ee83b42b69fc17e93e7",
+      "startTime": "2026-09-14T04:22:26.215Z",
+      "duration": 131935.40899999999,
+      "expected": 24,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "visualCreation": {
+      "report": "tmp/S10-visual-update.json",
+      "sha256": "3da5a16a6372ff942692bc0591d87eefd5cfff441839e3f7189a14fbbe34522d",
+      "startTime": "2026-09-14T04:27:31.072Z",
+      "duration": 49843.163,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "productionCP2": {
+      "report": "tmp/S10-CP2-playwright.json",
+      "sha256": "c80042577c7d4d4fa71c6cccad8968de1bb93074f0f77fb091a872ee0c067d28",
+      "startTime": "2026-09-14T04:29:29.884Z",
+      "duration": 227266.37600000002,
+      "expected": 40,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "comparisonTrayRecovery": {
+      "report": "tmp/S10-tray-playwright.json",
+      "sha256": "64cc127db201e14ee6fabaf4dd92f0ff421558f0503224ebebc2535c6791483a",
+      "startTime": "2026-09-16T01:15:54.301Z",
+      "duration": 31111.593,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "typecheck": "passed",
+    "scopedLint": "passed",
+    "build": {
+      "report": "tmp/S10-tray-build.log",
+      "sha256": "541b33622678ec934ef4ee4876fe750e124b15a88222401887d35a60d452dd9f"
+    },
+    "publicArtifactAudit": {
+      "textArtifacts": 22,
+      "skippedBinary": 1,
+      "result": "passed"
+    },
+    "catalog": {
+      "total": 134,
+      "systems": 34,
+      "analyses": 51,
+      "integrators": 21,
+      "auxiliary": 28
+    },
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "publishedUnits": 8,
+      "plannedUnits": 78,
+      "humanReviewed": 0
+    },
+    "inventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    },
+    "secrets": {
+      "report": "tmp/S10-secret-scan.json",
+      "sha256": "b5eba76a7e137cc6f37fc6e104ed96e4ee2c885f0ce4baf5280c4aa4347d5f08",
+      "sourceCommit": "06750e94412f0f36a1fa52f954ed4a97d30e90d3",
+      "trackedFiles": 1393,
+      "findings": 0,
+      "scope": "All Git-tracked working-tree text files; binary files listed separately; no history or ignored files.",
+      "limitations": [
+        "Known credential formats only; no entropy analysis, provider validation, or detection of arbitrary passwords.",
+        "Zero findings means no matches for these rules, not proof that all secrets are absent.",
+        "Git history, ignored files, binary contents, and external services are outside this local scan."
+      ]
+    },
+    "commands": [
+      "npm test -- --reporter=json --outputFile=tmp/S10-final-vitest.json",
+      "npm run typecheck",
+      "eslint new and changed S10 TypeScript files --max-warnings 0",
+      "npm run build",
+      "npm run redesign:check",
+      "npm run redesign:catalog:check",
+      "npm run redesign:learn:check",
+      "npm run redesign:inventory:check",
+      "node --import tsx scripts/redesign/secret-scan.ts",
+      "PLAYWRIGHT_USE_PREVIEW=1 PLAYWRIGHT_PORT=5187 playwright test chain-pendulum core-pendulum lab-shell shell --project=chromium --project=mobile-chrome --reporter=list,json"
+    ]
+  },
+  "physics": {
+    "supportedN": {
+      "min": 1,
+      "max": 128,
+      "allValidatedAndRoundTripped": true
+    },
+    "legacyKernels": [
+      "rhsTriple",
+      "energyTriple",
+      "rhsChain",
+      "energyChain"
+    ],
+    "duplicateEquationsOfMotion": 0,
+    "fixtures": [
+      "Original-engine parity for RK4/RK2/Euler",
+      "N1 analytic acceleration and energy",
+      "Triple vs chain N3",
+      "S01 golden",
+      "Legacy cascade exact parameters",
+      "Link insertion/deletion/bulk/resize correspondence",
+      "Canonical vectors and source metadata",
+      "Failed physics step preserves last valid state"
+    ]
+  },
+  "execution": {
+    "maxSteps": 100000,
+    "maxSamples": 2001,
+    "maxBatchSteps": 64,
+    "cooperativeBudgetMs": 8,
+    "workerTimeoutMs": 15000,
+    "maxImportBytes": 200000,
+    "recentDocumentSessions": 8,
+    "maxTrayPerSession": 12,
+    "pause": "Retains same worker after finishing its bounded batch.",
+    "cancelErrorDispose": "Terminates worker and ignores stale replies; last valid received sample preserved on failure.",
+    "routeReturn": "Restores current and comparison configurations only; workers and trajectories are released. Keys separate systems and canonical shared experiments; reload clears this memory cache.",
+    "savedConfigPrefix": "pendulum-product/chain/v1/",
+    "originalAndFutureDataPreserved": true
+  },
+  "performance": {
+    "report": "tmp/S10-performance.json",
+    "sha256": "b56ff8fd6c715cfb1f90b5946062eb1412970512f957bc81c4e18718ac79aa81",
+    "measurement": {
+      "schema": "pendulum-s10-performance/v1",
+      "timestamp": "2026-09-14T04:27:20.551Z",
+      "node": "v26.3.0",
+      "platform": "win32",
+      "cpu": "Intel(R) Core(TM) Ultra 7 256V",
+      "method": "RK4, 50 steps at dt=0.002 s; existing chain kernel with per-run workspace. Node timing, not browser FPS. Snapshot bytes are JSON size, not heap usage.",
+      "rows": [
+        {
+          "n": 1,
+          "initializationMs": 1.664199999999994,
+          "steps": 50,
+          "medianStepMs": 0.010800000000017462,
+          "maxStepMs": 0.276299999999992,
+          "totalStepMs": 1.2446999999998525,
+          "serializedSampleBytes": 221,
+          "denseWorkspaceFloat64Bytes": 32,
+          "finalTime": 0.1,
+          "finalEnergy": -9.035608351168483
+        },
+        {
+          "n": 3,
+          "initializationMs": 0.36709999999999354,
+          "steps": 50,
+          "medianStepMs": 0.03669999999999618,
+          "maxStepMs": 0.21710000000001628,
+          "totalStepMs": 2.3939000000000874,
+          "serializedSampleBytes": 393,
+          "denseWorkspaceFloat64Bytes": 192,
+          "finalTime": 0.1,
+          "finalEnergy": -55.7562783016006
+        },
+        {
+          "n": 4,
+          "initializationMs": 1.3016999999999825,
+          "steps": 50,
+          "medianStepMs": 0.014499999999998181,
+          "maxStepMs": 0.04590000000001737,
+          "totalStepMs": 0.7980000000000587,
+          "serializedSampleBytes": 486,
+          "denseWorkspaceFloat64Bytes": 320,
+          "finalTime": 0.1,
+          "finalEnergy": -93.24788339828731
+        },
+        {
+          "n": 16,
+          "initializationMs": 0.8984999999999559,
+          "steps": 50,
+          "medianStepMs": 0.043600000000026284,
+          "maxStepMs": 0.318300000000022,
+          "totalStepMs": 2.700300000000084,
+          "serializedSampleBytes": 1541,
+          "denseWorkspaceFloat64Bytes": 4352,
+          "finalTime": 0.1,
+          "finalEnergy": -1277.990473250831
+        },
+        {
+          "n": 64,
+          "initializationMs": 0.975400000000036,
+          "steps": 50,
+          "medianStepMs": 0.3089999999999691,
+          "maxStepMs": 0.9588000000000534,
+          "totalStepMs": 19.130100000000198,
+          "serializedSampleBytes": 5794,
+          "denseWorkspaceFloat64Bytes": 66560,
+          "finalTime": 0.1,
+          "finalEnergy": -19583.30731011231
+        },
+        {
+          "n": 128,
+          "initializationMs": 2.005899999999997,
+          "steps": 50,
+          "medianStepMs": 1.6494000000000142,
+          "maxStepMs": 2.6406000000000063,
+          "totalStepMs": 84.86390000000034,
+          "serializedSampleBytes": 11468,
+          "denseWorkspaceFloat64Bytes": 264192,
+          "finalTime": 0.1,
+          "finalEnergy": -77755.52592406345
+        }
+      ]
+    },
+    "browserTimingReport": {
+      "report": "tmp/S10-CP2-playwright.json",
+      "sha256": "c80042577c7d4d4fa71c6cccad8968de1bb93074f0f77fb091a872ee0c067d28"
+    },
+    "browserTimings": [
+      {
+        "project": "chromium",
+        "firstSampleMs": 209,
+        "cancelMs": 75
+      },
+      {
+        "project": "mobile-chrome",
+        "firstSampleMs": 192,
+        "cancelMs": 85
+      }
+    ],
+    "limitations": "One Windows machine. Node kernel timings are not FPS, heap measurements, worst-case bounds, or guarantees for other devices. Dense solver is O(N^2) storage and O(N^3) computation; one kernel step is not preempted cooperatively."
+  },
+  "preservation": {
+    "paths": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/lib.ts",
+      "src/lib",
+      "src/product/contracts",
+      "src/product/persistence",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "modifiedPaths": [],
+    "priorScreenshotsModified": [],
+    "userDataMigration": false,
+    "masterMergeReleaseOrDestructiveReset": false,
+    "rollbackReference": "4ba54ed9f52966f87f9de06e7f9a1e3bcad09ca6"
+  },
+  "visual": {
+    "directlyInspected": 12,
+    "screenshots": [
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-128-inspector-light-chromium-win32.png",
+        "sha256": "ba1796cc052fd167e72e872a5b3c67f84a48df4f125f7fe88f7d141facc68e84"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-128-inspector-light-mobile-chrome-win32.png",
+        "sha256": "0433b217f906dfafb284fdb0f25530874d8f9c650efd0698c7a31b272cab77bf"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-workspace-light-chromium-win32.png",
+        "sha256": "f85a77619393b8a2db91e79f13181705afcaeae6940b363d8bf1078c7dd51818"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-workspace-light-mobile-chrome-win32.png",
+        "sha256": "e88c35ae6b13ed17878a5258b1b00b00593dfd01a3302b374c0dd14eecec2421"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-analysis-dark-chromium-win32.png",
+        "sha256": "2d147159c081cc2623fcb5c9e142147dcb08001f15b348d64d178cfd7bd4c5bd"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-analysis-dark-mobile-chrome-win32.png",
+        "sha256": "d4b6196c09a4bb233247d21340fbbb3c15c631b18fc27bd54b99db60a9ac3284"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-inspector-dark-chromium-win32.png",
+        "sha256": "febacc17505a1833bb7451fda625e5cf280dce372ad40320b2e45edf5929794e"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-inspector-dark-mobile-chrome-win32.png",
+        "sha256": "08710c36f7d662051585fc803dbfbd7c68b0a0277ae8f07d1cb2d59ef873a29e"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-workspace-light-chromium-win32.png",
+        "sha256": "eb809992e598e257b5e8772e23c6d67e1dff0cdc16b48eead1d5b9194dec391e"
+      },
+      {
+        "path": "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-workspace-light-mobile-chrome-win32.png",
+        "sha256": "fc5a516be3afebef2456271da09f1bbbbcfcd7a8d7ee5044cd94677ef12ef68b"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s10-lab-library-light-chromium-win32.png",
+        "sha256": "4272a30cc153a9f13c751414337d904ad6704fab9b299dbf5fa00627210ca4f8"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s10-lab-library-light-mobile-chrome-win32.png",
+        "sha256": "d5bf3a291775417125ae404602833e052ca98bad97aae34531eed9ce1435c335"
+      }
+    ],
+    "beforeImages": "tmp/S10-visual-before",
+    "observations": "Removed default-angle binary display noise, captured actual dark theme, and supplied HTML legends/units/ranges for narrow layouts. Existing stage baselines unchanged."
+  },
+  "failuresAndRecovery": [
+    {
+      "kind": "environment",
+      "detail": "Initial sandbox FETCH_HEAD/subprocess EPERM recovered with authorized escalation; three agents initially stopped at account usage limits and root completed implementation without a model override."
+    },
+    {
+      "kind": "test-authoring",
+      "report": "tmp/S10-physics-first.json",
+      "sha256": "17ea1dfc05172b1b447a60cf7375bcc3a36c8ac6e96fe7f687b88c32284e4bbf",
+      "detail": "Unsupported toBeFinite matcher and legacy derivative/rhs fixture mismatch fixed; TypeScript message fixture casts corrected. Follow-up targeted and full suites passed; no existing golden changed."
+    },
+    {
+      "kind": "command-path",
+      "detail": "Resume used an incorrect check-plan.ts path once; the official npm run redesign:check was then run successfully. Failed invocation is not a passed check."
+    },
+    {
+      "kind": "review-finding",
+      "detail": "Independent read review found comparison tray lost on route departure despite page-lifetime wording. Config-only document/session storage and accurate limits were added, production recovery4/4 passed, independent re-review confirmed correction."
+    }
+  ],
+  "security": {
+    "existingFindings": "S01 npm high2/moderate2 and CodeQL32 remain unresolved. Each S10 push reports a separate default-branch aggregate high7/moderate3.",
+    "dependencyChanges": false,
+    "auditRefreshed": false,
+    "remediationOrRiskAcceptanceClaimed": false
+  },
+  "review": {
+    "approvedStructureGates": [
+      7,
+      9
+    ],
+    "S09ApprovalEvidence": "User requested S10 after the S09 report.",
+    "scientificHumanReviewedUnits": 0,
+    "publishedUnits": 8,
+    "S10UserGateRequired": false,
+    "independentCodeReview": "Read-only review identified and rechecked the comparison-tray correction; not scientific expert review.",
+    "unverified": [
+      "Physical mobile devices",
+      "Firefox/WebKit and other OS combinations",
+      "Actual screen-reader audio",
+      "Scientific human review"
+    ]
+  },
+  "desktopTransportCopies": [
+    {
+      "repository": "documents/redesign/master-roadmap-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995"
+    },
+    {
+      "repository": "documents/redesign/execution-plan-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+    }
+  ],
+  "nextValidStageAfterRemoteStatus": 11
+}
