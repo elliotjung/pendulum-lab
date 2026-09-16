@@ -22,8 +22,8 @@
 | CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 원격 확인 완료 |
 | CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 원격 확인 완료 |
 | CP2b | 화면 복귀 시 비교 보관함 보존 | typecheck/lint/build, 두 시스템 desktop/mobile 복귀·격리 | 원격 확인 완료 |
-| CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 증거 작성 완료·push 준비 |
-| STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 대기 |
+| CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 원격 확인 완료 |
+| STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 최종 검증 통과 · 별도 상태 commit/push |
 
 예정 경로: `src/product/adapters/physics/chain*`, product worker/model, `src/product/lab/views/chain*`, product app route/catalog, `css/product`, `tests/product`, `e2e/redesign`, `documents/redesign/stage-runs/S10*`와 S10 보고.
 
@@ -53,3 +53,12 @@
 - CP3: `triple-chain-lab-ko.md`에 물리·좌표·단위·worker·저장·성능·원본 보존·복구·검토 한계를 기록했다. `S10-verification.json`에 실제 보고서와 시각 기준 SHA-256, 기존2480사례 보존 비교, 엔진/계약 diff, 성능 첨부를 모았다. 추적1393파일 credential 패턴 검사에서 발견0이며 history/ignored/binary/임의 암호 검사를 의미하지 않는다.
 - 바탕화면 두 로드맵 사본의 SHA-256은 저장소 원본과 일치한다. 로드맵 본문은 변경하지 않았다. CP2 production N128 첫 표본/취소는 desktop209/75ms, mobile emulation192/85ms였으며 단일 환경 측정이다.
 - CP3 push 후 candidate-complete로 전환하고 전체 단위, 새 chain 및 기존 core/Lab/shell production 여정, typecheck/lint/build/catalog/Learn/inventory/secret 검사를 수행한다. 이후에만 별도 STATUS commit에서 완료 필드를 갱신한다.
+- CP3 `85de3e1002fb964bf7c40b9190bb8760e3ced02f` commit/push 성공, ls-remote 동일 hash 확인. 구현·문서 checkpoint가 모두 원격에 존재하므로 candidate-complete로 최종 검증을 시작한다. CP3 직전 plan 재호출은 sandbox subprocess EPERM으로 시작되지 않았고, 최종 검사에서 허용된 권한으로 다시 실행한다.
+
+## 최종 완료 후보 검증
+
+- 모든 구현·문서 checkpoint가 원격에 존재하는 CP3 이후 최종 Vitest2676/2676(265파일), production desktop/mobile106/106을 통과했다. 실패·skip·flaky·report error0. 새 chain30개와 기존 core/Lab/shell76개를 포함하고 시각 기준을 갱신하지 않았다.
+- 최종 typecheck/scoped ESLint/build/plan/catalog/Learn/inventory 및 공개 산출물 검사 통과. 추적1395파일의 알려진 credential 패턴 발견0. 기존2480개 단위 사례, 보존 경로, 이전 이미지, 바탕화면 로드맵 해시를 다시 대조했다.
+- 최종 보고서 SHA-256과 N128 브라우저 측정은 S10-verification.json에 기록했다. 단일 환경의 측정값이며 다른 기기·브라우저·실제 screen reader·과학 전문가 검토를 대신하지 않는다.
+- 사용자 데이터 migration, master 변경, release, 다음 단계 구현은 없다. S09 구조 승인은 기록했지만 human-reviewed0/8과 기존 보안 미해결 상태를 유지한다. 복구 기준은 S09 4ba54ed9f52966f87f9de06e7f9a1e3bcad09ca6이다.
+- 완료 필드는 이 별도 STATUS commit에만 반영한다. 이 commit의 push 뒤 원격 hash와 원격 status.json을 직접 확인해야 완료이며, 최종 종료 보고에 그 hash와 결과를 제공한다. 다음 유효 단계는 S11이다.

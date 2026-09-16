@@ -1,8 +1,8 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 10,
-  "state": "implementation-verified",
-  "finalValidation": "pending-after-document-checkpoint-push",
+  "state": "candidate-complete",
+  "finalValidation": "passed-after-implementation-push",
   "baselineCommit": "4ba54ed9f52966f87f9de06e7f9a1e3bcad09ca6",
   "implementationCommits": [
     "67c7b410852deb0e73019d88d1f31cfe28c2d705",
@@ -10,16 +10,55 @@
     "ce53ee57f0be2d4f480b8cc7ab7545ef4622c94e",
     "06750e94412f0f36a1fa52f954ed4a97d30e90d3"
   ],
-  "candidateDocumentCommit": null,
+  "candidateDocumentCommit": "85de3e1002fb964bf7c40b9190bb8760e3ced02f",
   "implementationRemotePresence": "Each listed checkpoint push succeeded and git ls-remote returned its exact hash. Completion requires a separate remote status commit.",
+  "changedFiles": [
+    "css/product/chain.css",
+    "documents/redesign/stage-runs/S10-progress.md",
+    "documents/redesign/stage-runs/S10-verification.json",
+    "documents/redesign/status.json",
+    "documents/redesign/triple-chain-lab-ko.md",
+    "e2e/redesign/chain-pendulum.spec.ts",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-128-inspector-light-chromium-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-128-inspector-light-mobile-chrome-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-workspace-light-chromium-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-chain-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-analysis-dark-chromium-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-analysis-dark-mobile-chrome-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-inspector-dark-chromium-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-workspace-light-chromium-win32.png",
+    "e2e/redesign/chain-pendulum.spec.ts-snapshots/s10-triple-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s10-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s10-lab-library-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-chain-performance.ts",
+    "src/product/adapters/physics/chain-client.ts",
+    "src/product/adapters/physics/chain-edit.ts",
+    "src/product/adapters/physics/chain-presets.ts",
+    "src/product/adapters/physics/chain-schema.ts",
+    "src/product/adapters/physics/chain-worker-protocol.ts",
+    "src/product/adapters/physics/chain.ts",
+    "src/product/adapters/physics/chain.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/chain-lab.ts",
+    "src/product/catalog/systems-classical.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/chain-files.ts",
+    "src/product/lab/views/chain-inspector.ts",
+    "src/product/lab/views/chain-model.ts",
+    "src/product/lab/views/chain-plots.ts",
+    "src/product/lab/views/chain-storage.ts",
+    "src/product/lab/views/chain-workspace.ts",
+    "tests/product/adapters/physics/chain-worker.test.ts",
+    "tests/product/adapters/physics/chain.test.ts",
+    "tests/product/lab/chain-storage.test.ts"
+  ],
   "environment": {
     "platform": "win32",
     "node": "v26.3.0",
-    "capturedAt": "2026-09-16T01:19:21.422Z",
-    "browserProjects": [
-      "chromium",
-      "mobile-chrome"
-    ],
+    "capturedAt": "2026-09-16T01:37:13.404Z",
+    "browserProjects": ["chromium", "mobile-chrome"],
     "productionPreview": true,
     "browserWorkers": 1,
     "retries": 0
@@ -36,8 +75,8 @@
       "pending": 0
     },
     "full": {
-      "report": "tmp/S10-full-vitest.json",
-      "sha256": "f48e2fad3ddba463ef9390fc986d7f675fe8e7979b14fd7d638cf7f0c66fad92",
+      "report": "tmp/S10-final-vitest.json",
+      "sha256": "fa0cb77a02362f7b4df82470563ee4e8b7cc109ff1c5e85ad330a35a4fa71eca",
       "files": 265,
       "total": 2676,
       "passed": 2676,
@@ -99,11 +138,22 @@
       "flaky": 0,
       "errors": 0
     },
+    "productionFinal": {
+      "report": "tmp/S10-final-playwright.json",
+      "sha256": "76273dfdf75d9b14f8f3a6a897f933375ffd9c15637f139e9f80f1364ba4a88b",
+      "startTime": "2026-09-16T01:22:37.075Z",
+      "duration": 792432.968,
+      "expected": 106,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
     "typecheck": "passed",
     "scopedLint": "passed",
     "build": {
-      "report": "tmp/S10-tray-build.log",
-      "sha256": "541b33622678ec934ef4ee4876fe750e124b15a88222401887d35a60d452dd9f"
+      "report": "tmp/S10-final-build.log",
+      "sha256": "64a06d69794fc1da7366cbd1bc91845777ff9feb849fb465ed8394859dd11194"
     },
     "publicArtifactAudit": {
       "textArtifacts": 22,
@@ -130,10 +180,10 @@
       "orphans": 0
     },
     "secrets": {
-      "report": "tmp/S10-secret-scan.json",
-      "sha256": "b5eba76a7e137cc6f37fc6e104ed96e4ee2c885f0ce4baf5280c4aa4347d5f08",
-      "sourceCommit": "06750e94412f0f36a1fa52f954ed4a97d30e90d3",
-      "trackedFiles": 1393,
+      "report": "tmp/S10-final-secret-scan.json",
+      "sha256": "b94d7f45674be54258afcf3bcf1c5497a6827be13e5221bafc8798117d0de644",
+      "sourceCommit": "85de3e1002fb964bf7c40b9190bb8760e3ced02f",
+      "trackedFiles": 1395,
       "findings": 0,
       "scope": "All Git-tracked working-tree text files; binary files listed separately; no history or ignored files.",
       "limitations": [
@@ -141,6 +191,10 @@
         "Zero findings means no matches for these rules, not proof that all secrets are absent.",
         "Git history, ignored files, binary contents, and external services are outside this local scan."
       ]
+    },
+    "finalChecksLog": {
+      "report": "tmp/S10-final-checks.log",
+      "sha256": "ac8f0b285773cb167767e373b83aa18ea0d99f5cc005b027ae59992bfc06804c"
     },
     "commands": [
       "npm test -- --reporter=json --outputFile=tmp/S10-final-vitest.json",
@@ -161,12 +215,7 @@
       "max": 128,
       "allValidatedAndRoundTripped": true
     },
-    "legacyKernels": [
-      "rhsTriple",
-      "energyTriple",
-      "rhsChain",
-      "energyChain"
-    ],
+    "legacyKernels": ["rhsTriple", "energyTriple", "rhsChain", "energyChain"],
     "duplicateEquationsOfMotion": 0,
     "fixtures": [
       "Original-engine parity for RK4/RK2/Euler",
@@ -280,19 +329,19 @@
       ]
     },
     "browserTimingReport": {
-      "report": "tmp/S10-CP2-playwright.json",
-      "sha256": "c80042577c7d4d4fa71c6cccad8968de1bb93074f0f77fb091a872ee0c067d28"
+      "report": "tmp/S10-final-playwright.json",
+      "sha256": "76273dfdf75d9b14f8f3a6a897f933375ffd9c15637f139e9f80f1364ba4a88b"
     },
     "browserTimings": [
       {
         "project": "chromium",
-        "firstSampleMs": 209,
-        "cancelMs": 75
+        "firstSampleMs": 211,
+        "cancelMs": 76
       },
       {
         "project": "mobile-chrome",
-        "firstSampleMs": 192,
-        "cancelMs": 85
+        "firstSampleMs": 191,
+        "cancelMs": 78
       }
     ],
     "limitations": "One Windows machine. Node kernel timings are not FPS, heap measurements, worst-case bounds, or guarantees for other devices. Dense solver is O(N^2) storage and O(N^3) computation; one kernel step is not preempted cooperatively."
@@ -377,7 +426,7 @@
   "failuresAndRecovery": [
     {
       "kind": "environment",
-      "detail": "Initial sandbox FETCH_HEAD/subprocess EPERM recovered with authorized escalation; three agents initially stopped at account usage limits and root completed implementation without a model override."
+      "detail": "Sandbox FETCH_HEAD/subprocess EPERM blocked initial launches and one CP3 plan recheck; authorized escalation and final official checks passed. Three agents initially stopped at account usage limits and root completed implementation without a model override."
     },
     {
       "kind": "test-authoring",
@@ -401,10 +450,7 @@
     "remediationOrRiskAcceptanceClaimed": false
   },
   "review": {
-    "approvedStructureGates": [
-      7,
-      9
-    ],
+    "approvedStructureGates": [7, 9],
     "S09ApprovalEvidence": "User requested S10 after the S09 report.",
     "scientificHumanReviewedUnits": 0,
     "publishedUnits": 8,
