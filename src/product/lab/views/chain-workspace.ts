@@ -23,8 +23,8 @@ const labels: Record<ChainStatus, string> = {
   cancelled: '실행 취소됨',
   error: '실행 오류'
 };
-// Restart settings are retained within this document; workers/results are released on route disposal.
-const sessions = new WeakMap<Document, Map<string, ChainConfig>>();
+// Only settings and comparison configurations survive route disposal, never workers/results.
+const sessions = new WeakMap<Document, Map<string, { config: ChainConfig; tray: ChainConfig[] }>>();
 export function createChainWorkspace(document: Document, system: SystemDefinition, experiment?: ExperimentStateV1) {
   const view = element(document, 'div', 'product-page product-lab-page lab-workspace chain-workspace');
   view.append(
@@ -61,7 +61,9 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     sessions.set(document, session);
   }
   const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id;
-  initial = session.get(key) ?? initial;
+  const retained = session.get(key);
+  initial = retained?.config ?? initial;
+  const tray = retained?.tray ?? [];
   const model = createChainModel(initial);
   view.append(
     element(
@@ -224,7 +226,8 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
       lastStep = -1;
       updatePlot();
     },
-    () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+    () => model.state.valid && model.state.status !== 'running' && !model.state.busy,
+    tray
   );
   const tabs = createTabs(document, {
     id: 'lab-panels',
@@ -285,7 +288,8 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
   return {
     element: view,
     dispose() {
-      session!.set(key, model.state.config);
+      session!.delete(key);
+      session!.set(key, { config: model.state.config, tray });
       while (session!.size > 8) session!.delete(session!.keys().next().value!);
       unsubscribe();
       model.dispose();

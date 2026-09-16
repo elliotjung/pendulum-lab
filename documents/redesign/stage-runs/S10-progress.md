@@ -20,7 +20,8 @@
 |---|---|---|---|
 | CP0 | 진행 기록·S09 구조 승인 | plan, preflight, dependency/history | 원격 확인 완료 |
 | CP1 | triple/N-chain 계약·수치 adapter·편집·worker | N 경계, parity/golden, round trip, 취소/오류, typecheck | 원격 확인 완료 |
-| CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 검증 완료·push 준비 |
+| CP2 | Lab 연결·링크 도구·가변 표시·파일·사용자 여정 | unit, production build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 원격 확인 완료 |
+| CP2b | 화면 복귀 시 비교 보관함 보존 | typecheck/lint/build, 두 시스템 desktop/mobile 복귀·격리 | 검증 완료·push 준비 |
 | CP3 | 통합 검증·보존·성능·결과 기록 | 전체 Vitest, 관련 E+U, catalog/inventory, diff | 대기 |
 | STATUS | 별도 완료 상태 commit/push | 구현 원격 존재와 최종 검사·원격 hash | 대기 |
 
@@ -45,3 +46,6 @@
 - typecheck, scoped ESLint, production build와 공개 산출물 검사(텍스트22·binary1), plan/catalog134/Learn8과정86경로8공개/inventory883·broken0·orphan0 통과. 기존 엔진·계약·저장·lockfile·S01 golden 경로의 기준 S09 대비 diff는 비어 있다.
 - N128 성능은 이 기기 Node 측정에서 RK4 50단계 중앙값1.65ms/최대2.64ms였으며 브라우저 FPS나 다른 기기 성능 보장이 아니다. 브라우저 첫 표본·취소 시간은 E2E 첨부로 보존했다.
 - 2026-09-16 재개 시 fetch 후 로컬/원격 모두 CP1 hash임을 확인했다. 미커밋 파일은 중단 전 S10 구현과 일치하고 무관한 사용자 변경은 없다. 최종 검증은 모든 구현·문서 checkpoint push 뒤 별도로 실행한다.
+- CP2 `ce53ee57f0be2d4f480b8cc7ab7545ef4622c94e` commit/push 성공, ls-remote 동일 hash 확인.
+- CP2b: 독립 코드 검토에서 모델별 WeakMap 보관함이 화면 이탈 시 사라져 안내와 다른 결함을 찾았다. Document·시스템/공유 키별로 현재 설정과 비교 설정만 보존하도록 수정했다. 최근8개 실험·실험당12개 제한이며 worker/궤적을 보존하지 않는다. 두 시스템의 복귀·다른 시스템 격리·설정 복원·새로고침 소멸을 production desktop/mobile에서4/4 검증했다. typecheck/scoped lint/build 통과. 수정 후 독립 읽기 검토에서도 결함 해결을 확인했다.
+- 재개 중 계획 검사 스크립트 경로를 잘못 지정해 module-not-found가 발생했다. 공식 `npm run redesign:check`로 재실행해 통과했다. 실패한 호출은 검증 성공으로 계산하지 않았다.

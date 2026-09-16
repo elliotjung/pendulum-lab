@@ -62,6 +62,38 @@ test.describe('S10 triple and N-chain laboratory', () => {
       await page.getByRole('button', { name: '처음으로', exact: true }).click();
       await expect(page.locator('#lab-time')).toHaveAttribute('data-time', '0');
     });
+    test(`${slug}: comparison settings survive route return and stay isolated`, async ({ page }) => {
+      await open(page, slug);
+      await panel(page, '조건');
+      await page.locator('#chain-mass').fill('2.5');
+      await panel(page, '보관함');
+      await page.getByRole('button', { name: '현재 설정 보관', exact: true }).click();
+      await panel(page, '조건');
+      await page.locator('#chain-mass').fill('3.5');
+      await page.getByRole('button', { name: '한 단계', exact: true }).click();
+      await settled(page);
+      await page.getByRole('link', { name: '시스템 라이브러리', exact: true }).click();
+      await page.evaluate(
+        (other) => {
+          location.hash = `#/lab/${other}`;
+        },
+        slug === 'triple' ? 'chain' : 'triple'
+      );
+      await panel(page, '보관함');
+      await expect(page.getByText('보관한 설정이 없습니다.', { exact: true })).toBeVisible();
+      await page.goBack();
+      await page.goBack();
+      await expect(page.locator('#lab-time')).toHaveAttribute('data-time', '0');
+      await panel(page, '조건');
+      await expect(page.locator('#chain-mass')).toHaveValue('3.5');
+      await panel(page, '보관함');
+      await page.getByRole('button', { name: '설정 1 설정 복원', exact: true }).click();
+      await panel(page, '조건');
+      await expect(page.locator('#chain-mass')).toHaveValue('2.5');
+      await page.reload();
+      await panel(page, '보관함');
+      await expect(page.getByText('보관한 설정이 없습니다.', { exact: true })).toBeVisible();
+    });
     test(`${slug}: edit/save/reload/share/import preserve SI vectors`, async ({ page }) => {
       await open(page, slug);
       await panel(page, '조건');

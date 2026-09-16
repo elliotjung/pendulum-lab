@@ -12,24 +12,21 @@ import {
 } from './chain-storage';
 import type { ChainModel } from './chain-model';
 
-const trays = new WeakMap<ChainModel, ChainConfig[]>();
-
 export function createChainFiles(
   document: Document,
   model: ChainModel,
   restore: (config: ChainConfig) => void,
-  canUse: () => boolean
+  canUse: () => boolean,
+  entries: ChainConfig[]
 ) {
   const tray = createSection(document, {
     id: 'chain-tray',
     title: '실험 보관함',
     description:
-      '현재 설정 저장은 이 브라우저에서 새로고침 후 복원됩니다. 보관함 비교 설정은 페이지를 닫으면 사라집니다 (최대 12개).'
+      '현재 설정 저장은 이 브라우저에서 새로고침 후 복원됩니다. 보관함 비교 설정은 이 페이지의 최근 8개 실험에서 유지됩니다 (실험당 최대 12개). 새로고침하면 사라집니다.'
   });
   const notice = element(document, 'p', 'lab-muted');
   notice.setAttribute('role', 'status');
-  const entries = trays.get(model) ?? [];
-  trays.set(model, entries);
   const list = element(document, 'div', 'lab-tray-list');
   const save = createButton(document, {
     label: '현재 설정 저장',
