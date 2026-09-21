@@ -84,8 +84,8 @@ export const classicalRows: readonly SystemRow[] = [
     ),
     dof: 2,
     limitation: l(
-      'r=0 좌표 특이점은 작은 반지름 바닥값으로 정칙화한다. 속도 의존 가속도의 분할법은 근사이다.',
-      'The r=0 chart singularity uses a small radius floor. Splitting velocity-dependent acceleration is approximate.'
+      '기존 엔진은 r=0 부근을 정칙화하며 새 Lab은 원점 특이점 접근 시 중지한다. 용수철 힘은 압축에서 음수이다. 속도 의존 가속도의 분할법은 근사이다.',
+      'The legacy engine regularizes near r=0; the new Lab stops near the origin singularity. Spring force is negative under compression. Splitting velocity-dependent acceleration is approximate.'
     )
   },
   {
@@ -141,8 +141,8 @@ export const classicalRows: readonly SystemRow[] = [
       )
     },
     limitation: l(
-      '포획 에너지 손실과 장력 부호를 보존해야 한다. 강체 이중 진자 RHS만으로 대체할 수 없다.',
-      'Preserve capture losses and tension signs. The rigid double-pendulum RHS alone cannot replace this engine.'
+      'taut/outer-slack/full-slack 세 모드의 기존 근사 모델이다. 안쪽만 느슨한 모드는 따로 풀지 않는다. 포획 손실·구속 잔차·간격 수렴을 확인해야 하며 강체 이중 진자 RHS로 대체할 수 없다.',
+      'The legacy approximation has taut/outer-slack/full-slack modes and no separate inner-only slack mode. Check capture loss, constraint residuals and step convergence; a rigid double-pendulum RHS cannot replace it.'
     )
   },
   {
