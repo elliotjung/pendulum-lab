@@ -18,8 +18,8 @@
 | ID | 작업 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan, preflight, 선행 산출물/history | 원격 보존 `3adc45f` |
-| CP1 | 공용 엔진 adapter·canonical·worker·모델·저장 | 수치 parity/golden, 사건 순서/유한성/에너지·구속, 왕복, 취소/오류, typecheck | 검증 통과, push 준비 |
-| CP2 | 세 시스템 Lab UI·길이/장력/사건·export | unit, build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 예정 |
+| CP1 | 공용 엔진 adapter·canonical·worker·모델·저장 | 수치 parity/golden, 사건 순서/유한성/에너지·구속, 왕복, 취소/오류, typecheck | 원격 보존 `f63fa06` |
+| CP2 | 세 시스템 Lab UI·길이/장력/사건·export | unit, build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 54/54 통과, push 준비 |
 | CP3 | 독립 검토·증거 문서·통합 검증 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 예정 |
 | STATUS | 별도 완료 상태 commit/push | 모든 구현 원격 존재, 최종 필수 검사, 원격 hash | 예정 |
 
@@ -57,3 +57,14 @@
 - 첫 새 수치 테스트 95/96에서 용수철 복원력 때문에 원점에 도달하지 않는 fixture가 실패했다. `k=0,g=0` 순수 방사 운동으로 목적에 맞게 고쳤고, typecheck의 tuple spread 오류도 수정했다. 기존 golden과 기존 테스트는 바꾸지 않았다.
 - 이중 줄 full-slack 예제 `[2.5,2.5,0,0]`, dt=0.002s, 2s에서 최대 길이 위반 0.4352688973m, 바깥 줄 포획의 에너지 증가 5.3233191174J를 원 엔진과 대조해 고정했다. 엔진을 보정하지 않고 순간 경고와 상시 한계 설명을 제공한다.
 - 독립 read-only 검토에서 invalid draft 복구, revision 기반 cache, session/storage 격리, worker 종료, CSV/SVG에 새 P0–P2 결함을 찾지 못했다. 자동 코드 검토이며 전문가 검토를 뜻하지 않는다.
+- CP1 commit `f63fa0670406849b0796aea37c82ec047f0d92b5` push 성공, `git ls-remote origin refs/heads/codex/redesign`가 동일한 hash를 반환했다. 완료 목록/nextStage는 여전히 S10/11이다.
+- push가 알린 기존 default branch 취약점은 high7/moderate3이다. 기존 npm/CodeQL 기준선과 별도 집계이며 이번 변경에서 해결 또는 위험 수용하지 않았다.
+
+## CP2 화면 검증
+
+- 세 새 라우트의 설정·실행·분석·저장·공유·가져오기·CSV/SVG·사건 프리셋을 연결했다. invalid draft를 JSON/보관함/초기화로 복구하고, 같은 step에서 초기조건을 바꿔도 plot/event revision을 갱신한다.
+- 첫 production 검사 `tmp/S11-browser-baseline.json`은 기능 50개 통과, 새 시각 기준 이미지가 없던 4개 시각 사례 실패로 기록됐다. 기존 이미지 불일치는 없었다. `--update-snapshots=missing`과 CI 조합에서 새 이미지는 생성됐지만 해당 사례가 실패로 남은 것이며 성공으로 계산하지 않는다.
+- sandbox Playwright 시작 EPERM은 허용된 실행으로 해결했다 (`tmp/S11-browser-launch-error.json`). 하위 검토 작업이 사용량 제한으로 중단된 뒤에도 이미 실행 중이던 테스트는 끝까지 완료됐으며 root가 결과와 화면을 직접 검토했다.
+- 직접 검토에서 공용 flex 스타일이 `hidden`을 덮어써 빈 사건 타임라인에 페이지 버튼이 보이는 결함을 발견했다. constraint 화면 범위에 `hidden` 우선 규칙을 추가하고 빈 타임라인 확인을 세 시스템 여정에 넣었다. 사용자에게 의미가 없는 실행 구현명은 표본 안내에서 제외했다.
+- 해당 화면 수정 뒤 **이번 S11 신규** constraint 이미지 8장만 다시 생성했다 (`tmp/S11-visual-update.json`, 2/2). 새 라이브러리 2장과 합계 10장을 root가 직접 확인했다. 기존 단계 이미지의 수정은 0이다.
+- 새 최종 build, typecheck, scoped lint/format 검사를 통과했다. `tmp/S11-CP2-playwright.json`에서 54/54 통과, 실패/skip/flaky 0, retries 0, frozen 시각 비교도 통과했다. 실제 물리 특이점 실패 후 마지막 유효 t=0.05s 보존·CSV와 preset 복구를 포함한다.

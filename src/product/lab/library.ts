@@ -42,7 +42,7 @@ export function createLibrary(document: Document): HTMLElement {
       document,
       'p',
       'lab-preview-note',
-      '이중·복합·삼중진자와 N중 사슬은 실제 계산·그래프·내보내기를 제공합니다. 다른 시스템은 조립 흐름 미리보기이며 기존 앱에서 계산할 수 있습니다.'
+      '이중·복합·삼중진자, N중 사슬과 용수철·줄·이중 줄 진자는 실제 계산·그래프·내보내기를 제공합니다. 다른 시스템은 조립 흐름 미리보기이며 기존 앱에서 계산할 수 있습니다.'
     )
   );
   const intro = element(document, 'div', 'lab-inline-actions');

@@ -191,7 +191,7 @@ test.describe('S06 system-first laboratory', () => {
     await page.goto('/next.html#/lab');
     await page.getByLabel('시스템 패밀리').selectOption('classical');
     await audit(page);
-    await expect(page).toHaveScreenshot('s10-lab-library-light.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s11-lab-library-light.png', { fullPage: true });
     // S07 promotes double/compound to real engines. The original S06 double
     // images remain historical evidence; retained mock visuals get distinct names.
     await openSystem(page, 'spherical');
