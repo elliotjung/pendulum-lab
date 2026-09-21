@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 11,
+  "state": "candidate-complete",
+  "finalValidation": "pending-after-document-push",
+  "baselineCommit": "73b7773c5ae9b00c00aecfb899937a53af1b8acf",
+  "implementationCommits": [
+    "3adc45fc049ee4efc9a2f794718a5f77605a0f3a",
+    "f63fa0670406849b0796aea37c82ec047f0d92b5",
+    "b9b4a7da5b1f8defe799a335352a55cad7643bbb"
+  ],
+  "implementationRemotePresence": "Every listed commit push succeeded and exact git ls-remote hashes were verified.",
+  "checkpointChecks": {
+    "numerical": { "files": 5, "passed": 96, "failed": 0 },
+    "storageCatalog": { "files": 6, "passed": 85, "failed": 0 },
+    "productionDesktopMobile": { "passed": 54, "failed": 0, "skipped": 0, "flaky": 0 },
+    "visualInspected": 10,
+    "typecheck": "passed",
+    "scopedLint": "passed",
+    "productionBuild": "passed"
+  },
+  "remaining": ["Clean preflight", "Final whole Vitest regression", "Final production journeys", "Final plan/catalog/Learn/inventory/secret checks", "Separate status commit and verified push"],
+  "stageComplete": false
+}
