@@ -20,8 +20,8 @@
 | CP0 | 범위·보존·진행 기록 | plan, preflight, 선행 산출물/history | 원격 보존 `3adc45f` |
 | CP1 | 공용 엔진 adapter·canonical·worker·모델·저장 | 수치 parity/golden, 사건 순서/유한성/에너지·구속, 왕복, 취소/오류, typecheck | 원격 보존 `f63fa06` |
 | CP2 | 세 시스템 Lab UI·길이/장력/사건·export | unit, build, desktop/mobile, keyboard/axe/320px/zoom, 시각 | 원격 보존 `b9b4a7d` |
-| CP3 | 독립 검토·증거 문서·통합 검증 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | candidate-complete, 최종 검사 대기 |
-| STATUS | 별도 완료 상태 commit/push | 모든 구현 원격 존재, 최종 필수 검사, 원격 hash | 예정 |
+| CP3 | 독립 검토·증거 문서·통합 검증 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 원격 보존 `8381ea8`, 최종 검증 통과 |
+| STATUS | 별도 완료 상태 commit/push | 모든 구현 원격 존재, 최종 필수 검사, 원격 hash | 최종 검사 통과 후 별도 완료 commit |
 
 예정 변경 경로: `src/product/adapters/physics/constraint*`, `src/product/lab/views/constraint*`, product route/catalog, `css/product/`, `tests/product/`, `e2e/redesign/constraint*`, 본 진행 기록과 S11 보고서.
 
@@ -73,7 +73,19 @@
 ## CP3 후보와 최종 검증 순서
 
 - 상태는 `candidate-complete`다. 모든 구현은 원격에 있지만 아직 단계 완료가 아니다. 설명 문서 `constraint-lab-ko.md`와 검증 보고서를 함께 보존한다.
-- 기존 엔진·공개 API·S03 계약·persistence·lockfile·S01 golden 경로에 S10 이후 변경은 0이다. 기존 테스트 파일과 기존 시각 기준 이미지도 그대로다.
+- 기존 엔진·공개 API·S03 계약·persistence·lockfile·S01 golden 경로에 S10 이후 변경은 0이다. 기존 단위 테스트·fixture와 기존 시각 이미지 파일도 그대로다. 라이브러리 screenshot assertion의 파일명만 새 S11 이미지 이름으로 바꿨다.
 - 바탕화면 원본 전달용 두 사본 hash는 각각 `1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995`, `803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5`로 저장소 원본과 일치한다. 로드맵/실행계획은 수정하지 않았다.
 - 이 문서 checkpoint를 push한 뒤 clean preflight, 전체 Vitest, 최종 production constraint/library/shell 여정, typecheck/lint/plan/catalog/Learn/inventory/secret 검사를 실행한다. 성공한 결과만 별도 STATUS commit에 반영한다.
 - S11에는 사용자 구조 승인 게이트가 없다. S07/S09 승인 기록을 유지한다. 교육 콘텐츠는 바뀌지 않았고 사람의 과학 검토는 기존 0/8 상태다. Windows Chromium desktop/mobile 에뮬레이션 밖 환경, 실제 screen-reader 음성, 물리 전문가 검토는 미검증이다.
+
+## 최종 검증과 완료 기록 — 2026-09-23
+
+- CP3 commit `8381ea860e068f5b343d91977c6d05e9a92504f5` push 성공과 정확한 원격 hash를 확인했다. 9월 23일 계속 요청 후 fetch에서도 로컬/원격 CP3가 일치하고 작업 폴더가 깨끗했다. 계획 검사와 clean preflight S11도 재통과했다.
+- 9월 21일 최종 production 브라우저 실행을 이번 재개에서 회수·확인했다. `tmp/S11-final-playwright.json`: 88/88 통과 (desktop 44/mobile 44), 실패/skip/flaky/retry/error 0. 실제 constraint worker·저장·export·접근성·시각·library 및 기존 route/오류 복구/legacy 공존을 포함한다.
+- 최초 전체 Vitest는 2766/2767 통과, 기존 inventory 기준선 검사 하나가 43.50초 걸려 30초 제한을 초과했다. JSON에는 STACK_TRACE_ERROR가 기록됐다. 원본 실패를 `tmp/S11-final-vitest-first-failed.json`에 보존했다. 같은 테스트의 단독 재실행은 7/7 통과했고 기준선 사례는 5.72초였다. 당시 build/browser/typecheck/inventory와 전체 테스트의 동시 실행에 따른 자원 경합으로 추정한다. 테스트·timeout·golden은 수정하지 않았다.
+- 브라우저 실행이 끝난 뒤 무거운 검사를 병렬 실행하지 않고 maxWorkers=2로 전체를 재검증했다. `tmp/S11-final-vitest.json`: 268파일 2767/2767 통과, 실패/pending/todo 0. 기존 2676개 누락 0, 신규 91개다. malformed Learn content의 매번 생성되는 Date.toString 이름 하나만 정규화하고 나머지 파일·이름·중복 수는 그대로 비교했다.
+- CP3 이후 typecheck, scoped ESLint, source policy 987파일, production build/공개 산출물 검사, 계획/catalog/Learn/inventory 검사가 통과했다. catalog 134개, 교육 8과정/86단원 예약/8공개, legacy inventory 883파일과 broken imports/orphans 0을 유지한다.
+- 알려진 비밀 패턴 검사는 tracked 1426파일에서 발견 0이었다. history/ignored/binary 내용은 검사 범위 밖이다. 의존성 감사 갱신이나 기존 취약점 해결·위험 수용은 하지 않았다.
+- 독립 재검토는 browser 각 사례 pass 1회, skip/flaky/retry/error 0, 신규 이미지 10장, 기존 이미지 수정/삭제/rename 0, 보존 대상과 timeout 설정 diff 0 및 전달 사본 hash 일치를 확인했다. 자동 검토이며 사람의 과학 검토를 뜻하지 않는다.
+- 검증 증거와 상태 변경만 이 별도 STATUS commit에 포함한다. 구현 CP0/CP1/CP2/CP3는 이미 모두 원격에 있다. S11 완료 판단은 이 상태 commit을 push하고 `origin/codex/redesign`의 정확한 hash와 원격 status의 completed=11/next=12를 확인한 뒤에만 한다.
+- S11 승인 게이트는 없으며 S07/S09 승인과 과학 human-reviewed 0/8을 유지한다. 이중 줄의 수치 한계·기존 보안 경고·실기기/다른 브라우저/실제 screen-reader 미검증은 남는다. 복구 참조는 S10 `73b7773`이며 기존 앱은 계속 제공한다. 다음 유효 단계는 S12이고 아직 시작하지 않았다.

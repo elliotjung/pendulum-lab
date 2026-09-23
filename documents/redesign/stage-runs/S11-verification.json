@@ -2,23 +2,346 @@
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 11,
   "state": "candidate-complete",
-  "finalValidation": "pending-after-document-push",
+  "finalValidation": "passed-after-implementation-push",
   "baselineCommit": "73b7773c5ae9b00c00aecfb899937a53af1b8acf",
   "implementationCommits": [
     "3adc45fc049ee4efc9a2f794718a5f77605a0f3a",
     "f63fa0670406849b0796aea37c82ec047f0d92b5",
-    "b9b4a7da5b1f8defe799a335352a55cad7643bbb"
+    "b9b4a7da5b1f8defe799a335352a55cad7643bbb",
+    "8381ea860e068f5b343d91977c6d05e9a92504f5"
   ],
-  "implementationRemotePresence": "Every listed commit push succeeded and exact git ls-remote hashes were verified.",
-  "checkpointChecks": {
-    "numerical": { "files": 5, "passed": 96, "failed": 0 },
-    "storageCatalog": { "files": 6, "passed": 85, "failed": 0 },
-    "productionDesktopMobile": { "passed": 54, "failed": 0, "skipped": 0, "flaky": 0 },
-    "visualInspected": 10,
-    "typecheck": "passed",
-    "scopedLint": "passed",
-    "productionBuild": "passed"
+  "implementationRemotePresence": "CP0/CP1/CP2/CP3 pushes were verified by exact git ls-remote hashes before the separate status commit. Status push must still be verified.",
+  "changedFiles": [
+    "css/product/constraint.css",
+    "documents/redesign/constraint-lab-ko.md",
+    "documents/redesign/stage-runs/S11-progress.md",
+    "documents/redesign/stage-runs/S11-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/constraint-pendulum.spec.ts",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-double-string-outer-slack-dark-chromium-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-double-string-outer-slack-dark-mobile-chrome-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-rope-slack-dark-chromium-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-rope-slack-dark-mobile-chrome-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-chromium-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-workspace-light-chromium-win32.png",
+    "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s11-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s11-lab-library-light-mobile-chrome-win32.png",
+    "src/product/adapters/physics/constraint-client.ts",
+    "src/product/adapters/physics/constraint-presets.ts",
+    "src/product/adapters/physics/constraint-schema.ts",
+    "src/product/adapters/physics/constraint-worker-protocol.ts",
+    "src/product/adapters/physics/constraint.ts",
+    "src/product/adapters/physics/constraint.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/constraint-lab.ts",
+    "src/product/catalog/systems-classical.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/constraint-files.ts",
+    "src/product/lab/views/constraint-inspector.ts",
+    "src/product/lab/views/constraint-model.ts",
+    "src/product/lab/views/constraint-plots.ts",
+    "src/product/lab/views/constraint-storage.ts",
+    "src/product/lab/views/constraint-workspace.ts",
+    "tests/product/adapters/physics/constraint-worker.test.ts",
+    "tests/product/adapters/physics/constraint.test.ts",
+    "tests/product/lab/constraint-storage.test.ts"
+  ],
+  "environment": {
+    "platform": "win32",
+    "node": "v26.3.0",
+    "capturedAt": "2026-09-23T01:23:39.925Z",
+    "browserProjects": ["chromium", "mobile-chrome"],
+    "productionPreview": true,
+    "browserWorkers": 1,
+    "retries": 0
   },
-  "remaining": ["Clean preflight", "Final whole Vitest regression", "Final production journeys", "Final plan/catalog/Learn/inventory/secret checks", "Separate status commit and verified push"],
-  "stageComplete": false
+  "checks": {
+    "preflight": "Original clean preflight passed before CP0. Continuation preserved proven S11 changes; recheck initially failed on those dirty files. Clean preflight passed after validated implementation and documentation pushes.",
+    "numerical": {
+      "path": "tmp/S11-numerical-targeted.json",
+      "sha256": "ac2771fbe9cdc2db59d7373eed7b2bf36bbcfc2126ce4e183a639cbb781d91fd",
+      "files": 5,
+      "total": 96,
+      "passed": 96,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "storageCatalog": {
+      "path": "tmp/S11-storage-catalog.json",
+      "sha256": "c60921348db32bbea10dd599b01dd33823f235e80c92faf5b7a53fd05d670084",
+      "files": 6,
+      "total": 85,
+      "passed": 85,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "full": {
+      "path": "tmp/S11-final-vitest.json",
+      "sha256": "f5cd910b92de9e9ecb9eb7279b6545b0abee91f2f620077c82354e27ac06e8eb",
+      "files": 268,
+      "total": 2767,
+      "passed": 2767,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "regression": {
+      "previous": {
+        "path": "tmp/S10-final-vitest.json",
+        "sha256": "fa0cb77a02362f7b4df82470563ee4e8b7cc109ff1c5e85ad330a35a4fa71eca"
+      },
+      "previousTests": 2676,
+      "missingPreviousTests": 0,
+      "missing": [],
+      "addedTests": 91,
+      "normalization": "Only the generated Date.toString suffix in the malformed Learn content test name is normalized; all other file/name multiplicities are compared exactly."
+    },
+    "firstFullAttempt": {
+      "path": "tmp/S11-final-vitest-first-failed.json",
+      "sha256": "dc4bb8cd9c682d31e306323439444ee8e3a73b862260cd0f597be22808c0138f",
+      "files": 268,
+      "total": 2767,
+      "passed": 2766,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "success": false
+    },
+    "inventoryRerun": {
+      "path": "tmp/S11-inventory-rerun.json",
+      "sha256": "ca42b97c1763a688745827ecd1d26363a4ede15fbd202bf94f8be83be5d26ec8",
+      "files": 1,
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "fullRerunConfiguration": "Whole suite with maxWorkers=2, unchanged tests and 30-second timeout, after the production browser run completed; no concurrent heavy checks.",
+    "browserInitial": {
+      "path": "tmp/S11-browser-baseline.json",
+      "sha256": "811b1d7b93444be10a51938e90fc01c2518a0e6ac95b4abdb87e7a35de232e55",
+      "startTime": "2026-09-21T00:49:16.144Z",
+      "duration": 375676.83999999997,
+      "expected": 50,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserCP2": {
+      "path": "tmp/S11-CP2-playwright.json",
+      "sha256": "3412ba4c0433152a4464c293f57d05e50d2d1334a3c33e247dde810449a3e782",
+      "startTime": "2026-09-21T00:57:14.794Z",
+      "duration": 307378.89999999997,
+      "expected": 54,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserFinal": {
+      "path": "tmp/S11-final-playwright.json",
+      "sha256": "02bde473e1c9472e87ba7072e904d4ddae47420b0f4547eaf278b1cf9aaff3bd",
+      "startTime": "2026-09-21T01:05:29.030Z",
+      "duration": 508737.494,
+      "expected": 88,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "typecheck": "passed",
+    "scopedEslint": "passed",
+    "sourcePolicy": "passed",
+    "build": {
+      "path": "tmp/S11-final-build.log",
+      "sha256": "382a01e02c2ed5d73374b2c5c3333d437e5fd45f2539676fcff31b9d704ab2dd"
+    },
+    "finalChecks": {
+      "path": "tmp/S11-final-checks.log",
+      "sha256": "b34d502e764c1b2ba2845f5877cbe6eb4e46c939c6f4377e1b4eb39901866af5"
+    },
+    "catalog": {
+      "definitions": 134,
+      "systems": 34,
+      "analyses": 51,
+      "integrators": 21,
+      "auxiliary": 28
+    },
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "published": 8,
+      "humanReviewed": 0
+    },
+    "inventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    },
+    "secrets": {
+      "path": "tmp/S11-final-secret-scan.json",
+      "sha256": "6b9a9b269bc8769e681539dba03263d952a3d886b8c8683990df0f6b7cf8a7ff",
+      "trackedFiles": 1426,
+      "findings": 0,
+      "scope": "All Git-tracked working-tree text files; binary files listed separately; no history or ignored files."
+    }
+  },
+  "physics": {
+    "legacyKernels": ["rhsSpring", "energySpring", "RopePendulum", "DoubleStringPendulum"],
+    "duplicateEquationsOfMotion": 0,
+    "fixtures": [
+      "Spring RK4/RK2/Euler original parity and analytic radial oscillator",
+      "Rope SI mass scaling, actual tension zero crossing, capture energy balance",
+      "Double-string original parity in taut/outer-slack/full-slack modes",
+      "Finite reproducible events before/after capture and source/order/unit separation",
+      "Inherited full-slack residual and energy-gain warning",
+      "Canonical/share/provenance/seed/analysis round trips and malformed payload rejection",
+      "Last valid snapshot after spring singularity; worker failure and cancellation",
+      "S01 numerical golden unchanged"
+    ],
+    "inheritedDoubleStringLimit": {
+      "initialState": [2.5, 2.5, 0, 0],
+      "step": 0.002,
+      "duration": 2,
+      "maximumOverextensionM": 0.4352688973307348,
+      "outerCaptureEnergyIncreaseJ": 5.323319117350394,
+      "remediation": "Original engine preserved; limitation documented and warnings shown. Not a physical-accuracy certification."
+    }
+  },
+  "execution": {
+    "maxSteps": 100000,
+    "maxSamples": 2001,
+    "maxEvents": 10000,
+    "maxBatchSteps": 64,
+    "cooperativeBudgetMs": 8,
+    "timeoutMs": 15000,
+    "importMaxBytes": 200000,
+    "recentDocumentSessions": 8,
+    "maxTrayPerSession": 12,
+    "restartOnly": true,
+    "midflightSerialization": false,
+    "storagePrefix": "pendulum-product/constraint/v1/"
+  },
+  "preservation": {
+    "paths": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/lib.ts",
+      "src/lib",
+      "src/product/contracts",
+      "src/product/persistence",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "modifiedPaths": [],
+    "priorScreenshotsModified": [],
+    "userDataMigration": false,
+    "masterMergeReleaseOrDestructiveReset": false,
+    "rollbackReference": "73b7773c5ae9b00c00aecfb899937a53af1b8acf"
+  },
+  "visual": {
+    "directlyInspected": 10,
+    "screenshots": [
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-double-string-outer-slack-dark-chromium-win32.png",
+        "sha256": "e3a9d3c6c8f88a15afd243cf1475b4cfd210dd3a38a9d941c4fece8fa4ed5f2f"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-double-string-outer-slack-dark-mobile-chrome-win32.png",
+        "sha256": "4a0ae7b76a2c27588bf3a56f98a080710aadd9aa48b45132dc2ae913f5da2b22"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-rope-slack-dark-chromium-win32.png",
+        "sha256": "f7db61e655d3f5fbe6531ceb62b03375d815b3edce6dccf4f10467e253b9bd2f"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-rope-slack-dark-mobile-chrome-win32.png",
+        "sha256": "8a40ac837b78586bf33cb3353e445616d745dfc9e35677a9eae56ae47611d03d"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-chromium-win32.png",
+        "sha256": "79d497b20723eac0d1f043a331ea6696f5d4c0217de5ba22f00ed9f20a8d69d0"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-mobile-chrome-win32.png",
+        "sha256": "a44f9e8b14e21782eee25487c544f20748ce2686591e0a7588ab8e9164cccf36"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-workspace-light-chromium-win32.png",
+        "sha256": "b7130e773a771e91f1ed0be93bf8a36becccc1d58ef94122664806c2e40a3e1a"
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-workspace-light-mobile-chrome-win32.png",
+        "sha256": "ec4b63fa310fe933d5ca7f76f51cfa8b33ca3da25687f37656a169e8983808a3"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s11-lab-library-light-chromium-win32.png",
+        "sha256": "df63a7406501e704cea089ebba262641e604526ea5fdd678ee02b8196894a3bf"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s11-lab-library-light-mobile-chrome-win32.png",
+        "sha256": "6019abab848f79be851db2479b6e445e76ad6eb74d9252153e8dbd863fd59f09"
+      }
+    ],
+    "observations": "Desktop/mobile light/dark layouts, spring controls, slack scenes and library inspected directly. Fixed hidden-attribute override exposing empty timeline paging. Old stage screenshots unchanged."
+  },
+  "failuresAndRecovery": [
+    "Earlier continuation stopped when automatic approval review/subagents hit account usage limits; no model override or approval bypass.",
+    "Initial sandbox Git/esbuild/Playwright subprocess EPERM resolved through authorized escalation; preserved tmp/S11-browser-launch-error.json.",
+    "Missing presets module, required parentExperimentIds provenance and event-link typing completed before passing validation.",
+    "New singularity test fixture initially bounced under spring force; corrected to k=0,g=0. Constructor tuple test typing fixed. Existing tests/goldens unchanged.",
+    "Initial production run passed 50 functional cases but failed 4 new visual cases because baseline screenshots were absent; subsequent frozen runs passed. No prior screenshots were changed.",
+    "First final full suite passed 2766/2767; the unchanged inventory baseline test took 43.50s under concurrent full tests/build/browser/checks, exceeding its 30s limit (JSON reported STACK_TRACE_ERROR). Isolated rerun passed 7/7, baseline case 5.72s. Resource contention is the inferred cause; first failure is retained separately and the whole suite was rerun with bounded concurrency.",
+    "UI/canonical range and mixed damping units, stale same-step plot cache, invalid-draft recovery, empty-event export fixture and hidden paging fixed."
+  ],
+  "security": {
+    "existingFindings": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; pushes also report default-branch high7/moderate3.",
+    "dependencyChanges": false,
+    "auditRefreshed": false,
+    "remediationOrRiskAcceptanceClaimed": false
+  },
+  "review": {
+    "approvedStructureGates": [7, 9],
+    "stage11UserGateRequired": false,
+    "independentCodeReview": "Read-only review found no new P0-P2 issues; root visual inspection found hidden paging and corrected it.",
+    "scientificHumanReviewedUnits": 0,
+    "publishedUnits": 8,
+    "unverified": [
+      "Physical mobile devices",
+      "Firefox/WebKit and other operating systems",
+      "Actual screen-reader audio",
+      "Scientific expert review"
+    ]
+  },
+  "desktopTransportCopies": [
+    {
+      "repository": "documents/redesign/master-roadmap-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995"
+    },
+    {
+      "repository": "documents/redesign/execution-plan-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+    }
+  ],
+  "nextValidStageAfterRemoteStatus": 12
 }
