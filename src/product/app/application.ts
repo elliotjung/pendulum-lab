@@ -33,7 +33,15 @@ export function mountApplication(root: HTMLElement, window: Window) {
           : route.kind === 'lab-system' &&
               ['system:spring', 'system:rope', 'system:double-string'].includes(route.systemId)
             ? import('./views/constraint-lab')
-            : loaders[space](),
+            : route.kind === 'lab-system' &&
+                [
+                  'system:spherical',
+                  'system:spherical-chain',
+                  'system:spherical-embedded',
+                  'system:spherical-embedded-chain'
+                ].includes(route.systemId)
+              ? import('./views/spatial-lab')
+              : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

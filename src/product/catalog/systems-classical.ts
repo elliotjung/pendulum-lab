@@ -158,7 +158,10 @@ export const classicalRows: readonly SystemRow[] = [
     binding: p('spherical', 'SphericalPendulum'),
     parameters: p('spherical', 'SphericalParams'),
     state: p('spherical', 'SphericalState'),
-    coordinates: l('[theta, phi, thetaDot, phiDot] 각 좌표.', '[theta, phi, thetaDot, phiDot] angular coordinates.'),
+    coordinates: l(
+      '[theta, phi, thetaDot, phiDot], rad와 rad/s. theta는 아래 수직선 기준, phi는 x–z 평면 방위각. 위치는 y 위쪽의 오른손 좌표계(m).',
+      '[theta, phi, thetaDot, phiDot] in rad and rad/s. Theta is measured from downward vertical; phi is the x–z azimuth. Positions use right-handed y-up coordinates (m).'
+    ),
     dof: 2,
     limitation: polarLimit,
     internal: {
@@ -179,8 +182,8 @@ export const classicalRows: readonly SystemRow[] = [
     binding: p('sphericalChain', 'SphericalChain'),
     parameters: p('sphericalChain', 'SphericalChainParams'),
     coordinates: l(
-      '[theta_0, phi_0, …, thetaDot_0, phiDot_0, …] 길이 4N.',
-      '[theta_0, phi_0, …, thetaDot_0, phiDot_0, …] length 4N.'
+      '[theta_0, phi_0, …, thetaDot_0, phiDot_0, …] 길이 4N, rad와 rad/s. 고정점 원점, y 위쪽, 중력 −y.',
+      '[theta_0, phi_0, …, thetaDot_0, phiDot_0, …] length 4N in rad and rad/s. Pivot at origin, y up, gravity along −y.'
     ),
     dof: spatialDof,
     limitation: polarLimit
@@ -198,7 +201,10 @@ export const classicalRows: readonly SystemRow[] = [
     binding: p('sphericalEmbedded', 'EmbeddedSphericalPendulum'),
     parameters: p('spherical', 'SphericalParams'),
     state: p('sphericalEmbedded', 'EmbeddedSphericalState'),
-    coordinates: l('[ux,uy,uz,wx,wy,wz], |u|=1, u·w=0.', '[ux,uy,uz,wx,wy,wz], |u|=1, u·w=0.'),
+    coordinates: l(
+      '[ux,uy,uz,wx,wy,wz], |u|=1, u·w=0. u는 무차원 방향, w=du/dt는 1/s이며 각속도 벡터가 아니다. y 위쪽, 중력 −y.',
+      '[ux,uy,uz,wx,wy,wz], |u|=1, u·w=0. u is dimensionless direction; w=du/dt has units 1/s and is not an angular-velocity vector. y up, gravity −y.'
+    ),
     dof: 2,
     limitation: projectionLimit,
     internal: {
@@ -220,8 +226,8 @@ export const classicalRows: readonly SystemRow[] = [
     parameters: p('sphericalEmbeddedChain', 'EmbeddedChainParams'),
     state: p('sphericalEmbeddedChain', 'EmbeddedChainState'),
     coordinates: l(
-      '[u_0(3), …, w_0(3), …] 길이 6N와 링크별 구속.',
-      '[u_0(3), …, w_0(3), …] length 6N with per-link constraints.'
+      '[u_0(3), …, w_0(3), …] 길이 6N. 링크별 |u|=1, u·w=0, w=du/dt(1/s). 위치 m, 속도 m/s, y 위쪽.',
+      '[u_0(3), …, w_0(3), …] length 6N. Per-link |u|=1, u·w=0, w=du/dt (1/s). Position m, velocity m/s, y up.'
     ),
     dof: spatialDof,
     limitation: projectionLimit,

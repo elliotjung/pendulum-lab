@@ -18,8 +18,8 @@
 | ID | 작업 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight, 선행 history·산출물 | 원격 보존 `1498e7c` |
-| CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 검증 통과, commit 준비 |
-| CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 대기 |
+| CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 원격 보존 `e1a3353` |
+| CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 검증 통과, commit 준비 |
 | CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 대기 |
 
@@ -56,3 +56,24 @@
 - 대표 기본값 8s, dt=0.002s 측정에서 상대 에너지 변화 최대 6.0623e-10, Ly 절대 변화 최대 3.8055e-9 kg·m²/s, 길이 잔차 최대 4.44e-16m였다. 16링크 0.4s 두 경로도 유한하며 길이 잔차 최대 1.12e-15m였다. 이는 해당 fixture의 관측치이며 모든 초기조건의 정확도 보증은 아니다.
 - 첫 production browser 기능 검사 `tmp/S12-first-playwright.json`은 desktop/mobile 합계 **32/32** 통과했다. 시각 기준선과 이후 추가한 실제 터치 입력·최대 링크·넓은 화면 정렬 검사는 아직 포함하지 않는다.
 - 독립 renderer 검토에서 넓은 화면의 max-height 제한이 WebGL canvas만 늘여 SVG와 어긋나던 결함을 수정했다. `object-fit: contain`과 같은 SVG 중앙 정렬을 적용하고 좌표 일치 테스트를 추가했다. renderer 12/12 및 scoped lint 통과이며 최종 browser 정렬 검증은 CP2에서 수행한다.
+
+## CP1 원격 보존과 CP2 검증
+
+- CP1 `e1a33532630bc00090d26fc9702c4de1e52d9d48`을 push하고 `git ls-remote origin refs/heads/codex/redesign`의 정확한 hash 일치를 확인했다.
+- 편집 13개·저장/내보내기 17개·모델 수명주기 11개·renderer 12개를 합친 `tmp/S12-ui-final-vitest.json`은 4파일 53/53 통과했다. 추가 모델 테스트의 readonly 배열 변조 검증에서 typecheck 오류 2건이 발견되어 타입 경계를 명시해 수정·재검증한다.
+- `tmp/S12-extra-playwright.json`의 desktop/mobile 6/6은 실제 Chromium 터치 이벤트, 링크 축소 후 16링크 실행, 넓은 화면 canvas/SVG 좌표 정렬을 검증한다.
+- 새 시각 기준선 생성은 4개 테스트에서 이미지 12장이 없다는 오류로 종료되었다. `tmp/S12-new-visuals.json`에 실패를 보존하며 통과로 세지 않는다. 12장 모두 직접 확인했고 기존 기준 이미지는 변경하지 않았다. 새 이름으로 고정 비교를 실행한다.
+- source policy, legacy inventory(883파일, broken import/orphan 0), Learn(8과정·86예약 단원), production build·공개 산출물 검사를 통과했다.
+- 독립 문서 검토에 따라 라우트 이동은 마지막 궤적을 복원하지 않고 초기조건·보관 설정만 유지한다고 명확히 했다. 현재 화면의 취소/오류 시 마지막 수신 결과 보존과 구별한다.
+- 넓힌 browser 검사 중 기존 keyboard/reflow 검사가 31.8초 timeout으로 실패했다. 실패 증거와 원인을 검토하며, timeout과 기존 assertions는 변경하지 않는다. 최종 통과 전 CP2를 publish하지 않는다.
+
+## 2026-10-15 동일 단계 재개
+
+- 자동 승인 검토가 계정 사용량 제한으로 완료되지 못해 마지막 재검증 명령은 실행되지 않았다. 사용자 `계속` 요청 후 다시 fetch했으며 HEAD와 origin/codex/redesign은 CP1 `e1a3353`로 일치한다. 수정·신규 파일은 이전 S12 작업과 대응하고 무관한 변경이 없다. 계획 검사는 재통과했다.
+- 새 모델 테스트의 readonly 대입을 `Reflect.set`과 성공 여부 검사로 바꾸어 런타임 복사 격리 검증을 유지했다. 해당 11/11, 전체 typecheck, S12 UI·시험 파일 scoped ESLint가 통과했다.
+- `tmp/S12-cp2-playwright.json`: 88개 중 87개 통과. 공간 진자 40/40, 새 시각 기준 12장 고정 비교는 모두 통과했다. retained mock의 마지막 axe 검사 중 전체 30초 예산을 넘겼다. trace에서 선행 assertions와 최종 위반 0 결과를 확인했다.
+- 독립 재실행 `tmp/S12-cp2-recovery-playwright.json`은 desktop 통과, mobile 30초 초과였다. 누적 지연이 재발하여 320px keyboard/패널 검사와 200% zoom/640px 검사를 별도 여정으로 나눴다. 원래 모든 assertions와 각 테스트의 30초 한도는 유지한다. 첫 실패 trace는 `tmp/S12-cp2-timeout-diagnostics`, 재실행 실패 trace는 `tmp/S12-cp2-recovery-timeout-diagnostics`에 보존한다.
+- 분리한 네 여정을 `tmp/S12-cp2-bounded-playwright.json`으로 검증한다. 전체 필수 검사와 완료 status push는 아직 수행하지 않았다.
+- 네 여정 중 3개 통과, desktop 320px 검사는 다시 30초를 넘겼다. 이번 trace는 BrowserContext 생성 15.29초, axe 보조 페이지 생성 5.11초 등의 준비 지연을 보였으며 세 번째 분석 패널의 보조 페이지 생성 도중 만료되었다. 앞선 두 패널의 axe 위반은 0, 분석 탭/viewport 검사와 페이지 오류 검사도 통과했다. 첫 실패의 마지막 axe 지연과 이번 실패 위치를 구별한다.
+- 반복되는 여러 axe 검사 누적을 제거하기 위해 retained mock과 공간 Lab 양쪽의 5개 패널을 각각 독립 테스트로 구성했다. 원래 각 패널의 viewport/axe와 keyboard 검증을 유지했고, 확대 화면 검사는 별도로 유지했다. 테스트당 30초, retries=0, 원래 assertions와 시각 기준은 바꾸지 않았다. `tmp/S12-cp2-panels-playwright.json`에서 desktop/mobile 24개 여정을 검사한다.
+- 패널별 최종 검사 **24/24** 통과, skip/flaky/retry 0. 기존 넓힌 검사에서 통과한 공간 진자 실행·저장·camera·fallback·12개 시각 기준과 합쳐 CP2의 필수 동작·접근성 검증을 충족한다. 실패 결과는 별도로 보존한다. 구현 commit 뒤 최종 필수 검증에서 이 구조를 다시 사용한다.

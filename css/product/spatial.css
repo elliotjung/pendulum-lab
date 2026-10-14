@@ -1,0 +1,65 @@
+.spatial-fields,
+.spatial-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin-block: var(--ds-space-4);
+}
+.spatial-state-card,
+.spatial-diagnostics {
+  min-width: 0;
+  border: 1px solid var(--ds-color-border);
+  padding: var(--ds-space-3);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.spatial-renderer,
+.spatial-scene {
+  min-width: 0;
+  max-width: 100%;
+}
+.spatial-renderer-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 600 / 430;
+  max-height: 32rem;
+  overflow: hidden;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.spatial-renderer-stage canvas,
+.spatial-renderer-stage svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.spatial-renderer-stage svg {
+  touch-action: none;
+}
+.spatial-camera-actions,
+.spatial-overlay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  margin-block: var(--ds-space-3);
+}
+.spatial-renderer-description,
+.spatial-energy,
+.spatial-momentum,
+.spatial-plot-description {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.spatial-workspace [hidden] {
+  display: none !important;
+}
+@media (max-width: 600px) {
+  .spatial-fields,
+  .spatial-state-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .spatial-workspace .core-plot text {
+    display: none;
+  }
+}
