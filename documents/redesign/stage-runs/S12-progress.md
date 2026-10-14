@@ -19,8 +19,8 @@
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight, 선행 history·산출물 | 원격 보존 `1498e7c` |
 | CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 원격 보존 `e1a3353` |
-| CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 검증 통과, commit 준비 |
-| CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 대기 |
+| CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 원격 보존 `787ae0b` |
+| CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | candidate-complete 문서 준비, 최종 검증 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 대기 |
 
 변경 예정 경로: `src/product/adapters/physics/spatial*`, `src/product/lab/views/spatial*`, product route/catalog/library, `css/product/spatial.css`, 관련 tests/E2E, S12 진행·검증 문서와 status.
@@ -77,3 +77,9 @@
 - 네 여정 중 3개 통과, desktop 320px 검사는 다시 30초를 넘겼다. 이번 trace는 BrowserContext 생성 15.29초, axe 보조 페이지 생성 5.11초 등의 준비 지연을 보였으며 세 번째 분석 패널의 보조 페이지 생성 도중 만료되었다. 앞선 두 패널의 axe 위반은 0, 분석 탭/viewport 검사와 페이지 오류 검사도 통과했다. 첫 실패의 마지막 axe 지연과 이번 실패 위치를 구별한다.
 - 반복되는 여러 axe 검사 누적을 제거하기 위해 retained mock과 공간 Lab 양쪽의 5개 패널을 각각 독립 테스트로 구성했다. 원래 각 패널의 viewport/axe와 keyboard 검증을 유지했고, 확대 화면 검사는 별도로 유지했다. 테스트당 30초, retries=0, 원래 assertions와 시각 기준은 바꾸지 않았다. `tmp/S12-cp2-panels-playwright.json`에서 desktop/mobile 24개 여정을 검사한다.
 - 패널별 최종 검사 **24/24** 통과, skip/flaky/retry 0. 기존 넓힌 검사에서 통과한 공간 진자 실행·저장·camera·fallback·12개 시각 기준과 합쳐 CP2의 필수 동작·접근성 검증을 충족한다. 실패 결과는 별도로 보존한다. 구현 commit 뒤 최종 필수 검증에서 이 구조를 다시 사용한다.
+
+## CP2 원격 보존과 CP3 완료 후보
+
+- CP2 `787ae0b3b37bee9c40da606b21203ae0b8be69e6`을 push하고 원격 branch의 정확한 hash 일치를 확인했다. UI 53/53와 변경 시험 파일 scoped ESLint를 마지막 수정 뒤 재통과했으며, 알려진 비밀정보 패턴 검사는 추적 파일 1,461개에서 0건이다.
+- 새 좌표/단위/알고리즘 한계·저장/복구 안내는 `spatial-lab-ko.md`, 수치 측정은 `S12-numerical-metrics.json`, 검증 및 보존 증거는 `S12-verification.json`에 모은다. 이 문서 checkpoint를 원격 보존한 뒤 깨끗한 preflight와 전체 Vitest, 최종 production browser 및 typecheck/lint/build/inventory 검사를 실행한다.
+- 현재 상태는 **candidate-complete**이며 완료 목록과 nextStage는 S11/S12 그대로이다. 필수 검증이 통과하고 별도 STATUS commit의 원격 hash가 확인되어야 S12 완료로 간주한다. S13은 시작하지 않았다.

@@ -1,0 +1,348 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 12,
+  "state": "candidate-complete",
+  "finalValidation": "pending-after-documentation-push",
+  "baselineCommit": "200193df0a61d8611ebb136cee9abc7030da8e66",
+  "implementationCommits": [
+    "1498e7c6af4ac458e6c88be58ccd4d0aaa599c8c",
+    "e1a33532630bc00090d26fc9702c4de1e52d9d48",
+    "787ae0b3b37bee9c40da606b21203ae0b8be69e6"
+  ],
+  "implementationRemotePresence": "CP0/CP1/CP2 exact remote hashes verified; this documentation checkpoint and final validation remain pending.",
+  "changedFiles": [
+    "css/product/spatial.css",
+    "documents/redesign/spatial-lab-ko.md",
+    "documents/redesign/stage-runs/S12-numerical-metrics.json",
+    "documents/redesign/stage-runs/S12-progress.md",
+    "documents/redesign/stage-runs/S12-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-lab-library-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-inspector-dark-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-workspace-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-embedded-inspector-dark-chromium-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-embedded-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spatial-diagnostics-dark-chromium-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spatial-diagnostics-dark-mobile-chrome-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spherical-workspace-light-chromium-win32.png",
+    "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spherical-workspace-light-mobile-chrome-win32.png",
+    "src/product/adapters/physics/spatial-client.ts",
+    "src/product/adapters/physics/spatial-schema.ts",
+    "src/product/adapters/physics/spatial-worker-protocol.ts",
+    "src/product/adapters/physics/spatial.ts",
+    "src/product/adapters/physics/spatial.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/spatial-lab.ts",
+    "src/product/catalog/systems-classical.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/spatial-files.ts",
+    "src/product/lab/views/spatial-inspector.ts",
+    "src/product/lab/views/spatial-model.ts",
+    "src/product/lab/views/spatial-plots.ts",
+    "src/product/lab/views/spatial-renderer.ts",
+    "src/product/lab/views/spatial-storage.ts",
+    "src/product/lab/views/spatial-workspace.ts",
+    "tests/product/adapters/physics/spatial-worker.test.ts",
+    "tests/product/adapters/physics/spatial.test.ts",
+    "tests/product/lab/spatial-edit.test.ts",
+    "tests/product/lab/spatial-model.test.ts",
+    "tests/product/lab/spatial-renderer.test.ts",
+    "tests/product/lab/spatial-storage.test.ts"
+  ],
+  "environment": {
+    "platform": "win32",
+    "node": "v26.3.0",
+    "capturedAt": "2026-10-14T23:20:19.279Z",
+    "browserProjects": ["chromium", "mobile-chrome"],
+    "productionPreview": true,
+    "browserWorkers": 1,
+    "retries": 0
+  },
+  "checks": {
+    "preflight": "Original clean preflight passed; proven same-stage work preserved through interrupted continuations. Clean recheck pending after implementation pushes.",
+    "numerical": {
+      "path": "tmp/S12-engine-vitest-final.json",
+      "sha256": "ffc2cb34bdddd349b68bdb27f9111d62bc47c02d3dfbc49204ffecf14da74a64",
+      "files": 7,
+      "total": 112,
+      "passed": 112,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "ui": {
+      "path": "tmp/S12-ui-final-vitest.json",
+      "sha256": "013a9bdc071bb71f8e79a2b76f52b47208141cc94700fbe5dd5fb1aa9efc2210",
+      "files": 4,
+      "total": 53,
+      "passed": 53,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "success": true
+    },
+    "browserInitial": {
+      "path": "tmp/S12-first-playwright.json",
+      "sha256": "e0a356c72c7c83eae47a7b59d483e388961a832d58621f54bdf0883544573891",
+      "startTime": "2026-10-13T10:57:27.469Z",
+      "duration": 227977.13799999998,
+      "expected": 32,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserExtra": {
+      "path": "tmp/S12-extra-playwright.json",
+      "sha256": "6fe44c4068f0a247604c2843e74ffd9118eda64c166ddbe444ad5d0e071acf81",
+      "startTime": "2026-10-14T02:26:57.184Z",
+      "duration": 36140.096999999994,
+      "expected": 6,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "visualCreation": {
+      "path": "tmp/S12-new-visuals.json",
+      "sha256": "0da070d5714f6cd60abd68cddbd4f89b285eef1ffc78a52e88ed675a55905d2c",
+      "startTime": "2026-10-14T02:27:50.482Z",
+      "duration": 53492.25,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserCP2FirstAttempt": {
+      "path": "tmp/S12-cp2-playwright.json",
+      "sha256": "5a1d767a2cf38f404c3f0c9d75fcd869285035ebb0842570bbf6c71f2ecb7d0c",
+      "startTime": "2026-10-14T02:31:13.542Z",
+      "duration": 674203.0819999999,
+      "expected": 87,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserCP2RecoveryAttempt": {
+      "path": "tmp/S12-cp2-recovery-playwright.json",
+      "sha256": "e1492feae0788dd8ba36f3600b4e20dc6e938c235b15f6b5be85a11780c138c2",
+      "startTime": "2026-10-14T02:42:45.352Z",
+      "duration": 68311.895,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserCP2BoundedAttempt": {
+      "path": "tmp/S12-cp2-bounded-playwright.json",
+      "sha256": "3f72c007b6de53f1ce3bede9032ebb9a860dbb7bdf67f9d330d2e2bd4617ceb7",
+      "startTime": "2026-10-14T23:11:31.371Z",
+      "duration": 101709.424,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "errors": 0
+    },
+    "browserCP2Recovery": {
+      "path": "tmp/S12-cp2-panels-playwright.json",
+      "sha256": "8993ccbec07229820e9497be2000e2b47654dacdce40e5aab71d0ccf0f8d8684",
+      "startTime": "2026-10-14T23:13:46.841Z",
+      "duration": 228648.68099999998,
+      "expected": 24,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0
+    },
+    "typecheck": "passed",
+    "scopedEslint": "passed",
+    "sourcePolicy": "passed",
+    "build": "passed, including public-artifact audit",
+    "catalog": {
+      "definitions": 134,
+      "systems": 34,
+      "analyses": 51,
+      "integrators": 21,
+      "auxiliary": 28
+    },
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "published": 8,
+      "humanReviewed": 0
+    },
+    "inventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    }
+  },
+  "physics": {
+    "legacyKernels": ["SphericalPendulum", "SphericalChain", "EmbeddedSphericalPendulum", "EmbeddedSphericalChain"],
+    "duplicateEquationsOfMotion": 0,
+    "metrics": {
+      "path": "documents/redesign/stage-runs/S12-numerical-metrics.json",
+      "sha256": "2a8eff2e2e3b3438e8636743430488c080772df1275d72857035e3c5071686aa"
+    },
+    "fixtures": [
+      "Original-engine state/position/energy parity",
+      "Mass and SI unit consistency",
+      "True angular momentum r cross mv and legacy single/chain sign conversion",
+      "Gravity-axis rotation symmetry",
+      "Undamped energy/vertical momentum and per-link constraint residuals",
+      "Polar singularity warning and embedded native pole restart",
+      "1/16/17-link boundaries, finite deterministic final states",
+      "Canonical native state/share/provenance round trips and unknown/unsupported analysis rejection",
+      "Worker cancellation, stale replies, sparse/final samples, last-valid-state recovery",
+      "S01 numerical golden unchanged"
+    ],
+    "limitations": "Fixture measurements are not universal error bounds. Polar regularization and embedded projection are inherited algorithms. Gravity conserves the vertical angular-momentum component, not the full vector. Fixed rigid links do not model slack/contact/collision."
+  },
+  "execution": {
+    "maxLinks": 16,
+    "maxSteps": 100000,
+    "maxSamples": 2001,
+    "maxBatchSteps": 64,
+    "cooperativeBudgetMs": 8,
+    "timeoutMs": 15000,
+    "importMaxBytes": 200000,
+    "recentDocumentSessions": 8,
+    "maxTrayPerSession": 12,
+    "storagePrefix": "pendulum-product/spatial/v1/",
+    "restartOnly": true,
+    "midflightSerialization": false,
+    "routeDeparture": "Terminates worker; retains config/tray only, not prior trajectory."
+  },
+  "preservation": {
+    "paths": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/lib.ts",
+      "src/lib",
+      "src/product/contracts",
+      "src/product/persistence",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "modifiedPaths": [],
+    "untrackedProtectedPaths": [],
+    "priorScreenshotsModified": [],
+    "priorScreenshotCount": 110,
+    "userDataMigration": false,
+    "masterMergeReleaseOrDestructiveReset": false,
+    "rollbackReference": "200193df0a61d8611ebb136cee9abc7030da8e66"
+  },
+  "visual": {
+    "directlyInspected": 12,
+    "screenshots": [
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-embedded-inspector-dark-chromium-win32.png",
+        "sha256": "955dd8ea3cbe86cb6ac87f7dd45338b2d584340f985b147fb9ca544463d6925c"
+      },
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-embedded-inspector-dark-mobile-chrome-win32.png",
+        "sha256": "ff289f4d6cba067e7d84662f8fbb592ad0cc4bd4c98727b9f4a89508477847ef"
+      },
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spatial-diagnostics-dark-chromium-win32.png",
+        "sha256": "ff2ca0ed607ec850c40b57db6b1a8972ca982ea7a68c87eb63b00c5392880d82"
+      },
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spatial-diagnostics-dark-mobile-chrome-win32.png",
+        "sha256": "55d9a67c37d01e4665fdead4b17f85c9b35f1d6dd7a5cdec7cd9a21f36fe0c6c"
+      },
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spherical-workspace-light-chromium-win32.png",
+        "sha256": "bfc5b818af546d61a72b9d561f970c54f54b08baa265c0d7aaff8c63f6b40336"
+      },
+      {
+        "path": "e2e/redesign/spatial-pendulum.spec.ts-snapshots/s12-spherical-workspace-light-mobile-chrome-win32.png",
+        "sha256": "bbdd1c080860bc92fac08087b6a7fabbd7cb6464d9a6b05712bc28048942632c"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-lab-library-light-chromium-win32.png",
+        "sha256": "478ca7647d2d8e8c53af9c872406d18ff617a52401f36d74b3dca95d42c0447f"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-lab-library-light-mobile-chrome-win32.png",
+        "sha256": "b05c46871d034b213b8b4f7a18bc5cbebf230b0a0b08a6c97e8b2f2c10485623"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-inspector-dark-chromium-win32.png",
+        "sha256": "8379a78f112feb1613a5d642430bb6a8876429ce73fd56f15ec86d000bc2f3ef"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-inspector-dark-mobile-chrome-win32.png",
+        "sha256": "8435524e4e6f86e5d50addfc1a82fbfcd86ef45821f4dea9086301682a42ceb9"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-workspace-light-chromium-win32.png",
+        "sha256": "bcb5b8ede28ce1d1959d8444c02917e266ee933cd546b15f2252606c1d950fe2"
+      },
+      {
+        "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s12-retained-mock-workspace-light-mobile-chrome-win32.png",
+        "sha256": "064f8118d7502d8dc6b52b5df3b8a3fd60b9c3035678341ff1609f0f119083f9"
+      }
+    ],
+    "observations": "All 12 new Windows desktop/mobile workspace, embedded inspector, diagnostics, library and retained mock light/dark images directly inspected. Existing images preserved. Canvas contain sizing matches centered SVG projection on wide layouts."
+  },
+  "failuresAndRecovery": [
+    "Usage-limit interruptions resumed within the same S12 scope; no model override or claim to inspect the app selector.",
+    "Sandbox Git/subprocess restrictions resolved through authorized escalation.",
+    "New missing-sample fixture initially assumed stride 1 when stride 2 was correct; adjusted new fixture duration, not engine/goldens/timeouts. First 105/106 failure retained separately.",
+    "Wide canvas stretching versus SVG corrected using contain sizing and matching centered SVG projection; renderer unit and production browser alignment verified.",
+    "Initial 4 visual tests reported missing baselines and created 12 new images; not counted as passing. Old images unchanged; frozen comparisons subsequently passed in the expanded CP2 run.",
+    "Two readonly-array assignments in the new model aliasing test caused typecheck errors; Reflect.set preserved the runtime mutation check and typecheck passed.",
+    "First expanded browser run passed 87/88; retained mock keyboard/reflow exceeded 30 seconds during axe. Isolated rerun passed desktop but timed out on mobile. Splitting viewport journeys still accumulated five panel audits (3/4 passed). Each panel was then separated into its own test, in both retained mock and spatial journeys, preserving every original assertion and the unchanged 30-second limit. Failure reports are retained separately from the passing per-panel run.",
+    "Independent documentation review corrected route-departure preservation wording: config/tray survive, current trajectory does not."
+  ],
+  "security": {
+    "existingFindings": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; pushes report separate default-branch high7/moderate3.",
+    "dependencyChanges": false,
+    "auditRefreshed": false,
+    "remediationOrRiskAcceptanceClaimed": false
+  },
+  "review": {
+    "approvedStructureGates": [7, 9],
+    "stage12UserGateRequired": false,
+    "independentCodeReview": "Engine, UI and renderer review completed; identified sizing and documentation issues corrected. Automated review is not human scientific review.",
+    "scientificHumanReviewedUnits": 0,
+    "publishedUnits": 8,
+    "unverified": [
+      "Physical mobile devices",
+      "Firefox/WebKit and other operating systems",
+      "Actual screen-reader audio",
+      "Scientific expert review"
+    ]
+  },
+  "desktopTransportCopies": [
+    {
+      "repository": "documents/redesign/master-roadmap-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995"
+    },
+    {
+      "repository": "documents/redesign/execution-plan-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+    }
+  ],
+  "nextValidStageAfterRemoteStatus": 13
+}
