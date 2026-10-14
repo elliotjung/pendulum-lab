@@ -17,8 +17,8 @@
 
 | ID | 작업 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 범위·보존·진행 기록 | plan/preflight, 선행 history·산출물 | 준비 |
-| CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 대기 |
+| CP0 | 범위·보존·진행 기록 | plan/preflight, 선행 history·산출물 | 원격 보존 `1498e7c` |
+| CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 검증 통과, commit 준비 |
 | CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 대기 |
 | CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 대기 |
@@ -32,3 +32,27 @@
 - worker와 결과 표본 크기를 제한하고 실패 시 마지막 유효 결과를 보존한다.
 - S12는 별도 사용자 승인 게이트가 아니다. 승인 [7,9]와 과학 human-reviewed 상태는 그대로 유지한다.
 - 기존 보안 기준선은 해결·위험 수용으로 표시하지 않는다.
+
+## 2026-10-09 동일 단계 재개
+
+- 사용량 제한으로 중단되었던 S12를 사용자 `계속` 요청으로 재개했다. 새 fetch 후 로컬/원격은 `1498e7c6af4ac458e6c88be58ccd4d0aaa599c8c`로 일치한다.
+- 수정된 4개 추적 파일과 9개 신규 경로는 위 CP0 범위의 공간 adapter/schema, UI/model/storage/renderer, route/catalog/library와 E2E 초안이다. 이전 작업 내역과 대조하여 같은 S12의 미완성 작업임을 확인했다. 무관한 변경은 없으며 모든 파일을 보존했다.
+- 계획 검사는 재통과했다. clean-worktree preflight는 진행 중 파일 때문에 재통과할 수 없으므로, 최초 clean preflight와 원격 CP0/activeStage=12를 근거로 동일 checkpoint를 계속한다. 구현을 검증·commit/push한 뒤 clean preflight를 다시 실행한다.
+- 이전 중단 시 worker와 workspace/plots/CSS 및 검증이 미완성이다. 그 상태를 완료나 검증 성공으로 간주하지 않는다.
+- 원격 CP0 push 시 default branch 취약점 high7/moderate3가 보고되었다. 별도 보안 해결이나 위험 수용은 하지 않았다.
+
+## 2026-10-13 동일 단계 재개
+
+- 사용자 `계속` 요청 후 다시 fetch했으며 로컬/원격 CP0 `1498e7c`가 일치한다. 진행 중 파일은 이전 S12 작업 기록과 대응하며 새로운 무관한 변경은 없다. 파일을 보존한 상태에서 동일 단계를 이어간다.
+- worker·workspace·plots·CSS와 엔진/renderer 테스트 초안이 추가된 상태를 회수했다. 전체 typecheck 및 production build/공개 산출물 검사가 통과했다. 아직 구현 checkpoint나 완료 상태를 push하지 않았다.
+- 엔진·저장/입력·렌더러 독립 검토와 실제 Chromium desktop/mobile 검증을 진행한다. 이전 미완성 검사와 이번 통과 결과를 구별해 기록한다.
+
+## CP1 검증 및 2026-10-14 재개
+
+- 재차 사용자 `계속` 요청 후 fetch한 로컬/원격은 CP0 `1498e7c`이며 진행 파일은 기존 S12 기록과 일치한다. 원본과 진행 파일은 그대로 보존했다.
+- `tmp/S12-engine-vitest-final.json`: 7파일 **112/112** 통과, 실패/pending 0. 새 adapter 41개, worker 25개, 기존 공간 엔진 33개, S01 golden 13개를 포함한다.
+- 처음 105/106이었던 검사에서는 새 worker 테스트가 stride=2에서 기록되지 않아야 하는 첫 표본을 누락 표본으로 가정했다. 짧은 실행으로 stride=1을 구성해 실제 누락을 검사하도록 fixture만 수정했다. 첫 실패 보고서는 `tmp/S12-engine-vitest.json`에 보존했다. 기존 engine/golden/timeout은 변경하지 않았다.
+- 원래 엔진별 상태·에너지·좌표 동등성, 단일/사슬 각운동량 부호 변환, 중력축 주위 회전 대칭, 극점 native 재시작, 구속 잔차, 1/16/17 링크 경계, 유한한 마지막 상태, 닫힌 계약·단위·공유 왕복, worker 취소/실패/표본 제한을 검증했다.
+- 대표 기본값 8s, dt=0.002s 측정에서 상대 에너지 변화 최대 6.0623e-10, Ly 절대 변화 최대 3.8055e-9 kg·m²/s, 길이 잔차 최대 4.44e-16m였다. 16링크 0.4s 두 경로도 유한하며 길이 잔차 최대 1.12e-15m였다. 이는 해당 fixture의 관측치이며 모든 초기조건의 정확도 보증은 아니다.
+- 첫 production browser 기능 검사 `tmp/S12-first-playwright.json`은 desktop/mobile 합계 **32/32** 통과했다. 시각 기준선과 이후 추가한 실제 터치 입력·최대 링크·넓은 화면 정렬 검사는 아직 포함하지 않는다.
+- 독립 renderer 검토에서 넓은 화면의 max-height 제한이 WebGL canvas만 늘여 SVG와 어긋나던 결함을 수정했다. `object-fit: contain`과 같은 SVG 중앙 정렬을 적용하고 좌표 일치 테스트를 추가했다. renderer 12/12 및 scoped lint 통과이며 최종 browser 정렬 검증은 CP2에서 수행한다.
