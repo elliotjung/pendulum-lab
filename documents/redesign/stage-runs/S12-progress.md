@@ -20,8 +20,8 @@
 | CP0 | 범위·보존·진행 기록 | plan/preflight, 선행 history·산출물 | 원격 보존 `1498e7c` |
 | CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 원격 보존 `e1a3353` |
 | CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 원격 보존 `787ae0b` |
-| CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | candidate-complete 문서 준비, 최종 검증 대기 |
-| STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 대기 |
+| CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 원격 보존 `eb6a5e9`, 최종 검증 통과 |
+| STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 최종 검사 통과, 별도 status push 준비 |
 
 변경 예정 경로: `src/product/adapters/physics/spatial*`, `src/product/lab/views/spatial*`, product route/catalog/library, `css/product/spatial.css`, 관련 tests/E2E, S12 진행·검증 문서와 status.
 
@@ -83,3 +83,27 @@
 - CP2 `787ae0b3b37bee9c40da606b21203ae0b8be69e6`을 push하고 원격 branch의 정확한 hash 일치를 확인했다. UI 53/53와 변경 시험 파일 scoped ESLint를 마지막 수정 뒤 재통과했으며, 알려진 비밀정보 패턴 검사는 추적 파일 1,461개에서 0건이다.
 - 새 좌표/단위/알고리즘 한계·저장/복구 안내는 `spatial-lab-ko.md`, 수치 측정은 `S12-numerical-metrics.json`, 검증 및 보존 증거는 `S12-verification.json`에 모은다. 이 문서 checkpoint를 원격 보존한 뒤 깨끗한 preflight와 전체 Vitest, 최종 production browser 및 typecheck/lint/build/inventory 검사를 실행한다.
 - 현재 상태는 **candidate-complete**이며 완료 목록과 nextStage는 S11/S12 그대로이다. 필수 검증이 통과하고 별도 STATUS commit의 원격 hash가 확인되어야 S12 완료로 간주한다. S13은 시작하지 않았다.
+
+## 최종 검사 결과와 2026-10-19 재개
+
+- CP3 `eb6a5e9e685b0dbebb1679ae68ac7617aeabdf65`의 push와 당시 원격 hash 일치를 확인했다. 구현·문서 checkpoint가 모두 원격에 있는 깨끗한 상태에서 plan/preflight, typecheck, scoped ESLint, source policy, catalog, legacy inventory, Learn, production build·공개 산출물, 알려진 비밀정보 패턴 검사를 통과했다. `tmp/S12-command-results.json`에 각 명령의 exitCode=0 및 검사 HEAD를 보존한다.
+- 전체 `tmp/S12-final-vitest.json`: **2,886/2,886**, 274파일, 실패/pending/todo 0. maxWorkers=2, 기존 timeout 유지, 무거운 검사 동시 실행 없음. 독립 JSON 비교에서 S11의 2,767개 assertion을 파일·이름·중복 수로 대조해 누락 0, 추가 119개를 확인했다. 기존 Learn 날짜 생성 이름 하나만 제한적으로 정규화했다.
+- `tmp/S12-final-playwright.json`: 62개 중 **60개 통과, 2개 timeout**, skip/flaky 0, retries=0. 이 결과를 62/62 통과로 표시하지 않는다. Chromium의 unsafe-imports와 frozen-layouts를 같은 조건으로 재검증해야 한다. 나머지 60개를 변경 없이 다시 실행할 필요는 없으며, 최종 판정은 각 필수 사례의 최신 실행 결과와 실패 원본을 함께 보존해야 한다.
+- unsafe-imports는 첫 page.goto에서 `ERR_NETWORK_IO_SUSPENDED`가 발생하여 가져오기·보존 assertions를 시작하지 못했다. 브라우저 오류 기록과 실행기 수신 사이 약 52.24분 공백을 확인했다. frozen-layouts도 약 117분 경과 후 timeout/teardown timeout으로 종료되었고, trace의 screenshot 요청에 약 20.82분 공백과 후속 실행 중단이 있다. 두 번째 trace에 screenshot 차이 assertion 실패는 기록되지 않았다. 호스트·브라우저·실행기 중단과 일치하는 증거이며 실제 OS 절전 여부는 확인할 수 없다. 원본 report와 test-results의 두 trace를 보존한다.
+- 사용자 `계속` 요청 후 작업 폴더는 깨끗하고 로컬 HEAD는 CP3이다. 원격 fetch/plan/preflight 명령을 두 번 요청했으나 자동 승인 검토가 `Selected model is at capacity`로 실행 전에 실패했다. 이는 안전성 거절이 아니며 실행·fetch·원격 재확인이 이루어졌다고 주장하지 않는다. 별도 읽기 전용 검토 agent도 지정 모델 지원 오류로 실행하지 못해 두 번째 trace는 root가 직접 확인했다. 모델 override나 승인 우회는 하지 않았다.
+- 구현 CP0/CP1/CP2/CP3는 앞서 원격 보존됐지만 이번 재개의 원격 상태 확인, 두 browser 사례 재검증, 최종 증거 갱신, 별도 STATUS commit/push는 아직 남아 있다. 완료 상태는 S11, nextStage/activeStage는 S12/12를 유지한다. 다음 유효 작업은 **동일 S12의 남은 검증과 완료 push 복구**이며 S13을 시작하지 않는다.
+
+## 최종 검증과 별도 STATUS commit
+
+- 2026-10-19 재개에서 승인된 fetch가 정상 실행되어 로컬/원격 CP3 hash 일치를 다시 확인했다. 중단된 unsafe-imports/frozen-layouts를 desktop/mobile에서 고정 이미지·30초·자동 retry 0 설정 그대로 재실행해 `tmp/S12-final-recovery-playwright.json` **4/4**를 확인했다. 두 원본 trace는 `tmp/S12-final-interrupted-diagnostics`에도 보존했다.
+- 일괄 문서 생성 명령은 자동 승인 검토 시간 초과로 두 번 실행되지 않았다. 원격 작업과 분리해 허용된 로컬 파일 작성 및 native read-only Git으로 증거를 준비했다. Node 내부 Git subprocess의 EPERM은 별도 읽기 전용 검사 결과를 파일로 전달해 해결했으며, 이 로컬 생성 과정에서 네트워크·Git mutation은 수행하지 않았다. 완료 push는 별도 승인 검토와 정확한 원격 hash 확인을 요구한다.
+- CP3 `eb6a5e9e685b0dbebb1679ae68ac7617aeabdf65`의 push와 정확한 원격 hash를 확인했다. 구현·문서 checkpoint가 모두 원격에 있는 상태에서 clean preflight와 단계 전체 필수 검증을 실행했다.
+- 전체 Vitest **2886/2886**, 274파일, 실패/pending/todo 0. S11의 2,767개 테스트를 파일·이름·중복 수로 비교하여 누락 0, 추가 119개를 확인했다. 생성 날짜가 들어간 기존 Learn 테스트 이름 하나만 제한적으로 정규화했다. maxWorkers=2, 기존 timeout 유지, 무거운 검사 동시 실행 없음.
+- 최종 production browser는 최초 **60/62**, 중단된 두 사례를 양 프로젝트에서 수동 재실행해 **4/4** 통과했다. 파일·전체 제목·프로젝트별 최신 결과로 공간 진자 50개와 retained mock의 접근성·키보드·화면 크기 12개, 고유 필수 사례62개 전부 통과를 확인했다. 하나의 중단 없는62/62 실행으로 주장하지 않는다. skip/flaky/자동 retry 0. 이전 넓힌 library/shell 검사와 모든 최초 실패는 별도 보고서로 보존한다. 시각 기준 갱신 없는 비교를 사용했다.
+- typecheck, scoped ESLint, source policy, catalog, inventory, Learn, production build와 공개 산출물 검사, plan/preflight 통과. 각 command/exitCode/검사 HEAD를 검증 보고서에 기록했다. 알려진 비밀정보 패턴 검사 1463개 추적 파일에서 0건.
+- 기존 계산·공개 API·계약·lockfile·golden 변경 0, 기존 PNG 110개 byte-identical, 새 이미지12개 직접 검토, 데스크톱 전달용 문서 hash 일치. 사용자 자료 migration이나 기본 앱 전환은 하지 않았다.
+- 승인 gate [7,9]와 과학 human-reviewed 0/8을 유지한다. Windows Chromium 에뮬레이션 이외 기기·브라우저·실제 화면읽기 음성·전문가 검토, 기존 보안 항목은 남아 있다. 복구 참조는 S11 `200193d`이다.
+- 위 통과 증거를 근거로 완료 상태를 별도 STATUS commit으로 준비한다. 이 commit의 원격 push와 정확한 hash 확인 전에는 S12 완료를 주장하지 않는다. 다음 유효 단계는 원격 완료 확인 뒤 S13이며 이번 작업에서 시작하지 않았다.
+- 최종 독립 검토에서도 전체 테스트·기존 테스트 보존·브라우저 원본/회복/최신 사례 집계·로컬 Git 보존 검사·데스크톱 사본 hash·완료 조건의 불일치를 찾지 못했다. 완료 기록 3개만 명시적으로 stage/commit하는 명령을 두 번 요청했으나 자동 승인 검토가 `Selected model is at capacity`로 프로세스 실행 전에 실패했다. 따라서 git add/commit/push는 실행되지 않았고 STATUS commit hash는 없다. 로컬 status의 S12/next S13은 준비 파일이며 원격 완료 상태가 아니다. 다음 재개는 동일 S12의 완료 commit/push와 정확한 원격 확인부터 수행한다.
+- 추가 `계속` 요청에서도 fetch가 동일한 자동 검토 모델 처리 용량 오류로 미실행됐다. 공식 Auto-review/Sandbox 안내를 확인한 뒤, 동일한 workspace-write 경계를 유지하며 검토 담당을 사용자로 바꾸는 앱의 `Ask for approval` 선택을 사용자에게 요청했다. 권한·모델·설정 파일을 agent가 변경하지 않았으며, 실제 승인 방식 변경이 확인되기 전에는 기존 제한을 유지한다. 제품·검사 변경은 없고 완료 기록 3개만 준비돼 있다.
+- 이후 사용자 `계속` 요청과 갱신된 승인 경로에서 fetch가 정상 실행됐다. 로컬 HEAD와 새 origin/codex/redesign은 모두 CP3 `eb6a5e9e685b0dbebb1679ae68ac7617aeabdf65`이며, 준비된 변경은 진행·검증·status 문서 3개뿐이다. 최종 완료 증거와 계획 검사를 재확인한 뒤 별도 STATUS commit/push를 수행한다. 원격 status commit의 정확한 hash 확인이 최종 완료 조건이다.
