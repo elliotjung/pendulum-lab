@@ -23,8 +23,8 @@
 | CP0 | 진행 기록과 activeStage | plan/preflight, diff | 원격 확인 완료 |
 | CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 원격 확인 완료 |
 | CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 원격 확인 완료 |
-| CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 문서/JSON/링크·plan/typecheck, push 뒤 전체 stage 검증 | candidate-complete |
-| STATUS | 완료 상태의 별도 commit/push | 구현 원격 존재, status 원격 hash 확인 | 대기 |
+| CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 문서/JSON/링크·plan/typecheck, push 뒤 전체 stage 검증 | 원격 확인·전체 검증 완료 |
+| STATUS | 완료 상태의 별도 commit/push | 구현 원격 존재, status 원격 hash 확인 | 별도 commit/push 준비 |
 
 ## 변경 예정 경로
 
@@ -80,3 +80,17 @@
 - `driven-control-lab-ko.md`에 좌표·단위·제어 부호·포화·에너지 한계·재시작·공명 관찰의 한계를 기록했다.
 - 재생성 가능한 `scripts/redesign/measure-driven-numerics.ts`와 exact config를 포함한 `S13-numerical-metrics.json`, 검증·실패·보존 기록 `S13-verification.json`을 추가했다.
 - 전체 필수 검증과 별도 STATUS push는 아직 남았다. 완료 목록과 nextStage는 S12/S13을 유지한다.
+
+## 최종 필수 검증
+
+- CP3 `3c0a44f3ac0f9ea767186f757e839b53d5fa6e45` push 성공, `ls-remote` 정확한 hash 일치. 깨끗한 작업 폴더에서 S13 preflight 통과 후 전체 검증을 시작했다.
+- `tmp/S13-final-vitest.json`: **3,007/3,007**, 280파일, 실패/pending/todo 0. maxWorkers=2, 기존 timeout 유지, 브라우저와 동시 실행하지 않았다.
+- S12 2,886개 assertion의 파일·이름·중복 수 비교에서 누락 0, 추가 121개. 기존 Learn `new Date()` 거부 fixture의 생성 날짜가 이름에 포함된 한 사례만 좁은 패턴으로 정규화했다. 해당 원본 테스트 파일은 변경하지 않았다. `tmp/S13-preservation.json`에 비교 결과를 보존한다.
+- 같은 CP3 HEAD에서 typecheck, 모든 변경 TS의 scoped ESLint, source policy(1,028개 파일), plan(30단계/86단원), catalog(134정의), Learn(8과정/86예약), inventory(883파일/깨진 import·orphan 0), production build와 공개 산출물 검사를 통과했다. `tmp/S13-command-results.json`에 각 exitCode=0을 기록한다.
+- 알려진 비밀정보 패턴 검사: 추적 파일 1,497개, 텍스트 1,355개, 발견 0건. 역사·ignored·binary 내용은 검사 범위 밖이며 비밀정보 부재의 보증이 아니다.
+- 기존 엔진·공개 경계·golden·package/lockfile 변경 0, 기존 스크린샷 122개 변경/삭제 0, 새 기준 8개. 원본 roadmap/execution 및 두 desktop 사본의 SHA256도 종료 검사에서 일치했다.
+- `tmp/S13-final-playwright.json`: production **88/88**, 단일 중단 없는 532.590 s 실행, 실패/skip/flaky/error/자동 retry 0, snapshot update 0. 기존 timeout을 유지했다. S13 58개·S06 전체 24개·S04 주요 경로 6개이며 각각 desktop/mobile을 포함한다. 기존 `app.html` 동시 실행도 통과했다.
+- 모든 필수 검증을 통과해 status의 lastCompletedStage=13, nextStage=14, activeStage=null을 별도 STATUS commit으로 준비했다. 이 commit을 push하고 원격의 정확한 hash를 확인해야 최종 완료다. 전체 commit hash는 Git 이력과 최종 사용자 보고에서 확인한다.
+- 검토: 사용자 승인 [7,9] 유지, S13 별도 승인 게이트 없음. 사람의 과학 검토는 수행하지 않았다. 테스트 범위는 Windows Chromium desktop/mobile emulation이며 실제 기기·Firefox/WebKit·screen reader 음성은 미검증이다.
+- 보안: 기존 S01 high2/moderate2·CodeQL32 및 최신 기본 branch 알림 high8/moderate3은 해결/승인됐다고 표시하지 않는다. 개발 서버의 Vite inline-style CSP 실패도 별도로 남긴다.
+- 복구: 기존 `app.html` 경로가 계속 동작한다. 구현 비교·복구 기준은 S12 `cf97e8a615a6dde4afa99b64946fc15a6655f28f`이다. 다음 유효 단계는 최종 원격 완료 확인 뒤 **S14**이며 이번 요청에서 시작하지 않았다.

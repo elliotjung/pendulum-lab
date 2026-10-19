@@ -1,12 +1,13 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 13,
-  "phase": "candidate-complete",
+  "phase": "validated",
   "baselineHead": "cf97e8a615a6dde4afa99b64946fc15a6655f28f",
   "implementationCheckpoints": {
     "CP0": "f5ac8357006cc8b94ee5f537ad5f226e0700d1ab",
     "CP1": "6eb48abb1e1bae5a2223660990faa69a0729200c",
-    "CP2": "e7336e13416bc54bc02daea07a80eaf84ec5c3eb"
+    "CP2": "e7336e13416bc54bc02daea07a80eaf84ec5c3eb",
+    "CP3": "3c0a44f3ac0f9ea767186f757e839b53d5fa6e45"
   },
   "remoteEvidence": "Each checkpoint push returned success and git ls-remote origin refs/heads/codex/redesign matched its exact commit hash before the next checkpoint. Completion requires a separate final status commit and exact remote verification.",
   "scope": {
@@ -17,8 +18,18 @@
     "excluded": ["S14+ systems", "S21 generic queue", "new Learn content", "cutover", "master merge", "release"]
   },
   "targetedValidation": {
-    "CP1": { "passed": 91, "total": 91, "files": 3, "report": "tmp/S13-cp1-vitest.json" },
-    "CP2": { "passed": 48, "total": 48, "files": 4, "report": "tmp/S13-cp2-vitest.json" },
+    "CP1": {
+      "passed": 91,
+      "total": 91,
+      "files": 3,
+      "report": "tmp/S13-cp1-vitest.json"
+    },
+    "CP2": {
+      "passed": 48,
+      "total": 48,
+      "files": 4,
+      "report": "tmp/S13-cp2-vitest.json"
+    },
     "browserPreparation": {
       "development": "Interrupted after inline Vite style CSP console failures; interaction assertions passed. These failures are not green tests. Production preview retains console guards.",
       "productionInitial": {
@@ -35,20 +46,103 @@
         "tmp/S13-visual-preparation.json",
         "tmp/S13-cp2-library-playwright.json"
       ],
-      "latestBreakdown": "54 original functional cases, 2 added rotation cases, 4 latest rotation/sweep cases overlapping 2 original cases, 2 current driven visual cases and 2 library/retained-mock visual cases. Every unique required case has a latest pass.",
+      "latestBreakdown": "54 original functional + 4 latest rotation/sweep minus 2 superseded original sweep + 2 current driven visual + 2 library/retained-mock visual = 60 unique cases; latest result of each is passing.",
       "skipped": 0,
       "flaky": 0,
       "automaticRetries": 0,
       "timeoutOrAssertionRelaxation": false
     }
   },
-  "finalValidation": { "pending": true, "vitest": null, "productionBrowser": null, "staticChecks": null },
+  "finalValidation": {
+    "pending": false,
+    "vitest": {
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/S13-final-vitest.json",
+      "passed": 3007,
+      "total": 3007,
+      "files": 280,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "report": "tmp/S13-final-vitest.json",
+      "sha256": "0447E00CA46D9437C0D11A001CDBBBE493492E9A98923074A97AA13C0B433C02",
+      "timeoutsUnchanged": true,
+      "heavyBrowserConcurrent": false
+    },
+    "productionBrowser": {
+      "report": "tmp/S13-final-playwright.json",
+      "sha256": "9557228DC39A7A4A23B23A952FB583F89A277B9C98B53644CDDE5176287CC993",
+      "passed": 88,
+      "total": 88,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "errors": 0,
+      "automaticRetries": 0,
+      "snapshotUpdates": false,
+      "singleUninterruptedRun": true,
+      "durationMs": 532590.381,
+      "scope": "58 S13 + 24 full S06 + 6 S04 cases across Chromium desktop and mobile Chrome emulation",
+      "timeoutsUnchanged": true,
+      "heavyVitestConcurrent": false
+    },
+    "staticChecks": [
+      {
+        "command": "npm run redesign:preflight -- 13",
+        "exitCode": 0,
+        "head": "3c0a44f3ac0f9ea767186f757e839b53d5fa6e45"
+      },
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0
+      },
+      {
+        "command": "npx eslint src/product/adapters/physics/driven.ts src/product/adapters/physics/driven-schema.ts src/product/adapters/physics/driven-client.ts src/product/adapters/physics/driven-worker-protocol.ts src/product/adapters/physics/driven.worker.ts src/product/contracts/quantities.ts tests/product/contracts/quantities.test.ts src/product/app/application.ts src/product/app/views/driven-lab.ts src/product/catalog/systems-driven.ts src/product/lab/library.ts src/product/lab/views/driven-files.ts src/product/lab/views/driven-inspector.ts src/product/lab/views/driven-model.ts src/product/lab/views/driven-plots.ts src/product/lab/views/driven-storage.ts src/product/lab/views/driven-sweep.ts src/product/lab/views/driven-workspace.ts tests/product/adapters/physics/driven.test.ts tests/product/adapters/physics/driven-worker.test.ts tests/product/lab/driven-edit.test.ts tests/product/lab/driven-model.test.ts tests/product/lab/driven-storage.test.ts tests/product/lab/driven-sweep.test.ts e2e/redesign/driven-pendulum.spec.ts e2e/redesign/lab-shell.spec.ts scripts/redesign/measure-driven-numerics.ts --max-warnings 0",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run lint:policy",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run redesign:check",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run redesign:catalog:check",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run redesign:learn:check",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run redesign:inventory:check",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run redesign:secrets",
+        "exitCode": 0
+      },
+      {
+        "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/S13-final-vitest.json",
+        "exitCode": 0
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 0
+      }
+    ],
+    "head": "3c0a44f3ac0f9ea767186f757e839b53d5fa6e45"
+  },
   "numericalEvidence": {
     "report": "documents/redesign/stage-runs/S13-numerical-metrics.json",
     "command": "node --import tsx scripts/redesign/measure-driven-numerics.ts",
     "interpretation": "Selected finite-time fixtures only. Original plant boundaries remain unchanged; no general stability or accuracy certification.",
     "nativeParity": "Five default 0.2s / dt=0.002s fixtures: max native-state and inherited energy differences both zero.",
-    "closedLoopAngleRatiosAfter5s": { "inverted": 4.13096977e-7, "cartpole": 0.042325206 },
+    "closedLoopAngleRatiosAfter5s": {
+      "inverted": 4.13096977e-7,
+      "cartpole": 0.042325206
+    },
     "impulseStepHalvingRatio": 16.04546516366808,
     "largeStartImpulseErrorNs": 7.47071612558492e-9
   },
@@ -67,9 +161,17 @@
     ],
     "canonicalExtension": "Existing S03 schema and unit behavior preserved; additive N/rad and N*s/rad gain units have a serialization test. S13 adapter requires exact per-field units and rejects unknown/unsupported fields and nonempty analysis requests.",
     "storage": "Isolated pendulum-product/driven/v1/ namespace; 200000-byte import cap; corrupt/future original records are retained and not overwritten.",
-    "legacyInventory": { "files": 883, "brokenImports": 0, "orphans": 0 },
+    "legacyInventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    },
     "catalogDefinitions": 134,
-    "learn": { "courses": 8, "reservedUnits": 86, "publishedUnits": 8 },
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "publishedUnits": 8
+    },
     "existingScreenshotsByteIdentical": 122,
     "newScreenshotsDirectlyInspected": 8,
     "desktopTransportCopies": {
@@ -77,6 +179,19 @@
       "executionSha256": "803B191496EDD95EBF2199A8983B920058109BB159D55F8BAFEB0737FA735FC5",
       "match": true,
       "planSourceFilesChanged": false
+    },
+    "legacyTestRetention": {
+      "baseline": "cf97e8a615a6dde4afa99b64946fc15a6655f28f",
+      "previousTests": 2886,
+      "currentTests": 3007,
+      "addedTests": 121,
+      "missingTests": [],
+      "missingCount": 0,
+      "normalization": "Only unchanged Learn content Date fixture display name, source lines 340/345; exact comparison initially found this one dynamic date name.",
+      "legacyChangedFiles": [],
+      "existingScreenshots": 122,
+      "modifiedOrDeletedExistingScreenshots": [],
+      "addedScreenshots": 8
     }
   },
   "review": {
@@ -97,8 +212,52 @@
     "dependenciesChanged": false,
     "inheritedBaseline": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; no refreshed dependency audit, remediation or risk acceptance occurred.",
     "latestPushNotice": "Default-branch GitHub notice: high8/moderate3 (11 total), separate from the S01 baseline.",
-    "secretPatternScan": "Pending final tracked-file scan; history/ignored/binary content is outside its scope."
+    "secretPatternScan": "Passed at CP3: 1497 tracked files, 1355 text files, zero known-pattern findings. No history, ignored or binary-content scan."
   },
   "rollbackReference": "cf97e8a615a6dde4afa99b64946fc15a6655f28f",
-  "nextValidStageAfterRemoteCompletion": 14
+  "nextValidStageAfterRemoteCompletion": 14,
+  "changedFiles": [
+    "css/product/driven.css",
+    "documents/redesign/driven-control-lab-ko.md",
+    "documents/redesign/stage-runs/S13-numerical-metrics.json",
+    "documents/redesign/stage-runs/S13-progress.md",
+    "documents/redesign/stage-runs/S13-verification.json",
+    "documents/redesign/state-contract-ko.md",
+    "documents/redesign/status.json",
+    "e2e/redesign/driven-pendulum.spec.ts",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-cartpole-controller-dark-chromium-win32.png",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-cartpole-controller-dark-mobile-chrome-win32.png",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-driven-workspace-light-chromium-win32.png",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-driven-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-response-analysis-dark-chromium-win32.png",
+    "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-response-analysis-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s13-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s13-lab-library-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-driven-numerics.ts",
+    "src/product/adapters/physics/driven-client.ts",
+    "src/product/adapters/physics/driven-schema.ts",
+    "src/product/adapters/physics/driven-worker-protocol.ts",
+    "src/product/adapters/physics/driven.ts",
+    "src/product/adapters/physics/driven.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/driven-lab.ts",
+    "src/product/catalog/systems-driven.ts",
+    "src/product/contracts/quantities.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/driven-files.ts",
+    "src/product/lab/views/driven-inspector.ts",
+    "src/product/lab/views/driven-model.ts",
+    "src/product/lab/views/driven-plots.ts",
+    "src/product/lab/views/driven-storage.ts",
+    "src/product/lab/views/driven-sweep.ts",
+    "src/product/lab/views/driven-workspace.ts",
+    "tests/product/adapters/physics/driven-worker.test.ts",
+    "tests/product/adapters/physics/driven.test.ts",
+    "tests/product/contracts/quantities.test.ts",
+    "tests/product/lab/driven-edit.test.ts",
+    "tests/product/lab/driven-model.test.ts",
+    "tests/product/lab/driven-storage.test.ts",
+    "tests/product/lab/driven-sweep.test.ts"
+  ]
 }
