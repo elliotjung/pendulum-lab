@@ -23,8 +23,8 @@
 | CP0 | 진행 기록·activeStage | plan check, preflight, typecheck | 완료 |
 | CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 완료 |
 | CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 완료 |
-| CP3 | 수치·보존·검증 보고서 | 전체 Vitest, 관련 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
-| STATUS | 별도 완료 상태 | 구현 원격 확인 후 최종 검증, status push/remote hash | 대기 |
+| CP3 | 수치·보존·검증 보고서 | 전체 Vitest, 관련 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 원격 보존·최종 검증 완료 |
+| STATUS | 별도 완료 상태 | 구현 원격 확인 후 최종 검증, status push/remote hash | 검증 완료·이 commit의 원격 확인 뒤 완료 |
 
 ## 변경 예정 경로
 
@@ -76,3 +76,15 @@
 - `measure-network-numerics.ts`는 출력 경로를 선택할 수 있으며, default authoritative 보고서와 별도로 최종 재현을 ignored tmp에 기록한다. native RK4 네 모델·chimera 차이 0, 순열 오차 <1e-12, seed 왕복, Huygens 선택 fixture와 Kuramoto 유한 관찰을 재현한다.
 - 자기 native grid 총13셀 일치(기본9셀+대표4셀), 대표 화면의 수렴 2/미수렴 2, large-network/첫 셀 내부 취소를 검증했다. 성능 수치는 한 기기의 단발성 관측이며 8ms의 엄격한 deadline이나 dense128 성능 인증이 아니다.
 - CP3 전용 script ESLint·전체 typecheck 통과, 수치 check 8/8 통과. 제품 구현은 CP1/CP2로 원격에 있다. 이 후보 문서 push 후 전체 필수 검증과 별도 STATUS push를 남기며 lastCompletedStage=14, nextStage=15를 유지한다.
+
+## 최종 필수 검증
+
+- CP3 `0c67942d6b96b37d2c32dec08d39800eb3df9010` push 성공, ls-remote 정확한 hash 일치. 최종 STATUS 작성 전 깨끗하고 동기화된 CP3에서 preflight를 다시 통과했다.
+- `tmp/S15-final-vitest.json`: **3220/3220**, 293파일, 실패/pending/todo0, maxWorkers2, 기존 timeout 유지.
+- `tmp/S15-command-results.json`: typecheck, 변경 TS30개 scopedESLint, sourcepolicy, plan, catalog, Learn, inventory, secrets, 수치 재현, production build/public-artifact 10개 모두 exit0.
+- `tmp/S15-preservation.json`: S14테스트3105개·중복 수 모두 보존,115추가·누락0. 보호 engine/API/lockfile/golden 변경0, 기존 PNG144개 byte-identical, 두 desktop 사본의 원본 SHA256 일치. 변경하지 않은 Date 거부 fixture 표시 시각만 좁게 정규화하여 test 이름을 비교했다.
+- known-pattern scan1582tracked/1410text·발견0. history/ignored/binary/외부 서비스는 범위 밖이며 비밀정보 부재의 보증이 아니다. 기존 dependency/CodeQL 위험을 해결·승인했다고 주장하지 않는다.
+- `tmp/S15-final-playwright.json`: **112/112**, desktop56·Pixel5emulation56, 단일 연속 실행 546.298초. 실패/skip/flaky/retry/snapshot update0, runner 오류0. SHA256 `19ea286212ab1dce0c0d9027e405835f1bd8a6e25556ba54ef3af7a8336e6498`.
+- 실제 전체 shell spec은17개/project여서 초기 예상84가 아닌112개가 발견되었다. 일부만 선택하지 않고 세 spec 전체를 그대로 실행했다. 기존 Lab24개·S15 54개·shell34개를 포함한다. 제품 source는 실행 중 변경하지 않았고 heavy Vitest/browser는 순차 실행했다.
+- Windows Chromium desktop/mobile emulation, keyboard/axe·320px·zoom2·16개 새 시각을 확인했다. 실제 기기·다른 browser·screen-reader 음성·사람 과학 검토는 수행하지 않았다. Huygens 축약·순간 coherence·native 정착 mask·고정 간격·정규화·이전 단계 한계는 문서에 남긴다.
+- 구현 CP0/CP1/CP2/CP3는 모두 원격에 있다. 이 기록과 status.json/verification의 별도 STATUS commit을 push한 뒤 정확한 원격 hash를 확인해야 S15완료다. 다음 유효 단계는 S16이며 이 요청에서 실행하지 않았다.

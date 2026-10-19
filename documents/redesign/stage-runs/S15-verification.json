@@ -1,12 +1,13 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 15,
-  "phase": "candidate-complete",
+  "phase": "validated",
   "baselineHead": "b2c2a31455fb1a10ef2c804590e3ea68a60c91f3",
   "implementationCheckpoints": {
     "CP0": "e8d8d80da614651bf4aa0817d68a9781352f4b85",
     "CP1": "86587570c36eca410b9e6885efaee0e935d2e59d",
-    "CP2": "fae50ba3f58218287b61cfe0677cbe9a2b278960"
+    "CP2": "fae50ba3f58218287b61cfe0677cbe9a2b278960",
+    "CP3": "0c67942d6b96b37d2c32dec08d39800eb3df9010"
   },
   "scope": {
     "systems": [
@@ -76,7 +77,11 @@
       "skipped": 0,
       "unexpected": 0,
       "flaky": 0,
-      "errors": 0
+      "errors": 0,
+      "updateSnapshots": "none",
+      "workers": 1,
+      "caseCount": 18,
+      "retryCount": 0
     },
     "browserExplanation": "56 unique CP2 cases: initial48 functional passes plus latest18 passes with10 strengthened overlapping atomic-edit cases. This is not a single56/56run. All16newPNGsdirectlyinspected; final mandatory uninterrupted full run remains separate."
   },
@@ -109,7 +114,33 @@
       "orphans": 0
     },
     "newScreenshotsDirectlyInspected": 16,
-    "historicalScreenshotCount": 144
+    "historicalScreenshotCount": 144,
+    "retention": {
+      "baseline": "b2c2a31455fb1a10ef2c804590e3ea68a60c91f3",
+      "previousTests": 3105,
+      "currentTests": 3220,
+      "missing": [],
+      "changedProtected": [],
+      "existingSnapshots": 144,
+      "changedSnapshots": [],
+      "dateNameNormalization": "Only the unchanged Date-rejection fixture displayed timestamp in product/learn/content.test.ts.",
+      "transport": {
+        "roadmapSource": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "roadmapDesktop": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "executionSource": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "executionDesktop": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+      }
+    },
+    "desktopTransportCopies": {
+      "roadmapSource": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "roadmapDesktop": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "executionSource": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "executionDesktop": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+    },
+    "evidence": {
+      "report": "tmp/S15-preservation.json",
+      "sha256": "2fcb98519b435e93b7b2685b347fa2a8ce3eed5c3a431ab97d843e0ff5927319"
+    }
   },
   "review": {
     "approvedUserGates": [
@@ -124,7 +155,17 @@
   "security": {
     "dependenciesChanged": false,
     "inheritedBaseline": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; no dependency audit refresh or risk acceptance in S15.",
-    "latestPushNotice": "GitHub default-branch high8/moderate3 notice; separate from S01 baseline."
+    "latestPushNotice": "GitHub default-branch high8/moderate3 notice; separate from S01 baseline.",
+    "secretPatternScan": {
+      "trackedFiles": 1582,
+      "textFiles": 1410,
+      "findings": 0,
+      "limitations": [
+        "Known credential formats only; no entropy analysis, provider validation, or detection of arbitrary passwords.",
+        "Zero findings means no matches for these rules, not proof that all secrets are absent.",
+        "Git history, ignored files, binary contents, and external services are outside this local scan."
+      ]
+    }
   },
   "rollbackReference": "b2c2a31455fb1a10ef2c804590e3ea68a60c91f3",
   "nextValidStageAfterRemoteCompletion": 16,
@@ -139,7 +180,11 @@
       "skipped": 0,
       "unexpected": 2,
       "flaky": 0,
-      "errors": 0
+      "errors": 0,
+      "updateSnapshots": "missing",
+      "workers": 1,
+      "caseCount": 50,
+      "retryCount": 0
     },
     "browserInitialExplanation": "48passed/2unexpected; only10new missing snapshot creations, no functional failures. Original report and outputs retained.",
     "visualPreparation": {
@@ -151,7 +196,11 @@
       "skipped": 0,
       "unexpected": 8,
       "flaky": 0,
-      "errors": 0
+      "errors": 0,
+      "updateSnapshots": "missing",
+      "workers": 1,
+      "caseCount": 8,
+      "retryCount": 0
     },
     "visualPreparationExplanation": "0passed/8missing-snapshot creations; nonmissing errors0. Latest normal18/18 uses update-snapshots=none and retries0.",
     "sandbox": "Initial Git/Node/esbuild child-process EPERM restrictions were resolved by rerunning the same authorized operations with approved escalation. No failing check was counted as green.",
@@ -265,5 +314,109 @@
     "tests/product/lab/network-edit.test.ts",
     "tests/product/lab/network-model.test.ts",
     "tests/product/lab/network-storage.test.ts"
-  ]
+  ],
+  "finalValidation": {
+    "vitest": {
+      "report": "tmp/S15-final-vitest.json",
+      "sha256": "9f843fc70c84e8683c89e052a35ae2ac96a220d417bc10b49801ec85347fb3ca",
+      "total": 3220,
+      "passed": 3220,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 293
+    },
+    "browser": {
+      "report": "tmp/S15-final-playwright.json",
+      "sha256": "19ea286212ab1dce0c0d9027e405835f1bd8a6e25556ba54ef3af7a8336e6498",
+      "startTime": "2026-10-19T23:37:01.816Z",
+      "duration": 546297.963,
+      "expected": 112,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0,
+      "updateSnapshots": "none",
+      "workers": 1,
+      "caseCount": 112,
+      "retryCount": 0
+    },
+    "commands": {
+      "report": "tmp/S15-command-results.json",
+      "sha256": "1bdac12c92ede08f6c5524cda5e0979de472ddf8c400711aea4373b207334c0c",
+      "results": [
+        {
+          "log": "tmp/S15-final-typecheck.log",
+          "elapsedMs": 7802,
+          "exitCode": 0,
+          "id": "typecheck",
+          "command": "npm.cmd run typecheck"
+        },
+        {
+          "log": "tmp/S15-final-eslint.log",
+          "elapsedMs": 4536,
+          "exitCode": 0,
+          "id": "eslint",
+          "command": "node.exe node_modules/eslint/bin/eslint.js e2e/redesign/lab-shell.spec.ts e2e/redesign/network-pendulum.spec.ts scripts/redesign/measure-network-numerics.ts src/product/adapters/physics/network-client.ts src/product/adapters/physics/network-contract.ts src/product/adapters/physics/network-schema.ts src/product/adapters/physics/network-worker-protocol.ts src/product/adapters/physics/network.ts src/product/adapters/physics/network.worker.ts src/product/app/application.ts src/product/app/views/network-lab.ts src/product/catalog/systems-network.ts src/product/contracts/experiment-validation.ts src/product/contracts/experiment.ts src/product/contracts/network-topology.ts src/product/lab/library.ts src/product/lab/views/network-basin.ts src/product/lab/views/network-files.ts src/product/lab/views/network-inspector.ts src/product/lab/views/network-model.ts src/product/lab/views/network-plots.ts src/product/lab/views/network-storage.ts src/product/lab/views/network-workspace.ts tests/product/adapters/physics/network-worker.test.ts tests/product/adapters/physics/network.test.ts tests/product/contracts/network-topology.test.ts tests/product/contracts/network.test.ts tests/product/lab/network-edit.test.ts tests/product/lab/network-model.test.ts tests/product/lab/network-storage.test.ts --max-warnings 0"
+        },
+        {
+          "log": "tmp/S15-final-policy.log",
+          "elapsedMs": 1544,
+          "exitCode": 0,
+          "id": "policy",
+          "command": "npm.cmd run lint:policy"
+        },
+        {
+          "log": "tmp/S15-final-plan.log",
+          "elapsedMs": 1166,
+          "exitCode": 0,
+          "id": "plan",
+          "command": "npm.cmd run redesign:check"
+        },
+        {
+          "log": "tmp/S15-final-catalog.log",
+          "elapsedMs": 2380,
+          "exitCode": 0,
+          "id": "catalog",
+          "command": "npm.cmd run redesign:catalog:check"
+        },
+        {
+          "log": "tmp/S15-final-learn.log",
+          "elapsedMs": 1476,
+          "exitCode": 0,
+          "id": "learn",
+          "command": "npm.cmd run redesign:learn:check"
+        },
+        {
+          "log": "tmp/S15-final-inventory.log",
+          "elapsedMs": 6318,
+          "exitCode": 0,
+          "id": "inventory",
+          "command": "npm.cmd run redesign:inventory:check"
+        },
+        {
+          "log": "tmp/S15-final-secrets.log",
+          "elapsedMs": 2511,
+          "exitCode": 0,
+          "id": "secrets",
+          "command": "npm.cmd run redesign:secrets"
+        },
+        {
+          "log": "tmp/S15-final-numerics.log",
+          "elapsedMs": 815,
+          "exitCode": 0,
+          "id": "numerics",
+          "command": "node.exe --import tsx scripts/redesign/measure-network-numerics.ts tmp/S15-final-numerical-metrics.json"
+        },
+        {
+          "log": "tmp/S15-final-build.log",
+          "elapsedMs": 5779,
+          "exitCode": 0,
+          "id": "build",
+          "command": "npm.cmd run build"
+        }
+      ]
+    },
+    "method": "Uninterrupted whole Vitest maxWorkers2 with unchanged timeouts, then uninterrupted production desktop/mobile browser112cases including the full shell spec, with no retries, skips or baseline updates. Heavy suites were sequential."
+  }
 }
