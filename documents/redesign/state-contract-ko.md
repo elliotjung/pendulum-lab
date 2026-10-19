@@ -99,6 +99,14 @@ parser는 hash, `/learn` 등의 hash body, 정확한 `/next.html#...` 상대 주
 
 ## 보존과 검증
 
+### S14의 명시적 adapter 확장
+
+`nonlinear-model-v1` 모델 버전은 `system:mathieu`와 `system:friction`에 한해서 시간응답 wrapper를 선언한다. 이 두 버전 지정 상태는 `runtime.domain=time`을 사용하며, 기존 버전·알 수 없는 버전의 진단 상태는 계속 `evaluation`을 요구한다. 다른 진단 모델에는 이 예외를 적용하지 않는다. 카탈로그의 기존 diagnostic 의미와 native API는 보존한다. `nonlinear-runtime.test.ts`가 이 양방향 구분을 검증한다.
+
+정규화 모델(Duffing·Van der Pol·Mathieu)은 `modelOptions.timeConvention=normalized`, 물리 모델은 `si`를 명시한다. 기존 공통 runtime의 s carrier를 유지하면서 정규화 시간의 의미를 버전 지정 adapter가 해석하고, 불일치 convention을 거부한다. 화면과 CSV는 정규화 눈금을 실제 초로 표시하지 않는다.
+
+Pyragas의 설정은 `historyKind`, `historyTheta`, `historyOmega`와 선택적 `delayTimes`·`delayTheta`·`delayOmega` 벡터로 과거 이력 함수를 표현한다. 실행 초기의 analytic 과거 이력이 필요한 동안에는 `delayHistoryBoundary` 상대 시각도 보존하여 경계 불연속을 가짜 ramp로 바꾸지 않는다. 이는 새 시점의 지연 초기조건이며 engine 객체나 UI layout을 직렬화하는 것이 아니다. 공통 schema·단위 allowlist·공개 API는 바꾸지 않는다.
+
 [legacy-adapter.test.ts](../../tests/product/contracts/legacy-adapter.test.ts)는 실제 v11 RuntimeSnapshot 타입에서 명시적으로 고른 double 재시작 표본의 왕복을 검증한다. 기존 StateStore를 호출하지 않으며 UI/mode/hash 등이 포함된 전체 session migration으로 표현하지 않는다. 원본 객체, theta/omega 순서, 감쇠 단위, winding, verlet ID, signed safe integer seed, simTime을 보존하고 역변환 손실을 거부한다.
 
 [계약 테스트 폴더](../../tests/product/contracts/)에는 SI scalar/vector/complex, stochastic seed, 별도 UI, artifact 계보, strict JSON, 임의 삽입 순서, 고정 seed property test, 공유 손상·공격·시스템 불일치가 포함된다. S01 수치 fixture와 인벤토리, S02 카탈로그 및 전체 기존 Vitest 회귀도 함께 확인한다. 집계와 Git 증거는 [S03 진행 기록](stage-runs/S03-progress.md)에 보존한다.

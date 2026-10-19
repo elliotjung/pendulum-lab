@@ -21,9 +21,9 @@
 
 | ID | 범위 | 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 진행 기록·activeStage | plan/preflight, diff | 준비 |
-| CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 대기 |
-| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | 대기 |
+| CP0 | 진행 기록·activeStage | plan/preflight, diff | 원격 확인 완료 |
+| CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 검증 완료·push 준비 |
+| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | UI 구현·unit 검증 완료, browser 대기 |
 | CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 대기 |
 
@@ -40,3 +40,24 @@
 - 정규화 단위, Duffing softening 발산, 큰 μ의 강성, Kapitza 평균화 조건, 마찰 격자 사건, 지연 보간과 자원 한계를 검증한다.
 - 기존 dependency/CodeQL 미해결 항목은 해결되거나 승인됐다고 주장하지 않는다.
 - 각 checkpoint 검증과 명시적 staging 뒤 push하고 정확한 원격 hash를 기록한다. nextStage는 마지막 STATUS까지 14를 유지한다.
+- CP0 `0997c032ffbf5800ab50a07e74d061f72140a161` push 성공, `ls-remote` 정확한 hash 일치. Git 쓰기와 네트워크 sandbox 제한은 동일 명령 확장 권한으로 실행했다. 이후 깨끗한 CP0 HEAD에서 preflight를 다시 통과했다.
+- 기본 branch push 알림 high8/moderate3은 기존 미해결 알림이며 S14 신규 audit·해결 증거가 아니다.
+- 두 desktop transport 사본은 저장소 원본과 SHA256이 일치한다. roadmap `1D46E04691D4119CED60DACB41945C75D9D1A20F66CBAED2B3664909F47F8995`, execution `803B191496EDD95EBF2199A8983B920058109BB159D55F8BAFEB0737FA735FC5`.
+
+## 구현 중 조사·검증
+
+- 기존 여섯 모델 native 테스트 `tmp/S14-native-baseline-vitest.json`: **34/34**, 6파일, 실패 0.
+- catalog 134정의, Learn 8과정/86예약, legacy inventory 883파일·broken import/orphan 0 확인. catalog/Learn은 sandbox esbuild EPERM 뒤 동일 명령 확장 권한 재실행으로 통과했다.
+- 정규화 Duffing/Van der Pol/Mathieu는 canonical `modelOptions.timeConvention=normalized`로 시간 carrier의 의미를 명시한다. 물리 모델은 `si`이며 잘못된 convention을 거부한다. 기존 공통 runtime schema는 변경하지 않는다.
+- 지연 이력 초기화 경계의 불연속을 작은 가짜 ramp로 대신하지 않도록 검토했다. 이어가기에는 원래 analytic 과거 이력 경계의 상대 시각을 함께 보존하고, 표시 축약과 독립된 계산 tape를 사용한다.
+- S06의 실행 흐름 mock 검증은 실제 계산으로 승격되는 Pyragas 대신 같은 기존 mock 구현의 Langevin으로 옮긴다. 기존 assertion과 이전 시각 파일은 유지하고 S14 시각 이름을 새로 사용한다.
+
+## CP1 검증
+
+- `tmp/S14-cp1-vitest.json`: adapter/worker 53개, 기존 experiment contract 32개, 신규 runtime contract 3개, **88/88**, 4파일, 실패·skip 0.
+- 전체 typecheck와 CP1 변경 TS의 scoped ESLint 통과. `git diff --check` 통과.
+- Duffing/Van der Pol/Kapitza의 native RK4 상태·에너지 동등성, 조화 극한·우물 평형·한계주기·Kapitza 역평형 비교, native Mathieu coefficient/Floquet, 마찰 stick/breakaway·마지막 유효 상태를 검증했다.
+- 지연은 native batch 비교·해석 극한·비정수 delay/dt·짧은 최종 step·출력 decimation 독립성·여러 번의 초기/후기 continuation·malformed tape·수치 실패 rollback을 검증했다. worker는 64단계/8ms, 2,001표본, 65점 표시 곡선/이력, 2,048점 계산 이력, 순서·오류·취소·15s timeout을 검사한다.
+- 개발 중 early continuation 측정 오차 `2.6655945675815862e-5`를 발견했다. 원래 불연속 경계의 양쪽을 부동소수점 오차로 다르게 선택한 것이 원인이었다. 저장된 경계에서만 32 ulp 이내를 승인된 오른쪽 상태로 일관되게 선택한다. 같은 고정 fixture의 최신 최대 오차는 `2.7755575615628914e-17`, 허용오차 `1e-12`이다. 실패 측정은 `tmp/S14-numerical-development-early-boundary.json`에 보존했다.
+- 초기 통합 typecheck의 미완성 client 필드·typed-array 타입 오류는 수정 후 통과했다. 첫 UI targeted 실행의 diagnostic/time 계약 불일치도 정확한 `nonlinear-model-v1` wrapper 확장으로 수정했다. 기존 버전·알 수 없는 버전의 evaluation 계약과 다른 diagnostic 모델을 회귀 테스트로 보존했다.
+- CP1에는 adapter 6파일·adapter/worker 테스트 2파일, 최소 runtime 계약 확장·회귀 테스트, 상태 계약 문서·진행 기록·activeStageCheckpoint만 stage한다. 제품 UI·route/catalog·수치 보고서는 다음 checkpoint에 남긴다.

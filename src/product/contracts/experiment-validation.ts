@@ -72,19 +72,30 @@ function seconds(value: unknown, positive: boolean, path: string, issues: Contra
   return value.value;
 }
 
-function checkRuntime(value: unknown, system: SystemDefinition | undefined, issues: ContractIssue[]): void {
+function checkRuntime(
+  value: unknown,
+  system: SystemDefinition | undefined,
+  modelVersion: unknown,
+  issues: ContractIssue[]
+): void {
   const path = '$.runtime';
   if (!isRecord(value)) {
     invalid(issues, path, 'Expected runtime configuration.');
     return;
   }
+  // S14 adds explicitly versioned time-response wrappers around two diagnostic
+  // tools. Their legacy evaluation contracts and catalog evolution stay intact.
+  const nonlinearTimeWrapper =
+    modelVersion === 'nonlinear-model-v1' && (system?.id === 'system:mathieu' || system?.id === 'system:friction');
   const domain =
     system &&
-    (['map', 'quantum'].includes(system.evolution)
-      ? 'iteration'
-      : ['spectral', 'diagnostic'].includes(system.evolution)
-        ? 'evaluation'
-        : 'time');
+    (nonlinearTimeWrapper
+      ? 'time'
+      : ['map', 'quantum'].includes(system.evolution)
+        ? 'iteration'
+        : ['spectral', 'diagnostic'].includes(system.evolution)
+          ? 'evaluation'
+          : 'time');
   if (domain && value.domain !== domain)
     issues.push(issue('incompatible-capability', `${path}.domain`, 'Runtime domain must match the catalog system.'));
   if (value.domain === 'time') {
@@ -161,7 +172,7 @@ export function validateExperimentState(input: unknown): ContractResult<Experime
   checkQuantityMap(value.initialConditions, '$.initialConditions', issues);
   if (Object.hasOwn(value, 'modelOptions')) checkOptions(value.modelOptions, '$.modelOptions', issues);
   checkIntegrator(value.integrator, system, issues);
-  checkRuntime(value.runtime, system, issues);
+  checkRuntime(value.runtime, system, value.modelVersion, issues);
   if (!Array.isArray(value.analyses) || value.analyses.length > MAX_ANALYSES)
     invalid(issues, '$.analyses', `Expected at most ${MAX_ANALYSES} analyses.`);
   else {
