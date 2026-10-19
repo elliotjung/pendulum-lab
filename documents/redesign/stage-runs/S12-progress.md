@@ -21,7 +21,7 @@
 | CP1 | 공간 엔진 adapter·canonical·worker | 기존 엔진 parity, 회전 대칭·잔차·결정론, 왕복, 취소/실패, typecheck | 원격 보존 `e1a3353` |
 | CP2 | 공간 Lab·3D 조작·수치 접근·export | 단위/저장, build, desktop/mobile, keyboard/touch, WebGL fallback, axe/시각 | 원격 보존 `787ae0b` |
 | CP3 | 독립 검토·증거 문서 | 전체 Vitest, E+U, catalog/inventory, 보존 diff | 원격 보존 `eb6a5e9`, 최종 검증 통과 |
-| STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 최종 검사 통과, 별도 status push 준비 |
+| STATUS | 별도 완료 commit/push | 구현 원격 존재, 최종 필수 검사, 원격 hash | 원격 완료 확인 `2286a8e` |
 
 변경 예정 경로: `src/product/adapters/physics/spatial*`, `src/product/lab/views/spatial*`, product route/catalog/library, `css/product/spatial.css`, 관련 tests/E2E, S12 진행·검증 문서와 status.
 
@@ -107,3 +107,5 @@
 - 최종 독립 검토에서도 전체 테스트·기존 테스트 보존·브라우저 원본/회복/최신 사례 집계·로컬 Git 보존 검사·데스크톱 사본 hash·완료 조건의 불일치를 찾지 못했다. 완료 기록 3개만 명시적으로 stage/commit하는 명령을 두 번 요청했으나 자동 승인 검토가 `Selected model is at capacity`로 프로세스 실행 전에 실패했다. 따라서 git add/commit/push는 실행되지 않았고 STATUS commit hash는 없다. 로컬 status의 S12/next S13은 준비 파일이며 원격 완료 상태가 아니다. 다음 재개는 동일 S12의 완료 commit/push와 정확한 원격 확인부터 수행한다.
 - 추가 `계속` 요청에서도 fetch가 동일한 자동 검토 모델 처리 용량 오류로 미실행됐다. 공식 Auto-review/Sandbox 안내를 확인한 뒤, 동일한 workspace-write 경계를 유지하며 검토 담당을 사용자로 바꾸는 앱의 `Ask for approval` 선택을 사용자에게 요청했다. 권한·모델·설정 파일을 agent가 변경하지 않았으며, 실제 승인 방식 변경이 확인되기 전에는 기존 제한을 유지한다. 제품·검사 변경은 없고 완료 기록 3개만 준비돼 있다.
 - 이후 사용자 `계속` 요청과 갱신된 승인 경로에서 fetch가 정상 실행됐다. 로컬 HEAD와 새 origin/codex/redesign은 모두 CP3 `eb6a5e9e685b0dbebb1679ae68ac7617aeabdf65`이며, 준비된 변경은 진행·검증·status 문서 3개뿐이다. 최종 완료 증거와 계획 검사를 재확인한 뒤 별도 STATUS commit/push를 수행한다. 원격 status commit의 정확한 hash 확인이 최종 완료 조건이다.
+- 별도 STATUS commit `2286a8efec4f9fcc48663d0e796b2be0a82c9e46`을 push했고 `git ls-remote origin refs/heads/codex/redesign`의 정확한 hash 일치를 확인했다. 원격 status의 lastCompletedStage=12, nextStage=13, activeStage=null과 깨끗한 작업 폴더도 확인했다. 이 확인으로 S12 완료 조건을 충족했다. 다음 유효 단계는 S13이며 아직 시작하지 않았다.
+- 완료 push에서 GitHub 기본 브랜치 알림은 high8/moderate3(합계11)로 표시됐다. CP0–CP3에서 관측한 high7/moderate3와 구별한다. 이번 단계는 의존성이나 lockfile을 바꾸지 않았고 새 audit·보안 해결·위험 수용을 수행하지 않았다. 이 마지막 원격 확인과 알림을 문서에 추가 보존한다.

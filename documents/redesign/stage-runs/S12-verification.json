@@ -1,7 +1,7 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 12,
-  "state": "candidate-complete",
+  "state": "complete",
   "finalValidation": "passed-after-implementation-push",
   "baselineCommit": "200193df0a61d8611ebb136cee9abc7030da8e66",
   "implementationCommits": [
@@ -10,7 +10,14 @@
     "787ae0b3b37bee9c40da606b21203ae0b8be69e6",
     "eb6a5e9e685b0dbebb1679ae68ac7617aeabdf65"
   ],
-  "implementationRemotePresence": "CP0/CP1/CP2/CP3 exact remote hashes verified before the separate status commit; final status push must still be verified.",
+  "implementationRemotePresence": "CP0/CP1/CP2/CP3 exact remote hashes verified before the separate status commit. Completion commit 2286a8efec4f9fcc48663d0e796b2be0a82c9e46 was then pushed and verified by exact git ls-remote hash.",
+  "statusRemoteVerification": {
+    "commit": "2286a8efec4f9fcc48663d0e796b2be0a82c9e46",
+    "lastCompletedStage": 12,
+    "nextStage": 13,
+    "activeStage": null,
+    "workingTreeCleanAtVerification": true
+  },
   "changedFiles": [
     "css/product/spatial.css",
     "documents/redesign/spatial-lab-ko.md",
@@ -1288,7 +1295,7 @@
     "Final browser run passed 60/62; two Chromium cases timed out across long execution gaps. unsafe-imports first navigation reported ERR_NETWORK_IO_SUSPENDED with about 52 minutes between browser and runner records; frozen-layouts lasted about 117 minutes with screenshot/teardown execution gaps and no recorded screenshot mismatch assertion. Actual OS sleep is not established. Original JSON and traces preserved; identical fixed-baseline manual recovery passed both cases on desktop/mobile (4/4). Latest exact file/title-path/project results cover all 62 required cases; this is not a single uninterrupted 62/62 run."
   ],
   "security": {
-    "existingFindings": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; pushes report separate default-branch high7/moderate3.",
+    "existingFindings": "S01 npm high2/moderate2 and CodeQL32 remain unresolved. CP0-CP3 pushes reported separate default-branch high7/moderate3; the completion push reported high8/moderate3 (11 total).",
     "dependencyChanges": false,
     "auditRefreshed": false,
     "remediationOrRiskAcceptanceClaimed": false
