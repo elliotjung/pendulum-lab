@@ -1,0 +1,92 @@
+.network-fields,
+.network-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin-block: var(--ds-space-4);
+}
+.network-workspace [hidden] {
+  display: none !important;
+}
+.network-state-card,
+.network-signals {
+  min-width: 0;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-3);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.network-scene {
+  width: 100%;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-text);
+}
+.network-scene svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+}
+.network-panel {
+  margin-block: var(--ds-space-4);
+  padding: var(--ds-space-4);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.network-panel legend {
+  font-weight: var(--ds-weight-bold);
+}
+.network-workspace svg,
+.network-workspace input,
+.network-workspace select {
+  min-width: 0;
+  max-width: 100%;
+}
+.network-workspace .ds-section,
+.network-workspace fieldset {
+  min-width: 0;
+}
+.network-workspace p,
+.network-workspace label,
+.network-workspace legend {
+  overflow-wrap: anywhere;
+}
+.network-workspace .core-plot {
+  color: var(--ds-color-text);
+}
+.network-state-card h3 {
+  margin-block: 0 var(--ds-space-2);
+}
+.network-state-card p {
+  margin: 0;
+}
+.network-plot-caption {
+  display: block;
+  margin-block: var(--ds-space-3) 0;
+}
+.network-json {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--ds-font-mono, monospace);
+  grid-column: 1 / -1;
+  resize: vertical;
+}
+.network-workspace textarea {
+  max-width: 100%;
+}
+@media (max-width: 600px) {
+  .network-fields,
+  .network-state-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .network-workspace .core-plot text {
+    display: none;
+  }
+  .network-plot-caption {
+    display: block;
+    margin-block: var(--ds-space-3) 0;
+  }
+}

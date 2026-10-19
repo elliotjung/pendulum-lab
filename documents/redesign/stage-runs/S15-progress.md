@@ -21,8 +21,8 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan check, preflight, typecheck | 완료 |
-| CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 검증 완료·push 대기 |
-| CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 대기 |
+| CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 완료 |
+| CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 검증 완료·push 대기 |
 | CP3 | 수치·보존·검증 보고서 | 전체 Vitest, 관련 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 후 최종 검증, status push/remote hash | 대기 |
 
@@ -53,3 +53,18 @@
 - 자기 grid는 native semi-implicit Euler 각 셀의 최근접 ID·속도 수렴 mask·수행 단계와 일치한다. 10,000단계짜리 첫 셀 안의 취소와 128노드 worker 취소·8ms 예산·64단계·최대 2,001표본을 검증했다.
 - worker는 초기 상태·node ID·phase/state 대응·같은 시각의 기록/현재 상태·요청 순서·오류 payload를 검증한다. null/primitive 오류 snapshot, timeout, dispose, 전달 실패, 시작 실패와 수치 불안정의 마지막 유효 상태 보존을 검사했다.
 - 검토 중 고리 생성이 R을 무시하는 문제, invalid plain object의 Number/String 강제 변환, null worker 오류 snapshot, 서로 모순되는 worker 표본을 발견하여 이 checkpoint 안에서 수정했다. 네이티브 방정식·허용오차·기존 fixture는 바꾸지 않았다.
+- CP1 `86587570c36eca410b9e6885efaee0e935d2e59d` push 성공, `ls-remote` 정확한 hash 일치. CP2만 진행하며 nextStage=15 유지.
+
+## CP2 구현·검증
+
+- 5개 native Lab route, 전용 topology JSON/고리 생성·seed 도구, aggregate/개별 노드 전환, R/local coherence·위상·시간 그래프, 자기 seed grid의 별도 worker, isolated 저장/공유/import·CSV/SVG를 연결했다.
+- `tmp/S15-cp2-vitest.json`: model/edit/storage **35/35**, 3파일, 실패·pending 0. radius+graph 원자 편집, duplicate JSON 키 거부, 불안정한 초기 진단에서도 이전 설정 보존, magnetic CSV와 stable ID, 128노드 취소, 격자 partial/error/cancel을 검증했다.
+- 전체 typecheck `tmp/S15-cp2-typecheck.log`, UI/route/catalog/경고 문구/E2E 범위 scoped ESLint `tmp/S15-cp2-eslint.log` exit0. Production build와 public-artifact privacy 검사 통과.
+- 초기 production browser `tmp/S15-initial-playwright.json`: **48통과/2실패**, desktop/mobile 총50개, skip/flaky/retry 0. 실패는 두 visual case의 새 기준 이미지 10개 부재·생성뿐이다. 기능·저장·공유·실행·graph·seed·취소·worker 오류·keyboard/axe·320px·zoom2의 48개는 모두 통과했다. 이후 준비와 정상 검증을 따로 기록한다.
+- 개발 검토에서 조건·초기 상태 적용 전에 candidate simulation을 구성하도록 고쳤고, topology 파일은 별도 `pendulum-network-graph-file/v1`을 사용한다. Huygens·magnetic의 불필요한 반경을 숨기고, 통합 node JSON에서 실제 활성 필드와 보존용 metadata를 설명한다.
+- 수렴·미수렴을 함께 보이는 자기 grid fixture를 채택했다. 긴 소수 축이 잘리지 않도록 표시만 유효숫자 4자리로 줄이고 xMax를 오른쪽 정렬했다. 정확한 설정은 CSV/metadata에서 보존한다. 8ms는 단계 사이 예산임을 제품과 문서에 명시했다.
+- 새 topology workspace와 inspector 시각 사례를 추가한다. 초기 grey 격자 준비 PNG는 ignored tmp로 보존하고 최종 수렴/mask 이름을 별도 사용한다. 기존 144개 PNG는 변경하지 않는다.
+- 새 시각 준비 `tmp/S15-visual-preparation-playwright.json`은 8개 모두 missing snapshot 생성으로 실패했다(기능 실패 0). 정상 검증은 별도로 수행했다. 준비 report hash는 S15-verification.json에 기록한다.
+- `tmp/S15-targeted-verified-playwright.json`: **18/18**, 90.795s, 실패·skip·flaky·retry·snapshot update 0. 5개 모델의 0.37 초기 상태 원자 편집·저장/공유 왕복 10개와 S15/추가 topology/inspector/기존 Lab 시각 8개를 정상 실행으로 통과했다. SHA256 `5d71e0fc2e85fb94d693a749d1d647d5905f7c37afd51157211b7ebc23efbdaa`.
+- CP2 고유 필수 browser 56개는 초기 기능 48개와 강화한 최신 18개(10개 중복)의 통과 증거를 결합한다. 단일 56/56 실행이라고 표시하지 않는다. CP3 원격 보존 후 전체 S15·기존 Lab·shell 여정을 단일 정상 실행으로 확인한다.
+- 최종 새 PNG 16개를 직접 시각 검토했다. 수렴 2셀(n2/n3)과 미수렴 2셀의 분리, 잘리지 않는 축, desktop/mobile 단위 caption, topology/개별 상태, dark inspector의 필드·도움말을 확인했다. 소수 fixture의 정확한 범위·수행 단계·native 일치는 numerical report에 보존한다.

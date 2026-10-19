@@ -14,11 +14,14 @@ export const networkRows: readonly SystemRow[] = [
     ),
     binding: p('magneticPendulum', 'rhsMagneticPendulum'),
     parameters: p('magneticPendulum', 'MagneticPendulumParameters'),
-    coordinates: l('[x, y, vx, vy] 평면 Cartesian 좌표.', '[x, y, vx, vy] planar Cartesian coordinates.'),
+    coordinates: l(
+      '[x, y, vx, vy] 평면 Cartesian 좌표. 새 Lab은 위치·속도·시간·에너지를 정규화한다.',
+      '[x, y, vx, vy] planar Cartesian coordinates. The new Lab uses normalized position, velocity, time and energy.'
+    ),
     dof: 2,
     limitation: l(
-      '정칙화된 현상론적 자력 모델이며 실제 자석 형상·접촉은 포함하지 않는다.',
-      'A softened phenomenological magnetic-force model, without actual magnet geometry or contact.'
+      '정칙화된 현상론적 자력 모델이며 실제 자석 형상·접촉은 포함하지 않는다. 궤적 RK4와 basin의 semi-implicit Euler를 구분한다. 유한 시간 최근접 자석과 속도 수렴 mask는 인력권 인증이 아니다.',
+      'A softened phenomenological force model without magnet geometry or contact. Distinguish trajectory RK4 from basin semi-implicit Euler. Finite-time nearest magnets and a speed-convergence mask do not certify basins.'
     )
   },
   {
@@ -36,8 +39,8 @@ export const networkRows: readonly SystemRow[] = [
     coordinates: l('[theta_0..N-1, omega_0..N-1] 네트워크 상태.', '[theta_0..N-1, omega_0..N-1] network state.'),
     dof: nDof,
     limitation: l(
-      '에너지 해석에는 결합 대칭성과 감쇠를 확인한다. 임의의 기계 접촉 그래프를 구현하지 않는다.',
-      'Check coupling symmetry and damping for energy interpretation. This does not implement arbitrary mechanical contact graphs.'
+      '무방향 비틀림 결합이며 감쇠가 있으면 에너지가 소산된다. 원형 각도 정렬 R과 국소 coherence는 진동 위상 추정이 아니다. 임의의 기계 접촉 그래프를 구현하지 않는다.',
+      'Undirected torsional coupling; damping dissipates energy. Circular angle order R and local coherence do not estimate oscillation phase. No arbitrary mechanical contact graph.'
     )
   },
   {
@@ -55,8 +58,8 @@ export const networkRows: readonly SystemRow[] = [
     coordinates: l('[phase_0..N-1] 위상만 포함한다.', '[phase_0..N-1] contains phases only.'),
     dof: l('N개 1차 위상 변수.', 'N first-order phase variables.'),
     limitation: l(
-      '진폭이나 관성 좌표가 없다. 짝수 차원이어도 q/v 분할 적분기는 호환되지 않는다.',
-      'Has no amplitude or inertial coordinates. Even state dimension does not make q/v split steppers compatible.'
+      '진폭이나 관성 좌표가 없다. 새 Lab의 무방향 그래프는 이웃 가중치 합으로 행 정규화하며 self 항을 포함한 기존 K/N과 유효 결합이 다르다. 짝수 차원이어도 q/v 분할 적분기는 호환되지 않는다.',
+      'No amplitude or inertia. The Lab undirected graph normalizes rows by neighbour weights, differing from legacy self-inclusive K/N coupling. Even state dimension does not make q/v split steppers compatible.'
     )
   },
   {
@@ -101,8 +104,8 @@ export const networkRows: readonly SystemRow[] = [
       description: l('내부 midpoint RK2와 위상 wrapping.', 'Internal midpoint RK2 with phase wrapping.')
     },
     limitation: l(
-      '쿠라모토 동역학과 키메라 진단을 재사용하는 탐색이다. 별도 엔진이나 일반적인 키메라 존재 증명이 아니다.',
-      'An exploration reusing Kuramoto dynamics and chimera diagnostics, not a separate engine or a general proof of chimera existence.'
+      '쿠라모토 동역학과 키메라 진단을 재사용한다. 새 Lab은 stable ID의 ringOrder와 단위 가중치 비국소 고리를 보존한다. chimera-candidate는 순간 유한 크기 진단이며 지속성·크기·반경 수렴을 확인해야 한다.',
+      'Reuses Kuramoto dynamics and chimera diagnostics. The Lab preserves stable-ID ringOrder and a unit-weight nonlocal ring. A chimera candidate is an instantaneous finite-size diagnostic requiring persistence, size and radius refinement.'
     )
   }
 ];

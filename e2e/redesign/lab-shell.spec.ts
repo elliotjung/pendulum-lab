@@ -198,7 +198,7 @@ test.describe('S06 system-first laboratory', () => {
     await page.goto('/next.html#/lab');
     await page.getByLabel('시스템 패밀리').selectOption('classical');
     await audit(page);
-    await expect(page).toHaveScreenshot('s14-lab-library-light.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s15-lab-library-light.png', { fullPage: true });
     // S14 promotes Pyragas. The original S06–S13
     // images remain historical evidence; retained Langevin mock visuals get distinct names.
     await openSystem(page, 'langevin');

@@ -317,7 +317,7 @@ export function networkPresetConfig(id: NetworkSystemId, presetId: string): Netw
 }
 export function networkWarnings(config: NetworkConfig): string[] {
   return [
-    `규모: 노드 ${config.graph.nodes.length}/${MAX_NETWORK_NODES}, 간선 ${config.graph.edges.length}/${MAX_NETWORK_EDGES}. 밀집 RHS·국소 지표는 O(N²)이며 큰 네트워크는 worker에서 최대 64단계·8ms 묶음으로 처리합니다.`,
+    `규모: 노드 ${config.graph.nodes.length}/${MAX_NETWORK_NODES}, 간선 ${config.graph.edges.length}/${MAX_NETWORK_EDGES}. 밀집 RHS·국소 지표는 O(N²)이며 worker는 최대 64단계와 단계 사이 8ms 예산을 사용합니다. 한 단계의 실행 시간은 기기와 규모에 따라 다릅니다.`,
     '고정 간격 적분 결과는 dt·관찰 길이·노드 수를 바꾸어 수렴과 장시간 지속성을 확인해야 합니다.',
     ...(config.systemId === 'system:magnetic'
       ? [

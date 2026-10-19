@@ -60,7 +60,16 @@ export function mountApplication(root: HTMLElement, window: Window) {
                       'system:pyragas'
                     ].includes(route.systemId)
                   ? import('./views/nonlinear-lab')
-                  : loaders[space](),
+                  : route.kind === 'lab-system' &&
+                      [
+                        'system:magnetic',
+                        'system:pendulum-network',
+                        'system:huygens-phase-pair',
+                        'system:kuramoto',
+                        'system:chimera-exploration'
+                      ].includes(route.systemId)
+                    ? import('./views/network-lab')
+                    : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);
