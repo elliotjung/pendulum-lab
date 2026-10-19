@@ -22,9 +22,9 @@
 | ID | 범위 | 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan/preflight, diff | 원격 확인 완료 |
-| CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 검증 완료·push 준비 |
-| CP1-FIX | production에서 발견한 지연 꼬리 중복 시각 수정 | 전체 client horizon·초기/후기 continuation·기존 계약, typecheck/lint | 검증 완료·push 준비 |
-| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | UI 구현·unit 검증 완료, browser 대기 |
+| CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 원격 확인 완료 |
+| CP1-FIX | production에서 발견한 지연 꼬리 중복 시각 수정 | 전체 client horizon·초기/후기 continuation·기존 계약, typecheck/lint | 원격 확인 완료 |
+| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | 검증 완료·push 준비 |
 | CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 대기 |
 
@@ -71,3 +71,15 @@
 - 새로운 시각 기준이 없는 첫 실행의 screenshot 실패도 별도로 기록한다. 기존 시각 파일을 갱신하거나 timeout/retry/assertion을 완화하지 않는다.
 - 실제 원인은 0.216 s의 crop 대상과 기존 승인 격자점이 같은 상대 double(-0.2)로 변환되어 strict-order 검사를 실패한 것이었다. analytic 구간 이후에는 `[-τ−dt,-τ]`의 실제 승인 bracket을 보존한다. 아직 analytic 구간인 crop은 정확한 원래 함수를 유지하고 동일한 상대 표현의 합성 crop만 제거한다. validator의 엄격한 순서 검사는 유지했다.
 - `tmp/S14-cp1-fix-vitest.json`: **93/93**, 4파일. adapter/worker는 58개이며 실제 client로 전체 기본 10s·chunk 1/7/64·초기 9단계/후기 109단계 이어가기를 검증하는 5개 회귀를 추가했다. typecheck·변경 TS ESLint 통과. 기존 물리식·golden·허용오차 변경은 없다.
+- CP1-FIX `349b1a432a1eff427969dfb4b4cd378ddef259c2` push 성공, `ls-remote` 정확한 hash 일치. 수정 전 production 초기 실행과 수정 후 실행은 별도로 집계한다.
+
+## CP2 검증
+
+- `tmp/S14-cp2-vitest.json`: UI model/storage/edit **37/37**, 3파일. 모델별 단위·atomic edit·초기/진행 지연 이력·손상/미래 저장 원본·오류/취소·늦은 응답·수치 CSV를 검증했다.
+- 모든 새 UI와 route/catalog/E2E 범위 scoped ESLint, 전체 typecheck, production build/public-artifact 검사 통과. CSV는 모델별 가진 항과 단위를 헤더에 명시한다.
+- 초기 production `tmp/S14-cp2-playwright-initial.json`: **46/52**, 6실패, skip/flaky 0. 새 Lab 시각 기준 부재 2개, Pyragas client 오류 2개, 비선형 시각 기준 부재와 같은 Pyragas 오류 2개다. 실패 산출물은 `tmp/S14-cp2-initial-test-results`에 별도 보존했다.
+- 수정된 production의 missing 시각 준비에서는 Pyragas 0.4s 도달을 확인하고 새 이력 화면 기준만 생성했다. 준비 실패를 통과로 집계하지 않았다.
+- 직접 시각 검토에서 모바일 SVG 글자가 숨겨져 축·단위가 보이지 않는 문제를 발견했다. S14 전용으로 읽을 수 있는 제목/축/단위 caption을 추가하고 320px·모델별 관찰·시각 test에 실제 표시 검사를 추가했다. 이 의도된 변경으로 신규 모바일 시각 4개만 다시 준비했다. 14개 새 PNG를 직접 검토했으며 이전 130개는 byte-identical이다.
+- `tmp/S14-cp2-playwright.json`: 수정·caption·320px·zoom·모델별 진단·시각 **14/14**, 단일 153.648s, 실패/skip/flaky/retry/snapshot update 0. 추가로 강화한 Pyragas 실행은 반드시 0.4s를 지나도록 검사한다. 개발 중 테스트 변수의 scope 오류는 typecheck에서 발견해 수정했으며 제품 오류로 집계하지 않는다.
+- CP2의 고유 필수 사례는 두 project 합계 52개다. 초기 통과 사례와 수정 후 최신 통과 사례를 결합하며, 이를 단일 52/52 실행이라고 표시하지 않는다. CP3 원격 보존 뒤 전체 필수 browser와 전체 Vitest를 각각 중단 없는 실행으로 확인한다.
+- 강화한 Pyragas lifecycle와 worker 시작 실패/회복/페이지 이탈의 최종 `tmp/S14-cp2-pyragas-regression.json`은 **4/4**, 27.3s, 실패/skip/flaky/retry/update 0. 직전 3/4 실행은 route click 직후 비동기 화면 전환이 끝나기 전에 종료 count를 읽은 테스트의 순서 오류였다. `.lab-library` 표시를 기다린 뒤 동일한 worker 종료 count=1을 검사한다. 실패 JSON은 `tmp/S14-cp2-pyragas-regression-initial.json`에 보존했다.

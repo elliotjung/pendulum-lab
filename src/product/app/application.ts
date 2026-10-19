@@ -50,7 +50,17 @@ export function mountApplication(root: HTMLElement, window: Window) {
                     'system:parametric'
                   ].includes(route.systemId)
                 ? import('./views/driven-lab')
-                : loaders[space](),
+                : route.kind === 'lab-system' &&
+                    [
+                      'system:duffing',
+                      'system:van-der-pol',
+                      'system:kapitza',
+                      'system:mathieu',
+                      'system:friction',
+                      'system:pyragas'
+                    ].includes(route.systemId)
+                  ? import('./views/nonlinear-lab')
+                  : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

@@ -75,13 +75,13 @@ test.describe('S06 system-first laboratory', () => {
     await panel(page, '조건');
     await expect(page.getByLabel('반복 횟수 · iterations (회)', { exact: true })).toBeVisible();
     await expect(page.locator('#lab-field-m1, #lab-field-step, #lab-field-duration, #lab-integrator')).toHaveCount(0);
-    await openSystem(page, 'pyragas');
+    await openSystem(page, 'langevin');
     await panel(page, '조건');
     await expect(page.locator('#lab-field-step, #lab-integrator')).toHaveCount(0);
   });
 
   test('runs, pauses, steps, cancels, resets and recovers a mock error without physical output', async ({ page }) => {
-    await openSystem(page, 'pyragas');
+    await openSystem(page, 'langevin');
     await page.getByRole('button', { name: '시험 실행', exact: true }).click();
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'running');
     await page.getByRole('button', { name: '일시정지', exact: true }).click();
@@ -163,7 +163,7 @@ test.describe('S06 system-first laboratory', () => {
   for (const name of ['작업 공간', '조건', '분석', '보관함', '내보내기']) {
     test(`supports keyboard panel navigation and 320px reflow: ${name}`, async ({ page }) => {
       await page.setViewportSize({ width: 320, height: 800 });
-      await openSystem(page, 'pyragas');
+      await openSystem(page, 'langevin');
       const workspace = page.getByRole('tab', { name: '작업 공간', exact: true });
       await workspace.focus();
       await page.keyboard.press('ArrowRight');
@@ -178,7 +178,7 @@ test.describe('S06 system-first laboratory', () => {
   // Keep every reflow/axe assertion, but give independent viewport journeys
   // their own normal test budget instead of accumulating seven axe runs.
   test('supports 200% zoom and 640px reflow with no axe violations', async ({ page }) => {
-    await openSystem(page, 'pyragas');
+    await openSystem(page, 'langevin');
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.evaluate(() => {
       document.documentElement.style.zoom = '2';
@@ -198,15 +198,15 @@ test.describe('S06 system-first laboratory', () => {
     await page.goto('/next.html#/lab');
     await page.getByLabel('시스템 패밀리').selectOption('classical');
     await audit(page);
-    await expect(page).toHaveScreenshot('s13-lab-library-light.png', { fullPage: true });
-    // S12 promotes the spatial family. The original S06/S11
-    // images remain historical evidence; retained delay mock visuals get distinct names.
-    await openSystem(page, 'pyragas');
+    await expect(page).toHaveScreenshot('s14-lab-library-light.png', { fullPage: true });
+    // S14 promotes Pyragas. The original S06–S13
+    // images remain historical evidence; retained Langevin mock visuals get distinct names.
+    await openSystem(page, 'langevin');
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'ready');
-    await expect(page).toHaveScreenshot('s12-retained-mock-workspace-light.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s14-retained-mock-workspace-light.png', { fullPage: true });
     await page.locator('#product-theme').selectOption('dark');
     await panel(page, '조건');
     await audit(page);
-    await expect(page).toHaveScreenshot('s12-retained-mock-inspector-dark.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s14-retained-mock-inspector-dark.png', { fullPage: true });
   });
 });

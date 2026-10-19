@@ -124,9 +124,15 @@ export const drivenRows: readonly SystemRow[] = [
     ),
     binding: p('duffing', 'rhsDuffing'),
     parameters: p('duffing', 'DuffingParameters'),
-    coordinates: l('[x, v, phase] 변위·속도·구동 위상.', '[x, v, phase] displacement, velocity, and drive phase.'),
+    coordinates: l(
+      '[x, v, phase] 변위·속도·구동 위상. 새 Lab은 x와 시간을 정규화한다.',
+      '[x, v, phase] displacement, velocity, and drive phase. The new Lab uses normalized displacement and time.'
+    ),
     dof: 1,
-    limitation: driveLimit
+    limitation: l(
+      '기존 RHS와 퍼텐셜을 재사용한다. 새 Lab의 정규화 에너지는 J가 아니며 구동·감쇠에서 보존되지 않는다. beta<0의 비구속 퍼텐셜은 유한시간 발산이 가능하다.',
+      'Reuses the existing RHS and potential. Normalized Lab energy is not joules and is not conserved with forcing or damping. An unconfined beta<0 potential can diverge in finite time.'
+    )
   },
   {
     id: 'van-der-pol',
@@ -140,11 +146,11 @@ export const drivenRows: readonly SystemRow[] = [
     ),
     binding: p('vanDerPol', 'rhsVanDerPol'),
     parameters: p('vanDerPol', 'VanDerPolParameters'),
-    coordinates: l('[x, v] 변위와 속도.', '[x, v] displacement and velocity.'),
+    coordinates: l('[x, v] 정규화 변위와 속도, 정규화 시간.', '[x, v] normalized displacement, velocity, and time.'),
     dof: 1,
     limitation: l(
-      'mu>0에서 에너지는 진단량이다. 큰 mu의 강성과 속도 의존 감쇠를 고려한다.',
-      'Energy is diagnostic for mu>0. Account for stiffness at large mu and velocity-dependent damping.'
+      'mu>0에서 에너지는 진단량이며 J가 아니다. 큰 mu의 강성에서는 시간 간격을 줄여 한계주기의 수렴을 확인한다. 유한 궤적만으로 한계주기 존재를 증명하지 않는다.',
+      'Energy is a diagnostic, not joules, for mu>0. Refine the step for stiff large-mu oscillations. A finite trajectory does not prove a limit cycle.'
     )
   },
   {
@@ -161,7 +167,10 @@ export const drivenRows: readonly SystemRow[] = [
     parameters: p('kapitza', 'KapitzaParameters'),
     coordinates: state3,
     dof: 1,
-    limitation: driveLimit
+    limitation: l(
+      'theta=0은 아래쪽이다. 직접 가진 RHS와 평균화 유효 퍼텐셜(s^-2)을 구별한다. a²Ω²>2gl은 빠른 가진·작은 진폭의 평균화 조건이며 임의 주파수의 안정성을 보장하지 않는다.',
+      'Theta=0 points downward. Distinguish the directly forced RHS from the averaged effective potential in s^-2. The a²Ω²>2gl criterion assumes fast, small-amplitude forcing and does not guarantee stability at arbitrary frequency.'
+    )
   },
   {
     id: 'mathieu',
@@ -177,8 +186,8 @@ export const drivenRows: readonly SystemRow[] = [
     parameters: b('chaos/mathieuStability', 'MathieuStabilityDiagramSpec'),
     state: b('chaos/mathieuStability', 'MathieuStabilityDiagram'),
     coordinates: l(
-      'delta/epsilon 격자와 Floquet 스펙트럼 출력; 독립 궤적 상태가 아니다.',
-      'Delta/epsilon grid with Floquet spectral outputs, not an independent trajectory state.'
+      '기존 API는 delta/epsilon 격자와 Floquet 출력이다. Lab은 같은 계수의 [x,v] 정규화 선형 응답도 표시하며 가진 주기는 2π이다.',
+      'The legacy API returns a delta/epsilon grid and Floquet outputs. The Lab also displays normalized [x,v] linear response using the same coefficient, with forcing period 2π.'
     ),
     dof: 1,
     internal: {
@@ -189,8 +198,8 @@ export const drivenRows: readonly SystemRow[] = [
       )
     },
     limitation: l(
-      '선형 마티외 방정식의 안정성 분석이다. 비선형 매개변수 진자 궤적을 대신하지 않는다.',
-      'Analyzes stability of the linear Mathieu equation; it does not replace nonlinear parametric-pendulum trajectories.'
+      '선형 마티외 방정식의 진단이며 비선형 매개변수 진자를 대신하지 않는다. 승수 반경이 허용오차 안에 있어도 중복 승수의 Jordan 성장이나 장시간 유계성을 판정하지 못한다.',
+      'A diagnostic of the linear Mathieu equation, not a nonlinear parametric pendulum. A multiplier radius within tolerance cannot exclude Jordan growth or certify long-term boundedness.'
     )
   },
   {
@@ -219,8 +228,8 @@ export const drivenRows: readonly SystemRow[] = [
       )
     },
     limitation: l(
-      '완성된 진자 엔진이 아닌 구성 도구다. 정칙화 마찰력과 정확한 stiction 경로를 구별한다.',
-      'A building block rather than a complete pendulum engine. Distinguish regularized forces from the exact stiction path.'
+      '기존 API는 구성 도구다. Lab의 질량·용수철·주기 외력 블록은 이 도구를 이용한 별도 명시적 예제다. 정칙화 힘과 정확한 stiction 경로를 구별하고 사건 시각의 격자 의존성을 확인한다.',
+      'The legacy API is a building block. The Lab mass-spring block with periodic force is a separate explicit example using it. Distinguish regularized forces from exact stiction and check grid dependence of event times.'
     )
   },
   {
