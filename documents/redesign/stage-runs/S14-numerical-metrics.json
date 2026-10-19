@@ -1,7 +1,7 @@
 {
   "schemaVersion": "S14-numerical-metrics/v1",
-  "recordedAtUtc": "2026-10-19T06:47:45.420Z",
-  "sourceHead": "58f9b13268337b6d26ade11a6496419f6764edf2",
+  "recordedAtUtc": "2026-10-19T06:49:12.691Z",
+  "sourceHead": "88093374738cc881d15601623a2a7816b27f6e50",
   "command": "node --import tsx scripts/redesign/measure-nonlinear-numerics.ts",
   "environment": {
     "platform": "win32",
@@ -540,5 +540,5 @@
     "Pyragas delay history uses linear interpolation; continuation equality is assessed on the overlapping horizon, with a nonintegral delay/step ratio and a nonconstant prehistory.",
     "A single local elapsed time is not a performance benchmark. No human scientific review was performed."
   ],
-  "elapsedMs": 1365.9229
+  "elapsedMs": 995.982
 }

@@ -1,14 +1,14 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 14,
-  "phase": "candidate-complete",
+  "phase": "validated",
   "baselineHead": "f52cbe4150e702cb1a2f754aa10b9db8ee07547f",
   "implementationCheckpoints": {
     "CP0": "0997c032ffbf5800ab50a07e74d061f72140a161",
     "CP1": "50254b7c7307a7e516a5a9745a3cfa67457477e2",
     "CP1-FIX": "349b1a432a1eff427969dfb4b4cd378ddef259c2",
     "CP2": "58f9b13268337b6d26ade11a6496419f6764edf2",
-    "CP3": null
+    "CP3": "88093374738cc881d15601623a2a7816b27f6e50"
   },
   "remoteEvidence": "Each listed checkpoint push succeeded and exact git ls-remote hash was checked before proceeding. Completion additionally requires the separate final status commit push and exact remote hash check; that final commit cannot contain its own hash.",
   "scope": {
@@ -97,11 +97,91 @@
     "browserScope": "52 unique CP2 cases have latest passing results across initial46 + patched14 + tightened4, with overlapping cases counted once. This is not one uninterrupted52-case passing run; the final80-case run is separately required."
   },
   "finalValidation": {
-    "pending": true,
-    "head": "58f9b13268337b6d26ade11a6496419f6764edf2",
-    "vitest": null,
-    "productionBrowser": null,
-    "staticChecks": null,
+    "pending": false,
+    "head": "88093374738cc881d15601623a2a7816b27f6e50",
+    "vitest": {
+      "total": 3105,
+      "passed": 3105,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 286,
+      "report": "tmp/S14-final-vitest.json",
+      "sha256": "9a80532d0846bc6974cd655663e314e20c4d436ad0dc92210eb032e3136ab67c"
+    },
+    "productionBrowser": {
+      "startTime": "2026-10-19T06:52:09.163Z",
+      "duration": 515675.198,
+      "expected": 80,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-final-playwright.json",
+      "sha256": "9e9b59d40f0e06a1e742b640b7ac2e7b2014e797f19cb837f60c93880b43d4c9"
+    },
+    "staticChecks": [
+      {
+        "name": "typecheck",
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "log": "tmp/S14-final-typecheck.log"
+      },
+      {
+        "name": "eslint",
+        "command": "npx eslint <all changed TS paths> --max-warnings 0",
+        "exitCode": 0,
+        "log": "tmp/S14-final-eslint.log"
+      },
+      {
+        "name": "policy",
+        "command": "npm run lint:policy",
+        "exitCode": 0,
+        "log": "tmp/S14-final-policy.log"
+      },
+      {
+        "name": "plan",
+        "command": "npm run redesign:check",
+        "exitCode": 0,
+        "log": "tmp/S14-final-plan.log"
+      },
+      {
+        "name": "catalog",
+        "command": "npm run redesign:catalog:check",
+        "exitCode": 0,
+        "log": "tmp/S14-final-catalog.log"
+      },
+      {
+        "name": "learn",
+        "command": "npm run redesign:learn:check",
+        "exitCode": 0,
+        "log": "tmp/S14-final-learn.log"
+      },
+      {
+        "name": "inventory",
+        "command": "npm run redesign:inventory:check",
+        "exitCode": 0,
+        "log": "tmp/S14-final-inventory.log"
+      },
+      {
+        "name": "secrets",
+        "command": "npm run redesign:secrets",
+        "exitCode": 0,
+        "log": "tmp/S14-final-secrets.log"
+      },
+      {
+        "name": "numerics",
+        "command": "node --import tsx scripts/redesign/measure-nonlinear-numerics.ts",
+        "exitCode": 0,
+        "log": "tmp/S14-final-numerics.log"
+      },
+      {
+        "name": "build",
+        "command": "npm run build",
+        "exitCode": 0,
+        "log": "tmp/S14-final-build.log"
+      }
+    ],
     "conditions": "Unchanged test timeouts, zero automatic retries/skip or screenshot updates in final production browser, one uninterrupted full final browser run, full Vitest maxWorkers=2; heavy test suites run sequentially."
   },
   "developmentFailures": {
@@ -185,7 +265,16 @@
       "brokenImports": 0,
       "orphans": 0
     },
-    "retention": null,
+    "retention": {
+      "baseline": "f52cbe4150e702cb1a2f754aa10b9db8ee07547f",
+      "previousTests": 3007,
+      "currentTests": 3105,
+      "missing": [],
+      "changedProtected": [],
+      "existingSnapshots": 130,
+      "changedSnapshots": [],
+      "dateNameNormalization": "Only the displayed timestamp of the unchanged Date rejection fixture in tests/product/learn/content.test.ts; no source tests changed to achieve retention."
+    },
     "newScreenshotsDirectlyInspected": 14,
     "historicalScreenshotCount": 130,
     "desktopTransportCopies": {
@@ -218,13 +307,25 @@
     "dependenciesChanged": false,
     "inheritedBaseline": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; no refreshed dependency audit or risk acceptance.",
     "latestPushNotice": "Default-branch GitHub notice high8/moderate3 (11); unresolved, separate from S01 baseline.",
-    "secretPatternScan": "See final static check log; known-pattern tracked text only, not history/ignored/binary content."
+    "secretPatternScan": {
+      "trackedFiles": 1537,
+      "textFiles": 1381,
+      "findings": 0,
+      "limitations": [
+        "Known credential formats only; no entropy analysis, provider validation, or detection of arbitrary passwords.",
+        "Zero findings means no matches for these rules, not proof that all secrets are absent.",
+        "Git history, ignored files, binary contents, and external services are outside this local scan."
+      ]
+    }
   },
   "rollbackReference": "f52cbe4150e702cb1a2f754aa10b9db8ee07547f",
   "nextValidStageAfterRemoteCompletion": 15,
   "changedFiles": [
     "css/product/nonlinear.css",
+    "documents/redesign/nonlinear-lab-ko.md",
+    "documents/redesign/stage-runs/S14-numerical-metrics.json",
     "documents/redesign/stage-runs/S14-progress.md",
+    "documents/redesign/stage-runs/S14-verification.json",
     "documents/redesign/state-contract-ko.md",
     "documents/redesign/status.json",
     "e2e/redesign/lab-shell.spec.ts",
@@ -243,6 +344,7 @@
     "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-pyragas-history-light-mobile-chrome-win32.png",
     "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-vanderpol-phase-dark-chromium-win32.png",
     "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-vanderpol-phase-dark-mobile-chrome-win32.png",
+    "scripts/redesign/measure-nonlinear-numerics.ts",
     "src/product/adapters/physics/nonlinear-client.ts",
     "src/product/adapters/physics/nonlinear-contract.ts",
     "src/product/adapters/physics/nonlinear-schema.ts",

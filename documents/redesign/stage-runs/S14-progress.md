@@ -25,10 +25,10 @@
 | CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 원격 확인 완료 |
 | CP1-FIX | production에서 발견한 지연 꼬리 중복 시각 수정 | 전체 client horizon·초기/후기 continuation·기존 계약, typecheck/lint | 원격 확인 완료 |
 | CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | 원격 확인 완료 |
-| CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | candidate-complete 준비·전체 검증 대기 |
-| STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 대기 |
+| CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | 원격 확인·최종 전체 검증 완료 |
+| STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 완료 기록 준비·별도 push와 원격 확인 필요 |
 
-## 변경 예정 경로
+## 변경 경로
 
 - `src/product/adapters/physics/nonlinear*`, `src/product/lab/views/nonlinear-*`, `src/product/app/views/nonlinear-lab.ts`
 - 제품 route/library/catalog 연결, 필요한 `css/product/` 스타일
@@ -89,4 +89,17 @@
 
 - `nonlinear-lab-ko.md`에 방정식·단위·native 경계·비매끈/지연/평균화 한계·저장/이어가기 의미·자원 한도·보존/복구를 기록했다.
 - `scripts/redesign/measure-nonlinear-numerics.ts`와 `S14-numerical-metrics.json`으로 exact config의 수치 관찰을 재생성한다. 세 native RK4 차이 0, native DDE 약 `6.94e-17`, 후기 이어가기 0, 초기 불연속 이어가기 약 `2.78e-17`; 고정 성분 허용오차 `1e-12`를 변경하지 않았다.
-- `S14-verification.json`은 현재 candidate-complete이며 초기 실패와 최신 targeted 검증, 보존 범위, 사람 검토 미완료와 기존 보안 위험을 구분한다. 구현 원격 존재 확인 뒤 전체 필수 검증과 별도 STATUS push가 남아 있다. lastCompletedStage=13, nextStage=14를 유지한다.
+- CP3 작성 시점의 `S14-verification.json`은 candidate-complete이며 초기 실패와 최신 targeted 검증, 보존 범위, 사람 검토 미완료와 기존 보안 위험을 구분했다. 당시 구현 원격 존재 확인 뒤 전체 필수 검증과 별도 STATUS push를 남기고 lastCompletedStage=13, nextStage=14를 유지했다. 아래 최종 검증 뒤 phase를 validated로 갱신한다.
+
+## 최종 필수 검증
+
+- CP3 `88093374738cc881d15601623a2a7816b27f6e50` push 성공, `ls-remote` 정확한 hash 일치. 깨끗한 CP3 HEAD에서 `redesign:preflight -- 14` 통과 후 최종 검증을 실행했다.
+- `tmp/S14-final-vitest.json`: **3,105/3,105**, 286파일, 실패/pending/todo 0, maxWorkers=2, 기존 timeout 유지. heavy browser와 동시에 실행하지 않았다.
+- `tmp/S14-command-results.json`: typecheck, 모든 변경 TS의 scoped ESLint, source policy, plan, catalog, Learn, inventory, secret pattern, 수치 재현, production build/public-artifact까지 10개 명령 exitCode=0.
+- `tmp/S14-preservation.json`: S13 3,007개 test 이름·중복 수 모두 보존, 98개 추가, 누락 0. 기존 Learn의 unchanged `new Date()` 거부 fixture 이름에 들어간 표시 시각 한 사례만 좁게 정규화했다. 보호된 engine/API/lockfile/golden 변경 0, e2e 전체 기존 PNG 130개 변경/삭제 0.
+- known-pattern secret scan: 추적 파일 1,537개·텍스트 1,381개·발견 0건. history/ignored/binary 내용과 외부 서비스는 범위 밖이며 비밀정보 부재의 보증이 아니다.
+- 두 desktop transport 사본은 종료 대조에서도 저장소 원본 SHA256과 일치했다. 원본 roadmap/execution 파일은 변경하지 않았다.
+- `tmp/S14-final-playwright.json`: 같은 CP3 product source의 production preview에서 **80/80**, Chromium desktop 40개·Pixel5 mobile emulation 40개, 단일 연속 실행 **515.675s**. 실패/skip/flaky/retry/snapshot update 0, runner 오류 0. S14 50개·기존 S06 Lab 24개·S04 shell 6개이며 테스트 중 source 변경은 없었다. 보고서 SHA256 `9E9B59D40F0E06A1E742B640B7AC2E7B2014E797F19CB837F60C93880B43D4C9`.
+- 6개 모델의 실제 실행·preset·canonical 복원, Pyragas 저장/공유/import 뒤 동일 이어가기, 손상/미래 원본 보존, 수치 오류/worker 실패의 안전 정지와 회복, 페이지 이탈 worker 종료, keyboard/axe/320px/zoom2, 전용 그래프 시각 검증과 기존 route 이동을 통과했다.
+- Windows Chromium desktop/Pixel5 emulation까지 검증했다. 실제 기기·Firefox/WebKit·screen-reader 음성 및 사람 과학 검토는 수행하지 않았다. 고정 격자 마찰 사건·보간 이력·평균화·강성·기존 보안 문제의 한계는 `nonlinear-lab-ko.md`와 `S14-verification.json`에 남긴다.
+- 구현 CP0/CP1/CP1-FIX/CP2/CP3는 모두 원격에 존재하며 전체 필수 검증이 통과했다. 별도 STATUS commit은 이 최종 기록과 `status.json`을 포함하며, 정확한 원격 hash 확인 뒤에만 S14 완료로 보고한다. 다음 유효 단계는 S15이며 실행하지 않았다. 기존 `app.html`과 S13 `f52cbe4`가 복구 기준이다.
