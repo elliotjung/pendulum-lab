@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 13,
+  "phase": "candidate-complete",
+  "baselineHead": "cf97e8a615a6dde4afa99b64946fc15a6655f28f",
+  "implementationCheckpoints": {
+    "CP0": "f5ac8357006cc8b94ee5f537ad5f226e0700d1ab",
+    "CP1": "6eb48abb1e1bae5a2223660990faa69a0729200c",
+    "CP2": "e7336e13416bc54bc02daea07a80eaf84ec5c3eb"
+  },
+  "remoteEvidence": "Each checkpoint push returned success and git ls-remote origin refs/heads/codex/redesign matched its exact commit hash before the next checkpoint. Completion requires a separate final status commit and exact remote verification.",
+  "scope": {
+    "systems": ["driven", "coupled", "inverted", "cartpole", "parametric"],
+    "waveforms": ["sine", "square", "triangle"],
+    "controllerSystems": ["inverted", "cartpole"],
+    "sweep": "S13-only sequential 2–6 frequencies, at most 30s each; last-half angular range is a finite-time observation, not a steady-state resonance certification.",
+    "excluded": ["S14+ systems", "S21 generic queue", "new Learn content", "cutover", "master merge", "release"]
+  },
+  "targetedValidation": {
+    "CP1": { "passed": 91, "total": 91, "files": 3, "report": "tmp/S13-cp1-vitest.json" },
+    "CP2": { "passed": 48, "total": 48, "files": 4, "report": "tmp/S13-cp2-vitest.json" },
+    "browserPreparation": {
+      "development": "Interrupted after inline Vite style CSP console failures; interaction assertions passed. These failures are not green tests. Production preview retains console guards.",
+      "productionInitial": {
+        "passed": 54,
+        "unexpected": 4,
+        "report": "tmp/S13-cp2-playwright.json",
+        "reason": "Four first-time missing screenshot baseline preparation failures."
+      },
+      "latestRequiredUniqueCases": 60,
+      "latestRequiredPassed": 60,
+      "singleUninterruptedRun": false,
+      "latestReports": [
+        "tmp/S13-cp2-latest-playwright.json",
+        "tmp/S13-visual-preparation.json",
+        "tmp/S13-cp2-library-playwright.json"
+      ],
+      "latestBreakdown": "54 original functional cases, 2 added rotation cases, 4 latest rotation/sweep cases overlapping 2 original cases, 2 current driven visual cases and 2 library/retained-mock visual cases. Every unique required case has a latest pass.",
+      "skipped": 0,
+      "flaky": 0,
+      "automaticRetries": 0,
+      "timeoutOrAssertionRelaxation": false
+    }
+  },
+  "finalValidation": { "pending": true, "vitest": null, "productionBrowser": null, "staticChecks": null },
+  "numericalEvidence": {
+    "report": "documents/redesign/stage-runs/S13-numerical-metrics.json",
+    "command": "node --import tsx scripts/redesign/measure-driven-numerics.ts",
+    "interpretation": "Selected finite-time fixtures only. Original plant boundaries remain unchanged; no general stability or accuracy certification.",
+    "nativeParity": "Five default 0.2s / dt=0.002s fixtures: max native-state and inherited energy differences both zero.",
+    "closedLoopAngleRatiosAfter5s": { "inverted": 4.13096977e-7, "cartpole": 0.042325206 },
+    "impulseStepHalvingRatio": 16.04546516366808,
+    "largeStartImpulseErrorNs": 7.47071612558492e-9
+  },
+  "preservation": {
+    "legacySourceUnchanged": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "package.json",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "canonicalExtension": "Existing S03 schema and unit behavior preserved; additive N/rad and N*s/rad gain units have a serialization test. S13 adapter requires exact per-field units and rejects unknown/unsupported fields and nonempty analysis requests.",
+    "storage": "Isolated pendulum-product/driven/v1/ namespace; 200000-byte import cap; corrupt/future original records are retained and not overwritten.",
+    "legacyInventory": { "files": 883, "brokenImports": 0, "orphans": 0 },
+    "catalogDefinitions": 134,
+    "learn": { "courses": 8, "reservedUnits": 86, "publishedUnits": 8 },
+    "existingScreenshotsByteIdentical": 122,
+    "newScreenshotsDirectlyInspected": 8,
+    "desktopTransportCopies": {
+      "roadmapSha256": "1D46E04691D4119CED60DACB41945C75D9D1A20F66CBAED2B3664909F47F8995",
+      "executionSha256": "803B191496EDD95EBF2199A8983B920058109BB159D55F8BAFEB0737FA735FC5",
+      "match": true,
+      "planSourceFilesChanged": false
+    }
+  },
+  "review": {
+    "approvedUserGates": [7, 9],
+    "stage13HasUserGate": false,
+    "humanScientificReviewPerformed": false,
+    "publishedUnitsHumanReviewed": 0,
+    "coverage": "Windows Chromium desktop and Pixel5 mobile emulation, keyboard, axe WCAG A/AA, 320px and CSS zoom2. Physical devices, Firefox/WebKit and actual screen-reader audio remain unverified."
+  },
+  "remainingLimitations": [
+    "Local feedback only; no swing-up or universal gain stability guarantee. Safety stops preserve the last valid sample.",
+    "Square wave transitions use fixed steps without event-time resolution; refine step/frequency before interpreting response.",
+    "Inherited cartpole rod RHS and point-bob energy differ. Coupled energy omits the length-squared factor at non-unit length. Both are explicitly labeled diagnostics.",
+    "Saved/shared settings restart from native initial conditions and time origin; midflight integrator-state serialization is not claimed.",
+    "Inherited S11 double-string slack and S12 polar regularization/projection limitations remain documented in their stage documents."
+  ],
+  "security": {
+    "dependenciesChanged": false,
+    "inheritedBaseline": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; no refreshed dependency audit, remediation or risk acceptance occurred.",
+    "latestPushNotice": "Default-branch GitHub notice: high8/moderate3 (11 total), separate from the S01 baseline.",
+    "secretPatternScan": "Pending final tracked-file scan; history/ignored/binary content is outside its scope."
+  },
+  "rollbackReference": "cf97e8a615a6dde4afa99b64946fc15a6655f28f",
+  "nextValidStageAfterRemoteCompletion": 14
+}

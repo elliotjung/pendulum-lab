@@ -22,8 +22,8 @@
 |---|---|---|---|
 | CP0 | 진행 기록과 activeStage | plan/preflight, diff | 원격 확인 완료 |
 | CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 원격 확인 완료 |
-| CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 검증 완료·push 준비 |
-| CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 전체 Vitest, typecheck/lint/build, catalog/Learn/inventory/plan, 최종 browser | 대기 |
+| CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 원격 확인 완료 |
+| CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 문서/JSON/링크·plan/typecheck, push 뒤 전체 stage 검증 | candidate-complete |
 | STATUS | 완료 상태의 별도 commit/push | 구현 원격 존재, status 원격 hash 확인 | 대기 |
 
 ## 변경 예정 경로
@@ -73,3 +73,10 @@
 - `tmp/S13-cp2-latest-playwright.json`: 회전 경계와 수정된 sweep 4/4 통과. `tmp/S13-visual-preparation.json`: 새 그림 기준 2/2 통과. 기존 시각 기준 122개는 byte-identical이며 신규 기준은 8개다. 신규 8개를 직접 시각 검토했다.
 - 최종 production build/public-artifact privacy 검사 통과. 전체 stage 검증은 CP3 원격 보존 뒤 단일 전체 Vitest와 88개 production browser로 다시 수행한다.
 - `tmp/S13-cp2-library-playwright.json`: 새 library와 기존 mock 시각 비교 **2/2** 통과, snapshot update 없음. CP2의 60개 고유 필수 사례는 모두 최신 실행에서 통과했다. 이는 단일 60/60 실행 결과가 아니며 초기 실패·기준 생성·수정 후 최신 결과를 구분한다. timeout/retries/assertion 완화와 skip은 없다.
+- CP2 `e7336e13416bc54bc02daea07a80eaf84ec5c3eb` push 성공, `ls-remote` 정확한 hash 일치.
+
+## CP3 완료 후보
+
+- `driven-control-lab-ko.md`에 좌표·단위·제어 부호·포화·에너지 한계·재시작·공명 관찰의 한계를 기록했다.
+- 재생성 가능한 `scripts/redesign/measure-driven-numerics.ts`와 exact config를 포함한 `S13-numerical-metrics.json`, 검증·실패·보존 기록 `S13-verification.json`을 추가했다.
+- 전체 필수 검증과 별도 STATUS push는 아직 남았다. 완료 목록과 nextStage는 S12/S13을 유지한다.

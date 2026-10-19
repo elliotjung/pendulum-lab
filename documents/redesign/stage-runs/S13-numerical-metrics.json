@@ -1,0 +1,493 @@
+{
+  "schemaVersion": "S13-numerical-metrics/v1",
+  "recordedAtUtc": "2026-10-19T05:33:10.028Z",
+  "sourceHead": "6eb48abb1e1bae5a2223660990faa69a0729200c",
+  "command": "node --import tsx scripts/redesign/measure-driven-numerics.ts",
+  "environment": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "arch": "x64",
+    "node": "v26.3.0",
+    "cpu": "Intel(R) Core(TM) Ultra 7 256V"
+  },
+  "method": "Small direct adapter observations using the existing createExpansionSystem factory and rk4Step boundary. Every default parity sample is compared including the initial and final states. No product edits, golden regeneration, statistical inference or scientific certification.",
+  "parity": [
+    {
+      "systemId": "system:driven",
+      "config": {
+        "systemId": "system:driven",
+        "parameters": {
+          "g": 1,
+          "length": 1,
+          "damping": 0.5
+        },
+        "initialState": [
+          0.2,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 1.15,
+          "frequency": 0.6666666666666666,
+          "phase": 1.5707963267948966
+        }
+      },
+      "originalParameters": {
+        "g": 1,
+        "length": 1,
+        "damping": 0.5,
+        "driveAmplitude": 1.15,
+        "driveFrequency": 0.6666666666666666
+      },
+      "comparisonsIncludingInitial": 101,
+      "executedSteps": 100,
+      "finished": true,
+      "maxStateAbsDifference": 0,
+      "stateDifferenceUnits": "Per component: rad, rad/s; cart x m and v m/s; native drive phase rad. Maximum mixes units and is a parity metric only.",
+      "maxEnergyAbsDifferenceJ": 0
+    },
+    {
+      "systemId": "system:coupled",
+      "config": {
+        "systemId": "system:coupled",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "coupling": 2.2,
+          "damping": 0
+        },
+        "initialState": [
+          0.65,
+          -0.2,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "originalParameters": {
+        "g": 9.81,
+        "length": 1,
+        "coupling": 2.2,
+        "damping": 0
+      },
+      "comparisonsIncludingInitial": 101,
+      "executedSteps": 100,
+      "finished": true,
+      "maxStateAbsDifference": 0,
+      "stateDifferenceUnits": "Per component: rad, rad/s; cart x m and v m/s; native drive phase rad. Maximum mixes units and is a parity metric only.",
+      "maxEnergyAbsDifferenceJ": 0
+    },
+    {
+      "systemId": "system:inverted",
+      "config": {
+        "systemId": "system:inverted",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "damping": 0
+        },
+        "initialState": [
+          0.035,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "controller": {
+          "enabled": false,
+          "kp": 20,
+          "kd": 6,
+          "kx": 0,
+          "kv": 0,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "originalParameters": {
+        "g": 9.81,
+        "length": 1,
+        "damping": 0
+      },
+      "comparisonsIncludingInitial": 101,
+      "executedSteps": 100,
+      "finished": true,
+      "maxStateAbsDifference": 0,
+      "stateDifferenceUnits": "Per component: rad, rad/s; cart x m and v m/s; native drive phase rad. Maximum mixes units and is a parity metric only.",
+      "maxEnergyAbsDifferenceJ": 0
+    },
+    {
+      "systemId": "system:cartpole",
+      "config": {
+        "systemId": "system:cartpole",
+        "parameters": {
+          "cartMass": 1,
+          "poleMass": 0.16,
+          "length": 0.75,
+          "g": 9.81,
+          "force": 0,
+          "friction": 0
+        },
+        "initialState": [
+          0,
+          0.12,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0,
+          "frequency": 1,
+          "phase": 1.5707963267948966
+        },
+        "controller": {
+          "enabled": false,
+          "kp": 40,
+          "kd": 10,
+          "kx": 1,
+          "kv": 2,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "originalParameters": {
+        "cartMass": 1,
+        "poleMass": 0.16,
+        "length": 0.75,
+        "g": 9.81,
+        "force": 0,
+        "friction": 0
+      },
+      "comparisonsIncludingInitial": 101,
+      "executedSteps": 100,
+      "finished": true,
+      "maxStateAbsDifference": 0,
+      "stateDifferenceUnits": "Per component: rad, rad/s; cart x m and v m/s; native drive phase rad. Maximum mixes units and is a parity metric only.",
+      "maxEnergyAbsDifferenceJ": 0
+    },
+    {
+      "systemId": "system:parametric",
+      "config": {
+        "systemId": "system:parametric",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "damping": 0.04
+        },
+        "initialState": [
+          0.18,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0.34,
+          "frequency": 6.25,
+          "phase": 1.5707963267948966
+        }
+      },
+      "originalParameters": {
+        "g": 9.81,
+        "length": 1,
+        "damping": 0.04,
+        "amplitude": 0.34,
+        "frequency": 6.25
+      },
+      "comparisonsIncludingInitial": 101,
+      "executedSteps": 100,
+      "finished": true,
+      "maxStateAbsDifference": 0,
+      "stateDifferenceUnits": "Per component: rad, rad/s; cart x m and v m/s; native drive phase rad. Maximum mixes units and is a parity metric only.",
+      "maxEnergyAbsDifferenceJ": 0
+    }
+  ],
+  "closedLoop": [
+    {
+      "systemId": "system:inverted",
+      "config": {
+        "systemId": "system:inverted",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "damping": 0
+        },
+        "initialState": [
+          0.035,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 5,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "controller": {
+          "enabled": true,
+          "kp": 20,
+          "kd": 6,
+          "kx": 0,
+          "kv": 0,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "finished": true,
+      "executedSteps": 2500,
+      "initialAngleRad": 0.035,
+      "finalAngleRad": -1.4458394205406518e-8,
+      "finalToInitialAbsoluteAngleRatio": 4.1309697729732906e-7,
+      "maxAbsAngleRad": 0.035,
+      "maxAbsControl": 0.7000000000000001,
+      "controlUnit": "rad/s^2",
+      "maxAbsError": 0.035,
+      "errorUnit": "rad",
+      "saturatedSamples": 0,
+      "finalState": [
+        -1.4458394205406518e-8,
+        7.36842037840775e-8
+      ]
+    },
+    {
+      "systemId": "system:cartpole",
+      "config": {
+        "systemId": "system:cartpole",
+        "parameters": {
+          "cartMass": 1,
+          "poleMass": 0.16,
+          "length": 0.75,
+          "g": 9.81,
+          "force": 0,
+          "friction": 0
+        },
+        "initialState": [
+          0,
+          0.12,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 5,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0,
+          "frequency": 1,
+          "phase": 1.5707963267948966
+        },
+        "controller": {
+          "enabled": true,
+          "kp": 40,
+          "kd": 10,
+          "kx": 1,
+          "kv": 2,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "finished": true,
+      "executedSteps": 2500,
+      "initialAngleRad": 0.12,
+      "finalAngleRad": 0.005079024717375774,
+      "finalToInitialAbsoluteAngleRatio": 0.04232520597813145,
+      "maxAbsAngleRad": 0.12,
+      "maxAbsControl": 4.8,
+      "controlUnit": "N",
+      "maxAbsError": 0.4385772725282172,
+      "errorUnit": "m",
+      "saturatedSamples": 0,
+      "finalState": [
+        0.043123980007016983,
+        0.005079024717375774,
+        -0.0955850693630609,
+        0.0005500379125941522
+      ]
+    }
+  ],
+  "impulse": {
+    "formula": "P=(M+m)v + m*l*cos(theta)*omega; with g=0, friction=0 and constant force=0, dP/dt=A*sin(Omega*t+phase). Exact input impulse=A/Omega*[cos(Omega*t0+phase)-cos(Omega*(t0+T)+phase)].",
+    "conditions": "Legacy cart-pole equations with the exact configs below; private elapsed clock is integrated with derivative 1 at RK stages. Only native four-dimensional states are exposed. This momentum identity follows directly from the inherited cart acceleration equation despite its 4/3 pole inertia approximation.",
+    "coarse": {
+      "config": {
+        "systemId": "system:cartpole",
+        "parameters": {
+          "cartMass": 1,
+          "poleMass": 0.16,
+          "length": 0.75,
+          "g": 0,
+          "force": 0,
+          "friction": 0
+        },
+        "initialState": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.05,
+        "duration": 0.4,
+        "startTime": 2,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0.5,
+          "frequency": 7,
+          "phase": 0.4
+        },
+        "controller": {
+          "enabled": false,
+          "kp": 40,
+          "kd": 10,
+          "kx": 1,
+          "kv": 2,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "finished": true,
+      "executedSteps": 8,
+      "actualFinalTimeS": 2.4,
+      "analyticalImpulseNs": -0.01293851153442255,
+      "measuredMomentumChangeNs": -0.012938579433941647,
+      "absoluteImpulseErrorNs": 6.789951909752512e-8,
+      "finalNativeDimension": 4
+    },
+    "fine": {
+      "config": {
+        "systemId": "system:cartpole",
+        "parameters": {
+          "cartMass": 1,
+          "poleMass": 0.16,
+          "length": 0.75,
+          "g": 0,
+          "force": 0,
+          "friction": 0
+        },
+        "initialState": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.025,
+        "duration": 0.4,
+        "startTime": 2,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0.5,
+          "frequency": 7,
+          "phase": 0.4
+        },
+        "controller": {
+          "enabled": false,
+          "kp": 40,
+          "kd": 10,
+          "kx": 1,
+          "kv": 2,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "finished": true,
+      "executedSteps": 16,
+      "actualFinalTimeS": 2.4,
+      "analyticalImpulseNs": -0.01293851153442255,
+      "measuredMomentumChangeNs": -0.012938515766117823,
+      "absoluteImpulseErrorNs": 4.231695273707037e-9,
+      "finalNativeDimension": 4
+    },
+    "observedErrorReductionRatio": 16.04546516366808,
+    "observedOrderFromStepHalving": 4.004093709349058,
+    "largeStartClock": {
+      "config": {
+        "systemId": "system:cartpole",
+        "parameters": {
+          "cartMass": 1,
+          "poleMass": 0.16,
+          "length": 0.75,
+          "g": 0,
+          "force": 0,
+          "friction": 0
+        },
+        "initialState": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.00001,
+        "duration": 0.1,
+        "startTime": 1000000000,
+        "sampleEvery": 1,
+        "analyses": [],
+        "forcing": {
+          "waveform": "sine",
+          "amplitude": 0.5,
+          "frequency": 1,
+          "phase": 0
+        },
+        "controller": {
+          "enabled": false,
+          "kp": 40,
+          "kd": 10,
+          "kx": 1,
+          "kv": 2,
+          "reference": 0,
+          "maxOutput": 50
+        }
+      },
+      "finished": true,
+      "executedSteps": 10000,
+      "actualFinalTimeS": 1000000000.1,
+      "analyticalImpulseNs": 0.02933968866488329,
+      "measuredMomentumChangeNs": 0.029339681194167164,
+      "absoluteImpulseErrorNs": 7.47071612558492e-9,
+      "finalNativeDimension": 4
+    }
+  },
+  "limitations": [
+    "These are selected finite-time fixtures, not accuracy or stability guarantees for arbitrary gains, states, waveforms, durations or devices.",
+    "The adapter uses sine(nativePhase+offset); default offset pi/2 reproduces the original cosine drive up to floating-point rounding. Parity uses controller disabled and zero cart-pole waveform amplitude.",
+    "Mechanical energy is inherited diagnostic output. Drive, damping and controller exchange energy; no passive energy conservation claim is made here.",
+    "The legacy cart-pole 4/3 inertia RHS and point-bob energy diagnostic use different inertia approximations. Coupled energy omits a length-squared factor in its coupling term and is not a consistent invariant at non-unit length.",
+    "Default feedback observations concern only the reported local perturbations and final angle ratio; they do not establish global/asymptotic stability or validate every state variable.",
+    "Impulse observations use smooth sine forcing. Square-wave discontinuity timing is not resolved by an event solver.",
+    "Large absolute arguments retain JavaScript trigonometric and floating-point time precision limits. Elapsed clock avoids repeated addition of tiny dt onto 1e9, but does not remove argument-reduction limitations.",
+    "Elapsed measurement is a single concurrent-machine observation including setup, diagnostics and cloning, not a performance budget or portable benchmark. Human/expert scientific review has not been performed."
+  ],
+  "elapsedMs": 329.98350000000005
+}
