@@ -17,7 +17,7 @@
 
 ## 실험 의미와 단위
 
-`ExperimentStateV1`의 필수 필드는 schema, S02 `system:*` ID, modelVersion, parameters, initialConditions, integrator, runtime, analyses이다. modelOptions, seed, provenance는 선택 사항이며 SDE 시스템은 seed가 필수다.
+`ExperimentStateV1`의 필수 필드는 schema, S02 `system:*` ID, modelVersion, parameters, initialConditions, integrator, runtime, analyses이다. modelOptions, topology, seed, provenance는 선택 사항이며 SDE 시스템은 seed가 필수다.
 
 - 수치는 scalar, vector, complex-vector의 명시적 형태와 SI 단위로 저장한다. 복소 벡터의 re/im 길이는 같아야 한다. 각도는 rad, 각속도는 rad/s이며 serializer가 각도를 감거나 clamp하지 않는다.
 - [quantities.ts](../../src/product/contracts/quantities.ts)의 단위 allowlist가 계약이다. SI 차원을 가진 값과 정규화된 무차원 값(`1`)을 구분한다. 단위 변환은 자동 실행하지 않는다. 비 SI 값은 adapter가 명시적으로 변환한 뒤 provenance.sourceUnits로 원래 입력 단위를 보존할 수 있다.
@@ -98,6 +98,12 @@ parser는 hash, `/learn` 등의 hash body, 정확한 `/next.html#...` 상대 주
 [safe-data.ts](../../src/product/persistence/safe-data.ts)는 accessor/toJSON/숨은 속성/symbol/custom prototype/cycle/sparse array/prototype pollution 키를 거부하며 detached plain-data copy를 만든다. JSON scanner는 escape로 위장한 중복 키도 거부한다. programmatic Proxy의 reflection trap 자체까지 실행을 막는 JS 격리 경계는 아니며, 외부 전송 입력에는 JSON parser를 사용한다.
 
 ## 보존과 검증
+
+### S15의 versioned topology 확장
+
+S15의 5개 네트워크 시스템은 정확한 `network-model-v1`에서만 선택적 `topology`를 전송한다. `pendulum-network-topology/v1`은 고유 node ID의 배열, 고유 edge ID·source·target을 가진 무방향 단순 그래프, 선택적 물리적 `ringOrder`를 포함한다. 최대 128노드·4,096edge이며 self/parallel edge, 없는 endpoint, 중복 ID와 알 수 없는 필드를 거부한다. Chimera는 모든 노드가 한 번씩 등장하는 ringOrder가 필수다. 배열 재배열과 물리적 이웃 관계를 구분하여 노드 순열 뒤에도 같은 실험을 나타낼 수 있게 한다.
+
+질량·길이·고유진동수·초기 상태·edge weight는 기존 quantity 벡터에 저장한다. 공통 validator는 구조·버전·ID를 검사하고, adapter가 그래프와 벡터 차원·가중치·모델 제약을 실행 전에 검사한다. 이전 모델의 topology 없는 상태는 그대로 유효하다. 공통 schema ID와 단위 allowlist를 변경하지 않으며 새 graph 의미를 다른 모델 버전에서 조용히 무시하지 않는다.
 
 ### S14의 명시적 adapter 확장
 

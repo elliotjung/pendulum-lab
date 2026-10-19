@@ -13,11 +13,21 @@ export interface ExperimentStateV1 {
   readonly parameters: QuantityMap;
   readonly initialConditions: QuantityMap;
   readonly modelOptions?: OptionMap;
+  /** S15 network-model-v1 identity/order metadata; numerical properties stay in quantity vectors. */
+  readonly topology?: NetworkTopologyV1;
   readonly integrator: IntegratorState;
   readonly runtime: RuntimeState;
   readonly analyses: readonly AnalysisState[];
   readonly seed?: SeedState;
   readonly provenance?: ExperimentProvenance;
+}
+
+/** Undirected simple graph. Vector order follows nodes; ringOrder is independent of array storage order. */
+export interface NetworkTopologyV1 {
+  readonly schema: 'pendulum-network-topology/v1';
+  readonly nodes: readonly string[];
+  readonly edges: readonly { readonly id: string; readonly source: string; readonly target: string }[];
+  readonly ringOrder?: readonly string[];
 }
 
 /** Internal stepping remains system-owned; maps and quantum kicks never impersonate ODE methods. */

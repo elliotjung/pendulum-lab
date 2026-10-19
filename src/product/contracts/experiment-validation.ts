@@ -4,6 +4,7 @@ import type { SystemDefinition } from './catalog';
 import { fields, integer, invalid, isFieldName, isRecord, token } from './contract-checks';
 import { EXPERIMENT_SCHEMA, type ExperimentStateV1 } from './experiment';
 import { checkProvenance } from './provenance-validation';
+import { checkNetworkTopology } from './network-topology';
 import { checkQuantityMap } from './quantities';
 import { issue, success, type ContractIssue, type ContractResult } from './validation';
 
@@ -150,7 +151,7 @@ export function validateExperimentState(input: unknown): ContractResult<Experime
     !fields(
       value,
       ['schema', 'systemId', 'modelVersion', 'parameters', 'initialConditions', 'integrator', 'runtime', 'analyses'],
-      ['modelOptions', 'seed', 'provenance'],
+      ['modelOptions', 'topology', 'seed', 'provenance'],
       '$',
       issues
     )
@@ -171,6 +172,8 @@ export function validateExperimentState(input: unknown): ContractResult<Experime
   checkQuantityMap(value.parameters, '$.parameters', issues);
   checkQuantityMap(value.initialConditions, '$.initialConditions', issues);
   if (Object.hasOwn(value, 'modelOptions')) checkOptions(value.modelOptions, '$.modelOptions', issues);
+  if (Object.hasOwn(value, 'topology'))
+    checkNetworkTopology(value.topology, value.systemId, value.modelVersion, issues);
   checkIntegrator(value.integrator, system, issues);
   checkRuntime(value.runtime, system, value.modelVersion, issues);
   if (!Array.isArray(value.analyses) || value.analyses.length > MAX_ANALYSES)

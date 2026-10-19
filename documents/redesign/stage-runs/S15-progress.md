@@ -20,8 +20,8 @@
 
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 진행 기록·activeStage | plan check, preflight, typecheck | 통과·push 대기 |
-| CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 대기 |
+| CP0 | 진행 기록·activeStage | plan check, preflight, typecheck | 완료 |
+| CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 검증 완료·push 대기 |
 | CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 대기 |
 | CP3 | 수치·보존·검증 보고서 | 전체 Vitest, 관련 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 후 최종 검증, status push/remote hash | 대기 |
@@ -41,3 +41,15 @@
 - 기존 S01 dependency/CodeQL 문제는 이번 단계에서 해결·수용했다고 주장하지 않는다.
 - desktop 두 transport 사본은 원본 SHA256과 일치한다. roadmap `1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995`, execution `803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5`.
 - checkpoint 검증 후 명시적 경로만 commit/push하고 정확한 원격 hash를 확인한다. 최종 STATUS까지 nextStage=15를 유지한다.
+- CP0 `e8d8d80da614651bf4aa0817d68a9781352f4b85` commit/push 성공, `ls-remote` 정확한 hash 일치, 깨끗한 CP0에서 preflight 재통과.
+- 기존 native engine 기준 `tmp/S15-native-vitest.json`: 23/23, 3파일, 실패 0. 공통 topology 계약+기존 상태 계약 `tmp/S15-contract-vitest.json`: 50/50, 2파일, 실패 0.
+- 공통 `ExperimentStateV1.topology`는 정확한 network-model-v1에서만 허용하는 닫힌 metadata 확장이다. 단위 allowlist와 공통 schema ID는 유지한다.
+
+## CP1 검증
+
+- engine adapter/worker/전용 계약 62개, 공통 topology 18개와 기존 상태 계약 32개: `tmp/S15-cp1-vitest.json` **112/112**, 5파일, 실패·pending 0.
+- 전체 typecheck, engine 6파일·전용 테스트 3파일과 공통 계약 변경 범위의 scoped ESLint 통과. 초기 typecheck의 테스트 배열 인덱스 타입 오류 4개는 수정 뒤 통과했으며 테스트 조건을 완화하지 않았다.
+- native RK4 네 모델의 모든 fixture 단계 상태 일치, 기존 chimera midpoint/wrapping·실제 threshold 일치, 다섯 모델의 노드 순열 오차 <1e-12, stable ID 기반 seed/canonical 왕복, Huygens 양/음 결합 잠금, 고립 노드, 2/128노드 경계와 명시적 고리 반경을 검증했다.
+- 자기 grid는 native semi-implicit Euler 각 셀의 최근접 ID·속도 수렴 mask·수행 단계와 일치한다. 10,000단계짜리 첫 셀 안의 취소와 128노드 worker 취소·8ms 예산·64단계·최대 2,001표본을 검증했다.
+- worker는 초기 상태·node ID·phase/state 대응·같은 시각의 기록/현재 상태·요청 순서·오류 payload를 검증한다. null/primitive 오류 snapshot, timeout, dispose, 전달 실패, 시작 실패와 수치 불안정의 마지막 유효 상태 보존을 검사했다.
+- 검토 중 고리 생성이 R을 무시하는 문제, invalid plain object의 Number/String 강제 변환, null worker 오류 snapshot, 서로 모순되는 worker 표본을 발견하여 이 checkpoint 안에서 수정했다. 네이티브 방정식·허용오차·기존 fixture는 바꾸지 않았다.
