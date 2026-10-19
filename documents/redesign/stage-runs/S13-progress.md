@@ -20,8 +20,8 @@
 
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 진행 기록과 activeStage | plan/preflight, diff | 준비 |
-| CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 대기 |
+| CP0 | 진행 기록과 activeStage | plan/preflight, diff | 원격 확인 완료 |
+| CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 검증 완료·push 준비 |
 | CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 대기 |
 | CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 전체 Vitest, typecheck/lint/build, catalog/Learn/inventory/plan, 최종 browser | 대기 |
 | STATUS | 완료 상태의 별도 commit/push | 구현 원격 존재, status 원격 hash 확인 | 대기 |
@@ -38,7 +38,11 @@
 
 - 시작 plan check: 30 stages / 86 unique units / next S13.
 - 시작 preflight: S13 at `cf97e8a615a6`, origin과 정확히 일치.
-- CP0: 아직 commit/push 전. 완료 목록은 S12, nextStage=13을 유지한다.
+- CP0 `f5ac8357006cc8b94ee5f537ad5f226e0700d1ab` push 성공, `ls-remote` 정확한 hash 일치. 완료 목록은 S12, nextStage=13을 유지한다.
+- CP0 push가 알린 기본 branch dependency 경고는 high 8 / moderate 3이다. 신규 audit나 보안 해결 결과가 아니다.
+- 구현 조사에서 cartpole의 rod RHS와 point-bob 에너지 진단 차이를 확인했다. 보존량으로 쓰지 않으며 기존 물리 코드를 바꾸지 않는다.
+- gain의 물리 단위를 잃지 않도록 canonical allowlist에 `N/rad`, `N*s/rad` 두 단위를 추가했다. 기존 단위·serializer·schema 식별자는 보존한다. 단위 직렬화 관련 19/19 테스트 통과(샌드박스의 하위 프로세스 EPERM 뒤 승인된 동일 명령으로 재실행).
+- desktop transport 두 사본의 SHA256은 저장소 원본과 각각 일치한다(roadmap `1D46E04691D4119CED60DACB41945C75D9D1A20F66CBAED2B3664909F47F8995`, execution `803B191496EDD95EBF2199A8983B920058109BB159D55F8BAFEB0737FA735FC5`). 원본 두 계획 파일은 변경하지 않았다.
 
 ## 검토·위험
 
@@ -46,3 +50,14 @@
 - 기존 보안 및 사람 과학 검토 미완료 상태는 해결됐다고 주장하지 않는다.
 - 파형 불연속·유한 step·선형 제어기의 국소 유효 범위와 plant 각도 convention을 원 코드 및 fixture로 확인한다.
 - desktop transport 사본은 종료 시 원본과 hash를 대조하고 차이를 기록한다.
+
+## CP1 검증
+
+- `tmp/S13-cp1-vitest.json`: adapter/worker 72개와 quantities 19개, **91/91 통과**, 3파일, skip/todo/실패 0.
+- `npm run typecheck` 통과. adapter 5개·test 2개와 root 연결 파일의 scoped ESLint 통과. `git diff --check` 통과.
+- 기본 cosine/제어 off 상태는 다섯 기존 factory 엔진과 비교한다(상태 11자리, 에너지 10자리 검사). 별도 상수 힘도 원 엔진과 일치한다.
+- zero-drive passive 극한·대칭 결합 모드, sine/square/triangle·주파수·native phase/offset round trip과 거부 입력을 검증한다.
+- inverted/cartpole 기본 피드백의 5 s fixture는 최종 각도 편차가 초기의 15% 미만이다. gain의 일반 안정성을 보장하지 않는다. 포화·gain 오류·π/2 안전 범위 이탈 뒤 마지막 유효 상태 보존을 검증한다.
+- cartpole의 RK4 중간 시각 구동을 analytic impulse와 대조했다. step 0.05→0.025 s의 오차 비율 12–20, 작은 step 오차 <1e-7. 시작 시각 1e9 s와 step 1e-5 s에서도 elapsed clock fixture의 impulse 오차 <1e-8.
+- worker는 요청당 최대 64단계/8 ms 협력 예산, 최대 2,001표본, 응답 timeout 15 s, 순서·진단 유효성·취소/에러/종료를 검증한다.
+- CP1에는 adapter·관련 테스트·정확한 gain 단위·계약 문서만 stage한다. UI 및 route 변경은 CP2에 보존한다.

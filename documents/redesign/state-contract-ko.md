@@ -21,6 +21,7 @@
 
 - 수치는 scalar, vector, complex-vector의 명시적 형태와 SI 단위로 저장한다. 복소 벡터의 re/im 길이는 같아야 한다. 각도는 rad, 각속도는 rad/s이며 serializer가 각도를 감거나 clamp하지 않는다.
 - [quantities.ts](../../src/product/contracts/quantities.ts)의 단위 allowlist가 계약이다. SI 차원을 가진 값과 정규화된 무차원 값(`1`)을 구분한다. 단위 변환은 자동 실행하지 않는다. 비 SI 값은 adapter가 명시적으로 변환한 뒤 provenance.sourceUnits로 원래 입력 단위를 보존할 수 있다.
+- S13은 cartpole gain을 정확히 직렬화하기 위해 `N/rad`, `N*s/rad`를 추가한다. 기존 단위·schema·fixture는 그대로 유지하며 inverted gain은 `s^-2`, `s^-1`, cartpole 위치 gain은 `N/m`, `N*s/m`를 사용한다.
 - sourceUnits는 `parameters.<name>` 또는 `initialConditions.<name>`의 실제 quantity를 가리키며 canonical 단위와 차원이 맞아야 한다. 예를 들어 deg→rad, cm→m만 허용하며 deg→kg는 거부한다.
 - 기존 double의 감쇠 계수는 질량행렬 역산 전 일반화 토크에 곱해지므로 fixture에서 `kg*m^2/s`를 사용한다. 다른 모델의 감쇠 계수에 이 단위를 일괄 적용하지 않는다.
 - parameters/initialConditions/settings는 adapter가 소유하는 이름→quantity map이다. modelOptions 및 적분기/분석 options는 안전한 식별자 또는 boolean map이며, 임의 함수·실행식·자유 서술 텍스트를 담지 않는다.

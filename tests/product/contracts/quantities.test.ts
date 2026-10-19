@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
+import { parseExperiment, serializeExperiment } from '../../../src/product/persistence';
+import { experimentFixture } from './fixtures';
 import {
   CANONICAL_UNITS,
   MAX_QUANTITY_VECTOR_LENGTH,
@@ -7,6 +9,23 @@ import {
 } from '../../../src/product/contracts/quantities';
 
 describe('S03 canonical SI quantities', () => {
+  it('preserves S13 controller gain units through canonical serialization', () => {
+    const state = experimentFixture();
+    const gains = {
+      kp: { kind: 'scalar' as const, value: 40, unit: 'N/rad' as const },
+      kd: { kind: 'scalar' as const, value: 10, unit: 'N*s/rad' as const },
+      kx: { kind: 'scalar' as const, value: 1, unit: 'N/m' as const },
+      kv: { kind: 'scalar' as const, value: 2, unit: 'N*s/m' as const }
+    };
+    const serialized = serializeExperiment({ ...state, parameters: gains });
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) throw new Error('Controller gain unit fixture failed serialization');
+    const parsed = parseExperiment(serialized.value);
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) throw new Error('Controller gain unit fixture failed parsing');
+    expect(parsed.value.parameters).toEqual(gains);
+  });
+
   it('preserves scalar, vector, complex components, explicit angle units and winding exactly', () => {
     for (const quantity of [
       { kind: 'scalar', value: 8 * Math.PI, unit: 'rad' },

@@ -18,6 +18,8 @@ export const CANONICAL_UNITS = [
   'kg*m^2',
   'kg*m^2/s',
   'N',
+  'N/rad',
+  'N*s/rad',
   'N/m',
   'N*s/m',
   'J',
