@@ -172,14 +172,27 @@ export function createNonlinearSimulation(input: NonlinearConfig, options: { sta
   function relativeTape(localTime: number): NonlinearDelayState {
     const target = localTime - p.delay!,
       first = times.findIndex((t) => t >= target);
-    const tailTimes = times.slice(Math.max(first, 0)),
-      tailStates = states.slice(Math.max(first, 0));
-    if (tailTimes[0] !== target) {
+    const bracket = first > 0 && times[first] !== target ? first - 1 : Math.max(first, 0);
+    // Keep the native accepted bracketing point whenever it fits in the supported
+    // tail window. Inserting a point only a few ulps from it can create duplicate
+    // timestamps when both are translated to a continuation origin.
+    const crop =
+      target - times[bracket]! > config.step + 1e-12 || (historyBoundary !== undefined && target < historyBoundary);
+    const tailTimes = times.slice(crop ? Math.max(first, 0) : bracket),
+      tailStates = states.slice(crop ? Math.max(first, 0) : bracket);
+    if (crop && tailTimes[0] !== target) {
       tailTimes.unshift(target);
       tailStates.unshift([...delayedAt(target)]);
     }
+    const relativeTimes = tailTimes.map((t) => canonicalNumber(t - localTime));
+    // The analytic left segment can end within one representable relative time
+    // of the accepted discontinuity boundary. Keep that accepted right limit.
+    if (crop && relativeTimes.length > 1 && relativeTimes[0] === relativeTimes[1]) {
+      relativeTimes.shift();
+      tailStates.shift();
+    }
     return {
-      times: tailTimes.map((t) => canonicalNumber(t - localTime)),
+      times: relativeTimes,
       states: tailStates.map((s) => s.map(canonicalNumber)),
       ...(historyBoundary === undefined || historyBoundary < target
         ? {}

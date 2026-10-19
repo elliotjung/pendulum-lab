@@ -118,6 +118,54 @@ describe('S14 bounded nonlinear worker', () => {
   });
 });
 describe('S14 worker client lifecycle and hostile packets', () => {
+  it.each([1, 7, 64])('accepts a full default Pyragas horizon with %i-step client packets', (chunk) => {
+    const config = defaultNonlinearConfig('system:pyragas'),
+      fake = fakeWorker(),
+      events: NonlinearWorkerEvent[] = [],
+      client = createNonlinearWorkerClient(
+        config,
+        (e) => events.push(e),
+        () => fake.worker
+      );
+    fake.flush();
+    let completed = false;
+    while (!completed) {
+      expect(client.advance(chunk)).toBe(true);
+      const produced = fake.flush();
+      expect(events.at(-1)?.type).toBe(produced.type);
+      if (produced.type !== 'progress') throw new Error('progress');
+      expect(events.at(-1)).toEqual(produced);
+      completed = produced.done;
+    }
+    expect(events.at(-1)).toMatchObject({ type: 'progress', done: true });
+  });
+  it.each([9, 109])('accepts every resumed Pyragas packet after saving at step%i', (saveStep) => {
+    const base = {
+        ...defaultNonlinearConfig('system:pyragas'),
+        duration: 0.6,
+        history: { kind: 'linear' as const, state: [0.7, -0.3] }
+      },
+      direct = createNonlinearSimulation(base);
+    for (let i = 0; i < saveStep; i++) direct.step();
+    const config = direct.serialize(),
+      fake = fakeWorker(),
+      events: NonlinearWorkerEvent[] = [],
+      client = createNonlinearWorkerClient(
+        config,
+        (e) => events.push(e),
+        () => fake.worker
+      );
+    fake.flush();
+    let completed = false;
+    while (!completed) {
+      expect(client.advance(7)).toBe(true);
+      const produced = fake.flush();
+      expect(events.at(-1)).toEqual(produced);
+      if (produced.type !== 'progress') throw new Error('progress');
+      completed = produced.done;
+    }
+    expect(events.at(-1)).toMatchObject({ type: 'progress', done: true });
+  });
   it.each(NONLINEAR_SYSTEM_IDS)('%s permits one request and terminates once on completion', (id) => {
     const fake = fakeWorker(),
       events: NonlinearWorkerEvent[] = [],

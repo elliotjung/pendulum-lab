@@ -339,7 +339,8 @@ describe('S14 Pyragas prehistory, bounded tape and continuation', () => {
       if (i % 11 === 0) {
         const restart = restored.serialize(),
           canonical = toCanonicalNonlinear(restart);
-        expect(restart.delayState!.times[0]).toBeCloseTo(-0.2, 14);
+        expect(restart.delayState!.times[0]).toBeGreaterThanOrEqual(-0.2 - c.step - 1e-12);
+        expect(restart.delayState!.times[0]).toBeLessThanOrEqual(-0.2 + 1e-12);
         expect(restart.delayState!.times.at(-1)).toBe(0);
         expect(restart.delayState!.times.length).toBeLessThanOrEqual(MAX_NONLINEAR_DELAY_POINTS);
         if (i < 60) expect(restart.delayState!.historyBoundary).toBeDefined();

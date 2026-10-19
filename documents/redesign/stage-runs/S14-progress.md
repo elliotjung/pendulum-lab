@@ -23,6 +23,7 @@
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan/preflight, diff | 원격 확인 완료 |
 | CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 검증 완료·push 준비 |
+| CP1-FIX | production에서 발견한 지연 꼬리 중복 시각 수정 | 전체 client horizon·초기/후기 continuation·기존 계약, typecheck/lint | 검증 완료·push 준비 |
 | CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | UI 구현·unit 검증 완료, browser 대기 |
 | CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 대기 |
@@ -61,3 +62,12 @@
 - 개발 중 early continuation 측정 오차 `2.6655945675815862e-5`를 발견했다. 원래 불연속 경계의 양쪽을 부동소수점 오차로 다르게 선택한 것이 원인이었다. 저장된 경계에서만 32 ulp 이내를 승인된 오른쪽 상태로 일관되게 선택한다. 같은 고정 fixture의 최신 최대 오차는 `2.7755575615628914e-17`, 허용오차 `1e-12`이다. 실패 측정은 `tmp/S14-numerical-development-early-boundary.json`에 보존했다.
 - 초기 통합 typecheck의 미완성 client 필드·typed-array 타입 오류는 수정 후 통과했다. 첫 UI targeted 실행의 diagnostic/time 계약 불일치도 정확한 `nonlinear-model-v1` wrapper 확장으로 수정했다. 기존 버전·알 수 없는 버전의 evaluation 계약과 다른 diagnostic 모델을 회귀 테스트로 보존했다.
 - CP1에는 adapter 6파일·adapter/worker 테스트 2파일, 최소 runtime 계약 확장·회귀 테스트, 상태 계약 문서·진행 기록·activeStageCheckpoint만 stage한다. 제품 UI·route/catalog·수치 보고서는 다음 checkpoint에 남긴다.
+- CP1 `50254b7c7307a7e516a5a9745a3cfa67457477e2` push 성공, `ls-remote` 정확한 hash 일치.
+- CP2 production build와 public-artifact privacy 검사 통과. browser 준비 실행을 시작한다. 기존 앱·물리/분석/런타임/worker/validation·공개 API·package/lockfile·golden 경로의 변경은 0개다.
+
+## CP2 browser 준비 중 발견
+
+- 첫 production browser 실행에서 기본 Pyragas가 약 0.210 s에 client의 잘못된 worker 결과 거부 경로로 들어갔다. 해당 실패와 30s timeout을 통과 결과로 세지 않는다. CP2를 push하기 전에 전체 delay 구간을 통과하는 client 회귀 fixture를 추가하고 원인을 수정한다.
+- 새로운 시각 기준이 없는 첫 실행의 screenshot 실패도 별도로 기록한다. 기존 시각 파일을 갱신하거나 timeout/retry/assertion을 완화하지 않는다.
+- 실제 원인은 0.216 s의 crop 대상과 기존 승인 격자점이 같은 상대 double(-0.2)로 변환되어 strict-order 검사를 실패한 것이었다. analytic 구간 이후에는 `[-τ−dt,-τ]`의 실제 승인 bracket을 보존한다. 아직 analytic 구간인 crop은 정확한 원래 함수를 유지하고 동일한 상대 표현의 합성 crop만 제거한다. validator의 엄격한 순서 검사는 유지했다.
+- `tmp/S14-cp1-fix-vitest.json`: **93/93**, 4파일. adapter/worker는 58개이며 실제 client로 전체 기본 10s·chunk 1/7/64·초기 9단계/후기 109단계 이어가기를 검증하는 5개 회귀를 추가했다. typecheck·변경 TS ESLint 통과. 기존 물리식·golden·허용오차 변경은 없다.
