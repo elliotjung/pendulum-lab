@@ -21,8 +21,8 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 진행 기록과 activeStage | plan/preflight, diff | 원격 확인 완료 |
-| CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 검증 완료·push 준비 |
-| CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 대기 |
+| CP1 | adapter/schema/worker, 원 엔진 연결·구동·제어 | passive/zero-force, 원 엔진 비교, closed-loop, saturation/invalid, worker cancel/error, typecheck | 원격 확인 완료 |
+| CP2 | Lab UI/저장/공유/내보내기, 카탈로그·라우트 | model/storage, desktop/mobile/keyboard/axe/320px/zoom, 시각 검증, build | 검증 완료·push 준비 |
 | CP3 | 과학적 한계·검증·보존 문서와 완료 후보 | 전체 Vitest, typecheck/lint/build, catalog/Learn/inventory/plan, 최종 browser | 대기 |
 | STATUS | 완료 상태의 별도 commit/push | 구현 원격 존재, status 원격 hash 확인 | 대기 |
 
@@ -61,3 +61,15 @@
 - cartpole의 RK4 중간 시각 구동을 analytic impulse와 대조했다. step 0.05→0.025 s의 오차 비율 12–20, 작은 step 오차 <1e-7. 시작 시각 1e9 s와 step 1e-5 s에서도 elapsed clock fixture의 impulse 오차 <1e-8.
 - worker는 요청당 최대 64단계/8 ms 협력 예산, 최대 2,001표본, 응답 timeout 15 s, 순서·진단 유효성·취소/에러/종료를 검증한다.
 - CP1에는 adapter·관련 테스트·정확한 gain 단위·계약 문서만 stage한다. UI 및 route 변경은 CP2에 보존한다.
+- CP1 `6eb48abb1e1bae5a2223660990faa69a0729200c` push 성공, `ls-remote` 정확한 hash 일치.
+
+## CP2 진행
+
+- UI model/storage/edit/sweep 45/45 targeted tests 통과. 최종 집계와 production browser 검증은 아직 남았다.
+- 개발 서버의 첫 브라우저 시도는 기존 Vite inline style/CSP console 오류로 afterEach 검사를 실패했다. 동작 assertion과 별개인 실패이며 통과로 세지 않는다. console 검사를 유지한 채 production build/preview에서 다시 검증한다.
+- production 준비 실행 `tmp/S13-cp2-playwright.json`은 기능 54통과 / 최초 시각 기준 생성 4실패이다. 이를 58/58 통과로 표시하지 않는다. 이후 회전 경계를 추가하고 실제 0.2 s 제어 결과를 새 시각 기준에 담았다.
+- 마지막 source에서 `tmp/S13-cp2-vitest.json`: UI **48/48**, 4파일, 실패/pending/todo 0. typecheck 및 UI·route·catalog·E2E 변경 범위 ESLint 통과.
+- 원점 y=160으로 전체 회전을 화면 안에 표시한다. 조건 적용·기본 예제·JSON·보관함 복원 뒤 이전 sweep 결과·오류를 지우고 worker 세대를 종료한다. stale 응답과 동기 취소 경로를 unit/browser로 검증했다.
+- `tmp/S13-cp2-latest-playwright.json`: 회전 경계와 수정된 sweep 4/4 통과. `tmp/S13-visual-preparation.json`: 새 그림 기준 2/2 통과. 기존 시각 기준 122개는 byte-identical이며 신규 기준은 8개다. 신규 8개를 직접 시각 검토했다.
+- 최종 production build/public-artifact privacy 검사 통과. 전체 stage 검증은 CP3 원격 보존 뒤 단일 전체 Vitest와 88개 production browser로 다시 수행한다.
+- `tmp/S13-cp2-library-playwright.json`: 새 library와 기존 mock 시각 비교 **2/2** 통과, snapshot update 없음. CP2의 60개 고유 필수 사례는 모두 최신 실행에서 통과했다. 이는 단일 60/60 실행 결과가 아니며 초기 실패·기준 생성·수정 후 최신 결과를 구분한다. timeout/retries/assertion 완화와 skip은 없다.

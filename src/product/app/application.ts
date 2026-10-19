@@ -41,7 +41,16 @@ export function mountApplication(root: HTMLElement, window: Window) {
                   'system:spherical-embedded-chain'
                 ].includes(route.systemId)
               ? import('./views/spatial-lab')
-              : loaders[space](),
+              : route.kind === 'lab-system' &&
+                  [
+                    'system:driven',
+                    'system:coupled',
+                    'system:inverted',
+                    'system:cartpole',
+                    'system:parametric'
+                  ].includes(route.systemId)
+                ? import('./views/driven-lab')
+                : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

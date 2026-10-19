@@ -4,7 +4,6 @@ import {
   b,
   p,
   driveLimit,
-  state2,
   state3,
   state4,
   expansionParams,
@@ -52,20 +51,23 @@ export const drivenRows: readonly SystemRow[] = [
     family: 'driven-control',
     evolution: 'ode',
     stage: 13,
-    name: l('개방 루프 역진자', 'Open-loop inverted pendulum'),
+    name: l('역진자', 'Inverted pendulum'),
     description: l(
-      '위쪽 평형을 기준으로 한 역진자의 불안정 운동.',
-      'Unstable inverted-pendulum motion measured from the upright equilibrium.'
+      '위쪽 평형을 기준으로 개방 루프 또는 포화된 PD 피드백을 비교한다.',
+      'Compares open-loop motion and saturated PD feedback around the upright equilibrium.'
     ),
     binding: expansionDefinitions,
     engines: [expansionFactory],
     parameters: expansionParams,
     state: p('expandedModels-types', 'ExpansionSystem'),
-    coordinates: state2,
+    coordinates: l(
+      '[theta, omega], rad와 rad/s. theta=0은 위쪽 불안정 평형이며 화면 y는 위쪽이다.',
+      '[theta, omega] in rad and rad/s. Theta=0 is the unstable upright equilibrium; display y points up.'
+    ),
     dof: 1,
     limitation: l(
-      'factory id=inverted이며 피드백 제어기는 포함하지 않는다.',
-      'Uses factory id=inverted and includes no feedback controller.'
+      'factory id=inverted의 plant를 보존한다. 새 Lab의 별도 PD adapter는 각도 오차를 사용하며 |theta−reference|>π/2에서 안전 중지한다. 국소 안정화이며 전역 swing-up 제어가 아니다.',
+      'Preserves the factory id=inverted plant. A separate Lab PD adapter uses angular error and stops at |theta−reference|>π/2. Local stabilization only; no global swing-up controller.'
     )
   },
   {
@@ -73,23 +75,23 @@ export const drivenRows: readonly SystemRow[] = [
     family: 'driven-control',
     evolution: 'ode',
     stage: 13,
-    name: l('개방 루프 카트폴', 'Open-loop cart-pole'),
+    name: l('카트폴', 'Cart-pole'),
     description: l(
-      '카트와 진자의 결합 운동에 상수 외력을 적용한다.',
-      'Applies a constant external force to coupled cart and pole motion.'
+      '카트와 위쪽 진자의 결합 운동에 외력·파형·상태 피드백을 적용한다.',
+      'Applies external force, waveforms and state feedback to a cart and upright pole.'
     ),
     binding: expansionDefinitions,
     engines: [expansionFactory],
     parameters: expansionParams,
     state: p('expandedModels-types', 'ExpansionSystem'),
     coordinates: l(
-      '[x, theta, xDot, thetaDot] 카트 위치와 진자 각.',
-      '[x, theta, xDot, thetaDot] cart position and pole angle.'
+      '[x, theta, xDot, thetaDot], m·rad·m/s·rad/s. theta=0은 위쪽, 화면 y는 위쪽이다.',
+      '[x, theta, xDot, thetaDot] in m, rad, m/s, rad/s. Theta=0 is upright; display y points up.'
     ),
     dof: 2,
     limitation: l(
-      'factory id=cartpole이다. 제어기·피드백 안정화나 포화 제한을 구현한 모델이 아니다.',
-      'Uses factory id=cartpole. Feedback stabilization, controllers, and saturation constraints are not implemented here.'
+      'factory id=cartpole의 plant와 에너지 진단을 보존한다. 기존 rod RHS와 point-bob 에너지식은 서로 달라 보존 검증에 쓰지 않는다. 별도 Lab 제어기는 포화·각도 안전 한계를 가진 국소 상태 피드백이다.',
+      'Preserves the factory id=cartpole plant and energy diagnostic. The inherited rod RHS and point-bob energy formula differ, so energy is not a conservation check. The separate Lab controller is local state feedback with saturation and angle safety limits.'
     )
   },
   {

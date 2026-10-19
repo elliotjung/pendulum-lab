@@ -198,7 +198,7 @@ test.describe('S06 system-first laboratory', () => {
     await page.goto('/next.html#/lab');
     await page.getByLabel('시스템 패밀리').selectOption('classical');
     await audit(page);
-    await expect(page).toHaveScreenshot('s12-lab-library-light.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s13-lab-library-light.png', { fullPage: true });
     // S12 promotes the spatial family. The original S06/S11
     // images remain historical evidence; retained delay mock visuals get distinct names.
     await openSystem(page, 'pyragas');
