@@ -22,7 +22,7 @@
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan check, preflight, typecheck | 완료 |
 | CP1 | native adapter·schema·canonical·bounded worker | native parity, permutation, graph/seed, cancel/error, 계약, typecheck | 완료 |
-| CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 검증 완료·push 대기 |
+| CP2 | 전용 Lab·topology·metrics·basin·files·저장 | model/edit/storage tests, desktop/mobile/keyboard/axe/visual, build | 완료 |
 | CP3 | 수치·보존·검증 보고서 | 전체 Vitest, 관련 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 후 최종 검증, status push/remote hash | 대기 |
 
@@ -68,3 +68,11 @@
 - `tmp/S15-targeted-verified-playwright.json`: **18/18**, 90.795s, 실패·skip·flaky·retry·snapshot update 0. 5개 모델의 0.37 초기 상태 원자 편집·저장/공유 왕복 10개와 S15/추가 topology/inspector/기존 Lab 시각 8개를 정상 실행으로 통과했다. SHA256 `5d71e0fc2e85fb94d693a749d1d647d5905f7c37afd51157211b7ebc23efbdaa`.
 - CP2 고유 필수 browser 56개는 초기 기능 48개와 강화한 최신 18개(10개 중복)의 통과 증거를 결합한다. 단일 56/56 실행이라고 표시하지 않는다. CP3 원격 보존 후 전체 S15·기존 Lab·shell 여정을 단일 정상 실행으로 확인한다.
 - 최종 새 PNG 16개를 직접 시각 검토했다. 수렴 2셀(n2/n3)과 미수렴 2셀의 분리, 잘리지 않는 축, desktop/mobile 단위 caption, topology/개별 상태, dark inspector의 필드·도움말을 확인했다. 소수 fixture의 정확한 범위·수행 단계·native 일치는 numerical report에 보존한다.
+- CP2 `fae50ba3f58218287b61cfe0677cbe9a2b278960` push 성공, `ls-remote` 정확한 hash 일치.
+
+## CP3 완료 후보
+
+- `network-lab-ko.md`에 다섯 모델의 native 경계·좌표·단위·그래프/seed·왕복 의미·범용 node metadata·성능·과학적 한계를 기록했다.
+- `measure-network-numerics.ts`는 출력 경로를 선택할 수 있으며, default authoritative 보고서와 별도로 최종 재현을 ignored tmp에 기록한다. native RK4 네 모델·chimera 차이 0, 순열 오차 <1e-12, seed 왕복, Huygens 선택 fixture와 Kuramoto 유한 관찰을 재현한다.
+- 자기 native grid 총13셀 일치(기본9셀+대표4셀), 대표 화면의 수렴 2/미수렴 2, large-network/첫 셀 내부 취소를 검증했다. 성능 수치는 한 기기의 단발성 관측이며 8ms의 엄격한 deadline이나 dense128 성능 인증이 아니다.
+- CP3 전용 script ESLint·전체 typecheck 통과, 수치 check 8/8 통과. 제품 구현은 CP1/CP2로 원격에 있다. 이 후보 문서 push 후 전체 필수 검증과 별도 STATUS push를 남기며 lastCompletedStage=14, nextStage=15를 유지한다.
