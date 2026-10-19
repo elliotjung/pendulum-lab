@@ -24,8 +24,8 @@
 | CP0 | 진행 기록·activeStage | plan/preflight, diff | 원격 확인 완료 |
 | CP1 | schema/adapter/worker와 수치 계약 | native parity, known limits, delay restore, 마찰 전환, stability, cancel/error, typecheck | 원격 확인 완료 |
 | CP1-FIX | production에서 발견한 지연 꼬리 중복 시각 수정 | 전체 client horizon·초기/후기 continuation·기존 계약, typecheck/lint | 원격 확인 완료 |
-| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | 검증 완료·push 준비 |
-| CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | 대기 |
+| CP2 | 전용 UI·preset·저장·공유·export·route/catalog | unit/component, desktop/mobile/keyboard/axe/320px/zoom, 시각 검토, build | 원격 확인 완료 |
+| CP3 | 과학적 한계·검증·보존 증거와 완료 후보 | 문서/JSON/plan, 전체 Vitest·관련 production browser·정적 검사 | candidate-complete 준비·전체 검증 대기 |
 | STATUS | 별도 완료 commit/push | 구현 원격 존재·최종 원격 hash | 대기 |
 
 ## 변경 예정 경로
@@ -83,3 +83,10 @@
 - `tmp/S14-cp2-playwright.json`: 수정·caption·320px·zoom·모델별 진단·시각 **14/14**, 단일 153.648s, 실패/skip/flaky/retry/snapshot update 0. 추가로 강화한 Pyragas 실행은 반드시 0.4s를 지나도록 검사한다. 개발 중 테스트 변수의 scope 오류는 typecheck에서 발견해 수정했으며 제품 오류로 집계하지 않는다.
 - CP2의 고유 필수 사례는 두 project 합계 52개다. 초기 통과 사례와 수정 후 최신 통과 사례를 결합하며, 이를 단일 52/52 실행이라고 표시하지 않는다. CP3 원격 보존 뒤 전체 필수 browser와 전체 Vitest를 각각 중단 없는 실행으로 확인한다.
 - 강화한 Pyragas lifecycle와 worker 시작 실패/회복/페이지 이탈의 최종 `tmp/S14-cp2-pyragas-regression.json`은 **4/4**, 27.3s, 실패/skip/flaky/retry/update 0. 직전 3/4 실행은 route click 직후 비동기 화면 전환이 끝나기 전에 종료 count를 읽은 테스트의 순서 오류였다. `.lab-library` 표시를 기다린 뒤 동일한 worker 종료 count=1을 검사한다. 실패 JSON은 `tmp/S14-cp2-pyragas-regression-initial.json`에 보존했다.
+- CP2 `58f9b13268337b6d26ade11a6496419f6764edf2` push 성공, `ls-remote` 정확한 hash 일치.
+
+## CP3 완료 후보
+
+- `nonlinear-lab-ko.md`에 방정식·단위·native 경계·비매끈/지연/평균화 한계·저장/이어가기 의미·자원 한도·보존/복구를 기록했다.
+- `scripts/redesign/measure-nonlinear-numerics.ts`와 `S14-numerical-metrics.json`으로 exact config의 수치 관찰을 재생성한다. 세 native RK4 차이 0, native DDE 약 `6.94e-17`, 후기 이어가기 0, 초기 불연속 이어가기 약 `2.78e-17`; 고정 성분 허용오차 `1e-12`를 변경하지 않았다.
+- `S14-verification.json`은 현재 candidate-complete이며 초기 실패와 최신 targeted 검증, 보존 범위, 사람 검토 미완료와 기존 보안 위험을 구분한다. 구현 원격 존재 확인 뒤 전체 필수 검증과 별도 STATUS push가 남아 있다. lastCompletedStage=13, nextStage=14를 유지한다.

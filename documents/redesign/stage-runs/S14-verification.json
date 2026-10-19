@@ -1,0 +1,270 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 14,
+  "phase": "candidate-complete",
+  "baselineHead": "f52cbe4150e702cb1a2f754aa10b9db8ee07547f",
+  "implementationCheckpoints": {
+    "CP0": "0997c032ffbf5800ab50a07e74d061f72140a161",
+    "CP1": "50254b7c7307a7e516a5a9745a3cfa67457477e2",
+    "CP1-FIX": "349b1a432a1eff427969dfb4b4cd378ddef259c2",
+    "CP2": "58f9b13268337b6d26ade11a6496419f6764edf2",
+    "CP3": null
+  },
+  "remoteEvidence": "Each listed checkpoint push succeeded and exact git ls-remote hash was checked before proceeding. Completion additionally requires the separate final status commit push and exact remote hash check; that final commit cannot contain its own hash.",
+  "scope": {
+    "systems": [
+      "duffing",
+      "van-der-pol",
+      "kapitza",
+      "mathieu",
+      "friction",
+      "pyragas"
+    ],
+    "result": "Six real native-equation adapters, model presets, dedicated potential/limit-cycle/Floquet/friction/history views, atomic editing, worker execution, isolated persistence, share/import, unit-bearing CSV and SVG.",
+    "canonicalExtension": "Exact nonlinear-model-v1 permits time-response wrappers only for mathieu/friction; older and unknown diagnostic versions remain evaluation. Explicit timeConvention normalized|si. Pyragas analytic history scalars and optional bounded tail vectors+analytic boundary are preserved.",
+    "excluded": [
+      "S15+",
+      "generic S21 sweep queue",
+      "new Learn units",
+      "app cutover",
+      "master merge",
+      "release"
+    ]
+  },
+  "targetedValidation": {
+    "native": {
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 6,
+      "report": "tmp/S14-native-baseline-vitest.json",
+      "sha256": "d31061c5ac71995dd49b0340746937e9e88daffeca2bf0d430013aa50f24f621"
+    },
+    "CP1": {
+      "total": 88,
+      "passed": 88,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 4,
+      "report": "tmp/S14-cp1-vitest.json",
+      "sha256": "f0617b9db9a21c68a9b8cb1a89d8360acb04b940286a22c0209afe1730245aac"
+    },
+    "CP1Fix": {
+      "total": 93,
+      "passed": 93,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 4,
+      "report": "tmp/S14-cp1-fix-vitest.json",
+      "sha256": "aac9c1e3915083ec6321adbc9a3ee86890ff7fc9d6122e363c1883f077913076"
+    },
+    "CP2": {
+      "total": 37,
+      "passed": 37,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 3,
+      "report": "tmp/S14-cp2-vitest.json",
+      "sha256": "e3c8d16b4fc9124e03a07a7cbfed0af8d7ac1d4c4601ae60077e50dd491c5500"
+    },
+    "browserLatest": {
+      "startTime": "2026-10-19T06:40:31.913Z",
+      "duration": 153648.473,
+      "expected": 14,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-cp2-playwright.json",
+      "sha256": "7d579745373ec095999e18e91dcd46521a3ae5240257545aa956698a2e3f612a"
+    },
+    "browserTightenedPyragas": {
+      "startTime": "2026-10-19T06:45:01.067Z",
+      "duration": 27318.743,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-cp2-pyragas-regression.json",
+      "sha256": "14fad5d61f9d8adfd80c00f6144e330d8e9d3479dc0ed88b7fdbf2d25e358a47"
+    },
+    "browserScope": "52 unique CP2 cases have latest passing results across initial46 + patched14 + tightened4, with overlapping cases counted once. This is not one uninterrupted52-case passing run; the final80-case run is separately required."
+  },
+  "finalValidation": {
+    "pending": true,
+    "head": "58f9b13268337b6d26ade11a6496419f6764edf2",
+    "vitest": null,
+    "productionBrowser": null,
+    "staticChecks": null,
+    "conditions": "Unchanged test timeouts, zero automatic retries/skip or screenshot updates in final production browser, one uninterrupted full final browser run, full Vitest maxWorkers=2; heavy test suites run sequentially."
+  },
+  "developmentFailures": {
+    "sandbox": "Node Git/esbuild child-process EPERM and Git write/network restrictions were rerun with identical commands under approved escalation; no failing check was treated as green.",
+    "earlyContinuation": {
+      "maxStateDifference": 0.000026655945675815862,
+      "report": "tmp/S14-numerical-development-early-boundary.json",
+      "resolution": "Preserve analytic historyBoundary and select the accepted right limit consistently within 32 ulp at that boundary; fixed 1e-12 tolerance retained."
+    },
+    "browserInitial": {
+      "startTime": "2026-10-19T06:28:16.767Z",
+      "duration": 450764.823,
+      "expected": 46,
+      "skipped": 0,
+      "unexpected": 6,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-cp2-playwright-initial.json",
+      "sha256": "1bbe6489ef01fe403635598952d7ff7425628096a18a36fd9eba24aedc637225"
+    },
+    "browserInitialExplanation": "46 passed/6 unexpected: two missing new lab visual baselines, two Pyragas client duplicate-relative-time lifecycle failures and two nonlinear visual cases with missing baselines/Pyragas error. Failed outputs archived separately.",
+    "delayClientResolution": "Retain actual accepted bracketing history points after analytic prehistory expires; do not insert a synthetic crop that collapses onto a relative timestamp. Added full 10s client runs at chunk1/7/64 and early/late restored horizons; strict order validation unchanged.",
+    "visualPreparation": {
+      "startTime": "2026-10-19T06:36:53.612Z",
+      "duration": 57975.69899999999,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-cp2-visual-preparation.json",
+      "sha256": "0e47b5ee640a6264fc6d4cef6b2666ec151abe81a1ec6a5ad88d298cae8d79e6"
+    },
+    "tightenedPyragasInitial": {
+      "startTime": "2026-10-19T06:43:27.628Z",
+      "duration": 36215.345,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "errors": 0,
+      "report": "tmp/S14-cp2-pyragas-regression-initial.json",
+      "sha256": "578aa487cbdc3e2fb388cea5fbe8103b5cc62c57d7aba938166129ed3e117f2e"
+    },
+    "tightenedPyragasInitialExplanation": "3/4: worker-disposal test read counter before asynchronous route settled; now awaits visible library and retains exact terminate count=1 assertion. Final4/4 separately recorded.",
+    "mobileReadability": "Direct visual inspection found hidden mobile SVG text. Added visible title/axis/unit captions in S14 only, tightened browser visibility assertions, and intentionally regenerated affected new S14 mobile baselines. Historical snapshots are byte-preserved.",
+    "initialTypecheck": "In-progress copied client fields and typed-array/index types were fixed before checkpoint validation.",
+    "initialUiTests": "First UI targeted run 27/36 passed: time-wrapper catalog-domain mismatch plus over-budget advance in fixtures. Added narrowly versioned runtime contract and corrected fixture scheduling; latest targeted UI report is passing."
+  },
+  "numericalEvidence": {
+    "report": "documents/redesign/stage-runs/S14-numerical-metrics.json",
+    "command": "node --import tsx scripts/redesign/measure-nonlinear-numerics.ts",
+    "summary": "Three native RK4 fixtures max difference0; VDP tail amplitude about2.00862; Kapitza5s max inverted deviation about.09999rad vs6.183rad without drive; Mathieu rho4.15605 vs~1; default friction15s stick130/slip2870 with3 transitions; native DDE difference~6.94e-17, late continuation0, early discontinuous continuation~2.78e-17.",
+    "fixedComponentTolerance": 1e-12,
+    "interpretation": "Selected finite-time fixtures only; no general stability, limit-cycle, chaos-control or event-time certification."
+  },
+  "preservation": {
+    "legacySourceUnchanged": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/lib",
+      "package.json",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "storage": "New pendulum-product/nonlinear/v1/ namespace; UTF8 256KiB import and common structural limits; corrupt/future originals retained.",
+    "resources": "100000steps,2001retained samples,64steps/8ms per request,15s timeout,2048delay tape points,65display curve/history points.",
+    "catalogDefinitions": 134,
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "publishedUnits": 8
+    },
+    "legacyInventory": {
+      "files": 883,
+      "brokenImports": 0,
+      "orphans": 0
+    },
+    "retention": null,
+    "newScreenshotsDirectlyInspected": 14,
+    "historicalScreenshotCount": 130,
+    "desktopTransportCopies": {
+      "roadmapSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "roadmapDesktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "executionSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "executionDesktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "planSourceFilesChanged": false
+    }
+  },
+  "review": {
+    "approvedUserGates": [
+      7,
+      9
+    ],
+    "stage14HasUserGate": false,
+    "humanScientificReviewPerformed": false,
+    "publishedUnitsHumanReviewed": 0,
+    "coverage": "Windows Chromium desktop and Pixel5 mobile emulation; keyboard/axe,320px,CSSzoom2,new screenshots directly inspected. Physical devices,Firefox/WebKit and actual screen-reader audio unverified."
+  },
+  "remainingLimitations": [
+    "Fixed-step discontinuity times and sampled delay history need dt/history refinement.",
+    "Kapitza effective potential assumes fast/small forcing; Van der Pol can be stiff; Duffing softening can escape.",
+    "Mathieu multiplier tolerance is not a boundedness proof, particularly at repeated/Jordan multipliers.",
+    "Friction spring/block is an explicit Lab wrapper; Stribeck regularization affects comparison curve while actual trajectory uses Coulomb complementarity.",
+    "Pyragas continuation restarts the original configured observation duration from the current state/clock with required tail; it is not a remaining-run integrator object dump.",
+    "Large history may exceed share URL limits and requires JSON. Earlier S11–S13 scientific limitations remain documented."
+  ],
+  "security": {
+    "dependenciesChanged": false,
+    "inheritedBaseline": "S01 npm high2/moderate2 and CodeQL32 remain unresolved; no refreshed dependency audit or risk acceptance.",
+    "latestPushNotice": "Default-branch GitHub notice high8/moderate3 (11); unresolved, separate from S01 baseline.",
+    "secretPatternScan": "See final static check log; known-pattern tracked text only, not history/ignored/binary content."
+  },
+  "rollbackReference": "f52cbe4150e702cb1a2f754aa10b9db8ee07547f",
+  "nextValidStageAfterRemoteCompletion": 15,
+  "changedFiles": [
+    "css/product/nonlinear.css",
+    "documents/redesign/stage-runs/S14-progress.md",
+    "documents/redesign/state-contract-ko.md",
+    "documents/redesign/status.json",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-lab-library-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-retained-mock-inspector-dark-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-retained-mock-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-retained-mock-workspace-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s14-retained-mock-workspace-light-mobile-chrome-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-duffing-potential-light-chromium-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-duffing-potential-light-mobile-chrome-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-friction-events-dark-chromium-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-friction-events-dark-mobile-chrome-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-pyragas-history-light-chromium-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-pyragas-history-light-mobile-chrome-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-vanderpol-phase-dark-chromium-win32.png",
+    "e2e/redesign/nonlinear-pendulum.spec.ts-snapshots/s14-vanderpol-phase-dark-mobile-chrome-win32.png",
+    "src/product/adapters/physics/nonlinear-client.ts",
+    "src/product/adapters/physics/nonlinear-contract.ts",
+    "src/product/adapters/physics/nonlinear-schema.ts",
+    "src/product/adapters/physics/nonlinear-worker-protocol.ts",
+    "src/product/adapters/physics/nonlinear.ts",
+    "src/product/adapters/physics/nonlinear.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/nonlinear-lab.ts",
+    "src/product/catalog/systems-driven.ts",
+    "src/product/contracts/experiment-validation.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/nonlinear-files.ts",
+    "src/product/lab/views/nonlinear-inspector.ts",
+    "src/product/lab/views/nonlinear-model.ts",
+    "src/product/lab/views/nonlinear-plots.ts",
+    "src/product/lab/views/nonlinear-storage.ts",
+    "src/product/lab/views/nonlinear-workspace.ts",
+    "tests/product/adapters/physics/nonlinear-worker.test.ts",
+    "tests/product/adapters/physics/nonlinear.test.ts",
+    "tests/product/contracts/nonlinear-runtime.test.ts",
+    "tests/product/lab/nonlinear-edit.test.ts",
+    "tests/product/lab/nonlinear-model.test.ts",
+    "tests/product/lab/nonlinear-storage.test.ts"
+  ]
+}

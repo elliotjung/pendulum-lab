@@ -111,4 +111,4 @@ Pyragas의 설정은 `historyKind`, `historyTheta`, `historyOmega`와 선택적 
 
 [계약 테스트 폴더](../../tests/product/contracts/)에는 SI scalar/vector/complex, stochastic seed, 별도 UI, artifact 계보, strict JSON, 임의 삽입 순서, 고정 seed property test, 공유 손상·공격·시스템 불일치가 포함된다. S01 수치 fixture와 인벤토리, S02 카탈로그 및 전체 기존 Vitest 회귀도 함께 확인한다. 집계와 Git 증거는 [S03 진행 기록](stage-runs/S03-progress.md)에 보존한다.
 
-새 UI/E2E나 과학 단원을 제작하지 않았으며 사람·전문가 검토 완료를 표시하지 않는다. 기존 dependency/CodeQL 미해결 위험은 S01 기록을 유지한다. S03 완료 여부는 별도 status commit의 `origin/codex/redesign` 존재 확인으로 결정한다.
+S03에서는 새 UI/E2E나 과학 단원을 제작하지 않았으며 사람·전문가 검토 완료를 표시하지 않는다. 기존 dependency/CodeQL 미해결 위험은 S01 기록을 유지한다. S03 완료 여부는 별도 status commit의 `origin/codex/redesign` 존재 확인으로 결정한다.

@@ -1,0 +1,544 @@
+{
+  "schemaVersion": "S14-numerical-metrics/v1",
+  "recordedAtUtc": "2026-10-19T06:47:45.420Z",
+  "sourceHead": "58f9b13268337b6d26ade11a6496419f6764edf2",
+  "command": "node --import tsx scripts/redesign/measure-nonlinear-numerics.ts",
+  "environment": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "node": "v26.3.0",
+    "cpu": "Intel(R) Core(TM) Ultra 7 256V"
+  },
+  "parity": [
+    {
+      "systemId": "system:duffing",
+      "config": {
+        "systemId": "system:duffing",
+        "parameters": {
+          "damping": 0.3,
+          "linearStiffness": -1,
+          "cubicStiffness": 1,
+          "driveAmplitude": 0.37,
+          "driveFrequency": 1.2
+        },
+        "initialState": [
+          0.5,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "maxStateAbsDifference": 0,
+      "executedSteps": 100
+    },
+    {
+      "systemId": "system:van-der-pol",
+      "config": {
+        "systemId": "system:van-der-pol",
+        "parameters": {
+          "mu": 1
+        },
+        "initialState": [
+          0.1,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "maxStateAbsDifference": 0,
+      "executedSteps": 100
+    },
+    {
+      "systemId": "system:kapitza",
+      "config": {
+        "systemId": "system:kapitza",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "driveAmplitude": 0.2,
+          "driveFrequency": 30,
+          "damping": 0
+        },
+        "initialState": [
+          3.241592653589793,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.001,
+        "duration": 0.2,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "maxStateAbsDifference": 0,
+      "executedSteps": 200
+    }
+  ],
+  "phenomena": [
+    {
+      "config": {
+        "systemId": "system:duffing",
+        "parameters": {
+          "damping": 0,
+          "linearStiffness": 1,
+          "cubicStiffness": 0,
+          "driveAmplitude": 0,
+          "driveFrequency": 1.2
+        },
+        "initialState": [
+          1,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 8,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 8,
+      "executedSteps": 4000,
+      "finalState": [
+        -0.14550003380755602,
+        -0.9893582466235356,
+        9.59999999999951
+      ],
+      "maxAbsCoordinate": 0.9999999170344535,
+      "maxAbsVelocity": 0.9999999998313429,
+      "tailCoordinateRange": [
+        -0.14550003380755602,
+        0.999999668137822
+      ]
+    },
+    {
+      "config": {
+        "systemId": "system:van-der-pol",
+        "parameters": {
+          "mu": 1
+        },
+        "initialState": [
+          0.1,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.002,
+        "duration": 40,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 40,
+      "executedSteps": 20000,
+      "finalState": [
+        1.5378777753464778,
+        -0.762998001252402
+      ],
+      "maxAbsCoordinate": 2.0086198542549822,
+      "maxAbsVelocity": 2.678441479575131,
+      "tailCoordinateRange": [
+        -2.0086198542549822,
+        2.0086197847372578
+      ]
+    },
+    {
+      "config": {
+        "systemId": "system:kapitza",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "driveAmplitude": 0.2,
+          "driveFrequency": 30,
+          "damping": 0
+        },
+        "initialState": [
+          3.241592653589793,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.001,
+        "duration": 5,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 5,
+      "executedSteps": 5000,
+      "finalState": [
+        3.099865163145841,
+        -0.34839040925813924,
+        150.00000000000492
+      ],
+      "maxAbsCoordinate": 3.2415841590589354,
+      "maxAbsVelocity": 0.5542519410052916,
+      "maxInvertedDeviationRad": 0.09999150546914226,
+      "tailCoordinateRange": [
+        3.099865163145841,
+        3.2385943440802363
+      ]
+    },
+    {
+      "config": {
+        "systemId": "system:kapitza",
+        "parameters": {
+          "g": 9.81,
+          "length": 1,
+          "driveAmplitude": 0,
+          "driveFrequency": 30,
+          "damping": 0
+        },
+        "initialState": [
+          3.241592653589793,
+          0,
+          0
+        ],
+        "integratorId": "integrator:rk4",
+        "step": 0.001,
+        "duration": 5,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 5,
+      "executedSteps": 5000,
+      "finalState": [
+        3.4751056167564527,
+        -0.991503847522222,
+        150.00000000000492
+      ],
+      "maxAbsCoordinate": 9.324777933389687,
+      "maxAbsVelocity": 6.256354877673502,
+      "maxInvertedDeviationRad": 6.183185279799893,
+      "tailCoordinateRange": [
+        3.4751056167564527,
+        8.462188668849633
+      ]
+    },
+    {
+      "config": {
+        "systemId": "system:mathieu",
+        "parameters": {
+          "delta": 0.25,
+          "epsilon": 0.5
+        },
+        "initialState": [
+          0.1,
+          0
+        ],
+        "integratorId": "internal",
+        "step": 0.005,
+        "duration": 20,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 20,
+      "executedSteps": 4000,
+      "finalState": [
+        0.5667920589767953,
+        3.984098660146065
+      ],
+      "maxAbsCoordinate": 4.756040464556006,
+      "maxAbsVelocity": 4.003211340363537,
+      "tailCoordinateRange": [
+        -4.756040464556006,
+        0.5667920589767953
+      ],
+      "floquet": {
+        "stable": false,
+        "spectralRadius": 4.156054938581536,
+        "determinantDrift": 6.8833827526759706e-15
+      }
+    },
+    {
+      "config": {
+        "systemId": "system:mathieu",
+        "parameters": {
+          "delta": 0.6,
+          "epsilon": 0.1
+        },
+        "initialState": [
+          0.1,
+          0
+        ],
+        "integratorId": "internal",
+        "step": 0.005,
+        "duration": 20,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 20,
+      "executedSteps": 4000,
+      "finalState": [
+        -0.10477849949113144,
+        -0.021245244246876627
+      ],
+      "maxAbsCoordinate": 0.11451799550218361,
+      "maxAbsVelocity": 0.09018917734029616,
+      "tailCoordinateRange": [
+        -0.10477849949113144,
+        0.11451799550218361
+      ],
+      "floquet": {
+        "stable": true,
+        "spectralRadius": 0.9999999999999977,
+        "determinantDrift": 4.884981308350689e-15
+      }
+    },
+    {
+      "config": {
+        "systemId": "system:friction",
+        "parameters": {
+          "mass": 1,
+          "stiffness": 1,
+          "staticFriction": 1.2,
+          "dynamicFriction": 0.7,
+          "stribeckVelocity": 0.4,
+          "regularizationVelocity": 0.01,
+          "viscous": 0.08,
+          "driveAmplitude": 2,
+          "driveFrequency": 1
+        },
+        "initialState": [
+          0,
+          0,
+          1.5707963267948966
+        ],
+        "integratorId": "internal",
+        "step": 0.005,
+        "duration": 15,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 15,
+      "executedSteps": 3000,
+      "finalState": [
+        -4.898532924280221,
+        -4.233839735042873,
+        16.570796326795897
+      ],
+      "maxAbsCoordinate": 5.465731090403934,
+      "maxAbsVelocity": 6.01503229664504,
+      "tailCoordinateRange": [
+        -4.898532924280221,
+        5.465731090403934
+      ],
+      "stickSamples": 130,
+      "slipSamples": 2870,
+      "modeTransitions": 3,
+      "maxMomentumResidual": 8.903988657493755e-14
+    },
+    {
+      "config": {
+        "systemId": "system:friction",
+        "parameters": {
+          "mass": 1,
+          "stiffness": 1,
+          "staticFriction": 1.2,
+          "dynamicFriction": 0.7,
+          "stribeckVelocity": 0.4,
+          "regularizationVelocity": 0.01,
+          "viscous": 0.08,
+          "driveAmplitude": 0.8,
+          "driveFrequency": 1
+        },
+        "initialState": [
+          0,
+          0,
+          0
+        ],
+        "integratorId": "internal",
+        "step": 0.005,
+        "duration": 15,
+        "startTime": 0,
+        "sampleEvery": 1,
+        "analyses": []
+      },
+      "finalTime": 15,
+      "executedSteps": 3000,
+      "finalState": [
+        0,
+        0,
+        15.000000000000943
+      ],
+      "maxAbsCoordinate": 0,
+      "maxAbsVelocity": 0,
+      "tailCoordinateRange": [
+        0,
+        0
+      ],
+      "stickSamples": 3000,
+      "slipSamples": 0,
+      "modeTransitions": 0,
+      "maxMomentumResidual": 0
+    }
+  ],
+  "delay": {
+    "config": {
+      "systemId": "system:pyragas",
+      "parameters": {
+        "g": 1,
+        "length": 1,
+        "damping": 0.2,
+        "feedbackGain": 0.1,
+        "delay": 0.073,
+        "driveAmplitude": 0,
+        "driveFrequency": 1
+      },
+      "initialState": [
+        0.3,
+        0
+      ],
+      "integratorId": "internal",
+      "step": 0.002,
+      "duration": 0.4,
+      "startTime": 0,
+      "sampleEvery": 1,
+      "analyses": [],
+      "history": {
+        "kind": "linear",
+        "state": [
+          0.3,
+          0.2
+        ]
+      }
+    },
+    "nativeFinalState": [
+      0.2772648052423994,
+      -0.11063830257098546
+    ],
+    "adapterFinalState": [
+      0.2772648052423993,
+      -0.11063830257098553
+    ],
+    "nativeFinalMaxAbsDifference": 6.938893903907228e-17,
+    "continuationOrigin": 0.114,
+    "preservedDelayPoints": 38,
+    "continuationMaxStateDifference": 0,
+    "continuationMeaning": "Same configured observation duration starts at the current time. Comparison uses only the overlapping original horizon; this is a continuation initial condition, not an integrator object dump."
+  },
+  "earlyDelay": {
+    "config": {
+      "systemId": "system:pyragas",
+      "parameters": {
+        "g": 1,
+        "length": 1,
+        "damping": 0.2,
+        "feedbackGain": 0.1,
+        "delay": 0.2,
+        "driveAmplitude": 0.4,
+        "driveFrequency": 1.7
+      },
+      "initialState": [
+        0.3,
+        0
+      ],
+      "integratorId": "internal",
+      "step": 0.002,
+      "duration": 0.4,
+      "startTime": 2,
+      "sampleEvery": 1,
+      "analyses": [],
+      "history": {
+        "kind": "linear",
+        "state": [
+          0.7,
+          -0.3
+        ]
+      }
+    },
+    "continuationOrigin": 2.018,
+    "delayState": {
+      "times": [
+        -0.2,
+        -0.018000000000000002,
+        -0.016,
+        -0.014000000000000002,
+        -0.012000000000000002,
+        -0.010000000000000002,
+        -0.008000000000000002,
+        -0.006000000000000002,
+        -0.004000000000000002,
+        -0.0020000000000000018,
+        0
+      ],
+      "states": [
+        [
+          0.7545999999999999,
+          -0.3
+        ],
+        [
+          0.3,
+          0
+        ],
+        [
+          0.2999987278835434,
+          -0.0012719346233022184
+        ],
+        [
+          0.2999949129934618,
+          -0.0025427713149524414
+        ],
+        [
+          0.299988557539473,
+          -0.0038124962234754372
+        ],
+        [
+          0.29997966375897933,
+          -0.005081095515844738
+        ],
+        [
+          0.29996823391703065,
+          -0.006348555377625352
+        ],
+        [
+          0.299954270306287,
+          -0.0076148620131162685
+        ],
+        [
+          0.29993777524698095,
+          -0.008880001645492781
+        ],
+        [
+          0.29991875108687965,
+          -0.010143960516948599
+        ],
+        [
+          0.2998972002012469,
+          -0.011406724888837767
+        ]
+      ],
+      "historyBoundary": -0.018000000000000002
+    },
+    "maxStateDifference": 2.7755575615628914e-17,
+    "method": "Save after 0.018s before the 0.2s delay elapses; discontinuous linear prehistory and nonzero absolute forcing clock; compare every remaining original step."
+  },
+  "checks": {
+    "nativeRk4Parity": true,
+    "nativeDelayParity": true,
+    "continuationParity": true,
+    "earlyDiscontinuousContinuationParity": true
+  },
+  "limitations": [
+    "Selected finite-time observations only; no universal stability, limit-cycle, chaos-control or event-time certification.",
+    "Duffing, Van der Pol and Mathieu use normalized displacement and time; numerical parity maxima mix native components and are comparison metrics only.",
+    "Kapitza averaged effective potential is not its directly forced energy; inverted stability requires checking forcing scale and step convergence.",
+    "Friction transitions occur at grid steps; the native scalar contact solve is exact stiction for the frozen force, not an event-time spring/block integrator.",
+    "Pyragas delay history uses linear interpolation; continuation equality is assessed on the overlapping horizon, with a nonintegral delay/step ratio and a nonconstant prehistory.",
+    "A single local elapsed time is not a performance benchmark. No human scientific review was performed."
+  ],
+  "elapsedMs": 1365.9229
+}
