@@ -1,0 +1,715 @@
+{
+  "schemaVersion": "pendulum-redesign-S18-verification/v1",
+  "stage": 18,
+  "phase": "validated",
+  "recordedAtUtc": "2026-10-20T04:52:04.122Z",
+  "baseline": {
+    "branch": "codex/redesign",
+    "head": "21bd6692ba2a3228035d95cb355eacbcfda96a01",
+    "dependency": 17,
+    "dependencyStatusCommit": "21bd669",
+    "clean": true,
+    "planCheck": true,
+    "preflight": true
+  },
+  "candidateHead": "b6df2cf9a4d35c103ec9ff70528a211f942a153b",
+  "checkpoints": [
+    {
+      "id": "CP0",
+      "commit": "b4d0c3057035ff69bfc798564914c16ff27e6194",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP1",
+      "commit": "66d7b347852437c8ca243fea47e36efe02f3c04c",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP2",
+      "commit": "b6df2cf9a4d35c103ec9ff70528a211f942a153b",
+      "push": "exact remote hash verified"
+    }
+  ],
+  "gates": {
+    "wholeVitest": true,
+    "targeted": true,
+    "newProductionJourneys": true,
+    "legacyProductionJourneys": true,
+    "quality": true,
+    "numerics": true,
+    "preservation": true,
+    "visual": true
+  },
+  "validation": {
+    "targeted": {
+      "report": "tmp/S18-cp1-vitest.json",
+      "sha256": "caad083fcde9368e5d933fa05ace7ba17c9c8e7964e2896ca024105ce039e297",
+      "total": 664,
+      "passed": 664,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 18
+    },
+    "fullVitest": {
+      "report": "tmp/S18-final-vitest.json",
+      "sha256": "eb289aece3479210896d34fac8a1e01adf68df902864461f545d3842bbd2af59",
+      "total": 3896,
+      "passed": 3896,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 314
+    },
+    "browser": {
+      "report": "tmp/S18-final-playwright.json",
+      "sha256": "b82fafe99181a6e8440c223003aee6009a10d39c3768990c340c8b73618b4f8d",
+      "startTime": "2026-10-20T04:32:51.251Z",
+      "duration": 242941.411,
+      "expected": 46,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 46,
+      "projects": ["chromium", "mobile-chrome"],
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "none",
+      "workers": 1
+    },
+    "legacyBrowser": {
+      "report": "tmp/S18-legacy-playwright.json",
+      "sha256": "491e9dc5b437604f10f236f173c0c3b46d342a8fe297c1ad38f6833728501440",
+      "startTime": "2026-10-20T04:42:34.162Z",
+      "duration": 313023.856,
+      "expected": 48,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 48,
+      "projects": ["chromium", "mobile-chrome"],
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "none",
+      "workers": 1
+    },
+    "browserExitEvidence": {
+      "report": "tmp/S18-ui-validation.json",
+      "sha256": "f3ce36efc06e224a52f6d40ee3406583190e10614b62aa709a2fb4061410070e",
+      "schema": "pendulum-s18-ui-validation/v1",
+      "build": {
+        "command": "npm run build *> tmp/S18-final-build.log",
+        "log": "tmp/S18-final-build.log",
+        "exitCode": 0,
+        "sha256": "cbc49961950c3032f9ff4fd2c28a562f703e0b7ca90c20bc4407f9ffc1824159"
+      },
+      "browser": {
+        "command": "npx playwright test e2e/redesign/core-diagnostics.spec.ts --project=chromium --project=mobile-chrome --update-snapshots=none --reporter=line,json --output=tmp/S18-browser-artifacts",
+        "environment": {
+          "PLAYWRIGHT_PORT": "5378",
+          "PLAYWRIGHT_USE_PREVIEW": "1",
+          "PLAYWRIGHT_JSON_OUTPUT_NAME": "tmp/S18-final-playwright.json"
+        },
+        "report": "tmp/S18-final-playwright.json",
+        "log": "tmp/S18-final-playwright.log",
+        "exitCode": 0,
+        "caseCount": 46,
+        "passed": 46,
+        "unexpected": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "errors": 0,
+        "retries": 0,
+        "snapshotUpdates": "none",
+        "durationMs": 242941.411,
+        "sha256": "b82fafe99181a6e8440c223003aee6009a10d39c3768990c340c8b73618b4f8d"
+      },
+      "visual": {
+        "images": [
+          {
+            "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-chromium-win32.png",
+            "sha256": "2038c93c97eedbcdd79f284783252411f6422abfbf4504870ed5b4b1f2bb13c5",
+            "inspected": true
+          },
+          {
+            "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-mobile-chrome-win32.png",
+            "sha256": "9ac010873f90c160f75202270347d3f6d8aab9329b4991c4efb8de48b98ce73f",
+            "inspected": true
+          },
+          {
+            "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-chromium-win32.png",
+            "sha256": "12039b6988e12af2d0d888ca45f1f55335e2ca3ef750f2364a8a12f8ef02bfce",
+            "inspected": true
+          },
+          {
+            "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-mobile-chrome-win32.png",
+            "sha256": "e054ec25f8aac4904f2e2a0588f30f20dc1aa1ba455db78c09ade91d1584e4fe",
+            "inspected": true
+          }
+        ],
+        "allInspected": true,
+        "inspectionTool": "view_image",
+        "inspection": "All four new 320 px light/dark Chromium and Pixel 5 scenes inspected: controls, units, warnings and lineage readable; no clipped content; accessible bounded plot with full numerical table/artifact. Existing historical PNGs were not targeted.",
+        "preparationCommand": "npx playwright test e2e/redesign/core-diagnostics.spec.ts --grep \"keyboard, 320 px\" --project=chromium --project=mobile-chrome --update-snapshots=all --reporter=line,json --output=tmp/S18-visual-artifacts",
+        "preparationReport": "tmp/S18-visual-preparation.json",
+        "preparationExitCode": 0,
+        "preparationPassed": 2
+      },
+      "preview": {
+        "port": 5378,
+        "pid": 23856,
+        "independent": true,
+        "running": true,
+        "stdout": "tmp/S18-preview.stdout.log",
+        "stderr": "tmp/S18-preview.stderr.log"
+      },
+      "coverage": [
+        "All 35 routes expose all 11 tools with explained compatibility/rejection",
+        "All nine family routes execute genuine recorded state/time worker diagnostics with native units and downloadable artifacts",
+        "All 11 diagnostics execute on a compatible planar source; strict artifact reload preserves the current experiment",
+        "Progress, cancel, worker startup failure/retry, invalid settings and static/hybrid/noisy/delay/discrete refusal",
+        "Lazy chunk loading and late completion after route disposal",
+        "Keyboard, axe WCAG2A/AA/2.1, 320 px and 200 percent reflow"
+      ],
+      "limitations": [
+        "Chromium desktop and emulated Pixel 5 only; Firefox, WebKit and physical devices unverified",
+        "Automated accessibility audits do not establish screen-reader audio usability",
+        "Visual graphs intentionally limit displayed points; artifact files retain declared numerical results",
+        "No human scientific review was performed"
+      ]
+    },
+    "legacyExitEvidence": {
+      "report": "tmp/S18-legacy-playwright.json",
+      "sha256": "90394330bb413f33fa766e1a5780b9961687ecf0a8675d9c6a29fa036c8c933c",
+      "schema": "pendulum-s18-legacy-validation/v1",
+      "command": "npx playwright test e2e/redesign/core-pendulum.spec.ts e2e/redesign/chain-pendulum.spec.ts e2e/redesign/constraint-pendulum.spec.ts e2e/redesign/spatial-pendulum.spec.ts e2e/redesign/driven-pendulum.spec.ts e2e/redesign/nonlinear-pendulum.spec.ts e2e/redesign/network-pendulum.spec.ts e2e/redesign/field-pendulum.spec.ts e2e/redesign/discrete-quantum.spec.ts --grep 'frozen|computes trajectory|controller|worker startup' --project=chromium --project=mobile-chrome --update-snapshots=none --retries=0 --workers=1 --reporter=line,json --output=tmp/S18-legacy-artifacts",
+      "environment": {
+        "PLAYWRIGHT_JSON_OUTPUT_FILE": "tmp/S18-legacy-playwright.json",
+        "PLAYWRIGHT_PORT": "5378",
+        "PLAYWRIGHT_USE_PREVIEW": "1"
+      },
+      "listExitCode": 0,
+      "listedTests": 48,
+      "listedFiles": 9,
+      "exitCode": 0,
+      "startedAt": "2026-10-20T04:42:32.0649686Z",
+      "endedAt": "2026-10-20T04:47:47.4748211Z",
+      "stats": {
+        "startTime": "2026-10-20T04:42:34.162Z",
+        "duration": 313023.856,
+        "expected": 48,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCount": 48,
+      "retriedTests": 0,
+      "topLevelErrors": 0,
+      "snapshotUpdates": "none",
+      "trackedHistoricalPngCount": 190,
+      "historicalPngHashChanges": [],
+      "gitPngDiff": [
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-chromium-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-mobile-chrome-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-chromium-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-mobile-chrome-win32.png"
+      ],
+      "artifactDirectory": "tmp/S18-legacy-artifacts",
+      "snapshotIsolation": "Temporary removal of only #core-diagnostics during old-panel screenshot with original node restored in finally; no inline stylesheet or CSP change.",
+      "startupFailure": {
+        "report": "tmp/S18-legacy-startup-failure.json",
+        "testCount": 0,
+        "code": "EPERM"
+      },
+      "priorInterruptedDiagnostic": "tmp/S18-legacy-csp-diagnostic.json",
+      "historicalGitPngDiff": [],
+      "newS18PngPaths": [
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-chromium-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-mobile-chrome-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-chromium-win32.png",
+        "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-mobile-chrome-win32.png"
+      ]
+    },
+    "commands": {
+      "report": "tmp/S18-command-results.json",
+      "sha256": "52d62161593483995a454742e3089d666adac22ca211f7961c605c6e48a0f10d",
+      "results": [
+        {
+          "id": "typecheck",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "node_modules/typescript/bin/tsc", "--noEmit"],
+          "log": "tmp/S18-final-typecheck.log",
+          "exitCode": 0,
+          "elapsedMs": 8857
+        },
+        {
+          "id": "eslint",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "node_modules/eslint/bin/eslint.js",
+            "e2e/redesign/chain-pendulum.spec.ts",
+            "e2e/redesign/constraint-pendulum.spec.ts",
+            "e2e/redesign/core-diagnostics.spec.ts",
+            "e2e/redesign/core-pendulum.spec.ts",
+            "e2e/redesign/discrete-quantum.spec.ts",
+            "e2e/redesign/driven-pendulum.spec.ts",
+            "e2e/redesign/field-pendulum.spec.ts",
+            "e2e/redesign/legacy-layout.ts",
+            "e2e/redesign/network-pendulum.spec.ts",
+            "e2e/redesign/nonlinear-pendulum.spec.ts",
+            "e2e/redesign/spatial-pendulum.spec.ts",
+            "scripts/redesign/measure-core-diagnostics.ts",
+            "src/product/adapters/analysis/core/artifact-validation.ts",
+            "src/product/adapters/analysis/core/artifact.ts",
+            "src/product/adapters/analysis/core/client.ts",
+            "src/product/adapters/analysis/core/contracts.ts",
+            "src/product/adapters/analysis/core/core.worker.ts",
+            "src/product/adapters/analysis/core/execute.ts",
+            "src/product/adapters/analysis/core/flow.ts",
+            "src/product/adapters/analysis/core/result.ts",
+            "src/product/adapters/analysis/core/settings.ts",
+            "src/product/adapters/analysis/core/signal.ts",
+            "src/product/adapters/analysis/core/signature.ts",
+            "src/product/adapters/analysis/core/source-config.ts",
+            "src/product/adapters/analysis/core/source-flow.ts",
+            "src/product/adapters/analysis/core/source.ts",
+            "src/product/adapters/analysis/core/validation.ts",
+            "src/product/adapters/physics/driven.ts",
+            "src/product/catalog/analyses-core.ts",
+            "src/product/lab/views/chain-workspace.ts",
+            "src/product/lab/views/constraint-workspace.ts",
+            "src/product/lab/views/core-workspace.ts",
+            "src/product/lab/views/diagnostics-panel.ts",
+            "src/product/lab/views/diagnostics.ts",
+            "src/product/lab/views/discrete-workspace.ts",
+            "src/product/lab/views/driven-workspace.ts",
+            "src/product/lab/views/field-workspace.ts",
+            "src/product/lab/views/network-workspace.ts",
+            "src/product/lab/views/nonlinear-workspace.ts",
+            "src/product/lab/views/spatial-workspace.ts",
+            "tests/product/adapters/analysis/core/artifact.test.ts",
+            "tests/product/adapters/analysis/core/client.test.ts",
+            "tests/product/adapters/analysis/core/fixture.ts",
+            "tests/product/adapters/analysis/core/flow.test.ts",
+            "tests/product/adapters/analysis/core/sali-dimension.test.ts",
+            "tests/product/adapters/analysis/core/signal.test.ts",
+            "tests/product/adapters/analysis/core/source-matrix.test.ts",
+            "tests/product/adapters/analysis/core/source.test.ts",
+            "tests/product/catalog/core-diagnostics.test.ts",
+            "--max-warnings",
+            "0"
+          ],
+          "log": "tmp/S18-final-eslint.log",
+          "exitCode": 0,
+          "elapsedMs": 6402
+        },
+        {
+          "id": "format",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--check",
+            "css/product/diagnostics.css",
+            "documents/redesign/stage-runs/S18-numerical-metrics.json",
+            "documents/redesign/status.json",
+            "e2e/redesign/chain-pendulum.spec.ts",
+            "e2e/redesign/constraint-pendulum.spec.ts",
+            "e2e/redesign/core-diagnostics.spec.ts",
+            "e2e/redesign/core-pendulum.spec.ts",
+            "e2e/redesign/discrete-quantum.spec.ts",
+            "e2e/redesign/driven-pendulum.spec.ts",
+            "e2e/redesign/field-pendulum.spec.ts",
+            "e2e/redesign/legacy-layout.ts",
+            "e2e/redesign/network-pendulum.spec.ts",
+            "e2e/redesign/nonlinear-pendulum.spec.ts",
+            "e2e/redesign/spatial-pendulum.spec.ts",
+            "scripts/redesign/measure-core-diagnostics.ts",
+            "src/product/adapters/analysis/core/artifact-validation.ts",
+            "src/product/adapters/analysis/core/artifact.ts",
+            "src/product/adapters/analysis/core/client.ts",
+            "src/product/adapters/analysis/core/contracts.ts",
+            "src/product/adapters/analysis/core/core.worker.ts",
+            "src/product/adapters/analysis/core/execute.ts",
+            "src/product/adapters/analysis/core/flow.ts",
+            "src/product/adapters/analysis/core/result.ts",
+            "src/product/adapters/analysis/core/settings.ts",
+            "src/product/adapters/analysis/core/signal.ts",
+            "src/product/adapters/analysis/core/signature.ts",
+            "src/product/adapters/analysis/core/source-config.ts",
+            "src/product/adapters/analysis/core/source-flow.ts",
+            "src/product/adapters/analysis/core/source.ts",
+            "src/product/adapters/analysis/core/validation.ts",
+            "src/product/adapters/physics/driven.ts",
+            "src/product/catalog/analyses-core.ts",
+            "src/product/lab/views/chain-workspace.ts",
+            "src/product/lab/views/constraint-workspace.ts",
+            "src/product/lab/views/core-workspace.ts",
+            "src/product/lab/views/diagnostics-panel.ts",
+            "src/product/lab/views/diagnostics.ts",
+            "src/product/lab/views/discrete-workspace.ts",
+            "src/product/lab/views/driven-workspace.ts",
+            "src/product/lab/views/field-workspace.ts",
+            "src/product/lab/views/network-workspace.ts",
+            "src/product/lab/views/nonlinear-workspace.ts",
+            "src/product/lab/views/spatial-workspace.ts",
+            "tests/product/adapters/analysis/core/artifact.test.ts",
+            "tests/product/adapters/analysis/core/client.test.ts",
+            "tests/product/adapters/analysis/core/fixture.ts",
+            "tests/product/adapters/analysis/core/flow.test.ts",
+            "tests/product/adapters/analysis/core/sali-dimension.test.ts",
+            "tests/product/adapters/analysis/core/signal.test.ts",
+            "tests/product/adapters/analysis/core/source-matrix.test.ts",
+            "tests/product/adapters/analysis/core/source.test.ts",
+            "tests/product/catalog/core-diagnostics.test.ts"
+          ],
+          "log": "tmp/S18-final-format.log",
+          "exitCode": 0,
+          "elapsedMs": 1407
+        },
+        {
+          "id": "policy",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/lint-source.ts"],
+          "log": "tmp/S18-final-policy.log",
+          "exitCode": 0,
+          "elapsedMs": 995
+        },
+        {
+          "id": "modules",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/audit-module-size.ts"],
+          "log": "tmp/S18-final-modules.log",
+          "exitCode": 0,
+          "elapsedMs": 833
+        },
+        {
+          "id": "plan",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/redesign/validate-plan.ts"],
+          "log": "tmp/S18-final-plan.log",
+          "exitCode": 0,
+          "elapsedMs": 375
+        },
+        {
+          "id": "catalog",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/redesign/validate-catalog.ts"],
+          "log": "tmp/S18-final-catalog.log",
+          "exitCode": 0,
+          "elapsedMs": 7345
+        },
+        {
+          "id": "learn",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/redesign/validate-learn.ts"],
+          "log": "tmp/S18-final-learn.log",
+          "exitCode": 0,
+          "elapsedMs": 1468
+        },
+        {
+          "id": "inventory",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--import",
+            "tsx",
+            "scripts/redesign/inventory.ts",
+            "--check"
+          ],
+          "log": "tmp/S18-final-inventory.log",
+          "exitCode": 0,
+          "elapsedMs": 7445
+        },
+        {
+          "id": "secrets",
+          "command": ["C:\\Program Files\\nodejs\\node.exe", "--import", "tsx", "scripts/redesign/secret-scan.ts"],
+          "log": "tmp/S18-final-secrets.log",
+          "exitCode": 0,
+          "elapsedMs": 3069
+        },
+        {
+          "id": "numerics",
+          "command": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "--import",
+            "tsx",
+            "scripts/redesign/measure-core-diagnostics.ts",
+            "tmp/S18-final-numerical-metrics.json"
+          ],
+          "log": "tmp/S18-final-numerics.log",
+          "exitCode": 0,
+          "elapsedMs": 8100
+        }
+      ]
+    },
+    "productionBuild": {
+      "command": "npm run build *> tmp/S18-final-build.log",
+      "log": "tmp/S18-final-build.log",
+      "exitCode": 0,
+      "sha256": "cbc49961950c3032f9ff4fd2c28a562f703e0b7ca90c20bc4407f9ffc1824159"
+    }
+  },
+  "compatibility": {
+    "systems": 35,
+    "diagnosticKinds": 11,
+    "matrixPairs": 385,
+    "computedAndArtifactRoundtrip": 297,
+    "explainedRefusals": 88,
+    "smoothNativeSystems": 22,
+    "refusedFlowSystems": 13,
+    "pairwiseAssertionsPassed": 385
+  },
+  "numericalEvidence": {
+    "report": "documents/redesign/stage-runs/S18-numerical-metrics.json",
+    "sha256": "7f9f6f0efff217d3b35f5253a82b0e00e08e25f03e7dbbf193fdd30b70d3802c",
+    "finalRerun": {
+      "report": "tmp/S18-final-numerical-metrics.json",
+      "sha256": "37258af4f33ce47ec9f589c7129f26d9cb0aa75a2fd2ddbce224dbba4e4f065f"
+    },
+    "schema": "pendulum-core-diagnostic-numerics/v1",
+    "recordedAt": "2026-10-20T04:36:45.766Z",
+    "checks": {
+      "inputNotMutated": true,
+      "stateProjection": true,
+      "phaseProjection": true,
+      "energyObservation": true,
+      "analyticFft": true,
+      "analyticNaff": true,
+      "periodicZeroOne": true,
+      "stochasticZeroOne": true,
+      "harmonicSpectrum": true,
+      "harmonicSali": true,
+      "harmonicFli": true,
+      "harmonicSection": true,
+      "shadowNoExceedance": true,
+      "nativeParity": true,
+      "allElevenKinds": true,
+      "finitePlotValues": true
+    },
+    "tolerances": {
+      "nativeParity": 1e-12,
+      "fft": 1e-12,
+      "naff": 0.0001,
+      "sectionResidual": 1e-8,
+      "harmonicExponent": 0.01
+    },
+    "fft": {
+      "samples": 1024,
+      "dt": 0.01,
+      "frequency": 6.25,
+      "amplitude": 1.4999999999999976
+    },
+    "naff": {
+      "expectedAngularFrequency": 1.2345,
+      "absoluteFrequencyError": 1.6312506900817425e-11
+    },
+    "zeroOne": {
+      "samples": 2000,
+      "periodicK": -0.011819115097078715,
+      "seededNoiseK": 0.9986884414047166,
+      "interpretation": "High K is compatible with noise and is not a proof of deterministic chaos."
+    },
+    "harmonic": {
+      "model": "system:van-der-pol",
+      "parameters": {
+        "mu": 0
+      },
+      "initialState": [1, 0],
+      "timeUnit": "normalized-time",
+      "duration": 20,
+      "dt": 0.01,
+      "spectrum": [-5.247691170497757e-13, -8.631872994160393e-13],
+      "sali": 1.4142135623036192,
+      "fli": 6.096234628216659e-13,
+      "sectionCount": 6,
+      "maxSectionResidual": 9.890805453306728e-10,
+      "shadowHorizon": null
+    },
+    "nativeDifferences": {
+      "lyapunovSpectrum": 0,
+      "saliSeries": 0,
+      "fliSeries": 0,
+      "sectionTimes": 0,
+      "sectionPoints": 0,
+      "shadowSeries": 0
+    },
+    "limitations": [
+      "Selected analytic/synthetic fixtures and native parity do not establish convergence for arbitrary model settings.",
+      "No human scientific review or real-device performance certification is implied."
+    ]
+  },
+  "preservation": {
+    "report": "tmp/S18-preservation.json",
+    "sha256": "3bf7ac578de11b3af53739ac16d30b3e26957af07fc0b8896b80d911f354a283",
+    "schemaVersion": "S18-preservation/v1",
+    "base": "21bd6692ba2a3228035d95cb355eacbcfda96a01",
+    "protectedPaths": [],
+    "oldPngCount": 190,
+    "oldTrackedPngCount": 196,
+    "pngScope": "All tracked PNGs, including E2E and existing icons/reports.",
+    "alteredPng": [],
+    "oldTestCount": 3404,
+    "currentTestCount": 3896,
+    "missingTests": [],
+    "desktop": [
+      {
+        "source": "documents/redesign/master-roadmap-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "sourceSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "copySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "equal": true
+      },
+      {
+        "source": "documents/redesign/execution-plan-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "sourceSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "copySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "equal": true
+      }
+    ],
+    "checks": {
+      "protectedPaths": true,
+      "historicalPng": true,
+      "oldTests": true,
+      "desktop": true
+    }
+  },
+  "limits": {
+    "observations": 8192,
+    "coordinates": 256,
+    "scalars": 1000000,
+    "integrationSteps": 100000,
+    "tangentDimension": 32,
+    "tangentWork": 2000000,
+    "artifactBytes": 16777216,
+    "workerInactivityMs": 30000
+  },
+  "visual": {
+    "images": [
+      {
+        "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-chromium-win32.png",
+        "sha256": "2038c93c97eedbcdd79f284783252411f6422abfbf4504870ed5b4b1f2bb13c5",
+        "inspected": true
+      },
+      {
+        "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-mobile-chrome-win32.png",
+        "sha256": "9ac010873f90c160f75202270347d3f6d8aab9329b4991c4efb8de48b98ce73f",
+        "inspected": true
+      },
+      {
+        "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-chromium-win32.png",
+        "sha256": "12039b6988e12af2d0d888ca45f1f55335e2ca3ef750f2364a8a12f8ef02bfce",
+        "inspected": true
+      },
+      {
+        "path": "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-mobile-chrome-win32.png",
+        "sha256": "e054ec25f8aac4904f2e2a0588f30f20dc1aa1ba455db78c09ade91d1584e4fe",
+        "inspected": true
+      }
+    ],
+    "allInspected": true,
+    "inspectionTool": "view_image",
+    "inspection": "All four new 320 px light/dark Chromium and Pixel 5 scenes inspected: controls, units, warnings and lineage readable; no clipped content; accessible bounded plot with full numerical table/artifact. Existing historical PNGs were not targeted.",
+    "preparationCommand": "npx playwright test e2e/redesign/core-diagnostics.spec.ts --grep \"keyboard, 320 px\" --project=chromium --project=mobile-chrome --update-snapshots=all --reporter=line,json --output=tmp/S18-visual-artifacts",
+    "preparationReport": "tmp/S18-visual-preparation.json",
+    "preparationExitCode": 0,
+    "preparationPassed": 2
+  },
+  "review": {
+    "approvedUserGates": [7, 9, 17],
+    "approvalEvidence": "Explicit S18 request after S17 report, per stage-run-protocol.",
+    "humanScientificReview": false,
+    "humanReviewedPublishedLearnUnits": 0,
+    "publishedLearnUnits": 8,
+    "modelSelector": "not exposed; no selection verification or model switching claimed",
+    "limitations": [
+      "Chromium desktop and emulated Pixel 5 only; Firefox, WebKit and physical devices unverified",
+      "Automated accessibility audits do not establish screen-reader audio usability",
+      "Visual graphs intentionally limit displayed points; artifact files retain declared numerical results",
+      "No human scientific review was performed"
+    ]
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "freshDependencyAudit": false,
+    "knownRisks": "S01 high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch push notice high8/moderate3 is not a fresh audit.",
+    "secretScan": {
+      "report": "tmp/S18-final-secrets.log",
+      "sha256": "9fa06b1661a705d64c754d748feb8ecc5131f63ec7b57fe1dcc948225c98e8d4"
+    },
+    "scope": "Tracked working-tree known credential patterns including staged S18 text; history/ignored/binary/external services excluded."
+  },
+  "corrections": [
+    "Invalid renormalization fixture corrected from valid10 to invalid11; golden values and timeouts unchanged.",
+    "Normalized time and per-mass energy units made explicit; Hamiltonian consistency not auto-certified from conserved energy.",
+    "Production CSP blocks inline screenshot style injection. Historical screenshot helper moves only the new dock out of DOM and restores the same node in finally, leaving CSP and all historical PNGs unchanged. New feature is separately visible in4 inspected PNGs.",
+    "SALI dimensional precondition and real one-node refusal/two-node native fixture added."
+  ],
+  "remainingLimitations": [
+    "Finite-time indicators and selected fixtures do not prove deterministic chaos or certify arbitrary settings.",
+    "Native finite-difference tangent models require time-step, duration, transient and normalization convergence checks.",
+    "Hybrid, projected constrained, delayed, stochastic, discrete and quantum dynamics require their own tangent models; static evaluations are not time series.",
+    "Artifact import/export and bounded JSON validation run on the main thread; no unbounded research package workflow is introduced.",
+    "Chromium desktop and emulated Pixel 5 only; Firefox, WebKit and physical devices unverified",
+    "Automated accessibility audits do not establish screen-reader audio usability",
+    "Visual graphs intentionally limit displayed points; artifact files retain declared numerical results",
+    "No human scientific review was performed"
+  ],
+  "remoteEvidence": "Implementation checkpoints are pushed before a separate completion status commit. This document cannot contain its own final commit hash.",
+  "rollback": "S17 commit21bd669 and existing app.html remain available; no reset, merge, force push, release, cutover or later-stage work performed.",
+  "changedFiles": [
+    "css/product/diagnostics.css",
+    "documents/redesign/core-diagnostics-ko.md",
+    "documents/redesign/stage-runs/S18-numerical-metrics.json",
+    "documents/redesign/stage-runs/S18-progress.md",
+    "documents/redesign/stage-runs/S18-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/chain-pendulum.spec.ts",
+    "e2e/redesign/constraint-pendulum.spec.ts",
+    "e2e/redesign/core-diagnostics.spec.ts",
+    "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-chromium-win32.png",
+    "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-dark-mobile-chrome-win32.png",
+    "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-chromium-win32.png",
+    "e2e/redesign/core-diagnostics.spec.ts-snapshots/s18-core-diagnostics-light-mobile-chrome-win32.png",
+    "e2e/redesign/core-pendulum.spec.ts",
+    "e2e/redesign/discrete-quantum.spec.ts",
+    "e2e/redesign/driven-pendulum.spec.ts",
+    "e2e/redesign/field-pendulum.spec.ts",
+    "e2e/redesign/legacy-layout.ts",
+    "e2e/redesign/network-pendulum.spec.ts",
+    "e2e/redesign/nonlinear-pendulum.spec.ts",
+    "e2e/redesign/spatial-pendulum.spec.ts",
+    "scripts/redesign/measure-core-diagnostics.ts",
+    "src/product/adapters/analysis/core/artifact-validation.ts",
+    "src/product/adapters/analysis/core/artifact.ts",
+    "src/product/adapters/analysis/core/client.ts",
+    "src/product/adapters/analysis/core/contracts.ts",
+    "src/product/adapters/analysis/core/core.worker.ts",
+    "src/product/adapters/analysis/core/execute.ts",
+    "src/product/adapters/analysis/core/flow.ts",
+    "src/product/adapters/analysis/core/result.ts",
+    "src/product/adapters/analysis/core/settings.ts",
+    "src/product/adapters/analysis/core/signal.ts",
+    "src/product/adapters/analysis/core/signature.ts",
+    "src/product/adapters/analysis/core/source-config.ts",
+    "src/product/adapters/analysis/core/source-flow.ts",
+    "src/product/adapters/analysis/core/source.ts",
+    "src/product/adapters/analysis/core/validation.ts",
+    "src/product/adapters/physics/driven.ts",
+    "src/product/catalog/analyses-core.ts",
+    "src/product/lab/views/chain-workspace.ts",
+    "src/product/lab/views/constraint-workspace.ts",
+    "src/product/lab/views/core-workspace.ts",
+    "src/product/lab/views/diagnostics-panel.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "src/product/lab/views/discrete-workspace.ts",
+    "src/product/lab/views/driven-workspace.ts",
+    "src/product/lab/views/field-workspace.ts",
+    "src/product/lab/views/network-workspace.ts",
+    "src/product/lab/views/nonlinear-workspace.ts",
+    "src/product/lab/views/spatial-workspace.ts",
+    "tests/product/adapters/analysis/core/artifact.test.ts",
+    "tests/product/adapters/analysis/core/client.test.ts",
+    "tests/product/adapters/analysis/core/fixture.ts",
+    "tests/product/adapters/analysis/core/flow.test.ts",
+    "tests/product/adapters/analysis/core/sali-dimension.test.ts",
+    "tests/product/adapters/analysis/core/signal.test.ts",
+    "tests/product/adapters/analysis/core/source-matrix.test.ts",
+    "tests/product/adapters/analysis/core/source.test.ts",
+    "tests/product/catalog/core-diagnostics.test.ts"
+  ],
+  "nextValidStage": 19
+}

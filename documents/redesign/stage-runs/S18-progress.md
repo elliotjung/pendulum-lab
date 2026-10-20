@@ -22,8 +22,8 @@
 |---|---|---|---|
 | CP0 | 실행 기록·activeStage·S17 승인 | plan/preflight/typecheck | 완료 |
 | CP1 | 공용 계약·native 분석·호환성·worker·artifact | synthetic/native parity, invalid/resource/cancel, typecheck | 완료 |
-| CP2 | 모든 패밀리 공용 Dock·설정·plots·재로드 | component/unit, build, desktop/mobile/keyboard/axe/visual | 검증 통과 |
-| CP3 | 전체 검증·수치·보존 기록 | 전체 Vitest, quality checks, E2E, preservation | 대기 |
+| CP2 | 모든 패밀리 공용 Dock·설정·plots·재로드 | component/unit, build, desktop/mobile/keyboard/axe/visual | 완료 |
+| CP3 | 전체 검증·수치·보존 기록 | 전체 Vitest, quality checks, E2E, preservation | 검증 통과 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
 
 ## 변경 예정 경로
@@ -68,3 +68,14 @@
 - 보안 패턴 scan1704tracked/1498text·발견0. dependency 새 감사나 위험 수용은 하지 않았다. baseline inventory883파일·깨진 import0/orphan0, catalog135정의/35시스템, Learn8과정/86예약/8공개 그대로다.
 - 최종 기존 회귀 `tmp/S18-legacy-playwright.json`: **48/48**, 9패밀리 파일, Chromium24+Pixel5 24, snapshot none/retry0, failed/skipped/flaky/runner errors0, tool exit0. `tmp/S18-legacy-validation.json`은 기존 E2E PNG190개 모두 hash동일, 기존 Git PNG변경0임을 확인한다. 신규46개와 합계 **94/94** production case 통과.
 - 모든 CP2 필수 targeted 검증 성공. UI·전용 시각 baseline·기존 화면 비교 helper·진행 metadata만 명시적으로 commit/push하고, 전체 Vitest와 최종 보존 기록은 CP3에서 확인한다.
+- CP2 `b6df2cf9a4d35c103ec9ff70528a211f942a153b` push 성공과 정확한 원격 hash 확인. 작업 폴더 clean 상태를 확인했으며 전체 Vitest를 maxWorkers2·원래 timeout으로 실행한다.
+
+## CP3 완료 후보
+
+- 현재 phase: candidate-complete. nextStage=18을 유지한다. `tmp/S18-final-vitest.json` **3,896/3,896**, 314파일, failed/pending/todo0, tool exit0. maxWorkers2와 기존 timeout을 유지했고 browser 종료 후 실행했다.
+- `tmp/S18-preservation.json`: 보호 엔진/API/app.html/package/lockfile/golden 변경0, 기존3,404개 assertion 이름·중복 횟수 손실0, 추적 PNG196개(그중 E2E190개) 모두 byte-identical. 동적 Date fixture 이름의 시각만 기존 좁은 정규식으로 정규화했다. 신규492개 테스트·4PNG를 추가했다.
+- 원본 roadmap/execution은 바꾸지 않았다. 두 desktop 전달 사본의 SHA256이 각각 원본과 일치해 동기화가 필요한 차이0이다.
+- `S18-verification.json` validated, gate8/8 true: targeted664, 전체3896, production46+48, 품질11, 수치16, 보존, 새4PNG 검사. 35×11 matrix385조합과297개의 실제 계산/artifact 왕복을 포함한다.
+- 검증 문서를 stage한 뒤 최종 known-pattern scan1705tracked/1499text·발견0을 확인했다. 새 검증 JSON과 진행 상태에 대한 plan/format 검사도 통과했다. 원본 계획·pure engine·PNG 기준은 그대로다.
+- 사람 과학 검토, 실제 기기, Firefox/WebKit, screen-reader 음성은 검증하지 않았다. 기존 S01 공급망/CodeQL 위험과 S11~S17 모델 한계는 유지한다. S17 사용자 gate는 이번18요청으로 승인했고 사람 검토로 표시하지 않는다.
+- 구현/검증 기록 CP3를 먼저 commit/push한 뒤, 원격 hash 확인과 clean guard를 통과해야 별도 STATUS commit에서만18완료·next19로 갱신한다. master merge/force push/tag/release/cutover와19이후 구현은 하지 않았다.
