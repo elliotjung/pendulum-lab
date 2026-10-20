@@ -1,13 +1,14 @@
 {
   "schemaVersion": "pendulum-redesign-verification/v1",
   "stage": 16,
-  "phase": "candidate-complete",
+  "phase": "validated",
   "baselineHead": "64db09a7ec6b433b7f6d1b0cac1ee2f1d1590439",
   "implementationCheckpoints": {
     "CP0": "ce4aad493f3d410894f66732e9c1edbfb44042d4",
     "CP1": "8acbcaa917bdd8b70fac9c6aa0987079d6fb4b63",
     "CP2": "d278674a0c77ffe5c87703d4b93fdbbfab44d620",
-    "CP3": "fabdb33f910c289ba76255aa3b203b12ab9d63f4"
+    "CP3": "fabdb33f910c289ba76255aa3b203b12ab9d63f4",
+    "CP4": "1aafaf2b4c3e02c31d841727b9b507e06487063d"
   },
   "scope": {
     "systems": [
@@ -76,7 +77,16 @@
       "failed": 0,
       "pending": 0,
       "todo": 0,
-      "files": 17
+      "files": 17,
+      "typecheck": {
+        "report": "tmp/S16-cp4-typecheck.log",
+        "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87",
+        "exitCode": 0
+      },
+      "scopedEslint": {
+        "command": "node node_modules/eslint/bin/eslint.js tests/product/contracts/routes.test.ts --max-warnings 0",
+        "exitCode": 0
+      }
     }
   },
   "numericalEvidence": {
@@ -137,6 +147,26 @@
         "tmp/S16-cp2-build.log",
         "tmp/S16-final-build.log"
       ]
+    },
+    "retention": {
+      "baseline": "64db09a7ec6b433b7f6d1b0cac1ee2f1d1590439",
+      "previousTests": 3220,
+      "currentTests": 3347,
+      "missing": [],
+      "changedProtected": [],
+      "existingSnapshots": 160,
+      "changedSnapshots": [],
+      "dateNameNormalization": "Only the unchanged Date-rejection fixture displayed timestamp in product/learn/content.test.ts.",
+      "transport": {
+        "roadmapSource": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "roadmapDesktop": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "executionSource": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "executionDesktop": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5"
+      }
+    },
+    "evidence": {
+      "report": "tmp/S16-preservation.json",
+      "sha256": "52af991949a276d390821fdcf101ad2e6cd36c35cc593b9751f364e18166d775"
     }
   },
   "review": {
@@ -152,7 +182,17 @@
   "security": {
     "dependenciesChanged": false,
     "newDependencyAudit": false,
-    "unresolved": "S01 high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch push notice high8/moderate3 is a separate current service notice. No risk acceptance or remediation claimed."
+    "unresolved": "S01 high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch push notice high8/moderate3 is a separate current service notice. No risk acceptance or remediation claimed.",
+    "secretPatternScan": {
+      "trackedFiles": 1626,
+      "textFiles": 1438,
+      "findings": 0,
+      "limitations": [
+        "Known credential formats only; no entropy analysis, provider validation, or detection of arbitrary passwords.",
+        "Zero findings means no matches for these rules, not proof that all secrets are absent.",
+        "Git history, ignored files, binary contents, and external services are outside this local scan."
+      ]
+    }
   },
   "developmentFailures": {
     "initialBrowser": {
@@ -222,7 +262,8 @@
       "todo": 0,
       "files": 300
     },
-    "firstWholeVitestReason": "3346passed/1failed: existing route fixture hardcoded34systems. S16 adds exactly1native-bound FK product route. Expected35and explicit FK route presence added; all previous route roundtrip assertions/testnames retained. Full suite must pass after correction."
+    "firstWholeVitestReason": "3346passed/1failed: existing route fixture hardcoded34systems. S16 adds exactly1native-bound FK product route. Expected35and explicit FK route presence added; all previous route roundtrip assertions/testnames retained. Full suite must pass after correction.",
+    "snapshotReportingCorrection": "Initial progress text said updateSnapshots=none for normal runs; actual JSON config is default missing. Corrected text preserves actual config. No baseline was created/changed in the normal reports. Four overlapping visual cases additionally use explicit none."
   },
   "remainingLimitations": [
     "Selected finite fixtures characterize native parity and refinement only; no general stability, accuracy, thermodynamic equilibrium or continuum-limit proof.",
@@ -291,5 +332,130 @@
     "tests/product/lab/field-edit.test.ts",
     "tests/product/lab/field-model.test.ts",
     "tests/product/lab/field-storage.test.ts"
-  ]
+  ],
+  "finalValidation": {
+    "vitest": {
+      "report": "tmp/S16-final-vitest.json",
+      "sha256": "f37a71eb9d09b62a9406dbec0a0d063e1b367367f986b533979d9e22c5b60c6b",
+      "total": 3347,
+      "passed": 3347,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 300
+    },
+    "browser": {
+      "report": "tmp/S16-final-playwright.json",
+      "sha256": "098c525a5a415664df6a23e42855baf6e46d438c900bfc1fe1214296388e31c2",
+      "startTime": "2026-10-20T00:30:52.878Z",
+      "duration": 171020.14800000002,
+      "expected": 34,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 34,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    },
+    "immutableVisual": {
+      "report": "tmp/S16-frozen-visual-playwright.json",
+      "sha256": "498a87134f6eb6f4bf45d19f72e7eaae6488ee6a42a52c586d6ddd0df7407c03",
+      "startTime": "2026-10-20T00:35:17.911Z",
+      "duration": 39884.988,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 4,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "none",
+      "workers": 1
+    },
+    "commands": {
+      "report": "tmp/S16-command-results.json",
+      "sha256": "cf000032bd47f9a05de36a6542c32380ba1ccfb6538f9a8c7af148268c25773b",
+      "results": [
+        {
+          "id": "typecheck",
+          "elapsedMs": 11876,
+          "command": "npm.cmd run typecheck",
+          "log": "tmp/S16-final-typecheck.log",
+          "exitCode": 0
+        },
+        {
+          "id": "eslint",
+          "elapsedMs": 6636,
+          "command": "node.exe node_modules/eslint/bin/eslint.js e2e/redesign/field-pendulum.spec.ts e2e/redesign/lab-shell.spec.ts scripts/redesign/measure-field-numerics.ts src/product/adapters/physics/field-client.ts src/product/adapters/physics/field-contract.ts src/product/adapters/physics/field-schema.ts src/product/adapters/physics/field-worker-protocol.ts src/product/adapters/physics/field.ts src/product/adapters/physics/field.worker.ts src/product/app/application.ts src/product/app/views/field-lab.ts src/product/catalog/systems-extended.ts src/product/catalog/systems-helpers.ts src/product/catalog/validation.ts src/product/lab/library.ts src/product/lab/views/field-diagnostics.ts src/product/lab/views/field-files.ts src/product/lab/views/field-inspector.ts src/product/lab/views/field-model.ts src/product/lab/views/field-plots.ts src/product/lab/views/field-storage.ts src/product/lab/views/field-workspace.ts tests/product/adapters/physics/field-worker.test.ts tests/product/adapters/physics/field.test.ts tests/product/catalog/catalog.test.ts tests/product/contracts/field.test.ts tests/product/lab/field-diagnostics.test.ts tests/product/lab/field-edit.test.ts tests/product/lab/field-model.test.ts tests/product/lab/field-storage.test.ts --max-warnings 0",
+          "log": "tmp/S16-final-eslint.log",
+          "exitCode": 0
+        },
+        {
+          "id": "policy",
+          "elapsedMs": 1709,
+          "command": "npm.cmd run lint:policy",
+          "log": "tmp/S16-final-policy.log",
+          "exitCode": 0
+        },
+        {
+          "id": "plan",
+          "elapsedMs": 1183,
+          "command": "npm.cmd run redesign:check",
+          "log": "tmp/S16-final-plan.log",
+          "exitCode": 0
+        },
+        {
+          "id": "catalog",
+          "elapsedMs": 2483,
+          "command": "npm.cmd run redesign:catalog:check",
+          "log": "tmp/S16-final-catalog.log",
+          "exitCode": 0
+        },
+        {
+          "id": "learn",
+          "elapsedMs": 1503,
+          "command": "npm.cmd run redesign:learn:check",
+          "log": "tmp/S16-final-learn.log",
+          "exitCode": 0
+        },
+        {
+          "id": "inventory",
+          "elapsedMs": 8793,
+          "command": "npm.cmd run redesign:inventory:check",
+          "log": "tmp/S16-final-inventory.log",
+          "exitCode": 0
+        },
+        {
+          "id": "secrets",
+          "elapsedMs": 2462,
+          "command": "npm.cmd run redesign:secrets",
+          "log": "tmp/S16-final-secrets.log",
+          "exitCode": 0
+        },
+        {
+          "id": "numerics",
+          "elapsedMs": 503,
+          "command": "node.exe --import tsx scripts/redesign/measure-field-numerics.ts tmp/S16-final-numerical-metrics.json",
+          "log": "tmp/S16-final-numerics.log",
+          "exitCode": 0
+        },
+        {
+          "id": "build",
+          "elapsedMs": 6048,
+          "command": "npm.cmd run build",
+          "log": "tmp/S16-final-build.log",
+          "exitCode": 0
+        }
+      ]
+    },
+    "browserCoverage": {
+      "total": 108,
+      "CP2FieldAndLab": 74,
+      "finalShell": 34,
+      "combinedReports": true
+    },
+    "method": "Whole Vitest maxWorkers2 with unchanged timeouts, then production shell34. Unchanged-production CP2 field/Lab74 retained as separate evidence; combined108cases, not a single108case run. Normal runs used default updateSnapshots=missing, with no missing or changed baselines. Four overlapping visual cases additionally pass explicit updateSnapshots=none. No retries/skips. Heavy suites sequential."
+  }
 }

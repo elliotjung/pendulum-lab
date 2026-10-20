@@ -8,8 +8,8 @@
     "selectedByUser": true
   },
   "totalStages": 30,
-  "lastCompletedStage": 15,
-  "nextStage": 16,
+  "lastCompletedStage": 16,
+  "nextStage": 17,
   "completedStages": [
     1,
     2,
@@ -25,11 +25,12 @@
     12,
     13,
     14,
-    15
+    15,
+    16
   ],
   "blockedStage": null,
-  "activeStage": 16,
-  "activeStageCheckpoint": "CP4",
+  "activeStage": null,
+  "activeStageCheckpoint": null,
   "reviewGates": [
     7,
     9,
@@ -42,14 +43,13 @@
     9
   ],
   "notes": [
-    "S15 connects magnetic, pendulum-network, Huygens phase pair, Kuramoto and chimera exploration to native equations and diagnostics. Dedicated topology/seed tools, aggregate/individual views, order/local coherence, bounded basin grid, graph files, save/share/import and CSV/SVG are available. See network-lab-ko.md and stage-runs/S15-verification.json.",
-    "Final uninterrupted whole Vitest passed 3220/3220 in 293 files with maxWorkers=2 and unchanged timeouts. All 3105 S14 tests are retained; 115 added. Final uninterrupted production browser passed 112/112 (56 desktop + 56 Pixel5 emulation), with zero failures, skips, flaky results, retries or snapshot updates. All 10 final checks passed: scoped ESLint for 30 TS files, typecheck, source policy, plan, catalog, Learn, inventory, secrets, numerics and production build/public-artifact audit.",
-    "Selected native RK4 and chimera midpoint state differences are zero; all five node permutations are below the fixed 1e-12 tolerance; stable-ID seed roundtrips pass. Native magnetic cells match 13/13; the representative grid has 2 converged cells (n2/n3, 4864 steps) and 2 unresolved cells (10000 steps). Huygens +/-K equal-frequency locking and finite-time Kuramoto observations do not establish general accuracy, stability, basin/Wada boundaries or persistent chimera.",
-    "network-model-v1 requires closed versioned topology with unique stable node/edge IDs, undirected simple edges and explicit chimera ringOrder. Numerical properties remain quantity vectors; unused unified node properties are documented metadata. External graph-file/v1 differs from canonical topology/v1. Magnetic time, coordinates and energy are normalized; phase/mechanical models use declared SI units. Existing common schema ID, unit allowlist and legacy inputs are preserved.",
-    "Resources: 128 nodes (magnetic 16), 4096 edges subject to 256KiB/structural limits, 100000 steps, 2001 retained samples, 64 steps/request with a between-step 8ms soft budget, and a 15s timeout; basin 16x16 cells/10000 steps each, SVG about 600 points/series and scene 512 edges. Large graph shares may require JSON. Native basin final-speed masks and nearest IDs are finite-budget classifications, not certified attractors.",
-    "Existing app.html, physics/chaos/research/runtime/workers/validation, public APIs, user data, package/lockfile and golden remain unchanged. Catalog has 134 definitions; Learn has 8 courses/86 reservations/8 published units; legacy inventory has 883 files with zero broken imports/orphans. All 144 historical PNGs are byte-identical; 16 new PNGs were directly inspected. Both desktop transport copies match unchanged roadmap/execution hashes. Earlier S11-S14 limitations remain documented.",
-    "Approved user gates remain [7,9]; S15 has no separate user gate. No human scientific review occurred; published-unit human review remains 0/8. Verified Windows Chromium desktop/Pixel5 emulation, keyboard/axe, 320px and CSS zoom2. Physical devices, Firefox/WebKit and actual screen-reader audio remain unverified.",
-    "Dependencies are unchanged; no fresh dependency audit or risk acceptance occurred. S01 npm high2/moderate2 and CodeQL32 remain unresolved; the GitHub default-branch push notice high8/moderate3 remains separate. A known-pattern scan of 1582 tracked/1410 text files found zero matches; history, ignored/binary data and external services are outside scope.",
-    "CP0 e8d8d80, CP1 8658757, CP2 fae50ba and CP3 0c67942 were pushed and exact remote hashes verified before this separate status commit. S15 counts complete only after this status commit is verified on origin/codex/redesign. Rollback reference S14 b2c2a31 and existing app.html. Next valid stage S16; no later-stage work, master merge or release performed."
+    "S16 adds seeded additive-Ito pendulum ensembles, fixed-wall FPUT, harmonic ring omega-squared diagnostics, sine-Gordon fields and stationary FK kinks. Seed/grid/boundary tools, heatmaps, individual/ensemble views, isolated save/share/import and labeled exports work. Independent diatomic, pinning and Arrhenius tools export separate reproduction settings. See field-lab-ko.md and stage-runs/S16-verification.json.",
+    "Whole Vitest passed 3347/3347 in 300 files with maxWorkers=2 and unchanged timeouts. All 3220 S15 tests remain; 127 added. Two normal production browser reports passed 74 field/Lab plus 34 shell cases, totaling 108; no failures, skips, flaky results, retries or baseline updates. This is not one 108-case run. Normal snapshot config was default missing; 4 overlapping visual cases additionally passed explicit none. All 10 quality checks and separate CP4 route lint/typecheck passed.",
+    "Selected native parity differences are zero at fixed 1e-12 tolerance. Seed replay, stable member prefixes and selected FPUT/SG refinement pass. FNV member seeds are a new versioned product contract. Main models use explicit normalized units; independent diatomic diagnostics use SI. SG retains native startup/boundary effects and two time levels. FK Newton may find a saddle; it is not a general depinning solver.",
+    "Bounds: 128 grid points, 2-64 stochastic members, 100000 steps, 2000000 member/grid updates, 1001 retained times, 64 steps/request with a between-step 8ms soft budget and 15s response timeout. Retained raw excludes unrecorded solver steps. Exact row times identify offstride endpoints. Stochastic exports support initial-seed replay, not Gaussian-cursor continuation. Accuracy, thermal equilibrium and continuum limits are not generally certified.",
+    "Existing app.html, engines, public APIs, user data, package/lockfile and golden remain unchanged. Catalog has 135 definitions/35 systems and retains all 134 frozen baseline references. Learn remains 8 courses/86 reservations/8 published units; inventory 883 files with zero broken imports/orphans. All 160 historical PNGs are byte-identical; 16 new PNGs were inspected. Desktop transport hashes match unchanged plans.",
+    "Approved gates remain [7,9]; S16 has no separate user gate. No human scientific review occurred; published-unit human review remains 0/8. Chromium desktop/Pixel5 emulation, keyboard/axe, 320px and CSS zoom2 passed. Physical devices, Firefox/WebKit and screen-reader audio remain unverified. Prior S11-S15 limitations remain documented.",
+    "Dependencies are unchanged; no fresh dependency audit or risk acceptance. S01 npm high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch high8/moderate3 notice is separate. Known-pattern scan of 1626 tracked/1438 text files found zero matches; history, ignored/binary data and external services are outside scope.",
+    "CP0 ce4aad4, CP1 8acbcaa, CP2 d278674, CP3 fabdb33 and CP4 1aafaf2 were pushed with exact remote hashes verified. First whole run 3346/3347 found an old 34-system route count; the explicit 35-system/FK fixture, contracts/catalog 371/371 and final whole 3347/3347 pass. Completion requires this separate status commit on origin/codex/redesign. Rollback: S15 64db09a and existing app.html. Next valid stage S17; no later-stage work, master merge or release."
   ]
 }

@@ -24,9 +24,9 @@
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
 | CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 완료 |
 | CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
-| CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 진행 |
-| CP4 | 전체 검사에서 발견한 route fixture 개수 보강 | routes/contracts/catalog, typecheck/lint, 전체 재검증 | 진행 |
-| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 대기 |
+| CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 완료 |
+| CP4 | 전체 검사에서 발견한 route fixture 개수 보강 | routes/contracts/catalog, typecheck/lint, 전체 재검증 | 완료 |
+| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 검증 성공·이 commit의 원격 확인 뒤 완료 |
 
 ## 변경 예정 경로
 
@@ -65,7 +65,7 @@
 - `tmp/S16-cp2-vitest.json`: 화면 model/storage/edit/독립 진단과 sparse worker 보강 **94/94**, 5파일, 실패·pending 0. worker 희소/상속 index 관련 16개 새 회귀와 canonical/native 기존 검사를 유지한다.
 - 전체 typecheck는 sparse 보강 후 재통과했고 CP2 변경 TS 18개 scoped ESLint `tmp/S16-cp2-eslint.log` exit0. Production build/public-artifact audit `tmp/S16-cp2-build.log` 통과.
 - 새 PNG 준비는 `tmp/S16-visual-preparation-playwright.json`의 4개와 lead 문구를 정확한 가산 Itô 모델로 좁힌 뒤 `tmp/S16-lead-preparation-playwright.json`의 2개가 missing-snapshot 작성으로 실패했다. 기능 실패가 아니며 성공 검사로 계산하지 않는다. 이번 요청에서 만든 미공개 lead PNG 2개만 다시 준비했다.
-- 정상 production `tmp/S16-cp2-playwright.json`: **74/74** (desktop37 + Pixel5 emulation37), 단일 연속 500.509초, 실패/skip/flaky/retry/runner 오류 0, snapshot update=none. 새 field 전체 50개와 기존 Lab 전체 24개를 포함한다.
+- 정상 production `tmp/S16-cp2-playwright.json`: **74/74** (desktop37 + Pixel5 emulation37), 단일 연속 500.509초, 실패/skip/flaky/retry/runner 오류 0. snapshot 설정은 기본값 `missing`이며 이 실행에서 baseline 생성/갱신은 없었다. 최초 기록의 `none` 표기를 정정한다. 후속 명시적 `none` 시각 비교로 다시 확인한다. 새 field 전체 50개와 기존 Lab 전체 24개를 포함한다.
 - 새 PNG 16개를 직접 검토했다. 두 theme의 heatmap과 ensemble 평균/산포, FK의 정적 경계와 pinning, ring ω²/SI 독립 진단, library와 유지된 mock에 대해 줄바꿈·overflow·caption·모바일 축/단위 설명을 확인했다. 기존 PNG는 수정하지 않았다.
 - CP2 `d278674a0c77ffe5c87703d4b93fdbbfab44d620` push 성공, `git ls-remote` 정확한 원격 hash 일치.
 
@@ -85,3 +85,14 @@
 - routes test의 개수35와 명시적인 FK route 포함 검사를 추가한다. 제품 source와 허용오차·golden·기존 test 이름은 변경하지 않는다. 전체 검사는 다시 통과해야 하며 첫 실패 보고서를 보존한다.
 - CP2 browser와 최종 production build의 field worker, field JS/CSS, catalog 파일 content hash가 각각 동일함을 확인했다. 따라서 정상 field/Lab74개의 runtime 증거는 그대로 유효하며 이 보강은 test fixture만 변경한다.
 - `tmp/S16-cp4-vitest.json`: 전체 공통 contracts/catalog **371/371**, 17파일, 실패·pending0. 라우트 test scoped ESLint와 전체 typecheck `tmp/S16-cp4-typecheck.log` 통과. 이 보강을 먼저 원격에 보존하고 전체 검사를 다시 실행한다.
+- CP4 `1aafaf2b4c3e02c31d841727b9b507e06487063d` push 성공, 정확한 원격 hash 일치. 깨끗하고 동기화된 CP4에서 preflight 재통과했다.
+
+## 최종 필수 검증과 STATUS
+
+- `tmp/S16-final-vitest.json`: **3347/3347**, 300파일, 실패/pending/todo0, maxWorkers2, 기존 timeout 유지. 첫 실패 보고서는 별도 보존했고 고친 fixture를 포함한 전체 실행으로 확인했다.
+- `tmp/S16-final-playwright.json`: shell **34/34** (desktop17+mobile17), 171.020초, 실패/skip/flaky/retry/runner 오류0. 정상 field/Lab74와 합계 **108개**이며 두 보고서를 결합한 값이다.
+- 일반 browser 두 실행의 설정은 기본 `missing`이다. baseline 생성/갱신은 없었고 CP2 원격 보존 이후 PNG 변경도0이다. 최초 progress의 `none` 표기를 바로잡았다. `tmp/S16-frozen-visual-playwright.json`: 명시적 `--update-snapshots=none`으로 중복 시각 case **4/4**, 39.885초, 오류/skip/flaky/retry0. 108에 이 중복4개를 더해 고유 case 수를 부풀리지 않는다.
+- 최종 품질10개 모두 exit0. 변경 TS30개 ESLint와 추가 route test1개 ESLint/typecheck를 통과했다. 수치 check9/9, catalog135개 정의/35개 시스템, Learn8과정/86예약/8공개, legacy inventory883파일·broken import/orphan0.
+- `tmp/S16-preservation.json`: 기존3220개 test 및 중복 수 모두 보존·127추가·누락0, 보호 engine/API/lockfile/golden 변경0, 과거 PNG160개 byte-identical, 새 PNG16개 직접 검토. 변경하지 않은 Date 거부 fixture의 표시 시각만 좁게 정규화하여 test 이름을 비교했다. 두 desktop 사본의 원본 SHA256 일치.
+- known-pattern scan1626tracked/1438text·발견0. 이력/ignored/binary/외부서비스는 범위 밖이다. dependency/CodeQL 기존 위험을 해결·승인했다고 주장하지 않는다. 사람 과학 검토·실기기·다른 browser·screen-reader 음성은 수행하지 않았다.
+- `S16-verification.json` phase=validated. CP0~CP4는 모두 origin에 보존했다. 이 문서/status/verification의 별도 STATUS commit을 push한 뒤 정확한 원격 hash를 확인해야 S16 완료다. 다음 유효 단계는 S17이며 이 요청에서 시작하지 않았다.
