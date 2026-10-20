@@ -2,15 +2,17 @@
 
 ## 범위와 단일 진입점
 
-[`src/product/catalog/index.ts`](../../src/product/catalog/index.ts)의 `catalog`는 배우기와 실험실이 공통으로 조회할 선언형 목록이다. 전체 134개 정의는 S01의 의미 기능 118개와 기존 적분기 registry의 개별 방법 16개를 정확히 한 번씩 연결한다.
+[`src/product/catalog/index.ts`](../../src/product/catalog/index.ts)의 `catalog`는 배우기와 실험실이 공통으로 조회할 선언형 목록이다. S02의 134개 정의는 S01의 의미 기능 118개와 기존 적분기 registry의 개별 방법 16개를 정확히 한 번씩 연결한다.
 
 | 종류 | 수 | 의미 |
 |---|---:|---|
-| 시스템 | 34 | 기존 모델, 특수 solver, 제한된 탐색/진단 경로 |
+| 시스템 | 35 | 기존 모델, 특수 solver, 제한된 탐색/진단 경로 |
 | 분석 | 51 | 입력 데이터와 기존 계산 함수의 계약 |
 | 적분기 | 21 | 기존 16개 ID와 적응 제어·정준 변환·SDE 5개 기능 |
 | 보조 기능 | 28 | 제어 7, importer 5, exporter 5, 저장 4, route 3, runtime 4 |
-| 합계 | 134 | S01 baseline 참조 134개, 중복 등록 없음 |
+| 합계 | 135 | S01 baseline 참조 134개, 중복 등록 없음 |
+
+S16은 기존 `sineGordon.relaxFrenkelKontorovaKink`를 `system:frenkel-kontorova` 정적 진단 경로로 노출한다. 이 제품 확장 하나의 `baselineIds`는 빈 배열이며 S01의 고정된 134개 참조와 기존 ID를 바꾸지 않는다. 빈 참조는 정확히 이 ID·단계·진단 종류·native binding 조합에만 허용한다. 위 표는 S16까지의 현재 등록 수이며 원래 baseline 개수는 유지한다.
 
 안정 ID는 `system:double`, `analysis:fft`, `integrator:rk4`처럼 종류를 포함한다. 기존 의미 ID는 유지한다. `verlet`과 `leapfrog`는 동일 함수에 연결되지만 저장된 기존 ID를 보존하므로 각각 등록한다. 이름은 한국어/영어를 포함하며 종류·언어별 공백, Unicode, 대소문자를 정규화해 중복을 검사한다.
 

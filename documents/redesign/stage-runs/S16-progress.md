@@ -22,7 +22,7 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
-| CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 대기 |
+| CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 완료 |
 | CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 대기 |
 | CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 대기 |
@@ -42,3 +42,14 @@
 - checkpoint마다 명시적 경로만 stage/commit/push하고 원격 hash 확인 후 다음 checkpoint로 간다. 최종 status 전 nextStage=16 유지.
 - CP0 code baseline `64db09a`를 ignored `tmp/s16-cp0-baseline`에 Git archive로 추출하여 기존 typecheck를 통과했다. 병렬 작업 중인 미완성 신규 모듈 때문에 live tree 첫 typecheck는 missing-module 오류로 끝났으며, CP1/CP2 공개 전에 전체 live tree typecheck를 다시 요구한다. CP0에는 문서/status만 포함한다.
 - 두 desktop 전달 사본은 원본 roadmap SHA256 `1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995`, execution `803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5`와 일치한다. 두 원본 계획 파일은 수정하지 않는다.
+- CP0 `ce4aad493f3d410894f66732e9c1edbfb44042d4` commit/push 성공, `git ls-remote` 정확한 원격 hash 일치.
+- native 조사의 결과 격자는 `ringPhononDispersion`의 모드 ω², FK는 정적 Newton kink를 연결한다. S16 카탈로그의 diatomic dispersion, Peierls–Nabarro barrier, Arrhenius MTTF 진단도 별도 bounded 설정 패널로 연결한다. 일반 depinning solver나 동적 격자 수송으로 오인하지 않게 표시한다.
+
+## CP1 검증
+
+- `tmp/S16-cp1-vitest.json`: adapter/worker/전용 canonical 계약/catalog 전체 **127/127**, 8파일, 실패·pending 0. 기존 catalog baseline 134개 참조는 보존하며 새 FK 제품 경로만 별도 확장한다(현재 전체 135개 정의/35개 시스템).
+- 전체 live tree typecheck `tmp/S16-cp1-typecheck.log`, CP1 TS 13개 scoped ESLint `tmp/S16-cp1-eslint.log` exit0. 개발 중 신규 파일의 타입 좁히기와 numerical script 배열 타입 오류는 공개 전에 수정했다.
+- FPUT 상태·에너지·조화 모드, SG fixed/periodic 두 시간층·정확한 재시작, native 확률 drift/Gaussian member stream, zero-noise, ensemble 크기 변경 시 prefix 보존, ring ω²와 정적 FK·최종 gradient norm을 검증했다.
+- worker는 64 member/128 grid 취소, 최대 1,001 기록, 64단계 요청·단계 사이 8ms soft budget, 오류/timeout/dispose/잘못된 snapshot과 마지막 유효 상태 보존을 검사했다. endpoint는 dt 정수배 실행 후 설정한 duration으로 정확히 표시하며 fractional native step을 만들지 않는다.
+- 새 seed 매핑은 `fnv1a-mulberry32-boxmuller@1`이고 고정 출력 fixture가 있다. native runLangevinEnsemble의 seed 매핑과 다른 새 product 계약이다. 확률 중간 RNG cursor 복원을 주장하지 않으며 초기 설정으로 재실행한다.
+- CP1에는 adapter 6개, adapter test 2개, canonical test 1개, 필요한 catalog 및 count/extension 검사와 문서만 포함한다. 화면·정적 진단 패널·browser는 CP2에서 검증·보존한다.

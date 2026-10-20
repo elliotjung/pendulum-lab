@@ -24,13 +24,36 @@ const system = (id: string) => catalog.systems.find((system) => system.id === `s
 describe('S02 typed capability catalog', () => {
   it('registers all systems, analysis input contracts and methods with unique stable IDs', () => {
     expect(validateCatalog(catalog)).toEqual([]);
-    expect(catalog.systems).toHaveLength(34);
+    expect(catalog.systems).toHaveLength(35);
     expect(catalog.analyses).toHaveLength(51);
     expect(catalog.integrators).toHaveLength(21);
-    expect(allDefinitions(catalog)).toHaveLength(134);
+    expect(allDefinitions(catalog)).toHaveLength(135);
     expect(catalog.integrators.filter((method) => method.legacyId !== undefined)).toHaveLength(16);
     expect(catalog.systems.every((system) => system.engineAdapters.length > 0)).toBe(true);
     expect(catalog.analyses.every((analysis) => analysis.inputs.length > 0)).toBe(true);
+  });
+
+  it('records the S16 native FK extension without fabricating or reassigning a baseline capability', () => {
+    const fk = system('frenkel-kontorova');
+    expect(fk.baselineIds).toEqual([]);
+    expect(fk.legacyBindings).toEqual([
+      { module: 'src/physics/sineGordon.ts', exportName: 'relaxFrenkelKontorovaKink' }
+    ]);
+    expect(fk.evolution).toBe('diagnostic');
+    for (const patch of [
+      { id: 'system:invented' },
+      { integrationStage: 17 },
+      { evolution: 'ode' },
+      { legacyBindings: [{ module: 'src/physics/standardMap.ts', exportName: 'standardMapStep' }] }
+    ]) {
+      const data = copy(),
+        entry = data.systems.find((item) => item.id === fk.id)!;
+      Object.assign(entry, patch);
+      expect(validateCatalog(data).some((error) => error.includes('baselineIds'))).toBe(true);
+    }
+    const data = copy();
+    data.systems[0]!.baselineIds = [];
+    expect(validateCatalog(data).some((error) => error.includes('baselineIds'))).toBe(true);
   });
 
   it('returns only known IDs and isolates the deeply frozen registry from caller objects', () => {

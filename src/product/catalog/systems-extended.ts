@@ -123,6 +123,39 @@ export const extendedRows: readonly SystemRow[] = [
     )
   },
   {
+    id: 'frenkel-kontorova',
+    baselineIds: [],
+    family: 'stochastic-field',
+    evolution: 'diagnostic',
+    stage: 16,
+    name: l('Frenkel–Kontorova 정적 kink', 'Frenkel–Kontorova stationary kink'),
+    description: l(
+      '고정 경계의 이산 FK kink를 Newton 완화하고 수렴 잔차를 확인한다.',
+      'Relaxes a fixed-boundary discrete FK kink with Newton iteration and reports convergence residuals.'
+    ),
+    binding: p('sineGordon', 'relaxFrenkelKontorovaKink'),
+    parameters: p('sineGordon', 'RelaxKinkOptions'),
+    coordinates: l(
+      '0→2π 고정 경계의 정규화 각도 격자. 시간 진화 상태가 아니다.',
+      'A normalized angle grid with fixed 0→2π boundaries; not a time-evolution state.'
+    ),
+    dof: l(
+      'N개 격자점 중 양 끝은 고정한 정적 각도 프로필.',
+      'A static angle profile with two fixed endpoints among N lattice sites.'
+    ),
+    internal: {
+      binding: p('sineGordon', 'relaxFrenkelKontorovaKink'),
+      description: l(
+        '기존 native Newton 정적 완화와 잔차 평가.',
+        'Existing native static Newton relaxation and residual evaluation.'
+      )
+    },
+    limitation: l(
+      '정지점은 saddle일 수 있다. 허용치·반복 수를 확인하며 구동 depinning·이동도·비정합 동역학을 주장하지 않는다. S16 제품 확장이며 고정 S01 baseline 기능을 새로 만들지 않는다.',
+      'A stationary point may be a saddle. Check tolerance and iterations; no driven depinning, mobility, or incommensurate dynamics. An S16 product extension without inventing a frozen S01 baseline capability.'
+    )
+  },
+  {
     id: 'standard-map',
     family: 'discrete-quantum',
     evolution: 'map',

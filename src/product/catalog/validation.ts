@@ -176,7 +176,19 @@ export function validateCatalog(value: unknown): string[] {
           }
         }
       strings(entry.tags, `${path}.tags`, undefined, 1);
-      strings(entry.baselineIds, `${path}.baselineIds`, undefined, 1);
+      // S16 exposes an existing static native API as a new product route. The frozen S01 inventory is unchanged.
+      const nativeFkExtension =
+        entry.id === 'system:frenkel-kontorova' &&
+        entry.category === 'system' &&
+        entry.integrationStage === 16 &&
+        entry.family === 'stochastic-field' &&
+        entry.evolution === 'diagnostic' &&
+        Array.isArray(entry.legacyBindings) &&
+        entry.legacyBindings.length === 1 &&
+        record(entry.legacyBindings[0]) &&
+        entry.legacyBindings[0].module === 'src/physics/sineGordon.ts' &&
+        entry.legacyBindings[0].exportName === 'relaxFrenkelKontorovaKink';
+      strings(entry.baselineIds, `${path}.baselineIds`, undefined, nativeFkExtension ? 0 : 1);
       bindings(entry.legacyBindings, `${path}.legacyBindings`);
       if (
         !Number.isInteger(entry.integrationStage) ||

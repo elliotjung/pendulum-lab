@@ -7,6 +7,7 @@ export const p = (file: string, exportName: string): LegacyBinding => b(`physics
 
 export interface SystemRow {
   id: string;
+  baselineIds?: readonly string[];
   family: SystemDefinition['family'];
   evolution: SystemDefinition['evolution'];
   stage: number;
@@ -36,7 +37,7 @@ export function define(row: SystemRow): SystemDefinition {
     name: row.name,
     description: row.description,
     tags: [row.id, row.family, row.evolution],
-    baselineIds: [id],
+    baselineIds: row.baselineIds ?? [id],
     integrationStage: row.stage,
     legacyBindings: [row.binding],
     engineAdapters: row.engines ?? [row.binding],
