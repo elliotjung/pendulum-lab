@@ -24,7 +24,7 @@
 | CP1 | 공용 계약·native 분석·호환성·worker·artifact | synthetic/native parity, invalid/resource/cancel, typecheck | 완료 |
 | CP2 | 모든 패밀리 공용 Dock·설정·plots·재로드 | component/unit, build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 전체 검증·수치·보존 기록 | 전체 Vitest, quality checks, E2E, preservation | 검증 통과 |
-| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
+| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 검증 성공·이 commit 원격 확인 뒤 완료 |
 
 ## 변경 예정 경로
 
@@ -79,3 +79,9 @@
 - 검증 문서를 stage한 뒤 최종 known-pattern scan1705tracked/1499text·발견0을 확인했다. 새 검증 JSON과 진행 상태에 대한 plan/format 검사도 통과했다. 원본 계획·pure engine·PNG 기준은 그대로다.
 - 사람 과학 검토, 실제 기기, Firefox/WebKit, screen-reader 음성은 검증하지 않았다. 기존 S01 공급망/CodeQL 위험과 S11~S17 모델 한계는 유지한다. S17 사용자 gate는 이번18요청으로 승인했고 사람 검토로 표시하지 않는다.
 - 구현/검증 기록 CP3를 먼저 commit/push한 뒤, 원격 hash 확인과 clean guard를 통과해야 별도 STATUS commit에서만18완료·next19로 갱신한다. master merge/force push/tag/release/cutover와19이후 구현은 하지 않았다.
+
+## STATUS
+
+- CP3 `0f5b98313e5b92fbf6cf2217077238e45a9b12f1` push 성공과 정확한 원격 hash 확인. 모든 구현·검증 근거가 원격에 있는 상태에서 완료 metadata만 별도 갱신한다.
+- stage18 완료 목록·nextStage19·activeStage 해제, approvedReviewGates=[7,9,17]. S17 사용자 승인과 사람 과학 검토를 구분한다.
+- 이 STATUS commit도 origin/codex/redesign에 push되고 정확한 원격 hash가 확인되어야 S18 완료다.

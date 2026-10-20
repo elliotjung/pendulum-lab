@@ -8,22 +8,22 @@
     "selectedByUser": true
   },
   "totalStages": 30,
-  "lastCompletedStage": 17,
-  "nextStage": 18,
-  "completedStages": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+  "lastCompletedStage": 18,
+  "nextStage": 19,
+  "completedStages": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
   "blockedStage": null,
-  "activeStage": 18,
-  "activeStageCheckpoint": "CP3",
+  "activeStage": null,
+  "activeStageCheckpoint": null,
   "reviewGates": [7, 9, 17, 24, 28],
   "approvedReviewGates": [7, 9, 17],
   "notes": [
-    "S17 connects standard-map iterations, complex QKR FFT evolution and raw unitary-Floquet spectra. Phase cylinder, wavefunction probability/phase, norm/unitarity, schema-driven conditions, pause/step/cancel, isolated save/share/import, CSV/SVG and exact complex-state continuation work. See discrete-quantum-lab-ko.md and stage-runs/S17-verification.json.",
-    "Whole Vitest 3404/3404 in 306 files passed with maxWorkers2 and unchanged timeouts. Production Chromium/Pixel5 124/124 passed with snapshot updates none, zero failures/skips/flaky/retries/errors. First normal attempt lost its completion report and is not counted; same124 rerun used separate preview and direct JSON output. Nine quality checks and production build passed.",
-    "Map1000 and QKR2048 iterations have zero native differences at fixed1e-12 parity tolerance. Selected QKR64 initial norm drift 1.7850165789923267e-12; analytic spectra and raw nonunitary fixture pass. NormDrift means abs(norm-1), not initial norm preservation. No automatic normalization or unit-circle projection.",
-    "Bounds: QKR powers-of-two N2-512, dense spectrum/operator N2-8,100000 iterations,2000000 grid-iteration work,1001 retained observations,64 steps/request,8ms between-step soft budget and15s response timeout. Spectrum uses exactly the same small grid; omitted for QKR N>8. Dense roots lack convergence/eigenvector-residual certification. No general infinite-grid accuracy/localization proof. Large CSV is assembled synchronously from retained observations.",
-    "Existing app.html, native engines, public APIs, user data, packages/lockfile and golden remain unchanged. All 3347 historical Vitest cases and 176 PNGs are preserved;14 new PNGs inspected. Catalog135 definitions/35systems/134frozen references; Learn8courses/86reservations/8published units. Inventory883files with broken imports/orphans0. Desktop transport hashes match unchanged plans.",
-    "S17 user checkpoint approved by the explicit S18 execution request under stage-run-protocol. Approved gates are [7,9,17]. Human scientific review remains0/8published units. Physical devices, Firefox/WebKit and screen-reader audio remain unverified; prior S11-S16 model limitations remain documented.",
-    "Dependencies unchanged; no fresh dependency audit or risk acceptance. S01 high2/moderate2 and CodeQL32 remain unresolved; separate GitHub default-branch notice high8/moderate3 is not a fresh audit. Known-pattern scan1666tracked/1464text files found0; history/ignored/binary/external services excluded.",
-    "CP0 80d37a0, CP1 789968f, CP2 cbcff5a and CP3 8c3c0f4 were pushed with exact remote hashes. Completion requires this separate status commit on origin/codex/redesign. Rollback: S16 16ff3bb and existing app.html. Next valid S18; no master merge, force push, release or cutover."
+    "S18 unifies state/time, energy, phase, FFT, NAFF, Poincare, full Lyapunov spectrum, SALI, FLI, zero-one and shadowing in a lazy common dock across35systems. Exact smooth native flows22; incompatible model-specific continuous diagnostics explain refusal. Matrix385:297 actual finite calculations and artifact roundtrips,88 explained refusals. See core-diagnostics-ko.md and stage-runs/S18-verification.json.",
+    "Whole Vitest 3896/3896 in314files passed with maxWorkers2 and unchanged timeouts. Production Chromium/Pixel5 new46/46+legacy48/48, snapshots none, zero failures/skips/flaky/retries/errors. Targeted664/664, numerical16/16,11quality commands and production build passed.",
+    "Native parity differences0 at fixed1e-12 for six selected outputs; analytic FFT6.25Hz/1.5 amplitude, NAFF error1.6312506900817425e-11. Finite-time indicators do not prove chaos; noise also gives high zero-oneK. Native uncertainty/Jacobian metadata and explicit shadowing non-exceedance preserved. SI/normalized-time/iteration and J/per-mass energy are distinct. Conserved energy does not auto-certify canonical Hamiltonian consistency.",
+    "Bounds:8192observations,256coordinates,1million state values,100000integrationsteps,32tangent dimensions,2million step-dimension-squared work,16MiB artifact,30s worker inactivity termination. Immutable snapshot, progress, cancel and strict artifact validation included. Bounded JSON import/export remains on main thread. Hybrid/projected/delay/stochastic/discrete/quantum systems need appropriate tangent models; static evaluations are not time series.",
+    "Existing app.html, pure native engines, public APIs, user data, packages/lockfile and golden remain unchanged. Only product driven RHS extracted and shared with parity/safety tests. All3404historical Vitest cases and196tracked PNGs preserved;4newPNG inspected. Historical visual helper temporarily detaches only new dock then restores same node; CSP unchanged. Catalog135/35systems/134frozen references, Learn8courses/86reservations/8published units, inventory883files/broken imports0/orphans0. Desktop plan transport hashes match.",
+    "S17 user checkpoint approved by explicit S18 request; approved gates[7,9,17]. No S18 human scientific review. Published Learn human-reviewed0/8 unchanged. Physical devices, Firefox/WebKit and screen-reader audio unverified. S11-S17 model and finite-grid/eigensolver limits remain in prior reports; no S19 or later implementation.",
+    "Dependencies unchanged; no fresh dependency audit or risk acceptance. S01 high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch notice high8/moderate3 is not a fresh audit. Tracked working-tree known-pattern secret scan found0; history/ignored/binary/external services excluded.",
+    "CP0 b4d0c30,CP1 66d7b34,CP2 b6df2cf,CP3 0f5b983 pushed with exact remote hashes. Completion requires this separate status commit on origin/codex/redesign. Rollback:S17 21bd669 and app.html. Next valid S19; no master merge,force push,release or cutover."
   ]
 }
