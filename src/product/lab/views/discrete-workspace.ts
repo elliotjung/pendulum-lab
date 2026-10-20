@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalDiscrete } from '../../adapters/physics/discrete';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -245,6 +247,12 @@ export function createDiscreteWorkspace(document: Document, system: SystemDefini
       () =>
         exportDiscreteFigure(document, model.state.config, model.state.samples, kind.control.value as DiscretePlotKind)
     );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalDiscrete(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -303,6 +311,7 @@ export function createDiscreteWorkspace(document: Document, system: SystemDefini
     warnings.textContent = [...new Set([...discreteWarnings(state.config), ...sample.warnings])].join(' ');
     inspector.update();
     files.update();
+    coreDiagnostics.update();
     updatePlot();
     updating = false;
   }
@@ -313,6 +322,7 @@ export function createDiscreteWorkspace(document: Document, system: SystemDefini
     dispose() {
       unsubscribe();
       model.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       session!.delete(key);
       session!.set(key, { config: model.state.config, tray });

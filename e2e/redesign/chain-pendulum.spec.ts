@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -277,23 +278,23 @@ test.describe('S10 triple and N-chain laboratory', () => {
   });
   test('frozen light/dark workspace, inspector and selected-link plots', async ({ page }) => {
     await open(page, 'triple');
-    await expect(page).toHaveScreenshot('s10-triple-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's10-triple-workspace-light.png');
     await panel(page, '조건');
     await page.getByLabel('화면 테마', { exact: true }).selectOption('dark');
-    await expect(page).toHaveScreenshot('s10-triple-inspector-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's10-triple-inspector-dark.png');
     await page.locator('#chain-duration').fill('0.02');
     await page.getByRole('button', { name: '실행', exact: true }).click();
     await expect(page.locator('.chain-workspace')).toHaveAttribute('data-lab-status', 'completed');
     await panel(page, '분석');
     await page.locator('#chain-plot-link').selectOption('2');
-    await expect(page).toHaveScreenshot('s10-triple-analysis-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's10-triple-analysis-dark.png');
   });
   test('frozen N-chain workspace and maximum-link inspector', async ({ page }) => {
     await open(page);
-    await expect(page).toHaveScreenshot('s10-chain-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's10-chain-workspace-light.png');
     await panel(page, '조건');
     await page.locator('#chain-count').selectOption('128');
     await page.locator('#chain-selected-link').selectOption('127');
-    await expect(page).toHaveScreenshot('s10-chain-128-inspector-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's10-chain-128-inspector-light.png');
   });
 });

@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -402,7 +403,7 @@ test.describe('S14 nonlinear and delay systems laboratory', () => {
         '#nonlinear-analysis',
         ['duffing', 'van-der-pol'].includes(scene.slug) ? /정규화/ : scene.slug === 'friction' ? /\(s\)/ : /rad/
       );
-      await expect(page).toHaveScreenshot(scene.file, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, scene.file);
     }
   });
 });

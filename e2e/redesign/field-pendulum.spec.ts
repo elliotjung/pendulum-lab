@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -355,7 +356,7 @@ test.describe('S16 stochastic lattice and field laboratory', () => {
       await page.locator('#field-plot-kind').selectOption(scene.kind);
       await page.getByLabel('화면 테마', { exact: true }).selectOption(scene.theme);
       await expect(page.locator('#field-analysis svg')).toBeVisible();
-      await expect(page).toHaveScreenshot(`s16-${scene.slug}-${scene.kind}-${scene.theme}.png`, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, `s16-${scene.slug}-${scene.kind}-${scene.theme}.png`);
     }
   });
 });

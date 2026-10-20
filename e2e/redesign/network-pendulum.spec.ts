@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -479,7 +480,7 @@ test.describe('S15 magnetic and synchronization network laboratory', () => {
     await expect(page.locator('#network-preview svg circle')).toHaveCount(8);
     await expect(page.locator('#network-preview svg line')).toHaveCount(8);
     await page.getByLabel('화면 테마', { exact: true }).selectOption('light');
-    await expect(page).toHaveScreenshot('s15-pendulum-topology-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's15-pendulum-topology-workspace-light.png');
   });
 
   test('frozen magnetic graph and parameter inspector dark layout', async ({ page }) => {
@@ -490,7 +491,7 @@ test.describe('S15 magnetic and synchronization network laboratory', () => {
     await expect(page.locator('#network-height')).toHaveValue('0.25');
     await expect(page.locator('#network-topology-input')).toHaveValue(/pendulum-network-graph-file\/v1/);
     await page.getByLabel('화면 테마', { exact: true }).selectOption('dark');
-    await expect(page).toHaveScreenshot('s15-magnetic-inspector-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's15-magnetic-inspector-dark.png');
   });
 
   test('frozen topology, aggregate order, individual phase, local coherence and basin layouts', async ({ page }) => {
@@ -530,7 +531,7 @@ test.describe('S15 magnetic and synchronization network laboratory', () => {
       await page.locator('#network-plot-kind').selectOption(scene.kind);
       await page.getByLabel('화면 테마', { exact: true }).selectOption(scene.theme);
       await caption(page);
-      await expect(page).toHaveScreenshot(scene.file, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, scene.file);
     }
   });
 });

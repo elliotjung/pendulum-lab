@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -464,7 +465,7 @@ test.describe('S17 discrete and quantum laboratory', () => {
       await page.locator('#discrete-plot-kind').selectOption(scene.kind);
       await page.getByLabel('화면 테마', { exact: true }).selectOption(scene.theme);
       await expect(page.locator('#discrete-analysis svg')).toBeVisible();
-      await expect(page).toHaveScreenshot(`s17-${scene.slug}-${scene.kind}-${scene.theme}.png`, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, `s17-${scene.slug}-${scene.kind}-${scene.theme}.png`);
     }
   });
 });

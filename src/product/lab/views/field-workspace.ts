@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalField } from '../../adapters/physics/field';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -262,6 +264,12 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
           Number(member.control.value) || 0
         )
     );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalField(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -333,6 +341,7 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
     warnings.textContent = [...fieldWarnings(state.config), ...sample.warnings].join(' ');
     inspector.update();
     files.update();
+    coreDiagnostics.update();
     updatePlot();
     updating = false;
   }
@@ -343,6 +352,7 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
     dispose() {
       unsubscribe();
       model.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       session!.delete(key);
       session!.set(key, { config: model.state.config, tray });

@@ -47,17 +47,11 @@
     "parameters": {
       "mu": 0
     },
-    "initialState": [
-      1,
-      0
-    ],
+    "initialState": [1, 0],
     "timeUnit": "normalized-time",
     "duration": 20,
     "dt": 0.01,
-    "spectrum": [
-      -5.247691170497757e-13,
-      -8.631872994160393e-13
-    ],
+    "spectrum": [-5.247691170497757e-13, -8.631872994160393e-13],
     "sali": 1.4142135623036192,
     "fli": 6.096234628216659e-13,
     "sectionCount": 6,

@@ -21,8 +21,8 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 실행 기록·activeStage·S17 승인 | plan/preflight/typecheck | 완료 |
-| CP1 | 공용 계약·native 분석·호환성·worker·artifact | synthetic/native parity, invalid/resource/cancel, typecheck | 검증 통과 |
-| CP2 | 모든 패밀리 공용 Dock·설정·plots·재로드 | component/unit, build, desktop/mobile/keyboard/axe/visual | 대기 |
+| CP1 | 공용 계약·native 분석·호환성·worker·artifact | synthetic/native parity, invalid/resource/cancel, typecheck | 완료 |
+| CP2 | 모든 패밀리 공용 Dock·설정·plots·재로드 | component/unit, build, desktop/mobile/keyboard/axe/visual | 검증 통과 |
 | CP3 | 전체 검증·수치·보존 기록 | 전체 Vitest, quality checks, E2E, preservation | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
 
@@ -54,3 +54,17 @@
 - 전체 typecheck, scoped ESLint, source policy 전 단계의 범위 보존, `audit:modules` 661파일·초과0. module-size 검사의 첫 sandbox 실행은 esbuild EPERM으로 실패했고 동일 명령을 확장 권한 실행해 통과했다.
 - `S18-numerical-metrics.json` **16/16**: FFT6.25Hz/진폭1.5, NAFF 각주파수 오차 `1.6312506900817425e-11`, periodic K `-0.011819115097078715`, seeded noise K `0.9986884414047166`. 조화진동자 spectrum 약1e-12, SALI1.4142/FLI약6e-13, 단면6교차·잔차9.89e-10. 6개 native 결과 비교의 차이 모두0(고정 허용오차1e-12).
 - UI는 별도 CP2에서 publish한다. 첫 exploratory Chromium run은 새 시각 baseline 부재만 실패했으며 완료 증거로 세지 않는다. 최종 동결 build·정상 snapshot-none 검증이 남았다.
+- CP1 `66d7b34` push 성공. 정확한 원격 hash를 확인한 뒤 CP2 최종 production 검증을 진행한다.
+
+## CP2 화면과 실행 검증
+
+- 기존 9개 실제 workspace의 분석 영역에 공용 진단을 연결했다. 기본 접힌 작은 facade만 로드하며 패널을 처음 열 때 분석 UI/provider를 lazy import한다. 실행 순간의 원 실험·실제 관측을 복사하며 animation worker와 분리한다.
+- 모든 설정에 범위·기본값·단위·의미와 실패 안내, 실제 진행/즉시 취소, 결과 plot/수치 표, 원 실험을 바꾸지 않는 artifact 다운로드·재로드를 제공한다. 늦은 chunk/worker 응답과 route dispose를 검사했다.
+- 동결 production build `tmp/S18-final-build.log` exit0. 신규 전용 browser `tmp/S18-final-playwright.json`: **46/46**, Chromium23+Pixel5 23, snapshot none, retry0, unexpected/skipped/flaky/runner errors0, tool exit0. 모든35route/9family 실제 worker/11diagnostic/단위·거부/파일 왕복/320px/keyboard/axe/CSS zoom2를 포함한다.
+- 새 S18 PNG4개만 준비하고 agent가 전부 직접 시각 검사했다. 기존 PNG는 갱신하지 않는다. 초기 exploratory missing-baseline 실패와 preparation은 최종 정상 검증과 구분한다. `tmp/S18-ui-validation.json`에 build/browser/image hash와 명령·검토 범위를 기록했다.
+- 첫 기존 화면 probe는 추가 summary로 높이가 늘어 실패했다. 기존 PNG 보존을 위해 새 영역만 제외하는 screenshot style 옵션을 시도했으나 설치 API는 stylePath를 요구했고, production CSP가 그 inline 스타일 주입을 차단했다. 앱 CSP는 유지한다. 최종 helper는 새 진단 DOM만 Comment marker로 잠시 분리하고 `finally`에서 같은 노드를 복원한다. 기존 기능·계산 assertion과 24개 시각 assertion은 유지하고 새 기능은 전용 시각 검사로 확인한다.
+- CSP 차단 run은 중단하고 완료 근거에서 제외했다. `tmp/S18-legacy-csp-diagnostic.json`/startup failure 및 trace를 보존했다. 최종 기존48case는 snapshot none·retry0·원래 timeout으로 재실행 중이다.
+- 최종 품질11개: typecheck/scoped ESLint/changed-file format/source policy/module-size/plan/catalog/Learn/inventory/secrets/numerics 모두 exit0. 최초 JSON format와 style 옵션의 타입 오류를 수정한 뒤 영향 범위만 재실행했다. 새 제품 코드는 build 이후 변경하지 않았다.
+- 보안 패턴 scan1704tracked/1498text·발견0. dependency 새 감사나 위험 수용은 하지 않았다. baseline inventory883파일·깨진 import0/orphan0, catalog135정의/35시스템, Learn8과정/86예약/8공개 그대로다.
+- 최종 기존 회귀 `tmp/S18-legacy-playwright.json`: **48/48**, 9패밀리 파일, Chromium24+Pixel5 24, snapshot none/retry0, failed/skipped/flaky/runner errors0, tool exit0. `tmp/S18-legacy-validation.json`은 기존 E2E PNG190개 모두 hash동일, 기존 Git PNG변경0임을 확인한다. 신규46개와 합계 **94/94** production case 통과.
+- 모든 CP2 필수 targeted 검증 성공. UI·전용 시각 baseline·기존 화면 비교 helper·진행 metadata만 명시적으로 commit/push하고, 전체 Vitest와 최종 보존 기록은 CP3에서 확인한다.

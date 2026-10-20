@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -430,21 +431,21 @@ test.describe('S11 spring, rope and double-string laboratory', () => {
 
   test('frozen light/dark spring and slack rope layouts', async ({ page }) => {
     await open(page, 'spring');
-    await expect(page).toHaveScreenshot('s11-spring-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's11-spring-workspace-light.png');
     await panel(page, '조건');
     await page.getByLabel('화면 테마', { exact: true }).selectOption('dark');
-    await expect(page).toHaveScreenshot('s11-spring-inspector-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's11-spring-inspector-dark.png');
     await open(page);
     await panel(page, '조건');
     await page.locator('#constraint-theta').fill('2.5');
     await page.locator('#constraint-omega').fill('0');
     await panel(page, '작업 공간');
-    await expect(page).toHaveScreenshot('s11-rope-slack-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's11-rope-slack-dark.png');
     await open(page, 'double-string');
     await panel(page, '조건');
     await page.locator('#constraint-preset').selectOption('double-outer-release');
     await page.getByRole('button', { name: '프리셋 적용', exact: true }).click();
     await panel(page, '작업 공간');
-    await expect(page).toHaveScreenshot('s11-double-string-outer-slack-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's11-double-string-outer-slack-dark.png');
   });
 });

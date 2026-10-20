@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalConstraint } from '../../adapters/physics/constraint';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createSection, createProgress } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -348,6 +350,12 @@ export function createConstraintWorkspace(
         Number(selected.value)
       )
   );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalConstraint(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -414,6 +422,7 @@ export function createConstraintWorkspace(
     }
     inspector.update();
     files.update();
+    coreDiagnostics.update();
     updateEvents();
     if (tabs.selectedId === 'analysis') updatePlot();
   }
@@ -428,6 +437,7 @@ export function createConstraintWorkspace(
       while (session!.size > 8) session!.delete(session!.keys().next().value!);
       unsubscribe();
       model.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       tabs.dispose();
     }

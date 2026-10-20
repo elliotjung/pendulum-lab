@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalDriven } from '../../adapters/physics/driven';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -422,6 +424,12 @@ export function createDrivenWorkspace(document: Document, system: SystemDefiniti
       ),
     () => sweep.state.status !== 'running'
   );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalDriven(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -498,6 +506,7 @@ export function createDrivenWorkspace(document: Document, system: SystemDefiniti
       ))
         input.disabled = true;
     files.update();
+    coreDiagnostics.update();
     if (tabs.selectedId === 'analysis') updatePlot();
     updating = false;
   }
@@ -519,6 +528,7 @@ export function createDrivenWorkspace(document: Document, system: SystemDefiniti
       unsubscribeSweep();
       model.dispose();
       sweep.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       tabs.dispose();
     }

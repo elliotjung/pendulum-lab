@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalPlanar } from '../../adapters/physics/planar';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -204,6 +206,12 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     restore,
     () => model.state.valid && model.state.status !== 'running' && dock.valid && !dock.busy
   );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalPlanar(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
+  });
+  dock.element.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -243,6 +251,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     inspector.update();
     dock.update();
     files.update();
+    coreDiagnostics.update();
   }
   const unsubscribe = model.subscribe(update);
   const unsubscribeDock = dock.subscribe(update);
@@ -255,6 +264,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
       unsubscribeDock();
       model.cancel();
       dock.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       tabs.dispose();
     }

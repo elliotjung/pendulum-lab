@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -189,7 +190,7 @@ test.describe('S07 real planar pendulum laboratory', () => {
         }
         await audit(page);
       }
-      await expect(page).toHaveScreenshot(`${slug}-analysis-light.png`, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, `${slug}-analysis-light.png`);
       // The long analyses use their own initial-state integration and preserve the animation cursor.
       await panel(page, '작업 공간');
       await expect(page.locator('#lab-time')).toHaveAttribute('data-time', '0.002');
@@ -321,11 +322,11 @@ test.describe('S07 real planar pendulum laboratory', () => {
     test(`${slug}: reviews a deterministic real workspace and dark inspector`, async ({ page }) => {
       await openSystem(page, slug);
       await audit(page);
-      await expect(page).toHaveScreenshot(`${slug}-workspace-light.png`, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, `${slug}-workspace-light.png`);
       await page.locator('#product-theme').selectOption('dark');
       await panel(page, '조건');
       await audit(page);
-      await expect(page).toHaveScreenshot(`${slug}-inspector-dark.png`, { fullPage: true });
+      await expectLegacyPanelScreenshot(page, `${slug}-inspector-dark.png`);
     });
   }
 

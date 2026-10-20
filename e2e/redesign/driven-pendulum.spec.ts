@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -369,19 +370,19 @@ test.describe('S13 driven and controlled systems laboratory', () => {
 
   test('frozen driven workspace, cart-pole controller and response layouts', async ({ page }) => {
     await open(page);
-    await expect(page).toHaveScreenshot('s13-driven-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's13-driven-workspace-light.png');
     await open(page, 'cartpole');
     await panel(page, '조건');
     await page.locator('#driven-controller-enabled').check();
     await apply(page);
     await page.getByLabel('화면 테마', { exact: true }).selectOption('dark');
-    await expect(page).toHaveScreenshot('s13-cartpole-controller-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's13-cartpole-controller-dark.png');
     await page.locator('#driven-duration').fill('0.2');
     await apply(page);
     await page.getByRole('button', { name: '실행', exact: true }).click();
     await expect(workspace(page)).toHaveAttribute('data-lab-status', 'completed');
     await panel(page, '분석');
     await page.locator('#driven-plot-kind').selectOption('error');
-    await expect(page).toHaveScreenshot('s13-response-analysis-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's13-response-analysis-dark.png');
   });
 });

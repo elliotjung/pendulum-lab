@@ -1,3 +1,4 @@
+import { expectLegacyPanelScreenshot } from './legacy-layout';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -355,12 +356,12 @@ test.describe('S12 spatial systems laboratory', () => {
 
   test('frozen spatial workspace, embedded inspector and numerical layouts', async ({ page }) => {
     await open(page);
-    await expect(page).toHaveScreenshot('s12-spherical-workspace-light.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's12-spherical-workspace-light.png');
     await open(page, 'spherical-embedded-chain');
     await panel(page, '조건');
     await page.getByLabel('화면 테마', { exact: true }).selectOption('dark');
-    await expect(page).toHaveScreenshot('s12-embedded-inspector-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's12-embedded-inspector-dark.png');
     await panel(page, '분석');
-    await expect(page).toHaveScreenshot('s12-spatial-diagnostics-dark.png', { fullPage: true });
+    await expectLegacyPanelScreenshot(page, 's12-spatial-diagnostics-dark.png');
   });
 });

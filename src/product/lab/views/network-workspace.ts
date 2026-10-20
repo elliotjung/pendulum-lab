@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalNetwork } from '../../adapters/physics/network';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -408,6 +410,12 @@ export function createNetworkWorkspace(document: Document, system: SystemDefinit
         ),
       () => basin.state.status !== 'running'
     );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalNetwork(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -493,6 +501,7 @@ export function createNetworkWorkspace(document: Document, system: SystemDefinit
     updateScene();
     inspector.update();
     files.update();
+    coreDiagnostics.update();
     updateBasin();
     if (tabs.selectedId === 'analysis') updatePlot();
     updating = false;
@@ -510,6 +519,7 @@ export function createNetworkWorkspace(document: Document, system: SystemDefinit
       model.dispose();
       basin.dispose();
       inspector.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       tabs.dispose();
       timers.forEach((timer) => clearTimeout(timer));

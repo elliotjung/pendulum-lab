@@ -1,3 +1,5 @@
+import { createDiagnostics } from './diagnostics';
+import { toCanonicalSpatial } from '../../adapters/physics/spatial';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createSection, createProgress } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -295,6 +297,12 @@ export function createSpatialWorkspace(document: Document, system: SystemDefinit
         residual.control.value as SpatialResidual
       )
   );
+  const coreDiagnostics = createDiagnostics(document, {
+    experiment: () => toCanonicalSpatial(model.state.config),
+    samples: () => model.state.samples,
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(coreDiagnostics.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -372,6 +380,7 @@ export function createSpatialWorkspace(document: Document, system: SystemDefinit
     }
     inspector.update();
     files.update();
+    coreDiagnostics.update();
     if (tabs.selectedId === 'analysis') updatePlot();
   }
   const unsubscribe = model.subscribe(update);
@@ -385,6 +394,7 @@ export function createSpatialWorkspace(document: Document, system: SystemDefinit
       while (session!.size > 8) session!.delete(session!.keys().next().value!);
       unsubscribe();
       model.dispose();
+      coreDiagnostics.dispose();
       files.dispose();
       tabs.dispose();
       scene.destroy();
