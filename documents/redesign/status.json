@@ -30,8 +30,8 @@
     17
   ],
   "blockedStage": null,
-  "activeStage": null,
-  "activeStageCheckpoint": null,
+  "activeStage": 18,
+  "activeStageCheckpoint": "CP0",
   "reviewGates": [
     7,
     9,
@@ -41,7 +41,8 @@
   ],
   "approvedReviewGates": [
     7,
-    9
+    9,
+    17
   ],
   "notes": [
     "S17 connects standard-map iterations, complex QKR FFT evolution and raw unitary-Floquet spectra. Phase cylinder, wavefunction probability/phase, norm/unitarity, schema-driven conditions, pause/step/cancel, isolated save/share/import, CSV/SVG and exact complex-state continuation work. See discrete-quantum-lab-ko.md and stage-runs/S17-verification.json.",
