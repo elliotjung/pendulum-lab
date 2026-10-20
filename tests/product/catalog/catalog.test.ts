@@ -202,6 +202,32 @@ describe('declarative compatibility', () => {
     }
   });
 
+  it('keeps the S17 registrations and excludes continuous vector-field tools from every discrete system', () => {
+    const ids = ['standard-map', 'quantum-kicked-rotor', 'unitary-floquet'];
+    expect(catalog.systems.filter((entry) => entry.family === 'discrete-quantum').map((entry) => entry.id)).toEqual(
+      ids.map((id) => `system:${id}`)
+    );
+    for (const id of ids) {
+      const entry = system(id);
+      expect(entry.integrationStage).toBe(17);
+      expect(entry.baselineIds).toEqual([entry.id]);
+      expect(entry.stepping.kind).toBe('internal');
+      for (const analysis of catalog.analyses.filter((definition) =>
+        definition.compatibility.requiredInputs.includes('vector-field')
+      )) {
+        expect(supportsSystem(analysis.compatibility, entry), `${id}: ${analysis.id}`).toBe(false);
+        expect(
+          matchesCapability(analysis.compatibility, {
+            system: entry,
+            availableInputs: analysis.compatibility.requiredInputs
+          })
+        ).toBe(false);
+      }
+      expect(compatibleIntegrators(catalog, { system: entry, availableInputs: ['state', 'vector-field'] })).toEqual([]);
+    }
+    expect(allDefinitions(catalog).flatMap((entry) => entry.baselineIds)).toHaveLength(134);
+  });
+
   it('requires real analysis data instead of treating catalog registration as a produced artifact', () => {
     const context = { system: system('double'), availableInputs: [] } as const;
     expect(compatibleAnalyses(catalog, context)).toEqual([]);

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "S17-numerical-metrics/v1",
+  "recordedAtUtc": "2026-10-20T02:36:17.636Z",
+  "sourceHead": "80d37a03cada643ed7b09f4de3e461666bd4ca65",
+  "sourceScope": "Working-tree S17 adapter sources at measurement; sourceHead identifies the parent Git HEAD.",
+  "command": "node --import tsx scripts/redesign/measure-discrete-numerics.ts",
+  "environment": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "node": "v26.3.0",
+    "cpu": "Intel(R) Core(TM) Ultra 7 256V"
+  },
+  "tolerances": {
+    "parityTolerance": 1e-12,
+    "spectrumTolerance": 1e-9,
+    "selectedNorm": 1e-9
+  },
+  "canonicalRoundtrips": [
+    {
+      "id": "system:standard-map",
+      "bytes": 771,
+      "equal": true
+    },
+    {
+      "id": "system:quantum-kicked-rotor",
+      "bytes": 827,
+      "equal": true
+    },
+    {
+      "id": "system:unitary-floquet",
+      "bytes": 946,
+      "equal": true
+    }
+  ],
+  "standardMap": {
+    "iterations": 1000,
+    "thetaAbsDifference": 0,
+    "momentumAbsDifference": 0,
+    "thetaWrapped": true,
+    "deterministic": true
+  },
+  "quantum": {
+    "gridSize": 64,
+    "iterations": 2048,
+    "realMaxAbsDifference": 0,
+    "imaginaryMaxAbsDifference": 0,
+    "finalNorm": 1.0000000000017852,
+    "absoluteNormDrift": 1.7850165789923267e-12,
+    "reportedDrift": 1.7852386235972517e-12,
+    "nativeNormDifference": 0,
+    "deterministic": true,
+    "largeGridSpectrumAbsent": true
+  },
+  "knownSpectrum": {
+    "dimension": 3,
+    "phasesMaxAbsError": 0,
+    "quasiEnergyMaxAbsError": 0,
+    "nativePhaseMaxAbsDifference": 0,
+    "unitarityDefect": 0,
+    "rawUnitCircleDrift": 1.1102230246251565e-16
+  },
+  "nonunitary": {
+    "defect": 0.38483762809787714,
+    "rawCircleDrift": 0.29999999999999993,
+    "eigenvalueMagnitudes": [
+      0.7000000000000001,
+      0.9
+    ]
+  },
+  "checks": {
+    "canonicalComplexRoundtrips": true,
+    "standardMapNativeParity": true,
+    "qkrNativeParity": true,
+    "selectedNormConservation": true,
+    "analyticDiagonalSpectrum": true,
+    "rawNonunitaryEvidence": true,
+    "knownQkrFreeSpectrum": true,
+    "spectrumUsesActualBoundedGrid": true
+  },
+  "limitations": [
+    "Selected finite fixtures and native parity do not certify arbitrary input spectra or infinite-grid quantum dynamics.",
+    "Native dense characteristic-polynomial roots have no convergence flag; degeneracies can be ill-conditioned. No eigenvector residual certification is claimed.",
+    "Quasi-energies use the principal branch E=-hbar*arg(lambda)/T and are defined modulo 2*pi*hbar/T for a unitary operator.",
+    "QKR uses FFT-ordered finite momentum states; norm conservation does not establish adequate grid resolution or dynamical localization.",
+    "No human scientific review, model selector verification, or physical-device performance certification occurred."
+  ],
+  "elapsedMs": 364.42659999999995
+}
