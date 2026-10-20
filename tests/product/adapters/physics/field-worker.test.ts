@@ -229,4 +229,98 @@ describe('S16 bounded worker retention and lifecycle', () => {
     expect(fake.worker.terminate).toHaveBeenCalledOnce();
     expect(client.advance(1)).toBe(false);
   });
+  it.each([
+    ['system:fput', 'state'],
+    ['system:fput', 'profile'],
+    ['system:fput', 'modeEnergies'],
+    ['system:fput', 'warnings'],
+    ['system:langevin', 'state'],
+    ['system:langevin', 'profile'],
+    ['system:langevin', 'mean'],
+    ['system:langevin', 'variance'],
+    ['system:langevin', 'memberStates'],
+    ['system:langevin', 'memberRow'],
+    ['system:langevin', 'seeds'],
+    ['system:langevin', 'memberIds'],
+    ['system:sine-gordon', 'previousField']
+  ] as const)('rejects sparse own indexes in %s %s ready snapshots', (systemId, field) => {
+    const config = defaultFieldConfig(systemId),
+      fake = fakeWorker(),
+      events: FieldWorkerEvent[] = [];
+    createFieldWorkerClient(
+      config,
+      (e) => events.push(e),
+      () => fake.worker
+    );
+    const request = fake.requests.shift()!,
+      ready = createFieldWorkerSession(() => 0).handle(request);
+    if (ready.type !== 'ready') throw new Error('ready');
+    const bad = structuredClone(ready) as Mutable<typeof ready>;
+    if (field === 'memberRow') bad.sample.memberStates[0] = new Array<number>(2);
+    else if (field === 'seeds') bad.sample.ensemble.seeds = new Array<number>(config.ensemble.members);
+    else if (field === 'memberIds') bad.sample.ensemble.memberIds = new Array<string>(config.ensemble.members);
+    else if (field === 'memberStates') bad.sample.memberStates = new Array<number[]>(config.ensemble.members);
+    else if (field === 'warnings') bad.sample.warnings = new Array<string>(1);
+    else bad.sample[field] = new Array<number>(bad.sample[field].length);
+    expect(() => fake.worker.onmessage?.({ data: bad } as unknown as MessageEvent<FieldWorkerEvent>)).not.toThrow();
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({ type: 'error', message: expect.stringContaining('유효하지 않은 결과') });
+    expect(fake.worker.terminate).toHaveBeenCalledOnce();
+  });
+  it.each(['hole', 'inherited-slot'])('rejects a retained-samples %s despite matching length', (kind) => {
+    const config = { ...defaultFieldConfig('system:fput'), duration: 0.01 },
+      fake = fakeWorker(),
+      events: FieldWorkerEvent[] = [],
+      client = createFieldWorkerClient(
+        config,
+        (e) => events.push(e),
+        () => fake.worker
+      ),
+      session = createFieldWorkerSession(() => 0);
+    const ready = session.handle(fake.requests.shift()!);
+    if (ready.type !== 'ready') throw new Error('ready');
+    fake.worker.onmessage?.({ data: ready } as MessageEvent<FieldWorkerEvent>);
+    client.advance(1);
+    const progress = session.handle(fake.requests.shift()!);
+    if (progress.type !== 'progress') throw new Error('progress');
+    const bad = structuredClone(progress) as Mutable<typeof progress>,
+      retained = bad.samples[0]!;
+    bad.samples = new Array<Mutable<typeof retained>>(1);
+    if (kind === 'inherited-slot')
+      Object.setPrototypeOf(bad.samples, Object.assign(Object.create(Array.prototype), { 0: retained }));
+    fake.worker.onmessage?.({ data: bad } as unknown as MessageEvent<FieldWorkerEvent>);
+    expect(events.at(-1)).toMatchObject({ type: 'error', message: expect.stringContaining('유효하지 않은 결과') });
+    expect(fake.worker.terminate).toHaveBeenCalledOnce();
+  });
+  it('rejects sparse numeric fields inside a populated retained sample and error snapshot', () => {
+    for (const kind of ['progress', 'error'] as const) {
+      const config = { ...defaultFieldConfig('system:fput'), duration: 0.01 },
+        fake = fakeWorker(),
+        events: FieldWorkerEvent[] = [],
+        client = createFieldWorkerClient(
+          config,
+          (e) => events.push(e),
+          () => fake.worker
+        ),
+        session = createFieldWorkerSession(() => 0);
+      const ready = session.handle(fake.requests.shift()!);
+      if (ready.type !== 'ready') throw new Error('ready');
+      fake.worker.onmessage?.({ data: ready } as MessageEvent<FieldWorkerEvent>);
+      client.advance(1);
+      const progress = session.handle(fake.requests.shift()!);
+      if (progress.type !== 'progress') throw new Error('progress');
+      const snapshot = structuredClone(progress) as Mutable<typeof progress>;
+      snapshot.samples[0]!.modeEnergies = new Array<number>(config.grid.points);
+      const payload =
+        kind === 'progress'
+          ? snapshot
+          : { type: 'error', id: snapshot.id, sequence: snapshot.sequence, message: 'failed', snapshot };
+      fake.worker.onmessage?.({ data: payload } as unknown as MessageEvent<FieldWorkerEvent>);
+      expect(events.at(-1)).toMatchObject({
+        type: 'error',
+        message: expect.stringContaining(kind === 'error' ? '유효하지 않은 오류' : '유효하지 않은 결과')
+      });
+      expect(fake.worker.terminate).toHaveBeenCalledOnce();
+    }
+  });
 });

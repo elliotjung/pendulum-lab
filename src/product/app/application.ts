@@ -69,7 +69,16 @@ export function mountApplication(root: HTMLElement, window: Window) {
                         'system:chimera-exploration'
                       ].includes(route.systemId)
                     ? import('./views/network-lab')
-                    : loaders[space](),
+                    : route.kind === 'lab-system' &&
+                        [
+                          'system:langevin',
+                          'system:fput',
+                          'system:lattice-fk-limit',
+                          'system:sine-gordon',
+                          'system:frenkel-kontorova'
+                        ].includes(route.systemId)
+                      ? import('./views/field-lab')
+                      : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

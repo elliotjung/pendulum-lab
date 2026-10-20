@@ -1,0 +1,110 @@
+.field-fields,
+.field-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin-block: var(--ds-space-4);
+}
+.field-workspace [hidden] {
+  display: none !important;
+}
+.field-state-card,
+.field-signals {
+  min-width: 0;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-3);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.field-scene {
+  width: 100%;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-text);
+}
+.field-scene svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+}
+.field-panel {
+  margin-block: var(--ds-space-4);
+  padding: var(--ds-space-4);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.field-panel legend {
+  font-weight: var(--ds-weight-bold);
+}
+.field-workspace svg,
+.field-workspace input,
+.field-workspace select {
+  min-width: 0;
+  max-width: 100%;
+}
+.field-workspace .ds-section,
+.field-workspace fieldset {
+  min-width: 0;
+}
+.field-workspace p,
+.field-workspace label,
+.field-workspace legend {
+  overflow-wrap: anywhere;
+}
+.field-workspace .core-plot {
+  color: var(--ds-color-text);
+}
+.field-state-card h3 {
+  margin-block: 0 var(--ds-space-2);
+}
+.field-state-card p {
+  margin: 0;
+}
+.field-plot-caption {
+  display: block;
+  margin-block: var(--ds-space-3) 0;
+}
+.field-json {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: var(--ds-font-mono, monospace);
+  grid-column: 1 / -1;
+  resize: vertical;
+}
+.field-workspace textarea {
+  max-width: 100%;
+}
+@media (max-width: 600px) {
+  .field-fields,
+  .field-state-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .field-workspace .core-plot text {
+    display: none;
+  }
+  .field-plot-caption {
+    display: block;
+    margin-block: var(--ds-space-3) 0;
+  }
+}
+
+.field-profile-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 8rem;
+  font-family: monospace;
+  resize: vertical;
+}
+.field-plot-caption {
+  overflow-wrap: anywhere;
+}
+
+.field-workspace .lab-data-output {
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

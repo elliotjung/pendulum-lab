@@ -19,6 +19,14 @@ export type FieldWorkerFactory = () => FieldWorker;
 const defaultFactory: FieldWorkerFactory = () =>
   new Worker(new URL('./field.worker.ts', import.meta.url), { type: 'module' });
 let runSequence = 0;
+/** Array predicates skip holes and can read inherited slots; transport arrays require every own index. */
+function denseArray(value: unknown, length: number): value is unknown[] {
+  if (!Array.isArray(value) || value.length !== length) return false;
+  for (let i = 0; i < length; i++) if (!Object.hasOwn(value, i)) return false;
+  return true;
+}
+const boundedDenseArray = (value: unknown, maximum: number): value is unknown[] =>
+  Array.isArray(value) && value.length <= maximum && denseArray(value, value.length);
 /** One in-flight request; completion, disposal, failure and timeout terminate the native worker. */
 export function createFieldWorkerClient(
   input: FieldConfig,
@@ -56,8 +64,7 @@ export function createFieldWorkerClient(
     }
   };
   const finiteArray = (value: unknown, length: number, bound = 1000): value is number[] =>
-    Array.isArray(value) &&
-    value.length === length &&
+    denseArray(value, length) &&
     value.every((v) => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= bound);
   const exactKeys = (value: object, keys: readonly string[]) =>
     Object.keys(value).length === keys.length && Object.keys(value).every((key) => keys.includes(key));
@@ -106,8 +113,7 @@ export function createFieldWorkerClient(
       !finiteArray(s.mean, langevin ? 2 : 0) ||
       !finiteArray(s.variance, langevin ? 1 : 0, Number.MAX_VALUE) ||
       !finiteArray(s.previousField, sg ? n : 0) ||
-      !Array.isArray(s.memberStates) ||
-      s.memberStates.length !== (langevin ? config.ensemble.members : 0) ||
+      !denseArray(s.memberStates, langevin ? config.ensemble.members : 0) ||
       s.memberStates.some((v) => !finiteArray(v, 2))
     )
       return false;
@@ -119,9 +125,8 @@ export function createFieldWorkerClient(
       s.iterations < 0 ||
       s.iterations > 200 ||
       s.energyUnit !== '정규화' ||
-      !Array.isArray(s.modeEnergies) ||
-      s.modeEnergies.length !== (fput ? n : 0) ||
-      s.modeEnergies.some((v) => typeof v !== 'number' || !Number.isFinite(v) || v < 0)
+      !finiteArray(s.modeEnergies, fput ? n : 0, Number.MAX_VALUE) ||
+      s.modeEnergies.some((v) => v < 0)
     )
       return false;
     if (
@@ -132,14 +137,11 @@ export function createFieldWorkerClient(
       s.ensemble.generator !== ensemble.generator ||
       s.ensemble.generatorVersion !== ensemble.generatorVersion ||
       s.ensemble.seedValue !== ensemble.seedValue ||
-      !Array.isArray(s.ensemble.seeds) ||
-      s.ensemble.seeds.length !== ensemble.seeds.length ||
+      !denseArray(s.ensemble.seeds, ensemble.seeds.length) ||
       s.ensemble.seeds.some((v, i) => v !== ensemble.seeds[i]) ||
-      !Array.isArray(s.ensemble.memberIds) ||
-      s.ensemble.memberIds.length !== ensemble.memberIds.length ||
+      !denseArray(s.ensemble.memberIds, ensemble.memberIds.length) ||
       s.ensemble.memberIds.some((v, i) => v !== ensemble.memberIds[i]) ||
-      !Array.isArray(s.warnings) ||
-      s.warnings.length > 16 ||
+      !boundedDenseArray(s.warnings, 16) ||
       s.warnings.some((v) => typeof v !== 'string' || v.length > 4096)
     )
       return false;
@@ -190,8 +192,7 @@ export function createFieldWorkerClient(
       (!failed && sequence > 0 && !s.advanced) ||
       s.sample.step !== previousStep + s.advanced ||
       s.done !== (s.sample.step === total) ||
-      !Array.isArray(s.samples) ||
-      s.samples.length > FIELD_WORKER_MAX_STEPS
+      !boundedDenseArray(s.samples, FIELD_WORKER_MAX_STEPS)
     )
       return false;
     const steps: number[] = [];

@@ -23,7 +23,7 @@
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
 | CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 완료 |
-| CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 대기 |
+| CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 대기 |
 
@@ -53,3 +53,16 @@
 - worker는 64 member/128 grid 취소, 최대 1,001 기록, 64단계 요청·단계 사이 8ms soft budget, 오류/timeout/dispose/잘못된 snapshot과 마지막 유효 상태 보존을 검사했다. endpoint는 dt 정수배 실행 후 설정한 duration으로 정확히 표시하며 fractional native step을 만들지 않는다.
 - 새 seed 매핑은 `fnv1a-mulberry32-boxmuller@1`이고 고정 출력 fixture가 있다. native runLangevinEnsemble의 seed 매핑과 다른 새 product 계약이다. 확률 중간 RNG cursor 복원을 주장하지 않으며 초기 설정으로 재실행한다.
 - CP1에는 adapter 6개, adapter test 2개, canonical test 1개, 필요한 catalog 및 count/extension 검사와 문서만 포함한다. 화면·정적 진단 패널·browser는 CP2에서 검증·보존한다.
+- CP1 `8acbcaa917bdd8b70fac9c6aa0987079d6fb4b63` push 성공, `git ls-remote` 정확한 원격 hash 일치.
+
+## CP2 구현·개발 검증
+
+- seed/ensemble, 격자·경계·초기조건, 공간·시간 heatmap, 개별 궤적/조화 모드, isolated 저장/공유/import, 기록 원본/축약 CSV와 계보 JSON/SVG를 연결했다. 세 독립 정적 진단은 주 실행에서 추정한 값이 아님을 표시하고 설정·단위·native 출처·결과를 별도 JSON으로 보존한다.
+- 초기 production Chromium `tmp/S16-initial-playwright.json`: **23통과/1실패**, 24개 기능 여정, skip/flaky/retry 0. 실패는 generic quantity 오류의 role=alert를 잘못 기대한 test locator였다. 실제 aria-invalid를 확인하도록 고치고 별도 CFL 위반을 유효 입력 범위 안에서 검사한다. 실패를 통과로 계산하지 않는다.
+- 독립 검토에서 CSV의 결정론적 variance shape, ring ω² 표기, 정적 progress, nominal stride/끝점 의미, 모바일 숨겨진 축의 보완 caption, sparse worker 배열 검사를 보강한다. 기존 engine/허용오차/golden/과거 PNG를 바꾸지 않는다.
+- Langevin이 실제 계산으로 승격되어 기존 mock 전용 회귀 여정은 아직 미리보기인 QKR로 옮긴다. test 의도와 모든 assertion을 유지하며 새 시각 이름을 사용해 이전 PNG를 보존한다. S17 기능을 구현한 것이 아니다.
+- `tmp/S16-cp2-vitest.json`: 화면 model/storage/edit/독립 진단과 sparse worker 보강 **94/94**, 5파일, 실패·pending 0. worker 희소/상속 index 관련 16개 새 회귀와 canonical/native 기존 검사를 유지한다.
+- 전체 typecheck는 sparse 보강 후 재통과했고 CP2 변경 TS 18개 scoped ESLint `tmp/S16-cp2-eslint.log` exit0. Production build/public-artifact audit `tmp/S16-cp2-build.log` 통과.
+- 새 PNG 준비는 `tmp/S16-visual-preparation-playwright.json`의 4개와 lead 문구를 정확한 가산 Itô 모델로 좁힌 뒤 `tmp/S16-lead-preparation-playwright.json`의 2개가 missing-snapshot 작성으로 실패했다. 기능 실패가 아니며 성공 검사로 계산하지 않는다. 이번 요청에서 만든 미공개 lead PNG 2개만 다시 준비했다.
+- 정상 production `tmp/S16-cp2-playwright.json`: **74/74** (desktop37 + Pixel5 emulation37), 단일 연속 500.509초, 실패/skip/flaky/retry/runner 오류 0, snapshot update=none. 새 field 전체 50개와 기존 Lab 전체 24개를 포함한다.
+- 새 PNG 16개를 직접 검토했다. 두 theme의 heatmap과 ensemble 평균/산포, FK의 정적 경계와 pinning, ring ω²/SI 독립 진단, library와 유지된 mock에 대해 줄바꿈·overflow·caption·모바일 축/단위 설명을 확인했다. 기존 PNG는 수정하지 않았다.
