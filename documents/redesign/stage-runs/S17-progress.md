@@ -24,7 +24,7 @@
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
 | CP1 | native adapter·canonical·bounded worker | deterministic/native parity, norm/unitarity/known spectra, complex roundtrip, worker cancel/error/resource, typecheck | 완료 |
 | CP2 | 전용 Lab·plots·files·route | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
-| CP3 | 전체 검증·보존·review 후보 | 전체 Vitest, browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
+| CP3 | 전체 검증·보존·review 후보 | 전체 Vitest, browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 완료 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
 
 ## 변경 예정 경로
@@ -72,3 +72,14 @@
 - 최종 품질9개(`tmp/S17-command-results.json`) 전부 exit0: typecheck/scoped ESLint/policy/plan/catalog/Learn/inventory/secrets/numerics. catalog135정의/35시스템, Learn8과정/86예약, inventory errors0. 알려진 패턴 scan1666tracked/1464text·발견0; 신규 S17 staged 파일을 포함하며 history/ignored/binary/외부서비스는 제외한다.
 - 첫 정상 browser 시도는 JSON reporter의 최종 결과 수집/종료가 멈춰 완료 근거에서 제외한다. test worker/browser가 종료되고 preview subtree만 남은 상태를 읽기 확인했다. task 소유 preview subtree를 정리한 뒤에도 report0bytes라 소유 runner만 종료했고 exit1을 기록했다. 빈 JSON/log·process 확인·복구 증거는 `tmp/S17-stalled-*`에 보존한다. 독립 preview session과 `line,json` reporter/직접 JSON 파일 출력으로 동일124·snapshot none·retry0을 다시 검증한다. source/기준 이미지/검사 조건은 변경하지 않는다.
 - 정상 재실행 `tmp/S17-final-playwright.json`: **124/124**, 807.524초, unexpected/skipped/flaky/runner errors0, workers1, retry0, updateSnapshots=none. 새 기준 생성·변경은0이다. 실제 실행은 Chromium62+Pixel5 62이며 config에 나열된 Firefox/WebKit 전체를 검증했다고 주장하지 않는다.
+- 정상 browser tool session73887의 최종 exit_code0도 확인했다(`tmp/S17-browser-exit.json`). 독립 production preview는 사용자 review를 위해 유지한다.
+- CP2 `cbcff5ac6933df14f6b36721f7d4661d7600ffc5` push 성공, 정확한 원격 hash 일치. clean/synced CP2에서 preflight17을 다시 확인하고 전체 Vitest를 maxWorkers2·기존 timeout으로 실행한다.
+
+## CP3 완료 후보
+
+- 현재 상태: candidate-complete. 전체 Vitest 및 기존3347개 test/176PNG/보호 경로/desktop 사본 보존 검증이 남았다. nextStage는17을 유지한다.
+- 최종 전체 Vitest `tmp/S17-final-vitest.json`: **3404/3404**, 306파일, failed/pending/todo0, tool exit0. 기존3347개 이름·중복 횟수 모두 보존하고57개를 추가했다. 바뀌지 않은 Date 거부 fixture 이름의 동적 표시 시각만 좁게 정규화하여 비교했다. 기존 timeout을 바꾸지 않았고 maxWorkers2로 browser 종료 후 순차 실행했다.
+- `tmp/S17-preservation.json`: 보호 engine/API/app.html/package/lockfile/golden 변경0, 기존 E2E PNG176개를 포함한 추적 PNG182개 byte-identical, missing historical tests0, desktop 전달 두 사본 hash일치. 첫 이미지 audit 범위를 redesign158개에서 전체 추적182개로 넓혀 일괄 해시 대조했다.
+- `S17-verification.json` phase=validated, 전체 gate5/5 true. 새14 PNG는 직접 검토한 hash와도 일치한다. 수치8/8, 품질9/9, production build와 browser124/124 근거를 함께 보존한다.
+- 전체 46개 변경 경로는 verification에 기록한다. 사람 과학 검토·실기기·Firefox/WebKit·screen-reader 음성은 수행하지 않았다. S17 사용자 gate승인은 대기이며 approvedReviewGates=[7,9]를 유지한다. 기존 공급망 위험과 native dense roots/유한 FFT/동기 CSV의 한계는 문서에 남긴다.
+- 다음은 이 검증 기록을 CP3로 push하고 정확한 원격 hash를 확인한 뒤, 완료 status만 별도 commit/push하는 것이다. master merge/tag/release/cutover 및 S18 구현은 수행하지 않는다.

@@ -1,0 +1,585 @@
+{
+  "schemaVersion": "pendulum-redesign-S17-verification/v1",
+  "stage": 17,
+  "phase": "validated",
+  "recordedAtUtc": "2026-10-20T03:23:44.353Z",
+  "baseline": {
+    "branch": "codex/redesign",
+    "localHead": "16ff3bb1a502c3d2923d5c0793dcf196fc15bb27",
+    "remoteHead": "16ff3bb1a502c3d2923d5c0793dcf196fc15bb27",
+    "dependencyStage": 16,
+    "dependencyStatusCommit": "16ff3bb",
+    "clean": true,
+    "planCheck": true,
+    "preflight": true
+  },
+  "candidateHead": "cbcff5ac6933df14f6b36721f7d4661d7600ffc5",
+  "checkpoints": [
+    {
+      "id": "CP0",
+      "commit": "80d37a03cada643ed7b09f4de3e461666bd4ca65",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP1",
+      "commit": "789968f31a41724b5e08d45349537d733bb75916",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP2",
+      "commit": "cbcff5ac6933df14f6b36721f7d4661d7600ffc5",
+      "push": "exact remote hash verified"
+    }
+  ],
+  "gates": {
+    "wholeVitest": true,
+    "productionJourneys": true,
+    "quality": true,
+    "numerics": true,
+    "preservation": true
+  },
+  "targeted": {
+    "backend": {
+      "report": "tmp/S17-cp1-vitest.json",
+      "sha256": "861a5d2b081cca0f4b3b7cf0121395df6a19165fd98fc3138b882aeca9152bdd",
+      "total": 36,
+      "passed": 36,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 3
+    },
+    "catalog": {
+      "report": "tmp/S17-integration-catalog-vitest.json",
+      "sha256": "3e5f039de6d99cc6865f315604a0623e5df1c8c8eb1548294e26e70b05c2a564",
+      "total": 39,
+      "passed": 39,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 3
+    },
+    "ui": {
+      "report": "tmp/S17-cp2-vitest.json",
+      "sha256": "50efb4c922d9f35d767649f66a35b101f4faa8ca0f8155e2225804db29893692",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 3
+    }
+  },
+  "finalValidation": {
+    "vitest": {
+      "report": "tmp/S17-final-vitest.json",
+      "sha256": "ec3f1c617e80fadf08d86fbc494f21f721cbede6ae8a02ddc506df6fd53555d0",
+      "total": 3404,
+      "passed": 3404,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 306
+    },
+    "browser": {
+      "report": "tmp/S17-final-playwright.json",
+      "sha256": "99e68ec5990dddecce558aa3bc23b74a0a381725ceab6e5c6c66354d967a81b5",
+      "startTime": "2026-10-20T03:04:02.405Z",
+      "duration": 807524.321,
+      "expected": 124,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 124,
+      "projects": [
+        "chromium",
+        "mobile-chrome"
+      ],
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "none",
+      "workers": 1
+    },
+    "browserExit": {
+      "report": "tmp/S17-browser-exit.json",
+      "sha256": "b672afa8d4faa70c7476c84adda599b6a5e3c28c372e9e903c3be66359353072",
+      "schema": "pendulum-s17-browser-exit/v1",
+      "toolSession": 73887,
+      "exitCode": 0,
+      "completedObservedAt": "2026-10-20T12:18:42.1910017+09:00",
+      "jsonReport": "tmp/S17-final-playwright.json",
+      "jsonSha256": "99e68ec5990dddecce558aa3bc23b74a0a381725ceab6e5c6c66354d967a81b5",
+      "log": "tmp/S17-final-playwright.log",
+      "logSha256": "8c1fe84089567c7094131aa02bae067f36d77ce46541c66772d838cd3151d0ab",
+      "stats": {
+        "startTime": "2026-10-20T03:04:02.405Z",
+        "duration": 807524.321,
+        "expected": 124,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCount": 124,
+      "retryCount": 0,
+      "resultStatuses": [
+        {
+          "Name": "passed",
+          "Count": 124
+        }
+      ],
+      "workers": 1,
+      "updateSnapshots": "none",
+      "errorCount": 0,
+      "preview": {
+        "retainedForUserReview": true,
+        "url": "http://127.0.0.1:5173/next.html#/lab",
+        "toolSession": 13474
+      },
+      "attempts": "First JSON-only attempt stalled without a completion report and was not counted. Recovery and original empty outputs are preserved separately. This completed run reused an independently managed preview."
+    },
+    "commands": {
+      "report": "tmp/S17-command-results.json",
+      "sha256": "3ba4ab6122c59632de67255e40bdf8e23052b599a43d71ca4efab60a3b39fbf3",
+      "results": [
+        {
+          "id": "typecheck",
+          "command": "C:\\Program Files\\nodejs\\node.exe node_modules/typescript/bin/tsc --noEmit",
+          "log": "tmp/S17-final-typecheck.log",
+          "exitCode": 0,
+          "elapsedMs": 24921
+        },
+        {
+          "id": "eslint",
+          "command": "C:\\Program Files\\nodejs\\node.exe node_modules/eslint/bin/eslint.js e2e/redesign/discrete-quantum.spec.ts e2e/redesign/lab-shell.spec.ts scripts/redesign/measure-discrete-numerics.ts src/product/adapters/physics/discrete-client.ts src/product/adapters/physics/discrete-contract.ts src/product/adapters/physics/discrete-engine.ts src/product/adapters/physics/discrete-schema.ts src/product/adapters/physics/discrete-worker-protocol.ts src/product/adapters/physics/discrete.ts src/product/adapters/physics/discrete.worker.ts src/product/app/application.ts src/product/app/views/discrete-lab.ts src/product/lab/library.ts src/product/lab/views/discrete-files.ts src/product/lab/views/discrete-inspector.ts src/product/lab/views/discrete-model.ts src/product/lab/views/discrete-plots.ts src/product/lab/views/discrete-storage.ts src/product/lab/views/discrete-workspace.ts tests/product/adapters/physics/discrete-worker.test.ts tests/product/adapters/physics/discrete.test.ts tests/product/catalog/catalog.test.ts tests/product/contracts/discrete.test.ts tests/product/lab/discrete-inspector.test.ts tests/product/lab/discrete-model.test.ts tests/product/lab/discrete-storage.test.ts --max-warnings 0",
+          "log": "tmp/S17-final-eslint.log",
+          "exitCode": 0,
+          "elapsedMs": 11952
+        },
+        {
+          "id": "policy",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/lint-source.ts",
+          "log": "tmp/S17-final-policy.log",
+          "exitCode": 0,
+          "elapsedMs": 1283
+        },
+        {
+          "id": "plan",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/validate-plan.ts",
+          "log": "tmp/S17-final-plan.log",
+          "exitCode": 0,
+          "elapsedMs": 296
+        },
+        {
+          "id": "catalog",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/validate-catalog.ts",
+          "log": "tmp/S17-final-catalog.log",
+          "exitCode": 0,
+          "elapsedMs": 1770
+        },
+        {
+          "id": "learn",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/validate-learn.ts",
+          "log": "tmp/S17-final-learn.log",
+          "exitCode": 0,
+          "elapsedMs": 1171
+        },
+        {
+          "id": "inventory",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/inventory.ts --check",
+          "log": "tmp/S17-final-inventory.log",
+          "exitCode": 0,
+          "elapsedMs": 12714
+        },
+        {
+          "id": "secrets",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/secret-scan.ts",
+          "log": "tmp/S17-final-secrets.log",
+          "exitCode": 0,
+          "elapsedMs": 7129
+        },
+        {
+          "id": "numerics",
+          "command": "C:\\Program Files\\nodejs\\node.exe --import tsx scripts/redesign/measure-discrete-numerics.ts tmp/S17-final-numerical-metrics.json",
+          "log": "tmp/S17-final-numerics.log",
+          "exitCode": 0,
+          "elapsedMs": 982
+        }
+      ]
+    },
+    "productionBuild": {
+      "report": "tmp/S17-cp2-build.log",
+      "sha256": "056dbbee0409346ea04248cc97bdfe45ee520558b4b8182f42f75d6936f3f74a",
+      "exitCode": 0,
+      "note": "Final production build after source freeze; no subsequent product-source mutations."
+    }
+  },
+  "numericalEvidence": {
+    "report": "documents/redesign/stage-runs/S17-numerical-metrics.json",
+    "sha256": "66361f274866b8e865cfeb708d2e5ae99d2e919be2664968b13755716f5e1d09",
+    "finalRerun": {
+      "report": "tmp/S17-final-numerical-metrics.json",
+      "sha256": "dc2ee3f529562dd553483d144c7e918d2989913dcf58c135e5bde1422b809b2e"
+    },
+    "checks": {
+      "canonicalComplexRoundtrips": true,
+      "standardMapNativeParity": true,
+      "qkrNativeParity": true,
+      "selectedNormConservation": true,
+      "analyticDiagonalSpectrum": true,
+      "rawNonunitaryEvidence": true,
+      "knownQkrFreeSpectrum": true,
+      "spectrumUsesActualBoundedGrid": true
+    },
+    "tolerances": {
+      "parityTolerance": 1e-12,
+      "spectrumTolerance": 1e-9,
+      "selectedNorm": 1e-9
+    },
+    "standardMap": {
+      "iterations": 1000,
+      "thetaAbsDifference": 0,
+      "momentumAbsDifference": 0,
+      "thetaWrapped": true,
+      "deterministic": true
+    },
+    "quantum": {
+      "gridSize": 64,
+      "iterations": 2048,
+      "realMaxAbsDifference": 0,
+      "imaginaryMaxAbsDifference": 0,
+      "finalNorm": 1.0000000000017852,
+      "absoluteNormDrift": 1.7850165789923267e-12,
+      "reportedDrift": 1.7852386235972517e-12,
+      "nativeNormDifference": 0,
+      "deterministic": true,
+      "largeGridSpectrumAbsent": true
+    },
+    "knownSpectrum": {
+      "dimension": 3,
+      "phasesMaxAbsError": 0,
+      "quasiEnergyMaxAbsError": 0,
+      "nativePhaseMaxAbsDifference": 0,
+      "unitarityDefect": 0,
+      "rawUnitCircleDrift": 1.1102230246251565e-16
+    },
+    "nonunitary": {
+      "defect": 0.38483762809787714,
+      "rawCircleDrift": 0.29999999999999993,
+      "eigenvalueMagnitudes": [
+        0.7000000000000001,
+        0.9
+      ]
+    }
+  },
+  "preservation": {
+    "report": "tmp/S17-preservation.json",
+    "sha256": "125ffd44e2ebcb31508d1b72eb65dced7e7c7fdb3b1f82397e839a95248dd6c0",
+    "schemaVersion": "S17-preservation/v1",
+    "base": "16ff3bb1a502c3d2923d5c0793dcf196fc15bb27",
+    "protectedPaths": [],
+    "oldPngCount": 176,
+    "oldTrackedPngCount": 182,
+    "pngScope": "All tracked PNGs, including E2E and existing icons/reports.",
+    "alteredPng": [],
+    "oldTestCount": 3347,
+    "currentTestCount": 3404,
+    "missingTests": [],
+    "desktop": [
+      {
+        "source": "documents/redesign/master-roadmap-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "sourceSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "copySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "equal": true
+      },
+      {
+        "source": "documents/redesign/execution-plan-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "sourceSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "copySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "equal": true
+      }
+    ],
+    "checks": {
+      "protectedPaths": true,
+      "historicalPng": true,
+      "oldTests": true,
+      "desktop": true
+    }
+  },
+  "catalog": {
+    "definitions": 135,
+    "systems": 35,
+    "frozenBaselineReferences": 134,
+    "changedCounts": false,
+    "allEightFamiliesActualConditions": true
+  },
+  "curriculum": {
+    "courses": 8,
+    "reservedUnits": 86,
+    "publishedUnits": 8,
+    "humanReviewedUnits": 0,
+    "changed": false
+  },
+  "workerBounds": {
+    "gridMaximum": 512,
+    "matrixMaximum": 8,
+    "iterationsMaximum": 100000,
+    "gridIterationWorkMaximum": 2000000,
+    "retainedMaximum": 1001,
+    "stepsPerRequest": 64,
+    "betweenStepSoftBudgetMs": 8,
+    "responseTimeoutMs": 15000
+  },
+  "visual": {
+    "historicalPng": 176,
+    "newPng": 14,
+    "allNewInspected": true,
+    "inspection": {
+      "report": "tmp/S17-visual-review.json",
+      "sha256": "308461852c53fc47ddbd6f5c2a14e3e27914747f239fb13d762d541ed667f81a",
+      "schema": "pendulum-s17-visual-review/v1",
+      "reviewedAt": "2026-10-20T12:13:50.8392038+09:00",
+      "reviewer": "Codex agent visual inspection",
+      "humanScientificReview": false,
+      "count": 14,
+      "scope": "Chromium desktop and Pixel5 emulation, library, QKR workspace and inspector, standard-map phase cylinder, QKR probability and complex phase, unitary-Floquet quasi-energy.",
+      "observations": [
+        "No clipped Korean text, overlapping controls, or horizontal overflow visible in the inspected images.",
+        "Mobile plots intentionally omit internal numeric SVG text; adjacent captions explicitly name axes, units and interpretation.",
+        "Standard-map theta axis is fixed to 0..2pi and points do not connect across the cylinder seam.",
+        "Raw spectrum entries, finite-grid limits, normalization and unitary caveats remain visible."
+      ],
+      "limitations": [
+        "Agent inspection is not human or expert scientific review.",
+        "Physical devices, screen-reader audio, Firefox and WebKit were not inspected."
+      ],
+      "images": [
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-probability-dark-chromium-win32.png",
+          "sha256": "4f8da06003068a5e4c5bfbfdfd604d9a7a8a6510e8658e0530f8a94fa693ef83",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-probability-dark-mobile-chrome-win32.png",
+          "sha256": "0efd81906a5d7911ee64d87d63786aa362979a28d6c74f9acc50d7d8645c6324",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-wavephase-light-chromium-win32.png",
+          "sha256": "890561c0a4cd80ec860b217c0c6790d25f87d25be73585eae1c74ced7c656a9d",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-wavephase-light-mobile-chrome-win32.png",
+          "sha256": "464a3198847d81a236ab825302871351c855db660118f5b406239518371ab4e1",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-standard-map-phase-light-chromium-win32.png",
+          "sha256": "863252b79b35b53ab75ac72474b1c3d2f8bc3e58966b4a5e735a6b9eb38690df",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-standard-map-phase-light-mobile-chrome-win32.png",
+          "sha256": "2114084d23a9ffc29ded490e340f69aac903b24be4ffde1858d199a34e7ffbaa",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-unitary-floquet-spectrum-dark-chromium-win32.png",
+          "sha256": "80cca3945db4f946d7de8a8296907f41dfcb649d5941e3c319b7cbedbb434363",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-unitary-floquet-spectrum-dark-mobile-chrome-win32.png",
+          "sha256": "ae1214562957395ca6a304377455d6350626060faaad49043fa8edf95bc87f7c",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-lab-library-light-chromium-win32.png",
+          "sha256": "58a9c96d8e8145c9c13f8f72f784cb71be08f16d76f418acb16cce3406d06380",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-lab-library-light-mobile-chrome-win32.png",
+          "sha256": "cf6e566c315e6c198e9e8f723c0fec5d87731c2bc78155b37d3fb367d7eedd8e",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-inspector-dark-chromium-win32.png",
+          "sha256": "21e1153d73c4b6a0d27a2b5eae77129a12cb577551269ee6795534d40d6c132a",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-inspector-dark-mobile-chrome-win32.png",
+          "sha256": "1a8059c5b65b22cc83a68e47292a98107908d44dd02557e708dbe9daf4e1510d",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-workspace-light-chromium-win32.png",
+          "sha256": "3d7cd2b8e16f411c8263bc39545b264ffde5c5dcbe3c93b4f86b5d92a23c7a2a",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        },
+        {
+          "path": "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-workspace-light-mobile-chrome-win32.png",
+          "sha256": "482eb7be6ad5aed4ef9ce8d65fe9164df02a750274c490dab1e372036a5fb75d",
+          "inspectedWith": "functions.view_image",
+          "inspected": true
+        }
+      ]
+    },
+    "historicalAlterations": [],
+    "preparation": {
+      "report": "tmp/S17-visual-preparation-playwright.json",
+      "sha256": "20a62aa1fc792acf50a3b2b9c364f9baab4aa821c9c5ffb51000d0b42af1eff2",
+      "startTime": "2026-10-20T02:37:41.205Z",
+      "duration": 73423.451,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0,
+      "caseCount": 4,
+      "projects": [
+        "chromium",
+        "mobile-chrome"
+      ],
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    },
+    "correction": {
+      "report": "tmp/S17-visual-correction-playwright.json",
+      "sha256": "f2c234f08fd79831a80758c5e64b4e0b00c635ead87fdd6aa5bdf00aa56d012d",
+      "startTime": "2026-10-20T02:40:20.798Z",
+      "duration": 63472.585,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 4,
+      "projects": [
+        "chromium",
+        "mobile-chrome"
+      ],
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "changed",
+      "workers": 1
+    },
+    "reason": "Only new S17 baselines prepared. Same-hash visual fixture required explicit reload; final phase axis bounds required correction of two new uncommitted images. Four remaining new images created. Final normal124 uses none and does not create or change images."
+  },
+  "review": {
+    "userGate": 17,
+    "approval": "pending; requesting S18 after this report records checkpoint approval",
+    "approvedGates": [
+      7,
+      9
+    ],
+    "humanScientificReview": false,
+    "modelSelector": "not exposed; no verification or model switching claimed",
+    "devices": "Chromium desktop and Pixel5 emulation; keyboard/axe/320px/CSS zoom2. Physical devices, Firefox/WebKit and screen-reader audio unverified."
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "freshDependencyAudit": false,
+    "knownRisks": "S01 high2/moderate2 and CodeQL32 remain unresolved; separate GitHub default-branch notice high8/moderate3 is not a fresh audit.",
+    "scan": {
+      "report": "tmp/S17-final-secrets.log",
+      "sha256": "a7e6180df1de0408e8ff2c9d9db453bc21af8de88363100fcca7f87854b8ebfb"
+    },
+    "scope": "Git-tracked working-tree known-pattern scan including staged S17 files; history/ignored/binary/external services excluded."
+  },
+  "remainingLimitations": [
+    "Selected finite fixtures and native parity do not certify arbitrary input spectra or infinite-grid quantum dynamics.",
+    "Native dense characteristic-polynomial roots have no convergence flag; degeneracies can be ill-conditioned. No eigenvector residual certification is claimed.",
+    "Quasi-energies use the principal branch E=-hbar*arg(lambda)/T and are defined modulo 2*pi*hbar/T for a unitary operator.",
+    "QKR uses FFT-ordered finite momentum states; norm conservation does not establish adequate grid resolution or dynamical localization.",
+    "No human scientific review, model selector verification, or physical-device performance certification occurred.",
+    "Small-N initial spectrum is evaluated on the main thread for immediate diagnostics and re-evaluated inside the worker; dense dimension is bounded to8.",
+    "All S11-S16 documented model limits remain; S18-S24 analysis/research integration and S25-S27 remaining Learn content are not part of S17."
+  ],
+  "corrections": [
+    "TypeScript unknown-array and indexed-map narrowing repaired before publication.",
+    "QKR native metadata keys separated from base spectral transport.",
+    "Initial cylinder range and large-momentum restart preservation verified.",
+    "Continuation envelopes validate field closure, model consistency, FFT order and observed values.",
+    "Last mock family browser fixtures promoted to real-worker assertions; no historical Vitest names removed."
+  ],
+  "infrastructureRecovery": {
+    "attempt": {
+      "report": "tmp/S17-stalled-browser-attempt.json",
+      "sha256": "508d3d4a8cfd999e348f2764a0e9a8b17218e7493253cf2493e1e2a80a67b384"
+    },
+    "teardown": {
+      "report": "tmp/S17-stalled-browser-teardown-recovery.json",
+      "sha256": "e895c36245236d682646c972b3eca78300b07a99e86af4357bc93bbc55b03dc8"
+    },
+    "outcome": "First normal attempt had no completion JSON and was stopped with exit1 after task-owned helper cleanup; zero cases from that attempt counted as passed.",
+    "finalMethod": "Same124 cases rerun with a separate production preview session, reuseExistingServer, line+JSON reporters and direct JSON file output. Source, snapshots, timeouts and assertion settings unchanged; retries0 and snapshots none."
+  },
+  "remoteEvidence": "Implementation checkpoints precede completion status. Final completion requires a separate status commit and exact origin/codex/redesign hash verification; this document cannot contain its own final commit hash.",
+  "rollback": "Existing app.html and S16 baseline16ff3bb remain available. No reset, force push, merge, tag, release or cutover performed.",
+  "changedFiles": [
+    "css/product/discrete.css",
+    "documents/redesign/discrete-quantum-lab-ko.md",
+    "documents/redesign/stage-runs/S17-numerical-metrics.json",
+    "documents/redesign/stage-runs/S17-progress.md",
+    "documents/redesign/stage-runs/S17-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/discrete-quantum.spec.ts",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-probability-dark-chromium-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-probability-dark-mobile-chrome-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-wavephase-light-chromium-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-quantum-kicked-rotor-wavephase-light-mobile-chrome-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-standard-map-phase-light-chromium-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-standard-map-phase-light-mobile-chrome-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-unitary-floquet-spectrum-dark-chromium-win32.png",
+    "e2e/redesign/discrete-quantum.spec.ts-snapshots/s17-unitary-floquet-spectrum-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-lab-library-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-inspector-dark-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-workspace-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s17-quantum-workspace-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-discrete-numerics.ts",
+    "src/product/adapters/physics/discrete-client.ts",
+    "src/product/adapters/physics/discrete-contract.ts",
+    "src/product/adapters/physics/discrete-engine.ts",
+    "src/product/adapters/physics/discrete-schema.ts",
+    "src/product/adapters/physics/discrete-worker-protocol.ts",
+    "src/product/adapters/physics/discrete.ts",
+    "src/product/adapters/physics/discrete.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/discrete-lab.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/discrete-files.ts",
+    "src/product/lab/views/discrete-inspector.ts",
+    "src/product/lab/views/discrete-model.ts",
+    "src/product/lab/views/discrete-plots.ts",
+    "src/product/lab/views/discrete-storage.ts",
+    "src/product/lab/views/discrete-workspace.ts",
+    "tests/product/adapters/physics/discrete-worker.test.ts",
+    "tests/product/adapters/physics/discrete.test.ts",
+    "tests/product/catalog/catalog.test.ts",
+    "tests/product/contracts/discrete.test.ts",
+    "tests/product/lab/discrete-inspector.test.ts",
+    "tests/product/lab/discrete-model.test.ts",
+    "tests/product/lab/discrete-storage.test.ts"
+  ],
+  "nextValidStage": 18
+}
