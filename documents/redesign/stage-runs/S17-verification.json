@@ -29,6 +29,11 @@
       "id": "CP2",
       "commit": "cbcff5ac6933df14f6b36721f7d4661d7600ffc5",
       "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP3",
+      "commit": "8c3c0f4f293fb9f18d5c5371e46101e4c7ca59ef",
+      "push": "exact remote hash verified before separate status commit"
     }
   ],
   "gates": {
@@ -581,5 +586,9 @@
     "tests/product/lab/discrete-model.test.ts",
     "tests/product/lab/discrete-storage.test.ts"
   ],
-  "nextValidStage": 18
+  "nextValidStage": 18,
+  "statusUpdate": {
+    "priorValidatedImplementationHead": "8c3c0f4f293fb9f18d5c5371e46101e4c7ca59ef",
+    "finalStatusPush": "Required after this metadata commit; exact remote hash must be confirmed separately."
+  }
 }

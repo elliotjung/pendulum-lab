@@ -25,7 +25,7 @@
 | CP1 | native adapter·canonical·bounded worker | deterministic/native parity, norm/unitarity/known spectra, complex roundtrip, worker cancel/error/resource, typecheck | 완료 |
 | CP2 | 전용 Lab·plots·files·route | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 전체 검증·보존·review 후보 | 전체 Vitest, browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 완료 |
-| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
+| STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 검증 성공·이 commit의 원격 확인 뒤 완료 |
 
 ## 변경 예정 경로
 
@@ -83,3 +83,9 @@
 - `S17-verification.json` phase=validated, 전체 gate5/5 true. 새14 PNG는 직접 검토한 hash와도 일치한다. 수치8/8, 품질9/9, production build와 browser124/124 근거를 함께 보존한다.
 - 전체 46개 변경 경로는 verification에 기록한다. 사람 과학 검토·실기기·Firefox/WebKit·screen-reader 음성은 수행하지 않았다. S17 사용자 gate승인은 대기이며 approvedReviewGates=[7,9]를 유지한다. 기존 공급망 위험과 native dense roots/유한 FFT/동기 CSV의 한계는 문서에 남긴다.
 - 다음은 이 검증 기록을 CP3로 push하고 정확한 원격 hash를 확인한 뒤, 완료 status만 별도 commit/push하는 것이다. master merge/tag/release/cutover 및 S18 구현은 수행하지 않는다.
+
+## STATUS
+
+- CP3 `8c3c0f4f293fb9f18d5c5371e46101e4c7ca59ef` push 성공과 정확한 원격 hash를 확인했다. 모든 구현·검증 근거가 원격에 있는 상태에서 완료 metadata만 별도 갱신한다.
+- stage17 완료 목록·nextStage18·activeStage 해제. approvedReviewGates는[7,9]를 유지하며 S17 사용자 review를 미리 승인하지 않는다.
+- 이 STATUS commit도 origin/codex/redesign에 push되고 정확한 원격 hash가 확인되어야 S17 완료다.
