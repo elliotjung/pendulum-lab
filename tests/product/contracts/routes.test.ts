@@ -68,7 +68,8 @@ describe('S03 pure Learn and Lab route contract', () => {
   });
 
   it('maps every stable S02 system ID to its unprefixed URL slug and back', () => {
-    expect(systemRoutes).toHaveLength(34);
+    expect(systemRoutes).toHaveLength(35);
+    expect(systemRoutes).toContainEqual({ kind: 'lab-system', systemId: 'system:frenkel-kontorova' });
     for (const { id } of catalog.systems) {
       const hash = value(serializeProductRoute({ kind: 'lab-system', systemId: id }));
       expect(hash).toBe(`#/lab/${id.slice('system:'.length)}`);

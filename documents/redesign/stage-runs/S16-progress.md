@@ -25,6 +25,7 @@
 | CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 완료 |
 | CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 진행 |
+| CP4 | 전체 검사에서 발견한 route fixture 개수 보강 | routes/contracts/catalog, typecheck/lint, 전체 재검증 | 진행 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 대기 |
 
 ## 변경 예정 경로
@@ -76,3 +77,11 @@
 - 필수 browser는 CP2의 정상 field/Lab 74개를 보존하고 공통 shell 34개를 별도로 검증한다. 합계 108개는 두 보고서의 결합이며 단일 108개 실행으로 표시하지 않는다. CP2 이후 제품 source의 의미 변경은 없다.
 - 이 후보의 검증·원격 보존 뒤 전체 Vitest와 shell·보존 검사를 완료하고 별도 STATUS를 push한다. nextStage=16 유지.
 - `tmp/S16-command-results.json`: 전체 typecheck, 변경 TS 30개 scoped ESLint, source policy, plan, catalog, Learn, inventory, secret pattern, 수치 재현, production build/public-artifact **10/10 exit0**. 최종 전체 Vitest와 shell 결과는 아직 대기 중이다.
+- CP3 `fabdb33f910c289ba76255aa3b203b12ab9d63f4` push 성공, 정확한 원격 hash 일치. 깨끗한 동기화 CP3에서 preflight 재통과.
+
+## CP4 전체 검사 회귀 보강
+
+- 첫 전체 Vitest `tmp/S16-first-full-vitest.json`: **3346통과/1실패**, 총3347개·300파일·pending0. 유일한 실패는 공통 routes test가 시스템 수를 S02 당시 34개로 고정한 assertion이다. 새 FK 제품 route를 포함한 실제 수는35이며 모든 route 왕복 loop는 유지한다.
+- routes test의 개수35와 명시적인 FK route 포함 검사를 추가한다. 제품 source와 허용오차·golden·기존 test 이름은 변경하지 않는다. 전체 검사는 다시 통과해야 하며 첫 실패 보고서를 보존한다.
+- CP2 browser와 최종 production build의 field worker, field JS/CSS, catalog 파일 content hash가 각각 동일함을 확인했다. 따라서 정상 field/Lab74개의 runtime 증거는 그대로 유효하며 이 보강은 test fixture만 변경한다.
+- `tmp/S16-cp4-vitest.json`: 전체 공통 contracts/catalog **371/371**, 17파일, 실패·pending0. 라우트 test scoped ESLint와 전체 typecheck `tmp/S16-cp4-typecheck.log` 통과. 이 보강을 먼저 원격에 보존하고 전체 검사를 다시 실행한다.

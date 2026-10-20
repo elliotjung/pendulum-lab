@@ -6,7 +6,8 @@
   "implementationCheckpoints": {
     "CP0": "ce4aad493f3d410894f66732e9c1edbfb44042d4",
     "CP1": "8acbcaa917bdd8b70fac9c6aa0987079d6fb4b63",
-    "CP2": "d278674a0c77ffe5c87703d4b93fdbbfab44d620"
+    "CP2": "d278674a0c77ffe5c87703d4b93fdbbfab44d620",
+    "CP3": "fabdb33f910c289ba76255aa3b203b12ab9d63f4"
   },
   "scope": {
     "systems": [
@@ -66,6 +67,16 @@
       "retryCount": 0,
       "updateSnapshots": "missing",
       "workers": 1
+    },
+    "CP4": {
+      "report": "tmp/S16-cp4-vitest.json",
+      "sha256": "8ebb93703c385170799be0fa77b31c34bf7bade84026a4972efab05365d20b22",
+      "total": 371,
+      "passed": 371,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 17
     }
   },
   "numericalEvidence": {
@@ -113,7 +124,20 @@
       "publishedUnits": 8
     },
     "newScreenshotsDirectlyInspected": 16,
-    "resources": "128gridpoints,2-64Langevinmembers,100000steps,2000000member/grid updates,1001retained times,64steps/request with between-step8ms soft budget,15s response timeout; SVGheatmap65timesx64sites,CSVdownsample121times. Independent diagnostics<=128samples/127sites/200Newtoniterations."
+    "resources": "128gridpoints,2-64Langevinmembers,100000steps,2000000member/grid updates,1001retained times,64steps/request with between-step8ms soft budget,15s response timeout; SVGheatmap65timesx64sites,CSVdownsample121times. Independent diagnostics<=128samples/127sites/200Newtoniterations.",
+    "productionBundleIdentity": {
+      "CP2AndFinalMatch": true,
+      "assets": [
+        "field.worker-BX_cAH_X.js",
+        "field-lab-dzuszA5d.css",
+        "field-lab-Drln0ZS-.js",
+        "catalog-BeTPzaH8.js"
+      ],
+      "source": [
+        "tmp/S16-cp2-build.log",
+        "tmp/S16-final-build.log"
+      ]
+    }
   },
   "review": {
     "userGate": false,
@@ -187,7 +211,18 @@
       "Static progress and exact final timestamps corrected.",
       "Retained raw is explicitly distinct from all integration steps; RNG export supports replay, not cursor continuation."
     ],
-    "sandbox": "Git FETCH_HEAD writes and Git/esbuild/browser child process restrictions resolved by approved escalation of the same authorized commands. No failing check counted as passing."
+    "sandbox": "Git FETCH_HEAD writes and Git/esbuild/browser child process restrictions resolved by approved escalation of the same authorized commands. No failing check counted as passing.",
+    "firstWholeVitest": {
+      "report": "tmp/S16-first-full-vitest.json",
+      "sha256": "2b8f2a3bced8ba075aa196290c97c828bc76fa43c4ef2b48f7d67818db8ad558",
+      "total": 3347,
+      "passed": 3346,
+      "failed": 1,
+      "pending": 0,
+      "todo": 0,
+      "files": 300
+    },
+    "firstWholeVitestReason": "3346passed/1failed: existing route fixture hardcoded34systems. S16 adds exactly1native-bound FK product route. Expected35and explicit FK route presence added; all previous route roundtrip assertions/testnames retained. Full suite must pass after correction."
   },
   "remainingLimitations": [
     "Selected finite fixtures characterize native parity and refinement only; no general stability, accuracy, thermodynamic equilibrium or continuum-limit proof.",
@@ -207,6 +242,7 @@
     "documents/redesign/field-lab-ko.md",
     "documents/redesign/stage-runs/S16-numerical-metrics.json",
     "documents/redesign/stage-runs/S16-progress.md",
+    "documents/redesign/stage-runs/S16-verification.json",
     "documents/redesign/status.json",
     "e2e/redesign/field-pendulum.spec.ts",
     "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-fput-heatmap-dark-chromium-win32.png",
@@ -250,6 +286,7 @@
     "tests/product/adapters/physics/field.test.ts",
     "tests/product/catalog/catalog.test.ts",
     "tests/product/contracts/field.test.ts",
+    "tests/product/contracts/routes.test.ts",
     "tests/product/lab/field-diagnostics.test.ts",
     "tests/product/lab/field-edit.test.ts",
     "tests/product/lab/field-model.test.ts",
