@@ -1,0 +1,397 @@
+{
+  "schemaVersion": "S16-numerical-metrics/v1",
+  "recordedAtUtc": "2026-10-20T00:22:51.407Z",
+  "sourceHead": "d278674a0c77ffe5c87703d4b93fdbbfab44d620",
+  "command": "node --import tsx scripts/redesign/measure-field-numerics.ts",
+  "environment": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "node": "v26.3.0",
+    "cpu": "Intel(R) Core(TM) Ultra 7 256V"
+  },
+  "tolerance": 1e-12,
+  "canonicalRoundtrips": [
+    {
+      "systemId": "system:langevin",
+      "roundtrip": true,
+      "modelVersion": "field-model-v1",
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      }
+    },
+    {
+      "systemId": "system:fput",
+      "roundtrip": true,
+      "modelVersion": "field-model-v1",
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      }
+    },
+    {
+      "systemId": "system:lattice-fk-limit",
+      "roundtrip": true,
+      "modelVersion": "field-model-v1",
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      }
+    },
+    {
+      "systemId": "system:sine-gordon",
+      "roundtrip": true,
+      "modelVersion": "field-model-v1",
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      }
+    },
+    {
+      "systemId": "system:frenkel-kontorova",
+      "roundtrip": true,
+      "modelVersion": "field-model-v1",
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      }
+    }
+  ],
+  "fputParity": {
+    "config": {
+      "systemId": "system:fput",
+      "parameters": {
+        "alpha": 0.25,
+        "beta": 0
+      },
+      "grid": {
+        "points": 16,
+        "length": 15,
+        "boundary": "fixed"
+      },
+      "initialState": [
+        0.09187475890828517,
+        0.18062083309357646,
+        0.26321608143867786,
+        0.3368478218232786,
+        0.39900861364011975,
+        0.44758164567753117,
+        0.4809128215864095,
+        0.49786708814751723,
+        0.4978670881475173,
+        0.4809128215864095,
+        0.4475816456775313,
+        0.3990086136401198,
+        0.33684782182327855,
+        0.26321608143867803,
+        0.18062083309357665,
+        0.09187475890828518,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "integratorId": "internal",
+      "step": 0.01,
+      "duration": 1,
+      "startTime": 0,
+      "sampleEvery": 1,
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      },
+      "ensemble": {
+        "members": 1
+      },
+      "analyses": []
+    },
+    "steps": 100,
+    "stateMaxAbsDifference": 0,
+    "energyAbsDifference": 0,
+    "modeEnergyMaxAbsDifference": 0
+  },
+  "fputRefinement": [
+    {
+      "step": 0.04,
+      "totalTime": 10,
+      "maxRelativeEnergyDrift": 0.00011982293626137631,
+      "harmonicModeSumAbsDifference": 0
+    },
+    {
+      "step": 0.02,
+      "totalTime": 10,
+      "maxRelativeEnergyDrift": 0.000029955711562421463,
+      "harmonicModeSumAbsDifference": 1.1102230246251565e-16
+    }
+  ],
+  "sineGordonParity": [
+    {
+      "boundary": "fixed",
+      "points": 41,
+      "dx": 0.75,
+      "step": 0.01,
+      "executedSteps": 20,
+      "profileMaxAbsDifference": 0,
+      "previousMaxAbsDifference": 0,
+      "energyAbsDifference": 0,
+      "chargeAbsDifference": 0,
+      "fixedEndpointMaxChange": 0
+    },
+    {
+      "boundary": "periodic",
+      "points": 41,
+      "dx": 0.7317073170731707,
+      "step": 0.01,
+      "executedSteps": 20,
+      "profileMaxAbsDifference": 0,
+      "previousMaxAbsDifference": 0,
+      "energyAbsDifference": 0,
+      "chargeAbsDifference": 0,
+      "fixedEndpointMaxChange": null
+    }
+  ],
+  "sineGordonContinuum": [
+    {
+      "points": 41,
+      "length": 30,
+      "dx": 0.75,
+      "dt": 0.01,
+      "time": 1.0000000000000007,
+      "velocity": 0.2,
+      "profileMaxAbsError": 0.04810449897246816,
+      "charge": 0.9999997141350719,
+      "relativeEnergyChange": 0.0000024638789375888564
+    },
+    {
+      "points": 81,
+      "length": 30,
+      "dx": 0.375,
+      "dt": 0.01,
+      "time": 1.0000000000000007,
+      "velocity": 0.2,
+      "profileMaxAbsError": 0.012184463881304453,
+      "charge": 0.9999997141350719,
+      "relativeEnergyChange": 7.798052985686605e-7
+    }
+  ],
+  "lattice": {
+    "config": {
+      "systemId": "system:lattice-fk-limit",
+      "parameters": {
+        "onsiteOmegaSq": 1,
+        "couplingRate": 1
+      },
+      "grid": {
+        "points": 32,
+        "length": 31,
+        "boundary": "periodic"
+      },
+      "initialState": [],
+      "integratorId": "internal",
+      "step": 0.01,
+      "duration": 10,
+      "startTime": 0,
+      "sampleEvery": 1,
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      },
+      "ensemble": {
+        "members": 1
+      },
+      "analyses": []
+    },
+    "modeCount": 32,
+    "angularFrequencySquaredMaxAbsDifference": 0,
+    "nativeReturns": "omega squared; adapter profile preserves normalized omega squared",
+    "zeroMode": 1,
+    "nyquistMode": 5
+  },
+  "fk": [
+    {
+      "coupling": 0.2,
+      "points": 81,
+      "profileMaxAbsDifference": 0,
+      "energyAbsDifference": 0,
+      "charge": 1,
+      "nativeGradNorm": 4.884981308350689e-15,
+      "reportedGradNorm": 4.9404924595819466e-15,
+      "converged": true,
+      "iterations": 3
+    },
+    {
+      "coupling": 1,
+      "points": 81,
+      "profileMaxAbsDifference": 0,
+      "energyAbsDifference": 0,
+      "charge": 1,
+      "nativeGradNorm": 7.793765632868599e-14,
+      "reportedGradNorm": 7.793765632868599e-14,
+      "converged": true,
+      "iterations": 3
+    },
+    {
+      "coupling": 3,
+      "points": 81,
+      "profileMaxAbsDifference": 0,
+      "energyAbsDifference": 0,
+      "charge": 1,
+      "nativeGradNorm": 4.68582144254788e-15,
+      "reportedGradNorm": 4.68582144254788e-15,
+      "converged": true,
+      "iterations": 3
+    }
+  ],
+  "langevin": {
+    "config": {
+      "systemId": "system:langevin",
+      "parameters": {
+        "damping": 0.2,
+        "noise": 0.4
+      },
+      "grid": {
+        "points": 1,
+        "length": 1,
+        "boundary": "fixed"
+      },
+      "initialState": [
+        0.5,
+        0
+      ],
+      "integratorId": "internal",
+      "step": 0.01,
+      "duration": 0.2,
+      "startTime": 0,
+      "sampleEvery": 1,
+      "seed": {
+        "value": "field-16",
+        "generator": "fnv1a-mulberry32-boxmuller",
+        "generatorVersion": "1"
+      },
+      "ensemble": {
+        "members": 16
+      },
+      "analyses": []
+    },
+    "memberMaxAbsDifference": 0,
+    "meanMaxAbsDifference": 0,
+    "varianceMaxAbsDifference": 0,
+    "seedRepeatability": true,
+    "stableMemberPrefix": true,
+    "ensembleProvenance": {
+      "members": 16,
+      "seeds": [
+        2944317877,
+        2893985020,
+        2910762639,
+        2860429782,
+        2877207401,
+        2826874544,
+        2843652163,
+        3061761210,
+        3078538829,
+        3380481119,
+        3363703500,
+        3414036357,
+        3397258738,
+        3313370643,
+        3296593024,
+        3346925881
+      ],
+      "generator": "fnv1a-mulberry32-boxmuller",
+      "generatorVersion": "1",
+      "seedValue": "field-16",
+      "memberIds": [
+        "member-1",
+        "member-2",
+        "member-3",
+        "member-4",
+        "member-5",
+        "member-6",
+        "member-7",
+        "member-8",
+        "member-9",
+        "member-10",
+        "member-11",
+        "member-12",
+        "member-13",
+        "member-14",
+        "member-15",
+        "member-16"
+      ]
+    }
+  },
+  "performanceSamples": [
+    {
+      "members": 8,
+      "initializationMs": 0.30459999999999354,
+      "requestMs": 1.5228999999999928,
+      "ready": "ready",
+      "advanced": 64,
+      "done": false,
+      "cancelled": true,
+      "note": "Single local wall-clock observation; between-step soft budget does not set a hard per-step deadline."
+    },
+    {
+      "members": 32,
+      "initializationMs": 0.26679999999998927,
+      "requestMs": 4.2760000000000105,
+      "ready": "ready",
+      "advanced": 64,
+      "done": false,
+      "cancelled": true,
+      "note": "Single local wall-clock observation; between-step soft budget does not set a hard per-step deadline."
+    },
+    {
+      "members": 64,
+      "initializationMs": 0.23560000000003356,
+      "requestMs": 7.24290000000002,
+      "ready": "ready",
+      "advanced": 64,
+      "done": false,
+      "cancelled": true,
+      "note": "Single local wall-clock observation; between-step soft budget does not set a hard per-step deadline."
+    }
+  ],
+  "checks": {
+    "canonicalRoundtrips": true,
+    "fputParity": true,
+    "fputHarmonicRefinement": true,
+    "sineGordonParity": true,
+    "sineGordonSelectedRefinement": true,
+    "latticeParity": true,
+    "staticFkParity": true,
+    "seededNativeLangevin": true,
+    "boundedWorkerCancellation": true
+  },
+  "limitations": [
+    "Selected finite fixtures characterize native parity and refinement only; no general stability, accuracy, thermodynamic equilibrium or continuum-limit proof.",
+    "All S16 models use normalized time/state/energy. Canonical runtime seconds are a carrier qualified by timeConvention metadata.",
+    "Stable FNV member seed mapping is a new versioned product contract; it differs from native runLangevinEnsemble SplitMix mapping.",
+    "Langevin is a single normalized pendulum with additive velocity Ito noise and arithmetic unwrapped-angle moments. Noise and damping are independent.",
+    "FPUT mode energies are harmonic projections; the fixed-wall chain differs from periodic ring dispersion.",
+    "Sine-Gordon discrete energy uses a backward difference; finite boundaries and startup endpoint rates affect comparisons.",
+    "FK is a stationary Newton kink, potentially a saddle, with fixed endpoints. This does not compute driven depinning or mobility.",
+    "Single-device timing is observational, not a cross-device or percentile guarantee. No human scientific review occurred."
+  ],
+  "elapsedMs": 260.8135
+}

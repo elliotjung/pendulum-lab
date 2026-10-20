@@ -24,7 +24,7 @@
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
 | CP1 | native adapter·canonical·bounded worker | seed/native parity, continuum/lattice, boundaries, resource/cancel/error, typecheck | 완료 |
 | CP2 | 전용 Lab·seed/grid·heatmap·ensemble·files | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
-| CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
+| CP3 | 수치·보존·완료 후보 | 전체 Vitest, 필수 browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 진행 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 최종 검증·status push/hash | 대기 |
 
 ## 변경 예정 경로
@@ -66,3 +66,13 @@
 - 새 PNG 준비는 `tmp/S16-visual-preparation-playwright.json`의 4개와 lead 문구를 정확한 가산 Itô 모델로 좁힌 뒤 `tmp/S16-lead-preparation-playwright.json`의 2개가 missing-snapshot 작성으로 실패했다. 기능 실패가 아니며 성공 검사로 계산하지 않는다. 이번 요청에서 만든 미공개 lead PNG 2개만 다시 준비했다.
 - 정상 production `tmp/S16-cp2-playwright.json`: **74/74** (desktop37 + Pixel5 emulation37), 단일 연속 500.509초, 실패/skip/flaky/retry/runner 오류 0, snapshot update=none. 새 field 전체 50개와 기존 Lab 전체 24개를 포함한다.
 - 새 PNG 16개를 직접 검토했다. 두 theme의 heatmap과 ensemble 평균/산포, FK의 정적 경계와 pinning, ring ω²/SI 독립 진단, library와 유지된 mock에 대해 줄바꿈·overflow·caption·모바일 축/단위 설명을 확인했다. 기존 PNG는 수정하지 않았다.
+- CP2 `d278674a0c77ffe5c87703d4b93fdbbfab44d620` push 성공, `git ls-remote` 정확한 원격 hash 일치.
+
+## CP3 완료 후보
+
+- `field-lab-ko.md`에 native 경계, 정규화/SI 진단 구분, seed 계약, SG 초기/경계 효과, 정적 FK, 자원/취소와 기록·축약 의미를 문서화했다.
+- 원격 CP2에서 `measure-field-numerics.ts` 재실행: 고정 1e-12 tolerance에서 수치 check **9/9**. native 상태/에너지/통계 차이 0, same-seed 및 member prefix, FPUT dt와 SG mesh 세분화, 두 경계 및 8/32/64 member 취소를 재현했다. 한 기기의 선택 fixture이며 일반 정확성·열평형·연속체 극한 인증은 아니다.
+- 수치 script scoped ESLint 통과. `S16-verification.json`은 candidate-complete로 작성하며 아직 status 완료를 표시하지 않는다.
+- 필수 browser는 CP2의 정상 field/Lab 74개를 보존하고 공통 shell 34개를 별도로 검증한다. 합계 108개는 두 보고서의 결합이며 단일 108개 실행으로 표시하지 않는다. CP2 이후 제품 source의 의미 변경은 없다.
+- 이 후보의 검증·원격 보존 뒤 전체 Vitest와 shell·보존 검사를 완료하고 별도 STATUS를 push한다. nextStage=16 유지.
+- `tmp/S16-command-results.json`: 전체 typecheck, 변경 TS 30개 scoped ESLint, source policy, plan, catalog, Learn, inventory, secret pattern, 수치 재현, production build/public-artifact **10/10 exit0**. 최종 전체 Vitest와 shell 결과는 아직 대기 중이다.

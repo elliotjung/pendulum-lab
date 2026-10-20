@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "pendulum-redesign-verification/v1",
+  "stage": 16,
+  "phase": "candidate-complete",
+  "baselineHead": "64db09a7ec6b433b7f6d1b0cac1ee2f1d1590439",
+  "implementationCheckpoints": {
+    "CP0": "ce4aad493f3d410894f66732e9c1edbfb44042d4",
+    "CP1": "8acbcaa917bdd8b70fac9c6aa0987079d6fb4b63",
+    "CP2": "d278674a0c77ffe5c87703d4b93fdbbfab44d620"
+  },
+  "scope": {
+    "systems": [
+      "langevin",
+      "fput",
+      "lattice-fk-limit",
+      "sine-gordon",
+      "frenkel-kontorova"
+    ],
+    "result": "Native seeded additive Ito pendulum ensemble, fixed-wall FPUT Verlet, harmonic ring omega-squared diagnostic, two-level sine-Gordon field and stationary FK kink; seed/grid/boundary tools, space-time heatmap, member summary, bounded worker, isolated save/share/import and labeled retained/downsampled CSV/provenance/SVG.",
+    "independentDiagnostics": [
+      "diatomic dispersion/bands/group velocity",
+      "static Peierls-Nabarro comparison",
+      "Arrhenius MTTF"
+    ],
+    "excluded": [
+      "S17+",
+      "generic sweep/ensemble queue",
+      "new Learn units",
+      "app cutover",
+      "master merge",
+      "release"
+    ]
+  },
+  "targetedValidation": {
+    "CP1": {
+      "report": "tmp/S16-cp1-vitest.json",
+      "sha256": "a0319848f2db5e35d93fb6c5317a642a3b91298422467595bcd79067ff8935d5",
+      "total": 127,
+      "passed": 127,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 8
+    },
+    "CP2": {
+      "report": "tmp/S16-cp2-vitest.json",
+      "sha256": "544724c8e57de95579cc10a5c121a2ff346b0aac72c8cf0a565127cacad21844",
+      "total": 94,
+      "passed": 94,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "files": 5
+    },
+    "browser": {
+      "report": "tmp/S16-cp2-playwright.json",
+      "sha256": "025d11b02ded678cc71d212798551aa6f730b07d3272140faca108b97045766c",
+      "startTime": "2026-10-20T00:13:20.674Z",
+      "duration": 500509.418,
+      "expected": 74,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "caseCount": 74,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    }
+  },
+  "numericalEvidence": {
+    "report": "documents/redesign/stage-runs/S16-numerical-metrics.json",
+    "sha256": "66480cbe4c1cfa67c0f01a316b983cf3ad94a601c93579cf6f3c8ee94c8b89a5",
+    "tolerance": 1e-12,
+    "checks": {
+      "canonicalRoundtrips": true,
+      "fputParity": true,
+      "fputHarmonicRefinement": true,
+      "sineGordonParity": true,
+      "sineGordonSelectedRefinement": true,
+      "latticeParity": true,
+      "staticFkParity": true,
+      "seededNativeLangevin": true,
+      "boundedWorkerCancellation": true
+    },
+    "summary": "Selected native state/energy/statistics parity differences zero at fixed 1e-12 tolerance. FPUT dt refinement and SG grid refinement decrease selected errors. Stable member-prefix and same-seed replay hold; static FK residuals and bounded worker cancellation pass."
+  },
+  "preservation": {
+    "protectedPaths": [
+      "app.html",
+      "src/physics",
+      "src/chaos",
+      "src/research",
+      "src/runtime",
+      "src/workers",
+      "src/validation",
+      "src/lib",
+      "package.json",
+      "package-lock.json",
+      "tests/characterization"
+    ],
+    "storageNamespace": "pendulum-product/field/v1/",
+    "canonicalSchema": "pendulum-experiment/v1 unchanged; existing maps carry closed field-model-v1 normalized convention; no unit allowlist change.",
+    "catalog": {
+      "definitions": 135,
+      "systems": 35,
+      "baselineReferences": 134,
+      "newExtension": "Exactly one source-bound static FK product route; frozen S01 inventory and existing IDs unchanged."
+    },
+    "learn": {
+      "courses": 8,
+      "reservedUnits": 86,
+      "publishedUnits": 8
+    },
+    "newScreenshotsDirectlyInspected": 16,
+    "resources": "128gridpoints,2-64Langevinmembers,100000steps,2000000member/grid updates,1001retained times,64steps/request with between-step8ms soft budget,15s response timeout; SVGheatmap65timesx64sites,CSVdownsample121times. Independent diagnostics<=128samples/127sites/200Newtoniterations."
+  },
+  "review": {
+    "userGate": false,
+    "approvedReviewGates": [
+      7,
+      9
+    ],
+    "humanScientificReview": false,
+    "publishedLearnHumanReviewed": "0/8 unchanged",
+    "scope": "Windows Chromium desktop and Pixel5 emulation, keyboard/axe/320px/CSSzoom2 and16newPNGs. Physical devices,Firefox/WebKit and screen-reader audio unverified."
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "newDependencyAudit": false,
+    "unresolved": "S01 high2/moderate2 and CodeQL32 remain unresolved. GitHub default-branch push notice high8/moderate3 is a separate current service notice. No risk acceptance or remediation claimed."
+  },
+  "developmentFailures": {
+    "initialBrowser": {
+      "report": "tmp/S16-initial-playwright.json",
+      "sha256": "10c69645d0150892f1af2153bb922eae20a711adb7556d9f6bb8a5232da2c00a",
+      "startTime": "2026-10-20T00:05:40.825Z",
+      "duration": 158216.33800000002,
+      "expected": 23,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0,
+      "caseCount": 24,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    },
+    "initialBrowserReason": "23passed/1unexpected: test incorrectly expected a role=alert for an already aria-invalid generic quantity input. Test now checks the field error plus a separately valid-range CFL violation.",
+    "visualPreparation": {
+      "report": "tmp/S16-visual-preparation-playwright.json",
+      "sha256": "24e1b0a751f2ad422208bab489b6c14658d15bff4ab0935d242cb1c5b12395b6",
+      "startTime": "2026-10-20T00:10:55.296Z",
+      "duration": 62526.464,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0,
+      "caseCount": 4,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    },
+    "leadPreparation": {
+      "report": "tmp/S16-lead-preparation-playwright.json",
+      "sha256": "9b12d8585a95e3c1e153320f59ad94b0eecc4936dadc7427f5b5d7c0c612c56e",
+      "startTime": "2026-10-20T00:12:43.296Z",
+      "duration": 28117.664,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0,
+      "caseCount": 2,
+      "errors": 0,
+      "retryCount": 0,
+      "updateSnapshots": "missing",
+      "workers": 1
+    },
+    "preparationReason": "Only missing new S16 snapshots were generated and counted as failed preparations; no historical image updates. Additive-only Langevin lead wording regenerated only2new uncommitted images. Normal validation is separate.",
+    "corrections": [
+      "Normalized vs independent SI diagnostic units explicitly separated.",
+      "Ring native output correctly labeled omega squared.",
+      "Deterministic CSV dimensions and applicability fields corrected.",
+      "Mobile captions state axes/units/series for all plots.",
+      "Worker sparse/inherited arrays rejected with16adversarial regressions.",
+      "Static progress and exact final timestamps corrected.",
+      "Retained raw is explicitly distinct from all integration steps; RNG export supports replay, not cursor continuation."
+    ],
+    "sandbox": "Git FETCH_HEAD writes and Git/esbuild/browser child process restrictions resolved by approved escalation of the same authorized commands. No failing check counted as passing."
+  },
+  "remainingLimitations": [
+    "Selected finite fixtures characterize native parity and refinement only; no general stability, accuracy, thermodynamic equilibrium or continuum-limit proof.",
+    "All S16 models use normalized time/state/energy. Canonical runtime seconds are a carrier qualified by timeConvention metadata.",
+    "Stable FNV member seed mapping is a new versioned product contract; it differs from native runLangevinEnsemble SplitMix mapping.",
+    "Langevin is a single normalized pendulum with additive velocity Ito noise and arithmetic unwrapped-angle moments. Noise and damping are independent.",
+    "FPUT mode energies are harmonic projections; the fixed-wall chain differs from periodic ring dispersion.",
+    "Sine-Gordon discrete energy uses a backward difference; finite boundaries and startup endpoint rates affect comparisons.",
+    "FK is a stationary Newton kink, potentially a saddle, with fixed endpoints. This does not compute driven depinning or mobility.",
+    "Single-device timing is observational, not a cross-device or percentile guarantee. No human scientific review occurred."
+  ],
+  "remoteEvidence": "Each listed implementation checkpoint was pushed and exact ls-remote hash verified before proceeding. Final completion additionally requires a separate status commit push with exact remote hash; that commit cannot contain its own hash.",
+  "rollback": "Existing app.html and S15 baseline64db09a remain preserved. No reset, force push, merge, release or cutover performed.",
+  "changedFiles": [
+    "css/product/field.css",
+    "documents/redesign/catalog-contract-ko.md",
+    "documents/redesign/field-lab-ko.md",
+    "documents/redesign/stage-runs/S16-numerical-metrics.json",
+    "documents/redesign/stage-runs/S16-progress.md",
+    "documents/redesign/status.json",
+    "e2e/redesign/field-pendulum.spec.ts",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-fput-heatmap-dark-chromium-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-fput-heatmap-dark-mobile-chrome-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-frenkel-kontorova-profile-light-chromium-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-frenkel-kontorova-profile-light-mobile-chrome-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-chromium-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-mobile-chrome-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-lattice-fk-limit-modes-dark-chromium-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-lattice-fk-limit-modes-dark-mobile-chrome-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-sine-gordon-heatmap-light-chromium-win32.png",
+    "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-sine-gordon-heatmap-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-lab-library-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-lab-library-light-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-retained-mock-inspector-dark-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-retained-mock-inspector-dark-mobile-chrome-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-retained-mock-workspace-light-chromium-win32.png",
+    "e2e/redesign/lab-shell.spec.ts-snapshots/s16-retained-mock-workspace-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-field-numerics.ts",
+    "src/product/adapters/physics/field-client.ts",
+    "src/product/adapters/physics/field-contract.ts",
+    "src/product/adapters/physics/field-schema.ts",
+    "src/product/adapters/physics/field-worker-protocol.ts",
+    "src/product/adapters/physics/field.ts",
+    "src/product/adapters/physics/field.worker.ts",
+    "src/product/app/application.ts",
+    "src/product/app/views/field-lab.ts",
+    "src/product/catalog/systems-extended.ts",
+    "src/product/catalog/systems-helpers.ts",
+    "src/product/catalog/validation.ts",
+    "src/product/lab/library.ts",
+    "src/product/lab/views/field-diagnostics.ts",
+    "src/product/lab/views/field-files.ts",
+    "src/product/lab/views/field-inspector.ts",
+    "src/product/lab/views/field-model.ts",
+    "src/product/lab/views/field-plots.ts",
+    "src/product/lab/views/field-storage.ts",
+    "src/product/lab/views/field-workspace.ts",
+    "tests/product/adapters/physics/field-worker.test.ts",
+    "tests/product/adapters/physics/field.test.ts",
+    "tests/product/catalog/catalog.test.ts",
+    "tests/product/contracts/field.test.ts",
+    "tests/product/lab/field-diagnostics.test.ts",
+    "tests/product/lab/field-edit.test.ts",
+    "tests/product/lab/field-model.test.ts",
+    "tests/product/lab/field-storage.test.ts"
+  ]
+}
