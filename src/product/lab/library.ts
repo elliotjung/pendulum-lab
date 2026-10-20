@@ -42,7 +42,7 @@ export function createLibrary(document: Document): HTMLElement {
       document,
       'p',
       'lab-preview-note',
-      '이중·복합·삼중진자, N중 사슬, 용수철·줄·공간 진자, 구동·제어·비선형 계와 자기·진자 네트워크·Huygens·Kuramoto·chimera는 실제 계산·그래프·내보내기를 제공합니다. Langevin 앙상블·FPUT·sine-Gordon은 정규화 동역학과 공간·시간 기록을 제공합니다. 조화 격자·FK kink는 정적 진단이며 독립 이원자·pinning·Arrhenius 진단은 각 표시 단위를 따릅니다. 다른 시스템은 조립 흐름 미리보기이며 기존 앱에서 계산할 수 있습니다.'
+      '8개 패밀리의 모든 35개 시스템에서 조건 설정·실제 계산·그래프·내보내기를 사용할 수 있습니다. 진자·구동·비선형·네트워크 계는 각 모델의 동역학을, Langevin 앙상블·FPUT·sine-Gordon은 정규화 동역학을 계산합니다. 조화 격자·FK kink는 정적 진단입니다. 표준 사상과 양자 킥 회전자는 반복 횟수로 전진하며, 유니터리 Floquet는 복소 연산자의 스펙트럼을 평가합니다. 독립 이원자·pinning·Arrhenius 진단과 모든 그래프의 표시 단위·모델 범위를 확인하세요.'
     )
   );
   const intro = element(document, 'div', 'lab-inline-actions');

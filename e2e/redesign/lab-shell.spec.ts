@@ -73,74 +73,99 @@ test.describe('S06 system-first laboratory', () => {
     await expect(page.locator('#lab-time')).toHaveAttribute('data-time', '0.02');
     await openSystem(page, 'standard-map');
     await panel(page, '조건');
-    await expect(page.getByLabel('반복 횟수 · iterations (회)', { exact: true })).toBeVisible();
+    await expect(page.locator('#discrete-iterations')).toBeVisible();
     await expect(page.locator('#lab-field-m1, #lab-field-step, #lab-field-duration, #lab-integrator')).toHaveCount(0);
     await openSystem(page, 'quantum-kicked-rotor');
     await panel(page, '조건');
     await expect(page.locator('#lab-field-step, #lab-integrator')).toHaveCount(0);
   });
 
-  test('runs, pauses, steps, cancels, resets and recovers a mock error without physical output', async ({ page }) => {
+  // S17 promotes the final mock family. Keep these lifecycle assertions against
+  // the real worker; historical mock unit fixtures and PNGs remain preserved.
+  test('runs, pauses, steps, cancels, resets and recovers a real discrete worker error', async ({ page }) => {
+    await page.addInitScript(() => {
+      const Original = window.Worker;
+      let fail = true;
+      window.Worker = class extends Original {
+        constructor(url: string | URL, options?: WorkerOptions) {
+          if (fail) {
+            fail = false;
+            throw new Error('fixture worker startup error');
+          }
+          super(url, options);
+        }
+      };
+    });
     await openSystem(page, 'quantum-kicked-rotor');
-    await page.getByRole('button', { name: '시험 실행', exact: true }).click();
+    await panel(page, '조건');
+    await page.locator('#discrete-iterations').fill('2048');
+    await page.getByRole('button', { name: '조건 적용', exact: true }).click();
+    await page.getByRole('button', { name: '실행', exact: true }).click();
+    await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'error');
+    await expect(page.getByRole('alert')).toContainText('error');
+    await audit(page);
+    await page.getByRole('button', { name: '실행', exact: true }).click();
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'running');
     await page.getByRole('button', { name: '일시정지', exact: true }).click();
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'paused');
+    await expect(page.locator('.lab-workspace')).toHaveAttribute('data-busy', 'false');
+    const before = Number(await page.locator('#discrete-iteration').getAttribute('data-iteration'));
     await page.getByRole('button', { name: '한 단계', exact: true }).click();
+    await expect(page.locator('.lab-workspace')).toHaveAttribute('data-busy', 'false');
+    expect(Number(await page.locator('#discrete-iteration').getAttribute('data-iteration'))).toBe(before + 1);
     await page.getByRole('button', { name: '실행 취소', exact: true }).click();
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'cancelled');
     await page.getByRole('button', { name: '처음으로', exact: true }).click();
     await expect(page.getByRole('progressbar')).toHaveAttribute('value', '0');
-    await page.getByText('오류 복구 체험', { exact: true }).click();
-    await page.getByRole('button', { name: '시험 오류 재현' }).click();
-    await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'error');
-    await expect(page.getByRole('alert')).toContainText('오류');
-    await audit(page);
-    await page.getByRole('button', { name: '시험 실행', exact: true }).click();
+    await panel(page, '조건');
+    await page.locator('#discrete-iterations').fill('3');
+    await page.getByRole('button', { name: '조건 적용', exact: true }).click();
+    await page.getByRole('button', { name: '실행', exact: true }).click();
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'completed');
-    await expect(page.getByRole('progressbar')).toHaveAttribute('value', '12');
-    await expect(page.locator('canvas')).toHaveCount(0);
+    await expect(page.getByRole('progressbar')).toHaveAttribute('value', '100');
+    await panel(page, '분석');
+    await expect(page.locator('#discrete-analysis svg')).toBeVisible();
   });
 
-  test('selects only compatible analyses and exports a restorable tray snapshot as explicit mock JSON', async ({
-    page
-  }) => {
+  test('blocks continuous tools and exports a restorable real discrete tray snapshot', async ({ page }) => {
     await openSystem(page, 'standard-map');
     await panel(page, '분석');
-    const first = page.locator('.lab-analysis-choice button').first();
-    await first.click();
-    await expect(first).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('.lab-selected-analyses > div')).toHaveCount(1);
+    await expect(page.locator('#discrete-plot-kind')).toBeVisible();
+    await expect(page.locator('.lab-analysis-choice')).toHaveCount(0);
+    await expect(page.locator('#discrete-analysis svg')).toBeVisible();
     await panel(page, '조건');
-    await page.getByLabel('반복 횟수 · iterations (회)', { exact: true }).fill('3');
+    await page.locator('#discrete-iterations').fill('3');
+    await page.getByRole('button', { name: '조건 적용', exact: true }).click();
     await panel(page, '보관함');
     await page.getByRole('button', { name: '현재 설정 보관', exact: true }).click();
     await expect(page.locator('.lab-tray-entry')).toHaveCount(1);
     await panel(page, '조건');
-    await page.getByLabel('반복 횟수 · iterations (회)', { exact: true }).fill('4');
+    await page.locator('#discrete-iterations').fill('4');
+    await page.getByRole('button', { name: '조건 적용', exact: true }).click();
     await panel(page, '보관함');
     await page.getByRole('button', { name: /설정 복원$/ }).click();
     await panel(page, '조건');
-    await expect(page.getByLabel('반복 횟수 · iterations (회)', { exact: true })).toHaveValue('3');
+    await expect(page.locator('#discrete-iterations')).toHaveValue('3');
     await panel(page, '내보내기');
     const pending = page.waitForEvent('download');
-    await page.getByRole('button', { name: '모의 설정 JSON 다운로드' }).click();
+    await page.getByRole('button', { name: '상태 JSON 다운로드', exact: true }).click();
     const download = await pending;
     const payload = JSON.parse(await readFile((await download.path())!, 'utf8'));
     expect(payload).toMatchObject({
-      schema: 'pendulum-lab-mock/v1',
-      mode: 'mock',
-      scientificResults: false,
-      settings: { systemId: 'system:standard-map', fields: { iterations: '3' } }
+      schema: 'pendulum-experiment/v1',
+      systemId: 'system:standard-map',
+      runtime: { domain: 'iteration', iterations: 3 },
+      integrator: { kind: 'internal' }
     });
-    expect(payload.settings.analysisIds).toHaveLength(1);
+    expect(payload.analyses).toEqual([]);
     await panel(page, '보관함');
     await page.getByRole('button', { name: /보관 해제$/ }).click();
     await expect(page.locator('.lab-tray-entry')).toHaveCount(0);
     await openSystem(page, 'quantum-kicked-rotor');
     await panel(page, '분석');
     await expect(page.locator('.lab-analysis-choice')).toHaveCount(0);
-    await expect(page.getByText('검색 조건과 호환되는 분석이 없습니다.', { exact: true })).toBeVisible();
+    await expect(page.locator('#discrete-plot-kind option').filter({ hasText: '푸앵카레' })).toHaveCount(0);
+    await expect(page.locator('#discrete-analysis svg')).toBeVisible();
   });
 
   test('preserves each system draft and cancels execution when navigating away', async ({ page }) => {
@@ -194,19 +219,18 @@ test.describe('S06 system-first laboratory', () => {
     await audit(page);
   });
 
-  test('keeps the library baseline and reviews retained mock workspace light/dark visuals', async ({ page }) => {
+  test('reviews the complete library and real quantum workspace light/dark visuals', async ({ page }) => {
     await page.goto('/next.html#/lab');
     await page.getByLabel('시스템 패밀리').selectOption('classical');
     await audit(page);
-    await expect(page).toHaveScreenshot('s16-lab-library-light.png', { fullPage: true });
-    // S16 promotes Langevin. The original S06–S15
-    // images remain historical evidence; retained QKR mock visuals get distinct names.
+    await expect(page).toHaveScreenshot('s17-lab-library-light.png', { fullPage: true });
+    // Every earlier PNG remains historical evidence. New actual QKR views use S17 names.
     await openSystem(page, 'quantum-kicked-rotor');
     await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'ready');
-    await expect(page).toHaveScreenshot('s16-retained-mock-workspace-light.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s17-quantum-workspace-light.png', { fullPage: true });
     await page.locator('#product-theme').selectOption('dark');
     await panel(page, '조건');
     await audit(page);
-    await expect(page).toHaveScreenshot('s16-retained-mock-inspector-dark.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('s17-quantum-inspector-dark.png', { fullPage: true });
   });
 });

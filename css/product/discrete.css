@@ -1,0 +1,72 @@
+.discrete-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin-block: var(--ds-space-4);
+}
+.discrete-workspace [hidden] {
+  display: none !important;
+}
+.discrete-signals {
+  min-width: 0;
+  padding: var(--ds-space-3);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.discrete-panel {
+  min-width: 0;
+  margin-block: var(--ds-space-4);
+  padding: var(--ds-space-4);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.discrete-panel legend {
+  font-weight: var(--ds-weight-bold);
+}
+.discrete-workspace svg,
+.discrete-workspace input,
+.discrete-workspace select,
+.discrete-workspace textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+.discrete-workspace .ds-section,
+.discrete-workspace fieldset {
+  min-width: 0;
+}
+.discrete-workspace p,
+.discrete-workspace label,
+.discrete-workspace legend,
+.discrete-workspace output {
+  overflow-wrap: anywhere;
+}
+.discrete-json {
+  width: 100%;
+  min-width: 0;
+  min-height: 8rem;
+  box-sizing: border-box;
+  grid-column: 1 / -1;
+  font-family: monospace;
+  resize: vertical;
+}
+.discrete-plot-caption {
+  display: block;
+  margin-block: var(--ds-space-3) 0;
+  overflow-wrap: anywhere;
+}
+.discrete-workspace .lab-data-output {
+  max-width: 100%;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .discrete-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .discrete-workspace .core-plot text {
+    display: none;
+  }
+}

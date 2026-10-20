@@ -78,7 +78,12 @@ export function mountApplication(root: HTMLElement, window: Window) {
                           'system:frenkel-kontorova'
                         ].includes(route.systemId)
                       ? import('./views/field-lab')
-                      : loaders[space](),
+                      : route.kind === 'lab-system' &&
+                          ['system:standard-map', 'system:quantum-kicked-rotor', 'system:unitary-floquet'].includes(
+                            route.systemId
+                          )
+                        ? import('./views/discrete-lab')
+                        : loaders[space](),
     presentation: {
       loading(space) {
         shell.setSpace(space);

@@ -23,7 +23,7 @@
 |---|---|---|---|
 | CP0 | 진행 기록·activeStage | plan/preflight/typecheck | 완료 |
 | CP1 | native adapter·canonical·bounded worker | deterministic/native parity, norm/unitarity/known spectra, complex roundtrip, worker cancel/error/resource, typecheck | 완료 |
-| CP2 | 전용 Lab·plots·files·route | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 대기 |
+| CP2 | 전용 Lab·plots·files·route | model/storage tests, production build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 전체 검증·보존·review 후보 | 전체 Vitest, browser, catalog/Learn/inventory/policy/secrets/typecheck/build | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
 
@@ -59,3 +59,16 @@
 - 실제 native roots의 complex division failure, QKR 비유한 관측량, 부분 묶음 오류의 마지막 유효 상태, worker startup/postMessage/deserialize/runtime/timeout/dispose 경로와 중복/순서/과대 요청을 검사했다.
 - map 초기 θ는 [0,2π)로 검증하며 p는 감지 않는다. 큰 p와 비1 norm 복소 상태도 재시작 계약에 보존하고 자동 보정하지 않는다.
 - 동결 backend36개 test와 전체 live tree의 최종 typecheck `tmp/S17-cp1-typecheck-final.log` exit0. 구현 checkpoint는 다음 단계로 완료 표시하지 않고 먼저 원격 보존한다.
+- CP1 `789968f31a41724b5e08d45349537d733bb75916` push 성공. 정확한 원격 hash 일치를 확인했다.
+
+## CP2 사용자 화면 검증
+
+- 실제 phase cylinder, 복소 확률·위상·운동량, raw 고유위상·준에너지, 전용 Inspector, 보관·저장·공유·CSV/SVG·현재 상태 continuation을 연결했다.
+- application lazy route와 library 안내를 전체 시스템 지원 상태에 맞췄다. 마지막 mock 전용 E2E 두 흐름은 실제 worker lifecycle/error와 canonical export로 바꾸고 기존 12케이스의 검증 목적을 유지한다. 이전 PNG는 보존하며 신규 S17 이름만 사용한다.
+- UI model/storage/inspector targeted **20/20**, 3파일(`tmp/S17-cp2-vitest.json`). 실제 native roots 오류의 `configure()` atomic 회귀를 포함한다. scoped ESLint/Prettier 통과. phase cylinder 축을 0..2π로 고정하고 continuation envelope의 step·FFT 인덱스·확률 일관성을 보강한 뒤 production build를 다시 생성했다.
+- 브라우저 대상: discrete33 + lab-shell12 + shell17 =62케이스/project, Chromium/Pixel5 두 project **124케이스**. 실행 전 `--list` 실제 확인을 사용한다. 초기 추정 test 수를 완료 증거로 사용하지 않는다.
+- 신규 시각 준비는 별도 기록한다. 첫 preparation은 신규 baseline 생성과 같은 QKR hash의 재방문 fixture 문제로 4unexpected였다. 같은 URL에서는 명시적 reload하도록 고쳤다. 새 S17 PNG10개만 생성했다. 최종 phase 축 보강 후 신규2개를 교정하고 나머지4개를 추가한 correction preparation은4/4 통과했다. 과거 PNG는 수정하지 않는다.
+- 신규 PNG14개를 desktop/Pixel5 양쪽에서 직접 검사했다. 원통 scatter·복소 확률/위상·raw 준에너지·조건 textarea·한국어 줄바꿈에 잘림/겹침이 없었다. 최종 정상 검증은 명시적 `--update-snapshots=none`, retry0, worker1이다.
+- 최종 품질9개(`tmp/S17-command-results.json`) 전부 exit0: typecheck/scoped ESLint/policy/plan/catalog/Learn/inventory/secrets/numerics. catalog135정의/35시스템, Learn8과정/86예약, inventory errors0. 알려진 패턴 scan1666tracked/1464text·발견0; 신규 S17 staged 파일을 포함하며 history/ignored/binary/외부서비스는 제외한다.
+- 첫 정상 browser 시도는 JSON reporter의 최종 결과 수집/종료가 멈춰 완료 근거에서 제외한다. test worker/browser가 종료되고 preview subtree만 남은 상태를 읽기 확인했다. task 소유 preview subtree를 정리한 뒤에도 report0bytes라 소유 runner만 종료했고 exit1을 기록했다. 빈 JSON/log·process 확인·복구 증거는 `tmp/S17-stalled-*`에 보존한다. 독립 preview session과 `line,json` reporter/직접 JSON 파일 출력으로 동일124·snapshot none·retry0을 다시 검증한다. source/기준 이미지/검사 조건은 변경하지 않는다.
+- 정상 재실행 `tmp/S17-final-playwright.json`: **124/124**, 807.524초, unexpected/skipped/flaky/runner errors0, workers1, retry0, updateSnapshots=none. 새 기준 생성·변경은0이다. 실제 실행은 Chromium62+Pixel5 62이며 config에 나열된 Firefox/WebKit 전체를 검증했다고 주장하지 않는다.
