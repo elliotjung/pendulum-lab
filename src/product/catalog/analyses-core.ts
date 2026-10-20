@@ -1,7 +1,7 @@
 import type { AnalysisDefinition } from '../contracts/catalog';
 import { analysis, ode, initialState, rhs } from './analyses-helpers';
 
-export const coreAnalyses: readonly AnalysisDefinition[] = [
+const discoveredCoreAnalyses: readonly AnalysisDefinition[] = [
   analysis({
     id: 'analysis:energy',
     name: ['에너지와 드리프트', 'Energy and drift'],
@@ -271,3 +271,16 @@ export const coreAnalyses: readonly AnalysisDefinition[] = [
     ]
   })
 ];
+
+/** Native bindings stay discoverable; the S18 product executes them in an isolated, terminable worker.
+ * Runtime source validation additionally checks the actual model and recorded sampling.
+ */
+export const coreAnalyses: readonly AnalysisDefinition[] = discoveredCoreAnalyses.map((definition) =>
+  definition.integrationStage === 18
+    ? {
+        ...definition,
+        tags: [...definition.tags, 'product-core-diagnostics-v1'],
+        computation: { ...definition.computation, location: 'worker', cancellable: true }
+      }
+    : definition
+);

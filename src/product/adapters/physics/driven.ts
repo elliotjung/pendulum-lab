@@ -278,7 +278,7 @@ export function drivenWaveform(waveform: DrivenForcing['waveform'], phase: numbe
       : sine;
 }
 const wrap = (theta: number) => ((((theta + Math.PI) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) - Math.PI;
-function createUncheckedSimulation(config: DrivenConfig) {
+function createUncheckedDynamics(config: DrivenConfig) {
   const id = config.systemId.slice(7) as 'driven' | 'coupled' | 'inverted' | 'cartpole' | 'parametric';
   const engine = createExpansionSystem(
     id,
@@ -294,12 +294,8 @@ function createUncheckedSimulation(config: DrivenConfig) {
   );
   // A private clock lets the existing autonomous steppers evaluate cart force at their intermediate stage times.
   const nativeDimension = config.initialState.length;
-  let state = Float64Array.from(id === 'cartpole' ? [...config.initialState, 0] : config.initialState),
-    index = 0,
-    failure: Error | undefined;
-  const scratch = new Float64Array(state.length),
-    ratio = config.duration / config.step,
-    total = Math.ceil(ratio - 8 * Number.EPSILON * ratio);
+  const initialState = Float64Array.from(id === 'cartpole' ? [...config.initialState, 0] : config.initialState);
+  const scratch = new Float64Array(initialState.length);
   const reference = config.controller?.reference ?? 0;
   function assertState(s: ArrayLike<number>) {
     if (Array.from(s).some((x, i) => !Number.isFinite(x) || (i < nativeDimension && Math.abs(x) > 1e6)))
@@ -346,6 +342,23 @@ function createUncheckedSimulation(config: DrivenConfig) {
     if (Array.from(out).some((x) => !Number.isFinite(x)))
       throw new Error('유한하지 않은 도함수로 계산을 중지했습니다. 설정을 줄이세요.');
   }
+  return { id, engine, nativeDimension, initialState, reference, assertState, signals, rhs };
+}
+/** Shared physical flow including the private cart clock, forcing and controller safety guards. */
+export function createDrivenFlow(input: DrivenConfig) {
+  const checked = validateDrivenConfig(input);
+  if (!checked.ok) throw new DrivenConfigurationError(checked.issues);
+  const native = createUncheckedDynamics(checked.value);
+  return { initial: Array.from(native.initialState), rhs: native.rhs };
+}
+function createUncheckedSimulation(config: DrivenConfig) {
+  const { id, engine, nativeDimension, initialState, reference, assertState, signals, rhs } =
+    createUncheckedDynamics(config);
+  let state = initialState,
+    index = 0,
+    failure: Error | undefined;
+  const ratio = config.duration / config.step,
+    total = Math.ceil(ratio - 8 * Number.EPSILON * ratio);
   function sample(s: StateVector, step: number): DrivenSample {
     assertState(s);
     const time = (config.startTime ?? 0) + Math.min(step * config.step, config.duration),

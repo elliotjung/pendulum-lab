@@ -1,0 +1,79 @@
+{
+  "schema": "pendulum-core-diagnostic-numerics/v1",
+  "recordedAt": "2026-10-20T04:30:33.572Z",
+  "checks": {
+    "inputNotMutated": true,
+    "stateProjection": true,
+    "phaseProjection": true,
+    "energyObservation": true,
+    "analyticFft": true,
+    "analyticNaff": true,
+    "periodicZeroOne": true,
+    "stochasticZeroOne": true,
+    "harmonicSpectrum": true,
+    "harmonicSali": true,
+    "harmonicFli": true,
+    "harmonicSection": true,
+    "shadowNoExceedance": true,
+    "nativeParity": true,
+    "allElevenKinds": true,
+    "finitePlotValues": true
+  },
+  "tolerances": {
+    "nativeParity": 1e-12,
+    "fft": 1e-12,
+    "naff": 0.0001,
+    "sectionResidual": 1e-8,
+    "harmonicExponent": 0.01
+  },
+  "fft": {
+    "samples": 1024,
+    "dt": 0.01,
+    "frequency": 6.25,
+    "amplitude": 1.4999999999999976
+  },
+  "naff": {
+    "expectedAngularFrequency": 1.2345,
+    "absoluteFrequencyError": 1.6312506900817425e-11
+  },
+  "zeroOne": {
+    "samples": 2000,
+    "periodicK": -0.011819115097078715,
+    "seededNoiseK": 0.9986884414047166,
+    "interpretation": "High K is compatible with noise and is not a proof of deterministic chaos."
+  },
+  "harmonic": {
+    "model": "system:van-der-pol",
+    "parameters": {
+      "mu": 0
+    },
+    "initialState": [
+      1,
+      0
+    ],
+    "timeUnit": "normalized-time",
+    "duration": 20,
+    "dt": 0.01,
+    "spectrum": [
+      -5.247691170497757e-13,
+      -8.631872994160393e-13
+    ],
+    "sali": 1.4142135623036192,
+    "fli": 6.096234628216659e-13,
+    "sectionCount": 6,
+    "maxSectionResidual": 9.890805453306728e-10,
+    "shadowHorizon": null
+  },
+  "nativeDifferences": {
+    "lyapunovSpectrum": 0,
+    "saliSeries": 0,
+    "fliSeries": 0,
+    "sectionTimes": 0,
+    "sectionPoints": 0,
+    "shadowSeries": 0
+  },
+  "limitations": [
+    "Selected analytic/synthetic fixtures and native parity do not establish convergence for arbitrary model settings.",
+    "No human scientific review or real-device performance certification is implied."
+  ]
+}
