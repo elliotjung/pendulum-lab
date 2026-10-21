@@ -39,3 +39,17 @@
 - 완료 목록과 nextStage=19를 유지한다. 검증된 checkpoint만 명시적 경로로 commit/push하고 정확한 원격 hash를 확인한다.
 - 기존 dependency/CodeQL 위험은 본 단계에서 해결·수용했다고 주장하지 않는다. 사람 과학 검토를 꾸며내지 않는다.
 
+
+- CP0 `b78adfc54ac51f0763b618d4ed93824ce88363cb` push 성공. `git ls-remote`의 정확한 hash 일치 확인. plan/preflight/typecheck exit0.
+- CP1 진행: native adapter/strict input/worker/artifact 구현. 원래 관측의 transient·stride 후 첫 maxSamples를 명시적으로 선택하며 선택 시각과 표본 수를 보존한다.
+- 독립 닫힌 해 benchmark 14/14. logistic Ulam CDF 오차32상자0.079456은 고정0.06기준에 미달했고,64·128상자에서 동일 기준 및 감소 추세를 통과했다. 거친 격자 결과도 보존한다.
+
+## CP1 계산·worker·artifact
+
+- 12도구 native 연결,35시스템×12=420호환 조합의 실제 계산/artifact왕복 또는 설명 있는 거부를 검증했다. 기존 S18 native source/flow를 공유한다.
+- 통합 targeted493/493 및 최종 worker/artifact/native-parity42/42, 전체 typecheck, 담당ESLint/Prettier 통과. full Vitest는 별도로 실행 중이다.
+- 원래 관측·단위·선택 시각, 별도 scalar source/정지 격자,원 실험,runID와 생성 시각을 versioned artifact에 보존한다.16MiB/구조/깊이/위험키/getter/희소배열/비유한값/서명·단위·계산법·파생source를 검증한다.
+- 취소/dispose는 별도worker를 종료하며 늦은 응답을 폐기한다.30초무응답 종료. 동기native 내부 진행률은 indeterminate이고 결과 준비 상태만 확정한다.
+- 교차검토로 Wada native numColors=max(label)+1의 오해를 막고 실제 distinct label 수를 계산한다. {0,2}/{1,2}를 세종류로 오인하지 않는 회귀 통과. 세격자를 한 번씩 계산하고 정확한 누적작업 예산을 적용한다.
+- FTLE는 native gradient를 한 번 전파하고 zero/subnormal STM 및 비유한 특이값을 거부한다. 극단감쇠 underflow 회귀와 정상native결과 exact parity를 통과했다. pure엔진/API 변경0.
+- 경계·스케일 부족 uncertainty와 CLV expanding/contracting쌍 부재는 null+이유로 보존한다. native기본값을 유효한 과학적 판정으로 대신 쓰지 않는다.
