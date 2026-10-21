@@ -27,6 +27,11 @@
       "id": "CP2",
       "commit": "4129ea560656c80a0b65055fc53a6ccf358feffa",
       "push": "exact remote hash verified before validation commit"
+    },
+    {
+      "id": "CP3",
+      "commit": "916564356bd5dd0d1238fb957fc866205128ba72",
+      "push": "exact remote hash verified before separate status commit"
     }
   ],
   "gates": {
@@ -483,5 +488,8 @@
     "legacyEntry": "app.html"
   },
   "nextValidStage": 20,
-  "statusUpdate": "Implementation/verification commits must be pushed before a separate status commit. Completion requires exact remote hash of that status commit."
+  "statusUpdate": {
+    "priorValidatedImplementationHead": "916564356bd5dd0d1238fb957fc866205128ba72",
+    "finalStatusPush": "Required after this metadata commit; exact remote hash must be confirmed separately."
+  }
 }

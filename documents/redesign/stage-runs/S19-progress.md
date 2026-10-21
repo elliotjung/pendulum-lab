@@ -15,8 +15,8 @@
 | CP0 | 실행 기록·activeStage, plan/preflight/typecheck | b78adfc54ac51f0763b618d4ed93824ce88363cb · 정확한 원격 hash 확인 |
 | CP1 | native 계산·안전 계약·worker·artifact, 통합 targeted 493/493, 최종 runtime/native 교차 검사 42/42 | 43b5803038b7c14500fb891f3ba5a9ed20355e5f · 정확한 원격 hash 확인 |
 | CP2 | lazy Dock·registry·결과·파일 왕복, production 30/30·새 PNG 4장 | 4129ea560656c80a0b65055fc53a6ccf358feffa · 정확한 원격 hash 확인 |
-| CP3 | 전체 검증·수치·보존·과학/보안 한계 기록 | candidate-complete. 이 검증 commit을 먼저 push해야 함 |
-| STATUS | 구현 원격 확인 뒤 별도 완료 상태 | 아직 nextStage=19. 최종 status commit 원격 확인 뒤 완료 |
+| CP3 | 전체 검증·수치·보존·과학/보안 한계 기록 | 916564356bd5dd0d1238fb957fc866205128ba72 · 정확한 원격 hash 확인 |
+| STATUS | 구현 원격 확인 뒤 별도 완료 상태 | 검증 성공 · 완료19/next20 · 이 status commit의 원격 hash 확인 뒤 완료 |
 
 ## 결과와 계산의 의미
 
@@ -45,3 +45,10 @@
 - staged checkpoint known-pattern secret scan1740tracked/1530text·발견0. history/ignored/binary/external services는 제외된다. dependency 새 감사나 위험 수용은 하지 않았다. S01 high2/moderate2·CodeQL32와 기존 모델 한계는 미해결 상태를 유지한다. GitHub default-branch high8/moderate3 notice는 새 local audit가 아니다.
 - S19는 사용자 review gate가 아니다. 승인 목록 [7,9,17]을 유지한다. 사람의 과학 검토, 실제 기기, Firefox/WebKit, screen-reader 음성은 검증하지 않았다. 유한 격자·유한 표본·eigensolver의 조건부 추정 한계는 UI와 artifact에 표시한다.
 - 상세 근거: advanced-diagnostics-ko.md, S19-verification.json, S19-numerical-metrics.json. rollback 기준은 S18 a7f4081과 기존 app.html이다. 최종 status push 확인 전 다음 단계를 시작하지 않는다. 다음 유효 단계는 S20이다.
+
+## STATUS
+
+- CP3 916564356bd5dd0d1238fb957fc866205128ba72 push 성공과 정확한 원격 hash를 확인하고 clean guard를 통과했다. 구현과 검증 근거가 모두 원격에 있는 상태에서 완료 metadata만 별도 갱신한다.
+- lastCompletedStage19, nextStage20, 완료 목록1–19, activeStage 해제. 승인 목록은 [7,9,17]로 유지한다.
+- 최종 검증 문서를 포함한 staged known-pattern scan1741tracked/1531text·발견0을 확인했다.
+- 이 STATUS commit도 origin/codex/redesign에 push되고 정확한 원격 hash가 확인되어야 S19 완료다.
