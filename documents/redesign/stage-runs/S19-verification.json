@@ -1,0 +1,487 @@
+{
+  "schemaVersion": "pendulum-redesign-S19-verification/v1",
+  "stage": 19,
+  "phase": "validated",
+  "recordedAtUtc": "2026-10-21T03:32:07.622Z",
+  "baseline": {
+    "branch": "codex/redesign",
+    "head": "a7f4081a98adf4469efe69acc246e93598aa5b9d",
+    "dependency": 18,
+    "clean": true,
+    "planCheck": true,
+    "preflight": true
+  },
+  "candidateHead": "4129ea560656c80a0b65055fc53a6ccf358feffa",
+  "checkpoints": [
+    {
+      "id": "CP0",
+      "commit": "b78adfc54ac51f0763b618d4ed93824ce88363cb",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP1",
+      "commit": "43b5803038b7c14500fb891f3ba5a9ed20355e5f",
+      "push": "exact remote hash verified"
+    },
+    {
+      "id": "CP2",
+      "commit": "4129ea560656c80a0b65055fc53a6ccf358feffa",
+      "push": "exact remote hash verified before validation commit"
+    }
+  ],
+  "gates": {
+    "targeted": true,
+    "fullVitest": true,
+    "newProductionJourneys": true,
+    "legacyProductionJourneys": true,
+    "quality": true,
+    "numerics": true,
+    "preservation": true,
+    "visual": true
+  },
+  "validation": {
+    "targeted": {
+      "path": "tmp/S19-cp1-vitest.json",
+      "sha256": "2170a13b18f2ae7047068957b3502ff0bc5d772f527b9e90615603bfcb98490f",
+      "total": 493,
+      "passed": 493,
+      "failed": 0,
+      "files": 8
+    },
+    "fullVitest": {
+      "path": "tmp/S19-final-vitest.json",
+      "sha256": "b9f1ed92cf8cce8bea0e97001b60bc2e26f2418ef171782ed684c2d325ebe500",
+      "total": 4375,
+      "passed": 4375,
+      "failed": 0,
+      "files": 320,
+      "maxWorkers": 2,
+      "unchangedTimeouts": true
+    },
+    "browser": {
+      "path": "tmp/S19-final-playwright.json",
+      "sha256": "05dc9451b7e7b48383432685b25b3e7eaa6f09ac3816f8cca88fc28c758b8a1e",
+      "stats": {
+        "startTime": "2026-10-21T03:17:07.750Z",
+        "duration": 213714.353,
+        "expected": 30,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCount": 30,
+      "errors": 0,
+      "retries": 0,
+      "updateSnapshots": "none",
+      "projects": ["chromium", "mobile-chrome"],
+      "passed": true
+    },
+    "legacyBrowser": {
+      "path": "tmp/S19-legacy-playwright.json",
+      "sha256": "0611753761bb28455f0ddead848ef14e44b56664475bab299358786361ce30d3",
+      "stats": {
+        "startTime": "2026-10-21T03:21:02.850Z",
+        "duration": 550842.4630000001,
+        "expected": 94,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "testCount": 94,
+      "errors": 0,
+      "retries": 0,
+      "updateSnapshots": "none",
+      "projects": ["chromium", "mobile-chrome"],
+      "passed": true
+    },
+    "numerics": {
+      "path": "documents/redesign/stage-runs/S19-numerical-metrics.json",
+      "sha256": "5f9bce3b9b91c2680943bc33400479062093c0f27472e1ba09e87f01c6ffcf39",
+      "checks": {
+        "periodicDeterminism": true,
+        "recurrenceRate": true,
+        "blockUncertaintyFinite": true,
+        "networkFinite": true,
+        "circleDimension": true,
+        "cascadeExact": true,
+        "tentEntropyResolution": true,
+        "transferSpectrum": true,
+        "logisticDensity": true,
+        "ftleConvergence": true,
+        "clvExponents": true,
+        "basinHomogeneous": true,
+        "basinMixed": true,
+        "boundaryDimension": true
+      }
+    },
+    "quality": {
+      "path": "tmp/S19-command-results.json",
+      "sha256": "34b5825d3fb41864fc545f9083eee8606d39cc729e6ebe78f3c4925dc7473b6c",
+      "results": [
+        {
+          "id": "typecheck",
+          "command": ["node", "node_modules/typescript/bin/tsc", "--noEmit"],
+          "exitCode": 0,
+          "elapsedMs": 2640540,
+          "log": "tmp/S19-final-typecheck.log"
+        },
+        {
+          "id": "eslint",
+          "command": [
+            "node",
+            "node_modules/eslint/bin/eslint.js",
+            "e2e/redesign/legacy-layout.ts",
+            "src/product/adapters/analysis/advanced/advanced.worker.ts",
+            "src/product/adapters/analysis/advanced/artifact-detail-validation.ts",
+            "src/product/adapters/analysis/advanced/artifact-validation.ts",
+            "src/product/adapters/analysis/advanced/artifact.ts",
+            "src/product/adapters/analysis/advanced/client.ts",
+            "src/product/adapters/analysis/advanced/contracts.ts",
+            "src/product/adapters/analysis/advanced/execute.ts",
+            "src/product/adapters/analysis/advanced/native-flow.ts",
+            "src/product/adapters/analysis/advanced/native-grid.ts",
+            "src/product/adapters/analysis/advanced/native-map.ts",
+            "src/product/adapters/analysis/advanced/native-series.ts",
+            "src/product/adapters/analysis/advanced/result.ts",
+            "src/product/adapters/analysis/advanced/settings.ts",
+            "src/product/adapters/analysis/advanced/validation.ts",
+            "src/product/catalog/analyses-core.ts",
+            "src/product/catalog/analyses-geometry.ts",
+            "src/product/lab/views/diagnostics.ts",
+            "tests/product/adapters/analysis/advanced/artifact.test.ts",
+            "tests/product/adapters/analysis/advanced/client.test.ts",
+            "tests/product/adapters/analysis/advanced/native-matrix.test.ts",
+            "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+            "e2e/redesign/advanced-diagnostics.spec.ts",
+            "scripts/redesign/measure-advanced-diagnostics.ts",
+            "src/product/lab/views/advanced-diagnostics-panel.ts",
+            "src/product/lab/views/advanced-diagnostics.ts",
+            "src/product/lab/views/advanced-plots.ts",
+            "src/product/lab/views/advanced-result.ts",
+            "src/product/lab/views/advanced-settings.ts",
+            "tests/product/catalog/advanced-diagnostics.test.ts",
+            "tests/product/lab/advanced-diagnostics.test.ts",
+            "--max-warnings",
+            "0"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 23083,
+          "log": "tmp/S19-final-eslint.log"
+        },
+        {
+          "id": "format",
+          "command": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--check",
+            "documents/redesign/status.json",
+            "e2e/redesign/legacy-layout.ts",
+            "src/product/adapters/analysis/advanced/advanced.worker.ts",
+            "src/product/adapters/analysis/advanced/artifact-detail-validation.ts",
+            "src/product/adapters/analysis/advanced/artifact-validation.ts",
+            "src/product/adapters/analysis/advanced/artifact.ts",
+            "src/product/adapters/analysis/advanced/client.ts",
+            "src/product/adapters/analysis/advanced/contracts.ts",
+            "src/product/adapters/analysis/advanced/execute.ts",
+            "src/product/adapters/analysis/advanced/native-flow.ts",
+            "src/product/adapters/analysis/advanced/native-grid.ts",
+            "src/product/adapters/analysis/advanced/native-map.ts",
+            "src/product/adapters/analysis/advanced/native-series.ts",
+            "src/product/adapters/analysis/advanced/result.ts",
+            "src/product/adapters/analysis/advanced/settings.ts",
+            "src/product/adapters/analysis/advanced/validation.ts",
+            "src/product/catalog/analyses-core.ts",
+            "src/product/catalog/analyses-geometry.ts",
+            "src/product/lab/views/diagnostics.ts",
+            "tests/product/adapters/analysis/advanced/artifact.test.ts",
+            "tests/product/adapters/analysis/advanced/client.test.ts",
+            "tests/product/adapters/analysis/advanced/native-matrix.test.ts",
+            "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+            "css/product/advanced-diagnostics.css",
+            "documents/redesign/stage-runs/S19-numerical-metrics.json",
+            "e2e/redesign/advanced-diagnostics.spec.ts",
+            "scripts/redesign/measure-advanced-diagnostics.ts",
+            "src/product/lab/views/advanced-diagnostics-panel.ts",
+            "src/product/lab/views/advanced-diagnostics.ts",
+            "src/product/lab/views/advanced-plots.ts",
+            "src/product/lab/views/advanced-result.ts",
+            "src/product/lab/views/advanced-settings.ts",
+            "tests/product/catalog/advanced-diagnostics.test.ts",
+            "tests/product/lab/advanced-diagnostics.test.ts"
+          ],
+          "exitCode": 0,
+          "elapsedMs": 825,
+          "log": "tmp/S19-final-format.log"
+        },
+        {
+          "id": "policy",
+          "command": ["node", "--import", "tsx", "scripts/lint-source.ts"],
+          "exitCode": 0,
+          "elapsedMs": 1077,
+          "log": "tmp/S19-final-policy.log"
+        },
+        {
+          "id": "modules",
+          "command": ["node", "--import", "tsx", "scripts/audit-module-size.ts"],
+          "exitCode": 0,
+          "elapsedMs": 657,
+          "log": "tmp/S19-final-modules.log"
+        },
+        {
+          "id": "plan",
+          "command": ["node", "--import", "tsx", "scripts/redesign/validate-plan.ts"],
+          "exitCode": 0,
+          "elapsedMs": 239,
+          "log": "tmp/S19-final-plan.log"
+        },
+        {
+          "id": "catalog",
+          "command": ["node", "--import", "tsx", "scripts/redesign/validate-catalog.ts"],
+          "exitCode": 0,
+          "elapsedMs": 1677,
+          "log": "tmp/S19-final-catalog.log"
+        },
+        {
+          "id": "learn",
+          "command": ["node", "--import", "tsx", "scripts/redesign/validate-learn.ts"],
+          "exitCode": 0,
+          "elapsedMs": 619,
+          "log": "tmp/S19-final-learn.log"
+        },
+        {
+          "id": "inventory",
+          "command": ["node", "--import", "tsx", "scripts/redesign/inventory.ts", "--check"],
+          "exitCode": 0,
+          "elapsedMs": 9572,
+          "log": "tmp/S19-final-inventory.log"
+        },
+        {
+          "id": "secrets",
+          "command": ["node", "--import", "tsx", "scripts/redesign/secret-scan.ts"],
+          "exitCode": 0,
+          "elapsedMs": 1398,
+          "log": "tmp/S19-final-secrets.log"
+        }
+      ]
+    },
+    "postCancellationFixtureChecks": {
+      "typecheck": {
+        "path": "tmp/S19-post-fixture-typecheck.log",
+        "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87",
+        "exitCode": 0
+      },
+      "eslint": {
+        "path": "tmp/S19-post-fixture-eslint.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "exitCode": 0
+      },
+      "format": {
+        "path": "tmp/S19-post-fixture-format.log",
+        "sha256": "f20510a9da4717c51c4cffee6d0dd88d6c9a723d0a83711d01216f5b48961283",
+        "exitCode": 0
+      }
+    },
+    "build": {
+      "command": "npm run build",
+      "log": "tmp/S19-final-build.log",
+      "exitCode": 0,
+      "path": "tmp/S19-final-build.log",
+      "sha256": "f3445c5020c69918ab3393f3f82c2645f458e03e0b749e9ef1a5bc8bef2d7b9a"
+    },
+    "visual": {
+      "reviewer": "Codex advanced_ui agent",
+      "inspectedAllImages": true,
+      "imageCount": 4,
+      "scope": "320px desktop Chromium and Pixel5 light/dark, keyboard, CSS zoom2, automated axe",
+      "findingAndFix": "Initial visual review found numeric columns wrapping into vertical letters. Scoped table nowrap and horizontal scrolling fixed it; production build and four new PNGs regenerated.",
+      "priorPreparation": "tmp/S19-visual-before-table.json",
+      "outcome": "Readable controls, explicit independent benchmark warnings, complete result/provenance actions, numeric rows readable in focusable horizontal scrolling region, no page overflow or axe violations.",
+      "limitations": "Plot text scales at320px; numeric table and accessible image descriptions provide data. Physical devices and screen reader audio not verified. Final snapshot-none regression is root-owned.",
+      "images": [
+        {
+          "name": "s19-advanced-dark-chromium-win32.png",
+          "sha256": "7e09c4fc59b9770c517df2b5be95fa5c3fa49677a6704c2873e6462403715db5",
+          "bytes": 119144,
+          "inspected": true,
+          "path": "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-dark-chromium-win32.png",
+          "currentSha256": "7e09c4fc59b9770c517df2b5be95fa5c3fa49677a6704c2873e6462403715db5"
+        },
+        {
+          "name": "s19-advanced-dark-mobile-chrome-win32.png",
+          "sha256": "901b22ef5b7a4860192df64010a5d447d25a9dd5847e8a63c9d6ff8b41f77814",
+          "bytes": 121337,
+          "inspected": true,
+          "path": "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-dark-mobile-chrome-win32.png",
+          "currentSha256": "901b22ef5b7a4860192df64010a5d447d25a9dd5847e8a63c9d6ff8b41f77814"
+        },
+        {
+          "name": "s19-advanced-light-chromium-win32.png",
+          "sha256": "a12f2245565f82697f9e171c8190526385445345dede0128e81d8f389e1b0005",
+          "bytes": 119409,
+          "inspected": true,
+          "path": "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-light-chromium-win32.png",
+          "currentSha256": "a12f2245565f82697f9e171c8190526385445345dede0128e81d8f389e1b0005"
+        },
+        {
+          "name": "s19-advanced-light-mobile-chrome-win32.png",
+          "sha256": "49aed0be1678e33b843ce91d0c218bc943ea2794e05ba560ac95510b360d168e",
+          "bytes": 121335,
+          "inspected": true,
+          "path": "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-light-mobile-chrome-win32.png",
+          "currentSha256": "49aed0be1678e33b843ce91d0c218bc943ea2794e05ba560ac95510b360d168e"
+        }
+      ],
+      "preparation": {
+        "command": "npx playwright test e2e/redesign/advanced-diagnostics.spec.ts --grep 'keyboard, 320 px' --project=chromium --project=mobile-chrome --update-snapshots=all --reporter=json",
+        "environment": {
+          "PLAYWRIGHT_USE_PREVIEW": "1",
+          "PLAYWRIGHT_PORT": "5391",
+          "PLAYWRIGHT_JSON_OUTPUT_NAME": "tmp/S19-visual-preparation.json"
+        },
+        "report": "tmp/S19-visual-preparation.json",
+        "log": "tmp/S19-visual-preparation.log",
+        "exitCode": 0,
+        "expected": 2,
+        "unexpected": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "preparationOnly": true
+      }
+    },
+    "preservation": {
+      "schemaVersion": "pendulum-S19-preservation/v1",
+      "base": "a7f4081a98adf4469efe69acc246e93598aa5b9d",
+      "recordedAt": "2026-10-21T03:29:23.691Z",
+      "protectedChanges": [],
+      "historicalPngCount": 200,
+      "historicalPngHashChanges": [],
+      "oldTestCount": 3896,
+      "newTestCount": 4375,
+      "missingHistoricalTests": [],
+      "desktopCopies": [
+        {
+          "source": "documents/redesign/master-roadmap-ko.md",
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+          "sourceSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+          "destinationSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+          "match": true
+        },
+        {
+          "source": "documents/redesign/execution-plan-ko.md",
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+          "sourceSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+          "destinationSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+          "match": true
+        }
+      ],
+      "scope": "Historical test fullName multiplicity and tracked PNG bytes; protected engine/API/package/golden/plan paths use Git diff. Only the dynamic Date argument in unchanged tests/product/learn/content.test.ts:340 is normalized; all assertion names and duplicate counts are preserved."
+    },
+    "priorFailedBrowser": {
+      "path": "tmp/S19-interrupted-playwright.json",
+      "sha256": "c6d7abc41bbc0a5ccd3b6b9d4916012166b97fcd5dd8d79862ffc463c16da9d8",
+      "stats": {
+        "startTime": "2026-10-21T02:28:26.810Z",
+        "duration": 2837307.282,
+        "expected": 27,
+        "skipped": 0,
+        "unexpected": 3,
+        "flaky": 0
+      },
+      "disposition": "Not completion evidence. Cancellation fixture was too short; use a valid 1.92M tangent-work native job. Two other cases timed out during a run with a 44-minute typecheck/47-minute browser wall-time interruption. Original timeouts/retries unchanged for final full rerun."
+    }
+  },
+  "scientificScope": {
+    "executionKinds": 12,
+    "catalogDefinitions": 11,
+    "systemCount": 35,
+    "matrixPairs": 420,
+    "sourceDistinctions": [
+      "recorded scalar observations",
+      "current smooth native flow and initial state",
+      "independent from-rest double angle grid",
+      "explicit independent named scalar benchmark"
+    ],
+    "limitations": [
+      "Finite sample, threshold, embedding and scale estimates do not prove chaos or asymptotic dimensions.",
+      "Uncertainty is conditional 2-D finite-grid boundary proxy, not direct perturbation-pair exponent.",
+      "Wada candidate evidence and FTLE ridges do not prove Wada or material LCS.",
+      "Basin labels are finite-time flip classifications, not certified attractors.",
+      "Named scalar map results are not pendulum/standard-map estimates."
+    ],
+    "humanScientificReview": false
+  },
+  "security": {
+    "dependencyChanges": false,
+    "freshDependencyAudit": false,
+    "baselineRisks": "S01 high2/moderate2 and CodeQL32 remain unresolved; remote default-branch notice high8/moderate3 is not a fresh local audit.",
+    "secretPatternFindings": 0,
+    "stagedCheckpointScan": {
+      "path": "tmp/S19-cp2-secrets.log",
+      "sha256": "08adce2c5db1a5a44f3c24b0f1b34a7c208259b26daf6861f377a955d7b71c1c",
+      "trackedFiles": 1740,
+      "textFiles": 1530,
+      "findings": []
+    },
+    "scanScope": "Git tracked working-tree text only; no history, ignored files, binary contents or external services."
+  },
+  "preservationImpact": "Pure engines, product physics adapters, app.html, public APIs, packages/lockfile, numerical golden, all3896historical tests and200PNG bytes preserved. Added479Vitest cases and4PNG.",
+  "changedFiles": [
+    "css/product/advanced-diagnostics.css",
+    "documents/redesign/advanced-diagnostics-ko.md",
+    "documents/redesign/stage-runs/S19-numerical-metrics.json",
+    "documents/redesign/stage-runs/S19-progress.md",
+    "documents/redesign/stage-runs/S19-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/advanced-diagnostics.spec.ts",
+    "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-dark-chromium-win32.png",
+    "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-dark-mobile-chrome-win32.png",
+    "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-light-chromium-win32.png",
+    "e2e/redesign/advanced-diagnostics.spec.ts-snapshots/s19-advanced-light-mobile-chrome-win32.png",
+    "e2e/redesign/legacy-layout.ts",
+    "scripts/redesign/measure-advanced-diagnostics.ts",
+    "src/product/adapters/analysis/advanced/advanced.worker.ts",
+    "src/product/adapters/analysis/advanced/artifact-detail-validation.ts",
+    "src/product/adapters/analysis/advanced/artifact-validation.ts",
+    "src/product/adapters/analysis/advanced/artifact.ts",
+    "src/product/adapters/analysis/advanced/client.ts",
+    "src/product/adapters/analysis/advanced/contracts.ts",
+    "src/product/adapters/analysis/advanced/execute.ts",
+    "src/product/adapters/analysis/advanced/native-flow.ts",
+    "src/product/adapters/analysis/advanced/native-grid.ts",
+    "src/product/adapters/analysis/advanced/native-map.ts",
+    "src/product/adapters/analysis/advanced/native-series.ts",
+    "src/product/adapters/analysis/advanced/result.ts",
+    "src/product/adapters/analysis/advanced/settings.ts",
+    "src/product/adapters/analysis/advanced/validation.ts",
+    "src/product/catalog/analyses-core.ts",
+    "src/product/catalog/analyses-geometry.ts",
+    "src/product/lab/views/advanced-diagnostics-panel.ts",
+    "src/product/lab/views/advanced-diagnostics.ts",
+    "src/product/lab/views/advanced-plots.ts",
+    "src/product/lab/views/advanced-result.ts",
+    "src/product/lab/views/advanced-settings.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "tests/product/adapters/analysis/advanced/artifact.test.ts",
+    "tests/product/adapters/analysis/advanced/client.test.ts",
+    "tests/product/adapters/analysis/advanced/native-matrix.test.ts",
+    "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+    "tests/product/catalog/advanced-diagnostics.test.ts",
+    "tests/product/lab/advanced-diagnostics.test.ts"
+  ],
+  "review": {
+    "checkpointRequired": false,
+    "approvedReviewGates": [7, 9, 17],
+    "humanReviewedLearnUnits": 0,
+    "limitations": [
+      "Chromium desktop and emulated Pixel5 only; physical devices/Firefox/WebKit unverified.",
+      "Automated axe/keyboard/reflow checks do not certify screen-reader audio usability."
+    ]
+  },
+  "rollback": {
+    "stage": 18,
+    "commit": "a7f4081",
+    "legacyEntry": "app.html"
+  },
+  "nextValidStage": 20,
+  "statusUpdate": "Implementation/verification commits must be pushed before a separate status commit. Completion requires exact remote hash of that status commit."
+}
