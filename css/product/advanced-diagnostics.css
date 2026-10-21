@@ -1,0 +1,66 @@
+.advanced-diagnostics {
+  margin-block-start: var(--ds-space-5);
+}
+.advanced-diagnostics-body,
+.advanced-diagnostic-files {
+  display: grid;
+  gap: var(--ds-space-4);
+  min-width: 0;
+}
+.advanced-diagnostics-body {
+  margin-block-start: var(--ds-space-4);
+}
+.advanced-diagnostic-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+.advanced-diagnostics [hidden] {
+  display: none !important;
+}
+.advanced-diagnostics input,
+.advanced-diagnostics select,
+.advanced-diagnostic-output {
+  min-width: 0;
+  max-width: 100%;
+}
+.advanced-diagnostics .core-plot {
+  width: 100%;
+  height: auto;
+}
+.advanced-diagnostic-json {
+  max-height: 30rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+}
+.advanced-diagnostic-table {
+  overflow: auto;
+  max-height: 24rem;
+  margin-block: var(--ds-space-3);
+}
+.advanced-diagnostic-table table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  min-width: max-content;
+}
+.advanced-diagnostic-table th,
+.advanced-diagnostic-table td {
+  border: 1px solid var(--ds-color-border);
+  padding: var(--ds-space-2);
+  text-align: start;
+  white-space: nowrap;
+}
+.advanced-diagnostic-compatibility-list {
+  overflow-wrap: anywhere;
+  padding-inline-start: 1.25rem;
+}
+.advanced-diagnostic-compatibility-list li {
+  margin-block: var(--ds-space-2);
+}
+@media (max-width: 600px) {
+  .advanced-diagnostic-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

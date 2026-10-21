@@ -22,8 +22,8 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 실행 기록·activeStage | plan/preflight/typecheck | 완료 |
-| CP1 | native 고급 분석·계약·검증·worker·artifact | synthetic/native parity, resource/invalid/cancel, typecheck | 대기 |
-| CP2 | lazy Dock·registry·설정·결과·export | component/build, desktop/mobile/keyboard/axe/visual | 대기 |
+| CP1 | native 고급 분석·계약·검증·worker·artifact | synthetic/native parity, resource/invalid/cancel, typecheck | 완료 |
+| CP2 | lazy Dock·registry·설정·결과·export | component/build, desktop/mobile/keyboard/axe/visual | 완료 |
 | CP3 | 전체 수치·회귀·보존 증거 | 전체 Vitest, quality, production E2E | 대기 |
 | STATUS | 별도 완료 상태 | 구현 원격 확인 뒤 status push/hash | 대기 |
 
@@ -53,3 +53,24 @@
 - 교차검토로 Wada native numColors=max(label)+1의 오해를 막고 실제 distinct label 수를 계산한다. {0,2}/{1,2}를 세종류로 오인하지 않는 회귀 통과. 세격자를 한 번씩 계산하고 정확한 누적작업 예산을 적용한다.
 - FTLE는 native gradient를 한 번 전파하고 zero/subnormal STM 및 비유한 특이값을 거부한다. 극단감쇠 underflow 회귀와 정상native결과 exact parity를 통과했다. pure엔진/API 변경0.
 - 경계·스케일 부족 uncertainty와 CLV expanding/contracting쌍 부재는 null+이유로 보존한다. native기본값을 유효한 과학적 판정으로 대신 쓰지 않는다.
+
+- CP1 `43b5803038b7c14500fb891f3ba5a9ed20355e5f` push 성공. 정확한 원격hash 일치 확인. CP2 공용 lazy Dock/registry/접근성/시각검증 진행.
+- production Chromium exploratory4/4: 전체12도구 실제worker와artifact왕복,독립map source,입력/자원거부,worker오류복구/취소. 최종 동결browser 검증과 구분한다.
+- 첫 시각검토에서320px 수치표의 과도한 줄바꿈을 발견했다. 셀nowrap+가로scroll로 수정하고 새4PNG만 다시 준비한다. 과거PNG는 변경하지 않는다.
+
+## 최종 검증 진행
+
+- 전체 Vitest `tmp/S19-final-vitest.json` **4375/4375**,320파일,failed/pending/todo0,exit0,maxWorkers2·기존timeout 유지. 기존3896개 assertion 이름·중복 횟수 보존. 변경 없는 Learn Date fixture의 동적 시각1개만 좁게 정규화했다.
+- 독립수치 `S19-numerical-metrics.json` **14/14**. logisticCDF오차32/64/128상자=0.07945625/0.05577607/0.04128365. 고정오차0.06과세분오차감소를 확인했다.
+- 품질10종 typecheck/ESLint/format/policy/module-size/plan/catalog/Learn/inventory/secrets exit0. Catalog135/35시스템/134frozen참조,Learn8과정/86예약/8공개,inventory883파일·brokenimport0·orphan0 유지.
+- 보호경로diff0,기존PNG200개 byte-identical,desktop roadmap/execution 사본hash 각각일치. 기존app/pure엔진/product물리adapter/publicAPI/package/lockfile/golden 원본보존.
+- 최초최종browser는27pass/3fail로완료근거에서제외했다. 취소fixture의짧은CLV가버튼클릭전완료해실패했고,동일실행에서44분typecheck/47분browser벽시계정지와모바일2timeout을관측했다. 중단원인은단정하지않는다. `tmp/S19-interrupted-playwright.json/log`와trace를보존했다.
+- 취소fixture를1.92million tangent-work의유효한실제CLV로바꿨다. 제품코드·timeout·retry설정은변경하지않고신규30case전체를snapshot-none/retries0으로다시실행한다.
+- 최종build exit0. 새light/dark desktop/Pixel5 PNG4개만준비하고agent가모두직접검사했다. 준비2/2통과는최종정상회귀와구분한다. `tmp/S19-ui-validation.json`에hash와320px표수정근거를기록했다.
+
+## CP2 공용 Dock 완료
+
+-9개패밀리35route에서기존공용mount를공유하는별도lazy Dock를추가했다. 11개기존S19카탈로그정의로12실행도구를검색·발견하며nativebinding과135정의를유지한다.
+-새 production 최종30/30: Chromium15+Pixel5 15,failed/skipped/flaky/runnererror/retry0,snapshot-none,exit0. 원래timeout을유지했다. 모든도구실제worker/원실험보존import·export/source분리/invalid·resource·cancel·error·lazyload·키보드·axe·320px·zoom2검증.
+-계산·불확실성·원자료표와재귀행렬/복소고유값/CLV성분/다중프랙탈/FTLE능선·반전격자를표시한다. 수치표는가로scroll로정확한숫자를보존한다.
+-기존시각helper는새공용wrapper만잠시분리하고동일노드를finally복원한다. 기존assertion·PNG·CSP를변경하지않는다. S18 및기존9패밀리94case검증은CP3에서확인한다.

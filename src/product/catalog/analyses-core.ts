@@ -282,5 +282,11 @@ export const coreAnalyses: readonly AnalysisDefinition[] = discoveredCoreAnalyse
         tags: [...definition.tags, 'product-core-diagnostics-v1'],
         computation: { ...definition.computation, location: 'worker', cancellable: true }
       }
-    : definition
+    : definition.integrationStage === 19
+      ? {
+          ...definition,
+          tags: [...definition.tags, 'product-advanced-diagnostics-v1'],
+          computation: { ...definition.computation, location: 'worker', cancellable: true }
+        }
+      : definition
 );

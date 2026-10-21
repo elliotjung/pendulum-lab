@@ -1,7 +1,7 @@
 import type { AnalysisDefinition } from '../contracts/catalog';
 import { analysis, ode, initialState, rhs } from './analyses-helpers';
 
-export const geometryAnalyses: readonly AnalysisDefinition[] = [
+const discoveredGeometryAnalyses: readonly AnalysisDefinition[] = [
   analysis({
     id: 'analysis:recurrence-network',
     name: ['재귀 네트워크', 'Recurrence network'],
@@ -283,3 +283,14 @@ export const geometryAnalyses: readonly AnalysisDefinition[] = [
     ]
   })
 ];
+
+/** Runtime checks actual source data; source-bound native API contracts remain intact. */
+export const geometryAnalyses: readonly AnalysisDefinition[] = discoveredGeometryAnalyses.map((definition) => ({
+  ...definition,
+  tags: [
+    ...definition.tags,
+    'product-advanced-diagnostics-v1',
+    ...(definition.id === 'analysis:basin' ? ['uncertainty', 'boundary-scaling', '불확실성', '경계'] : [])
+  ],
+  computation: { ...definition.computation, location: 'worker', cancellable: true }
+}));
