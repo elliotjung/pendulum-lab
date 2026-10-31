@@ -9,7 +9,11 @@ import { researchAnalyses } from './analyses-research';
 export const analyses: readonly AnalysisDefinition[] = [
   ...coreAnalyses,
   ...geometryAnalyses,
-  ...stabilityAnalyses,
+  ...stabilityAnalyses.map((definition) => ({
+    ...definition,
+    tags: [...definition.tags, 'product-stability-workflow-v1'],
+    computation: { ...definition.computation, location: 'worker' as const, cancellable: true }
+  })),
   ...physicalAnalyses,
   ...researchAnalyses
 ];

@@ -12,8 +12,8 @@
 
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 실행 기록·activeStage | plan/preflight/typecheck | 진행 |
-| CP1 | 기존 수치 모듈 adapter·안전 계약·worker·artifact | normal form/native parity, 경계/실패/restart/cancel, typecheck | 대기 |
+| CP0 | 실행 기록·activeStage | plan/preflight/typecheck | 8e5b6589f4a1ea331657afa3c4798dc73993ff7e push·정확한 remote hash 확인 |
+| CP1 | 기존 수치 모듈 adapter·안전 계약·worker·artifact | normal form/native parity, 경계/실패/restart/cancel, typecheck | targeted 607/607·25파일, typecheck·scoped ESLint 통과. commit/push 진행 |
 | CP2 | lazy workflow·초기 추정·수렴 기록·branch graph·파일 왕복 | component, desktop/mobile keyboard/axe/visual, build | 대기 |
 | CP3 | 전체 회귀·수치/보존/검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | 대기 |
 | STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 대기 |
@@ -32,3 +32,12 @@
 ## commit·push 증거
 
 각 checkpoint의 검증 후 명시적 경로만 stage하고 origin/codex/redesign으로 push한다. 정확한 원격 hash를 확인하기 전에는 완료로 표시하지 않는다.
+
+## CP1 검증과 수치 연결
+
+- 35 canonical 시스템 × 11 도구 = 385조합에서 실제 계산·artifact 왕복 또는 설명 가능한 거부를 검사했다. 기존 카탈로그 정의는 정확히 13개다.
+- 기존 shooting/Floquet/linear Floquet/Melnikov/주기궤도 DB/분기 탐지/arclength/주기배가/NS/torus/circle map/codim 계산을 재사용한다. phase0 전용 continuation scanner 대신 동일 native shooting을 실제 위상에서 orchestration하고 phase0 결과를 scanner와 대조했다.
+- native19·독립 회귀6은 실제 product sine flow의 네 가지 위상, 고정점·Floquet·continuation parity, 실제 위상 P2, codim grid, fold 방향, ±sqrt pitchfork, NS a=2, 전체 torus 곡선·offgrid 잔차, 선형 analytic modulus와 실패·예산·getter를 검증했다.
+- 원래 입력 실험 snapshot ID와 부모 artifact를 재시작/해 전달에서 보존한다. 실제 저장된 관측 run ID를 만들었다고 주장하지 않는다. S24 연구 저장 계층은 범위 밖이다.
+- 최초 targeted 431/434의 세 실패는 카탈로그 개수 기대값·설명·오류 작업 ID였다. 모두 수정했고 확장 targeted607/607로 재검증했다. 두 readonly test fixture 타입 오류와 미사용 import도 수정 후 typecheck/scoped ESLint가 통과했다.
+- CP2 시각 준비는 Chromium 30초 timeout 1건이 있어 완료 근거에서 제외한다. 320px/theme/zoom의 세 접근성 감사를 한 test에 묶은 흐름을 분리해 원래 timeout/retry를 유지한다. 새 PNG 4개는 직접 검사했으며 최종 회귀는 별도로 실행한다.
