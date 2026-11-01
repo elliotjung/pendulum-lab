@@ -15,8 +15,8 @@
 | CP0 | 실행 기록·activeStage | plan/preflight/typecheck | 8e5b6589f4a1ea331657afa3c4798dc73993ff7e push·정확한 remote hash 확인 |
 | CP1 | 기존 수치 모듈 adapter·안전 계약·worker·artifact | normal form/native parity, 경계/실패/restart/cancel, typecheck | 7c66151ca1bd9b41fd3bc98142075a856d03cd43 push·정확한 remote hash 확인; targeted607/607·25파일, typecheck·scoped ESLint 통과 |
 | CP2 | lazy workflow·초기 추정·수렴 기록·branch graph·파일 왕복 | component, desktop/mobile keyboard/axe/visual, build | 76df0cceb8c48077b6bdba413b84370bfdf6e931 push·정확한 remote hash 확인 |
-| CP3 | 전체 회귀·수치/보존/검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | candidate-complete: 최종 전체 필수 검증 통과·근거 commit/push 준비 |
-| STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 대기 |
+| CP3 | 전체 회귀·수치/보존/검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | f16fc996fd46c91dfe4956a58068774b59ce8063 push·정확한 remote hash 확인 |
+| STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 최종 검증 통과; 이 문서를 포함하는 별도 status commit의 원격 존재가 완료 기준 |
 
 예정 경로: src/product/adapters/analysis/stability/, src/product/lab/views/stability*, css/product/stability*, catalog의 기존 안정성 정의, tests/product/, e2e/redesign/, scripts/redesign/, documents/redesign/.
 
@@ -65,3 +65,10 @@ CP2 push exit0, local HEAD와 git ls-remote origin refs/heads/codex/redesign 모
 - 무거운 외부 검사가 끝난 뒤 원본 inventory7/7이 통과했다(문제 사례6273.1005ms). 이어 단독 실행한 전체 Vitest는4836/4836·327파일, 실패·pending·todo0, exit0으로 통과했다(UTC2026-11-01T23:27:43.557Z–23:29:35.726Z,112.169초). 해당 inventory 사례도7760.0661ms로 통과했다. 원인 미확정인 앞선 실패는 성공 기록과 분리한다.
 - 보존 재감사는 보호270파일·기존PNG204개와 기존599개 test/E2E의 byte 동일, 서식만 바뀐 기존test1개의4055토큰·AST 동일, 새PNG4개·바탕화면 계획 사본 해시 일치를 확인했다. native 엔진·공개 API·사용자 데이터 형식·package/lockfile은 그대로다.
 - 최종 수치13/13과 검증 보고서를 구현 근거로 먼저 push하고 정확한 remote hash를 확인한다. 그 뒤 clean-tree preflight20·plan 검증을 통과한 별도 status commit에서만 lastCompleted20/next21로 바꾼다. S20은 사용자 review gate가 아니며, approved[7,9,17]·Learn의 사람 검토 상태는 변경하지 않는다. 실제 기기·Firefox/WebKit·screen-reader 음성은 미검증이다.
+
+## 완료 status gate
+
+- CP3 push exit0, local HEAD와 git ls-remote origin refs/heads/codex/redesign 모두f16fc996fd46c91dfe4956a58068774b59ce8063였다. clean tree에서 preflight20·plan check가exit0으로 통과했다.
+- CP3 tracked-text secret scan1777tracked/1563text에서 known-pattern finding0. history·ignored·binary·외부 서비스 제외이며 모든 비밀정보의 부재를 증명하지 않는다. 의존성 변경·새 dependency audit·위험 수용은 없고 S01 high2/moderate2·CodeQL32 미해결이다. GitHub 기본 브랜치 알림19(12high/6moderate/1low)는 별도 push 알림이다.
+- 별도 status commit의 변경은 이 기록과 status.json 두 파일이다. lastCompleted20/next21, completed1..20, active/checkpoint null, approved[7,9,17]를 기록한다. 원격의 해당 status commit을 확인하기 전에는 완료로 간주하지 않는다. 최종 사용자 보고에 실제 status commit hash와 push 결과를 제공한다.
+- 변경 파일 전체와 출처·수치·UX·보존·실패 이력은 S20-verification.json, S20-numerical-metrics.json, S20-preservation.json에 있다. 복구 기준은 S19 6589ef60beaa7cedb2cd96bb4ac6ea5513327429와 보존된 app.html이다. S21은 아직 실행하지 않았다.
