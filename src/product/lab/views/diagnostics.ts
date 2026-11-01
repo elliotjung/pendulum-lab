@@ -4,6 +4,7 @@ import { createButton } from '../../design-system/primitives';
 import type { ExperimentStateV1 } from '../../contracts/experiment';
 import type { ContractResult } from '../../contracts/validation';
 import { createAdvancedDiagnostics } from './advanced-diagnostics';
+import { createStability } from './stability';
 
 export interface DiagnosticsOptions {
   experiment(): ContractResult<ExperimentStateV1>;
@@ -15,6 +16,7 @@ export interface DiagnosticsOptions {
 export function createDiagnostics(document: Document, options: DiagnosticsOptions) {
   const wrapper = element(document, 'div', 'lab-diagnostics');
   const advanced = createAdvancedDiagnostics(document, options);
+  const stability = createStability(document, options);
   const container = element(document, 'details', 'lab-details core-diagnostics');
   container.id = 'core-diagnostics';
   container.dataset.coreDiagnosticStatus = 'empty';
@@ -63,17 +65,19 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   container.addEventListener('toggle', () => {
     if (container.open) void load();
   });
-  wrapper.append(container, advanced.element);
+  wrapper.append(container, advanced.element, stability.element);
   return {
     element: wrapper,
     update() {
       panel?.update();
       advanced.update();
+      stability.update();
     },
     dispose() {
       disposed = true;
       panel?.dispose();
       advanced.dispose();
+      stability.dispose();
     }
   };
 }

@@ -13,8 +13,8 @@
 | ID | 범위 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 실행 기록·activeStage | plan/preflight/typecheck | 8e5b6589f4a1ea331657afa3c4798dc73993ff7e push·정확한 remote hash 확인 |
-| CP1 | 기존 수치 모듈 adapter·안전 계약·worker·artifact | normal form/native parity, 경계/실패/restart/cancel, typecheck | targeted 607/607·25파일, typecheck·scoped ESLint 통과. commit/push 진행 |
-| CP2 | lazy workflow·초기 추정·수렴 기록·branch graph·파일 왕복 | component, desktop/mobile keyboard/axe/visual, build | 대기 |
+| CP1 | 기존 수치 모듈 adapter·안전 계약·worker·artifact | normal form/native parity, 경계/실패/restart/cancel, typecheck | 7c66151ca1bd9b41fd3bc98142075a856d03cd43 push·정확한 remote hash 확인; targeted607/607·25파일, typecheck·scoped ESLint 통과 |
+| CP2 | lazy workflow·초기 추정·수렴 기록·branch graph·파일 왕복 | component, desktop/mobile keyboard/axe/visual, build | 검증 통과·commit/push 준비 |
 | CP3 | 전체 회귀·수치/보존/검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | 대기 |
 | STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 대기 |
 
@@ -41,3 +41,15 @@
 - 원래 입력 실험 snapshot ID와 부모 artifact를 재시작/해 전달에서 보존한다. 실제 저장된 관측 run ID를 만들었다고 주장하지 않는다. S24 연구 저장 계층은 범위 밖이다.
 - 최초 targeted 431/434의 세 실패는 카탈로그 개수 기대값·설명·오류 작업 ID였다. 모두 수정했고 확장 targeted607/607로 재검증했다. 두 readonly test fixture 타입 오류와 미사용 import도 수정 후 typecheck/scoped ESLint가 통과했다.
 - CP2 시각 준비는 Chromium 30초 timeout 1건이 있어 완료 근거에서 제외한다. 320px/theme/zoom의 세 접근성 감사를 한 test에 묶은 흐름을 분리해 원래 timeout/retry를 유지한다. 새 PNG 4개는 직접 검사했으며 최종 회귀는 별도로 실행한다.
+
+## CP2 구현·검증 진행
+
+- 공용 lazy Dock에 11도구, source·단위·범위·초기 추정, 실제 잔차·branch graph/표, 파일 왕복, 취소/실패 복구와 해 전달을 연결했다. 물리 주기1 해를 Floquet·shooting·진폭 continuation으로 전달할 때 원래 실험·부모 artifact·입력 snapshot ID를 보존한다.
+- 저장된 물성·실제 위상 단면·계산법 metadata를 request와 대조하는 검사를 추가했다. Melnikov의 metadata는 analytic+Simpson으로 정확히 표시한다. 외부 파일의 수치값 자체를 재계산/인증한다고 주장하지 않는다. 관련4파일417/417 통과.
+- 전체 Vitest 최초4833/4833·327파일, 마지막 출처 검증 보강 후4836/4836·327파일 통과. 실패/pending/todo0. typecheck의 신규 readonly corruption fixture는 immutable copy로 수정했고 typecheck·관련 artifact18/18을 통과했다.
+- production 첫 전체 browser는33pass/5fail(데스크톱/모바일의 default chaotic guess 비수렴4건, 모바일 복구·비수렴·취소를 한 test에 묶은30초timeout1건)로 완료 근거에서 제외했다. 성공 경로는 공유 가능한 안정 물리 fixture로 명시하고, 세 복구 여정을 분리했다. solver 허용오차·test timeout·retry는 바꾸지 않았다. 실패 JSON/trace/video는 tmp/s20-browser-first-artifacts와 tmp/s20-browser-final.json에 보존했다.
+- 두 번째 production은41/42 통과했으나 모바일 비수렴 화면의 다운로드가 실패했다. 실제 trace에서 이전91행 결과와 실패 결과를 함께 표시할 때 implicit grid min-content가393px 화면을788px로 확장해 td가 버튼의 pointer를 가리는 문제를 확인했다. 이를 숨기는 작은 fixture나 forced click을 쓰지 않았다.
+- 11월2일 재개 후 fetch한 local/remote는 같은 CP1 7c66151이었다. scoped minmax(0,1fr) grid와 attempt/result/table의 min-width0으로 수정했다. production 동일91행+실패 상태에서 innerWidth/scrollWidth393, panel319, hit target BUTTON, 실제 다운로드 성공·pageerrors0을 확인했다. 새 E2E가 실제 viewport 폭과 다운로드를 검사한다. 기존 핵심/고급 Dock production 회귀8/8과 기존 PNG는 유지된다.
+- production 수정 뒤 desktop/mobile 미수렴·키보드·320px·light/dark targeted4/4를 통과했다. PNG4개는 변경 없이 비교했다. CP2 구현 push 뒤 전체42개와 전체 Vitest·품질 검사를 최종 gate로 다시 실행한다. 앞선 실패 JSON/trace/geometry는 tmp/s20-browser-final2.json, tmp/s20-nonconvergence-trace, tmp/s20-mobile-css-before-production.json에 보존했다.
+- 기존 science.test.ts의 Math.hypot 호출 줄바꿈 때문에 fullformat 경고가 있었다. 그 호출만 정규화했다. 기존599/600 test/E2E 파일은 raw-byte 동일이며 이1개는 TypeScript scanner4055토큰·AST·호출 인수의 완전 동일성을 확인했다. assertion·허용오차·수치 golden 변경은 없다. 보호270파일과 기존PNG204개는 raw-byte 동일하다.
+- 수치 측정13/13, golden13/13, lint/format/module-size/plan/catalog/Learn/inventory 통과. 상세 수치·보존 증거는 S20-numerical-metrics.json과 S20-preservation.json에 있다. 마지막 최종 검증과 push 전에는 단계 완료가 아니다.

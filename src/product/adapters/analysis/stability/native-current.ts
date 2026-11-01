@@ -115,6 +115,7 @@ export function runCurrentStability(request: StabilityRequest, work: StabilityWo
       rows,
       {
         ...sourceDetails,
+        integrator: 'analytic + Simpson quadrature',
         verdict: {
           ...verdict,
           amplitudeRatio: Number.isFinite(verdict.amplitudeRatio) ? verdict.amplitudeRatio : null

@@ -43,6 +43,89 @@ describe('S20 solution and branch persistence', () => {
     result.branch[0]!.state[0] = 123;
     expect(artifact).toEqual(saved);
   });
+  it('rejects current-driven source metadata that contradicts the stored physical experiment and section', () => {
+    const config = defaultDrivenConfig();
+    const experiment = toCanonicalDriven({
+      ...config,
+      initialState: [0.3, -0.2, 0.7],
+      forcing: { waveform: 'sine', amplitude: 0.3, frequency: 1.1, phase: -0.4 }
+    });
+    if (!experiment.ok) throw new Error('phase-aware metadata fixture');
+    const r: StabilityRequest = {
+      id: 'physical-source-artifact',
+      kind: 'fixed-point',
+      experiment: experiment.value,
+      settings: defaultStabilitySettings('fixed-point', experiment.value)
+    };
+    const saved = createStabilityArtifact(r, runStability(r), metadata);
+    const mutations: ((details: Record<string, unknown>) => void)[] = [
+      ...['g', 'length', 'damping', 'driveAmplitude', 'driveFrequency'].map(
+        (key) => (details: Record<string, unknown>) => {
+          const parameters = details.physicalParameters as Record<string, number>;
+          parameters[key] = parameters[key]! + 0.25;
+        }
+      ),
+      (details) => {
+        details.nativeSectionPhase = Number(details.nativeSectionPhase) + 0.25;
+      },
+      (details) => {
+        details.nativeSectionPhase = 0;
+      },
+      (details) => {
+        details.phaseTransform = 'unshifted cosine section';
+      },
+      (details) => {
+        details.integrator = 'unverified numerical propagator';
+      },
+      (details) => {
+        details.sourceDescription = 'A different physical source';
+      },
+      (details) => {
+        delete details.physicalParameters;
+      },
+      (details) => {
+        delete (details.physicalParameters as Record<string, unknown>).length;
+      },
+      (details) => {
+        (details.physicalParameters as Record<string, unknown>).unknown = 1;
+      }
+    ];
+    for (const mutate of mutations) {
+      const changed = structuredClone(saved);
+      mutate(changed.result.details as Record<string, unknown>);
+      expect(() => importStabilityArtifact(JSON.stringify(changed))).toThrow();
+    }
+    const changedRequest = structuredClone(saved);
+    changedRequest.request.experiment = {
+      ...changedRequest.request.experiment,
+      parameters: {
+        ...changedRequest.request.experiment.parameters,
+        forcingPhase: { kind: 'scalar', value: 0.2, unit: 'rad' }
+      }
+    };
+    expect(() => importStabilityArtifact(JSON.stringify(changedRequest))).toThrow(/source/);
+    expect(importStabilityArtifact(exportStabilityArtifact(saved))).toEqual(saved);
+  });
+  it('binds the analytic/Simpson Melnikov method without mislabelling it as RK4 propagation', () => {
+    const artifact = fixture('melnikov');
+    expect(artifact.result.details).toHaveProperty('integrator', 'analytic + Simpson quadrature');
+    expect(importStabilityArtifact(exportStabilityArtifact(artifact))).toEqual(artifact);
+    const changed = structuredClone(artifact);
+    (changed.result.details as Record<string, unknown>).integrator = 'native RK4';
+    expect(() => importStabilityArtifact(JSON.stringify(changed))).toThrow(/source/);
+  });
+  it('keeps independent benchmark metadata separate from current-driven source fields', () => {
+    const r = request('floquet');
+    r.settings = defaultStabilitySettings('floquet', r.experiment, 'linear-oscillator');
+    const artifact = createStabilityArtifact(r, runStability(r), metadata);
+    expect(artifact.result.details).not.toHaveProperty('physicalParameters');
+    expect(importStabilityArtifact(exportStabilityArtifact(artifact))).toEqual(artifact);
+    // Structural/source consistency does not establish that a third party
+    // actually computed the numbers: numeric analysis outputs are not rerun.
+    const importedData = structuredClone(artifact);
+    importedData.result.rows[0]![1]! += 0.01;
+    expect(importStabilityArtifact(JSON.stringify(importedData))).toEqual(importedData);
+  });
   it('rejects future versions, changed native signatures, unknown fields and inconsistent source', () => {
     const saved = fixture();
     const changes: ((a: typeof saved) => void)[] = [

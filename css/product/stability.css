@@ -1,0 +1,71 @@
+.stability-workflow {
+  margin-block-start: var(--ds-space-5);
+}
+.stability-body,
+.stability-files {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ds-space-4);
+  min-width: 0;
+}
+.stability-body {
+  margin-block-start: var(--ds-space-4);
+}
+.stability-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+.stability-workflow [hidden] {
+  display: none !important;
+}
+.stability-workflow input,
+.stability-workflow select,
+.stability-attempt,
+.stability-attempt-result,
+.stability-output,
+.stability-result,
+.stability-table {
+  min-width: 0;
+  max-width: 100%;
+}
+.stability-workflow .core-plot {
+  width: 100%;
+  height: auto;
+}
+.stability-json {
+  max-height: 30rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+}
+.stability-table {
+  overflow: auto;
+  max-height: 24rem;
+  margin-block: var(--ds-space-3);
+}
+.stability-table table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  min-width: max-content;
+}
+.stability-table th,
+.stability-table td {
+  border: 1px solid var(--ds-color-border);
+  padding: var(--ds-space-2);
+  text-align: start;
+  white-space: nowrap;
+}
+.stability-compatibility {
+  overflow-wrap: anywhere;
+  padding-inline-start: 1.25rem;
+}
+.stability-compatibility li {
+  margin-block: var(--ds-space-2);
+}
+@media (max-width: 600px) {
+  .stability-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

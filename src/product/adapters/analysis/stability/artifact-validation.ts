@@ -1,6 +1,7 @@
 import { closedRecord, validateArtifactData } from '../core/artifact-validation';
 import { validateStabilityRequest } from './validation';
 import { stabilityResultSignature } from './result';
+import { readStabilityDriven } from './source';
 import {
   STABILITY_LIMITS as limits,
   STABILITY_VERSION,
@@ -14,6 +15,26 @@ const finiteArray = (value: unknown, max: number) =>
   Array.isArray(value) && value.length <= max && value.every((x) => typeof x === 'number' && Number.isFinite(x));
 const strings = (value: unknown, max: number) =>
   Array.isArray(value) && value.length <= max && value.every((x) => typeof x === 'string' && x.length <= 2000);
+
+/** Bind source metadata only. This does not rerun or authenticate imported numerical results. */
+function validateCurrentDrivenSourceMetadata(details: unknown, request: StabilityRequest): void {
+  if (request.settings.source !== 'current-driven') return;
+  if (!details || typeof details !== 'object' || Array.isArray(details))
+    throw new RangeError('현재 구동 진자의 분석 source 메타데이터가 필요합니다.');
+  const source = details as Record<string, unknown>;
+  const expected = readStabilityDriven(request.experiment);
+  const keys = Object.keys(expected.parameters);
+  closedRecord(source.physicalParameters, keys, [], '현재 구동 진자 source 물성');
+  const parameters = source.physicalParameters;
+  if (
+    Object.entries(expected.parameters).some(([key, value]) => parameters[key] !== value) ||
+    source.nativeSectionPhase !== expected.phase ||
+    source.phaseTransform !== 'native phi = persisted drivePhase + forcingPhase - pi/2' ||
+    source.integrator !== (request.kind === 'melnikov' ? 'analytic + Simpson quadrature' : 'native RK4') ||
+    source.sourceDescription !== 'Current driven-pendulum physical parameters and actual forcing section.'
+  )
+    throw new RangeError('분석 source의 물성·위상 단면이 저장된 원래 구동 진자 실험과 다릅니다. 원본을 보존하세요.');
+}
 
 /** Inspect descriptors before reading user supplied fields, then enforce a closed versioned contract. */
 export function validateStabilityRequestData(input: unknown): asserts input is StabilityRequest {
@@ -83,6 +104,7 @@ export function validateStabilityResult(input: unknown, request: StabilityReques
     input.method !== signature.method
   )
     throw new RangeError('안정성 결과의 좌표·단위·계산 방법이 요청과 다릅니다.');
+  validateCurrentDrivenSourceMetadata(input.details, request);
   const width = signature.columns.length;
   if (
     !Array.isArray(input.rows) ||

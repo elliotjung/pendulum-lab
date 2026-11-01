@@ -172,10 +172,7 @@ describe('S09 all eight declared scientific observation tasks', () => {
     const maxError = (run: FocusSnapshot) =>
       Math.max(
         ...run.series.map((frame) =>
-          Math.hypot(
-            frame.sample.state[0] - frame.linearState![0],
-            frame.sample.state[1] - frame.linearState![1]
-          )
+          Math.hypot(frame.sample.state[0] - frame.linearState![0], frame.sample.state[1] - frame.linearState![1])
         )
       );
     expect(maxError(small)).toBeLessThan(0.01);
