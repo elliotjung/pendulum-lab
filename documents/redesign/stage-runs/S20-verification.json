@@ -1,0 +1,834 @@
+{
+  "schemaVersion": "pendulum-S20-verification/v1",
+  "stage": 20,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-01T23:31:35.279Z",
+  "generatedAtAsiaSeoul": "2026-11-02T08:31:35.279+09:00",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "separate status commit must be pushed after implementation/evidence",
+  "git": {
+    "baselineCommit": "6589ef60beaa7cedb2cd96bb4ac6ea5513327429",
+    "implementationHead": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+    "remoteTrackingHead": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+    "branch": "codex/redesign",
+    "previouslyVerifiedCheckpoints": {
+      "CP0": "8e5b6589f4a1ea331657afa3c4798dc73993ff7e",
+      "CP1": "7c66151ca1bd9b41fd3bc98142075a856d03cd43"
+    },
+    "implementationPushProofs": [
+      {
+        "commit": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+        "remoteHead": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+        "pushExitCode": 0,
+        "checkpoint": "CP2",
+        "verifiedAtUtc": "2026-11-01T23:20:11.1604463Z",
+        "evidence": {
+          "path": "tmp/s20-implementation-push-proof.json",
+          "bytes": 315,
+          "sha256": "6e7581d0063f48001dc32bedec499b47b3ea1deed65ce531a9ca89b57c4187ff"
+        }
+      }
+    ],
+    "proofScope": "No final status-push success is inferred from test evidence or local HEAD."
+  },
+  "scope": {
+    "tools": 11,
+    "existingNativeCatalogDefinitions": 13,
+    "systems": 35,
+    "matrixPairs": 385,
+    "currentDriven": "Actual canonical g, length, damping, forcing amplitude/frequency/phase and the existing native RHS; phase-aware product-map parity is independently checked with createDrivenFlow.",
+    "independentBenchmarks": "fold-normal-form, pitchfork-normal-form, delayed-logistic, sine-circle and linear-oscillator are named independent models, never physical results attributed to the current pendulum.",
+    "continuation": "Phase-aware orchestration uses native findPeriodicOrbit. Phase-zero output is compared to the existing specialized continueDrivenPeriodicOrbit scanner.",
+    "inputRunId": "Immutable canonical input-experiment snapshot identity and parent chain; no persisted observation-run repository claim before S24.",
+    "importedResults": "Closed/versioned schema, source parameters, actual section and declared method are checked; external numerical rows/branches are not rerun or authenticated."
+  },
+  "validation": {
+    "profile": "E + U (D/C, native numerical fixtures and isolated worker errors/cancel; desktop/mobile production journeys, keyboard/axe/reflow/visual regression)",
+    "vitest": {
+      "path": "tmp/s20-full-vitest-final.json",
+      "bytes": 1837874,
+      "sha256": "a81c50a6bb7115f341596291b00d5e875e2a079b283e55d772ee6eb14c4c8884",
+      "log": {
+        "path": "tmp/s20-full-vitest-final.log",
+        "bytes": 233,
+        "sha256": "e5ab7813bddeec9b8181cfec882811630687bfa69f5d4559de8982355df7bfb3"
+      },
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/s20-full-vitest-final.json",
+      "tests": 4836,
+      "passed": 4836,
+      "files": 327,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0,
+      "skipped": 0,
+      "physicalFileCountMeaning": "testResults.length; numTotalTestSuites includes describe groups",
+      "nestedSuiteCount": 912,
+      "startTime": "2026-11-01T23:27:43.557Z",
+      "matrixPassed": 385
+    },
+    "quality": {
+      "path": "tmp/s20-quality-final-results.json",
+      "bytes": 1126,
+      "sha256": "22da749b5a9d40a1e92e14dcdf1488d9b26d420a156a0359ee886c7848e6b6f5",
+      "commands": [
+        {
+          "command": "npm run typecheck",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-typecheck.log",
+            "bytes": 66,
+            "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87"
+          }
+        },
+        {
+          "command": "npm run lint",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-lint.log",
+            "bytes": 339,
+            "sha256": "f24c1626d32ecda9e85f3dbc2321dc72933366c161f1033a3770aa1715e48879"
+          }
+        },
+        {
+          "command": "npm run format:check",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-format-check.log",
+            "bytes": 175,
+            "sha256": "7f4c49d5c04df21bee771baac7c611d0ca94ee4fd27a2ecfbb9aa472de110eb4"
+          }
+        },
+        {
+          "command": "npm run audit:modules",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-audit-modules.log",
+            "bytes": 167,
+            "sha256": "1dca8f443cc21a1a54aa5eae26fd6b5fa8c83599e496b1c4bbaa203f97271b08"
+          }
+        },
+        {
+          "command": "npm run redesign:check",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-redesign-check.log",
+            "bytes": 158,
+            "sha256": "1cdca630f052824fcad7836119fa5740775dd92dee40c6ab4c015fa7d19f4cee"
+          }
+        },
+        {
+          "command": "npm run redesign:catalog:check",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-redesign-catalog-check.log",
+            "bytes": 258,
+            "sha256": "1f4f72f397f9e7d539061746a2cf7bdc5d27ef1655901530abbe309c1e924d35"
+          }
+        },
+        {
+          "command": "npm run redesign:learn:check",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-redesign-learn-check.log",
+            "bytes": 214,
+            "sha256": "0989231ce32a57674cab68f1582ef8569554468dd50899ed20b0cadd6c5b9af1"
+          }
+        },
+        {
+          "command": "npm run redesign:inventory:check",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-redesign-inventory-check.log",
+            "bytes": 1139,
+            "sha256": "9f374b693915ee8d2809dcc800fc4842de43ba436d0e86e8b9a0bde9ca54b3aa"
+          }
+        },
+        {
+          "command": "npm run redesign:golden",
+          "exitCode": 0,
+          "log": {
+            "path": "tmp/s20-quality-post-push-redesign-golden.log",
+            "bytes": 356,
+            "sha256": "31829ab15a44db39e740810808f8b1286d8ab0d57c5bf7c47027156e99e626ef"
+          }
+        }
+      ]
+    },
+    "build": {
+      "command": "npm run build",
+      "path": "tmp/s20-mobile-css-build.log",
+      "bytes": 9986,
+      "sha256": "73b9be8845f9cfc959fcd80f836fef3d99b9a805717580fb2469810ad6c81119",
+      "completeLogMarkers": true,
+      "evidenceBoundary": "Retained build log includes Vite completion and public-artifact audit pass; execution-tool exit status is recorded by the operator separately."
+    },
+    "golden": {
+      "tests": 13,
+      "passed": 13
+    },
+    "numerical": {
+      "path": "documents/redesign/stage-runs/S20-numerical-metrics.json",
+      "bytes": 8925,
+      "sha256": "9b342042b7251ab01a6c4e7559509f376bace5c49cdbadeb529242e8dfa9b100",
+      "passed": 13,
+      "total": 13,
+      "checks": {
+        "currentPhasePreserved": true,
+        "floquetLiouvilleDeterminant": true,
+        "linearOscillatorClosedForm": true,
+        "nativeContinuationParity": true,
+        "melnikovQuadrature": true,
+        "foldResidualAndCount": true,
+        "foldRestartOrientation": true,
+        "pitchforkSymmetricRoots": true,
+        "delayedLogisticCriticalParameter": true,
+        "nonzeroInvariantCircles": true,
+        "fullTorusCurveSaved": true,
+        "circleRigidRotation": true,
+        "actualPeriodDoubling": true
+      },
+      "tolerances": {
+        "productSectionResidual": 1e-9,
+        "floquetDeterminantAbsoluteError": 0.000001,
+        "linearModulusAbsoluteError": 1e-8,
+        "nativeContinuationStateParity": 1e-7,
+        "melnikovQuadratureAbsoluteError": 1e-8,
+        "foldResidual": 1e-8,
+        "pitchforkSqrtAbsoluteError": 0.000001,
+        "nsCriticalAbsoluteError": 0.0001,
+        "torusOffGridResidual": 0.000001,
+        "rigidRotationAbsoluteError": 1e-10,
+        "p2Residual": 1e-8,
+        "p2MinimumSeparation": 0.05
+      }
+    },
+    "productionBrowser": {
+      "path": "tmp/s20-browser-final3.json",
+      "bytes": 57161,
+      "sha256": "8b79b1d27f624c4123e168342d811942aeaebd037d7e9ef8ed7e930a4675ed84",
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "startTime": "2026-11-01T23:18:42.175Z",
+      "durationMs": 318848.75899999996,
+      "byProject": {
+        "chromium": 21,
+        "mobile-chrome": 21
+      },
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "e2e/redesign/stability-workflow.spec.ts",
+        "--project=chromium",
+        "--project=mobile-chrome",
+        "--update-snapshots=none",
+        "--output=tmp/s20-final3-browser-artifacts",
+        "--reporter=list,json"
+      ],
+      "productionServer": {
+        "command": "npm run preview -- --port 5183 --strictPort",
+        "url": "http://127.0.0.1:5183/app.html",
+        "reuseExistingServer": true,
+        "timeout": 120000
+      },
+      "snapshotUpdates": "none",
+      "retries": 0,
+      "timeoutMs": 30000
+    },
+    "legacyBrowserRegression": {
+      "path": "tmp/s20-regression-browser.json",
+      "bytes": 15189,
+      "sha256": "320683728c68b86a1b6ed89fc1f8dac4d73570a6b92df73d0e85529261e5d6b0",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "startTime": "2026-11-01T23:24:35.372Z",
+      "durationMs": 112071.95599999999,
+      "byProject": {
+        "chromium": 4,
+        "mobile-chrome": 4
+      },
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+        "test",
+        "e2e/redesign/advanced-diagnostics.spec.ts",
+        "e2e/redesign/core-diagnostics.spec.ts",
+        "--project=chromium",
+        "--project=mobile-chrome",
+        "--grep=loads|keyboard",
+        "--update-snapshots=none",
+        "--output=tmp/s20-final-legacy-browser-artifacts",
+        "--reporter=list,json"
+      ],
+      "productionServer": {
+        "command": "npm run preview -- --port 5183 --strictPort",
+        "url": "http://127.0.0.1:5183/app.html",
+        "reuseExistingServer": true,
+        "timeout": 120000
+      },
+      "snapshotUpdates": "none",
+      "retries": 0,
+      "timeoutMs": 30000
+    },
+    "browserTotalPassed": 50,
+    "mobileFailedStateLayout": {
+      "beforeProduction": {
+        "path": "tmp/s20-mobile-css-before-production.json",
+        "bytes": 8010,
+        "sha256": "02a6e31d539c326ba8656194e05285908e4c369f1edbaa89b3213a1edfeba4d0",
+        "phase": "before-production",
+        "device": "Pixel 5",
+        "innerWidth": 788,
+        "deviceViewport": {
+          "width": 393,
+          "height": 727,
+          "scale": 1
+        },
+        "scrollWidth": 788,
+        "failedAttemptBox": {
+          "selector": ".stability-attempt",
+          "x": 37,
+          "y": 740.21875,
+          "width": 750.265625,
+          "height": 1409.96875,
+          "scrollWidth": 750,
+          "minWidth": "auto",
+          "columns": "none"
+        },
+        "footerHitTarget": "TD",
+        "downloaded": false,
+        "failure": "TimeoutError: locator.click: Timeout 5000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: '안정성 결과 JSON 다운로드', exact: true })\n    - locator resolved to <button type=\"button\" class=\"ds-button ds-button--secondary\">안정성 결과 JSON 다운로드</button>\n  - attempting click action\n    - waiting fo",
+        "pageErrors": []
+      },
+      "afterProduction": {
+        "path": "tmp/s20-mobile-css-after-production.json",
+        "bytes": 3638,
+        "sha256": "da69cae5a86d1c3fd43114053b2568f4bf26b2917df3b3dbe8020382818b3938",
+        "phase": "after-production",
+        "device": "Pixel 5",
+        "innerWidth": 393,
+        "deviceViewport": {
+          "width": 393,
+          "height": 727,
+          "scale": 1
+        },
+        "scrollWidth": 393,
+        "failedAttemptBox": {
+          "selector": ".stability-attempt",
+          "x": 37,
+          "y": 977.703125,
+          "width": 319,
+          "height": 1571.578125,
+          "scrollWidth": 319,
+          "minWidth": "0px",
+          "columns": "none"
+        },
+        "footerHitTarget": "BUTTON",
+        "downloaded": true,
+        "failure": null,
+        "pageErrors": []
+      },
+      "fix": "Scoped failed-attempt min-width:0 and minmax(0,1fr) grid tracks; normal footer click and original 91-row result retained."
+    },
+    "historicalFailedAttempts": [
+      {
+        "path": "tmp/s20-visual-preparation.json",
+        "bytes": 14711,
+        "sha256": "24352949fe6d0cb790fb29b0867b46981651618c1a87780aa920b7b4a2786170",
+        "excludedFromCompletionEvidence": true,
+        "reason": "Visual preparation: one Chromium 30s timeout; fixture later split. Preparation used snapshot update all and is not final regression evidence.",
+        "stats": {
+          "startTime": "2026-10-31T12:41:00.665Z",
+          "duration": 72497.25,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 1,
+          "flaky": 0
+        },
+        "snapshotUpdates": "all",
+        "runnerErrors": 0,
+        "failedTests": [
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "keyboard, narrow layout, zoom and themes retain an accessible branch graph and convergence table",
+            "project": "chromium",
+            "errors": [
+              "Test timeout of 30000ms exceeded."
+            ]
+          }
+        ]
+      },
+      {
+        "path": "tmp/s20-browser-final.json",
+        "bytes": 90844,
+        "sha256": "c9ee5f28df32a16fb88ef651c3c75be9651b0edbbf0831aad14139a8afb37081",
+        "excludedFromCompletionEvidence": true,
+        "reason": "33 passed / 5 failed: four nominal-success paths used the chaotic default guess and did not converge; one combined mobile recovery case timed out. A stable physical fixture and separate recovery tests retain original tolerance/timeouts/retries.",
+        "stats": {
+          "startTime": "2026-10-31T12:45:29.424Z",
+          "duration": 485918.365,
+          "expected": 33,
+          "skipped": 0,
+          "unexpected": 5,
+          "flaky": 0
+        },
+        "snapshotUpdates": "none",
+        "runnerErrors": 0,
+        "failedTests": [
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "native tools fixed-point, periodic-shooting, floquet, melnikov execute in workers with explicit sources and complete input lineage",
+            "project": "chromium",
+            "errors": [
+              "Error: expect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('#stability-workflow')\nExpected: \"completed\"\nReceived: \"nonconverged\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveAttribute\" with timeout 5000ms\n  - waiting for locator('#stability-workflow')\n    3 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"running\" class=\"lab-details stability-workflow\">…</details>\n      - unexpected value \"running\"\n    11 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"nonconverged\" class=\"lab-details stability-workflow\">…</details>\n       - unexpected value \"nonconverged\"\n\n\n  14 |   await page.locator('#stability-kind').selectOption(kind);\n  15 |   await page.getByRole('button', { name: '안정성 계산', exact: true }).click();\n> 16 |   await expect(page.locator('#stability-workflow')).toHaveAttribute('data-stability-status', 'completed');\n     |                                                     ^\n  17 |   return JSON.parse(await download(page));\n  18 | }\n  19 | async function download(page: Page) {\n    at compute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:16:53)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:106:26"
+            ]
+          },
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "a converged physical solution flows into Floquet and continuation with preserved source lineage",
+            "project": "chromium",
+            "errors": [
+              "Error: expect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('#stability-workflow')\nExpected: \"completed\"\nReceived: \"nonconverged\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveAttribute\" with timeout 5000ms\n  - waiting for locator('#stability-workflow')\n    3 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"running\" class=\"lab-details stability-workflow\">…</details>\n      - unexpected value \"running\"\n    11 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"nonconverged\" class=\"lab-details stability-workflow\">…</details>\n       - unexpected value \"nonconverged\"\n\n\n  14 |   await page.locator('#stability-kind').selectOption(kind);\n  15 |   await page.getByRole('button', { name: '안정성 계산', exact: true }).click();\n> 16 |   await expect(page.locator('#stability-workflow')).toHaveAttribute('data-stability-status', 'completed');\n     |                                                     ^\n  17 |   return JSON.parse(await download(page));\n  18 | }\n  19 | async function download(page: Page) {\n    at compute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:16:53)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:156:20"
+            ]
+          },
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "native tools fixed-point, periodic-shooting, floquet, melnikov execute in workers with explicit sources and complete input lineage",
+            "project": "mobile-chrome",
+            "errors": [
+              "Error: expect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('#stability-workflow')\nExpected: \"completed\"\nReceived: \"nonconverged\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveAttribute\" with timeout 5000ms\n  - waiting for locator('#stability-workflow')\n    3 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"running\" class=\"lab-details stability-workflow\">…</details>\n      - unexpected value \"running\"\n    11 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"nonconverged\" class=\"lab-details stability-workflow\">…</details>\n       - unexpected value \"nonconverged\"\n\n\n  14 |       initialState: [0.1, 0, 0],\n  15 |       forcing: { waveform: 'sine', amplitude: 0.3, frequency: 2 / 3, phase: Math.PI / 2 }\n> 16 |     });\n     |        ^\n  17 |     if (!config.ok) throw new Error('stable physical fixture');\n  18 |     const token = encodeShareToken(config.value);\n  19 |     if (!token.ok) throw new Error('stable share fixture');\n    at compute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:16:53)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:106:26"
+            ]
+          },
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "a converged physical solution flows into Floquet and continuation with preserved source lineage",
+            "project": "mobile-chrome",
+            "errors": [
+              "Error: expect(locator).toHaveAttribute(expected) failed\n\nLocator:  locator('#stability-workflow')\nExpected: \"completed\"\nReceived: \"nonconverged\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveAttribute\" with timeout 5000ms\n  - waiting for locator('#stability-workflow')\n    3 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"running\" class=\"lab-details stability-workflow\">…</details>\n      - unexpected value \"running\"\n    11 × locator resolved to <details open=\"\" id=\"stability-workflow\" data-stability-status=\"nonconverged\" class=\"lab-details stability-workflow\">…</details>\n       - unexpected value \"nonconverged\"\n\n\n  14 |       initialState: [0.1, 0, 0],\n  15 |       forcing: { waveform: 'sine', amplitude: 0.3, frequency: 2 / 3, phase: Math.PI / 2 }\n> 16 |     });\n     |        ^\n  17 |     if (!config.ok) throw new Error('stable physical fixture');\n  18 |     const token = encodeShareToken(config.value);\n  19 |     if (!token.ok) throw new Error('stable share fixture');\n    at compute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:16:53)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:156:20"
+            ]
+          },
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "worker startup recovers, nonconvergence and cancellation keep the last completed artifact",
+            "project": "mobile-chrome",
+            "errors": [
+              "Test timeout of 30000ms exceeded.",
+              "Error: page.waitForEvent: Test timeout of 30000ms exceeded.\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n\n  18 |     const token = encodeShareToken(config.value);\n  19 |     if (!token.ok) throw new Error('stable share fixture');\n> 20 |     query = `?state=${token.value}`;\n     |                        ^\n  21 |   }\n  22 |   await page.goto(`/next.html#/lab/${slug}${query}`);\n  23 |   await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'ready');\n    at download (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:20:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:223:29",
+              "lick action\n       - waiting 500ms\n       - waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <td class=\"\">8.8817842e-16</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">0.88274100</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">0.85783251</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">8.8817842e-16</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n\n\n  19 |     if (!token.ok) throw new Error('stable share fixture');\n  20 |     query = `?state=${token.value}`;\n> 21 |   }\n     |    ^\n  22 |   await page.goto(`/next.html#/lab/${slug}${query}`);\n  23 |   await expect(page.locator('.lab-workspace')).toHaveAttribute('data-lab-status', 'ready');\n  24 |   await page.getByRole('tab', { name: '분석', exact: true }).click();\n    at download (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:21:77)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:223:29"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "tmp/s20-browser-final2.json",
+        "bytes": 68509,
+        "sha256": "662194363249faeafab1e30df526d67e97f74dcbdd8a64c6541c68284c438056",
+        "excludedFromCompletionEvidence": true,
+        "reason": "41 passed / 1 failed: production mobile failed-state result table enlarged the grid by intrinsic min-content width; table cells intercepted footer download clicks. Scoped min-width:0/minmax(0,1fr) fixes the actual layout; final run must pass with original rows and normal clicks.",
+        "stats": {
+          "startTime": "2026-10-31T12:55:31.527Z",
+          "duration": 452103.07999999996,
+          "expected": 41,
+          "skipped": 0,
+          "unexpected": 1,
+          "flaky": 0
+        },
+        "snapshotUpdates": "none",
+        "runnerErrors": 0,
+        "failedTests": [
+          {
+            "file": "redesign/stability-workflow.spec.ts",
+            "title": "nonconvergence preserves the last completed artifact",
+            "project": "mobile-chrome",
+            "errors": [
+              "Test timeout of 30000ms exceeded.",
+              "Error: page.waitForEvent: Test timeout of 30000ms exceeded.\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n\n  33 | }\n  34 | async function download(page: Page) {\n> 35 |   const pending = page.waitForEvent('download');\n     |                        ^\n  36 |   await page.getByRole('button', { name: '안정성 결과 JSON 다운로드', exact: true }).click();\n  37 |   const result = await pending;\n  38 |   expect(await result.failure()).toBeNull();\n    at download (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:35:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:241:29",
+              "ement to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <td class=\"\">8.8817842e-16</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">0.88274100</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">0.85783251</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n    - element is visible, enabled and stable\n    - scrolling into view if needed\n    - done scrolling\n    - <td class=\"\">8.8817842e-16</td> from <div id=\"stability-output\" class=\"stability-output\">…</div> subtree intercepts pointer events\n  - retrying click action\n    - waiting 500ms\n\n\n  34 | async function download(page: Page) {\n  35 |   const pending = page.waitForEvent('download');\n> 36 |   await page.getByRole('button', { name: '안정성 결과 JSON 다운로드', exact: true }).click();\n     |                                                                             ^\n  37 |   const result = await pending;\n  38 |   expect(await result.failure()).toBeNull();\n  39 |   return readFile((await result.path())!, 'utf8');\n    at download (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:36:77)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\stability-workflow.spec.ts:241:29"
+            ]
+          }
+        ]
+      }
+    ],
+    "historicalFullVitestFailure": {
+      "path": "tmp/s20-full-vitest-post-push-first.json",
+      "bytes": 1839111,
+      "sha256": "8aa23e53939c8c60c6df25e7d2f0ab0ebfcf6a4919d5ab4e1830e7a437320ab5",
+      "log": {
+        "path": "tmp/s20-full-vitest-post-push-first.log",
+        "bytes": 233,
+        "sha256": "e5ab7813bddeec9b8181cfec882811630687bfa69f5d4559de8982355df7bfb3"
+      },
+      "excludedFromCompletionEvidence": true,
+      "tests": 4836,
+      "passed": 4835,
+      "failed": 1,
+      "files": 327,
+      "configuredTimeoutMs": 30000,
+      "unchangedConfig": {
+        "path": "vitest.config.ts",
+        "bytes": 1932,
+        "sha256": "238d8053975efd7dcc9e833f7b2e29b5d1630406176382beb58ce67cc6f7c975"
+      },
+      "unchangedTest": {
+        "path": "tests/characterization/inventory.test.ts",
+        "bytes": 8111,
+        "sha256": "97caeb5ed52473e16e96a0a4f4a558745feb219797412aaea71200cf22dc6171"
+      },
+      "failedTest": {
+        "file": "tests/characterization/inventory.test.ts",
+        "fullName": "S01 read-only capability inventory reproduces the complete recorded baseline with owner declarations and no broken imports",
+        "durationMs": 33335.84529999999,
+        "failureMessages": [
+          "Error: STACK_TRACE_ERROR\n    at task (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1784:27)\n    at Object.<anonymous> (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1817:16)\n    at Object.<anonymous> (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1563:28)\n    at chain (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:599:14)\n    at C:/Users/junge/Desktop/pendulum_lab_modular/tests/characterization/inventory.test.ts:36:3\n    at file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:40\n    at runWithSuite (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:2258:8)\n    at Object.collect (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1889:10)\n    at Object.collect (file:///C:/Users/junge/Desktop/pendulum_lab_modular/node_modules/@vitest/runner/dist/chunk-artifact.js:1893:54)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)"
+        ],
+        "assertionDiffPresentInRetainedJson": false
+      },
+      "diagnosis": "The retained JSON reports STACK_TRACE_ERROR without an assertion diff. The case lasted about 33.3 seconds against the unchanged 30-second configured timeout. Resource contention is suspected; the report does not establish that cause or explicitly prove a timeout.",
+      "completionBoundary": "This failed full run is historical evidence only; an isolated pass cannot replace the required later complete 4836-test pass."
+    },
+    "inventoryDiagnosticRerun": {
+      "path": "tmp/s20-inventory-isolated.json",
+      "bytes": 3317,
+      "sha256": "4ba2cc0a9b7b012b7c309df0a5693f40a5677cdfd62c529f26a3730f148fe989",
+      "log": {
+        "path": "tmp/s20-inventory-isolated.log",
+        "bytes": 276,
+        "sha256": "8184daa504aa0ce6486c8869f70ece2f5d1e0e62da2f7aa2f6547f542f4938ec"
+      },
+      "command": "npm test -- --maxWorkers=2 tests/characterization/inventory.test.ts --reporter=json --outputFile=tmp/s20-inventory-isolated.json",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "files": 1,
+      "configuredTimeoutMs": 30000,
+      "formerlyFailingCase": {
+        "fullName": "S01 read-only capability inventory reproduces the complete recorded baseline with owner declarations and no broken imports",
+        "status": "passed",
+        "durationMs": 6273.1005
+      },
+      "completionBoundary": "Diagnostic evidence for the unchanged case; the later full run remains required."
+    }
+  },
+  "preservation": {
+    "path": "documents/redesign/stage-runs/S20-preservation.json",
+    "bytes": 15091,
+    "sha256": "fb617c98ec179a48ba9e875738e57559d139842744af56cf16c7858d5409691d",
+    "protectedFiles": 270,
+    "originalEnginesPublicApisDataFormatsUnchanged": true,
+    "oldTestFiles": 600,
+    "byteIdenticalOldTestFiles": 599,
+    "formattingOnlyExceptions": [
+      {
+        "path": "tests/product/experiments/science.test.ts",
+        "tokenCount": 4055,
+        "tokenSequenceIdentical": true,
+        "astShapeIdentical": true
+      }
+    ],
+    "byteIdenticalOldPngFiles": 204,
+    "newBrowserPngFiles": [
+      {
+        "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-chromium-win32.png",
+        "bytes": 159091,
+        "sha256": "eff3bff341398048d05850ee1a2564c9c53d52be085698958fbbb8c1f4f0d63e"
+      },
+      {
+        "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-mobile-chrome-win32.png",
+        "bytes": 161708,
+        "sha256": "0f5e168fa65cb04cefc9e73a1d3f98f281a1e74139cf371950f51122b677bcc0"
+      },
+      {
+        "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-chromium-win32.png",
+        "bytes": 159984,
+        "sha256": "41025a66f4f519c467be18ff309a9ac2e9736de7f2771279836a8f1ae50377ca"
+      },
+      {
+        "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-mobile-chrome-win32.png",
+        "bytes": 162260,
+        "sha256": "80e98ef7f6ea16a5edfc5a0e2f3ed4618a2ed0751e303c074202effe4dfce5a5"
+      }
+    ],
+    "desktopTransportHashes": [
+      {
+        "repository": "documents/redesign/master-roadmap-ko.md",
+        "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "match": true
+      },
+      {
+        "repository": "documents/redesign/execution-plan-ko.md",
+        "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "match": true
+      }
+    ]
+  },
+  "changedFiles": [
+    {
+      "status": "A",
+      "path": "css/product/stability.css",
+      "sha256": "bd7a604a2d3876c210af2892c473234703301d3a9dde78de16e6d4f9d7b48bfc"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/stability-workflow-ko.md",
+      "sha256": "3868463a98c9c07a0da4093724ce716266ebdc693325bca692a5b240a044b0a0"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/stage-runs/S20-progress.md",
+      "sha256": "ea9534376dd1c568e9178500e791499b8f0a06e524d65a2e1114fcbdea1c68b1"
+    },
+    {
+      "status": "M",
+      "path": "documents/redesign/status.json",
+      "sha256": "c0bb8910210e4f4e3514a7dd50ca5e3a8602a7607d58558e0d66f945af1f78ba"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/stability-workflow.spec.ts",
+      "sha256": "ed45299e03e673f8d5c9348d02a99d76232da8e2a9c0e9222c1a3bff98920334"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-chromium-win32.png",
+      "sha256": "eff3bff341398048d05850ee1a2564c9c53d52be085698958fbbb8c1f4f0d63e"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-mobile-chrome-win32.png",
+      "sha256": "0f5e168fa65cb04cefc9e73a1d3f98f281a1e74139cf371950f51122b677bcc0"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-chromium-win32.png",
+      "sha256": "41025a66f4f519c467be18ff309a9ac2e9736de7f2771279836a8f1ae50377ca"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-mobile-chrome-win32.png",
+      "sha256": "80e98ef7f6ea16a5edfc5a0e2f3ed4618a2ed0751e303c074202effe4dfce5a5"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/artifact-validation.ts",
+      "sha256": "97c35faceaf9b46c4dfcd38913c4f6a77348e38d760a6a51a55ed66f9b884e12"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/artifact.ts",
+      "sha256": "6def24990ef570f1a35800fe290264cc283879fc95de889e3268d185ea8a2bea"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/client.ts",
+      "sha256": "565875f67ebbe02aeb0dd465175eff07988db6d2307b713d7404602c681483ae"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/contracts.ts",
+      "sha256": "37ea52ee58486ae98e41affaf52827d7f7a05fe4dcebe48b9fedfc8a19146373"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/execute.ts",
+      "sha256": "a78db74ef6641c989aace56ba33ca7e9503bcfec2b327cf09210d4ef7fec8936"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/native-benchmarks.ts",
+      "sha256": "5b78b256c623bd27ff92860d8ad1276542a37aa8d211a2d928675124bbebf99d"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/native-common.ts",
+      "sha256": "30927e99429afff0fc719d1cdf3671f6edaeba9c42c497d413f7b6764e63691e"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/native-current.ts",
+      "sha256": "848da19055a85b0f91e42b557e85f21b1088142fa4ad103c8f963dde000622fa"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/result.ts",
+      "sha256": "e70bcca335ccde9f75feb819522e08d419227e88842da23b1b1416cf93b6ef56"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/settings.ts",
+      "sha256": "74a4421cd3d3872333b3ca7a098570d24753ebec0677db0a5cb39d7fb0051861"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/source.ts",
+      "sha256": "ab221d34c4a28df3babcd17db35f34f461e0e8fee5bec33b2eae1153faf0d244"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/stability.worker.ts",
+      "sha256": "ecfdd52612c9689668771702caee281fbc8ea415ac500afa5d9ce297966e3535"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/validation.ts",
+      "sha256": "0349b187a7ab52ab0ccf96fca3fc930cd19bb4c71de8c14cdeb42391e36cdace"
+    },
+    {
+      "status": "M",
+      "path": "src/product/catalog/analyses.ts",
+      "sha256": "6d09a96c852553e822e8cc4bc17797dd4d6fddd4363cb0efe15ff90a347067b6"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/diagnostics.ts",
+      "sha256": "904104b7968e3f190a99533f6eec2f9b6e225a6f6154f138aa2dcb1a6bcf9c33"
+    },
+    {
+      "status": "A",
+      "path": "src/product/lab/views/stability-panel.ts",
+      "sha256": "f171d08175376c571a952ffa4efe3d4468005b00048ff7dbd53ea38e7fd9fb1a"
+    },
+    {
+      "status": "A",
+      "path": "src/product/lab/views/stability-result.ts",
+      "sha256": "d5c34ab6aa73b8540bbdc6e6075713d6a99861e006b2b2c5a91963f7f67985c0"
+    },
+    {
+      "status": "A",
+      "path": "src/product/lab/views/stability-settings.ts",
+      "sha256": "c6b5c8a9c61f0d3a30f5b1699ff1e163ff8c5bb11024fb79e3ab534031a0bba6"
+    },
+    {
+      "status": "A",
+      "path": "src/product/lab/views/stability.ts",
+      "sha256": "158d694b60d73bbe9fb82df635b0364302e4c795a103a7b2b319a36c65c0aa59"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "sha256": "64b98b0ee58eda60764876a3de7278e1b8bfb3ce31c8fb98324eb8455dbf0f62"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/adapters/analysis/stability/client.test.ts",
+      "sha256": "8e6a01546aacb90fbfd12e0fe80aeb63f08c47f0ddf101f80e6943f144663834"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/adapters/analysis/stability/matrix.test.ts",
+      "sha256": "fafc9326ad6f55fe6698413e05907046050db53b6c538919ba39fbbc9f862a8a"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/adapters/analysis/stability/native.test.ts",
+      "sha256": "450420ec0b4ea7f8ee132b5c9c9700f3c5b8c9e05ffecd1519d2aa219176291f"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/adapters/analysis/stability/review-regressions.test.ts",
+      "sha256": "ac125b6af72ff7c177ab543b7f0c22f439ff8f4a2d25db4bade80ecb8f1549d0"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/catalog/stability-workflow.test.ts",
+      "sha256": "50cc5a18af630960a58b192e7a8b651dee07d2d7ae5bab244fd1959fa142e6fa"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/experiments/science.test.ts",
+      "sha256": "3591f4013cd5732cf1145fc112370fe1f2ff84811399089573115bce78026ba9"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/lab/stability.test.ts",
+      "sha256": "eb30e8ccab6670497418219e4ca79ee11ed9e1d23b4aae94db9d1ececa175d96"
+    },
+    {
+      "status": "untracked",
+      "path": "documents/redesign/stage-runs/S20-numerical-metrics.json",
+      "sha256": "9b342042b7251ab01a6c4e7559509f376bace5c49cdbadeb529242e8dfa9b100"
+    },
+    {
+      "status": "untracked",
+      "path": "documents/redesign/stage-runs/S20-preservation.json",
+      "sha256": "fb617c98ec179a48ba9e875738e57559d139842744af56cf16c7858d5409691d"
+    },
+    {
+      "status": "untracked",
+      "path": "scripts/redesign/measure-stability-workflow.ts",
+      "sha256": "adad65d2f1c910933cef9400c32e4a26b4826749f3713f5c0bf97e59900c86a2"
+    }
+  ],
+  "limits": {
+    "source": {
+      "path": "src/product/adapters/analysis/stability/contracts.ts",
+      "bytes": 2813,
+      "sha256": "37ea52ee58486ae98e41affaf52827d7f7a05fe4dcebe48b9fedfc8a19146373"
+    },
+    "artifactBytes": 8388608,
+    "branchPoints": 256,
+    "resultRows": 8192,
+    "stateDimension": 8,
+    "work": 2000000,
+    "workerInactivityTimeoutMs": 30000,
+    "caveats": [
+      "Bounded selected fixtures establish numerical evidence only; they do not certify arbitrary physical parameters or all branches.",
+      "Melnikov is a weak-perturbation approximation. NS crossings, finite-time exponents, locking intervals and fold locations are numerical candidates, not existence proofs.",
+      "Torus full curves reload exactly; endpoint warm-start is not claimed because the existing solver has no saved-curve seed API.",
+      "Unwrapped-angle shooting excludes relative rotating cycles with nonzero winding number.",
+      "No human scientific review is implied."
+    ]
+  },
+  "review": {
+    "userGateForS20": false,
+    "approvedPreviousGates": [
+      7,
+      9,
+      17
+    ],
+    "humanScientificReviewPerformed": false,
+    "sourceAndSyntheticChecksOnly": true,
+    "unchangedExistingLearnReviewState": true,
+    "unverified": [
+      "physical devices",
+      "Firefox/WebKit",
+      "screen-reader audio"
+    ]
+  },
+  "security": {
+    "dependenciesUnchanged": true,
+    "freshDependencyAuditPerformed": false,
+    "riskAcceptanceChanged": false,
+    "existingUnresolvedBaseline": "S01 local high2/moderate2 and CodeQL32 remain unresolved; GitHub push notices are not a fresh local audit.",
+    "latestKnownDefaultBranchPushNotice": {
+      "total": 19,
+      "high": 12,
+      "moderate": 6,
+      "low": 1,
+      "observedAtCheckpoint": "CP2",
+      "implementationCommit": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+      "source": "GitHub default-branch notice reported during the verified CP2 push; not a fresh audit of the redesign checkout.",
+      "freshLocalAudit": false
+    },
+    "localKnownPatternScan": {
+      "path": "tmp/s20-secrets-cp2.log",
+      "bytes": 21545,
+      "sha256": "de31166d01b0acc8c305fa3257dcd1de0b84722589b72072dc9f0301b286f630"
+    },
+    "scanLimits": "Known-format local text scan excludes history, ignored files, binary contents and external services; no claim that all secrets are absent."
+  },
+  "rollback": {
+    "baseline": "S19 6589ef60beaa7cedb2cd96bb4ac6ea5513327429 and the preserved app.html",
+    "cutoverPerformed": false
+  },
+  "nextValidStageAfterRemoteStatusCommit": 21
+}

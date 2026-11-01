@@ -1,0 +1,310 @@
+{
+  "schemaVersion": "pendulum-redesign-preservation/v1",
+  "stage": 20,
+  "dateAsiaSeoul": "2026-11-02",
+  "generatedAtUtc": "2026-11-01T23:21:07.652Z",
+  "baselineCommit": "6589ef60beaa7cedb2cd96bb4ac6ea5513327429",
+  "checkedHead": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+  "checkedRemoteTrackingHead": "76df0cceb8c48077b6bdba413b84370bfdf6e931",
+  "scope": "Read-only audit of baseline Git blobs against current working-tree raw bytes at the recorded implementation HEAD. No source/status/progress modified by this audit.",
+  "method": "git ls-tree baseline; SHA1('blob '+byteLength+'\\0'+rawBytes) and SHA256 sorted manifests. One formatting-only old-test exception additionally compares TypeScript scanner token kind/text sequences and parsed AST kind/child shape. Token/AST equivalence supplements rather than conceals the recorded byte difference.",
+  "protectedGroups": [
+    {
+      "scope": "app.html",
+      "baselineCount": 1,
+      "unchangedCount": 1,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "9871afa84516e157802e26b20c346c16db52f09ad65ce0837f728578f9da301d",
+      "workingManifestSha256": "9871afa84516e157802e26b20c346c16db52f09ad65ce0837f728578f9da301d"
+    },
+    {
+      "scope": "src/physics/",
+      "baselineCount": 68,
+      "unchangedCount": 68,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "baed15525953f1545c53f6ffba2debff54b5b37f92d7c25452913094ca0329af",
+      "workingManifestSha256": "baed15525953f1545c53f6ffba2debff54b5b37f92d7c25452913094ca0329af"
+    },
+    {
+      "scope": "src/chaos/",
+      "baselineCount": 38,
+      "unchangedCount": 38,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "063a61fdd515483321736f706f20a86253aa7ad90043bed6534d212ab945b541",
+      "workingManifestSha256": "063a61fdd515483321736f706f20a86253aa7ad90043bed6534d212ab945b541"
+    },
+    {
+      "scope": "src/research/",
+      "baselineCount": 42,
+      "unchangedCount": 42,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "18a104452dfef6766cab69a23db9749f2880c935110e34c6a2cd64f9ae6ded2f",
+      "workingManifestSha256": "18a104452dfef6766cab69a23db9749f2880c935110e34c6a2cd64f9ae6ded2f"
+    },
+    {
+      "scope": "src/runtime/",
+      "baselineCount": 33,
+      "unchangedCount": 33,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "b98878a37dc3a10313a589b3de102e5a02179bea49fe6dc6d92ed40ff89d21f6",
+      "workingManifestSha256": "b98878a37dc3a10313a589b3de102e5a02179bea49fe6dc6d92ed40ff89d21f6"
+    },
+    {
+      "scope": "src/workers/",
+      "baselineCount": 16,
+      "unchangedCount": 16,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "b30637c57e48083f80ad6d6489127ed16302c5e33e14d6620c293719a7feedac",
+      "workingManifestSha256": "b30637c57e48083f80ad6d6489127ed16302c5e33e14d6620c293719a7feedac"
+    },
+    {
+      "scope": "src/validation/",
+      "baselineCount": 10,
+      "unchangedCount": 10,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "5d45ee6f5c7f2fe31ff96f512ecd462344138ee9badba2cfb9fa6745d16ec52e",
+      "workingManifestSha256": "5d45ee6f5c7f2fe31ff96f512ecd462344138ee9badba2cfb9fa6745d16ec52e"
+    },
+    {
+      "scope": "src/lib/",
+      "baselineCount": 7,
+      "unchangedCount": 7,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "a17ddb8725c7d05c670844961f75b1b79daf3a95c696eb1f47c42dcec3e645bb",
+      "workingManifestSha256": "a17ddb8725c7d05c670844961f75b1b79daf3a95c696eb1f47c42dcec3e645bb"
+    },
+    {
+      "scope": "src/product/adapters/physics/",
+      "baselineCount": 51,
+      "unchangedCount": 51,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "a74118e9a52fb238371ea430697b987f3fcd5c1f9938d83ceaa02c1ced0b4d4c",
+      "workingManifestSha256": "a74118e9a52fb238371ea430697b987f3fcd5c1f9938d83ceaa02c1ced0b4d4c"
+    },
+    {
+      "scope": "package.json",
+      "baselineCount": 1,
+      "unchangedCount": 1,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "e0a5072b84a6996ac938d36a0143292ee729da0bbacb328a5f8069b5e5fb54f0",
+      "workingManifestSha256": "e0a5072b84a6996ac938d36a0143292ee729da0bbacb328a5f8069b5e5fb54f0"
+    },
+    {
+      "scope": "package-lock.json",
+      "baselineCount": 1,
+      "unchangedCount": 1,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "a579964d4ddf309389d904758a05fcc87e788ae56cbe0ffd7527601b08275c1b",
+      "workingManifestSha256": "a579964d4ddf309389d904758a05fcc87e788ae56cbe0ffd7527601b08275c1b"
+    },
+    {
+      "scope": "documents/redesign/master-roadmap-ko.md",
+      "baselineCount": 1,
+      "unchangedCount": 1,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "968d8f5a363defcfdc70c1951720a4df5f6b0320f02921ff5c722217018c51c7",
+      "workingManifestSha256": "968d8f5a363defcfdc70c1951720a4df5f6b0320f02921ff5c722217018c51c7"
+    },
+    {
+      "scope": "documents/redesign/execution-plan-ko.md",
+      "baselineCount": 1,
+      "unchangedCount": 1,
+      "changedOrMissing": [],
+      "baselineManifestSha256": "e6bcd1a4171de15fa7642a865495b1e509ae26ff92549153435ddb45d56a74d3",
+      "workingManifestSha256": "e6bcd1a4171de15fa7642a865495b1e509ae26ff92549153435ddb45d56a74d3"
+    }
+  ],
+  "historicalTestAndE2eFiles": {
+    "baselineCount": 600,
+    "unchangedCount": 599,
+    "changedOrMissing": [
+      {
+        "path": "tests/product/experiments/science.test.ts",
+        "reason": "raw-byte-difference",
+        "baselineBlob": "f7ed2f04ca7ad97050eb8b74d4f56fd777419d08",
+        "workingBlob": "57e02621e5d920e3ea1aa84af4768f73a682fb2e"
+      }
+    ],
+    "baselineManifestSha256": "4de96a212f991c940b042ca9f8afaa22c4164a95f3f1cff813567d59b66297dd",
+    "workingManifestSha256": "f84882044c012ad950b119109c3c4fb5278bc1d7e639d9a1c1a62055c74a6cc2",
+    "semanticallyPreservedCount": 600,
+    "preservationCriterion": "599 raw-byte-identical files plus one explicitly recorded whitespace-only exception with identical TypeScript token kind/text sequence, parsed AST shape and Math.hypot argument tokens; no blanket claim of 600 byte-identical files."
+  },
+  "allHistoricalPngFiles": {
+    "baselineCount": 204,
+    "unchangedCount": 204,
+    "changedOrMissing": [],
+    "baselineManifestSha256": "81e1bf26b35bd11e814f641fdcaa5c42f78bf04f4f850d1a0c2258f6879484b4",
+    "workingManifestSha256": "81e1bf26b35bd11e814f641fdcaa5c42f78bf04f4f850d1a0c2258f6879484b4"
+  },
+  "historicalBrowserScreenshots": {
+    "baselineCount": 198,
+    "unchangedCount": 198,
+    "changedOrMissing": [],
+    "baselineManifestSha256": "e166cda8691d6a6def0ef1d22e1258d3f7203e9ca560113edf2ba6d72fafa3d9",
+    "workingManifestSha256": "e166cda8691d6a6def0ef1d22e1258d3f7203e9ca560113edf2ba6d72fafa3d9"
+  },
+  "newBrowserScreenshots": [
+    {
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-chromium-win32.png",
+      "bytes": 159091,
+      "sha256": "eff3bff341398048d05850ee1a2564c9c53d52be085698958fbbb8c1f4f0d63e"
+    },
+    {
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-dark-mobile-chrome-win32.png",
+      "bytes": 161708,
+      "sha256": "0f5e168fa65cb04cefc9e73a1d3f98f281a1e74139cf371950f51122b677bcc0"
+    },
+    {
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-chromium-win32.png",
+      "bytes": 159984,
+      "sha256": "41025a66f4f519c467be18ff309a9ac2e9736de7f2771279836a8f1ae50377ca"
+    },
+    {
+      "path": "e2e/redesign/stability-workflow.spec.ts-snapshots/s20-stability-light-mobile-chrome-win32.png",
+      "bytes": 162260,
+      "sha256": "80e98ef7f6ea16a5edfc5a0e2f3ed4618a2ed0751e303c074202effe4dfce5a5"
+    }
+  ],
+  "desktopTransportCopies": [
+    {
+      "repository": "documents/redesign/master-roadmap-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "match": true
+    },
+    {
+      "repository": "documents/redesign/execution-plan-ko.md",
+      "desktop": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "match": true
+    }
+  ],
+  "trackedPreexistingChanges": [
+    "documents/redesign/status.json",
+    "src/product/catalog/analyses.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "tests/product/experiments/science.test.ts"
+  ],
+  "allowedPreexistingProductChanges": [
+    "src/product/catalog/analyses.ts",
+    "src/product/lab/views/diagnostics.ts"
+  ],
+  "notes": [
+    "599 historical test/E2E files and all 204 old PNGs are raw-byte-identical. The one existing science.test.ts whitespace-only exception is explicitly recorded and token/AST-equivalent. New S20 tests and four browser PNGs are separate additions.",
+    "No fresh dependency audit or risk acceptance was performed; dependency audit belongs to S30. Existing security and human-review state is not changed.",
+    "Numerical review verifies explicit independent normal forms versus current driven-model section; bounded workers, failed-cell refusal, nonconverged classification and original snapshot preservation were reviewed separately."
+  ],
+  "pass": true,
+  "generatedAtAsiaSeoul": "2026-11-02T08:21:07.652+09:00",
+  "sourceScopeReview": {
+    "existingProductIntegrationChangesOnly": [
+      "src/product/catalog/analyses.ts",
+      "src/product/lab/views/diagnostics.ts"
+    ],
+    "nativeStabilityDefinitions": {
+      "path": "src/product/catalog/analyses-stability.ts",
+      "baselineBlob": "177923cedd9a829b758c66adc38fece44049bfb4",
+      "workingBlob": "177923cedd9a829b758c66adc38fece44049bfb4",
+      "identical": true
+    },
+    "checks": [
+      {
+        "check": "Preserved original public engines and APIs; source calls existing native numerical boundaries through new product adapters",
+        "pass": true
+      },
+      {
+        "check": "Only explicit independent normal-form maps add mathematical benchmark definitions; no duplicate physical pendulum equation engine",
+        "pass": true
+      },
+      {
+        "check": "Current-driven source retains actual sine/cosine section convention and canonical physical snapshot; phase parity independently tested",
+        "pass": true
+      },
+      {
+        "check": "Branch/solution persistence is new versioned JSON; existing canonical/share/data migration is unchanged",
+        "pass": true
+      },
+      {
+        "check": "Cancellation terminates isolated worker; failures preserve current experiment and last usable artifact",
+        "pass": true
+      },
+      {
+        "check": "Scope contains S20 stability tools only; no S21 queue, later curriculum, migration, cutover, release, merge or dependencies",
+        "pass": true
+      }
+    ],
+    "limitations": [
+      "Qualitative safety review is bounded to the new workflow. It is not a new dependency audit, penetration test, human scientific review or device certification.",
+      "The inputRunId denotes the immutable input experiment snapshot and parent chain, not a claim of a persisted observation run repository (S24)."
+    ]
+  },
+  "formattingOnlyExceptions": [
+    {
+      "path": "tests/product/experiments/science.test.ts",
+      "reason": "Prettier requires the existing two-argument Math.hypot call to occupy one line. Only whitespace inside that already-parenthesized call changed; no assertion, literal, tolerance, test name or token changed.",
+      "baselineBlob": "f7ed2f04ca7ad97050eb8b74d4f56fd777419d08",
+      "workingBlob": "57e02621e5d920e3ea1aa84af4768f73a682fb2e",
+      "scanner": {
+        "implementation": "TypeScript createScanner",
+        "typescriptVersion": "5.9.3",
+        "scriptTarget": "Latest",
+        "languageVariant": "Standard",
+        "skipTrivia": true,
+        "tokenCount": 4055,
+        "baselineTokenSequenceSha256": "2d8ce8b3ef3972da5de9c20ffaf8e8485cebd6293d6194670989cdd43cd6fdef",
+        "workingTokenSequenceSha256": "2d8ce8b3ef3972da5de9c20ffaf8e8485cebd6293d6194670989cdd43cd6fdef",
+        "tokenSequenceIdentical": true
+      },
+      "parser": {
+        "implementation": "TypeScript createSourceFile; recursive kind/child shape with positions/trivia excluded",
+        "baselineAstShapeSha256": "8bad0d9842423acedc820df17c690442b5832fdbe7666bd148f72112c5145224",
+        "workingAstShapeSha256": "8bad0d9842423acedc820df17c690442b5832fdbe7666bd148f72112c5145224",
+        "astShapeIdentical": true,
+        "baselineParseDiagnostics": 0,
+        "workingParseDiagnostics": 0,
+        "mathHypotCalls": [
+          {
+            "argumentCount": 2,
+            "argumentTokenDigests": [
+              "bc0ed6a7871732b664f58f53e43eedc75addaeb11210537753b679cfd40f93a0",
+              "8ba9c6d5e03891a8aa578b99b7925dc7dfd6360064472652d2bfee2b60eac1aa"
+            ]
+          },
+          {
+            "argumentCount": 2,
+            "argumentTokenDigests": [
+              "cafee4df2fc2b9a7b0d9dded0c7b58c7232910a3598c43505f3f5ab7a7939d62",
+              "c3738f6ee4dab263733512323de95f3fbbbd13ee63385464f765657835673070"
+            ]
+          },
+          {
+            "argumentCount": 1,
+            "argumentTokenDigests": [
+              "0276cffe20b9dec50a4b20bea2891856125c66eeadb8e09cf7dec34c7598edb9"
+            ]
+          },
+          {
+            "argumentCount": 1,
+            "argumentTokenDigests": [
+              "7eb11d987693eae6e99f570d46bdc360105f2a055560675a48bfae5c4f8e630c"
+            ]
+          },
+          {
+            "argumentCount": 2,
+            "argumentTokenDigests": [
+              "2be859880c5201206297173238112da5e42e4590a426226cc03bfd789c9ae926",
+              "338f7f948fc0e8f15c33e19e752bd4e5b209dc3de67a2de34d6acdf97b1555e3"
+            ]
+          }
+        ],
+        "callArgumentsIdentical": true
+      },
+      "diff": "diff --git a/tests/product/experiments/science.test.ts b/tests/product/experiments/science.test.ts\nindex f7ed2f0..57e0262 100644\n--- a/tests/product/experiments/science.test.ts\n+++ b/tests/product/experiments/science.test.ts\n@@ -172,10 +172,7 @@ describe('S09 all eight declared scientific observation tasks', () => {\n     const maxError = (run: FocusSnapshot) =>\n       Math.max(\n         ...run.series.map((frame) =>\n-          Math.hypot(\n-            frame.sample.state[0] - frame.linearState![0],\n-            frame.sample.state[1] - frame.linearState![1]\n-          )\n+          Math.hypot(frame.sample.state[0] - frame.linearState![0], frame.sample.state[1] - frame.linearState![1])\n         )\n       );\n     expect(maxError(small)).toBeLessThan(0.01);",
+      "pass": true
+    }
+  ],
+  "passDefinition": "All protected files and old PNGs raw-byte-identical; all old tests byte-identical except the single declared token/AST-equivalent whitespace-only exception; desktop hashes match; only declared old source/status/test paths changed."
+}
