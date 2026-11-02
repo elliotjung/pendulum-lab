@@ -43,3 +43,12 @@
 - CP1을 두 개로 나누어 먼저 독립된 고유해석 adapter를 보존한다. CP1-E는 eigen-contracts/validation/eigen과 전용 test만 포함한다. 나머지 학습/worker/UI 변경은 이 commit에 포함하지 않는다.
 - CP1-E: product eigen 38 + 기존 Arnoldi/Lanczos 7 =45/45, 실패·pending0 (`tmp/s23-cp1-eigen.json`). 전체 typecheck, 해당 ESLint/Prettier exit0. 희소2048차, 복소 잔차, pair 독립성·부족한 pair, 비수렴, malformed/asymmetry/자원 거부, 저장 벡터 재평가와 실제 matvec progress를 검증했다.
 - 독립 검토로 id 숫자 coercion, 저장 native 학습 진단 메타데이터, 작은 조밀 행렬의 숨김 설정, HAVOK 비적용 ridge와 짧아진 reconstruction 표시를 발견했다. CP1-L/CP2에 수정·회귀 검증을 포함한다. 초기 실패 시도는 최종 통과와 구분해 남긴다.
+
+### CP1-E 원격 및 CP1-L
+
+- CP1-E `600f1df7e5edfdcfb244d32cd6719f0b389cebc2` push exit0, ls-remote 정확히 일치. 고유해석 구현만 원격에 있다.
+- CP1-L은 학습5종, 현재 Lab/S22 원본 source, SHA256 lineage·저장/재학습/고정 모델 재평가, 전용 worker/client와 표적 테스트를 포함한다. UI는 CP2다.
+- 최신 통합 표적 `tmp/s23-cp1-combined-passed.json` exit0; 전체 typecheck exit0; 해당 ESLint/Prettier exit0. 수치 script는24/24 항목 통과: 5개 모델의 정확도·held-out 누수·재실행, Arnoldi/Lanczos의 실제 잔차·해석 Laplacian spectrum, 일반 solver의 trace 불변량·2±3i 및-0.5 spectrum. trace를 eigenpair residual로 표시하지 않는다.
+- 미리보기→확정 원본 파일, native 모듈 재사용, 분할 뒤 차분/Hankel, training-only 전처리와 HAVOK basis, source/model/settings/version/seed를 검증한다. 재평가는 native fit/SVD를 호출하지 않는 spy 검증을 포함한다(일반 조밀 spectrum은 명시된 bounded solver replay).
+- DMD/HAVOK spectrum, SINDy/Hamiltonian 잔차·R², reservoir NRMSE/radius와 HAVOK training SVD triplet 잔차도 저장 모델에서 다시 계산한다. 외부 계수·source 물리적 의미는 인증하지 않는다.
+- 초기 실패: -0 fixture와 canonical0 비교, Hamiltonian feature descriptor 순서, 추가 Duffing test의 dt0.02 중앙차분 오차와 singular failure reason 가정. Native 순서에 맞춘 library 검증, dt0.01에서 원래 계수 허용오차 유지, 명시적 오류 거부 검증으로 수정했다. 초기 root/learning JSON은 최종 통과와 별도 보존한다. 기존 assertion/golden/timeout/retry는 수정하지 않았다.
