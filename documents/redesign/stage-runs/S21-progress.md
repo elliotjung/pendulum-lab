@@ -14,8 +14,8 @@
 |---|---|---|---|
 | CP0 | 실행 기록·activeStage | plan/preflight/typecheck | ae9e2ecdd297a2df3f035d8f458bd9210721e5eb push·정확한 remote hash 확인 |
 | CP1 | deterministic builder·queue·worker·artifact | scheduling/concurrency, partial failure, cancel/resume, numerical parity, input guards, typecheck | 0102d42d933327c787dbcd7ed3678c18156d0f4a push·정확한 remote hash 확인 |
-| CP2 | 공용 lazy builder·queue·summary·파일 왕복 UI | component, desktop/mobile keyboard/axe/320px/visual, build | 신규315/315·production26/26·품질10명령 통과; push 준비 |
-| CP3 | 전체 회귀·보존·검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | 대기 |
+| CP2 | 공용 lazy builder·queue·summary·파일 왕복 UI | component, desktop/mobile keyboard/axe/320px/visual, build | 4bd3796ae29f3e7d815fd1908dd338c4dc47447f push·정확한 remote hash 확인 |
+| CP3 | 전체 회귀·보존·검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | candidate-complete; 전체5151/5151·browser40/40 통과, push 준비 |
 | STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 대기 |
 
 예정 경로: src/product/lab/experiments/, 공용 lab 통합 경계, css/product/experiments.css, tests/product/lab/experiments/, e2e/redesign/batch-experiments*, documents/redesign/.
@@ -62,3 +62,15 @@ checkpoint 검증 후 명시적 경로만 stage하고 origin/codex/redesign에 p
 - provisional26의 snapshot 정책은 기본 missing이었다. 새 PNG4개는 최초 생성 때의 actual PNG와 SHA256이 모두 같아 실제 갱신0이었다. 최종 native-LHS production build는 tmp/s21-build-final2.log exit0이며, 최종26개와 기존 대표14개는 명시적 update-snapshots=none으로 검사한다.
 - 최종 production 신규26/26(Chromium13·Pixel5 13), unexpected/skip/flaky/runner error0, retries0·원래30초 timeout·명시적 snapshot update none으로 exit0 통과했다. 실행155.847초. 200-run 실제 worker 취소·파일 복원·재개와 완료 run 불변, 실패 재실행, seed 일치, 저장 snapshot의 독립 실행, 접근성/keyboard/320px/200% 확대를 확인했다. tmp/s21-browser-final2.json에 기록했다.
 - 최종 코드의10개 품질 명령(typecheck/lint/format/module-size/plan/catalog/Learn/inventory/golden/secrets)은 모두exit0이다. secret scan은 이 시점의 tracked 파일 범위이며 UI를 push한 뒤 새 tracked 파일을 포함해 다시 기록한다. 보호286파일·기존 test/fixture410개·기존 PNG208개 및 바탕화면 전달본2개의 정확한 바이트/해시 일치를 확인했다.
+- CP2 push exit0, local HEAD와 git ls-remote 모두4bd3796ae29f3e7d815fd1908dd338c4dc47447f로 확인했다. nextStage21·lastCompleted20을 유지한 candidate-complete 상태에서 전체 Vitest와 기존 browser14개를 확인한다.
+
+## CP3 최종 gate
+
+- 새 S21 scheduling 회귀의 완료 순서를 wall-clock의3–12ms 지연 대신 microtask gate로 역순 제어하도록 바꿨다. 실행량·native 결과·동시 실행 제한·seed 비교 assertion은 유지한다. CP2 push 직후의 이 새 test 전용 개선은 CP3에서 전체 검증하고 별도로 보존한다. 기존 테스트/fixture410개는 그대로다.
+- 같은 최종 production build의 기존 S18/S19/S20 대표14/14도 exit0 통과했다. 신규26개와 합쳐40/40, 실패·skip·flaky·runner error0, retries0·snapshot update none·원래30초 timeout이다. tmp/s21-browser-legacy-final2.json과 tmp/s21-browser-final2.json을 확인했다.
+- CP2 원격 구현을 기준으로 최종 수치 측정10/10을 생성했다. 256run·동시 최대4·취소 전 완료10개 보존·미완료 재실행·종점 오차0·전체 파일 왕복·native LHS32개 층화가 통과했다. 주입 비동기 executor orchestration896.5355ms이며 browser latency나 장치 throughput으로 해석하지 않는다. S21-numerical-metrics.json에 실제 측정과 한계를 기록했다.
+- S21-preservation.json에서 보호286파일, 기존 test/fixture410개, 기존 PNG208개 모두 원래 Git blob과 정확히 일치했다. 두 바탕화면 전달본의 SHA256도 저장소 원본과 일치한다. 원본 roadmap 문서를 변경하지 않아 복사는 필요하지 않았다.
+- 전체 Vitest는333파일5151/5151, 실패·pending0, exit0으로 통과했다. 기존4836개와 신규315개이며, UTC2026-11-02T04:54:00.572Z–04:55:56.447Z에 실행했다. 새 test의 역순 microtask gate까지 같은 전체 run에 포함했다. 테스트 timeout·retry·원래 golden·기존 assertion을 바꾸지 않았다.
+- 마지막 전체 실행 후 typecheck도exit0으로 확인했다. 새 test/측정 script의 scoped ESLint·Prettier·diff 검사가 통과했다. 최종 production build/10개 품질 명령/40browser·수치10개와 함께 S21-verification.json에 command·건수·환경·hash·실패 이력을 기록했다.
+- CP2 push 후 CP3 source/측정 경로를 stage하고 tracked1810/text1592개 known-pattern secret scan에서 finding0을 확인했다. 이 검사는 최종 verification JSON 생성 전이며 history·ignored·binary·외부 서비스는 제외다. 패키지 변경·새 dependency audit·보안 위험 수용은 없다. S01 high2/moderate2·CodeQL32는 미해결이며 CP2 GitHub 기본 branch 알림22(12high/7moderate/3low)는 별도 관측이다.
+- approved review gates[7,9,17]와 Learn 사람 검토 상태는 그대로다. 사람의 과학 검토를 수행하지 않았다. 실제 기기·Firefox/WebKit·screen-reader 음성은 미검증이다. 원래 app.html과 S20 4158b6b를 복구 기준으로 보존했다. S22 이후 구현·master merge·force push·tag·release·cutover는 하지 않았다.

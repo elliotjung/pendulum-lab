@@ -1,0 +1,532 @@
+{
+  "schemaVersion": "pendulum-S21-verification/v1",
+  "stage": 21,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-02T04:57:22.667Z",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "Implementation/evidence pushed before a separate completion status commit; no remote completion inferred from local tests.",
+  "git": {
+    "baselineCommit": "4158b6b293883c2558519ecf9e0c7bccaf199798",
+    "branch": "codex/redesign",
+    "implementationHead": "4bd3796ae29f3e7d815fd1908dd338c4dc47447f",
+    "remoteTrackingHead": "4bd3796ae29f3e7d815fd1908dd338c4dc47447f",
+    "verifiedCheckpoints": {
+      "CP0": "ae9e2ecdd297a2df3f035d8f458bd9210721e5eb",
+      "CP1": "0102d42d933327c787dbcd7ed3678c18156d0f4a",
+      "CP2": {
+        "checkpoint": "CP2",
+        "commit": "4bd3796ae29f3e7d815fd1908dd338c4dc47447f",
+        "remoteHead": "4bd3796ae29f3e7d815fd1908dd338c4dc47447f",
+        "pushExitCode": 0,
+        "verifiedAtUtc": "2026-11-02T04:52:44.0339374Z"
+      }
+    },
+    "dependencyStatus": "S01-S20 contiguous completed status; all twenty progress records exist and twenty separate completion commits occur in redesign history."
+  },
+  "scope": {
+    "builders": [
+      "paired",
+      "grid",
+      "log",
+      "lhs",
+      "ensemble",
+      "integrators"
+    ],
+    "systems": 35,
+    "nativeBuilderMatrixPairs": 210,
+    "engine": "All physical propagation/evaluation delegates to preserved native product physics adapters; LHS directly calls preserved research latinHypercube.",
+    "queue": "Run-boundary resume, immutable canonical inputs and design/native seeds, original-order aggregates, bounded concurrency, partial failures and selected/all failed-run retry.",
+    "provenance": "Input snapshot -> batch plan -> child runs -> aggregate; a self-contained file, not S24 project storage.",
+    "methods": "Actual canonical adapter support (Euler/RK2/RK4 where accepted); internal steppers refuse comparison with an explanation.",
+    "preservedLegacyDifferences": "Existing runExpansionSuite additional methods, ghost/bifurcation/optional Lyapunov/ranking and energyDriftProfile trend/R2/secular classification remain preserved legacy APIs and are not exposed by this new summary UI. S28 full feature parity is not claimed.",
+    "importedNumericalClaims": "Closed schema/version, physical input, native result shape/units, counts, lineage and derived aggregate are checked; external numerical claims are not rerun or authenticated."
+  },
+  "validation": {
+    "profile": "E+U: D/C, native parity and worker cancel/error/inactivity guards, desktop/mobile production journeys, keyboard/axe/reflow/zoom/visual.",
+    "vitest": {
+      "path": "tmp/s21-full-vitest-final.json",
+      "bytes": 1969540,
+      "sha256": "3741b1373079fee3b6ce5b18f8df2a01ba7a72014a88d1dc9c181e463f6fa499",
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/s21-full-vitest-final.json",
+      "passed": 5151,
+      "total": 5151,
+      "failed": 0,
+      "pending": 0,
+      "files": 333,
+      "newTests": 315,
+      "newFiles": 6,
+      "newFileDetails": [
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/axis-fields.test.ts",
+          "passed": 10
+        },
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/client.test.ts",
+          "passed": 14
+        },
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/core.test.ts",
+          "passed": 21
+        },
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/native-parity.test.ts",
+          "passed": 5
+        },
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/review-regressions.test.ts",
+          "passed": 3
+        },
+        {
+          "path": "C:/Users/junge/Desktop/pendulum_lab_modular/tests/product/lab/experiments/review-science.test.ts",
+          "passed": 262
+        }
+      ],
+      "log": {
+        "path": "tmp/s21-full-vitest-final.log",
+        "bytes": 233,
+        "sha256": "77a722bcafd098b35f2ed30065e784194dc9bcc57226cd9d280b2f0d27f0317e"
+      }
+    },
+    "cp1Targeted": {
+      "path": "tmp/s21-cp1-vitest.json",
+      "bytes": 130672,
+      "sha256": "8b24ffebb9476c94d741c3fe88b5aa4b93f0a9c0b03d6ac20ba711900ae2205a",
+      "passed": 313,
+      "total": 313,
+      "meaning": "CP1 new300 plus unchanged numerical golden13; CP2 adds15 tests, all included in final whole suite."
+    },
+    "quality": [
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-typecheck.log",
+        "startedAtUtc": "2026-11-02T04:48:14.5051719Z",
+        "finishedAtUtc": "2026-11-02T04:48:41.7706678Z",
+        "evidence": {
+          "path": "tmp/s21-quality-typecheck.log",
+          "bytes": 66,
+          "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87"
+        }
+      },
+      {
+        "command": "npm run lint",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-lint.log",
+        "startedAtUtc": "2026-11-02T04:48:41.8106509Z",
+        "finishedAtUtc": "2026-11-02T04:49:24.9583694Z",
+        "evidence": {
+          "path": "tmp/s21-quality-lint.log",
+          "bytes": 339,
+          "sha256": "61286105c7e41974d5fcaa5b07868bbf6c7fb2548415e7d70df129f8ac592430"
+        }
+      },
+      {
+        "command": "npm run format:check",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-format-check.log",
+        "startedAtUtc": "2026-11-02T04:49:24.9684150Z",
+        "finishedAtUtc": "2026-11-02T04:49:47.6284062Z",
+        "evidence": {
+          "path": "tmp/s21-quality-format-check.log",
+          "bytes": 175,
+          "sha256": "7f4c49d5c04df21bee771baac7c611d0ca94ee4fd27a2ecfbb9aa472de110eb4"
+        }
+      },
+      {
+        "command": "npm run audit:modules",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-audit-modules.log",
+        "startedAtUtc": "2026-11-02T04:49:47.6326747Z",
+        "finishedAtUtc": "2026-11-02T04:49:49.9196183Z",
+        "evidence": {
+          "path": "tmp/s21-quality-audit-modules.log",
+          "bytes": 167,
+          "sha256": "6d2193cbf0567182c9dbd3c9ff16360a52299c3f8a25e39950302792809e3904"
+        }
+      },
+      {
+        "command": "npm run redesign:check",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-check.log",
+        "startedAtUtc": "2026-11-02T04:49:49.9256709Z",
+        "finishedAtUtc": "2026-11-02T04:49:51.8610624Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-check.log",
+          "bytes": 158,
+          "sha256": "0c1687cd729fb34b9e9065f207a82ead5198292c875bd8e96290a346b548c40b"
+        }
+      },
+      {
+        "command": "npm run redesign:catalog:check",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-catalog-check.log",
+        "startedAtUtc": "2026-11-02T04:49:51.8645675Z",
+        "finishedAtUtc": "2026-11-02T04:49:54.7229979Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-catalog-check.log",
+          "bytes": 258,
+          "sha256": "1f4f72f397f9e7d539061746a2cf7bdc5d27ef1655901530abbe309c1e924d35"
+        }
+      },
+      {
+        "command": "npm run redesign:learn:check",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-learn-check.log",
+        "startedAtUtc": "2026-11-02T04:49:54.7245456Z",
+        "finishedAtUtc": "2026-11-02T04:49:57.0185734Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-learn-check.log",
+          "bytes": 214,
+          "sha256": "0989231ce32a57674cab68f1582ef8569554468dd50899ed20b0cadd6c5b9af1"
+        }
+      },
+      {
+        "command": "npm run redesign:inventory:check",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-inventory-check.log",
+        "startedAtUtc": "2026-11-02T04:49:57.0203747Z",
+        "finishedAtUtc": "2026-11-02T04:50:06.2292576Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-inventory-check.log",
+          "bytes": 1139,
+          "sha256": "9f374b693915ee8d2809dcc800fc4842de43ba436d0e86e8b9a0bde9ca54b3aa"
+        }
+      },
+      {
+        "command": "npm run redesign:golden",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-golden.log",
+        "startedAtUtc": "2026-11-02T04:50:06.2339768Z",
+        "finishedAtUtc": "2026-11-02T04:50:09.2433162Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-golden.log",
+          "bytes": 356,
+          "sha256": "8ce8c1ee8c92a97e89955f54b2373f48a5d1104e2a9b3dab0e1d0107f13c298e"
+        }
+      },
+      {
+        "command": "npm run redesign:secrets",
+        "exitCode": 0,
+        "log": "tmp/s21-quality-redesign-secrets.log",
+        "startedAtUtc": "2026-11-02T04:50:09.2473402Z",
+        "finishedAtUtc": "2026-11-02T04:50:13.5410224Z",
+        "evidence": {
+          "path": "tmp/s21-quality-redesign-secrets.log",
+          "bytes": 21536,
+          "sha256": "f8df5791e9d7b1d95616e08d17869de03144b0865e75415683928bb637dc2ecc"
+        }
+      }
+    ],
+    "finalTypecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/s21-typecheck-post-full.log",
+        "bytes": 66,
+        "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87"
+      }
+    },
+    "build": {
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/s21-build-final2.log",
+        "bytes": 10298,
+        "sha256": "fbdfec47aa465163052a5c7cfc81a39ef0f2f267ea0184cd57e7ff22dd0960de"
+      }
+    },
+    "browser": {
+      "path": "tmp/s21-browser-final2.json",
+      "bytes": 37973,
+      "sha256": "11a74f40fcf7b75f303ac165b8d94f46af1ac98c98726a811a296b2d8b7b2741",
+      "stats": {
+        "startTime": "2026-11-02T04:48:11.574Z",
+        "duration": 155847.414,
+        "expected": 26,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": [],
+      "actualProjects": {
+        "chromium": 13,
+        "mobile-chrome": 13
+      },
+      "config": {
+        "updateSnapshots": "none",
+        "retries": [
+          {
+            "name": "chromium",
+            "retries": 0,
+            "timeout": 30000
+          },
+          {
+            "name": "mobile-chrome",
+            "retries": 0,
+            "timeout": 30000
+          }
+        ],
+        "webServer": {
+          "command": "npm run preview -- --port 5192 --strictPort",
+          "url": "http://127.0.0.1:5192/app.html",
+          "reuseExistingServer": true,
+          "timeout": 120000
+        }
+      },
+      "totalPassed": 26
+    },
+    "legacyBrowser": {
+      "path": "tmp/s21-browser-legacy-final2.json",
+      "bytes": 23793,
+      "sha256": "8c9311b2f7c9bd3b23e0c636de0d151fb273cbf53774c9350461da4ed0dbd94d",
+      "stats": {
+        "startTime": "2026-11-02T04:51:15.771Z",
+        "duration": 105494.11499999999,
+        "expected": 14,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "errors": [],
+      "actualProjects": {
+        "chromium": 7,
+        "mobile-chrome": 7
+      },
+      "snapshotPolicy": "none",
+      "totalPassed": 14
+    },
+    "combinedBrowserPassed": 40,
+    "visual": {
+      "newPngs": 4,
+      "baselineProof": {
+        "path": "tmp/s21-visual-baseline-proof.json",
+        "bytes": 2101,
+        "sha256": "c8c49d4bc4e3ec2225f96d399b28094744512590f93202d9985759de73b9da00"
+      },
+      "finalUpdates": 0,
+      "manuallyInspected": true
+    },
+    "numeric": {
+      "path": "documents/redesign/stage-runs/S21-numerical-metrics.json",
+      "bytes": 1486,
+      "sha256": "f3400189e93b13d95655467d01c5ba787894a07e659dab869c993b8a46601db8",
+      "passed": 10,
+      "total": 10,
+      "checks": {
+        "exactly256Runs": true,
+        "boundedConcurrency": true,
+        "completedRunsPreserved": true,
+        "noFailures": true,
+        "exactNativeEndpoint": true,
+        "savedCancellationRoundtrip": true,
+        "aggregateLineage": true,
+        "fullResultRoundtrip": true,
+        "exactlyOneSamplePerStratum": true,
+        "repeatedSeedIdenticalPlan": true
+      },
+      "measurements": {
+        "runs": 256,
+        "maximumActive": 4,
+        "callsIncludingInterrupted": 260,
+        "completedBeforeCancel": 10,
+        "maximumNativeEndpointError": 0,
+        "elapsedMs": 896.5355,
+        "cancellationFileBytes": 534292,
+        "completedFileBytes": 916233,
+        "lhsStrata": [
+          21,
+          8,
+          11,
+          10,
+          15,
+          7,
+          5,
+          2,
+          17,
+          27,
+          4,
+          3,
+          16,
+          18,
+          12,
+          13,
+          30,
+          14,
+          25,
+          22,
+          1,
+          6,
+          9,
+          31,
+          0,
+          28,
+          23,
+          29,
+          24,
+          20,
+          26,
+          19
+        ]
+      }
+    },
+    "golden": {
+      "passed": 13,
+      "total": 13,
+      "unchanged": true
+    },
+    "preservation": {
+      "path": "documents/redesign/stage-runs/S21-preservation.json",
+      "bytes": 295311,
+      "sha256": "3016ccbe5498e36c8f90ea5b00fed5b0a837b59f857838bf5af3d5caae42ed4b",
+      "protected": 286,
+      "historicalTestsAndFixtures": 410,
+      "historicalPng": 208,
+      "mismatches": [],
+      "desktopCopies": [
+        {
+          "source": "documents/redesign/master-roadmap-ko.md",
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+          "sourceSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+          "destinationSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+          "equal": true
+        },
+        {
+          "source": "documents/redesign/execution-plan-ko.md",
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+          "sourceSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+          "destinationSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+          "equal": true
+        }
+      ]
+    },
+    "historicalAttempts": [
+      {
+        "path": "tmp/s21-dev-first-artifacts",
+        "reason": "Development CSP inline CSS and concurrently unfinished lazy module; excluded from completion evidence."
+      },
+      {
+        "path": "tmp/s21-browser-initial.json",
+        "bytes": 53547,
+        "sha256": "b65b7218326e6dca4499b57f8fb578f1b8f0d56f29933daa880635bdca77b2d6",
+        "stats": {
+          "startTime": "2026-11-02T04:35:00.672Z",
+          "duration": 227868.81100000002,
+          "expected": 21,
+          "skipped": 0,
+          "unexpected": 3,
+          "flaky": 0
+        },
+        "reason": "Provisional build: LHS helper edited hidden per-axis count; mobile200 completion was asserted before actual completion. New test helper waits on real completion; timeout/retry unchanged."
+      },
+      {
+        "path": "tmp/s21-browser-final.json",
+        "bytes": 49583,
+        "sha256": "21f25bfd9a321620fabd9dfacdf512c4fcfca6ba50e1715151124b7f6860fcfd",
+        "stats": {
+          "startTime": "2026-11-02T04:43:43.793Z",
+          "duration": 201808.252,
+          "expected": 24,
+          "skipped": 0,
+          "unexpected": 2,
+          "flaky": 0
+        },
+        "reason": "New test incorrectly expected an immutable valid prepared plan to be disabled by invalid unrelated live input; corrected test verifies independent valid snapshot and input preservation. App code unchanged for this correction."
+      }
+    ]
+  },
+  "limits": {
+    "runs": 512,
+    "concurrency": 4,
+    "axes": 3,
+    "stepsPerRun": 100000,
+    "observedDimension": 512,
+    "totalEstimatedWork": 4000000,
+    "artifactBytes": 16777216,
+    "workerInactivityMs": 30000,
+    "semantics": "Intermediate interrupted run restarts from original input/seed, not an internal stochastic cursor; arithmetic retained-sample summaries, not time-weighted means or confidence intervals."
+  },
+  "security": {
+    "dependencyChanges": false,
+    "freshDependencyAudit": false,
+    "knownInheritedRisks": "S01 local high2/moderate2 and CodeQL32 remain unresolved; no new risk acceptance.",
+    "githubDefaultBranchPushNotice": "Observed22 (high12/moderate7/low3) in CP2 push notice; not a fresh local redesign dependency audit.",
+    "trackedTextSecretScan": {
+      "path": "tmp/s21-secrets-post-push.log",
+      "bytes": 21912,
+      "sha256": "d2b52ecf1b908631ebe9ba1ac57c41b9cd1d84b6c9002126a46094935a127e51"
+    },
+    "scanScope": "After CP2 push and staging CP3 sources/measurements; before generation of this verification JSON.",
+    "scanLimits": "Known patterns only; Git history, ignored files, binary contents and external services excluded."
+  },
+  "review": {
+    "approvedUserGates": [
+      7,
+      9,
+      17
+    ],
+    "userGateRequiredForS21": false,
+    "nextUserGate": 24,
+    "humanScientificReviewPerformed": false,
+    "learnHumanReviewStateUnchanged": true,
+    "independentAutomatedReview": "Three concrete P2 reproductions fixed and added as permanent tests: native partial step count, signed-zero Floquet transport, exact upper log endpoint."
+  },
+  "limitations": [
+    "Legacy suite/profile differences are explicit; full S28 parity has not been certified.",
+    "Raw trajectories are not stored in the compact batch file.",
+    "Physical devices, Firefox/WebKit and screen-reader audio are unverified.",
+    "Security findings from earlier stages remain for the planned security gate."
+  ],
+  "changedFiles": [
+    "css/product/experiments.css",
+    "documents/redesign/batch-experiments-ko.md",
+    "documents/redesign/stage-runs/S21-numerical-metrics.json",
+    "documents/redesign/stage-runs/S21-preservation.json",
+    "documents/redesign/stage-runs/S21-progress.md",
+    "documents/redesign/stage-runs/S21-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/batch-experiments.spec.ts",
+    "e2e/redesign/batch-experiments.spec.ts-snapshots/s21-batch-dark-chromium-win32.png",
+    "e2e/redesign/batch-experiments.spec.ts-snapshots/s21-batch-dark-mobile-chrome-win32.png",
+    "e2e/redesign/batch-experiments.spec.ts-snapshots/s21-batch-light-chromium-win32.png",
+    "e2e/redesign/batch-experiments.spec.ts-snapshots/s21-batch-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-batch-workflow.ts",
+    "scripts/redesign/verify-stage-preservation.mjs",
+    "src/product/lab/experiments/aggregate.ts",
+    "src/product/lab/experiments/artifact.ts",
+    "src/product/lab/experiments/batch.worker.ts",
+    "src/product/lab/experiments/builders.ts",
+    "src/product/lab/experiments/client.ts",
+    "src/product/lab/experiments/contracts.ts",
+    "src/product/lab/experiments/execute.ts",
+    "src/product/lab/experiments/metadata.ts",
+    "src/product/lab/experiments/panel.ts",
+    "src/product/lab/experiments/queue.ts",
+    "src/product/lab/experiments/result-view.ts",
+    "src/product/lab/experiments/safe.ts",
+    "src/product/lab/experiments/settings.ts",
+    "src/product/lab/experiments/validation.ts",
+    "src/product/lab/experiments/view.ts",
+    "src/product/lab/views/chain-workspace.ts",
+    "src/product/lab/views/constraint-workspace.ts",
+    "src/product/lab/views/core-workspace.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "src/product/lab/views/discrete-workspace.ts",
+    "src/product/lab/views/driven-workspace.ts",
+    "src/product/lab/views/field-workspace.ts",
+    "src/product/lab/views/network-workspace.ts",
+    "src/product/lab/views/nonlinear-workspace.ts",
+    "src/product/lab/views/spatial-workspace.ts",
+    "tests/product/lab/experiments/axis-fields.test.ts",
+    "tests/product/lab/experiments/client.test.ts",
+    "tests/product/lab/experiments/core.test.ts",
+    "tests/product/lab/experiments/native-parity.test.ts",
+    "tests/product/lab/experiments/review-regressions.test.ts",
+    "tests/product/lab/experiments/review-science.test.ts"
+  ],
+  "rollback": {
+    "baselineCommit": "4158b6b293883c2558519ecf9e0c7bccaf199798",
+    "legacyEntry": "app.html",
+    "automaticResetOrMigrationPerformed": false
+  },
+  "nextValidStage": 22
+}

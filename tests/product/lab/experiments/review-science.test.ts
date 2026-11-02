@@ -376,26 +376,38 @@ describe('S21 independent native endpoint and interpretation review', () => {
         concurrency
       });
       let active = 0,
-        maximum = 0;
+        maximum = 0,
+        flushQueued = false;
       const order: number[] = [];
+      const pending: { index: number; settle(): void }[] = [];
       const queue = createBatchQueue(plan, {
         executor(request, event) {
           active++;
           maximum = Math.max(maximum, active);
           let settled = false;
-          const timer = setTimeout(
-            () => {
+          pending.push({
+            index: request.run.index,
+            settle() {
+              if (settled) return;
               const result = executeBatchRun(request);
               active--;
               settled = true;
               order.push(request.run.index);
               event({ type: 'result', id: request.run.id, result });
-            },
-            (4 - (request.run.index % 4)) * 3
-          );
+            }
+          });
+          if (!flushQueued) {
+            flushQueued = true;
+            queueMicrotask(() => {
+              flushQueued = false;
+              pending
+                .splice(0)
+                .sort((a, b) => b.index - a.index)
+                .forEach((entry) => entry.settle());
+            });
+          }
           return {
             dispose() {
-              clearTimeout(timer);
               if (!settled) {
                 settled = true;
                 active--;
