@@ -14,8 +14,8 @@
 
 | ID | 내용 | 필수 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 진행 |
-| CP1 | 학습·고유해석 계약/adapter, lineage 파일, worker | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | 대기 |
+| CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 완료·원격 확인 |
+| CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | CP1-E 검증 완료 / CP1-L 검증 중 |
 | CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 대기 |
 | CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | 대기 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 대기 |
@@ -35,3 +35,11 @@
 ## 실행 증거
 
 - CP0: plan check exit0; preflight23 exit0 (확장 권한); local/remote 89850497ce94a0bd68307ec43437c9c93f4c1168.
+
+
+### CP0 원격 및 CP1-E
+
+- CP0 commit `7e3c7cfe34f5bcb8d725f1f854b64be241d966f8`; push exit0, ls-remote 정확히 일치했다. 기본 branch의 취약점 알림 22개(12 high/7 moderate/3 low)는 기존 부채와 별도 관측이며 새 audit나 위험 수락이 아니다.
+- CP1을 두 개로 나누어 먼저 독립된 고유해석 adapter를 보존한다. CP1-E는 eigen-contracts/validation/eigen과 전용 test만 포함한다. 나머지 학습/worker/UI 변경은 이 commit에 포함하지 않는다.
+- CP1-E: product eigen 38 + 기존 Arnoldi/Lanczos 7 =45/45, 실패·pending0 (`tmp/s23-cp1-eigen.json`). 전체 typecheck, 해당 ESLint/Prettier exit0. 희소2048차, 복소 잔차, pair 독립성·부족한 pair, 비수렴, malformed/asymmetry/자원 거부, 저장 벡터 재평가와 실제 matvec progress를 검증했다.
+- 독립 검토로 id 숫자 coercion, 저장 native 학습 진단 메타데이터, 작은 조밀 행렬의 숨김 설정, HAVOK 비적용 ridge와 짧아진 reconstruction 표시를 발견했다. CP1-L/CP2에 수정·회귀 검증을 포함한다. 초기 실패 시도는 최종 통과와 구분해 남긴다.
