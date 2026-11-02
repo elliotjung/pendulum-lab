@@ -15,8 +15,8 @@
 | CP0 | 실행 기록·activeStage | plan/preflight/typecheck | ae9e2ecdd297a2df3f035d8f458bd9210721e5eb push·정확한 remote hash 확인 |
 | CP1 | deterministic builder·queue·worker·artifact | scheduling/concurrency, partial failure, cancel/resume, numerical parity, input guards, typecheck | 0102d42d933327c787dbcd7ed3678c18156d0f4a push·정확한 remote hash 확인 |
 | CP2 | 공용 lazy builder·queue·summary·파일 왕복 UI | component, desktop/mobile keyboard/axe/320px/visual, build | 4bd3796ae29f3e7d815fd1908dd338c4dc47447f push·정확한 remote hash 확인 |
-| CP3 | 전체 회귀·보존·검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | candidate-complete; 전체5151/5151·browser40/40 통과, push 준비 |
-| STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 대기 |
+| CP3 | 전체 회귀·보존·검증 보고서 | 전체 Vitest, E/U, 품질·보존 검사 | c4f7c8de94591f92e663b7812efe150b4af89883 push·정확한 remote hash 확인 |
+| STATUS | 구현 원격 확인 후 완료 metadata | 별도 commit/push·정확한 remote hash | 최종 검증 통과; 별도 status commit의 원격 존재가 완료 기준 |
 
 예정 경로: src/product/lab/experiments/, 공용 lab 통합 경계, css/product/experiments.css, tests/product/lab/experiments/, e2e/redesign/batch-experiments*, documents/redesign/.
 
@@ -74,3 +74,9 @@ checkpoint 검증 후 명시적 경로만 stage하고 origin/codex/redesign에 p
 - 마지막 전체 실행 후 typecheck도exit0으로 확인했다. 새 test/측정 script의 scoped ESLint·Prettier·diff 검사가 통과했다. 최종 production build/10개 품질 명령/40browser·수치10개와 함께 S21-verification.json에 command·건수·환경·hash·실패 이력을 기록했다.
 - CP2 push 후 CP3 source/측정 경로를 stage하고 tracked1810/text1592개 known-pattern secret scan에서 finding0을 확인했다. 이 검사는 최종 verification JSON 생성 전이며 history·ignored·binary·외부 서비스는 제외다. 패키지 변경·새 dependency audit·보안 위험 수용은 없다. S01 high2/moderate2·CodeQL32는 미해결이며 CP2 GitHub 기본 branch 알림22(12high/7moderate/3low)는 별도 관측이다.
 - approved review gates[7,9,17]와 Learn 사람 검토 상태는 그대로다. 사람의 과학 검토를 수행하지 않았다. 실제 기기·Firefox/WebKit·screen-reader 음성은 미검증이다. 원래 app.html과 S20 4158b6b를 복구 기준으로 보존했다. S22 이후 구현·master merge·force push·tag·release·cutover는 하지 않았다.
+
+## 완료 status gate
+
+- CP3 push exit0, local HEAD와 git ls-remote 모두c4f7c8de94591f92e663b7812efe150b4af89883로 확인했다. clean tree에서 redesign:preflight -- 21과 plan check가exit0으로 통과했다.
+- 이 마지막 변경은 progress/status 두 파일이다. lastCompleted21/next22, completed1..21, active/checkpoint null을 기록한다. 이전 구현·증거 commit은 모두 원격에 있다. 이 별도 status commit을 push하고 정확한 원격 hash를 확인하기 전에는 완료가 아니다.
+- 최종 보고는 실제 status commit hash와 push 결과를 제공한다. S21은 사용자 review gate가 아니며 다음 유효 요청은 “22단계 실행해줘.”다. S28 전체 parity와 사람의 과학 검토를 완료했다고 주장하지 않는다.
