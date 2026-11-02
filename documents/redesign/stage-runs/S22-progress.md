@@ -17,7 +17,7 @@
 | CP0 | 범위·보존·진행 기록 | plan/preflight22/typecheck | 완료·원격 확인 |
 | CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 완료·원격 확인 |
 | CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 완료·원격 확인 |
-| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | candidate-complete·검증 완료 |
+| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | 완료·원격 확인 |
 | STATUS | 별도 완료 상태 commit | 원격 HEAD 정확한 일치 | 대기 |
 
 변경 예정 경로: `src/product/observations/`, `src/product/adapters/analysis/inverse/`, `src/product/lab/research/`, 공유 diagnostics 연결, 전용 CSS, 관련 `tests/product/`와 `e2e/redesign/`, S22 문서/검증 증거. 각 checkpoint에서 명시적 경로만 stage한다.
@@ -72,3 +72,9 @@
 - `S22-verification.json`에 command·실제 건수·실행 환경·원격 구현·원본/로그/PNG SHA256·실패한 provisional 이력과 한계를 기록했다. 새로운 버전의 package/lockfile, 물리 golden, 기존 fixture·테스트·PNG를 생성하거나 대체하지 않았다.
 - 승인 gate는[7,9,17], Learn 검토 상태는 그대로다. 사람의 과학 검토·실물 기기·Firefox/WebKit·screen-reader 음성은 수행한 것으로 표시하지 않는다. 기존 S01 보안 부채(high2/moderate2·CodeQL32)와 GitHub 기본 branch 관측22개(12high/7moderate/3low)는 미해결이며 구별한다.
 - rollback 기준은 S21 `3a09c3f`와 보존한 `app.html`이다. S23 이후 구현·master merge·force push·tag·release·cutover를 실행하지 않았다. 이 증거 checkpoint를 push한 뒤 clean-tree preflight22를 확인하고 별도 status commit으로만 lastCompleted22/next23을 갱신한다.
+
+## 별도 완료 status gate
+
+- CP3 commit/push exit0, local HEAD와 `git ls-remote` 모두 `5312dd9e210aebcdb9f328a6c90d93f152459aac`로 확인했다. 구현·증거가 모두 원격에 있는 clean tree에서 `redesign:preflight -- 22`와 `redesign:check`가 exit0이다.
+- 마지막 변경 경로는 progress/status 두 파일이다. lastCompleted22/next23, completed1..22, blocked/active/checkpoint null을 기록한다. 승인 gate[7,9,17]와 실행 프로필은 그대로다. 변경 후 plan check도 exit0이다.
+- 이 별도 status commit의 push와 정확한 원격 HEAD 확인 전에는 S22 완료가 아니다. 최종 보고에서 실제 status commit hash와 push 결과를 제공한다. 다음 유효 입력은 “23단계 실행해줘.”이며 S22 사용자 checkpoint나 사람의 과학 검토를 수행한 것으로 표시하지 않는다.
