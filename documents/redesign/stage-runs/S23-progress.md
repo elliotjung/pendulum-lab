@@ -15,8 +15,8 @@
 | ID | 내용 | 필수 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 완료·원격 확인 |
-| CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | CP1-E 검증 완료 / CP1-L 검증 중 |
-| CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 대기 |
+| CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | 완료·원격 확인 |
+| CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 검증 완료·push 대기 |
 | CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | 대기 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 대기 |
 
@@ -52,3 +52,13 @@
 - 미리보기→확정 원본 파일, native 모듈 재사용, 분할 뒤 차분/Hankel, training-only 전처리와 HAVOK basis, source/model/settings/version/seed를 검증한다. 재평가는 native fit/SVD를 호출하지 않는 spy 검증을 포함한다(일반 조밀 spectrum은 명시된 bounded solver replay).
 - DMD/HAVOK spectrum, SINDy/Hamiltonian 잔차·R², reservoir NRMSE/radius와 HAVOK training SVD triplet 잔차도 저장 모델에서 다시 계산한다. 외부 계수·source 물리적 의미는 인증하지 않는다.
 - 초기 실패: -0 fixture와 canonical0 비교, Hamiltonian feature descriptor 순서, 추가 Duffing test의 dt0.02 중앙차분 오차와 singular failure reason 가정. Native 순서에 맞춘 library 검증, dt0.01에서 원래 계수 허용오차 유지, 명시적 오류 거부 검증으로 수정했다. 초기 root/learning JSON은 최종 통과와 별도 보존한다. 기존 assertion/golden/timeout/retry는 수정하지 않았다.
+
+
+### CP1-L 원격 및 CP2
+
+- CP1-L `fe06238f3797e03b9469bff68e739cd6e894e58e` push exit0, ls-remote 정확히 일치. 통합 표적129/129, 수치24/24이며 별도 agent 재검토66/66도 통과했다. 이 검토는 사람의 과학 검토가 아니다.
+- CP2: lazy Lab 데이터 모델 패널, 학습/연산자 입력, preview→채택, 재학습/저장 모델 재평가, 진단·rollout 표/그림, 경고·진행·오류·취소와 결과 다운로드를 연결한다. 기존 diagnostics 연결은6줄 diff이며 기존 패널 계약은 유지한다.
+- 실제 production Chromium/Pixel5 여정26/26 (`tmp/s23-browser-final.json`), 실패·skip·flaky·runner error0. 원래30초 timeout/retries0 유지. 이 run의 실제 snapshot policy는 기본값 missing이며 준비된4개 기준 이미지가 존재했다. 이후 visual2/2를 명시적 --update-snapshots=none으로 비교했다 (`tmp/s23-visual-final.json`); 기준 이미지의 전후 hash도 별도 확인한다.
+- 최신 production build (`tmp/s23-build-ui.log`), 전체 typecheck (`tmp/s23-cp2-typecheck.log`), 전용 ESLint/Prettier exit0. 320px·200% zoom·키보드 및 axe가 통과했다. 새 light/dark desktop/mobile PNG4개는 개별 시각 확인했다. 좁은 화면 metrics 줄바꿈과 짧은 ID 표시를 개선했고 full ID는 펼침 기록/파일에 보존했다.
+- 작은2×2 일반 복소 고유값, 희소64차 Lanczos, eigen 채택 후 기존 학습 데이터의 보이는 요약, HAVOK 비적용 ridge 숨김, invalid split/file/asymmetry, 이전 결과 보존, 실제 Lab129표본 source와 live state 보존을 브라우저로 확인했다.
+- 초기 browser24건은10통과/14실패였다. 10건은 JSON의 -0→0 fixture 비교,2건은 숨겨진 조건 탭을 열지 않은 설정,2건은 작은 fit이 취소 클릭 전에 끝난 test 준비 문제였다. fixture canonical0·조건 탭 활성화·명시된1500ms 제출 지연으로 pending worker 취소를 검증했다. Native 계산을 느리게 바꾸지 않았고 원래 timeout/retry/assertion은 약화하지 않았다. 최초 sandbox build/worker spawn EPERM은 동일 명령의 확장 권한으로 해결했다.

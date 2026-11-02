@@ -1,0 +1,101 @@
+.data-model-body,
+.data-model-output,
+.data-model-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ds-space-4);
+  min-width: 0;
+}
+.data-model-body {
+  margin-block-start: var(--ds-space-4);
+}
+.data-model-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-3);
+  min-width: 0;
+}
+.data-model-workflow [hidden] {
+  display: none !important;
+}
+.data-model-workflow input,
+.data-model-workflow select,
+.data-model-workflow textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.data-model-workflow textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.data-model-workflow fieldset {
+  min-width: 0;
+  padding: var(--ds-space-3);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.data-model-workflow p,
+.data-model-workflow pre,
+.data-model-workflow legend {
+  overflow-wrap: anywhere;
+}
+.data-model-workflow pre {
+  white-space: pre-wrap;
+}
+.data-model-table {
+  overflow: auto;
+  max-height: 24rem;
+}
+.data-model-table table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.data-model-table th,
+.data-model-table td {
+  text-align: start;
+  padding: var(--ds-space-2);
+  border: 1px solid var(--ds-color-border);
+  white-space: nowrap;
+}
+.data-model-metrics table {
+  width: 100%;
+  table-layout: fixed;
+}
+.data-model-metrics th,
+.data-model-metrics td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.data-model-chart {
+  margin: 0;
+  min-width: 0;
+}
+.data-model-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 18rem;
+}
+.data-model-chart .observed {
+  fill: none;
+  stroke: var(--ds-color-text);
+  stroke-width: 2;
+}
+.data-model-chart .predicted {
+  fill: none;
+  stroke: var(--ds-color-accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+.data-model-chart .axis {
+  fill: none;
+  stroke: var(--ds-color-border);
+  stroke-width: 1;
+}
+@media (max-width: 40rem) {
+  .data-model-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
