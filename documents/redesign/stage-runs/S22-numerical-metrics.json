@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "pendulum-S22-numerical-metrics/v1",
+  "generatedAtUtc": "2026-11-02T05:30:37.386Z",
+  "implementationHead": "339d5f85500fd1871c6b5242669eaa70d11871ec",
+  "elapsedMs": 741.5038000000002,
+  "interpretation": "Local numerical workflow measurement, not browser responsiveness, physical-device accuracy, posterior calibration or full S28 parity.",
+  "estimate": {
+    "truthGravity": 9.81,
+    "initialGuess": 8,
+    "recoveredGravity": 9.809999283957767,
+    "absoluteError": 7.160422335061867e-7,
+    "nativeObservationSamples": 81,
+    "sourceInputUnits": [
+      "ms",
+      "deg"
+    ],
+    "fitted": {
+      "parameters": [
+        9.809999283957767
+      ],
+      "cost": 7.665950014786281e-14,
+      "rmse": 3.0763835620292544e-8,
+      "iterations": 5,
+      "converged": true,
+      "status": "gradient-converged",
+      "lambda": 0.000010000000000000003,
+      "gradientNorm": 2.104716922011887e-16,
+      "degreesOfFreedom": 161,
+      "residualVariance": 9.522919273026436e-16,
+      "covariance": [
+        [
+          4.007553042752721e-15
+        ]
+      ],
+      "standardErrors": [
+        6.330523708788018e-8
+      ],
+      "correlation": [
+        [
+          1.0000000000000002
+        ]
+      ],
+      "estimated": {
+        "g": 9.809999283957767
+      },
+      "parametersFull": {
+        "m1": 1,
+        "m2": 1.2,
+        "l1": 1,
+        "l2": 0.8,
+        "g": 9.809999283957767
+      },
+      "initialAngles": [
+        0.5,
+        -0.3
+      ]
+    }
+  },
+  "sobol": {
+    "model": "Native standard map, K=0, one iteration, away from angular wrapping; theta final=theta initial+p initial",
+    "exactFractions": [
+      0.2,
+      0.8
+    ],
+    "rows": [
+      [
+        1,
+        0.21629839289466904,
+        0.20337363971812095
+      ],
+      [
+        2,
+        0.8241488280392932,
+        0.8149307882800937
+      ]
+    ],
+    "evaluations": 1024
+  },
+  "pce": {
+    "rows": [
+      [
+        1,
+        0.2,
+        0.2
+      ],
+      [
+        2,
+        0.8,
+        0.8
+      ]
+    ],
+    "validationRmse": 6.798699777552591e-17,
+    "validationMaxError": 1.1102230246251565e-16,
+    "evaluations": 40
+  },
+  "checks": {
+    "nativeGravityRecovery": true,
+    "originalRawSourcePreserved": true,
+    "relationRestored": true,
+    "explicitUnits": true,
+    "sobolAnalyticFractions": true,
+    "pceAnalyticFractions": true,
+    "pceValidationError": true
+  },
+  "passed": true
+}

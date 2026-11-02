@@ -14,9 +14,9 @@
 
 | ID | 내용 | 검증 | 상태 |
 |---|---|---|---|
-| CP0 | 범위·보존·진행 기록 | plan/preflight22/typecheck | 진행 |
-| CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 대기 |
-| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 대기 |
+| CP0 | 범위·보존·진행 기록 | plan/preflight22/typecheck | 완료·원격 확인 |
+| CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 검증 완료·push 대기 |
+| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 검증 중 |
 | CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | 대기 |
 | STATUS | 별도 완료 상태 commit | 원격 HEAD 정확한 일치 | 대기 |
 
@@ -32,4 +32,22 @@
 
 ## commit·push 증거
 
-아직 checkpoint commit/push 없음. 구현 checkpoint를 검증·push하고 정확한 원격 hash를 확인한 뒤에만 다음 checkpoint로 진행한다. 최종 status push 전에는 완료가 아니다.
+- CP0: plan check/preflight22/typecheck exit0. commit/push exit0. local HEAD와 `git ls-remote origin refs/heads/codex/redesign` 모두 `339d5f85500fd1871c6b5242669eaa70d11871ec`로 확인했다.
+- 구현 checkpoint를 검증·push하고 정확한 원격 hash를 확인한 뒤에만 다음 checkpoint로 진행한다. 최종 status push 전에는 완료가 아니다.
+- CP0 push의 GitHub 기본 branch 보안 알림은 22개(high12/moderate7/low3)였다. 이는 새 dependency audit가 아니며 기존 부채 해결을 뜻하지 않는다.
+
+## CP1 검토·검증 진행
+
+- native 물리 adapter를 통과하는 독립 표준 사상 선형 benchmark에서 Sobol/PCE의 해석적 분산비0.2/0.8을 확인했다. native 이중진자에서 생성한81개 표본을 ms/deg CSV로 가져와 초기 g=8에서 참값9.81을 오차7.16e-7로 복원했다. 원본·단위·변환·결과 관계 왕복까지 수치7개 불변식이 통과했다. 이는 브라우저 반응성이나 실물 센서 정확도 검증과 구별한다.
+- 관측 importer의84개와 독립 회귀7개, 합91개가 통과했다. 영상19개는 주입한 decoder/native tracker로 검사하며 실제 browser 영상 decoding 증거와 구별한다.
+- 초기 통합 targeted는178개 중177pass/1fail이었다(`tmp/s22-cp1-targeted.json`). 새 async worker 결과 검증 도입 후 기존 새 client test가 동기 오류 통지를 기대하는 문제다. 오류 assertion은 유지하며 async terminal 처리를 확인하도록 보완한다. 이 상태를 publish하지 않는다.
+- 영상 원본8MiB의 base64와 관측16MiB를 모두 담도록 inverse 결과 envelope은24MiB로 맞췄다. 다른 canonical/share 한도를 변경하지 않았다.
+- 저장 관측 복원의 fabricated preview를 private 확인 표식이 거부하는 UI 연결 오류를 독립 검토에서 발견했다. 원본에서 다시 preview를 생성하고 명시적 확인을 요구하는 흐름으로 고친다. 저장 결과의 embedded 관측도 새 추정에 쓰기 전 확인한다.
+- CP1 최종 targeted `tmp/s22-cp1-targeted-final.json`:12파일187/187, 실패·pending0, exit0. 신규140개와 기존 native/golden47개이며 timeout/retry/기존 테스트·fixture를 바꾸지 않았다. 최종 typecheck·scoped ESLint·Prettier exit0. 관측 source decoder8Mi pixels/8192edge 제한과26개 영상 fixture, native/golden13개, worker12개를 포함한다.
+- LM damping이 accepted step에서1e-15까지 내려가므로 반복별 거절 평가 상한을30으로 보수적으로 잡았다. UQ 비용은 평균 corner가 아닌 최대 corner를 사용하며 정수 전용 ensembleMembers/maxIterations를 연속 균일분포 변수로 취급하지 않는다. 공통 질량 배율과 무감쇠 두 길이·g 공통 배율의 비식별 조합을 명시적으로 거부한다.
+- decoder 원본8Mi pixels·각 변8192px·metadata preload 검사로 큰 원본 프레임을 draw 전에 차단한다. 색상 마커 추적·CSV 기하 변환·optimizer·Sobol·PCE는 기존 native 구현을 호출한다. 결과 복원은 물리 궤도를 재실행하지 않고 저장 표본의 Sobol/PCE와 진단 관계를 검증하며 원본·결과를 불변으로 반환한다.
+
+## CP2 진행
+
+- 초기 production16개는6pass/10fail이었다(`tmp/s22-browser-initial.json`). 표 스크롤 영역 axe 접근성6건, 실제 계산량 제한을 초과한 새 cancellation fixture2건, blob media CSP 거부2건을 확인했다. UI 포커스 경로를 보완하고 cancellation은 동일한 예산 안의 장기 계산을 사용하며, 실제 영상 decoding에 필요한 `media-src 'self' blob:`만 추가한다. 기존 timeout/retry와 보안 script/worker/connect 정책을 바꾸지 않는다.
+- media CSP 변경으로 inventory의 frozen legacy fingerprint가 달라지는 것을 확인했다. S04와 같은 좁은 projection으로 **정확한 로컬 media 지시문 하나만** 분리하며 S01 인벤토리는 재생성하지 않는다. 회귀 검사에서 원격 media·실행 blob 추가는 계속 fingerprint 차이로 탐지된다. inventory check와 기존 배포/PWA37개가 exit0이다. 이 변경과 검사는 CP2에 포함한다.
