@@ -28,8 +28,10 @@ class TestVideo extends EventTarget {
   videoHeight = 8;
   duration = 1;
   readyState = 2;
+  seekHistory: number[] = [];
   private time = 0;
   set currentTime(value: number) {
+    this.seekHistory.push(value);
     this.time = value;
     queueMicrotask(() => this.dispatchEvent(new Event('seeked')));
   }
@@ -46,15 +48,24 @@ class TestVideo extends EventTarget {
 }
 
 function decoder(
-  input: { dimensions?: [number, number]; duration?: number; blank?: boolean; metadata?: boolean } = {}
+  input: {
+    dimensions?: [number, number];
+    duration?: number;
+    blank?: boolean;
+    metadata?: boolean;
+    blackUntilPrimed?: boolean;
+  } = {}
 ) {
   const video = new TestVideo();
   if (input.dimensions) [video.videoWidth, video.videoHeight] = input.dimensions;
   if (input.duration !== undefined) video.duration = input.duration;
   if (input.metadata === false) video.load = () => {};
-  const getImageData = vi.fn(() =>
-    input.blank ? { width: 8, height: 8, data: new Uint8ClampedArray(8 * 8 * 4) } : frame()
-  );
+  const getImageData = vi.fn(() => {
+    const primed = video.seekHistory.length >= 2 && video.seekHistory[0]! > 0 && video.seekHistory[1] === 0;
+    return input.blank || (input.blackUntilPrimed && !primed)
+      ? { width: 8, height: 8, data: new Uint8ClampedArray(8 * 8 * 4) }
+      : frame();
+  });
   const canvas = { width: 0, height: 0, getContext: () => ({ drawImage: vi.fn(), getImageData }) };
   vi.stubGlobal('document', { createElement: (tag: string) => (tag === 'video' ? video : canvas) });
   const create = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:local-test');
@@ -69,6 +80,20 @@ afterEach(() => {
 });
 
 describe('S22 recorded video marker adapter', () => {
+  it('primes a loaded-but-black first frame and retains the actual t=0 observation', async () => {
+    const { video, getImageData } = decoder({ blackUntilPrimed: true });
+    video.readyState = 4;
+    const { artifact } = await previewRecordedVideo(videoFile(), tracking, { sampleCount: 4 });
+    const native = trackDoublePendulumFrame(frame(), tracking)!;
+    expect(video.seekHistory.slice(0, 2)).toEqual([0.001, 0]);
+    expect(artifact.data.times).toHaveLength(4);
+    expect(artifact.data.times[0]).toBe(0);
+    expect(artifact.original.text.split('\n')[1]!.split(',')[0]).toBe('0');
+    expect(artifact.data.angles[0]).toEqual(native.angles);
+    expect(artifact.original.capture!.missedFrames).toBe(0);
+    expect(getImageData).toHaveBeenCalledTimes(4);
+  });
+
   it('uses native tracking, retains exact video source and restores preview-confirm lineage', async () => {
     const { video, canvas, revoke } = decoder();
     const progress: number[] = [];

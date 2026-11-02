@@ -76,6 +76,7 @@ export default defineConfig({
         "script-src 'self' 'wasm-unsafe-eval'",
         "style-src 'self'",
         "img-src 'self' data: blob:",
+        "media-src 'self' blob:",
         "worker-src 'self'",
         "connect-src 'self' ws://127.0.0.1:* ws://localhost:*",
         "manifest-src 'self'",

@@ -15,9 +15,9 @@
 | ID | 내용 | 검증 | 상태 |
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight22/typecheck | 완료·원격 확인 |
-| CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 검증 완료·push 대기 |
-| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 검증 중 |
-| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | 대기 |
+| CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 완료·원격 확인 |
+| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 검증 완료·push 대기 |
+| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | candidate-complete |
 | STATUS | 별도 완료 상태 commit | 원격 HEAD 정확한 일치 | 대기 |
 
 변경 예정 경로: `src/product/observations/`, `src/product/adapters/analysis/inverse/`, `src/product/lab/research/`, 공유 diagnostics 연결, 전용 CSS, 관련 `tests/product/`와 `e2e/redesign/`, S22 문서/검증 증거. 각 checkpoint에서 명시적 경로만 stage한다.
@@ -46,8 +46,16 @@
 - CP1 최종 targeted `tmp/s22-cp1-targeted-final.json`:12파일187/187, 실패·pending0, exit0. 신규140개와 기존 native/golden47개이며 timeout/retry/기존 테스트·fixture를 바꾸지 않았다. 최종 typecheck·scoped ESLint·Prettier exit0. 관측 source decoder8Mi pixels/8192edge 제한과26개 영상 fixture, native/golden13개, worker12개를 포함한다.
 - LM damping이 accepted step에서1e-15까지 내려가므로 반복별 거절 평가 상한을30으로 보수적으로 잡았다. UQ 비용은 평균 corner가 아닌 최대 corner를 사용하며 정수 전용 ensembleMembers/maxIterations를 연속 균일분포 변수로 취급하지 않는다. 공통 질량 배율과 무감쇠 두 길이·g 공통 배율의 비식별 조합을 명시적으로 거부한다.
 - decoder 원본8Mi pixels·각 변8192px·metadata preload 검사로 큰 원본 프레임을 draw 전에 차단한다. 색상 마커 추적·CSV 기하 변환·optimizer·Sobol·PCE는 기존 native 구현을 호출한다. 결과 복원은 물리 궤도를 재실행하지 않고 저장 표본의 Sobol/PCE와 진단 관계를 검증하며 원본·결과를 불변으로 반환한다.
+- CP1 commit/push exit0, local HEAD와 `git ls-remote` 모두 `9c2c0ae33191c815bcea629b2fc6c2284c122ce9`로 확인했다. core25경로만 명시적으로 stage했으며 UI/CSP 변경은 CP2로 남겼다.
 
 ## CP2 진행
 
 - 초기 production16개는6pass/10fail이었다(`tmp/s22-browser-initial.json`). 표 스크롤 영역 axe 접근성6건, 실제 계산량 제한을 초과한 새 cancellation fixture2건, blob media CSP 거부2건을 확인했다. UI 포커스 경로를 보완하고 cancellation은 동일한 예산 안의 장기 계산을 사용하며, 실제 영상 decoding에 필요한 `media-src 'self' blob:`만 추가한다. 기존 timeout/retry와 보안 script/worker/connect 정책을 바꾸지 않는다.
 - media CSP 변경으로 inventory의 frozen legacy fingerprint가 달라지는 것을 확인했다. S04와 같은 좁은 projection으로 **정확한 로컬 media 지시문 하나만** 분리하며 S01 인벤토리는 재생성하지 않는다. 회귀 검사에서 원격 media·실행 blob 추가는 계속 fingerprint 차이로 탐지된다. inventory check와 기존 배포/PWA37개가 exit0이다. 이 변경과 검사는 CP2에 포함한다.
+- 실제 Chromium VP8 녹화에서 loadeddata/readyState가 준비됐어도 t=0의 canvas draw가 검게 읽히는 문제를 probe3으로 재현했다. 같은 원본에서 짧은 양수 시각으로 seek한 뒤0으로 돌아오면 실제 마커 픽셀이 읽혔다. decoder를 그 방식으로 준비하고 t=0과 모든 행을 보존한다. 주입 decoder 회귀27/27, actual browser4-frame/source-byte 검증 양쪽 project와 visual 준비4/4가 통과했다(`tmp/s22-preparation2.json`). 결측 정책이나 마커 허용오차를 완화하지 않았다.
+- 관측 복원은 원본 재preview→사용자 확인을 거치고 결과 복원은 모든 비동기 검증 후 atomic하게 게시한다. 계산 설정을 hydrate하여 저장한 PCE를 같은 설정으로 다시 실행한다. CSV는 BOM을 보존하고 잘못된 UTF-8을 거부하는 fatal decoder로 읽는다.
+- 새 light/dark·desktop/mobile PNG4개를 직접 검사했다. 표본·단위·시간/보정 요약을 먼저 표시하고 전체 ID/SHA/변환 이력은 접이식 영역에 보존한다. 최초 snapshot 준비 실패는 missing baseline 생성이며 기존 PNG는 변경하지 않았다. 최종 비교는 명시적으로 update-snapshots=none이다.
+- 최종 보호 해시:286파일·기존 test/fixture417개·기존 PNG212개와 desktop 전달본2개 모두 기준과 정확히 일치했다. 순수 엔진·API·사용자 데이터 형식·원본 계획·package/lockfile을 보존했다.
+- provisional26개는25pass/1fail이었다(`tmp/s22-browser-provisional26.json`). 새 테스트가320px와200%를 동시에 적용해 유효160CSSpx를 검사하던 설정이었다. 기존 S18/S20/S21과 같은 독립320px·desktop200% 검증으로 맞추고 axe/overflow assertion은 유지하며 확대 후 원본 다운로드까지 검사한다. 제품 소스·빌드는 바꾸지 않았다.
+- CP2 targeted는 production Chromium13+Pixel5 13,26/26 pass, 실패·skip·flaky·runner error0, exit0이다(`tmp/s22-browser-cp2-targeted.json`,202.833초). retries0·원래30초 timeout·snapshot update none으로 원본 가져오기/확정/재확정, 변환·보안 오류 보존, 실제4프레임 영상·원본 바이트, worker 취소, PCE 저장 설정 재실행, keyboard/axe/320px/200%를 확인했다. 새 PNG4개를 직접 검사했다.
+- 같은 소스의 구현 전 전체 Vitest도340파일5294/5294(신규143개), 실패·pending0으로 통과했다. 구현을 먼저 원격에 보존한 뒤 프로토콜의 완료 후보 전체 gate를 다시 실행하며 앞 실행은 별도 targeted 증거로 남긴다. 최종 typecheck·전체 ESLint·format·policy는 exit0이다.

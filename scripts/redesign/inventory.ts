@@ -86,11 +86,15 @@ function isRedesignHarnessCommand(name: string, command: unknown): boolean {
  * S04 adds one HTML input and isolates Vite's preload helper from legacy engines.
  * Compare that legacy projection, retaining every other build byte and AST fact.
  * The exact additions are narrow: different targets or build behavior still fail.
+ * S22 also permits precisely local blob media for recorded-video observations.
+ * Project that additive directive out; keep the frozen S01 fingerprint unchanged.
  */
-function legacySourceText(file: string, text: string): string {
+export function legacySourceText(file: string, text: string): string {
   const normalized = text.replaceAll('\r\n', '\n');
+  if (file === 'public/_headers') return normalized.replace("; media-src 'self' blob:", '');
   if (file !== 'vite.config.ts') return normalized;
   return normalized
+    .replace('        "media-src \'self\' blob:",\n', '')
     .replace(
       "      input: {\n        app: 'app.html',\n        next: 'next.html',\n        reviewer: 'reviewer.html'\n      },",
       "      input: {\n        app: 'app.html',\n        reviewer: 'reviewer.html'\n      },"

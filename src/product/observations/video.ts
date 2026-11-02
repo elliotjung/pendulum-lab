@@ -151,6 +151,17 @@ export async function previewRecordedVideo(
     const context = canvas.getContext('2d', { willReadFrequently: true });
     if (!context) throw new Error('이 브라우저에서 영상 픽셀 읽기를 사용할 수 없습니다.');
     if (video.readyState < 2) await mediaEvent(video, 'loadeddata', signal);
+    // Chromium can report loadeddata at t=0 before presenting the decoded first frame.
+    // Prime presentation with an in-range seek, then return to the actual t=0 sample.
+    // Both waits keep the existing timeout/cancellation cleanup; no sample is dropped or shifted.
+    const primeTime = Math.min(0.001, video.duration / 2);
+    if (!(primeTime > 0)) throw new Error('영상 길이가 유효한 첫 프레임 추출에 너무 짧습니다.');
+    for (const time of [primeTime, 0]) {
+      aborted(signal);
+      const seeked = mediaEvent(video, 'seeked', signal);
+      video.currentTime = time;
+      await seeked;
+    }
     const rows = ['time,x1,y1,x2,y2'];
     let missedFrames = 0;
     for (let index = 0; index < options.sampleCount; index += 1) {

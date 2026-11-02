@@ -6,6 +6,7 @@ import type { ContractResult } from '../../contracts/validation';
 import { createAdvancedDiagnostics } from './advanced-diagnostics';
 import { createStability } from './stability';
 import { createExperimentWorkflow } from '../experiments/view';
+import { createResearchWorkflow } from '../research/view';
 
 export interface DiagnosticsOptions {
   experiment(): ContractResult<ExperimentStateV1>;
@@ -19,6 +20,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   const advanced = createAdvancedDiagnostics(document, options);
   const stability = createStability(document, options);
   const experiments = createExperimentWorkflow(document, options);
+  const research = createResearchWorkflow(document, options);
   const container = element(document, 'details', 'lab-details core-diagnostics');
   container.id = 'core-diagnostics';
   container.dataset.coreDiagnosticStatus = 'empty';
@@ -67,7 +69,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   container.addEventListener('toggle', () => {
     if (container.open) void load();
   });
-  wrapper.append(container, advanced.element, stability.element);
+  wrapper.append(container, advanced.element, stability.element, research.element);
   return {
     element: wrapper,
     experiments: experiments.element,
@@ -76,6 +78,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
       advanced.update();
       stability.update();
       experiments.update();
+      research.update();
     },
     dispose() {
       disposed = true;
@@ -83,6 +86,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
       advanced.dispose();
       stability.dispose();
       experiments.dispose();
+      research.dispose();
     }
   };
 }

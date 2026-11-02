@@ -1,0 +1,70 @@
+.research-body,
+.research-import,
+.research-settings,
+.research-output {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ds-space-4);
+  min-width: 0;
+}
+.research-body {
+  margin-block-start: var(--ds-space-4);
+}
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-3);
+  min-width: 0;
+}
+.research-grid > fieldset {
+  grid-column: 1 / -1;
+}
+.research-workflow [hidden] {
+  display: none !important;
+}
+.research-workflow input,
+.research-workflow select,
+.research-workflow textarea {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.research-workflow textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.research-workflow fieldset {
+  min-width: 0;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-3);
+}
+.research-workflow p,
+.research-workflow pre {
+  overflow-wrap: anywhere;
+}
+.research-table {
+  overflow: auto;
+  max-height: 25rem;
+}
+.research-table table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.research-table th,
+.research-table td {
+  text-align: start;
+  padding: var(--ds-space-2);
+  border: 1px solid var(--ds-color-border);
+  white-space: nowrap;
+}
+.research-video {
+  max-width: 100%;
+  max-height: 18rem;
+}
+@media (max-width: 40rem) {
+  .research-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
