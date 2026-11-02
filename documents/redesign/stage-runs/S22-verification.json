@@ -1,0 +1,361 @@
+{
+  "schemaVersion": "pendulum-S22-verification/v1",
+  "stage": 22,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-02T05:51:20.949Z",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "All implementation and evidence checkpoints must be pushed and exact hashes verified before separate completion status commit. This report is not itself proof of final status push.",
+  "git": {
+    "baselineCommit": "3a09c3f6bb0c9bb4ba01aa4e9a09763fbc17eb12",
+    "branch": "codex/redesign",
+    "evidenceGeneratedAtHead": "f0524ee4ce61146e697ea8c49c8024f4b32540ad",
+    "verifiedImplementationCommit": "f0524ee4ce61146e697ea8c49c8024f4b32540ad",
+    "remoteTrackingHead": "f0524ee4ce61146e697ea8c49c8024f4b32540ad",
+    "verifiedCheckpoints": {
+      "CP0": "339d5f85500fd1871c6b5242669eaa70d11871ec",
+      "CP1": "9c2c0ae33191c815bcea629b2fc6c2284c122ce9",
+      "CP2": "f0524ee4ce61146e697ea8c49c8024f4b32540ad"
+    },
+    "dependency": "S01-S21 contiguous status, 21 separate completion commits and 21 progress records; S21 status commit3a09c3f present on origin before work."
+  },
+  "scope": {
+    "observations": "CSV/sensor angles or marker coordinates; bounded local two-colour recorded-video decoding via preserved native tracker; explicit preview and confirm, SI units/calibration/time/missing-data history; frozen originals including raw UTF8 text/video bytes and SHA256; replay on restore.",
+    "estimation": "Preserved native double-pendulum RK4 fitter at start0, known initial angles/velocities and fixed gamma; 1-3 selected physical parameters; convergence/covariance/error diagnostics and identifiable-combination guards. No default model or method substitution.",
+    "uq": "Preserved canonical physics adapters, native Sobol estimators and seeded LHS/Legendre PCE; independent uniform continuous inputs; worst-corner work budgets; separate validation and bounded surrogate prediction.",
+    "lineage": "Self-contained versioned observation/result files preserve original -> transformation -> canonical input -> settings -> result. Sobol design/statistic and PCE coefficient/error consistency replay; physics trajectories are not rerun on import. S24 project/ZIP storage is outside scope.",
+    "worker": "Single terminable dedicated worker, progress/error/cancel/30s inactivity, immutable completed result and previous-state preservation; optimizer internal cursor resume not provided."
+  },
+  "validation": {
+    "profile": "E+U",
+    "fullVitest": {
+      "path": "tmp/s22-full-vitest-final.json",
+      "bytes": 2021508,
+      "sha256": "bc9da9a2d9575263a930df28a3f09d3950c65084f420eef6414a76f0dc77fbb7",
+      "passed": 5294,
+      "failed": 0,
+      "pending": 0,
+      "total": 5294,
+      "files": 340,
+      "success": true,
+      "startTime": 1793598443400,
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/s22-full-vitest-final.json"
+    },
+    "cp1Targeted": {
+      "path": "tmp/s22-cp1-targeted-final.json",
+      "bytes": 69250,
+      "sha256": "743c49b9a7a8f8af1e120a6d1d47c36b82a2a19b0bff8fbd33f711b74e1a1b29",
+      "passed": 187,
+      "failed": 0,
+      "pending": 0,
+      "total": 187,
+      "files": 12,
+      "success": true,
+      "startTime": 1793597405741
+    },
+    "productionBrowser": {
+      "path": "tmp/s22-browser-final.json",
+      "bytes": 38151,
+      "sha256": "d94cf70fbc764b3276c0c308a51942b4571b6b8ee769a8c5fe13699e63eb42f6",
+      "startTime": "2026-11-02T05:47:07.566Z",
+      "duration": 180457.19799999997,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retryPolicy": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "unchangedRepresentativeBrowser": {
+      "path": "tmp/s22-browser-legacy-final.json",
+      "bytes": 29773,
+      "sha256": "6b24449929e4b6a65a2aad3a5c0b8a435b2d41f80a5690e65e020695fe9d1c99",
+      "startTime": "2026-11-02T05:41:55.210Z",
+      "duration": 206994.749,
+      "expected": 18,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retryPolicy": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "numerical": {
+      "path": "documents/redesign/stage-runs/S22-numerical-metrics.json",
+      "bytes": 2429,
+      "sha256": "d927b208b782eb782ef8b01d1d57496969f7405a32c9248f920e3f59a20ee8d9",
+      "nativeGravityRecovery": true,
+      "originalRawSourcePreserved": true,
+      "relationRestored": true,
+      "explicitUnits": true,
+      "sobolAnalyticFractions": true,
+      "pceAnalyticFractions": true,
+      "pceValidationError": true
+    },
+    "productionBuild": {
+      "path": "tmp/s22-ui-build-final.log",
+      "bytes": 10527,
+      "sha256": "52e720e774df65a2ce197462f39a97feb30df4c2fa6ae071296b2e99c8c1900f",
+      "exitCode": 0
+    },
+    "quality": [
+      {
+        "name": "plan",
+        "command": "redesign:check",
+        "path": "tmp/s22-quality-plan.log",
+        "bytes": 158,
+        "sha256": "f8c5c26b5fb9c09514b33d83ce31bffdfc4d919f5acb2b607974a274e2e37ad4",
+        "exitCode": 0
+      },
+      {
+        "name": "catalog",
+        "command": "redesign:catalog:check",
+        "path": "tmp/s22-quality-catalog.log",
+        "bytes": 258,
+        "sha256": "1f4f72f397f9e7d539061746a2cf7bdc5d27ef1655901530abbe309c1e924d35",
+        "exitCode": 0
+      },
+      {
+        "name": "learn",
+        "command": "redesign:learn:check",
+        "path": "tmp/s22-quality-learn.log",
+        "bytes": 214,
+        "sha256": "0989231ce32a57674cab68f1582ef8569554468dd50899ed20b0cadd6c5b9af1",
+        "exitCode": 0
+      },
+      {
+        "name": "inventory-final",
+        "command": "redesign:inventory:check",
+        "path": "tmp/s22-quality-inventory-final.log",
+        "bytes": 1139,
+        "sha256": "9f374b693915ee8d2809dcc800fc4842de43ba436d0e86e8b9a0bde9ca54b3aa",
+        "exitCode": 0
+      },
+      {
+        "name": "modules",
+        "command": "audit:modules",
+        "path": "tmp/s22-quality-modules.log",
+        "bytes": 167,
+        "sha256": "628796f0366683311159ac0270cecd0270a601c63326c6178339fbbbbe783fea",
+        "exitCode": 0
+      },
+      {
+        "name": "policy",
+        "command": "lint:policy",
+        "path": "tmp/s22-quality-policy.log",
+        "bytes": 147,
+        "sha256": "32101e2ff0e1f09f771fe7f7842c01fae083399c2ec1b92e0f2702cb84573961",
+        "exitCode": 0
+      },
+      {
+        "name": "eslint",
+        "command": "lint:eslint",
+        "path": "tmp/s22-quality-eslint.log",
+        "bytes": 101,
+        "sha256": "0c47268b9f60421429eccaf2d9ac4f8a9ea9d24037116519f77baa9312d233fb",
+        "exitCode": 0
+      },
+      {
+        "name": "format",
+        "command": "format:check",
+        "path": "tmp/s22-quality-format.log",
+        "bytes": 175,
+        "sha256": "7f4c49d5c04df21bee771baac7c611d0ca94ee4fd27a2ecfbb9aa472de110eb4",
+        "exitCode": 0
+      },
+      {
+        "name": "typecheck",
+        "command": "typecheck",
+        "path": "tmp/s22-quality-typecheck.log",
+        "bytes": 66,
+        "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87",
+        "exitCode": 0
+      },
+      {
+        "name": "secrets",
+        "command": "redesign:secrets",
+        "path": "tmp/s22-quality-secrets.log",
+        "bytes": 22356,
+        "sha256": "2882fc217385650e4f973a232f477b021765e12e5a6e47b6ea9834063fc0079e",
+        "exitCode": 0
+      }
+    ],
+    "preservation": {
+      "path": "documents/redesign/stage-runs/S22-preservation.json",
+      "bytes": 299052,
+      "sha256": "ca413eea63d8cd6e7757b05e6dddb7333198d9cdd685b998e71b4ed47673211f",
+      "passed": true,
+      "protected": 286,
+      "historicalTests": 417,
+      "historicalPng": 212,
+      "desktopCopies": [
+        {
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+          "equal": true
+        },
+        {
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+          "equal": true
+        }
+      ]
+    },
+    "inspectedVisualBaselines": [
+      {
+        "path": "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-dark-chromium-win32.png",
+        "bytes": 21679,
+        "sha256": "ff94cd0b070688f34abc7397cd2bdb2391f80e176b02017fbb0cbe910dab19f4"
+      },
+      {
+        "path": "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-dark-mobile-chrome-win32.png",
+        "bytes": 19779,
+        "sha256": "8e1b88398304cdc8dfdfd2c7d07e1b1bbff6c6eef1abbbd2d3127ae3640c93ee"
+      },
+      {
+        "path": "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-light-chromium-win32.png",
+        "bytes": 21743,
+        "sha256": "acadf9ad75285504328cd7e2cbf567f37f09109128c86164ddb86611ca59c0ff"
+      },
+      {
+        "path": "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-light-mobile-chrome-win32.png",
+        "bytes": 19884,
+        "sha256": "7fdd92c4068f461305cfd9a2dbd79b55d7fc0493e3244d60039599d5c7c3c084"
+      }
+    ],
+    "failedAttempts": [
+      {
+        "path": "tmp/s22-cp1-targeted.json",
+        "bytes": 67053,
+        "sha256": "a304c3102185177ca2860e24848ae4ee2b9fe21fc2189be5933e26c9f36b6fb1"
+      },
+      {
+        "path": "tmp/s22-browser-initial.json",
+        "bytes": 92454,
+        "sha256": "c06aac8431d78b9ce65a0c1556e40a6e16cb0b4a44b6dc93a226f8e07dd76b2f"
+      },
+      {
+        "path": "tmp/s22-browser-provisional26.json",
+        "bytes": 43747,
+        "sha256": "95658f9dba87ac21fbd798678696b9cf334c3ee43ffce0341fae7c7a1e45e1e1"
+      },
+      {
+        "path": "tmp/s22-video-probe.json",
+        "bytes": 12929,
+        "sha256": "67c13f023ebebf7e1aca385d818472dca3ef5a5cadccf65ce964cc555f05c330"
+      },
+      {
+        "path": "tmp/s22-video-probe2.json",
+        "bytes": 12939,
+        "sha256": "6450d03741ce774c2367c784ca42b81251a0acf2a48abafe0fd06a4e59b0cb03"
+      },
+      {
+        "path": "tmp/s22-video-probe3.json",
+        "bytes": 12032,
+        "sha256": "8928cf24c1b842b69f1781803f1865bc5841dfa6180ae20a91bde013e76ecbd1"
+      },
+      {
+        "path": "tmp/s22-snapshot-preparation.json",
+        "bytes": 21343,
+        "sha256": "22c22cbc682dacb648666db230db0704250048088a6cd4a5554e66c87a70a663"
+      }
+    ],
+    "failureDisposition": "One initial async worker test expectation corrected without weakening rejection; initial axe scroll-region failures fixed with focus/region labels; invalid cancellation test fixture moved within real work budget; local blob media CSP added narrowly with frozen baseline projection regression; actual decoded first-frame presentation bug corrected with seek priming preserving t0; missing baseline preparation separate from final snapshot-update none comparison. A new test first combined320px with200%zoom (effective160px); corrected to independent320px and desktop200% checks matching historical tests, retaining axe/nooverflow and postzoom download assertions. Provisional results are not counted as final passes.",
+    "existingTestsAndGolden": "No historical assertion, fixture, timeout, retries or PNG changed; exact byte identity verified against S21."
+  },
+  "environment": {
+    "node": "v26.3.0",
+    "platform": "win32",
+    "architecture": "x64",
+    "browsers": [
+      "Chromium desktop",
+      "Chromium Pixel5 emulation"
+    ],
+    "physicalDevices": "unverified",
+    "firefoxWebkit": "unverified",
+    "screenReaderAudio": "unverified",
+    "modelSelector": "not exposed; no claim of changing or verifying user selection"
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "baselineDebt": "S01 high2/moderate2 and CodeQL32 unresolved; CP0/CP1/CP2 push default-branch notice22(high12/moderate7/low3) is a separate observation, not fresh audit or risk acceptance.",
+    "inputDefenses": "Numeric-only closed CSV, formula/quote/prototype/accessor/path/version/finite/dimension/size/work checks; metadata-before-source-decoder cap; bounded cancellation; only local media blob source added, scripts/workers/connect unchanged.",
+    "externalClaims": "Checksums and public IDs check internal consistency, not source authenticity or scientific truth. External physics values are not rerun or authenticated.",
+    "secretScan": "1848 tracked/1626 text files, zero known-pattern findings before final verification JSON generation; history, ignored/binary files and external services excluded."
+  },
+  "preservation": "Pure physics/chaos/research/runtime/workers/validation, product physics adapters, public APIs, app.html, package/lockfile, old data/share schemas, golden and plans preserved. Frozen inventory not regenerated; exactly local media CSP directive projected out with tests ensuring remote/executable additions still fail.",
+  "review": {
+    "approvedUserGates": [
+      7,
+      9,
+      17
+    ],
+    "currentStageRequiresUserGate": false,
+    "nextGate": 24,
+    "humanScientificReview": false,
+    "learnReviewState": "unchanged"
+  },
+  "risks": [
+    "Local video requires identifiable two-colour markers and supported codec; source cap8Mi pixels/8192edge, media8MiB,60s, sampled640x480/256frames/24Mi pixel work.",
+    "Native inverse solver is local and may be nonconvergent or nonidentifiable; uncertainty uses local residual assumptions, not posterior intervals.",
+    "UQ continuous independent uniform inputs and finite-time scalar summaries; fixed stochastic seed means conditional common-random-number sensitivity.",
+    "PCE validation samples are finite and do not prove uniform error bounds; no extrapolation.",
+    "Existing security debt, real physical devices, Firefox/WebKit and screen-reader audio remain unverified."
+  ],
+  "rollback": {
+    "baseline": "3a09c3f6bb0c9bb4ba01aa4e9a09763fbc17eb12",
+    "preservedEntry": "app.html",
+    "cutoverPerformed": false
+  },
+  "nextValidStage": 23,
+  "implementationChangedPaths": [
+    "css/product/research.css",
+    "documents/redesign/observations-inverse-uq-ko.md",
+    "documents/redesign/stage-runs/S22-numerical-metrics.json",
+    "documents/redesign/stage-runs/S22-progress.md",
+    "documents/redesign/status.json",
+    "e2e/redesign/observations-inverse.spec.ts",
+    "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-dark-chromium-win32.png",
+    "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-dark-mobile-chrome-win32.png",
+    "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-light-chromium-win32.png",
+    "e2e/redesign/observations-inverse.spec.ts-snapshots/s22-observation-preview-light-mobile-chrome-win32.png",
+    "public/_headers",
+    "scripts/redesign/inventory.ts",
+    "scripts/redesign/measure-inverse-workflow.ts",
+    "src/product/adapters/analysis/inverse/artifact.ts",
+    "src/product/adapters/analysis/inverse/client.ts",
+    "src/product/adapters/analysis/inverse/contracts.ts",
+    "src/product/adapters/analysis/inverse/data.ts",
+    "src/product/adapters/analysis/inverse/estimate.ts",
+    "src/product/adapters/analysis/inverse/execute.ts",
+    "src/product/adapters/analysis/inverse/inverse.worker.ts",
+    "src/product/adapters/analysis/inverse/settings.ts",
+    "src/product/adapters/analysis/inverse/uq.ts",
+    "src/product/adapters/analysis/inverse/validation.ts",
+    "src/product/lab/research/controls.ts",
+    "src/product/lab/research/observation-settings.ts",
+    "src/product/lab/research/panel.ts",
+    "src/product/lab/research/view.ts",
+    "src/product/lab/research/workflow-settings.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "src/product/observations/artifact.ts",
+    "src/product/observations/csv.ts",
+    "src/product/observations/index.ts",
+    "src/product/observations/types.ts",
+    "src/product/observations/video.ts",
+    "tests/product/analysis/inverse/client.test.ts",
+    "tests/product/analysis/inverse/review-regressions.test.ts",
+    "tests/product/analysis/inverse/workflows.test.ts",
+    "tests/product/observations/import.test.ts",
+    "tests/product/observations/media-policy.test.ts",
+    "tests/product/observations/review-regressions.test.ts",
+    "tests/product/observations/video.test.ts",
+    "vite.config.ts"
+  ],
+  "evidencePaths": [
+    "documents/redesign/stage-runs/S22-progress.md",
+    "documents/redesign/stage-runs/S22-numerical-metrics.json",
+    "documents/redesign/stage-runs/S22-preservation.json",
+    "documents/redesign/stage-runs/S22-verification.json"
+  ]
+}

@@ -1,8 +1,8 @@
 {
   "schemaVersion": "pendulum-S22-numerical-metrics/v1",
-  "generatedAtUtc": "2026-11-02T05:30:37.386Z",
-  "implementationHead": "339d5f85500fd1871c6b5242669eaa70d11871ec",
-  "elapsedMs": 741.5038000000002,
+  "generatedAtUtc": "2026-11-02T05:47:25.889Z",
+  "implementationHead": "f0524ee4ce61146e697ea8c49c8024f4b32540ad",
+  "elapsedMs": 900.4618,
   "interpretation": "Local numerical workflow measurement, not browser responsiveness, physical-device accuracy, posterior calibration or full S28 parity.",
   "estimate": {
     "truthGravity": 9.81,

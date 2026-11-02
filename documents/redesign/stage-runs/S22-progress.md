@@ -16,8 +16,8 @@
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight22/typecheck | 완료·원격 확인 |
 | CP1 | immutable 관측 계약·보정·원본 복원, 역문제/UQ adapter·worker | malicious/malformed, recovery, native/UQ benchmark, progress/cancel/memory, typecheck/lint | 완료·원격 확인 |
-| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 검증 완료·push 대기 |
-| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | candidate-complete |
+| CP2 | lazy 관측 wizard·추정/UQ UI·결과·복원 | production browser desktop/mobile, keyboard/a11y, visual, build | 완료·원격 확인 |
+| CP3 | 보존·통합 검증·완료 후보 | 전체 Vitest, golden, 품질 검사, 보존 해시, 원격 구현 확인 | candidate-complete·검증 완료 |
 | STATUS | 별도 완료 상태 commit | 원격 HEAD 정확한 일치 | 대기 |
 
 변경 예정 경로: `src/product/observations/`, `src/product/adapters/analysis/inverse/`, `src/product/lab/research/`, 공유 diagnostics 연결, 전용 CSS, 관련 `tests/product/`와 `e2e/redesign/`, S22 문서/검증 증거. 각 checkpoint에서 명시적 경로만 stage한다.
@@ -59,3 +59,16 @@
 - provisional26개는25pass/1fail이었다(`tmp/s22-browser-provisional26.json`). 새 테스트가320px와200%를 동시에 적용해 유효160CSSpx를 검사하던 설정이었다. 기존 S18/S20/S21과 같은 독립320px·desktop200% 검증으로 맞추고 axe/overflow assertion은 유지하며 확대 후 원본 다운로드까지 검사한다. 제품 소스·빌드는 바꾸지 않았다.
 - CP2 targeted는 production Chromium13+Pixel5 13,26/26 pass, 실패·skip·flaky·runner error0, exit0이다(`tmp/s22-browser-cp2-targeted.json`,202.833초). retries0·원래30초 timeout·snapshot update none으로 원본 가져오기/확정/재확정, 변환·보안 오류 보존, 실제4프레임 영상·원본 바이트, worker 취소, PCE 저장 설정 재실행, keyboard/axe/320px/200%를 확인했다. 새 PNG4개를 직접 검사했다.
 - 같은 소스의 구현 전 전체 Vitest도340파일5294/5294(신규143개), 실패·pending0으로 통과했다. 구현을 먼저 원격에 보존한 뒤 프로토콜의 완료 후보 전체 gate를 다시 실행하며 앞 실행은 별도 targeted 증거로 남긴다. 최종 typecheck·전체 ESLint·format·policy는 exit0이다.
+- CP2 commit/push exit0, local HEAD와 `git ls-remote` 모두 `f0524ee4ce61146e697ea8c49c8024f4b32540ad`로 확인했다. 구현·화면·정책21경로만 stage했으며 최종 보존/검증 보고서는 CP3로 남겼다.
+
+## CP3 완료 후보 gate
+
+- 원격 CP2와 동일한 production build에서 기존 S18/S19/S20/S21 대표18/18이 pass, 실패·skip·flaky·runner error0이다(`tmp/s22-browser-legacy-final.json`,206.995초). 기존 timeout30초·retry0·snapshot update none을 유지했다. 공유 worker/분기·Floquet·진행/취소·seed ensemble·200run 복원/재개를 확인했다.
+- 원격 구현 확인 뒤 별도로 전체 Vitest와 신규26개 production 여정을 재실행한다. 그 결과와 최종 품질10명령·수치7개·보존 해시가 모두 성공한 뒤에만 완료 status를 갱신한다. 현재 nextStage22/lastCompleted21을 유지한다.
+- 수치 보고서·보존 증거의 기준 구현 HEAD는 CP2 `f0524ee`다. native 중력 복원 오차7.160422335061867e-7, 물리 선형 극한 PCE validation RMSE6.798699777552591e-17이며 모든 수치7개 불변식과 보호286/기존test417/기존PNG212/desktop2 해시가 통과했다.
+- **원격 구현 push 후 최종 전체 gate:** Vitest340파일5294/5294, 신규143개·기존5151개, 실패·pending0, exit0. `tmp/s22-full-vitest-final.json`이 최종 증거이며 먼저 실행한 동일 소스 전체 결과는 `tmp/s22-full-vitest-cp2-targeted.json`에 분리 보존했다.
+- **원격 구현 push 후 최종 신규 browser:** Chromium13+Pixel5 13,26/26 pass, unexpected/skip/flaky/runner error0, exit0,180.457초(`tmp/s22-browser-final.json`). 동일 production build, retries0·원래30초 budget·명시적 snapshot update none이다. 기존 대표18개와 합44/44다.
+- 최종 품질10개(plan/catalog/Learn/inventory/module-size/policy/전체ESLint/format/typecheck/secrets)는 모두 exit0이다. Golden13개는 CP1 targeted와 최종 전체 run에 포함했다. 원격 구현 기준의 known-pattern secret scan은 tracked1848/text1626파일에서 finding0이며 최종 verification JSON 생성 전 수행했다. history/ignored/binary/외부 서비스는 제외이며 새 dependency audit나 위험 수용이 아니다.
+- `S22-verification.json`에 command·실제 건수·실행 환경·원격 구현·원본/로그/PNG SHA256·실패한 provisional 이력과 한계를 기록했다. 새로운 버전의 package/lockfile, 물리 golden, 기존 fixture·테스트·PNG를 생성하거나 대체하지 않았다.
+- 승인 gate는[7,9,17], Learn 검토 상태는 그대로다. 사람의 과학 검토·실물 기기·Firefox/WebKit·screen-reader 음성은 수행한 것으로 표시하지 않는다. 기존 S01 보안 부채(high2/moderate2·CodeQL32)와 GitHub 기본 branch 관측22개(12high/7moderate/3low)는 미해결이며 구별한다.
+- rollback 기준은 S21 `3a09c3f`와 보존한 `app.html`이다. S23 이후 구현·master merge·force push·tag·release·cutover를 실행하지 않았다. 이 증거 checkpoint를 push한 뒤 clean-tree preflight22를 확인하고 별도 status commit으로만 lastCompleted22/next23을 갱신한다.
