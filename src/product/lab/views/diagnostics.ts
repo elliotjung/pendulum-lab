@@ -5,6 +5,7 @@ import type { ExperimentStateV1 } from '../../contracts/experiment';
 import type { ContractResult } from '../../contracts/validation';
 import { createAdvancedDiagnostics } from './advanced-diagnostics';
 import { createStability } from './stability';
+import { createExperimentWorkflow } from '../experiments/view';
 
 export interface DiagnosticsOptions {
   experiment(): ContractResult<ExperimentStateV1>;
@@ -17,6 +18,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   const wrapper = element(document, 'div', 'lab-diagnostics');
   const advanced = createAdvancedDiagnostics(document, options);
   const stability = createStability(document, options);
+  const experiments = createExperimentWorkflow(document, options);
   const container = element(document, 'details', 'lab-details core-diagnostics');
   container.id = 'core-diagnostics';
   container.dataset.coreDiagnosticStatus = 'empty';
@@ -68,16 +70,19 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   wrapper.append(container, advanced.element, stability.element);
   return {
     element: wrapper,
+    experiments: experiments.element,
     update() {
       panel?.update();
       advanced.update();
       stability.update();
+      experiments.update();
     },
     dispose() {
       disposed = true;
       panel?.dispose();
       advanced.dispose();
       stability.dispose();
+      experiments.dispose();
     }
   };
 }

@@ -3,6 +3,7 @@ import type { QuantityMap, QuantityValue } from '../../contracts/quantities';
 import { readDiagnosticConfiguration } from '../../adapters/analysis/core/source-config';
 import { createDiagnosticSeries } from '../../adapters/analysis/core/source';
 import { integrators } from '../../catalog/integrators';
+import { latinHypercube } from '../../../research/experimentDesign';
 import { validateExperimentState } from '../../contracts/experiment-validation';
 import { batchMetricMetadata, batchStepCount } from './metadata';
 import {
@@ -18,10 +19,20 @@ import {
 import { batchData, batchHash, closed } from './safe';
 
 export function builderFields(experiment: ExperimentStateV1): readonly BatchField[] {
-  readDiagnosticConfiguration(experiment);
+  const source = readDiagnosticConfiguration(experiment);
   const output: BatchField[] = [];
   for (const group of ['parameters', 'initialConditions'] as const)
     for (const [key, quantity] of Object.entries(experiment[group])) {
+      // These transport aliases require coordinated runtime/array edits; an isolated axis cannot express them.
+      if (group === 'parameters' && (source.family === 'field' || source.family === 'discrete')) {
+        if (key.startsWith('configured') || key === 'gridPoints' || key === 'gridSize') continue;
+        if (
+          source.family === 'field' &&
+          ((key === 'gridLength' && experiment.systemId !== 'system:sine-gordon') ||
+            (key === 'ensembleMembers' && experiment.systemId !== 'system:langevin'))
+        )
+          continue;
+      }
       if (quantity.kind === 'scalar') output.push({ group, key, unit: quantity.unit, value: quantity.value });
       else if (quantity.kind === 'vector')
         quantity.values.forEach((value, index) => output.push({ group, key, index, unit: quantity.unit, value }));
@@ -199,17 +210,9 @@ export function buildBatch(experiment: ExperimentStateV1, input: BatchBuilderSet
         ])
       );
   } else if (settings.kind === 'lhs') {
-    values = Array.from({ length: settings.count }, () => []);
-    for (const axis of axes) {
-      const permutation = Array.from({ length: settings.count }, (_, i) => i);
-      for (let i = permutation.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [permutation[i], permutation[j]] = [permutation[j]!, permutation[i]!];
-      }
-      values.forEach((row, i) =>
-        row.push(axis.start + ((permutation[i]! + rng()) / settings.count) * (axis.end - axis.start))
-      );
-    }
+    values = latinHypercube(axes.length, settings.count, settings.seed).map((point) =>
+      axes.map((axis, i) => axis.start + (axis.end - axis.start) * point[i]!)
+    );
   } else
     values = Array.from({ length: settings.count }, () =>
       axes.map((axis) => axis.start + rng() * (axis.end - axis.start))

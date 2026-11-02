@@ -212,6 +212,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
   });
   dock.element.append(coreDiagnostics.element);
+  files.tray.append(coreDiagnostics.experiments);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',

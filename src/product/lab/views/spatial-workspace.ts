@@ -303,6 +303,7 @@ export function createSpatialWorkspace(document: Document, system: SystemDefinit
     canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
   });
   analysis.body.append(coreDiagnostics.element);
+  files.tray.append(coreDiagnostics.experiments);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
