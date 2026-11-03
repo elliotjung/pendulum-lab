@@ -1,4 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
+import { mkdtemp, readFile, rmdir, unlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import {
   buildZip,
   parseZip,
@@ -7,7 +11,7 @@ import {
   checksumEntriesSha256,
   type ZipEntryInput
 } from '../../../src/research/zipBundle';
-import { addResearchArtifact } from '../../../src/product/provenance/project';
+import { addResearchArtifact, copyResearchBundle, verifyResearchBundle } from '../../../src/product/provenance/project';
 import {
   buildResearchPackage,
   importResearchPackage,
@@ -207,5 +211,89 @@ describe('S24 exact portable package and legacy compatibility', () => {
     const zip = await checkedZip(missingMarker);
     await expect(importResearchPackage(zip)).rejects.toThrow();
     await expect(importLegacyResearchPackage(zip)).rejects.toThrow(/우회/);
+  });
+  it('imports fs.readFile Buffer ZIPs in a fresh environment and exports exact native bytes again', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pendulum-s24-buffer-'));
+    const filename = join(directory, 'research.zip');
+    try {
+      const bundle = await addResearchArtifact(await bundleFixture(), {
+        runId: 'run-test',
+        filename: 'native.json',
+        data: nativeFixture().bytes
+      });
+      await writeFile(filename, await buildResearchPackage(bundle));
+      const bytes = await readFile(filename);
+      expect(Buffer.isBuffer(bytes)).toBe(true);
+      const imported = await importResearchPackage(bytes);
+      expect(imported).toEqual(bundle);
+      const exported = await importResearchPackage(await buildResearchPackage(imported));
+      expect(exported.files).toEqual(bundle.files);
+      expect(exported.files.every((entry) => !Buffer.isBuffer(entry.data))).toBe(true);
+    } finally {
+      await unlink(filename).catch(() => undefined);
+      await rmdir(directory);
+    }
+  });
+  it('hashes only selected Buffer/typed-array view bytes and detaches source mutation', async () => {
+    const raw = nativeFixture().bytes;
+    const expected = createHash('sha256').update(raw).digest('hex');
+    for (const buffer of [false, true]) {
+      const storage = buffer ? Buffer.alloc(raw.length + 73, 0xa5) : new Uint8Array(raw.length + 73).fill(0x5a);
+      storage.set(raw, 31);
+      const view = storage.subarray(31, 31 + raw.length);
+      let bundle = await addResearchArtifact(await bundleFixture(), {
+        runId: 'run-test',
+        filename: 'view.json',
+        data: view
+      });
+      expect(bundle.project.artifacts.at(-1)!.sha256).toBe(expected);
+      expect(bundle.files.at(-1)!.data).toEqual(raw);
+      expect(bundle.files.at(-1)!.data.byteOffset).toBe(0);
+      expect(bundle.files.at(-1)!.data.buffer.byteLength).toBe(raw.length);
+      storage[31] = 0;
+      expect(bundle.files.at(-1)!.data).toEqual(raw);
+      // Verify accepts externally provided Buffer-backed raw files too.
+      bundle = { ...bundle, files: bundle.files.map((file) => ({ path: file.path, data: Buffer.from(file.data) })) };
+      const verified = await verifyResearchBundle(bundle),
+        detached = copyResearchBundle(bundle);
+      expect(verified.project.artifacts.at(-1)!.sha256).toBe(expected);
+      expect(verified.files.every((file) => !Buffer.isBuffer(file.data))).toBe(true);
+      bundle.files.at(-1)!.data[0] = 0;
+      expect(detached.files.at(-1)!.data).toEqual(raw);
+    }
+  });
+  it('verifies Buffer-backed member checksum rows and Buffer subarray ZIPs without prefix/suffix noise', async () => {
+    const bundle = await bundleFixture();
+    const extraBacking = Buffer.alloc(100, 0x61),
+      extra = extraBacking.subarray(23, 42);
+    const zip = await buildResearchPackage(bundle, { extraEntries: [{ path: 'report.md', data: extra }] });
+    const stored = Buffer.alloc(zip.length + 97, 0x5f);
+    stored.set(zip, 37);
+    const archiveView = stored.subarray(37, 37 + zip.length);
+    expect(await importResearchPackage(archiveView)).toEqual(bundle);
+    const entries = parseZip(new Uint8Array(zip)).map((entry) => {
+      const backing = Buffer.alloc(entry.data.length + 19, 0x77);
+      backing.set(entry.data, 7);
+      return { path: entry.path, data: backing.subarray(7, 7 + entry.data.length) };
+    });
+    await expect(verifyResearchChecksums(entries)).resolves.toBeUndefined();
+    const manifest = JSON.parse(bytesToText(entries.find((entry) => entry.path === 'manifest/checksums.json')!.data));
+    expect(manifest.files.find((file: { path: string }) => file.path === 'report.md').sha256).toBe(
+      createHash('sha256').update(extra).digest('hex')
+    );
+  });
+  it('normalizes legacy original Buffer archive and keeps its exact selected byte range', async () => {
+    const zip = await legacyZip(),
+      storage = Buffer.alloc(zip.length + 51, 0x6e);
+    storage.set(zip, 18);
+    const bundle = await importLegacyResearchPackage(storage.subarray(18, 18 + zip.length));
+    expect(bundle.files[0]!.data).toEqual(zip);
+    expect(bundle.project.artifacts[0]!.sha256).toBe(createHash('sha256').update(zip).digest('hex'));
+    expect(await importResearchPackage(await buildResearchPackage(bundle))).toEqual(bundle);
+  });
+  it('rejects duplicate direct checksum-input paths before copying Buffer members', async () => {
+    const entries = parseZip(new Uint8Array(await buildResearchPackage(await bundleFixture())));
+    entries.push({ ...entries[0]!, data: Buffer.from(entries[0]!.data) });
+    await expect(verifyResearchChecksums(entries)).rejects.toThrow(/중복/);
   });
 });

@@ -39,7 +39,9 @@ export function copyResearchBundle(bundle: ResearchProjectBundle): ResearchProje
   validateResearchFiles(bundle);
   return {
     project: clone(bundle.project),
-    files: bundle.files.map((file) => ({ path: file.path, data: file.data.slice() }))
+    // Buffer.slice() retains a view of its pooled backing store; always detach
+    // through the Uint8Array constructor before hashing or returning originals.
+    files: bundle.files.map((file) => ({ path: file.path, data: new Uint8Array(file.data) }))
   };
 }
 export function createResearchProject(options: CreateResearchProjectOptions): ResearchProjectBundle {
@@ -182,10 +184,13 @@ export async function addResearchArtifact(
     run = next.project.runs.find((entry) => entry.id === options.runId);
   if (!run) throw new Error('artifact를 연결할 run이 없습니다.');
   projectString(options.filename, 128);
-  const description = await inspectResearchArtifactBytes(options.data, options.kind);
+  if (!(options.data instanceof Uint8Array) || options.data.length > PROJECT_LIMITS.fileBytes)
+    throw new Error('연구 원본 파일은 최대24 MiB입니다.');
+  const data = new Uint8Array(options.data);
+  const description = await inspectResearchArtifactBytes(data, options.kind);
   if (run.experiment && description.experiment && ordered(run.experiment) !== ordered(description.experiment))
     throw new Error('첨부 artifact의 원본 실험 설정이 선택한 run과 다릅니다. 원 run을 따로 캡처하세요.');
-  const sha256 = await sha256Hex(options.data),
+  const sha256 = await sha256Hex(data),
     id = `artifact-${sha256.slice(0, 24)}-${next.project.artifacts.length}`;
   const { experiment: _experiment, ...metadata } = description;
   const artifact: ResearchArtifact = {
@@ -201,7 +206,7 @@ export async function addResearchArtifact(
         : description.kind === 'attachment'
           ? 'application/octet-stream'
           : 'application/json'),
-    bytes: options.data.length,
+    bytes: data.length,
     sha256,
     status: 'present',
     parentIds: options.parentIds ? [...options.parentIds] : [],
@@ -213,7 +218,7 @@ export async function addResearchArtifact(
   };
   next.project.artifacts.push(artifact);
   run.artifactIds.push(id);
-  next.files.push({ path: artifact.path, data: options.data.slice() });
+  next.files.push({ path: artifact.path, data });
   next.project.updatedAt = new Date().toISOString();
   validateResearchProject(next.project);
   validateResearchFiles(next);
@@ -279,9 +284,10 @@ export function readResearchArtifact(bundle: ResearchProjectBundle, artifactId: 
     throw new Error('이 첨부는 실행하거나 JSON으로 해석하지 않는 원본 bytes입니다.');
   return JSON.parse(bytesToText(file.data)) as unknown;
 }
-export async function verifyResearchBundle(bundle: ResearchProjectBundle): Promise<ResearchProjectBundle> {
-  validateResearchProject(bundle.project);
-  validateResearchFiles(bundle);
+export async function verifyResearchBundle(input: ResearchProjectBundle): Promise<ResearchProjectBundle> {
+  // A detached plain-byte snapshot avoids Buffer backing-store hashing and
+  // caller mutation while asynchronous native validation is in progress.
+  const bundle = copyResearchBundle(input);
   const files = new Map(bundle.files.map((file) => [file.path, file.data]));
   for (const artifact of bundle.project.artifacts) {
     if (artifact.status === 'missing') continue;
@@ -324,5 +330,5 @@ export async function verifyResearchBundle(bundle: ResearchProjectBundle): Promi
     )
       throw new Error('완료 run에는 시작부터 종료까지 도달한 원본 표본이 필요합니다.');
   }
-  return copyResearchBundle(bundle);
+  return bundle;
 }

@@ -8,6 +8,7 @@ import { projectRecord } from './validation';
 /** Read-only bridge: retain the original legacy ZIP and every member without inventing canonical runs. */
 export async function importLegacyResearchPackage(bytes: Uint8Array): Promise<ResearchProjectBundle> {
   const entries = readResearchZip(bytes);
+  bytes = new Uint8Array(bytes);
   if (isResearchPackage(entries)) throw new Error('새 project ZIP의 오류를 legacy 가져오기로 우회할 수 없습니다.');
   await verifyResearchChecksums(entries);
   const paper = entries.find((entry) => entry.path === 'paper/paper-pack.json');
@@ -53,6 +54,7 @@ export async function importLegacyResearchPackage(bytes: Uint8Array): Promise<Re
     note: string,
     parentIds: string[]
   ) => {
+    data = new Uint8Array(data);
     const sha256 = await sha256Hex(data),
       id = `artifact-${sha256.slice(0, 24)}-${bundle.project.artifacts.length}`;
     const path = `artifacts/${id}.${kind === 'legacy' ? 'zip' : 'bin'}`;

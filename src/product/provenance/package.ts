@@ -26,7 +26,7 @@ const parseJson = (data: Uint8Array): unknown => {
 export function readResearchZip(bytes: Uint8Array): ZipEntryInput[] {
   if (!(bytes instanceof Uint8Array) || bytes.length > PROJECT_LIMITS.archiveBytes)
     throw new Error('연구 ZIP은 최대64 MiB입니다.');
-  const entries = parseZip(bytes);
+  const entries = parseZip(new Uint8Array(bytes));
   if (entries.length > PROJECT_LIMITS.files) throw new Error('연구 ZIP 파일 개수 제한을 초과했습니다.');
   for (const entry of entries) {
     safeResearchPath(entry.path);
@@ -35,6 +35,21 @@ export function readResearchZip(bytes: Uint8Array): ZipEntryInput[] {
   return entries.map(({ path, data }) => ({ path, data }));
 }
 export async function verifyResearchChecksums(entries: ZipEntryInput[]): Promise<void> {
+  if (!Array.isArray(entries) || entries.length > PROJECT_LIMITS.files)
+    throw new Error('연구 ZIP 파일 개수 제한을 초과했습니다.');
+  const inputPaths = new Set<string>();
+  let inputBytes = 0;
+  for (const entry of entries) {
+    safeResearchPath(entry.path);
+    if (!(entry.data instanceof Uint8Array) || entry.data.length > PROJECT_LIMITS.fileBytes)
+      throw new Error('연구 ZIP의 개별 파일은 최대24 MiB입니다.');
+    const key = entry.path.toLowerCase();
+    if (inputPaths.has(key)) throw new Error('연구 ZIP checksum 입력 경로가 중복되었습니다.');
+    inputPaths.add(key);
+    inputBytes += entry.data.length;
+  }
+  if (inputBytes > PROJECT_LIMITS.archiveBytes) throw new Error('연구 ZIP 파일 합계는 최대64 MiB입니다.');
+  entries = entries.map((entry) => ({ path: entry.path, data: new Uint8Array(entry.data) }));
   const checksum = entries.find((entry) => entry.path === CHECKSUM_PATH);
   if (!checksum) throw new Error('ZIP checksum manifest가 없습니다.');
   const raw = parseJson(checksum.data);
@@ -91,7 +106,7 @@ export async function buildResearchPackage(
   options: { extraEntries?: ZipEntryInput[] } = {}
 ): Promise<Uint8Array> {
   const checked = await verifyResearchBundle(bundle);
-  const entries: ZipEntryInput[] = checked.files.map((file) => ({ path: file.path, data: file.data.slice() }));
+  const entries: ZipEntryInput[] = checked.files.map((file) => ({ path: file.path, data: new Uint8Array(file.data) }));
   const paths = new Set(entries.map((entry) => entry.path.toLowerCase()));
   for (const extra of options.extraEntries ?? []) {
     safeResearchPath(extra.path);
@@ -103,7 +118,7 @@ export async function buildResearchPackage(
     )
       throw new Error('생성된 연구 출력의 경로·크기·중복이 유효하지 않습니다.');
     paths.add(extra.path.toLowerCase());
-    entries.push({ path: extra.path, data: extra.data.slice() });
+    entries.push({ path: extra.path, data: new Uint8Array(extra.data) });
   }
   entries.push({ path: PROJECT_PATH, data: textToBytes(JSON.stringify(checked.project, null, 2)) });
   entries.push({

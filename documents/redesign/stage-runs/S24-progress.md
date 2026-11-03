@@ -44,3 +44,12 @@
 - CP1 표적: 신규53+기존 ZIP/SHA20=73/73,4files, 실패·pending0 (`tmp/s24-cp1-backend.json`).8개 파일 Prettier/ESLint exit0. 원본 native core·S22 observation·S23 model, malformed7schema, byte round trip, 명시적 누락 figure placeholder, legacy 원 ZIP+모든 멤버 보존과 fallback 우회 거부를 검증했다.
 - 작성 도중의 초기 typecheck는 미작성 UI module과 신규 test의 상대 import 깊이, 예제 script tuple 타입 오류를 발견했다. 해당 코드를 수정했고 최종 typecheck 결과와 구분한다. 기존 test/golden/timeout/retry는 수정하지 않았다.
 - CP1 이후 통합 typecheck exit0. backend73/73 재실행 로그를 독립 확보했고 신규8개 경로의 전용 lint/format도 통과했다. CP1을 먼저 원격에 보존한다.
+
+### CP1 원격 및 바이트 경계 보강
+
+- CP1 `8a4a1e8e4079bbced03cc7045a5b8f23008385a4` push exit0, ls-remote 정확한 hash 일치. 전체 typecheck 및 표적73/73 통과 후 원격에 보존했다.
+- 초기 production build는 Vite의 sandbox 하위 process EPERM으로 실패했으며 같은 build를 확장 권한으로 실행해 exit0을 확인했다. production browser 초기20건은16pass/4fail: Node Buffer fixture checksum 두 건과 신규 PNG missing 생성 두 건이다. 이 결과를 완료 검증으로 사용하지 않는다 (`tmp/s24-browser-initial.json`).
+- Node Buffer의 slice/backing-store 차이는 실제 새 Node import API에서도 영향을 줄 수 있어 S24 boundary에서 plain detached Uint8Array로 정규화했다. 기존 src/research/zipBundle.ts는 보존한다. fs.readFile Buffer와 offset Buffer/typedarray의 정확한 SHA256, prefix/suffix 제외, 호출자 변경 분리, legacy Buffer round trip 및 checksum 입력 중복/총량을 추가 검증했다.
+- CP1-B는 backend3개 module과 package test만 보강한다. 신규5개를 포함해 backend+ZIP78/78 통과, 전용 lint/format exit0. 현재 UI/renderer/legacy 통합 표적126/126, 실패·pending0 (`tmp/s24-targeted-final.json`).
+- 독립 UI 검토에서 내부 route 이동시 지역 프로젝트 소실 문제를 발견했다. CP2에서 document 메모리 state로 보강하고 이중→복합→이중 왕복 browser 검증을 추가한다. 같은 ZIP 재선택과 그림의 접근성 축·단위 설명도 CP2에서 보강한다.
+- CP1-B 이후 통합 typecheck와 전체 format:check exit0. renderer 전용6/6 및 UI 경계13/13도 통과했다. 다음 checkpoint 전에 이 바이트 경계 보강을 원격에 보존한다.
