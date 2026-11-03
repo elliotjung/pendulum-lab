@@ -1,9 +1,9 @@
 {
   "schemaVersion": "pendulum-S23-numerical-metrics/v1",
-  "generatedAtUtc": "2026-11-02T23:46:07.063Z",
-  "implementationHead": "600f1df7e5edfdcfb244d32cd6719f0b389cebc2",
+  "generatedAtUtc": "2026-11-03T00:05:53.319Z",
+  "implementationHead": "b93a660af1a276d142c9a47bb51286bc8dfa4993",
   "interpretation": "Local synthetic/native recovery, held-out leakage and saved-model consistency benchmarks. No physical-device, external-data authenticity, long-horizon forecasting or S28 full-parity claim.",
-  "elapsedMs": 845.3314999999998,
+  "elapsedMs": 628.0360000000001,
   "measurements": {
     "sindy": {
       "inputId": "data-input-95ed0f967a6b18f398ee5a35321819343940b73720f101e49d701e42d20ed321",

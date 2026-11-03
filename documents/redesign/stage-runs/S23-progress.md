@@ -17,7 +17,7 @@
 | CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 완료·원격 확인 |
 | CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | 완료·원격 확인 |
 | CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 완료·원격 확인 |
-| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete 전체 검증 중 |
+| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete 검증 완료·증거 push 대기 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 대기 |
 
 예정 경로: src/product/adapters/analysis/data-driven/, src/product/lab/data-driven/, diagnostics 연결, 전용 CSS, tests/product/analysis/data-driven/, e2e/redesign/data-driven*, scripts/redesign/measure-data-driven.ts, S23 문서와 검증 증거. 명시적 경로만 stage한다.
@@ -75,3 +75,16 @@
 - 첫 전체 Vitest5382/5382 및11개 품질 명령은 모두 exit0이었다. 마지막 입력 검토에서 형식이 잘못된 학습 JSON을 기본 설정으로 읽을 때 내부 TypeError가 노출될 수 있음을 확인했다. 정상 데이터와 계산은 바꾸지 않고 미지원 source schema와 필수 배열을 기본 설정 생성 전에 검사하도록 보강했다.
 - 변경은 source.ts와 기존 신규 source.test.ts의 오류 안내 assertion뿐이다. 관련4/4, 전용 ESLint/Prettier, 전체 typecheck, production build exit0; production invalid split/file/asymmetry·이전 결과 보존2/2, 오류·skip·flaky0을 확인했다 (`tmp/s23-import-guidance.json`, `tmp/s23-import-guidance-browser.json`).
 - 이 작은 구현 보강도 먼저 별도 checkpoint로 push한다. 이후 최종 전체 Vitest·품질 검사·S23 browser26건 및 기존 대표 browser를 새로 확정한다. 앞서 통과한 전체 결과는 `tmp/s23-full-vitest-pre-import-guidance.json`, S23 browser26건의 기본 missing 정책 결과는 `tmp/s23-browser-pre-import-guidance.json`으로 보존했다.
+
+
+### CP3 최종 검증 결과
+
+- CP3-I `b93a660af1a276d142c9a47bb51286bc8dfa4993` push exit0 및 정확한 ls-remote 일치 후 최종 전체 검증을 수행했다. 이후 제품 source 변경은 없다.
+- 전체 Vitest5382/5382,345files, 실패·pending0 (`tmp/s23-full-vitest-final.json`); baseline 대비 신규88건이다. Golden13/13, 통합 표적129/129, 별도 입력 안내4/4와 브라우저2/2, 수치24/24가 통과했다.
+- 최종 production S23 Chromium/Pixel5 26/26 및 기존 S18–S22 대표20/20 통과. 두 최종 run 모두 실제 snapshot policy none, 원래30초 timeout/retries0, 실패·skip·flaky·runner error0이다. 이전별도 visual2/2와 PNG4개의 전후SHA256 일치도 보존했다. 기존 대표는 core11/advanced12 도구, 안정성 연결, paired/seeded ensemble, 관측 원본/추정·PCE·영상, lazy load를 포함한다. 전체 타 브라우저/E2E 인증으로 확대하지 않는다.
+- 최종 production build, typecheck, ESLint/policy, format, plan/catalog/Learn/inventory/module audit 및 known-pattern secrets 총11명령 exit0. Secret scan은 tracked1888/text1662, 알려진 패턴0건이며 최종 검증/보존 JSON을 stage하기 전 범위다. history/ignored/binary/외부 서비스와 arbitrary password는 제외다. 의존성 감사나 보안 부채 해결을 주장하지 않는다.
+- 정확한 바이트 보존: protected286/286, historical tests/fixtures425/425, existing PNG216/216. 기존 엔진·physics adapters·공개API·app.html·package/lockfile·old state/share 계약과 원 계획은 바꾸지 않았다. Desktop 전달본 두 SHA256도 저장소 원본과 같아 추가 복사가 필요 없다.
+- source.ts 최종 보강 이후의 수치·보존 보고서 head는 b93a660이다. S23-verification.json에는 각 원 로그 SHA256, 모든42개 변경 경로, 환경·경계·실패 시도와 한계를 기록했다. Windows PowerShell 품질 로그는 UTF16LE라 보고서 작성기가 해당 인코딩으로 읽도록 보정했다. 제품 코드 문제가 아니다.
+- 독립 agent code review의 발견 사항은 모두 수정 후 재검토했다. 사용자 승인 gate[7,9,17]와 Learn의 검토 상태는 유지한다. S23은 사용자 review gate가 아니며 사람의 과학 검토·실기기·Firefox/WebKit·screen-reader 음성을 수행한 것으로 표시하지 않는다.
+- 남은 한계: 유한 표본·수치미분·단일 궤도의 식별성/일반화, HAVOK 조건부 재구성, 외부 canonical 선언과 source 진위, 부분 spectrum·조건수, 기존 dependency/CodeQL 부채. 제품에 해당 경고와 자원 한도를 표시한다.
+- 이 증거 checkpoint push 이후 clean-tree preflight23와 plan check를 통과하고, 별도의 status commit만으로 lastCompleted23/next24를 갱신한다. Rollback 기준 S22 `8985049`와 보존된 app.html. S24 구현·master merge·force push·tag·release·cutover는 하지 않았다.

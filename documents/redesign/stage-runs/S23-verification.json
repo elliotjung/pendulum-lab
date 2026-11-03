@@ -1,0 +1,532 @@
+{
+  "schemaVersion": "pendulum-S23-verification/v1",
+  "stage": 23,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-03T00:13:05.239Z",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "Implementation and evidence checkpoints must be pushed before a separate completion status commit. This report does not prove the final status push.",
+  "git": {
+    "branch": "codex/redesign",
+    "baselineCommit": "89850497ce94a0bd68307ec43437c9c93f4c1168",
+    "verifiedImplementationCommit": "b93a660af1a276d142c9a47bb51286bc8dfa4993",
+    "remoteTrackingHead": "b93a660af1a276d142c9a47bb51286bc8dfa4993",
+    "verifiedCheckpoints": {
+      "CP0": "7e3c7cfe34f5bcb8d725f1f854b64be241d966f8",
+      "CP1-E": "600f1df7e5edfdcfb244d32cd6719f0b389cebc2",
+      "CP1-L": "fe06238f3797e03b9469bff68e739cd6e894e58e",
+      "CP2": "0ac2964ec154b1b033da5239d2d235ccfbc52098",
+      "CP3-I": "b93a660af1a276d142c9a47bb51286bc8dfa4993"
+    },
+    "dependency": "S01-S22 contiguous status/progress/history; S22 status8985049 was fetched and exact local/remote HEAD before S23."
+  },
+  "scope": {
+    "learning": [
+      "SINDy",
+      "DMD",
+      "HAVOK conditional latent reconstruction",
+      "seeded reservoir",
+      "canonical Hamiltonian"
+    ],
+    "eigen": [
+      "real sparse Arnoldi",
+      "real symmetric Lanczos",
+      "bounded dense general spectrum"
+    ],
+    "data": "Immutable recorded Lab slices or S22 observations or declared datasets. Explicit preview/confirmation, exact units/time axis/slices, frozen train-only preprocessing and HAVOK basis.",
+    "lineage": "Versioned self-contained files retain full data/source/settings/seed/model/version; SHA256 consistency, repeat training and saved-model evaluation. Parent result ID retained for evaluation.",
+    "bounds": "Learning24-512samples/1-4variables, HAVOKdelays4-32/rank2-6, ESN4-32, rollout1-64. Dense64/sparse2048/nnz32768, k16,m64,restarts40,estimated100M work,16MiB files,30s worker inactivity.",
+    "exclusions": [
+      "S24 projects/ZIP/reviewer",
+      "later curriculum",
+      "S28 full parity",
+      "cutover",
+      "master merge/tag/release"
+    ]
+  },
+  "validation": {
+    "profile": "E+U",
+    "fullVitest": {
+      "path": "tmp/s23-full-vitest-final.json",
+      "bytes": 2053195,
+      "sha256": "4021e626bc63047cb07819e7804c5d199ce821ad61b27174e2625488e340c67d",
+      "passed": 5382,
+      "total": 5382,
+      "failed": 0,
+      "pending": 0,
+      "files": 345,
+      "success": true
+    },
+    "targeted": {
+      "path": "tmp/s23-cp1-combined-passed.json",
+      "bytes": 47451,
+      "sha256": "f0f96d329e381ba84806f5693ad7541068a9dc25c02152882f4c9a7a0cd6e754",
+      "passed": 129,
+      "total": 129,
+      "failed": 0,
+      "pending": 0,
+      "files": 12,
+      "success": true
+    },
+    "importGuidance": {
+      "path": "tmp/s23-import-guidance.json",
+      "bytes": 2303,
+      "sha256": "e050f280abce4bb9f9f7dd677d8b3c0a80f51e105b38c3b296460c63035d2980",
+      "passed": 4,
+      "total": 4,
+      "failed": 0,
+      "pending": 0,
+      "files": 1,
+      "success": true
+    },
+    "importGuidanceBrowser": {
+      "path": "tmp/s23-import-guidance-browser.json",
+      "bytes": 7304,
+      "sha256": "aa4b2d45b2bec4e83d2509b5ccb0830545a0a2bfd8ef4a9477ecfc6b472074e3",
+      "startTime": "2026-11-03T00:03:13.276Z",
+      "duration": 31538.952999999998,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retries": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "earlierUiBrowser": {
+      "path": "tmp/s23-browser-pre-import-guidance.json",
+      "bytes": 37609,
+      "sha256": "4d0901440b94a8b0e4b91c5771f4650c5009c702293b0f83b77dca72e2917ab0",
+      "startTime": "2026-11-02T23:51:48.033Z",
+      "duration": 186608.426,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retries": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "missing"
+    },
+    "eigenCheckpoint": {
+      "path": "tmp/s23-cp1-eigen.json",
+      "bytes": 16128,
+      "sha256": "958911a802266b7bc7810c19f549dc7411e75ffb255fdd3c89489e7b6bbc6a26",
+      "passed": 45,
+      "total": 45,
+      "failed": 0,
+      "pending": 0,
+      "files": 3,
+      "success": true
+    },
+    "golden": {
+      "path": "tmp/s23-golden-final.json",
+      "bytes": 5942,
+      "sha256": "f536f633dc90feb780dfe66d131db52dc16eff5978394572f30602f9990b87a8",
+      "passed": 13,
+      "total": 13,
+      "failed": 0,
+      "pending": 0,
+      "files": 1,
+      "success": true
+    },
+    "productionBrowser": {
+      "path": "tmp/s23-browser-final.json",
+      "bytes": 37641,
+      "sha256": "997e126d05f62f44d21bbcf85b0216fb0103c95b3a0801768d28beb7d9b641db",
+      "startTime": "2026-11-03T00:05:35.600Z",
+      "duration": 210802.357,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retries": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "explicitNoUpdateVisualComparison": {
+      "path": "tmp/s23-visual-final.json",
+      "bytes": 7290,
+      "sha256": "fc627cb3d587557fbbed69eaead2fe67c2fc10fa68f5c3868a34a717b195ae23",
+      "startTime": "2026-11-02T23:56:23.572Z",
+      "duration": 45973.031,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retries": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "visualBaselineHashes": {
+      "path": "tmp/s23-visual-hashes.json",
+      "bytes": 2141,
+      "sha256": "e9197c04d1736a287d97fe25c161f692c08198fc8fb07b16c156ca8a1f2b1f8f",
+      "proof": {
+        "schemaVersion": "pendulum-s23-visual-hashes/v1",
+        "policy": "none",
+        "count": 4,
+        "equal": true,
+        "before": [
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-dark-chromium-win32.png",
+            "sha256": "2fecc932bbdb4c717ce073399c14b86f804f7e240d5e45813c408b3f9a253717"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-dark-mobile-chrome-win32.png",
+            "sha256": "528b1f469191646355e47d91be4298a90e29d811caaae2fcb1aa2ce57a6c3b2a"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-light-chromium-win32.png",
+            "sha256": "765588326b99449b1b09fdeb6680e74244b93f31233ed83f533714b055078bea"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-light-mobile-chrome-win32.png",
+            "sha256": "8e02ecd8a656949f1e9e744b9f395eaf8b9be8796b0ada108c72a67be0a93b40"
+          }
+        ],
+        "after": [
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-dark-chromium-win32.png",
+            "sha256": "2fecc932bbdb4c717ce073399c14b86f804f7e240d5e45813c408b3f9a253717"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-dark-mobile-chrome-win32.png",
+            "sha256": "528b1f469191646355e47d91be4298a90e29d811caaae2fcb1aa2ce57a6c3b2a"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-light-chromium-win32.png",
+            "sha256": "765588326b99449b1b09fdeb6680e74244b93f31233ed83f533714b055078bea"
+          },
+          {
+            "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\data-driven.spec.ts-snapshots\\s23-data-model-light-mobile-chrome-win32.png",
+            "sha256": "8e02ecd8a656949f1e9e744b9f395eaf8b9be8796b0ada108c72a67be0a93b40"
+          }
+        ]
+      }
+    },
+    "unchangedRepresentativeBrowser": {
+      "path": "tmp/s23-browser-legacy-final.json",
+      "bytes": 32557,
+      "sha256": "95d1a2c48fd0688ad4a307023dcbb82835ccf764d749605ac0bb17613db2e0f7",
+      "startTime": "2026-11-03T00:10:01.828Z",
+      "duration": 140923.511,
+      "expected": 20,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "retries": 0,
+      "originalTestTimeoutMs": 30000,
+      "snapshotUpdate": "none"
+    },
+    "numerical": {
+      "path": "documents/redesign/stage-runs/S23-numerical-metrics.json",
+      "bytes": 32309,
+      "sha256": "d65e724761d19cd414a24a9267e9f1c1cdca346e78e3dab9a856c034b45c66cb",
+      "checks": {
+        "sindyReplay": true,
+        "sindyNoLeakage": true,
+        "sindyAccuracy": true,
+        "dmdReplay": true,
+        "dmdNoLeakage": true,
+        "dmdAccuracy": true,
+        "havokReplay": true,
+        "havokNoLeakage": true,
+        "havokConditionalDerivativeAccuracy": true,
+        "reservoirReplay": true,
+        "reservoirNoLeakage": true,
+        "reservoirAccuracy": true,
+        "hamiltonianReplay": true,
+        "hamiltonianNoLeakage": true,
+        "hamiltonianAccuracy": true,
+        "arnoldiReplay": true,
+        "arnoldiResidual": true,
+        "arnoldiAnalyticSpectrum": true,
+        "lanczosReplay": true,
+        "lanczosResidual": true,
+        "lanczosAnalyticSpectrum": true,
+        "general-eigensolverReplay": true,
+        "generalEigensolverTraceInvariant": true,
+        "generalEigensolverAnalyticSpectrum": true
+      }
+    },
+    "quality": [
+      {
+        "path": "tmp/s23-quality-build.log",
+        "command": "npm run build",
+        "name": "build",
+        "exitCode": 0,
+        "bytes": 21256,
+        "sha256": "57eb694345adb6d5319d22a5ad67b6508336e498f5f7646b1a5e24df8e4b0c26"
+      },
+      {
+        "path": "tmp/s23-quality-plan.log",
+        "command": "npm run redesign:check",
+        "name": "plan",
+        "exitCode": 0,
+        "bytes": 318,
+        "sha256": "0b64e269c611128e0e4b51b91297b6cbf225b480501fdb8c82c8f35e5dcd953d"
+      },
+      {
+        "path": "tmp/s23-quality-catalog.log",
+        "command": "npm run redesign:catalog:check",
+        "name": "catalog",
+        "exitCode": 0,
+        "bytes": 518,
+        "sha256": "293784c4dea59171247326fd250ed77cc24ddced9d6a2809cad1498fc0f200d9"
+      },
+      {
+        "path": "tmp/s23-quality-learn.log",
+        "command": "npm run redesign:learn:check",
+        "name": "learn",
+        "exitCode": 0,
+        "bytes": 430,
+        "sha256": "25155f4383f9d581b8a425bd29fe6c55b39938ae482f41df2e0b61e37d15b49d"
+      },
+      {
+        "path": "tmp/s23-quality-inventory.log",
+        "command": "npm run redesign:inventory:check",
+        "name": "inventory",
+        "exitCode": 0,
+        "bytes": 2280,
+        "sha256": "5e75cc9f8cde17fd8c48ecb175d134d1e9c6979cda710087bed006a0072e1ab1"
+      },
+      {
+        "path": "tmp/s23-quality-typecheck.log",
+        "command": "npm run typecheck",
+        "name": "typecheck",
+        "exitCode": 0,
+        "bytes": 134,
+        "sha256": "b538d0920d3be3d84a01b672003caa4697f3c06e05e69f7233ef9b6a5c9c9b42"
+      },
+      {
+        "path": "tmp/s23-quality-modules.log",
+        "command": "npm run audit:modules",
+        "name": "modules",
+        "exitCode": 0,
+        "bytes": 336,
+        "sha256": "6db16eaf63b00376fef2c68e81aaaae746348093b376f05c5455be8a870e30be"
+      },
+      {
+        "path": "tmp/s23-quality-policy.log",
+        "command": "npm run lint:policy",
+        "name": "policy",
+        "exitCode": 0,
+        "bytes": 296,
+        "sha256": "9933beb062999d0e8a7184f33e579ea2c86a35d580fc23c810efea56eec5e2a8"
+      },
+      {
+        "path": "tmp/s23-quality-eslint.log",
+        "command": "npm run lint:eslint",
+        "name": "eslint",
+        "exitCode": 0,
+        "bytes": 204,
+        "sha256": "a66dabcf2a69521e1b8a506de449df6b1c621d3762ff0518a881bc608e1036fb"
+      },
+      {
+        "path": "tmp/s23-quality-format.log",
+        "command": "npm run format:check",
+        "name": "format",
+        "exitCode": 0,
+        "bytes": 352,
+        "sha256": "a8ec65c29a7cf63a5822b273fe070e6beec5cb5dfcd8c9cf5aca80ebb795fa4a"
+      },
+      {
+        "path": "tmp/s23-quality-secrets.log",
+        "command": "npm run redesign:secrets",
+        "name": "secrets",
+        "exitCode": 0,
+        "bytes": 45458,
+        "sha256": "88fc1c3e7d90a50628a6a0be28bbdb93385b6a683b487157ac3657bad8072739"
+      }
+    ],
+    "preservation": {
+      "path": "documents/redesign/stage-runs/S23-preservation.json",
+      "bytes": 303180,
+      "sha256": "25933e8985774ef3c6a8611baa29609276035e884bc03844b524e9e7f7ce3702",
+      "passed": true,
+      "protected": 286,
+      "historicalTests": 425,
+      "historicalPng": 216,
+      "desktopCopies": [
+        {
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+          "equal": true
+        },
+        {
+          "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+          "equal": true
+        }
+      ]
+    },
+    "inspectedVisualBaselines": [
+      {
+        "path": "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-dark-chromium-win32.png",
+        "bytes": 60344,
+        "sha256": "2fecc932bbdb4c717ce073399c14b86f804f7e240d5e45813c408b3f9a253717"
+      },
+      {
+        "path": "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-dark-mobile-chrome-win32.png",
+        "bytes": 61543,
+        "sha256": "528b1f469191646355e47d91be4298a90e29d811caaae2fcb1aa2ce57a6c3b2a"
+      },
+      {
+        "path": "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-light-chromium-win32.png",
+        "bytes": 60696,
+        "sha256": "765588326b99449b1b09fdeb6680e74244b93f31233ed83f533714b055078bea"
+      },
+      {
+        "path": "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-light-mobile-chrome-win32.png",
+        "bytes": 61832,
+        "sha256": "8e02ecd8a656949f1e9e744b9f395eaf8b9be8796b0ada108c72a67be0a93b40"
+      }
+    ],
+    "failedAttempts": [
+      {
+        "path": "tmp/s23-root-targeted.json",
+        "bytes": 21359,
+        "sha256": "67e487786b797df2d2e6552bf2facb12e57c0ca419e319e4c1eadd76e66d60a3"
+      },
+      {
+        "path": "tmp/s23-cp1-targeted.json",
+        "bytes": 48800,
+        "sha256": "049a322ed2034f85ad0adba28849d9f6d252350c3f7f827ae6a15033084b3a81"
+      },
+      {
+        "path": "tmp/s23-cp1-targeted-final.json",
+        "bytes": 48117,
+        "sha256": "a12115df559d61070e8d2b1f60ec4e9cb2c8877c60926c5d8019e6fa01237edb"
+      },
+      {
+        "path": "tmp/s23-learning-tests.json",
+        "bytes": 11131,
+        "sha256": "031de80a12b19a8a809588971789c69c37eebf46374f33c750bd55c6a0c4d773"
+      },
+      {
+        "path": "tmp/s23-learning-tests2.json",
+        "bytes": 11668,
+        "sha256": "a2307bbd33d4e7c93e3f0cbd914164eaf73ed1dc3c899f105eca99e44dfa02da"
+      },
+      {
+        "path": "tmp/s23-learning-tests5.json",
+        "bytes": 8587,
+        "sha256": "6b9a6811bd333600212cea24d055cbef6a7ae55229a3d8700f49d08bace64d5c"
+      },
+      {
+        "path": "tmp/s23-browser-initial.json",
+        "bytes": 109416,
+        "sha256": "0fde062d06c16d7d4aac783cd423b197eb64e6a2c1c4eebef4e3e2e6596c2156"
+      },
+      {
+        "path": "tmp/s23-snapshot-preparation.json",
+        "bytes": 8390,
+        "sha256": "fbf03b7d5e773fcb2d274f545859b57645b78de89f90f350fa60bd21c8c105ed"
+      }
+    ],
+    "failureDisposition": "Initial -0 fixture equality corrected by canonical zero; Hamiltonian descriptor ordering matched native feature library; Duffing finite-difference dt reduced0.02->0.01 keeping original coefficient tolerance; singular native failure test accepts explicit rejection paths. Browser fixture negative-zero equality, hidden condition-tab test setup and fast-fit cancellation race corrected. Pending-worker cancellation test explicitly delays submission, not native numerical work. New snapshots prepared separately; The initial successful26test UI run used actual default missing policy with all4baselines present; final post-hardening26test UI run uses explicit none. Separate2visual comparisons used explicit none with before/after4PNG hash equality. Code review additionally fixed saved native diagnostic consistency, hidden general-solver m for2x2, source visibility after eigen adoption, ignored HAVOK ridge and shortened reconstruction notice. No historical assertion/fixture/timeout/retry/PNG changed."
+  },
+  "preservation": "286 protected files, historical tests and PNGs exact bytes against S22; pure engines, product physics adapters, public APIs, app.html, package/lockfile, old storage/share contracts and original plans preserved.",
+  "review": {
+    "approvedUserGates": [
+      7,
+      9,
+      17
+    ],
+    "currentStageRequiresUserGate": false,
+    "nextGate": 24,
+    "humanScientificReview": false,
+    "independentAgentCodeReview": "All reported findings fixed and rechecked; independent learning/eigen66tests passed. Automated review is not human expert review.",
+    "learnState": "unchanged"
+  },
+  "security": {
+    "dependenciesChanged": false,
+    "freshDependencyAudit": false,
+    "baselineDebt": "S01 high2/moderate2 and CodeQL32 unresolved. Git push default-branch notice22(high12/moderate7/low3) is separate, not risk acceptance.",
+    "inputDefenses": "Descriptor-first inert JSON, closed versions/shapes, finite/dimension/work budgets, no serialized executable operators, no unbounded sparse allocation, dedicated terminable workers.",
+    "externalClaims": "Checksums and recomputed diagnostics establish internal consistency, not external source authenticity, coefficient training history or scientific truth.",
+    "secretScan": {
+      "trackedFiles": 1888,
+      "textFiles": 1662,
+      "findings": 0,
+      "scope": "Known-pattern tracked-text scan before final verification/preservation evidence files are staged; history, ignored/binary files and external services excluded."
+    }
+  },
+  "environment": {
+    "node": "v26.3.0",
+    "platform": "win32",
+    "browsers": [
+      "Chromium desktop",
+      "Chromium Pixel5 emulation"
+    ],
+    "physicalDevices": "unverified",
+    "firefoxWebkit": "unverified",
+    "screenReaderAudio": "unverified",
+    "modelSelector": "not exposed; no claim of changing or verifying user selection"
+  },
+  "risks": [
+    "Finite derivative/validation/rollout diagnostics do not guarantee long-horizon generalization or unique coefficients.",
+    "HAVOK uses validation forcing and future samples within its delay window; conditional reconstruction only.",
+    "Canonical external q,p labels are source declarations, not authenticated physical mappings.",
+    "Krylov partial spectrum and small residuals do not establish complete spectrum or eigenvalue conditioning.",
+    "Known dependency/CodeQL debt and untested physical devices/browsers/screen reader audio remain."
+  ],
+  "rollback": {
+    "baseline": "89850497ce94a0bd68307ec43437c9c93f4c1168",
+    "preservedEntry": "app.html",
+    "cutoverPerformed": false
+  },
+  "nextValidStage": 24,
+  "changedPaths": [
+    "css/product/data-driven.css",
+    "documents/redesign/data-driven-krylov-ko.md",
+    "documents/redesign/stage-runs/S23-numerical-metrics.json",
+    "documents/redesign/stage-runs/S23-preservation.json",
+    "documents/redesign/stage-runs/S23-progress.md",
+    "documents/redesign/stage-runs/S23-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/data-driven.spec.ts",
+    "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-dark-chromium-win32.png",
+    "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-dark-mobile-chrome-win32.png",
+    "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-light-chromium-win32.png",
+    "e2e/redesign/data-driven.spec.ts-snapshots/s23-data-model-light-mobile-chrome-win32.png",
+    "scripts/redesign/measure-data-driven.ts",
+    "src/product/adapters/analysis/data-driven/artifact.ts",
+    "src/product/adapters/analysis/data-driven/client.ts",
+    "src/product/adapters/analysis/data-driven/contracts.ts",
+    "src/product/adapters/analysis/data-driven/data-driven.worker.ts",
+    "src/product/adapters/analysis/data-driven/eigen-contracts.ts",
+    "src/product/adapters/analysis/data-driven/eigen-validation.ts",
+    "src/product/adapters/analysis/data-driven/eigen.ts",
+    "src/product/adapters/analysis/data-driven/execute.ts",
+    "src/product/adapters/analysis/data-driven/learning-contracts.ts",
+    "src/product/adapters/analysis/data-driven/learning-diagnostics.ts",
+    "src/product/adapters/analysis/data-driven/learning-havok.ts",
+    "src/product/adapters/analysis/data-driven/learning-math.ts",
+    "src/product/adapters/analysis/data-driven/learning-model.ts",
+    "src/product/adapters/analysis/data-driven/learning-validation.ts",
+    "src/product/adapters/analysis/data-driven/learning.ts",
+    "src/product/adapters/analysis/data-driven/safe.ts",
+    "src/product/adapters/analysis/data-driven/source.ts",
+    "src/product/lab/data-driven/controls.ts",
+    "src/product/lab/data-driven/panel.ts",
+    "src/product/lab/data-driven/render.ts",
+    "src/product/lab/data-driven/settings.ts",
+    "src/product/lab/data-driven/view.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "tests/product/analysis/data-driven/artifact.test.ts",
+    "tests/product/analysis/data-driven/client.test.ts",
+    "tests/product/analysis/data-driven/eigen.test.ts",
+    "tests/product/analysis/data-driven/fixtures.ts",
+    "tests/product/analysis/data-driven/learning.test.ts",
+    "tests/product/analysis/data-driven/source.test.ts"
+  ],
+  "evidencePaths": [
+    "documents/redesign/stage-runs/S23-progress.md",
+    "documents/redesign/stage-runs/S23-numerical-metrics.json",
+    "documents/redesign/stage-runs/S23-preservation.json",
+    "documents/redesign/stage-runs/S23-verification.json"
+  ]
+}
