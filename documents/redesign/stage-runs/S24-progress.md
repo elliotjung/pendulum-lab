@@ -17,7 +17,9 @@
 | CP0 | 범위·보존·진행 기록 | plan/preflight24/typecheck | 완료·원격 확인 |
 | CP1 / CP1-B | 엄격한 계층·ZIP·checksum·legacy 호환·Node byte 경계 | 정상/경계/손상/unsafe path/round trip, typecheck | 완료·원격 확인 |
 | CP2 | lazy 연구 workspace·notebook·figure·report·offline reviewer | component/production desktop/mobile/keyboard/a11y/visual, build | 완료·원격 확인 |
-| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete·전체 검증 진행 |
+| CP2-I | frozen inventory exact projection | 기존7+신규14, inventory check/typecheck | 완료·원격 확인 |
+| CP2-L | batch/model 중첩 계보·분류 연결 | backend94, 새 source4+시각2, build/typecheck | 완료·원격 확인 |
+| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | 검증 완료·증거 push 예정 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push 및 정확한 remote HEAD | 대기 |
 
 예정 경로: src/product/provenance/, src/product/lab/projects/, diagnostics 연결, src/reviewer/의 연구 package mode, 전용 CSS, tests/product/provenance/, e2e/redesign/research-project*, scripts/redesign/의 검증·샘플 생성, S24 문서/검증/재현 패키지. 명시적 경로만 stage한다.
@@ -119,3 +121,22 @@
 - backend/ZIP 표적94/94를 root에서도 재실행해 JSON 증거를 확보했다 (`tmp/s24-nested-targeted.json`). source7종의 typed 원본/ID 추출과 새16건을 포함하며 실패·pending0이다.
 - 새 source4건+시각2건 총6/6 production 통과, actual snapshot none/원30초/retries0/skip·flaky·runner errors0 (`tmp/s24-browser-cp2-lineage.json`). 실제 help문구 변경 후 새4PNG의 refresh 직후와 none 종료 SHA256도 같다 (`tmp/s24-visual-hashes-nested-cp.json`).
 - 전체 typecheck·production build, 변경 backend/test/E2E의 전용 lint/format 및 panel lint 모두 exit0. 기준선·기존432test/fixture·220PNG·순수엔진/API에 변경이 없다. 이 patch를 원격에 보존한 뒤 마지막 전체 Vitest/품질/30여정을 실행한다.
+
+### CP2-L 원격 확인과 완료 후보 전체 검사
+
+- CP2-L `3f1dcfb` push 성공 및 정확한 원격 HEAD 확인은 아래 최종 증거와 종료 보고에 포함한다. 모든 제품/검사 구현이 원격에 있고 이후 source/기존test/PNG는 고정한다.
+- candidate-complete를 다시 확정한다. 최종 전체 Vitest는 --maxWorkers=2로 CPU 경합을 제한하며 원래30초·모든 assertion·fixture를 유지한다. 전 단계의 단일worker5473건 결과는 보강 전 증거로 구분한다. 최신 source의 전체 단위·golden·10개 품질 명령·30개 사용자 여정·보존 해시가 통과해야 완료 상태를 만든다.
+
+## CP3 최종 통과 증거
+
+- 최종 구현 commit `3f1dcfb067c70fc63ad982abcf3d17bac647265b`와 origin tracking/실제 remote hash를 확인했다. 이 뒤 제품·검사 source 및 PNG는 바뀌지 않았다.
+- 최종 전체 Vitest5489/5489,350files, 실패·pending0, maxWorkers2와 원testTimeout30초 (`tmp/s24-full-vitest-final.json`). S23 대비 신규107건이다. Golden13/13, 원 checkpoint 표적126/126, 중첩 계보 표적94/94 및 inventory21/21이 통과했다. 신규14 inventory 검증과16 nested 검증은 최종 전체에도 포함된다.
+- 최종 source의 typecheck, lint(policy+ESLint), format:check, plan/catalog/Learn/inventory check, module audit, known-pattern secrets, production build 총10개 명령이 모두 exit0 (`tmp/s24-quality-final.json`). 알려진 비밀 패턴0건이며 history/ignored/binary/외부 서비스/임의 password는 제외다. 최종 증거 JSON들을 stage하기 전 tracked text 범위이며 새 dependency audit/보안 부채 수락이 아니다.
+- 최종 post-push production S24 30/30, unexpected/skipped/flaky/runner errors0, 실제 snapshot none, 원30초/retries0 (`tmp/s24-browser-final-clean.json`). batch/실제160표본 DMD의 불일치 거부와 일치 원본 채택, 실제 legacy exporter의 원 ZIP+모든 멤버 보존, 다중 시스템 내부 왕복, fresh-context round trip, file:// offline no-network/no-script, 오류·취소·키보드·320px·200%zoom을 포함한다.
+- 기존 대표20/20은 CP2 build에서 통과했다. 이후 수정은 project 계보/설명과 inventory guard에 한정되며 기존 도구/콘솔 source는 그대로다. 최초19/20의 마지막 axe page-start timeout, 초기 UI/Buffer/missing baseline/시각 원인 진단은 각각 별도 이전 로그로 보존한다. 최종 통과로 덮어 설명하지 않는다.
+- 최신 help문구 기준 새4PNG의 최종30 직전/직후 SHA256이 모두 같다 (`tmp/s24-visual-hashes-final.json`). 최신 표적6과 최종30의 두 독립 context에서 geometry/font/DPR도 같았다 (`tmp/s24-visual-fixed-geometry.json`, passed=true). 기존220PNG는 별도 보존 검사에서 모두 같으며 threshold/mask/timeout/retry를 완화하지 않았다.
+- 바이트 보존: protected286/286, 역사 test/fixture432/432, 기존 PNG220/220, desktop 전달본 두 SHA256 일치, mismatches0 (`S24-preservation.json`). physics/chaos/research/runtime/workers/validation/physics adapters, 공개 API, 기존 app.html·저장/공유, package/lockfile·원 계획과 golden은 바꾸지 않았다.
+- 제공 예제 `S24-example.zip`:115224bytes, 실제 기존 엔진2runs·6artifacts·2figures·notebook1, 원본 bytes 및 project round trip 동일. SHA256 `5fc04915b220840b92fcf4ef07c1dce2e5af12672329915d5d942682376f4606`; sourceHead는3f1dcfb이며 각 멤버의 독립 Node SHA256은 `S24-example-manifest.json`에 있다. 고정 예제 시각은 실행 시각과 구분했다.
+- S24-verification.json에 모든45개 변경 경로와 source/원 로그 SHA256, 각 실제 실행 조건·실패 이력·보존·보안/검토 한계를 기록했다. 이것은 최종 status push의 증명이 아니며 원격 status commit이 완료의 권위다.
+- 사용자 gate 승인 목록은 [7,9,17] 유지, S24 검토는 대기다. 사람의 과학 검토·실기기·Firefox/WebKit·screen-reader audio 인증은 하지 않았다. 기존 dependency/CodeQL 부채, legacy SHA helper의 직접 offset-Buffer 제약, 큰 파일 한도와 native 과학적 가정은 review 문서에 남긴다. 신규 package 경계는 Buffer를 정규화한다.
+- 복구 기준은 S23 status e6aa709와 보존된 app.html이다. S25 이후 교육 콘텐츠, S28 full parity/migration, cutover, master merge/force push/tag/release는 실행하지 않았다.

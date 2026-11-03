@@ -1,0 +1,2622 @@
+{
+  "schemaVersion": "pendulum-S24-verification/v1",
+  "stage": 24,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-03T07:06:24.469Z",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "Implementation and evidence checkpoints are pushed first; completion requires a separate status commit on origin. This report does not prove the final status push.",
+  "git": {
+    "branch": "codex/redesign",
+    "baselineCommit": "e6aa7094229e26527b02ceeeeb0cb7e6c01b38a3",
+    "verifiedImplementationCommit": "3f1dcfb067c70fc63ad982abcf3d17bac647265b",
+    "remoteTrackingHead": "3f1dcfb067c70fc63ad982abcf3d17bac647265b",
+    "checkpoints": {
+      "CP0": "b344aafdaab0a09014e45cf5aed6acd8b27c5168",
+      "CP1": "8a4a1e8e4079bbced03cc7045a5b8f23008385a4",
+      "CP1-B": "4c9ac6f56224e691f3c57ad050bd6c7fee6bab88",
+      "CP2": "8dbadccdb3b811d8db4a366b8e22a5e1200c0bd2",
+      "CP2-I": "55f446324a542431e2ee9e7dc6ebe7ff82fb38cd",
+      "CP2-L": "3f1dcfb067c70fc63ad982abcf3d17bac647265b"
+    },
+    "dependency": "S23 separate status e6aa709 fetched, exact local/remote preflight24, contiguous completed1..23 and required progress/verification/preservation/history verified."
+  },
+  "scope": {
+    "hierarchy": "project/session/run/artifact/narrative/figure/citation",
+    "data": "Immutable click-time canonical configuration and retained native recorded samples; strict native core/advanced/stability/batch/inverse/model/observation parser reuse and original byte preservation.",
+    "exports": [
+      "notebook JSON",
+      "report Markdown",
+      "true-vector figure SVG and raw source CSV",
+      "versioned SHA256/CRC32/legacy-hash ZIP",
+      "static file:// offline reviewer",
+      "hosted reviewer local ZIP validation"
+    ],
+    "compatibility": "Original legacy research ZIP and every member are preserved without inventing canonical complete runs. New-package corruption cannot fall through to legacy parsing.",
+    "figureScope": "Recorded Lab time/coordinate projections. Native analytical results and legacy figures/notebooks are retained as exact original attachments; narrative supplies the interpretation.",
+    "storage": "Document memory survives internal route navigation. Explicit separate-key local slot <=3MiB; explicit portable ZIP required across reload/devices.",
+    "bounds": "64MiB archive/512files,24MiB member,2MiB metadata;64sessions/512runs/384artifacts/128narratives/64figures;8192samples/256coordinates/1Mscalars;30s worker inactivity and actual termination cancellation.",
+    "exclusions": [
+      "S25+ curriculum",
+      "S28 full migration/parity",
+      "app cutover",
+      "master merge",
+      "force push",
+      "tag",
+      "release"
+    ]
+  },
+  "validation": {
+    "profile": "E+U",
+    "fullVitest": {
+      "path": "tmp/s24-full-vitest-final.json",
+      "bytes": 2097192,
+      "sha256": "5b60b70199d5753d697dfbe9c05528584784e66df4c2c15ddb7078f95fe2f915",
+      "total": 5489,
+      "passed": 5489,
+      "failed": 0,
+      "pending": 0,
+      "files": 350,
+      "success": true,
+      "maxWorkers": 2,
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=tmp/s24-full-vitest-final.json"
+    },
+    "originalCheckpointTargeted": {
+      "path": "tmp/s24-targeted-final.json",
+      "bytes": 46052,
+      "sha256": "afd885e09b645cea4202ea910d89c166fe347709974cf05cf6195caf3c0bd27f",
+      "total": 126,
+      "passed": 126,
+      "failed": 0,
+      "pending": 0,
+      "files": 10,
+      "success": true
+    },
+    "nestedLineageTargeted": {
+      "path": "tmp/s24-nested-targeted.json",
+      "bytes": 36585,
+      "sha256": "5266d7adb9a7c4449136a409cfb2d2aba8b4c333fb5c26dcbe4d7f0c1f38b8ec",
+      "total": 94,
+      "passed": 94,
+      "failed": 0,
+      "pending": 0,
+      "files": 4,
+      "success": true
+    },
+    "nestedSourceJourneys": {
+      "path": "tmp/s24-browser-nested.json",
+      "bytes": 9591,
+      "sha256": "557d89d1625da56246b262d6b623755e6b4c97d5daf4df72078ca9d2e14f35d1",
+      "stats": {
+        "startTime": "2026-11-03T06:41:08.367Z",
+        "duration": 56245.002,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "snapshotPolicy": "none",
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ],
+      "runnerErrors": 0,
+      "tests": [
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11857,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11198,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11620,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6945,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        }
+      ]
+    },
+    "finalPatchTargetedJourneys": {
+      "path": "tmp/s24-browser-cp2-lineage.json",
+      "bytes": 20603,
+      "sha256": "5a0c4deda69ebc9a57eec63413ced6cd5a9b52ed21e454743098edf5d5922883",
+      "stats": {
+        "startTime": "2026-11-03T06:44:53.555Z",
+        "duration": 50751.905,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "snapshotPolicy": "none",
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ],
+      "runnerErrors": 0,
+      "tests": [
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6232,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6975,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8959,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11104,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6271,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4912,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        }
+      ]
+    },
+    "golden": {
+      "path": "tmp/s24-golden-final.json",
+      "bytes": 5948,
+      "sha256": "f62bef5720f5dfbdf765f087d1b23a670d589c2a5099078b112fd4951bb8a251",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "pending": 0,
+      "files": 1,
+      "success": true
+    },
+    "browser": {
+      "path": "tmp/s24-browser-final-clean.json",
+      "bytes": 50485,
+      "sha256": "787c380961c683838e9a2817269c9f3196e9d367f4339471d31a82c4edcb9f0c",
+      "stats": {
+        "startTime": "2026-11-03T06:58:04.217Z",
+        "duration": 237800.246,
+        "expected": 30,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "snapshotPolicy": "none",
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ],
+      "runnerErrors": 0,
+      "tests": [
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / captures real runs, composes a sourced figure and exports independently checked raw bytes",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 12257,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / a fresh browser opens the verified ZIP only after preview and preserves its source identity",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 13468,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / one project keeps distinct double and compound runs across library navigation",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4710,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / real legacy research export opens through the compatibility adapter without losing any original member",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 15683,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / an existing native analysis artifact joins the same run with its exact original bytes and lineage",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 5086,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4609,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11006,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / malformed, changed-checksum and traversal packages leave the adopted project intact",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4175,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / an explicitly missing source stays visible and cannot regenerate a misleading figure",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4903,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / separate local storage requires explicit validated restore and keeps legacy keys unchanged",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8471,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / the extracted reviewer opens offline in a new context without executing user text",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 7480,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / the reviewer application verifies a package without fetching deployment reports",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6029,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / worker startup errors and cancellation preserve the current project and pending preview isolation",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3707,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 9600,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / 200 percent zoom retains project editing, source descriptions and all controls",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 9703,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / captures real runs, composes a sourced figure and exports independently checked raw bytes",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 12326,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / a fresh browser opens the verified ZIP only after preview and preserves its source identity",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 12438,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / one project keeps distinct double and compound runs across library navigation",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 4267,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / real legacy research export opens through the compatibility adapter without losing any original member",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11299,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / an existing native analysis artifact joins the same run with its exact original bytes and lineage",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8118,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / batch: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3812,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / model: a native nested source must match its project run before association",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6386,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / malformed, changed-checksum and traversal packages leave the adopted project intact",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3996,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / an explicitly missing source stays visible and cannot regenerate a misleading figure",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3896,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / separate local storage requires explicit validated restore and keeps legacy keys unchanged",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3994,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / the extracted reviewer opens offline in a new context without executing user text",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 7074,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / the reviewer application verifies a package without fetching deployment reports",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 9802,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / worker startup errors and cancellation preserve the current project and pending preview isolation",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3472,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8751,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / 200 percent zoom retains project editing, source descriptions and all controls",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 9819,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        }
+      ]
+    },
+    "historicalJourneys": {
+      "path": "tmp/s24-browser-regression.json",
+      "bytes": 31659,
+      "sha256": "763db08aec09bada598fb85312f6fae1253a36c548de84425691d787739ae53e",
+      "stats": {
+        "startTime": "2026-11-03T06:10:20.035Z",
+        "duration": 197601.802,
+        "expected": 20,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "snapshotPolicy": "none",
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ],
+      "runnerErrors": 0,
+      "tests": [
+        {
+          "title": "redesign\\advanced-diagnostics.spec.ts / S19 advanced chaos geometry / all twelve native tools execute in a dedicated worker with provenance and strict artifact reload",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 19920,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\advanced-diagnostics.spec.ts / S19 advanced chaos geometry / all twelve native tools execute in a dedicated worker with provenance and strict artifact reload",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 20526,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\batch-experiments.spec.ts / S21 comparison, sweep and ensemble experiments / paired builder executes native runs with complete source and aggregate lineage",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8344,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\batch-experiments.spec.ts / S21 comparison, sweep and ensemble experiments / a seeded stochastic ensemble repeats exactly after export, reload and import",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 14962,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\batch-experiments.spec.ts / S21 comparison, sweep and ensemble experiments / paired builder executes native runs with complete source and aggregate lineage",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3084,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\batch-experiments.spec.ts / S21 comparison, sweep and ensemble experiments / a seeded stochastic ensemble repeats exactly after export, reload and import",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 13723,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\core-diagnostics.spec.ts / S18 common core diagnostics / loads the diagnostic chunk only on demand and ignores a late load after route disposal",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 2644,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\core-diagnostics.spec.ts / S18 common core diagnostics / all eleven diagnostics execute through the common worker and artifact reload preserves the current experiment",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 10868,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\core-diagnostics.spec.ts / S18 common core diagnostics / loads the diagnostic chunk only on demand and ignores a late load after route disposal",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 1795,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\core-diagnostics.spec.ts / S18 common core diagnostics / all eleven diagnostics execute through the common worker and artifact reload preserves the current experiment",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8333,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\data-driven.spec.ts / S23 data-driven models and Krylov tools / current recorded Lab data is copied through preview without changing the live experiment",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3690,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\data-driven.spec.ts / S23 data-driven models and Krylov tools / current recorded Lab data is copied through preview without changing the live experiment",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 3911,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\observations-inverse.spec.ts / S22 observations, inverse problems and uncertainty / preview confirmation recovers gravity and restores original observation lineage",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 16064,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\observations-inverse.spec.ts / S22 observations, inverse problems and uncertainty / preview confirmation recovers gravity and restores original observation lineage",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 17455,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\stability-workflow.spec.ts / S20 stability and bifurcation workflows / a converged physical solution flows into Floquet and continuation with preserved source lineage",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8274,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\stability-workflow.spec.ts / S20 stability and bifurcation workflows / a converged physical solution flows into Floquet and continuation with preserved source lineage",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 5362,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "reviewer-dashboard.spec.ts / reviewer console loads report JSON and exposes rich evidence",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6440,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "reviewer-dashboard.spec.ts / reviewer console tabs expose vendor matrix and artifact ledger",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 6330,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "reviewer-dashboard.spec.ts / reviewer console loads report JSON and exposes rich evidence",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 2711,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "reviewer-dashboard.spec.ts / reviewer console tabs expose vendor matrix and artifact ledger",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 11092,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        }
+      ],
+      "phase": "Ran after CP2 on that production build. Later changes were confined to project input-lineage code and its help plus the read-only inventory guard; finalS24 and fullVitest evidence are at3f1dcfb."
+    },
+    "quality": [
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-typecheck.log",
+        "startedAtUtc": "2026-11-03T06:55:01.7562931Z",
+        "finishedAtUtc": "2026-11-03T06:55:14.9972192Z",
+        "evidence": {
+          "path": "tmp/s24-quality-typecheck.log",
+          "bytes": 66,
+          "sha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87"
+        }
+      },
+      {
+        "command": "npm run lint",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-lint.log",
+        "startedAtUtc": "2026-11-03T06:55:15.0030661Z",
+        "finishedAtUtc": "2026-11-03T06:55:53.7526902Z",
+        "evidence": {
+          "path": "tmp/s24-quality-lint.log",
+          "bytes": 339,
+          "sha256": "0d7b81656f81b6edb2dbda35b8f36b8d801ba66adc2d938b3967833ecb01f1d2"
+        }
+      },
+      {
+        "command": "npm run format:check",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-format-check.log",
+        "startedAtUtc": "2026-11-03T06:55:53.7540053Z",
+        "finishedAtUtc": "2026-11-03T06:56:12.6547251Z",
+        "evidence": {
+          "path": "tmp/s24-quality-format-check.log",
+          "bytes": 175,
+          "sha256": "7f4c49d5c04df21bee771baac7c611d0ca94ee4fd27a2ecfbb9aa472de110eb4"
+        }
+      },
+      {
+        "command": "npm run redesign:check",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-redesign-check.log",
+        "startedAtUtc": "2026-11-03T06:55:04.910581Z",
+        "finishedAtUtc": "2026-11-03T06:55:06.2296533Z",
+        "evidence": {
+          "path": "tmp/s24-quality-redesign-check.log",
+          "bytes": 158,
+          "sha256": "ca126d5f97464c246f87b76f1b20d7f936e2ffa20c9a047386fa7343fb76766c"
+        }
+      },
+      {
+        "command": "npm run redesign:catalog:check",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-redesign-catalog-check.log",
+        "startedAtUtc": "2026-11-03T06:55:06.2364589Z",
+        "finishedAtUtc": "2026-11-03T06:55:10.3389689Z",
+        "evidence": {
+          "path": "tmp/s24-quality-redesign-catalog-check.log",
+          "bytes": 258,
+          "sha256": "1f4f72f397f9e7d539061746a2cf7bdc5d27ef1655901530abbe309c1e924d35"
+        }
+      },
+      {
+        "command": "npm run redesign:learn:check",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-redesign-learn-check.log",
+        "startedAtUtc": "2026-11-03T06:55:10.3395633Z",
+        "finishedAtUtc": "2026-11-03T06:55:11.9880432Z",
+        "evidence": {
+          "path": "tmp/s24-quality-redesign-learn-check.log",
+          "bytes": 214,
+          "sha256": "0989231ce32a57674cab68f1582ef8569554468dd50899ed20b0cadd6c5b9af1"
+        }
+      },
+      {
+        "command": "npm run redesign:inventory:check",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-redesign-inventory-check.log",
+        "startedAtUtc": "2026-11-03T06:55:11.9883986Z",
+        "finishedAtUtc": "2026-11-03T06:55:20.4009281Z",
+        "evidence": {
+          "path": "tmp/s24-quality-redesign-inventory-check.log",
+          "bytes": 1139,
+          "sha256": "9f374b693915ee8d2809dcc800fc4842de43ba436d0e86e8b9a0bde9ca54b3aa"
+        }
+      },
+      {
+        "command": "npm run audit:modules",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-audit-modules.log",
+        "startedAtUtc": "2026-11-03T06:55:20.4017417Z",
+        "finishedAtUtc": "2026-11-03T06:55:22.3218453Z",
+        "evidence": {
+          "path": "tmp/s24-quality-audit-modules.log",
+          "bytes": 167,
+          "sha256": "e4cc260892009c7375717cd18818b6eb8cc88003a1e9d7a55cd9b3f6761b6399"
+        }
+      },
+      {
+        "command": "npm run redesign:secrets",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-redesign-secrets.log",
+        "startedAtUtc": "2026-11-03T06:55:22.3224034Z",
+        "finishedAtUtc": "2026-11-03T06:55:25.4079781Z",
+        "evidence": {
+          "path": "tmp/s24-quality-redesign-secrets.log",
+          "bytes": 23140,
+          "sha256": "9b49e1eee089978893ed12cba350398487aeb8c1e5a0443a5845055c38fc6e5d"
+        }
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 0,
+        "log": "tmp/s24-quality-build.log",
+        "startedAtUtc": "2026-11-03T06:55:03.8233846Z",
+        "finishedAtUtc": "2026-11-03T06:55:16.8023793Z",
+        "evidence": {
+          "path": "tmp/s24-quality-build.log",
+          "bytes": 11317,
+          "sha256": "5bafeb5b6979e0cc2055865a2aefd07a2b332bc4ad6e8d1318a1dc54d6fcf206"
+        }
+      }
+    ],
+    "visual": {
+      "path": "tmp/s24-visual-hashes-final.json",
+      "bytes": 1587,
+      "sha256": "5fcdadbf137746ea5d2040b77d75d565fedd1eca0545d8ae9214ecc5846c09d9",
+      "equal": true,
+      "sourceCommit": "3f1dcfb067c70fc63ad982abcf3d17bac647265b",
+      "beforeCapturedAtUtc": "2026-11-03T06:58:02.9025569Z",
+      "checkedAtUtc": "2026-11-03T07:02:45.3532797Z",
+      "verifiedBy": "tmp/s24-browser-final-clean.json",
+      "files": [
+        {
+          "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-chromium-win32.png",
+          "beforeSha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe",
+          "afterSha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe",
+          "equal": true
+        },
+        {
+          "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-mobile-chrome-win32.png",
+          "beforeSha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe",
+          "afterSha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe",
+          "equal": true
+        },
+        {
+          "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-chromium-win32.png",
+          "beforeSha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215",
+          "afterSha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215",
+          "equal": true
+        },
+        {
+          "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-mobile-chrome-win32.png",
+          "beforeSha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215",
+          "afterSha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215",
+          "equal": true
+        }
+      ]
+    },
+    "fixedVisualGeometry": {
+      "path": "tmp/s24-visual-fixed-geometry.json",
+      "bytes": 19151,
+      "sha256": "63612a11a8cf9d704d67272674bfb4f0397dd33b9c4272b3c7ba9a764e813fb2",
+      "passed": true,
+      "scope": "Latest nested-source help; independent checkpoint6 none and final30 post-push none contexts",
+      "sourceCommit": "3f1dcfb067c70fc63ad982abcf3d17bac647265b",
+      "sources": {
+        "checkpoint6": "tmp/s24-browser-cp2-lineage.json",
+        "final30": "tmp/s24-browser-final-clean.json"
+      },
+      "checks": [
+        {
+          "project": "chromium",
+          "theme": "light",
+          "runs": 2,
+          "phases": [
+            "checkpoint6",
+            "final30"
+          ],
+          "stable": true,
+          "figureTop": [
+            134.515625,
+            134.515625
+          ],
+          "summaryHeight": [
+            188.65625,
+            188.65625
+          ],
+          "font": [
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            },
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            }
+          ],
+          "devicePixelRatio": [
+            1,
+            1
+          ]
+        },
+        {
+          "project": "chromium",
+          "theme": "dark",
+          "runs": 2,
+          "phases": [
+            "checkpoint6",
+            "final30"
+          ],
+          "stable": true,
+          "figureTop": [
+            134.515625,
+            134.515625
+          ],
+          "summaryHeight": [
+            188.65625,
+            188.65625
+          ],
+          "font": [
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            },
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            }
+          ],
+          "devicePixelRatio": [
+            1,
+            1
+          ]
+        },
+        {
+          "project": "mobile-chrome",
+          "theme": "light",
+          "runs": 2,
+          "phases": [
+            "checkpoint6",
+            "final30"
+          ],
+          "stable": true,
+          "figureTop": [
+            134.515625,
+            134.515625
+          ],
+          "summaryHeight": [
+            188.65625,
+            188.65625
+          ],
+          "font": [
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            },
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            }
+          ],
+          "devicePixelRatio": [
+            2.75,
+            2.75
+          ]
+        },
+        {
+          "project": "mobile-chrome",
+          "theme": "dark",
+          "runs": 2,
+          "phases": [
+            "checkpoint6",
+            "final30"
+          ],
+          "stable": true,
+          "figureTop": [
+            134.515625,
+            134.515625
+          ],
+          "summaryHeight": [
+            188.65625,
+            188.65625
+          ],
+          "font": [
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            },
+            {
+              "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+              "size": "14px",
+              "lineHeight": "23.8px"
+            }
+          ],
+          "devicePixelRatio": [
+            2.75,
+            2.75
+          ]
+        }
+      ],
+      "measurements": [
+        {
+          "phase": "checkpoint6",
+          "project": "chromium",
+          "status": "passed",
+          "name": "s24-visual-geometry-light",
+          "scrollY": 8641,
+          "devicePixelRatio": 1,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "checkpoint6",
+          "project": "chromium",
+          "status": "passed",
+          "name": "s24-visual-geometry-dark",
+          "scrollY": 8641,
+          "devicePixelRatio": 1,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "checkpoint6",
+          "project": "mobile-chrome",
+          "status": "passed",
+          "name": "s24-visual-geometry-light",
+          "scrollY": 8641,
+          "devicePixelRatio": 2.75,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "checkpoint6",
+          "project": "mobile-chrome",
+          "status": "passed",
+          "name": "s24-visual-geometry-dark",
+          "scrollY": 8641,
+          "devicePixelRatio": 2.75,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "final30",
+          "project": "chromium",
+          "status": "passed",
+          "name": "s24-visual-geometry-light",
+          "scrollY": 8641,
+          "devicePixelRatio": 1,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "final30",
+          "project": "chromium",
+          "status": "passed",
+          "name": "s24-visual-geometry-dark",
+          "scrollY": 8641,
+          "devicePixelRatio": 1,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "final30",
+          "project": "mobile-chrome",
+          "status": "passed",
+          "name": "s24-visual-geometry-light",
+          "scrollY": 8641,
+          "devicePixelRatio": 2.75,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        },
+        {
+          "phase": "final30",
+          "project": "mobile-chrome",
+          "status": "passed",
+          "name": "s24-visual-geometry-dark",
+          "scrollY": 8641,
+          "devicePixelRatio": 2.75,
+          "fontStatus": "loaded",
+          "figure": {
+            "x": 52,
+            "y": 134.515625,
+            "width": 216,
+            "height": 531.9375
+          },
+          "description": {
+            "x": 65,
+            "y": 343.078125,
+            "width": 190,
+            "height": 190.375
+          },
+          "summary": {
+            "x": 37,
+            "y": -5387.625,
+            "width": 246,
+            "height": 188.65625
+          },
+          "summaryText": "Short double pendulum studyproject-s24-visual · 세션 1 · run 1 · artifact 2 · 노트북 1 · 그림 1 · 누락 0",
+          "font": {
+            "family": "\"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", sans-serif",
+            "size": "14px",
+            "lineHeight": "23.8px"
+          },
+          "lines": [
+            {
+              "x": 65,
+              "y": 345.078125,
+              "width": 140.59375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 368.875,
+              "width": 187.203125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 392.671875,
+              "width": 167.421875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 416.46875,
+              "width": 184.46875,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 440.265625,
+              "width": 177.828125,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 464.0625,
+              "width": 163.09375,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 487.859375,
+              "width": 183.15625,
+              "height": 19
+            },
+            {
+              "x": 65,
+              "y": 511.65625,
+              "width": 10.59375,
+              "height": 19
+            }
+          ]
+        }
+      ]
+    },
+    "metadataStabilizationBeforeNestedHelp": {
+      "phase": "Before CP2-L help text update; evidence of the UUID-layout cause and its deterministic-fixture correction.",
+      "path": "tmp/s24-visual-fixed-stability.json",
+      "bytes": 26602,
+      "sha256": "bc3666386d7517ef363334c39edb876a0ecbfbf502d83f9484d7510d11b68773",
+      "stats": {
+        "startTime": "2026-11-03T05:55:47.478Z",
+        "duration": 69786.352,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "snapshotPolicy": "none",
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ],
+      "runnerErrors": 0,
+      "tests": [
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8255,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "chromium",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 21394,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 17328,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        },
+        {
+          "title": "redesign\\research-project.spec.ts / S24 research project and reproducible package / keyboard, 320px and light/dark figure views retain accessible controls",
+          "project": "mobile-chrome",
+          "timeout": 30000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "durationMs": 8081,
+              "retry": 0,
+              "errors": 0
+            }
+          ]
+        }
+      ]
+    },
+    "earlierAttempts": [
+      {
+        "path": "tmp/s24-full-vitest-before-inventory-projection.json",
+        "bytes": 2084153,
+        "sha256": "2850becf390f9155186eb1040b07fb5a3e248c3dd533b5ac156d1bafcf912da6",
+        "outcome": "5458/5459: frozen S01 inventory saw additive reviewer entry code. Exact additive projection with mutation guards restored original baseline without changing historical tests or baseline values."
+      },
+      {
+        "path": "tmp/s24-full-vitest-before-nested-lineage.json",
+        "bytes": 2089675,
+        "sha256": "1f3d7f1a5d9f7cb8a7f5d3bfca2d3d86543fc610a8193ee3157d5a72d5456e87",
+        "outcome": "5473/5473 green at55f4463; independent valid native batch/model reproducer then found missing nested canonical comparison. Typed extraction and16 new regression tests plus4UI journeys were added before final completion."
+      },
+      {
+        "path": "tmp/s24-nested-lineage-repro.json",
+        "bytes": 724,
+        "sha256": "871bbc7f355af832ca30ccf27ab1da4dc43746938c8b5510978055f6677c1e4b",
+        "outcome": "Valid batch and real Lab DMD with another canonical input were accepted before CP2-L; source comparison and native identities were subsequently corrected."
+      },
+      {
+        "path": "tmp/s24-browser-initial.json",
+        "bytes": 57020,
+        "sha256": "210bf4dbf87bb5e2f29320646a44d0769b620dbd266de6ac27912c61ed608247",
+        "outcome": "16pass/4fail: Buffer fixture checksum2 and CI missing-baseline creation2; corrected through adapter normalization and newly scoped PNGs."
+      },
+      {
+        "path": "tmp/s24-browser-visual-refresh.json",
+        "bytes": 11091,
+        "sha256": "219dcfae68ef484c64ecb84ddf8a092114117d54ffcfbcad5393c0e5e2dabb8a",
+        "outcome": "Chromium pass; Pixel5 combined visual+zoom exceeded original30s. Same checks split without timeout/retry relaxation."
+      },
+      {
+        "path": "tmp/s24-browser-pre-visual-stability.json",
+        "bytes": 47325,
+        "sha256": "b7a863b65a054245a6099a9b53188ad9da188f4bca5903c81567ea763016297d",
+        "outcome": "25pass/1visualfail. Random upstream UUID wrapping shifted fractional raster origin; fixed metadata visual fixture retained real engine data."
+      },
+      {
+        "path": "tmp/s24-visual-geometry-comparison.json",
+        "bytes": 5285,
+        "sha256": "e7fb1e9ce1d933213d76bcd7f7121c4472fff9a57a6d3361c9d17a69e397aa41",
+        "outcome": "Fonts loaded,14px,lineheight23.8,DPR2.75; summary differed23.796875px and figure top0.203125px; affected line1px phase only."
+      },
+      {
+        "path": "tmp/s24-browser-regression-initial.json",
+        "bytes": 33474,
+        "sha256": "051e1e184af99e0c77a210ab5601bc9ef908e2d54b4c75f513c7e805c7a778ae",
+        "outcome": "19pass/1timeout at existing Pixel5 advanced12 final axe page creation. Existing test,30s,retries0 unchanged; clean20 rerun passed including advanced12 in20.5s."
+      }
+    ],
+    "resolvedFindings": [
+      "Internal route project loss fixed through Document WeakMap state and real double/compound/double browser test.",
+      "Node Buffer backing store normalized only in new adapter; exact Node crypto and offset view tests passed.",
+      "Same ZIP can be selected again; plots expose units/sample/source descriptions; deterministic visual metadata removes random upstream line wrapping.",
+      "Exact S24 inventory projection preserves the frozen S01 main SHA and every other legacy byte/fact;14mutations/normalization/unknown-file tests enforce the boundary.",
+      "Typed native batch and learning source extraction rejects another canonical source or forged wrapper even with valid rewritten outer checksums; original source-free metadata stays unbound and intact."
+    ]
+  },
+  "preservation": {
+    "path": "documents/redesign/stage-runs/S24-preservation.json",
+    "bytes": 306911,
+    "sha256": "b5506b8c66367ac5e2a11f5dc058ea5779fc4e00ccd626c0ab193d4ffbaf4efb",
+    "passed": true,
+    "groups": {
+      "protected": {
+        "count": 286,
+        "equal": 286
+      },
+      "historicalTests": {
+        "count": 432,
+        "equal": 432
+      },
+      "historicalPng": {
+        "count": 220,
+        "equal": 220
+      }
+    },
+    "desktopCopies": [
+      {
+        "source": "documents/redesign/master-roadmap-ko.md",
+        "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "sourceSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "destinationSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "equal": true
+      },
+      {
+        "source": "documents/redesign/execution-plan-ko.md",
+        "destination": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "sourceSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "destinationSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "equal": true
+      }
+    ],
+    "mismatches": []
+  },
+  "reproductionPackage": {
+    "path": "documents/redesign/stage-runs/S24-example.zip",
+    "bytes": 115224,
+    "sha256": "5fc04915b220840b92fcf4ef07c1dce2e5af12672329915d5d942682376f4606",
+    "manifest": {
+      "path": "documents/redesign/stage-runs/S24-example-manifest.json",
+      "bytes": 3458,
+      "sha256": "9871b5a6c09618d73f7ee67d701112bd270c70441b3098069875f07abe243db8"
+    },
+    "sessions": 1,
+    "runs": 2,
+    "artifacts": 6,
+    "figures": 2,
+    "projectRoundTripEqual": true,
+    "originalArtifactBytesEqual": true,
+    "sourceHead": "3f1dcfb067c70fc63ad982abcf3d17bac647265b",
+    "fixtureTimestampPolicy": "Fixed example timestamp; not a test execution timestamp."
+  },
+  "review": {
+    "automated": "passed as scoped above",
+    "independentAgentReview": "findings fixed; not a human scientific review",
+    "humanScientificReview": "not performed",
+    "userReviewGate": 24,
+    "approvedReviewGates": [
+      7,
+      9,
+      17
+    ],
+    "userReviewPending": true,
+    "checklist": "documents/redesign/stage-runs/S24-review.md",
+    "nextStageRequestMeaning": "Requesting25 after receiving checklist records user workflow approval, not scientific expert review."
+  },
+  "security": {
+    "dependencyChanges": false,
+    "freshDependencyAudit": false,
+    "debtDisposition": "No debt accepted or closed. S01 high2/moderate2 and CodeQL32 are historical unresolved observations; push notice22(high12/moderate7/low3) is separate.",
+    "importBoundary": "Whole checksum coverage, strict schema/reference graph, native parser validation, Windows/Unix unsafe path rejection, prototype/accessor/resource budget rejection. Imported executable formats remain opaque.",
+    "checksumMeaning": "Internal byte consistency only; external source authenticity and physical truth are not authenticated.",
+    "secretScanScope": "Tracked text known-pattern scan after implementation files staged/committed; excludes history, ignored files, binaries and external services."
+  },
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v26.3.0",
+    "userTimezone": "Asia/Seoul",
+    "browsers": "Chromium Desktop and Pixel5 emulation projects. Explicit fresh newContext imports/offline file contexts use desktop defaults. No physical mobile, Firefox/WebKit or screen-reader audio certification."
+  },
+  "risks": [
+    "Explicit ZIP/local save required across reload/tab closure; no automatic writes to legacy storage.",
+    "The unchanged legacy public SHA256 helper still assumes a plain Uint8Array for offset views; new project APIs normalize Buffer/pool/offset inputs and test exact bytes.",
+    "Static offline HTML is a safe export-time view; full ZIP checksum recomputation is provided by hosted local-file reviewer.",
+    "Opaque legacy bridge preserves files; full canonical legacy migration/parity remains S28.",
+    "Finite-time observations, solver/model assumptions and source authenticity limitations of native results remain.",
+    "Existing security debt and human scientific/user review remain open."
+  ],
+  "rollback": {
+    "previousStageStatus": "e6aa7094229e26527b02ceeeeb0cb7e6c01b38a3",
+    "preservedApp": "app.html",
+    "performed": "No cutover, destructive recovery or legacy data mutation."
+  },
+  "nextValidStage": 25,
+  "changedPaths": [
+    "css/product/projects.css",
+    "documents/redesign/stage-runs/S24-example-manifest.json",
+    "documents/redesign/stage-runs/S24-example.zip",
+    "documents/redesign/stage-runs/S24-preservation.json",
+    "documents/redesign/stage-runs/S24-progress.md",
+    "documents/redesign/stage-runs/S24-review.md",
+    "documents/redesign/stage-runs/S24-verification.json",
+    "documents/redesign/status.json",
+    "e2e/redesign/research-project-fixtures.ts",
+    "e2e/redesign/research-project.spec.ts",
+    "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-chromium-win32.png",
+    "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-mobile-chrome-win32.png",
+    "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-chromium-win32.png",
+    "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-mobile-chrome-win32.png",
+    "scripts/redesign/create-research-project-example.ts",
+    "scripts/redesign/inventory.ts",
+    "src/product/lab/projects/client.ts",
+    "src/product/lab/projects/context.ts",
+    "src/product/lab/projects/controls.ts",
+    "src/product/lab/projects/editor.ts",
+    "src/product/lab/projects/figures.ts",
+    "src/product/lab/projects/output.ts",
+    "src/product/lab/projects/package-contracts.ts",
+    "src/product/lab/projects/package.worker.ts",
+    "src/product/lab/projects/panel.ts",
+    "src/product/lab/projects/session.ts",
+    "src/product/lab/projects/storage.ts",
+    "src/product/lab/projects/view.ts",
+    "src/product/lab/views/diagnostics.ts",
+    "src/product/provenance/compatibility.ts",
+    "src/product/provenance/contracts.ts",
+    "src/product/provenance/package.ts",
+    "src/product/provenance/project.ts",
+    "src/product/provenance/render.ts",
+    "src/product/provenance/validation.ts",
+    "src/reviewer/main.ts",
+    "src/reviewer/project.css",
+    "src/reviewer/project.ts",
+    "tests/product/provenance/fixtures.ts",
+    "tests/product/provenance/inventory-projection.test.ts",
+    "tests/product/provenance/lineage-fixtures.ts",
+    "tests/product/provenance/package.test.ts",
+    "tests/product/provenance/project-ui.test.ts",
+    "tests/product/provenance/project.test.ts",
+    "tests/product/provenance/render.test.ts"
+  ],
+  "sourceEvidence": [
+    {
+      "path": "css/product/projects.css",
+      "bytes": 1776,
+      "sha256": "2169c9c2856d7c106e5a3611190c6c704f8de1b7ac5f0a1dde9e3c69168329e1"
+    },
+    {
+      "path": "e2e/redesign/research-project-fixtures.ts",
+      "bytes": 4810,
+      "sha256": "9f1485699f6f4719b309bef5077205177a1f8b0fac23b395ad54d3e911bdfafc"
+    },
+    {
+      "path": "e2e/redesign/research-project.spec.ts",
+      "bytes": 35236,
+      "sha256": "45d4ba1f9ae26eed7f60a3fc4878632ee6e1cab3ee42865c106c94ecf7ffc4b0"
+    },
+    {
+      "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-chromium-win32.png",
+      "bytes": 18276,
+      "sha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe"
+    },
+    {
+      "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-dark-mobile-chrome-win32.png",
+      "bytes": 18276,
+      "sha256": "015752fd7cec57d5ee798df1b1ecbc90d42c753157f8d3663c1fb33b6d21bbfe"
+    },
+    {
+      "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-chromium-win32.png",
+      "bytes": 18181,
+      "sha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215"
+    },
+    {
+      "path": "e2e/redesign/research-project.spec.ts-snapshots/s24-research-figure-light-mobile-chrome-win32.png",
+      "bytes": 18181,
+      "sha256": "39ce41f01960477766355659aa558f82b146a684d08f167c4fcc81b563c11215"
+    },
+    {
+      "path": "scripts/redesign/create-research-project-example.ts",
+      "bytes": 6954,
+      "sha256": "1ef7fe1bad61c68a35daa1fb28cd1a329e9a2b49cdabc283b35813196b76d3c0"
+    },
+    {
+      "path": "scripts/redesign/inventory.ts",
+      "bytes": 33681,
+      "sha256": "7fb65ff5371e19e7ce3d6b15fc0917e6bf5c6a2682187c58183dea1a7b303f24"
+    },
+    {
+      "path": "src/product/lab/projects/client.ts",
+      "bytes": 5331,
+      "sha256": "dff9218dc6690ad1e1306688f7ca04d5ece866901d0c8a0a64f523f234c66d63"
+    },
+    {
+      "path": "src/product/lab/projects/context.ts",
+      "bytes": 532,
+      "sha256": "d84b86b3ebec6f1da7d7f4004f1f27caded5ee3882bf38eab43f749f48748174"
+    },
+    {
+      "path": "src/product/lab/projects/controls.ts",
+      "bytes": 3080,
+      "sha256": "ffbb5764f24cab3fb0aa498e455c60c596fda4844269c0771b10b1ee80e52dc3"
+    },
+    {
+      "path": "src/product/lab/projects/editor.ts",
+      "bytes": 7074,
+      "sha256": "d740bbf2fafe37c6fc7003311650124e4e5c9d029d63a958629d5372f1503933"
+    },
+    {
+      "path": "src/product/lab/projects/figures.ts",
+      "bytes": 7828,
+      "sha256": "41abce64fbf5e6cfb068c1518a907f6b75f0339f8f82aa693e2bcaa6a10a33b1"
+    },
+    {
+      "path": "src/product/lab/projects/output.ts",
+      "bytes": 4677,
+      "sha256": "088964966abeb5a74b6ef584a9a34677b2403342b13dc27600612cca16476b47"
+    },
+    {
+      "path": "src/product/lab/projects/package-contracts.ts",
+      "bytes": 1034,
+      "sha256": "c9f3dd426f4e0177c822d228f751a122af280032179dbccd08aa511e1d2732a4"
+    },
+    {
+      "path": "src/product/lab/projects/package.worker.ts",
+      "bytes": 3596,
+      "sha256": "8173f018abf842a7bb5567ca516ed1616fbc6785a1eea47983ad153756c91f1e"
+    },
+    {
+      "path": "src/product/lab/projects/panel.ts",
+      "bytes": 20633,
+      "sha256": "b7470e524801d92d4c76f4bc715e9f427287b2af6885f4d61ed369105e366c5e"
+    },
+    {
+      "path": "src/product/lab/projects/session.ts",
+      "bytes": 922,
+      "sha256": "9a8648f9512ae6c1008c9d190b988b68262c0e50f35cb2fb8bacc407fd42c5d4"
+    },
+    {
+      "path": "src/product/lab/projects/storage.ts",
+      "bytes": 2607,
+      "sha256": "a072187f71409c0cf6baada9838c9066b74041e4447547adb3576549442af7ed"
+    },
+    {
+      "path": "src/product/lab/projects/view.ts",
+      "bytes": 2207,
+      "sha256": "d97a2a2a86aa1524f25465e8afb9f6ac74472a739ef4b021994c5c6bfc319c1d"
+    },
+    {
+      "path": "src/product/lab/views/diagnostics.ts",
+      "bytes": 3856,
+      "sha256": "f4e67f3b140a56a0213020c5289ad7d449379892250f341a5a52ac173d2fe06b"
+    },
+    {
+      "path": "src/product/provenance/compatibility.ts",
+      "bytes": 4414,
+      "sha256": "433444cffa1c87827d7ac603be2772ec51d474b6cf26a9c438f3e5b38609736f"
+    },
+    {
+      "path": "src/product/provenance/contracts.ts",
+      "bytes": 3260,
+      "sha256": "e3fdbcd7a2bb932149ead566967be02b217821d7e3f1d02dba15b19d0053f017"
+    },
+    {
+      "path": "src/product/provenance/package.ts",
+      "bytes": 9423,
+      "sha256": "82a9a5c902e214b31adff68ff9116e10a73c339c663b983cc8098554be8467b6"
+    },
+    {
+      "path": "src/product/provenance/project.ts",
+      "bytes": 17275,
+      "sha256": "c5ebb44d03865e0ebe7626d4e0f59d42d808a0d44d2fcbf1f2d2d204a0a94d24"
+    },
+    {
+      "path": "src/product/provenance/render.ts",
+      "bytes": 12659,
+      "sha256": "554268dcdd98d9727dc1ea72410d5d6f7d5305a50d4db6117e0c8a195424cbb0"
+    },
+    {
+      "path": "src/product/provenance/validation.ts",
+      "bytes": 14385,
+      "sha256": "c2e8d851923d8f72703e5043be1bbc5861a87b7ea6d13c3586b5618d0ef67781"
+    },
+    {
+      "path": "src/reviewer/main.ts",
+      "bytes": 23947,
+      "sha256": "be86493caeb06a3ddd593098f08ebd7d9d421c69e39cdbeeaaf3e38122158ad5"
+    },
+    {
+      "path": "src/reviewer/project.css",
+      "bytes": 901,
+      "sha256": "9d5f31ee7939848e9695e5b92dabacab20c2b3f3990dea30a7daa30b8be519c6"
+    },
+    {
+      "path": "src/reviewer/project.ts",
+      "bytes": 9185,
+      "sha256": "3b6805c8e232b476d0375b6683ef181217fb078de1ad82e8694e52c7371bf0b8"
+    },
+    {
+      "path": "tests/product/provenance/fixtures.ts",
+      "bytes": 2306,
+      "sha256": "5c882b006c1290031ce2c94cfbcf8193f56da3bc5d37d7ff0211967c58c6b283"
+    },
+    {
+      "path": "tests/product/provenance/inventory-projection.test.ts",
+      "bytes": 5995,
+      "sha256": "0c3df1dc995dd4eb294dac33680894e23ad31a5526db1eec4e829095d0667d0c"
+    },
+    {
+      "path": "tests/product/provenance/lineage-fixtures.ts",
+      "bytes": 3220,
+      "sha256": "0347e4218a759c8acd6392224e38885d7ff095b98a422650cf3b4a167dbbe9ee"
+    },
+    {
+      "path": "tests/product/provenance/package.test.ts",
+      "bytes": 17525,
+      "sha256": "a5a70caabe0aa60c75b85232f4cd11d86b007684749f8b6bd3365db03ffe262a"
+    },
+    {
+      "path": "tests/product/provenance/project-ui.test.ts",
+      "bytes": 11375,
+      "sha256": "320c59bd3ed18952c4b4799d8978fe1b6eb03a0a1048fdedd712ad998284fb09"
+    },
+    {
+      "path": "tests/product/provenance/project.test.ts",
+      "bytes": 17378,
+      "sha256": "a9f8668d8b511ce44f306d70c8535802438e4cbd06abb9e1373478015fd23cf2"
+    },
+    {
+      "path": "tests/product/provenance/render.test.ts",
+      "bytes": 9340,
+      "sha256": "3742eea8c537b1b3625bb71e36c37f98114dc1775c526dfdea9776585afa6d57"
+    }
+  ]
+}

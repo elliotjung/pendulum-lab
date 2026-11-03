@@ -21,9 +21,11 @@
 - 프로젝트 manifest는 `pendulum-research-project/v1`, package는 `pendulum-research-package/v1`, notebook은 `pendulum-research-notebook/v1`이다. 기존 `pendulum-bundle-checksums/v2` 형식의 SHA-256/CRC32/legacy hash를 재사용한다. checksum manifest 자신을 제외한 모든 파일을 정확히 검증한다.
 - package ZIP은 STORE 방식, 최대64 MiB/512파일, 원본 파일24 MiB, 프로젝트 metadata2 MiB다. localStorage는 별도 key에3 MiB 이하 ZIP을 저장한다. 네이티브 파일에는 각 원래 도구의 더 작은 한도도 적용된다.
 - 실제 기록은 최대8192표본·256좌표·100만 scalar다. 자동 보간·축약은 하지 않는다. 장시간 실행에서 시작 부분이 이미 제거된 기록은 partial로 보존한다. 그림의 error=0 열은 불확실성을 추정하지 않았다는 뜻이며 측정 오차가 0이라는 주장이 아니다.
+- Figure composer는 보존한 Lab 기록의 시간·좌표 투영을 만든다. native 분석 결과와 legacy 그림·notebook은 원본 첨부로 함께 보존한다. 보고서의 해석은 사용자가 작성한 narrative와 출처 참조를 따른다.
 - 같은 페이지의 내부 라우트 이동에서는 프로젝트·직전 프로젝트·검증 미리보기를 메모리에 유지한다. 새로고침·탭 종료·다른 브라우저로의 이동에는 명시적 ZIP 또는 로컬 저장이 필요하다. 현재 폼에서 아직 저장하지 않은 narrative 초안은 프로젝트 manifest와 구분한다.
 - import/ZIP/hash/native 파일 검증과 캡처는 전용 worker에서 실행한다. 취소는 worker를 종료하며30초 무응답을 오류로 처리한다. 진행률은 단계 진행이며 초 단위 완료 예측이 아니다.
 - 기존 research ZIP 호환 adapter는 checksum을 검증하고 원본 ZIP 및 모든 멤버를 보존한다. legacy snapshot을 canonical run으로 변환하거나 외부 notebook/HTML/SVG를 실행하지 않는다. legacy ZIP 원본 첨부는24 MiB 이하이며 member 개수·총 바이트 상한도 적용된다. 전체 legacy migration/parity는 S28 범위다.
+- 기존 공개 ZIP helper는 보존했다. Node의 offset/pool `Buffer`를 기존 `sha256Hex`에 직접 전달하는 호출에는 기존 backing-store 제약이 남는다. 새 프로젝트 package API는 원본을 독립 `Uint8Array`로 정규화해 이 문제를 차단하며 Node 파일·offset view 회귀 검사를 통과했다.
 - SHA-256은 패키지 내부 무결성을 검증한다. 외부 출처의 진위, 기록의 실제 실험 수행 여부, 과학적 정확성, 사람의 검토 또는 모든 하드웨어에서의 bitwise 재현을 인증하지 않는다. 기록 캡처는 실행중인 엔진/지연 버퍼/worker checkpoint를 복제한 것이 아니다.
 - 사람의 과학 검토는 미완료다. 기존 dependency/CodeQL 보안 부채를 해결하거나 수락한 것으로 표시하지 않는다. 실제 검증 명령·횟수·환경·제한은 `S24-verification.json`과 `S24-progress.md`에 기록한다.
 
