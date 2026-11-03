@@ -36,3 +36,11 @@
 - CP0 사전 검사: redesign:check exit0, preflight24 exit0. 기준 두 HEAD가 일치한다.
 
 - CP0: typecheck exit0, plan check exit0, diff check 통과. 완료 목록·nextStage는 유지하며 activeStage24/CP0만 갱신한다.
+
+### CP0 원격 확인과 CP1 계약
+
+- CP0 `b344aafdaab0a09014e45cf5aed6acd8b27c5168` push exit0, ls-remote가 같은 hash를 반환했다. GitHub 기본 브랜치 취약점 알림22개(12high/7moderate/3low)는 기존 부채의 별도 관측이며 새 dependency audit나 위험 수락이 아니다.
+- CP1은5개 backend module과3개 전용 test/fixture만 포함한다. UI/renderer/reviewer는 다음 checkpoint에 남긴다. 엄격한 versioned 계층, 원본 bytes/SHA256, native parser 재사용, 완주/partial 구분, 단위·좌표 검사, ZIP 전체 coverage/checksum, unsafe path와 legacy bridge를 구현했다.
+- CP1 표적: 신규53+기존 ZIP/SHA20=73/73,4files, 실패·pending0 (`tmp/s24-cp1-backend.json`).8개 파일 Prettier/ESLint exit0. 원본 native core·S22 observation·S23 model, malformed7schema, byte round trip, 명시적 누락 figure placeholder, legacy 원 ZIP+모든 멤버 보존과 fallback 우회 거부를 검증했다.
+- 작성 도중의 초기 typecheck는 미작성 UI module과 신규 test의 상대 import 깊이, 예제 script tuple 타입 오류를 발견했다. 해당 코드를 수정했고 최종 typecheck 결과와 구분한다. 기존 test/golden/timeout/retry는 수정하지 않았다.
+- CP1 이후 통합 typecheck exit0. backend73/73 재실행 로그를 독립 확보했고 신규8개 경로의 전용 lint/format도 통과했다. CP1을 먼저 원격에 보존한다.
