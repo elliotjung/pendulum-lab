@@ -1,0 +1,48 @@
+.research-reviewer {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px;
+  overflow-wrap: anywhere;
+}
+.research-reviewer label,
+.research-reviewer input,
+.research-reviewer select,
+.research-reviewer progress {
+  display: block;
+  max-width: 100%;
+  margin-block: 12px;
+}
+.research-reviewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.research-reviewer button,
+.research-reviewer select,
+.research-reviewer input {
+  min-height: 44px;
+  font: inherit;
+}
+.research-reviewer select {
+  min-width: 0;
+  width: 100%;
+}
+.research-reviewer :focus-visible {
+  outline: 3px solid #a75400;
+  outline-offset: 3px;
+}
+.research-reviewer pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #fff;
+  border: 1px solid #b5c6cd;
+  padding: 16px;
+}
+.research-reviewer figure {
+  margin: 24px 0;
+}
+.research-reviewer img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}

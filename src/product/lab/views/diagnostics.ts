@@ -8,6 +8,7 @@ import { createStability } from './stability';
 import { createExperimentWorkflow } from '../experiments/view';
 import { createResearchWorkflow } from '../research/view';
 import { createDataDrivenWorkflow } from '../data-driven/view';
+import { createResearchProjectWorkflow } from '../projects/view';
 
 export interface DiagnosticsOptions {
   experiment(): ContractResult<ExperimentStateV1>;
@@ -23,6 +24,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   const experiments = createExperimentWorkflow(document, options);
   const research = createResearchWorkflow(document, options);
   const dataDriven = createDataDrivenWorkflow(document, options);
+  const projects = createResearchProjectWorkflow(document, options);
   const container = element(document, 'details', 'lab-details core-diagnostics');
   container.id = 'core-diagnostics';
   container.dataset.coreDiagnosticStatus = 'empty';
@@ -71,7 +73,14 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
   container.addEventListener('toggle', () => {
     if (container.open) void load();
   });
-  wrapper.append(container, advanced.element, stability.element, research.element, dataDriven.element);
+  wrapper.append(
+    container,
+    advanced.element,
+    stability.element,
+    research.element,
+    dataDriven.element,
+    projects.element
+  );
   return {
     element: wrapper,
     experiments: experiments.element,
@@ -82,6 +91,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
       experiments.update();
       research.update();
       dataDriven.update();
+      projects.update();
     },
     dispose() {
       disposed = true;
@@ -91,6 +101,7 @@ export function createDiagnostics(document: Document, options: DiagnosticsOption
       experiments.dispose();
       research.dispose();
       dataDriven.dispose();
+      projects.dispose();
     }
   };
 }

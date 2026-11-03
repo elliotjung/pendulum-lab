@@ -1,0 +1,86 @@
+.project-body,
+.project-editor,
+.project-figures,
+.project-figure-list,
+.project-notebook-list,
+.project-run-list,
+.project-artifact-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ds-space-4);
+  min-width: 0;
+}
+.project-body {
+  margin-block-start: var(--ds-space-4);
+}
+.project-workflow [hidden] {
+  display: none !important;
+}
+.project-workflow input,
+.project-workflow select,
+.project-workflow textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.project-workflow textarea {
+  resize: vertical;
+  min-height: 7rem;
+}
+.project-workflow fieldset {
+  min-width: 0;
+  padding: var(--ds-space-3);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--ds-space-3);
+  min-width: 0;
+}
+.project-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ds-space-4);
+}
+.project-workflow p,
+.project-workflow legend,
+.project-workflow h3,
+.project-workflow h4,
+.project-workflow li,
+.project-workflow figcaption {
+  overflow-wrap: anywhere;
+}
+.project-narrative {
+  white-space: pre-wrap;
+}
+.project-entry,
+.project-figure,
+.project-summary,
+.project-preview:not(:empty) {
+  padding: var(--ds-space-3);
+  margin: 0;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  min-width: 0;
+}
+.project-checksum,
+.project-artifact-id {
+  font-family: var(--ds-font-mono, monospace);
+  font-size: 0.85em;
+}
+.project-figure-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 28rem;
+  object-fit: contain;
+}
+@media (max-width: 40rem) {
+  .project-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

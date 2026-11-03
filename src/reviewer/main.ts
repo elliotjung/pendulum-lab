@@ -393,7 +393,9 @@ async function render(): Promise<void> {
   paperLink.href = './paper/';
   const repoLink = element('a', undefined, 'Repository');
   repoLink.href = 'https://github.com/elliotjung/pendulum-lab';
-  nav.append(appLink, paperLink, repoLink);
+  const researchLink = element('a', undefined, 'Research package');
+  researchLink.href = './reviewer.html?view=project#/project';
+  nav.append(appLink, paperLink, repoLink, researchLink);
   header.append(brand, nav);
 
   const main = element('main', 'reviewer-main');
@@ -521,7 +523,14 @@ async function render(): Promise<void> {
   root.replaceChildren(shell);
 }
 
-render().catch((error) => {
+async function startReviewer(): Promise<void> {
+  if (window.location.hash === '#/project') {
+    const module = await import('./project');
+    module.mountResearchReviewer(document);
+  } else await render();
+}
+
+startReviewer().catch((error) => {
   const root = document.querySelector<HTMLElement>('#reviewer-root');
   if (root)
     root.replaceChildren(
