@@ -19,8 +19,8 @@
 | CP2 | lazy 연구 workspace·notebook·figure·report·offline reviewer | component/production desktop/mobile/keyboard/a11y/visual, build | 완료·원격 확인 |
 | CP2-I | frozen inventory exact projection | 기존7+신규14, inventory check/typecheck | 완료·원격 확인 |
 | CP2-L | batch/model 중첩 계보·분류 연결 | backend94, 새 source4+시각2, build/typecheck | 완료·원격 확인 |
-| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | 검증 완료·증거 push 예정 |
-| STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push 및 정확한 remote HEAD | 대기 |
+| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | 완료·원격 확인 |
+| STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push 및 정확한 remote HEAD | 별도 commit 생성·push 확인은 종료 보고 |
 
 예정 경로: src/product/provenance/, src/product/lab/projects/, diagnostics 연결, src/reviewer/의 연구 package mode, 전용 CSS, tests/product/provenance/, e2e/redesign/research-project*, scripts/redesign/의 검증·샘플 생성, S24 문서/검증/재현 패키지. 명시적 경로만 stage한다.
 
@@ -140,3 +140,9 @@
 - S24-verification.json에 모든45개 변경 경로와 source/원 로그 SHA256, 각 실제 실행 조건·실패 이력·보존·보안/검토 한계를 기록했다. 이것은 최종 status push의 증명이 아니며 원격 status commit이 완료의 권위다.
 - 사용자 gate 승인 목록은 [7,9,17] 유지, S24 검토는 대기다. 사람의 과학 검토·실기기·Firefox/WebKit·screen-reader audio 인증은 하지 않았다. 기존 dependency/CodeQL 부채, legacy SHA helper의 직접 offset-Buffer 제약, 큰 파일 한도와 native 과학적 가정은 review 문서에 남긴다. 신규 package 경계는 Buffer를 정규화한다.
 - 복구 기준은 S23 status e6aa709와 보존된 app.html이다. S25 이후 교육 콘텐츠, S28 full parity/migration, cutover, master merge/force push/tag/release는 실행하지 않았다.
+
+## 별도 완료 상태 gate
+
+- CP3 evidence `804c481b0d5088cccb282f55edd471cfe077b37f` push exit0 및 정확한 원격 HEAD를 확인했다. 모든 source/증거/재현 ZIP이 원격에 있는 clean tree에서 preflight24와 plan check가 exit0이다.
+- 마지막 변경은 progress/status 두 파일이다. 검증된 결과를 바탕으로 lastCompleted24/next25/completed1..24, blocked/active/checkpoint null을 기록한다. 승인 gate[7,9,17]과 실행 프로필은 유지하며 S24 사용자·전문가 검토를 완료로 표시하지 않는다.
+- 이 별도 status commit을 push하고 실제 origin/codex/redesign HEAD가 같은 commit임을 확인한 뒤에만 S24 완료를 보고한다. source 변경·master merge·force push·tag·release·S25 구현은 없다. 다음 유효 입력은 S24 review 확인 뒤 “25단계 실행해줘.”이며 그 요청이 workflow 승인 기록이다.
