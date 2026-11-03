@@ -17,8 +17,8 @@
 | CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 완료·원격 확인 |
 | CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | 완료·원격 확인 |
 | CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 완료·원격 확인 |
-| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete 검증 완료·증거 push 대기 |
-| STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 대기 |
+| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | 완료·원격 확인 |
+| STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 별도 commit 생성·push 확인은 종료 보고 |
 
 예정 경로: src/product/adapters/analysis/data-driven/, src/product/lab/data-driven/, diagnostics 연결, 전용 CSS, tests/product/analysis/data-driven/, e2e/redesign/data-driven*, scripts/redesign/measure-data-driven.ts, S23 문서와 검증 증거. 명시적 경로만 stage한다.
 
@@ -88,3 +88,10 @@
 - 독립 agent code review의 발견 사항은 모두 수정 후 재검토했다. 사용자 승인 gate[7,9,17]와 Learn의 검토 상태는 유지한다. S23은 사용자 review gate가 아니며 사람의 과학 검토·실기기·Firefox/WebKit·screen-reader 음성을 수행한 것으로 표시하지 않는다.
 - 남은 한계: 유한 표본·수치미분·단일 궤도의 식별성/일반화, HAVOK 조건부 재구성, 외부 canonical 선언과 source 진위, 부분 spectrum·조건수, 기존 dependency/CodeQL 부채. 제품에 해당 경고와 자원 한도를 표시한다.
 - 이 증거 checkpoint push 이후 clean-tree preflight23와 plan check를 통과하고, 별도의 status commit만으로 lastCompleted23/next24를 갱신한다. Rollback 기준 S22 `8985049`와 보존된 app.html. S24 구현·master merge·force push·tag·release·cutover는 하지 않았다.
+
+
+## 별도 완료 상태 gate
+
+- CP3 증거 commit `b86d7da5ac40d16de612547ac04ea5add1d34c93`의 push exit0 및 정확한 원격 HEAD를 확인했다. 모든 구현/검증 증거가 원격에 있는 clean tree에서 preflight23와 plan check exit0이다.
+- 마지막 변경은 progress/status 두 파일이다. 검증 후 lastCompleted23/next24, completed1..23, blocked/active/checkpoint null을 기록하며 승인 gate[7,9,17]와 실행 프로필은 유지한다.
+- 이 별도 status commit의 push와 정확한 원격 HEAD 확인 전에는 S23 완료가 아니다. 종료 보고에서 실제 status hash와 push 결과를 제공한다. 다음 유효 입력은 “24단계 실행해줘.”이며 S24 작업은 시작하지 않았다.
