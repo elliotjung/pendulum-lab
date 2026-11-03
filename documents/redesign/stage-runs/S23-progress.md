@@ -16,8 +16,8 @@
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight23/typecheck | 완료·원격 확인 |
 | CP1-E / CP1-L | 고유해석 후 학습·worker 계약의 두 bounded checkpoint | synthetic recovery/leakage/residual/replay/invalid/resource/progress/cancel, typecheck/lint | 완료·원격 확인 |
-| CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 검증 완료·push 대기 |
-| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | 대기 |
+| CP2 | lazy Lab 설정·진단·rollout·복원 UI | build, production desktop/mobile, keyboard/a11y/visual | 완료·원격 확인 |
+| CP3 | 보존·통합 검증 및 완료 후보 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete 전체 검증 중 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push·정확한 원격 hash | 대기 |
 
 예정 경로: src/product/adapters/analysis/data-driven/, src/product/lab/data-driven/, diagnostics 연결, 전용 CSS, tests/product/analysis/data-driven/, e2e/redesign/data-driven*, scripts/redesign/measure-data-driven.ts, S23 문서와 검증 증거. 명시적 경로만 stage한다.
@@ -62,3 +62,16 @@
 - 최신 production build (`tmp/s23-build-ui.log`), 전체 typecheck (`tmp/s23-cp2-typecheck.log`), 전용 ESLint/Prettier exit0. 320px·200% zoom·키보드 및 axe가 통과했다. 새 light/dark desktop/mobile PNG4개는 개별 시각 확인했다. 좁은 화면 metrics 줄바꿈과 짧은 ID 표시를 개선했고 full ID는 펼침 기록/파일에 보존했다.
 - 작은2×2 일반 복소 고유값, 희소64차 Lanczos, eigen 채택 후 기존 학습 데이터의 보이는 요약, HAVOK 비적용 ridge 숨김, invalid split/file/asymmetry, 이전 결과 보존, 실제 Lab129표본 source와 live state 보존을 브라우저로 확인했다.
 - 초기 browser24건은10통과/14실패였다. 10건은 JSON의 -0→0 fixture 비교,2건은 숨겨진 조건 탭을 열지 않은 설정,2건은 작은 fit이 취소 클릭 전에 끝난 test 준비 문제였다. fixture canonical0·조건 탭 활성화·명시된1500ms 제출 지연으로 pending worker 취소를 검증했다. Native 계산을 느리게 바꾸지 않았고 원래 timeout/retry/assertion은 약화하지 않았다. 최초 sandbox build/worker spawn EPERM은 동일 명령의 확장 권한으로 해결했다.
+
+
+### CP2 원격 및 candidate-complete 검증
+
+- CP2 `0ac2964ec154b1b033da5239d2d235ccfbc52098` push exit0, ls-remote 정확히 일치했다. 모든 구현 checkpoint가 원격에 있다. `nextStage=23`, 완료 목록1..22는 그대로 유지한다.
+- 별도 시각 비교2/2의 실제 정책 none과 PNG4개 전후 SHA256 일치(`tmp/s23-visual-hashes.json`)를 확인했다. 전체26건의 실제 missing 정책과 구분한다.
+- 지금부터 CP3에서 전체 Vitest/golden, 전체 typecheck/lint/format/build 및 계획·카탈로그·Learn·인벤토리·보안 패턴 검사, 기존 S18–S22 대표 production browser 회귀와 정확한 보존 해시를 확정한다. 어떤 필수 검증이 실패해도 완료 표시하지 않는다.
+
+### CP3-I — 최종 입력 오류 안내 보강
+
+- 첫 전체 Vitest5382/5382 및11개 품질 명령은 모두 exit0이었다. 마지막 입력 검토에서 형식이 잘못된 학습 JSON을 기본 설정으로 읽을 때 내부 TypeError가 노출될 수 있음을 확인했다. 정상 데이터와 계산은 바꾸지 않고 미지원 source schema와 필수 배열을 기본 설정 생성 전에 검사하도록 보강했다.
+- 변경은 source.ts와 기존 신규 source.test.ts의 오류 안내 assertion뿐이다. 관련4/4, 전용 ESLint/Prettier, 전체 typecheck, production build exit0; production invalid split/file/asymmetry·이전 결과 보존2/2, 오류·skip·flaky0을 확인했다 (`tmp/s23-import-guidance.json`, `tmp/s23-import-guidance-browser.json`).
+- 이 작은 구현 보강도 먼저 별도 checkpoint로 push한다. 이후 최종 전체 Vitest·품질 검사·S23 browser26건 및 기존 대표 browser를 새로 확정한다. 앞서 통과한 전체 결과는 `tmp/s23-full-vitest-pre-import-guidance.json`, S23 browser26건의 기본 missing 정책 결과는 `tmp/s23-browser-pre-import-guidance.json`으로 보존했다.

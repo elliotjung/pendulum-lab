@@ -92,5 +92,8 @@ describe('S23 actual Lab and immutable observation sources', () => {
     irregular.times[8]! += 0.001;
     await expect(parseLearningData(JSON.stringify(irregular))).rejects.toThrow();
     await expect(parseLearningData('{"__proto__":{}}')).rejects.toThrow();
+    await expect(parseLearningData('{"schema":"pendulum-learning-data/v99"}')).rejects.toThrow(/버전/);
+    await expect(parseLearningData('{"values":[]}')).rejects.toThrow(/times, values, labels, units/);
+    await expect(parseLearningData('{"schema":"pendulum-learning-data/v1","data":null}')).rejects.toThrow(/배열/);
   });
 });

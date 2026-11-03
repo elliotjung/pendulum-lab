@@ -68,6 +68,11 @@ export async function parseLearningData(text: string): Promise<LearningData> {
   const parsed = parseModelJson(text);
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('학습 데이터 객체가 필요합니다.');
   const source = parsed as Record<string, unknown>;
+  if (
+    source.schema !== undefined &&
+    !['pendulum-observation/v1', 'pendulum-learning-data/v1'].includes(String(source.schema))
+  )
+    throw new Error('지원하지 않는 학습 데이터 버전입니다. 원본을 보존하고 v1 파일을 선택하세요.');
   let data: LearningData;
   if (source.schema === 'pendulum-observation/v1') {
     const observation = await validateObservationArtifact(source);
@@ -93,6 +98,15 @@ export async function parseLearningData(text: string): Promise<LearningData> {
       throw new Error('지원하지 않는 학습 데이터 envelope 필드입니다.');
     data = raw as LearningData;
   }
+  if (
+    !data ||
+    typeof data !== 'object' ||
+    !Array.isArray(data.times) ||
+    !Array.isArray(data.values) ||
+    !Array.isArray(data.labels) ||
+    !Array.isArray(data.units)
+  )
+    throw new Error('학습 데이터에 times, values, labels, units 배열이 필요합니다. 원본 파일을 확인하세요.');
   validateLearning(data, learningDefaults(data, 'dmd'));
   return freezeModelData(modelData(data) as unknown as LearningData);
 }
