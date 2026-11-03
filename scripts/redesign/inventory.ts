@@ -88,10 +88,31 @@ function isRedesignHarnessCommand(name: string, command: unknown): boolean {
  * The exact additions are narrow: different targets or build behavior still fail.
  * S22 also permits precisely local blob media for recorded-video observations.
  * Project that additive directive out; keep the frozen S01 fingerprint unchanged.
+ * S24 adds one exact reviewer navigation link and one exact lazy route wrapper.
+ * Remove only those known bytes; altered routes, labels, imports or console code
+ * remain in the legacy fingerprint and AST rather than being silently hidden.
  */
 export function legacySourceText(file: string, text: string): string {
   const normalized = text.replaceAll('\r\n', '\n');
   if (file === 'public/_headers') return normalized.replace("; media-src 'self' blob:", '');
+  if (file === 'src/reviewer/main.ts')
+    return normalized
+      .replace(
+        "  const researchLink = element('a', undefined, 'Research package');\n" +
+          "  researchLink.href = './reviewer.html?view=project#/project';\n" +
+          '  nav.append(appLink, paperLink, repoLink, researchLink);',
+        '  nav.append(appLink, paperLink, repoLink);'
+      )
+      .replace(
+        'async function startReviewer(): Promise<void> {\n' +
+          "  if (window.location.hash === '#/project') {\n" +
+          "    const module = await import('./project');\n" +
+          '    module.mountResearchReviewer(document);\n' +
+          '  } else await render();\n' +
+          '}\n\n' +
+          'startReviewer().catch((error) => {',
+        'render().catch((error) => {'
+      );
   if (file !== 'vite.config.ts') return normalized;
   return normalized
     .replace('        "media-src \'self\' blob:",\n', '')
@@ -119,7 +140,11 @@ export function inventoryFiles(root: string): string[] {
     if (!existsSync(absolute)) return;
     if (statSync(absolute).isDirectory()) {
       for (const entry of readdirSync(absolute).sort()) visit(`${relative}/${entry}`);
-    } else files.push(relative);
+    } else if (relative !== 'src/reviewer/project.ts' && relative !== 'src/reviewer/project.css') {
+      // These two S24 additions have their own product tests. Every other file
+      // in the existing reviewer family, including unknown additions, is scanned.
+      files.push(relative);
+    }
   }
   for (const entry of [...scanRoots, ...scanRootFiles]) visit(entry);
   return [...new Set(files)].sort();

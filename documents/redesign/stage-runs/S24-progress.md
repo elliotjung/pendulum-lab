@@ -16,8 +16,8 @@
 |---|---|---|---|
 | CP0 | 범위·보존·진행 기록 | plan/preflight24/typecheck | 완료·원격 확인 |
 | CP1 / CP1-B | 엄격한 계층·ZIP·checksum·legacy 호환·Node byte 경계 | 정상/경계/손상/unsafe path/round trip, typecheck | 완료·원격 확인 |
-| CP2 | lazy 연구 workspace·notebook·figure·report·offline reviewer | component/production desktop/mobile/keyboard/a11y/visual, build | 검증 완료·push 예정 |
-| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | 대기 |
+| CP2 | lazy 연구 workspace·notebook·figure·report·offline reviewer | component/production desktop/mobile/keyboard/a11y/visual, build | 완료·원격 확인 |
+| CP3 | 통합 회귀·보존·재현 패키지 및 review 증거 | 전체 Vitest/golden/품질 검사/보존 hash | candidate-complete·전체 검증 진행 |
 | STATUS | 별도 완료 상태 commit | 구현 원격 확인 후 status push 및 정확한 remote HEAD | 대기 |
 
 예정 경로: src/product/provenance/, src/product/lab/projects/, diagnostics 연결, src/reviewer/의 연구 package mode, 전용 CSS, tests/product/provenance/, e2e/redesign/research-project*, scripts/redesign/의 검증·샘플 생성, S24 문서/검증/재현 패키지. 명시적 경로만 stage한다.
@@ -75,3 +75,22 @@
 - 최종 production S24 전체26/26, unexpected/skipped/flaky/runner errors0, 실제 snapshot policy none 통과 (`tmp/s24-browser-final-clean.json`). 신규4PNG는 fixed baseline 생성 후의 SHA256과 최종 비교 후 SHA256이 모두 같다 (`tmp/s24-visual-hashes-final.json`).
 - Chromium/Pixel5 프로젝트의 주 context를 검증했다. fresh newContext의 ZIP import와 file:// offline 검토는 desktop defaults이며 실기기나 모든 context가 Pixel5라는 주장을 하지 않는다.
 - 최종 E2E fixture helper를 포함한 전체 typecheck exit0, 세 전용 test/fixture TS의 ESLint/Prettier exit0. 제품 소스는 CP2 production build 뒤 바뀌지 않았다. 지금 CP2 구현·검증·review 문서를 push한 뒤 기존 대표20건 및 전체 Vitest/golden/품질/보존을 수행한다.
+
+### CP2 원격과 CP3 완료 후보
+
+- CP2 `8dbadccdb3b811d8db4a366b8e22a5e1200c0bd2` push exit0 및 정확한 ls-remote hash를 확인했다. 모든 제품 구현이 원격에 있고 소스 변경은 없다. status는 next24/완료1..23을 유지한다.
+- 후보 상태: candidate-complete. 기존 S18–S23 대표와 기존 reviewer console의 production20건, 전체 Vitest/golden,10개 품질 명령, 원본 보존 및 재현 패키지 검증을 수행한 뒤에만 별도 완료 status commit을 만든다.
+
+### CP3 전체 회귀에서 발견한 inventory 연결
+
+- 첫 전체 Vitest는5458/5459,349files 중 S01 inventory baseline 동일성1건만 실패했다 (`tmp/s24-full-vitest-before-inventory-projection.json`). 기존432test/fixture·220PNG·286보호 파일은 바이트 동일했고 실제 제품 여정26건과 기존 대표20건은 통과했다.
+- 원인: 새 src/reviewer/project.ts/project.css 및 main.ts의 정확한 S24 route/nav 추가가 frozen legacy inventory에 포함됐다. baseline JSON/MD·기존 characterization test·golden을 수정하지 않는다. S04/S22의 엄격한 projection 방식처럼 S24의 정확한 추가분만 scanner에서 분리하고, 기존 콘솔의 다른 변경·변조 route/nav·알 수 없는 reviewer 파일은 계속 탐지하는 새 회귀 검증을 추가한다.
+- 기존 대표20건의 최초 실행은19pass/1timeout이었다. Pixel5 advanced12의 모든 계산/복원 assertion 뒤 마지막 axe page 시작에서30초 제한에 도달했다. 기존 test·timeout·retry는 유지하고 별도 로그/trace로 보존했다. 깨끗한 동일 재실행20/20에서 해당 case20.5초, unexpected/skipped/flaky/runner errors0을 확인했다 (`tmp/s24-browser-regression.json`).
+- harness 보강도 별도 검증·commit·push한 뒤 원격 구현 HEAD를 기준으로 예제/보존/전체 Vitest/품질/최종26여정을 다시 확정한다. 필수 실패를 완료로 표시하지 않는다.
+
+### CP2-I — 고정 inventory에 대한 정확한 추가 UI projection
+
+- scripts/redesign/inventory.ts에서 main.ts의 정확한 승인 nav3줄과 정확한 lazy wrapper만 기존 호출로 투영한다. 새 project.ts/project.css 두 파일만 additive 범위로 분리한다. 다른 reviewer 파일·변조·새 코드·바뀐 route/import/label/fetch는 그대로 fingerprint/AST에 남는다.
+- 기존7+신규14=21/21 통과. 실제 S01 main SHA와23583bytes가 LF/CRLF에서 동일하고, 전체 frozen inventory JSON/MD도 원본 그대로 재현됐다. baseline 파일·기존432test/fixture·raw reviewer를 수정하지 않았다. 전용 lint/format 및 전체 typecheck exit0이다.
+- inventory:check는 sandbox esbuild child EPERM을 동일 검사의 확장 권한 실행으로 해결했다. 최종 exit0:883files/6825facts/2548imports, errors/orphans/broken imports0. 새 헬퍼가 기존 변경 탐지를 약하게 만들지 않는 변조 검증을 포함한다.
+- 이 검증 보강도 별도 원격 checkpoint로 먼저 보존한 뒤 candidate-complete 전체 검사를 다시 수행한다. 제품 runtime 소스와 기존 browser baseline은 CP2와 같다.
