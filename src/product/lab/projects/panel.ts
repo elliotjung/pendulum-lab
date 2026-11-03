@@ -183,7 +183,7 @@ export function createResearchProjectPanel(
       document,
       'p',
       'lab-muted',
-      '최대 24 MiB. 위에서 선택한 run에 native parser로 검증한 원본 bytes를 연결합니다. 입력 설정이 다른 결과는 거부합니다. 파일의 native run ID는 별도로 보존합니다.'
+      '최대 24 MiB. 서로 비교할 원 실험 설정이 있는 결과는 선택한 run과 일치해야 합니다. 설정이 없는 관측·외부 데이터·연산자는 사용자가 분류해 연결한 첨부이며, 이 run에서 계산했다는 뜻이 아닙니다. 원본 파일과 자체 계보를 함께 보존합니다.'
     )
   );
   const runList = element(document, 'div', 'project-run-list');

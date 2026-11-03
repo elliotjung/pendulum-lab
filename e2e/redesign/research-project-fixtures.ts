@@ -7,6 +7,58 @@ import { createDiagnosticSeries } from '../../src/product/adapters/analysis/core
 import { addResearchSession, captureResearchRun, createResearchProject } from '../../src/product/provenance/project';
 import { buildResearchPackage } from '../../src/product/provenance/package';
 import { researchExportEntries } from '../../src/product/provenance/render';
+import { buildBatch, defaultBatchSettings } from '../../src/product/lab/experiments/builders';
+import { createBatchQueue } from '../../src/product/lab/experiments/queue';
+import { serializeBatch } from '../../src/product/lab/experiments/artifact';
+import { datasetFromExperiment } from '../../src/product/adapters/analysis/data-driven/source';
+import { learningDefaults } from '../../src/product/adapters/analysis/data-driven/learning-contracts';
+import { runDataDriven } from '../../src/product/adapters/analysis/data-driven/execute';
+import { textToBytes } from '../../src/research/zipBundle';
+import type { ExperimentStateV1 } from '../../src/product/contracts/experiment';
+
+/** Native valid files exercise association checks rather than malformed-file refusal. */
+export async function researchNativeAttachment(
+  kind: 'batch' | 'model',
+  gravity: number
+): Promise<{ bytes: Uint8Array; nativeId: string; nativeInputRunId: string; experiment: ExperimentStateV1 }> {
+  const defaults = defaultPlanarConfig();
+  const config = {
+    ...defaults,
+    parameters: { ...defaults.parameters, g: gravity },
+    duration: kind === 'model' ? 1.59 : 0.04,
+    step: 0.01
+  };
+  const canonical = toCanonicalPlanar(config);
+  if (!canonical.ok) throw new Error('Invalid S24 native source fixture');
+  if (kind === 'batch') {
+    const plan = buildBatch(canonical.value, defaultBatchSettings(canonical.value));
+    const queue = createBatchQueue(plan);
+    const snapshot = queue.state;
+    queue.dispose();
+    return {
+      bytes: textToBytes(serializeBatch(snapshot)),
+      nativeId: plan.id,
+      nativeInputRunId: plan.sourceInputId,
+      experiment: canonical.value
+    };
+  }
+  const simulation = createPlanarSimulation(config);
+  const samples = [simulation.snapshot()];
+  while (!simulation.done) samples.push(simulation.step());
+  const data = datasetFromExperiment(canonical.value, samples);
+  const result = await runDataDriven({
+    schema: 'pendulum-data-driven-request/v1',
+    id: 's24-native-model',
+    mode: 'train',
+    input: { kind: 'learning', data, settings: learningDefaults(data, 'dmd') }
+  });
+  return {
+    bytes: textToBytes(JSON.stringify(result)),
+    nativeId: result.id,
+    nativeInputRunId: result.inputId,
+    experiment: canonical.value
+  };
+}
 
 /** Real engine samples, with fixed metadata so mobile line boxes have a stable origin. */
 export async function researchVisualPackage(title: string, description: string): Promise<Uint8Array> {

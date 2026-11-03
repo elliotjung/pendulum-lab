@@ -94,3 +94,28 @@
 - 기존7+신규14=21/21 통과. 실제 S01 main SHA와23583bytes가 LF/CRLF에서 동일하고, 전체 frozen inventory JSON/MD도 원본 그대로 재현됐다. baseline 파일·기존432test/fixture·raw reviewer를 수정하지 않았다. 전용 lint/format 및 전체 typecheck exit0이다.
 - inventory:check는 sandbox esbuild child EPERM을 동일 검사의 확장 권한 실행으로 해결했다. 최종 exit0:883files/6825facts/2548imports, errors/orphans/broken imports0. 새 헬퍼가 기존 변경 탐지를 약하게 만들지 않는 변조 검증을 포함한다.
 - 이 검증 보강도 별도 원격 checkpoint로 먼저 보존한 뒤 candidate-complete 전체 검사를 다시 수행한다. 제품 runtime 소스와 기존 browser baseline은 CP2와 같다.
+
+### CP2-I 원격 확인과 최종 재검증
+
+- CP2-I `55f446324a542431e2ee9e7dc6ebe7ff82fb38cd` push exit0 및 정확한 ls-remote hash 확인. 제품 runtime은 CP2와 같으며 모든 구현·검사 adapter가 원격에 있다. 이후 source 수정 없이 candidate-complete 전체 검사를 다시 확정한다.
+- 전체 Vitest는 두 legacy AST inventory 스캔의 메모리/CPU 경합을 줄이기 위해 --maxWorkers=1로 모든 파일을 실행한다. 기존 testTimeout30초·assertion·fixture·golden은 그대로 유지한다. 대상 축소나 retry 완화는 없다.
+
+### CP3 추가 계보 경계 재현
+
+- inventory 보강 후 전체 Vitest5473/5473,350files, 실패·pending0을 확인했다. 이 결과는 중첩 계보 보강 전 상태이며 `tmp/s24-full-vitest-before-nested-lineage.json`에 보존했다.
+- 추가 독립 검토가 유효한 S21 batch.plan.source와 S23 learning request.input.data.provenance.experiment의 불일치가 선택한 run 비교에서 빠지는 경우를 재현했다 (`tmp/s24-nested-lineage-repro.json`). 파일 자체 검증과 원본 bytes는 정상이나 source 연결을 잘못 인정할 수 있어 수정한다.
+- typed native parser의 검증된 반환값에서 schema별 원 실험과 native ID를 명시적으로 읽는다. batch의 plan/source ID, 학습 데이터의 선언된 canonical 실험을 비교하고, checksum을 재작성한 잘못된 wrapper도 거부하도록 검증한다. 일반 provenance metadata를 임의 canonical로 승격하지 않아 기존 파일을 보존한다.
+- 원 실험을 비교할 수 없는 관측·외부 학습·연산자 첨부는 사용자 분류 연결이며 해당 run의 계산 결과를 인증하지 않는다는 설명을 명시한다. 새15case·양쪽 project 총30건의 UI 검증에 mismatched/matching batch·model을 추가하고 기존13case는 유지한다. 실제 source 수정 뒤 전체 필수 검증도 다시 실행한다.
+
+### CP2-L — 중첩 source와 명시적 분류 연결
+
+- 유효 native7종의 parser 반환 타입에서 각 원본/ID를 명시적으로 추출한다. S21 plan.source/id/sourceInputId와 S23 learning provenance의 선언된 canonical 원본도 selected run과 비교한다. 일반 provenance의 문자열/다른 namespace 객체는 원본 그대로 유지하고 분류 연결로 명시한다.
+- 신규16건을 포함한 backend+ZIP94/94 통과. parameter/seed/runtime 불일치, metadata native ID 변조, config·모든 외부 checksum까지 재작성한 잘못된 wrapper를 거부한다. source가 없는 관측/외부 학습/eigen 또는 설정 없는 run의 연결은 계산 결과 인증으로 표시하지 않는다.
+- 전용 lint/format·전체 typecheck·production build exit0. 실제 g9.81/g9.7 batch와1.59초160표본 DMD의 UI4/4가 양쪽 project에서 원30초/retries0/none으로 통과했다 (`tmp/s24-browser-nested.json`). g9.7은 거부·이전project보존, 일치하는 g9.81은 native ID와 원본 bytes를 유지했다.
+- 이번 checkpoint는 새 source4건+영향받은시각2건 표적을 통과한 후 push한다. 전체30건은 원격 patch HEAD의 완료 후보 전체 검증에서 실행한다. 실제 help문구변경으로 신규4PNG만 명시 갱신하고 기존220PNG는 보존한다.
+
+### CP2-L 표적 검증 통과
+
+- backend/ZIP 표적94/94를 root에서도 재실행해 JSON 증거를 확보했다 (`tmp/s24-nested-targeted.json`). source7종의 typed 원본/ID 추출과 새16건을 포함하며 실패·pending0이다.
+- 새 source4건+시각2건 총6/6 production 통과, actual snapshot none/원30초/retries0/skip·flaky·runner errors0 (`tmp/s24-browser-cp2-lineage.json`). 실제 help문구 변경 후 새4PNG의 refresh 직후와 none 종료 SHA256도 같다 (`tmp/s24-visual-hashes-nested-cp.json`).
+- 전체 typecheck·production build, 변경 backend/test/E2E의 전용 lint/format 및 panel lint 모두 exit0. 기준선·기존432test/fixture·220PNG·순수엔진/API에 변경이 없다. 이 patch를 원격에 보존한 뒤 마지막 전체 Vitest/품질/30여정을 실행한다.

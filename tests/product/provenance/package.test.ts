@@ -19,6 +19,7 @@ import {
 } from '../../../src/product/provenance/package';
 import { importLegacyResearchPackage } from '../../../src/product/provenance/compatibility';
 import { bundleFixture, nativeFixture, timestamp } from './fixtures';
+import { canonicalBatchFixture, canonicalModelFixture, changedCanonical, configOnlyRun } from './lineage-fixtures';
 
 async function checkedZip(entries: ZipEntryInput[]): Promise<Uint8Array> {
   const originals = entries.filter((entry) => entry.path !== 'manifest/checksums.json');
@@ -296,4 +297,46 @@ describe('S24 exact portable package and legacy compatibility', () => {
     entries.push({ ...entries[0]!, data: Buffer.from(entries[0]!.data) });
     await expect(verifyResearchChecksums(entries)).rejects.toThrow(/중복/);
   });
+  it.each(['batch', 'model'])(
+    'rejects a false %s wrapper even after configuration and every outer checksum are correctly rewritten',
+    async (kind) => {
+      const native = kind === 'batch' ? canonicalBatchFixture() : await canonicalModelFixture();
+      const bundle = await addResearchArtifact(await configOnlyRun(native.experiment), {
+        runId: 'run-test',
+        filename: `${kind}.json`,
+        data: native.bytes
+      });
+      const entries = parseZip(await buildResearchPackage(bundle));
+      const manifestEntry = entries.find((entry) => entry.path === 'manifest/project.json')!;
+      const project = JSON.parse(bytesToText(manifestEntry.data)) as typeof bundle.project;
+      const foreignExperiment = changedCanonical(native.experiment, 'runtime');
+      project.runs[0]!.experiment = foreignExperiment;
+      const configuration = project.artifacts.find((artifact) => artifact.kind === 'configuration')!;
+      const configurationFile = entries.find((entry) => entry.path === configuration.path)!;
+      configurationFile.data = textToBytes(JSON.stringify(foreignExperiment, null, 2));
+      configuration.bytes = configurationFile.data.length;
+      configuration.sha256 = createHash('sha256').update(configurationFile.data).digest('hex');
+      manifestEntry.data = textToBytes(JSON.stringify(project));
+      expect(entries.find((entry) => entry.path === bundle.project.artifacts.at(-1)!.path)!.data).toEqual(native.bytes);
+      const forged = await checkedZip(entries);
+      await expect(verifyResearchChecksums(parseZip(forged))).resolves.toBeUndefined();
+      await expect(importResearchPackage(forged)).rejects.toThrow(/원본 설정과 run이 다릅니다/);
+    }
+  );
+  it.each(['batch', 'model'])(
+    'checks nested %s native result and source IDs against their exact original bytes',
+    async (kind) => {
+      const native = kind === 'batch' ? canonicalBatchFixture() : await canonicalModelFixture();
+      const bundle = await addResearchArtifact(await configOnlyRun(native.experiment), {
+        runId: 'run-test',
+        filename: `${kind}.json`,
+        data: native.bytes
+      });
+      for (const field of ['nativeId', 'nativeInputRunId'] as const) {
+        const changed = structuredClone(bundle);
+        changed.project.artifacts.at(-1)![field] = 'forged-native-identity';
+        await expect(verifyResearchBundle(changed)).rejects.toThrow(/native schema·계보/);
+      }
+    }
+  );
 });

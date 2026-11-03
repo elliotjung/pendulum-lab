@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { createHash } from 'node:crypto';
 import { textToBytes } from '../../../src/research/zipBundle';
 import {
   createResearchProject,
   captureResearchRun,
   addResearchArtifact,
+  inspectResearchArtifactBytes,
   readResearchArtifact,
   verifyResearchBundle
 } from '../../../src/product/provenance/project';
@@ -13,9 +15,11 @@ import {
   validateResearchSeriesDocument
 } from '../../../src/product/provenance/validation';
 import { runDataDriven } from '../../../src/product/adapters/analysis/data-driven/execute';
+import { parseDataDrivenResult } from '../../../src/product/adapters/analysis/data-driven/artifact';
 import { modelRequest } from '../analysis/data-driven/fixtures';
 import { previewObservationImport } from '../../../src/product/observations/artifact';
 import { bundleFixture, emptyFixture, nativeFixture } from './fixtures';
+import { canonicalBatchFixture, canonicalModelFixture, changedCanonical, configOnlyRun } from './lineage-fixtures';
 
 describe('S24 project hierarchy and immutable original artifacts', () => {
   it('captures detached canonical input and actual native series with source/units/seed intact', async () => {
@@ -106,6 +110,7 @@ describe('S24 project hierarchy and immutable original artifacts', () => {
       model
     );
     expect(bundle.files.at(-1)!.data).toEqual(bytes);
+    expect(bundle.project.artifacts.at(-1)!.note).toContain('사용자 분류 연결');
   });
   it('preserves observation original text and transformation history', async () => {
     const preview = await previewObservationImport({
@@ -123,6 +128,7 @@ describe('S24 project hierarchy and immutable original artifacts', () => {
     expect(readResearchArtifact(await verifyResearchBundle(bundle), bundle.project.artifacts.at(-1)!.id)).toEqual(
       preview.artifact
     );
+    expect(bundle.project.artifacts.at(-1)!.note).toContain('그 run에서 계산한 결과임을 확인하지 않습니다');
   });
   it.each([
     'pendulum-core-diagnostic/v1',
@@ -276,5 +282,137 @@ describe('S24 project hierarchy and immutable original artifacts', () => {
         })
       ).toThrow(/원본 adapter/);
     }
+  });
+});
+
+describe('S24 validated nested native lineage and unbound external associations', () => {
+  it.each(['batch', 'model'])(
+    'extracts validated nested %s canonical lineage and native IDs without changing its bytes',
+    async (kind) => {
+      const native = kind === 'batch' ? canonicalBatchFixture() : await canonicalModelFixture();
+      expect(await inspectResearchArtifactBytes(native.bytes)).toMatchObject({
+        experiment: native.experiment,
+        nativeId: native.nativeId,
+        nativeInputRunId: native.nativeInputRunId
+      });
+      const bundle = await addResearchArtifact(await configOnlyRun(native.experiment), {
+        runId: 'run-test',
+        filename: `${kind}.json`,
+        data: native.bytes
+      });
+      const artifact = bundle.project.artifacts.at(-1)!;
+      expect(artifact).toMatchObject({
+        nativeId: native.nativeId,
+        nativeInputRunId: native.nativeInputRunId,
+        sha256: createHash('sha256').update(native.bytes).digest('hex')
+      });
+      expect(bundle.files.at(-1)!.data).toEqual(native.bytes);
+      expect((await verifyResearchBundle(bundle)).files.at(-1)!.data).toEqual(native.bytes);
+      expect(artifact.note).not.toContain('사용자 분류 연결');
+    }
+  );
+  it.each(['batch', 'model'])(
+    'rejects another run parameter, seed and runtime for declared nested %s sources',
+    async (kind) => {
+      const native = kind === 'batch' ? canonicalBatchFixture() : await canonicalModelFixture();
+      for (const field of ['parameters', 'seed', 'runtime'] as const) {
+        await expect(
+          addResearchArtifact(await configOnlyRun(changedCanonical(native.experiment, field)), {
+            runId: 'run-test',
+            filename: `${kind}.json`,
+            data: native.bytes
+          })
+        ).rejects.toThrow(/선택한 run과 다릅니다/);
+      }
+    }
+  );
+  it.each([
+    'external experiment label',
+    { name: 'generic provenance record' },
+    { schema: 'external-domain/v1', id: 'example' }
+  ])('preserves noncanonical learning provenance %j as explicit unbound association', async (declaration) => {
+    const request = modelRequest();
+    if (request.input.kind !== 'learning') throw new Error('Learning fixture required');
+    request.input.data.provenance.experiment = declaration;
+    const native = await runDataDriven(request),
+      bytes = textToBytes(JSON.stringify(native));
+    await expect(parseDataDrivenResult(new TextDecoder().decode(bytes))).resolves.toEqual(native);
+    expect((await inspectResearchArtifactBytes(bytes)).experiment).toBeUndefined();
+    const bundle = await addResearchArtifact(await bundleFixture(), {
+      runId: 'run-test',
+      filename: 'external-model.json',
+      data: bytes,
+      note: '사용자 기록'
+    });
+    expect(bundle.files.at(-1)!.data).toEqual(bytes);
+    expect(bundle.project.artifacts.at(-1)!.note).toContain('그 run에서 계산한 결과임을 확인하지 않습니다');
+  });
+  it.each([
+    { schema: 'pendulum-experiment/v1' },
+    { schema: 'pendulum-experiment/v999' },
+    { schema: 'pendulum-experiment' }
+  ])('refuses malformed or unsupported explicitly declared canonical learning schema %j', async (declaration) => {
+    const request = modelRequest();
+    if (request.input.kind !== 'learning') throw new Error('Learning fixture required');
+    request.input.data.provenance.experiment = declaration;
+    const native = await runDataDriven(request),
+      bytes = textToBytes(JSON.stringify(native));
+    await expect(parseDataDrivenResult(new TextDecoder().decode(bytes))).resolves.toEqual(native);
+    await expect(inspectResearchArtifactBytes(bytes)).rejects.toThrow(/canonical experiment 버전/);
+  });
+  it('keeps a valid independent eigen operator unbound to the selected physical run', async () => {
+    const native = await runDataDriven({
+      schema: 'pendulum-data-driven-request/v1',
+      id: 'external-eigen-source',
+      mode: 'train',
+      input: {
+        kind: 'eigen',
+        operator: {
+          kind: 'dense',
+          matrix: [
+            [3, 0],
+            [0, 1]
+          ]
+        },
+        settings: {
+          method: 'general-eigensolver',
+          k: 1,
+          krylovDim: 2,
+          maxRestarts: 1,
+          tolerance: 1e-8,
+          seed: 'external-eigen',
+          which: 'LA'
+        }
+      }
+    });
+    const bytes = textToBytes(JSON.stringify(native));
+    expect((await inspectResearchArtifactBytes(bytes)).experiment).toBeUndefined();
+    const bundle = await addResearchArtifact(await bundleFixture(), {
+      runId: 'run-test',
+      filename: 'eigen.json',
+      data: bytes
+    });
+    expect(bundle.project.artifacts.at(-1)!.note).toContain('사용자 분류 연결');
+    expect((await verifyResearchBundle(bundle)).files.at(-1)!.data).toEqual(bytes);
+  });
+  it('labels a declared canonical artifact attached to a configuration-free run as a classification only', async () => {
+    const bundle = emptyFixture();
+    bundle.project.runs.push({
+      id: 'run-unbound',
+      sessionId: 'session-test',
+      label: 'External collection',
+      createdAt: bundle.project.createdAt,
+      status: 'partial',
+      artifactIds: [],
+      note: '분류 연결'
+    });
+    const native = canonicalBatchFixture();
+    const attached = await addResearchArtifact(bundle, {
+      runId: 'run-unbound',
+      filename: 'batch.json',
+      data: native.bytes
+    });
+    expect(attached.project.artifacts.at(-1)!.note).toContain('사용자 분류 연결');
+    expect((await verifyResearchBundle(attached)).files.at(-1)!.data).toEqual(native.bytes);
   });
 });

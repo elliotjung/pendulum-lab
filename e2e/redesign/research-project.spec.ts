@@ -5,7 +5,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { buildZip, checksumEntriesSha256, parseZip, textToBytes } from '../../src/research/zipBundle';
 import { openModernTab } from '../shell';
-import { researchVisualPackage } from './research-project-fixtures';
+import { researchNativeAttachment, researchVisualPackage } from './research-project-fixtures';
 
 const projectName = 'Short double pendulum study';
 const question = 'Can the original five recorded samples regenerate a figure without rerunning physics?';
@@ -18,9 +18,9 @@ async function open(page: Page) {
   await expect(page.locator('#project-title')).toBeVisible();
 }
 
-async function record(page: Page) {
+async function record(page: Page, duration = '0.04') {
   await page.getByRole('tab', { name: '조건', exact: true }).click();
-  await page.getByLabel('관찰 시간 · duration (s)', { exact: true }).fill('0.04');
+  await page.getByLabel('관찰 시간 · duration (s)', { exact: true }).fill(duration);
   await page.getByText('상세 조건 펼치기', { exact: true }).click();
   await page.getByLabel('시간 간격 · step (s)', { exact: true }).fill('0.01');
   await page.getByRole('button', { name: '실행', exact: true }).click();
@@ -338,6 +338,41 @@ test.describe('S24 research project and reproducible package', () => {
     await expect(page.locator('#project-artifact-list')).toContainText('native-state-time.json');
     expect(projectFromZip(await download(page)).project).toEqual(project);
   });
+
+  for (const kind of ['batch', 'model'] as const)
+    test(`${kind}: a native nested source must match its project run before association`, async ({ page }) => {
+      const matching = await researchNativeAttachment(kind, 9.81);
+      const different = await researchNativeAttachment(kind, 9.7);
+      await open(page);
+      await record(page, kind === 'model' ? '1.59' : '0.04');
+      await makeProject(page);
+      await capture(page);
+      const original = projectFromZip(await download(page)).project;
+      expect(original.runs[0].experiment).toEqual(matching.experiment);
+      await page.locator('#project-artifact-import').setInputFiles({
+        name: `different-${kind}.json`,
+        mimeType: 'application/json',
+        buffer: Buffer.from(different.bytes)
+      });
+      await expect(page.locator('#research-project-workflow')).toHaveAttribute('data-project-status', 'error');
+      await expect(page.locator('#project-error')).toContainText(/다릅니다/);
+      expect(projectFromZip(await download(page)).project).toEqual(original);
+      await page.locator('#project-artifact-import').setInputFiles({
+        name: `matching-${kind}.json`,
+        mimeType: 'application/json',
+        buffer: Buffer.from(matching.bytes)
+      });
+      await expect(page.locator('#research-project-workflow')).toHaveAttribute('data-project-status', 'ready');
+      await expect(page.locator('#project-artifact-list')).toContainText(`matching-${kind}.json`);
+      const saved = projectFromZip(await download(page));
+      const artifact = saved.project.artifacts.find(
+        (item: { filename: string }) => item.filename === `matching-${kind}.json`
+      );
+      expect(artifact.nativeId).toBe(matching.nativeId);
+      expect(artifact.nativeInputRunId).toBe(matching.nativeInputRunId);
+      expect(artifact.runId).toBe(original.runs[0].id);
+      expect(saved.entries.find((entry) => entry.path === artifact.path)!.data).toEqual(matching.bytes);
+    });
 
   test('malformed, changed-checksum and traversal packages leave the adopted project intact', async ({ page }) => {
     await open(page);

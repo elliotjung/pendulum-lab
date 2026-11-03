@@ -85,8 +85,10 @@ interface NativeDescription {
   schema: string;
   nativeId?: string;
   nativeInputRunId?: string;
-  experiment?: unknown;
+  experiment?: ExperimentStateV1;
 }
+const UNBOUND_ASSOCIATION_NOTE =
+  '원본과 선택한 run 양쪽의 canonical 실험을 대조할 수 없습니다. 선택한 run은 사용자 분류 연결이며 그 run에서 계산한 결과임을 확인하지 않습니다.';
 /** Validate native files through their original parser without rewriting their bytes. */
 export async function inspectResearchArtifactBytes(
   data: Uint8Array,
@@ -108,64 +110,105 @@ export async function inspectResearchArtifactBytes(
   const body = parsed as Record<string, unknown>,
     schema = body.schema;
   let actual: ResearchArtifactKind;
+  let experiment: ExperimentStateV1 | undefined;
+  let nativeId: string | undefined;
+  let nativeInputRunId: string | undefined;
   switch (schema) {
     case 'pendulum-experiment/v1': {
       const checked = validateExperimentState(parsed);
       if (!checked.ok) throw new Error('canonical experiment 파일이 유효하지 않습니다.');
+      experiment = checked.value;
       actual = 'configuration';
       break;
     }
-    case 'pendulum-project-series/v1':
-      validateResearchSeriesDocument(parsed);
+    case 'pendulum-project-series/v1': {
+      experiment = validateResearchSeriesDocument(parsed).experiment;
       actual = 'series';
       break;
-    case 'pendulum-core-diagnostic/v1':
-      (await import('../adapters/analysis/core/artifact')).importCoreDiagnosticArtifact(text);
+    }
+    case 'pendulum-core-diagnostic/v1': {
+      const checked = (await import('../adapters/analysis/core/artifact')).importCoreDiagnosticArtifact(text);
+      experiment = checked.request.experiment;
+      nativeId = checked.artifactId;
+      nativeInputRunId = checked.inputRunId;
       actual = 'core';
       break;
-    case 'pendulum-advanced-diagnostic/v1':
-      (await import('../adapters/analysis/advanced/artifact')).importAdvancedDiagnosticArtifact(text);
+    }
+    case 'pendulum-advanced-diagnostic/v1': {
+      const checked = (await import('../adapters/analysis/advanced/artifact')).importAdvancedDiagnosticArtifact(text);
+      experiment = checked.request.experiment;
+      nativeId = checked.artifactId;
+      nativeInputRunId = checked.inputRunId;
       actual = 'advanced';
       break;
-    case 'pendulum-stability-workflow/v1':
-      (await import('../adapters/analysis/stability/artifact')).importStabilityArtifact(text);
+    }
+    case 'pendulum-stability-workflow/v1': {
+      const checked = (await import('../adapters/analysis/stability/artifact')).importStabilityArtifact(text);
+      experiment = checked.request.experiment;
+      nativeId = checked.artifactId;
+      nativeInputRunId = checked.inputRunId;
       actual = 'stability';
       break;
-    case 'pendulum-batch/v1':
-      (await import('../lab/experiments/artifact')).parseBatch(text);
+    }
+    case 'pendulum-batch/v1': {
+      const checked = (await import('../lab/experiments/artifact')).parseBatch(text);
+      experiment = checked.plan.source;
+      nativeId = checked.plan.id;
+      nativeInputRunId = checked.plan.sourceInputId;
       actual = 'batch';
       break;
-    case 'pendulum-inverse-result/v1':
-      await (await import('../adapters/analysis/inverse/artifact')).importInverseResult(text);
+    }
+    case 'pendulum-inverse-result/v1': {
+      const checked = await (await import('../adapters/analysis/inverse/artifact')).importInverseResult(text);
+      experiment = checked.request.experiment;
+      nativeId = checked.id;
+      nativeInputRunId = checked.inputId;
       actual = 'inverse';
       break;
-    case 'pendulum-data-driven-result/v1':
-      await (await import('../adapters/analysis/data-driven/artifact')).parseDataDrivenResult(text);
+    }
+    case 'pendulum-data-driven-result/v1': {
+      const checked = await (await import('../adapters/analysis/data-driven/artifact')).parseDataDrivenResult(text);
+      nativeId = checked.id;
+      nativeInputRunId = checked.inputId;
+      if (checked.request.input.kind === 'learning') {
+        const declaration = checked.request.input.data.provenance.experiment;
+        // Provenance is arbitrary data in the preserved S23 contract. Only a
+        // declared canonical namespace has experiment meaning; strings and
+        // unrelated objects stay opaque metadata rather than being migrated.
+        if (declaration && typeof declaration === 'object' && !Array.isArray(declaration)) {
+          const declaredSchema = (declaration as Record<string, unknown>).schema;
+          if (
+            typeof declaredSchema === 'string' &&
+            (declaredSchema === 'pendulum-experiment' || declaredSchema.startsWith('pendulum-experiment/'))
+          ) {
+            const canonical = validateExperimentState(declaration);
+            if (!canonical.ok)
+              throw new Error(
+                '학습 원본에 선언한 canonical experiment 버전·입력이 유효하지 않습니다. 원본을 보존하세요.'
+              );
+            experiment = canonical.value;
+          }
+        }
+      }
       actual = 'data-driven';
       break;
-    case 'pendulum-observation/v1':
-      await (await import('../observations/artifact')).parseObservationArtifact(text);
+    }
+    case 'pendulum-observation/v1': {
+      const checked = await (await import('../observations/artifact')).parseObservationArtifact(text);
+      nativeId = checked.id;
       actual = 'observation';
       break;
+    }
     default:
       throw new Error('지원하지 않는 연구 artifact schema입니다. 기존 research ZIP은 호환 가져오기를 사용하세요.');
   }
   if (kind !== undefined && kind !== actual) throw new Error('artifact 종류와 원본 schema가 다릅니다.');
-  const request = body.request as Record<string, unknown> | undefined;
-  const nativeId = body.artifactId ?? body.id,
-    nativeInputRunId = body.inputRunId ?? body.inputId;
   return {
     kind: actual,
     schema: String(schema),
     ...(typeof nativeId === 'string' ? { nativeId } : {}),
     ...(typeof nativeInputRunId === 'string' ? { nativeInputRunId } : {}),
-    ...(actual === 'configuration'
-      ? { experiment: parsed }
-      : body.experiment !== undefined
-        ? { experiment: body.experiment }
-        : request?.experiment !== undefined
-          ? { experiment: request.experiment }
-          : {})
+    ...(experiment ? { experiment } : {})
   };
 }
 function ordered(value: unknown): string {
@@ -211,10 +254,11 @@ export async function addResearchArtifact(
     status: 'present',
     parentIds: options.parentIds ? [...options.parentIds] : [],
     note:
-      options.note ??
-      (description.kind === 'legacy' || description.kind === 'attachment'
-        ? '원본 bytes를 보존한 첨부입니다. 실행·과학 검증 또는 canonical migration을 주장하지 않습니다.'
-        : '원본 파일과 native 계보를 보존합니다. 프로젝트 연결은 사용자가 지정한 기록입니다.')
+      (options.note ??
+        (description.kind === 'legacy' || description.kind === 'attachment'
+          ? '원본 bytes를 보존한 첨부입니다. 실행·과학 검증 또는 canonical migration을 주장하지 않습니다.'
+          : '원본 파일과 native 계보를 보존합니다. 프로젝트 연결은 사용자가 지정한 기록입니다.')) +
+      (!description.experiment || !run.experiment ? ` ${UNBOUND_ASSOCIATION_NOTE}` : '')
   };
   next.project.artifacts.push(artifact);
   run.artifactIds.push(id);
