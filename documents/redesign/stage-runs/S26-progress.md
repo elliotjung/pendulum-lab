@@ -63,3 +63,14 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - CP2 export의 Learn 표적 **273/273** (기존 회귀+과정4에 제한한 동일 품질 checker31), typecheck/build/privacy exit0. `tmp/s26-cp2-check/tmp/cp2-content.json`과 typecheck/build 로그에 기록했다. 제한 checker와 브라우저 정의는 최종 전수 정의의 단원 집합만 좁힌 검증 입력이며 제품 source는 바꾸지 않았다.
 - production Chromium **10/10**, 실패/skip/flaky/runner error0 (`tmp/s26-cp2-check/tmp/cp2-browser.json`): 노출값 실제 편집, 수식/체크, 실제 계산·결과 JSON·axe·정확한 canonical Lab export·복귀 결과·새로고침 설정과 사용자 저장 원본 보존. retries0, 원30초, snapshot none이다.
 - 최초 CP2 typecheck/build 호출은 export의 tmp 로그 폴더가 없어 명령 자체가 실행되지 않았다. 디렉터리 생성 후 두 명령을 다시 실행해 실제 exit0을 확인했다. 처음 wrapper의 exit0을 검증 성공으로 사용하지 않았다.
+
+### CP2 원격 / CP3 과정 5
+
+- CP2 `e22da19d1e1fd6f2814985ace4c33387253d2c84` push exit0와 실제 원격 동일 hash 확인.
+- CP3은 과정5의13개와 computation-free authoring helper, 전체23개 품질70개, 최종49공개/37준비 metadata와 안내를 포함한다. 공개 수를 반영한 기존 metadata 기대값 외 수치 assertion을 완화하지 않았다.
+- 13개 실제 분석은 S18/S19를 호출하며9점 SALI/FLI, 동일 run의 창/관측량/threshold 비교, 실제 epsilon·fitRange·bootstrap/block 변동을 표시한다. 수치 참조와 유한 구간의 한계를 본문과 결과에 구분했다.
+- 한국어 띄어쓰기·영문 결합 단어를 교정하고, 수식의 모든 기호·SI 차원을 검사했다. 정확히23개 고유 탐구 활동이며 사람 검토는0/23이다.
+
+- 최종 Learn **312/312** (신규 품질70 포함), CP3 typecheck와 production build/privacy exit0. 실제 native/synthetic 과정5 fixture26개는 CP1 source에서 통과했으며 원래 분석 코드를 바꾸지 않았다.
+- production Chromium 과정5 **13/13**, 실패/skip/flaky/runner error0 (`tmp/s26-cp3-browser.json`). 노출값 편집·실제 분석·진단 JSON·axe·분석 옵션/단위를 포함한 canonical Lab export 동일성·복귀·새로고침을 전수 확인했다. retries0, 원30초, snapshot none이다.
+- 신규16PNG의 최초 생성16/16과 SVG text bounds 검사를 통과했다 (`tmp/s26-visual-create.json`). 이는 기준 생성이며 비교 통과로 취급하지 않는다. AI 시각 QA에서5개 Mathieu 곡선 중 첫/다섯 선의 모양이 겹쳐 CP4에서 구별되는12개 선 패턴으로 보강하고 해당4PNG만 갱신한다. 기존 시각 기준의 완화나 마스크 추가는 하지 않는다.

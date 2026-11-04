@@ -477,8 +477,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-5.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '실제 공용 엔진을 사용해 예측하고 관찰하는 단원입니다. 적용 전제와 수치적 한계를 함께 확인합니다.',
+      en: 'Predict and observe with the shared engines, checking assumptions and numerical limitations.'
     },
     units: [
       {
@@ -489,8 +489,8 @@ export const courses = [
           ko: '상태공간·위상공간과 궤적 기하',
           en: 'State space, phase space and trajectory geometry'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.2',
@@ -500,8 +500,8 @@ export const courses = [
           ko: '시계열·스펙트럼·FFT의 해석',
           en: 'Interpreting time series, spectra and FFT'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.3',
@@ -511,8 +511,8 @@ export const courses = [
           ko: 'NAFF와 준주기 기본주파수',
           en: 'NAFF and quasiperiodic fundamental frequencies'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.4',
@@ -522,8 +522,8 @@ export const courses = [
           ko: 'Poincaré 단면과 return map',
           en: 'Poincaré sections and return maps'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.5',
@@ -533,8 +533,8 @@ export const courses = [
           ko: '최대 Lyapunov 지수',
           en: 'The maximal Lyapunov exponent'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.6',
@@ -544,8 +544,8 @@ export const courses = [
           ko: '전체 Lyapunov spectrum과 발산율',
           en: 'The full Lyapunov spectrum and divergence'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.7',
@@ -555,8 +555,8 @@ export const courses = [
           ko: 'SALI와 FLI의 빠른 혼돈 판별',
           en: 'Rapid chaos detection with SALI and FLI'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.8',
@@ -566,8 +566,8 @@ export const courses = [
           ko: '0–1 test와 관측량 의존성',
           en: 'The 0–1 test and observable dependence'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.9',
@@ -577,8 +577,8 @@ export const courses = [
           ko: 'shadowing과 수치 궤적의 신뢰 시간',
           en: 'Shadowing and the trust horizon of numerical trajectories'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.10',
@@ -588,8 +588,8 @@ export const courses = [
           ko: 'recurrence plot과 RQA',
           en: 'Recurrence plots and RQA'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.11',
@@ -599,8 +599,8 @@ export const courses = [
           ko: 'recurrence network 분석',
           en: 'Recurrence network analysis'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.12',
@@ -610,8 +610,8 @@ export const courses = [
           ko: 'correlation dimension과 scaling 영역',
           en: 'Correlation dimension and scaling regions'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '5.13',
@@ -621,8 +621,8 @@ export const courses = [
           ko: 'multifractal spectrum과 국소 스케일링',
           en: 'Multifractal spectra and local scaling'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },
