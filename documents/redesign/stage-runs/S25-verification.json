@@ -1,0 +1,1281 @@
+{
+  "schemaVersion": "pendulum-S25-verification/v1",
+  "stage": 25,
+  "verificationStatus": "passed",
+  "generatedAtUtc": "2026-11-04T12:03:46.351Z",
+  "completionAuthority": "origin/codex/redesign documents/redesign/status.json",
+  "completionRule": "This evidence proves verification, not completion. A separately pushed status commit must mark S25 complete after the implementation/evidence checkpoints are remote.",
+  "git": {
+    "branch": "codex/redesign",
+    "baselineCommit": "831e7afeda1c5d94439a2bf52276b2ff5996587d",
+    "verifiedImplementationCommit": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+    "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+    "checkpoints": {
+      "CP0": "03cead0afc0ee9252ea90a5f787d172e5cb4bd47",
+      "CP1": "d2b16684604dc15c69d6aa54086dc03ab4a6f0f4",
+      "CP2": "27b4ca3456cdd7360cf8daffa97b606d5987d622",
+      "CP3": "0732f2e5c14d4c362b5338a2b1fa1407140e7083",
+      "CP4-V": "dad2866dae0d297c99f5b76916b83f209b19ca5d"
+    },
+    "dependency": "S24 status 831e7af fetched and matched; contiguous S01-S24, required S10-S12/S21 adapters and S24 review/verification/example artifacts checked. User S25 request approves workflow gate24, not scientific expert review."
+  },
+  "scope": {
+    "newUnits": 18,
+    "published": 26,
+    "planned": 60,
+    "courses": 8,
+    "totalReservations": 86,
+    "codeDuplication": "No new equations of motion/integrators; existing adapters and native adaptive/canonical/stiff/Poincare/S21 functions are invoked.",
+    "units": [
+      {
+        "id": "2.1",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.1",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "theta1",
+          "omega1"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.2",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.2",
+        "systemId": "system:double",
+        "integratorId": "integrator:euler",
+        "exposedFields": [
+          "step",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.3",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.3",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "tolerance",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.4",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.4",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.5",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.5",
+        "systemId": "system:spring",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "stiffness",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.6",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.6",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.7",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.7",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "tolerance",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.8",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.8",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "theta1"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "2.9",
+        "courseId": "course-2",
+        "route": "/next.html#/learn/course-2/2.9",
+        "systemId": "system:double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "step",
+          "duration"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.1",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.1",
+        "systemId": "system:triple",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "theta",
+          "mass",
+          "length"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.2",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.2",
+        "systemId": "system:chain",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "links",
+          "theta",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.3",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.3",
+        "systemId": "system:compound-double",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "m1",
+          "m2",
+          "l1",
+          "l2"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.4",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.4",
+        "systemId": "system:spring",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "stiffness",
+          "r",
+          "theta"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.5",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.5",
+        "systemId": "system:rope",
+        "integratorId": "internal",
+        "exposedFields": [
+          "theta",
+          "omega",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.6",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.6",
+        "systemId": "system:double-string",
+        "integratorId": "internal",
+        "exposedFields": [
+          "theta1",
+          "theta2",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.7",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.7",
+        "systemId": "system:spherical",
+        "integratorId": "internal",
+        "exposedFields": [
+          "theta1",
+          "phiDot1",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.8",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.8",
+        "systemId": "system:spherical-chain",
+        "integratorId": "integrator:rk4",
+        "exposedFields": [
+          "links",
+          "theta1",
+          "phi1",
+          "phiDot1"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      },
+      {
+        "id": "3.9",
+        "courseId": "course-3",
+        "route": "/next.html#/learn/course-3/3.9",
+        "systemId": "system:spherical-embedded",
+        "integratorId": "internal",
+        "exposedFields": [
+          "theta1",
+          "phiDot1",
+          "step"
+        ],
+        "automatedVerified": true,
+        "sourceChecked": true,
+        "humanReviewed": false
+      }
+    ],
+    "exclusions": [
+      "S26-S30 implementation",
+      "full migration/parity/cutover",
+      "master merge/force push/tag/release",
+      "dependency upgrades",
+      "human scientific review"
+    ]
+  },
+  "tests": {
+    "fullVitest": {
+      "files": 356,
+      "total": 5684,
+      "passed": 5684,
+      "failed": 0,
+      "pending": 0,
+      "maxWorkers": 2,
+      "testTimeoutUnchanged": true
+    },
+    "science": {
+      "extended-science": 56,
+      "extended-systems": 11,
+      "extended-compound": 6,
+      "extended-boundaries": 69,
+      "extended-runtime": 8
+    },
+    "contentQuality": 45,
+    "golden": 13,
+    "quality": [
+      {
+        "name": "typecheck",
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:47:35.3126078+00:00",
+        "endedAtUtc": "2026-11-04T11:48:11.0804819+00:00",
+        "durationSeconds": 35.768,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-typecheck.log",
+        "logSha256": "c5017fc371a4b346b7681b603fe2f781f2d40e5b7d5fb3dda440f9541cf84f87",
+        "logBytes": 66
+      },
+      {
+        "name": "lint",
+        "command": "npm run lint",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:48:11.3052990+00:00",
+        "endedAtUtc": "2026-11-04T11:49:27.2893069+00:00",
+        "durationSeconds": 75.984,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-lint.log",
+        "logSha256": "eaef93eefdef7facb39b662723c92603af69349b4690b0cf8d118e87d161c34e",
+        "logBytes": 339
+      },
+      {
+        "name": "format",
+        "command": "npm run format:check",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:49:27.3204647+00:00",
+        "endedAtUtc": "2026-11-04T11:50:03.7970371+00:00",
+        "durationSeconds": 36.477,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-format.log",
+        "logSha256": "7f4c49d5c04df21bee771baac7c611d0ca94ee4fd27a2ecfbb9aa472de110eb4",
+        "logBytes": 175
+      },
+      {
+        "name": "plan",
+        "command": "npm run redesign:check",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:03.8209303+00:00",
+        "endedAtUtc": "2026-11-04T11:50:05.5372318+00:00",
+        "durationSeconds": 1.716,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-plan.log",
+        "logSha256": "23b0b46dead943eae9b1d228e2d20846199d8c59cb5bb20f67d460419ec0f8db",
+        "logBytes": 158
+      },
+      {
+        "name": "catalog",
+        "command": "npm run redesign:catalog:check",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:05.5525967+00:00",
+        "endedAtUtc": "2026-11-04T11:50:08.4526421+00:00",
+        "durationSeconds": 2.9,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-catalog.log",
+        "logSha256": "1f4f72f397f9e7d539061746a2cf7bdc5d27ef1655901530abbe309c1e924d35",
+        "logBytes": 258
+      },
+      {
+        "name": "learn",
+        "command": "npm run redesign:learn:check",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:08.4612015+00:00",
+        "endedAtUtc": "2026-11-04T11:50:10.2082329+00:00",
+        "durationSeconds": 1.747,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-learn.log",
+        "logSha256": "0989231ce32a57674cab68f1582ef8569554468dd50899ed20b0cadd6c5b9af1",
+        "logBytes": 214
+      },
+      {
+        "name": "inventory",
+        "command": "npm run redesign:inventory:check",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:10.2173252+00:00",
+        "endedAtUtc": "2026-11-04T11:50:24.2897719+00:00",
+        "durationSeconds": 14.072,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-inventory.log",
+        "logSha256": "9f374b693915ee8d2809dcc800fc4842de43ba436d0e86e8b9a0bde9ca54b3aa",
+        "logBytes": 1139
+      },
+      {
+        "name": "modules",
+        "command": "npm run audit:modules",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:24.3014184+00:00",
+        "endedAtUtc": "2026-11-04T11:50:25.9397308+00:00",
+        "durationSeconds": 1.638,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-modules.log",
+        "logSha256": "e61f65b1621fda0558e3aa251f999f34f510f3c286a52b081ce5c6968eb3cb0f",
+        "logBytes": 167
+      },
+      {
+        "name": "build",
+        "command": "npm run build",
+        "exitCode": 0,
+        "startedAtUtc": "2026-11-04T11:50:25.9487241+00:00",
+        "endedAtUtc": "2026-11-04T11:50:33.2709823+00:00",
+        "durationSeconds": 7.322,
+        "sourceHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "remoteTrackingHead": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+        "frozenSourceDiffPaths": [],
+        "logPath": "tmp\\s25-quality-final-build.log",
+        "logSha256": "18a6289faf911d44a5936eefa3200bb649350ec7b433f8a1faaeddb8d8f55158",
+        "logBytes": 13455
+      }
+    ],
+    "journeys": {
+      "path": "tmp/s25-browser-final.json",
+      "sha256": "2b7b9d2b83334938eb81a48cbc0225256c253d2559055515bdb977447b3dea64",
+      "passed": 54,
+      "unexpected": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "durationMs": 364902.747,
+      "projects": {
+        "chromium": 27,
+        "mobile-chrome": 27
+      },
+      "snapshotPolicy": "none",
+      "workers": 2,
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ]
+    },
+    "regression": {
+      "path": "tmp/s25-browser-regression.json",
+      "sha256": "4eb04bd59b5954dd1a875a2613c9f1a6df3776c4ef5f7e8af567ccf99beb371f",
+      "passed": 22,
+      "unexpected": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "runnerErrors": 0,
+      "durationMs": 207387.661,
+      "projects": {
+        "chromium": 11,
+        "mobile-chrome": 11
+      },
+      "snapshotPolicy": "none",
+      "workers": 2,
+      "retries": [
+        {
+          "name": "chromium",
+          "retries": 0
+        },
+        {
+          "name": "firefox",
+          "retries": 0
+        },
+        {
+          "name": "webkit",
+          "retries": 0
+        },
+        {
+          "name": "mobile-chrome",
+          "retries": 0
+        },
+        {
+          "name": "mobile-webkit",
+          "retries": 0
+        }
+      ]
+    },
+    "visual": {
+      "newPng": 20,
+      "newBaselineSha256": {
+        "s25-focus-2-3-dark-chromium-win32.png": "da68262ecb265e58ab13ffec863021eaa9744ee39d46d6c8c82d5714008ed967",
+        "s25-focus-2-3-dark-mobile-chrome-win32.png": "9747a0c49640af5d00d73e12d1457752ae4683a9b8a0e4d84108bfa36baee2a5",
+        "s25-focus-2-3-light-chromium-win32.png": "f50be157ad68a3e75c03a4458625b3f0e44f42317b22c859496b3dd6cfd5762e",
+        "s25-focus-2-3-light-mobile-chrome-win32.png": "3c605a235eee86a50f95c0a877d49eef5c2a68fb84615c8a16be0ca68082dd50",
+        "s25-focus-3-1-dark-chromium-win32.png": "e338f8260e24d541dba5892c6fc2c1c9b29dcd520c29633a50bc8289abfb4078",
+        "s25-focus-3-1-dark-mobile-chrome-win32.png": "b85fcdf15643ea06cf772ac4be9965b06116a153cf6ebe04d4ce3da9ebc3b045",
+        "s25-focus-3-1-light-chromium-win32.png": "2655c22fd37667ecc5d045d9cddb6bef9fc799f62b0504f97498d50a95276f32",
+        "s25-focus-3-1-light-mobile-chrome-win32.png": "b3c387e1517c4c5601b131ac249944dbd8d341a563e9e3633326e627f5711f41",
+        "s25-focus-3-5-dark-chromium-win32.png": "3b7425d132c1e1b8d9e7231cfc9932ff5a63011e269827ce5a0d664da9aa30cc",
+        "s25-focus-3-5-dark-mobile-chrome-win32.png": "9e14ac34bd9270e54ed6ad054ede2d35f618084967eebdcf9cd0f2210023aa01",
+        "s25-focus-3-5-light-chromium-win32.png": "407c2a2cf251971b54e5c17d0014326e761b7dffce22675092c805133f838cca",
+        "s25-focus-3-5-light-mobile-chrome-win32.png": "987c4198c9de04777dcb93725e4fdf7afc24c8fd683d1e568e9d88e7c66882c5",
+        "s25-focus-3-8-dark-chromium-win32.png": "477c82f31aa2c810b9b9e7312e79a6a2c35990fc1e7954069baf3f9a7b3470e3",
+        "s25-focus-3-8-dark-mobile-chrome-win32.png": "d044551eb341d44a90bd0569a45ac39ef98948581e2361812fd24186b9d54ffd",
+        "s25-focus-3-8-light-chromium-win32.png": "d7d2e4ed771d8b01e82c5cadf3291d7cd5d8dae1ab33989eb86516181c74bd6f",
+        "s25-focus-3-8-light-mobile-chrome-win32.png": "c6d7a405c96a4b26be77d8eeb171523f8e85406ea9ab371a65f3ae929e80431e",
+        "s25-focus-3-9-dark-chromium-win32.png": "c98104d9f245f9673fbe145398c5e7fa6bb8f7a6b54b8d8c80adb90b5389e74b",
+        "s25-focus-3-9-dark-mobile-chrome-win32.png": "2b93d8dde8f091bbe8a15cf843be28b1f361433985ce5ba0b47abd83b33c0896",
+        "s25-focus-3-9-light-chromium-win32.png": "d93fbb7a002d22dd7c20f7212dc5ecd004d258cb7acc9c16bd1536f49866a6e6",
+        "s25-focus-3-9-light-mobile-chrome-win32.png": "43ef44520525f9d97c3f8c70648b55ebfa12ef501f19dfe50ba24317877d53f1"
+      },
+      "historicalPngUpdated": [
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+          "baselineSha256": "385d8febb73a9dcc104bc7251f969a45b1c5d871b09452eb75e9f63c734b4d90",
+          "currentSha256": "0c911f63a4a6e29a9d478316a88e8e3c0413d8b20dce08181bbb54ef1cb8bfb1",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+          "baselineSha256": "bc3b996c85befd6c5da4d4a532360fddb9e70e4a3fed5a2cf489325c0b46ded1",
+          "currentSha256": "0fcafdb438631fc01dbcfea26defab2e1fe89167565642e0c25d54e22dff36e5",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+          "baselineSha256": "9332b6be18aa4673d0eb0c15385804eddb01eefea7e31210be40168742246ef0",
+          "currentSha256": "d9931ce879723ca09714b06d69dbd8b59342ab9da7acfc4f38feb905e4bcf265",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+          "baselineSha256": "c71b8512a5d6b5d254b9ed2b21f8071b93c02089bd4afee18e208f1cf344a1b1",
+          "currentSha256": "358b4846dcd0a67c3c7fd519bd20b44f1425f1117b12644058bbb73d7dcb1940",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        }
+      ],
+      "masks": [],
+      "threshold": 0.2,
+      "maxDiffPixels": 100,
+      "geometry": "Visible SVG text bounding boxes stay inside the 640x270 viewBox; mobile captions retain exact axis ranges."
+    }
+  },
+  "persistenceAndTransfer": {
+    "sessionSchema": "pendulum-extended-focus-session/v1",
+    "key": "pendulum-product/extended-focus/v1/{courseId}/{unitId}",
+    "resultSchema": "pendulum-learn-diagnostics/v1",
+    "transferSchema": "pendulum-experiment/v1",
+    "semantics": "Reload restores restart fields. Document memory retains completed results across internal routes. Lab receives exact supported canonical baseline; adaptive/midpoint/TR-BDF2 companions remain separate in the report/session declaration. Spatial canonical analyses stay [] while native intrinsic diagnostics remain available.",
+    "bounds": "20,000 baseline steps; <=801 trace samples; reviewed per-unit scalar ranges; <=30s worker inactivity; actual termination on cancel; exact canonical input/source/version/quantity units and batch; finite result shape and chart numeric guards."
+  },
+  "preservation": {
+    "report": "S25-preservation.json",
+    "sha256": "e7832366828c8936714d75a1881010b125ad50f1fd8ec00e27f54d9002deab69",
+    "summary": {
+      "protected": {
+        "total": 353,
+        "byteEqual": 353,
+        "lfNormalizedEqual": 353,
+        "changes": []
+      },
+      "oldTestsAndFixtures": {
+        "total": 441,
+        "byteEqual": 438,
+        "lfNormalizedEqual": 438,
+        "changes": [
+          {
+            "path": "e2e/redesign/learn.spec.ts",
+            "baselineSha256": "34df66eeaf03e2f5507ae6c6dd8a3561e6783281986e67a7ab8bcee1fcc26f6d",
+            "currentSha256": "1679ab73d17e6cc88a2adc0cf49317198fccacf1155481b904c69ed1addcbdd6",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": true
+          },
+          {
+            "path": "tests/product/learn/content.test.ts",
+            "baselineSha256": "33c12647b7ccaf2abdd7a5e0a4304be5dda3a649ecb623407c9f1f14d02951c4",
+            "currentSha256": "e4b4319f678b59c88a5f6997e4e6096d8b952bf3920434a692cf8ccd90e3e01e",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": true
+          },
+          {
+            "path": "tests/product/learn/course-one-quality.test.ts",
+            "baselineSha256": "7b82fbbab2af163a5724303ab2a920a1c33913e5c9f15971187f59df2e7fe803",
+            "currentSha256": "298eafc768258f2b48887b86bbf927a51612171291eb09d174dce1c9ae61be49",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": true
+          }
+        ]
+      },
+      "oldPng": {
+        "total": 218,
+        "byteEqual": 214,
+        "lfNormalizedEqual": 214,
+        "changes": [
+          {
+            "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+            "baselineSha256": "385d8febb73a9dcc104bc7251f969a45b1c5d871b09452eb75e9f63c734b4d90",
+            "currentSha256": "0c911f63a4a6e29a9d478316a88e8e3c0413d8b20dce08181bbb54ef1cb8bfb1",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": false
+          },
+          {
+            "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+            "baselineSha256": "bc3b996c85befd6c5da4d4a532360fddb9e70e4a3fed5a2cf489325c0b46ded1",
+            "currentSha256": "0fcafdb438631fc01dbcfea26defab2e1fe89167565642e0c25d54e22dff36e5",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": false
+          },
+          {
+            "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+            "baselineSha256": "9332b6be18aa4673d0eb0c15385804eddb01eefea7e31210be40168742246ef0",
+            "currentSha256": "d9931ce879723ca09714b06d69dbd8b59342ab9da7acfc4f38feb905e4bcf265",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": false
+          },
+          {
+            "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+            "baselineSha256": "c71b8512a5d6b5d254b9ed2b21f8071b93c02089bd4afee18e208f1cf344a1b1",
+            "currentSha256": "358b4846dcd0a67c3c7fd519bd20b44f1425f1117b12644058bbb73d7dcb1940",
+            "byteEqual": false,
+            "lfNormalizedEqual": false,
+            "plannedMetadataUpdate": false
+          }
+        ]
+      }
+    },
+    "desktop": [
+      {
+        "original": "documents/redesign/master-roadmap-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "originalSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "copySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "equal": true
+      },
+      {
+        "original": "documents/redesign/execution-plan-ko.md",
+        "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "originalSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "copySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "equal": true
+      }
+    ],
+    "impact": "353 protected files including native engines/adapters/public boundary plans/app.html/package/lockfile/course1/golden are byte-identical. Three historical test files update metadata/fixture references only; four original course-list PNGs reflect 26 published units."
+  },
+  "review": {
+    "approvedUserGates": [
+      7,
+      9,
+      17,
+      24
+    ],
+    "automatedVerified": 18,
+    "sourceChecked": 18,
+    "humanReviewed": 0,
+    "note": "AI source and visual checks do not certify human/expert review, physical devices, Firefox/WebKit or screen-reader audio."
+  },
+  "security": {
+    "knownPatternScan": {
+      "path": "tmp/s25-secrets-final.json",
+      "sha256": "2ee32a97220aaa89729f433514a0f7d8935a287c57697d88539e736f0430c4c3",
+      "findings": 0,
+      "sourceCommit": "dad2866dae0d297c99f5b76916b83f209b19ca5d",
+      "scope": "All Git-tracked working-tree text files; binary files listed separately; no history or ignored files.",
+      "limitations": [
+        "Known credential formats only; no entropy analysis, provider validation, or detection of arbitrary passwords.",
+        "Zero findings means no matches for these rules, not proof that all secrets are absent.",
+        "Git history, ignored files, binary contents, and external services are outside this local scan."
+      ]
+    },
+    "dependencyStatus": "No package/lockfile changes or fresh dependency audit/risk acceptance. Latest GitHub default-branch push notice:26 (15high/8moderate/3low); earlier stage notices22 are historical. Existing dependency/CodeQL debt remains for the planned release audit."
+  },
+  "history": [
+    "Initial CLI fixture missed course3 authoring imports; actual curriculum/helper copy fixed without weakening assertions.",
+    "Independent worker audits reproduced13 shape/lineage gaps,3 numeric chart cells, native negative zero and setter alias; guarded by passing adversarial/native tests.",
+    "Profile rebinding reproduced; course2/3 declarations now always use their reviewed mapping. A mixed-source full run failed that new regression; clean frozen rerun passed.",
+    "Initial browser selector assumed spinbutton for shared text quantity controls; corrected. Native Lab return links missing for new families; added only for validated Learn provenance.",
+    "Missing-baseline creation was not counted as comparison pass. Exactly4 reviewed course-list actuals were adopted; all other historical PNGs retained.",
+    "AI QA found clipped y-axis tick; gutter widened with numeric values unchanged. New graph baseline16 refreshed, matrix4 retained, getBBox and none comparisons passed.",
+    "Environment/tool execution stalled about1.2h during browser context setup; affected runs aborted and excluded. Temporary process-scoped wake request prevents idle sleep and resets at exit; user power settings unchanged. PowerShell stderr warning wrapper corrected and identified own orphan preview stopped. Final validation is fresh with unchanged retry/timeout/snapshot tolerances."
+  ],
+  "recovery": {
+    "baselineCommit": "831e7afeda1c5d94439a2bf52276b2ff5996587d",
+    "retainedEntry": "app.html",
+    "action": "Use the preserved old entry or request a separately reviewed rollback; no destructive Git recovery performed."
+  },
+  "changedFiles": [
+    {
+      "path": "content/learn/course-2/2.1.ts",
+      "sha256": "a4dec23513b659fe6935d849db9678c33542d9abea23bce120e669389a5873ac",
+      "bytes": 20202,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.2.ts",
+      "sha256": "37baa06599961de68db51ad22bfd19cfc74934543943b2a76c4697723d898e49",
+      "bytes": 20858,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.3.ts",
+      "sha256": "b60f0f48e228d55606d289efde39c90c2aaba2423a913e0108a8789318f173b1",
+      "bytes": 23059,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.4.ts",
+      "sha256": "99027e354ac9d84413c806fb53203309bf232b0420647474d3378d17e5452d97",
+      "bytes": 21020,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.5.ts",
+      "sha256": "e49774a432dbdbad6af879286bffa664aa23bca27c18d0d476750d849e7c350b",
+      "bytes": 22569,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.6.ts",
+      "sha256": "c573e076f32a1b738023ed9714313232c1eab85a46cf2c7a2f7a46404b83caee",
+      "bytes": 20770,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.7.ts",
+      "sha256": "fa0907926baedb87bf48da647b6c876fe2bca196a35e56856e56af31360be716",
+      "bytes": 23265,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.8.ts",
+      "sha256": "a4d0c4409bb837160ed3af3763529db065675a1140a83b0d653767d9a44c0f92",
+      "bytes": 21979,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-2/2.9.ts",
+      "sha256": "2d34a97c6dfaa4f16b83ab7bb8487432cdbb3c4a6f982d8922ec4c875b790f22",
+      "bytes": 21134,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.1.ts",
+      "sha256": "d9ba7c0d04378d01503b20a426f6aef183aa401316e92dc370ca7e2471494342",
+      "bytes": 10192,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.2.ts",
+      "sha256": "2d7307e17827f17473d4e89efdec94f18c3a4e4d869b13ef6ee814fd914e2672",
+      "bytes": 9240,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.3.ts",
+      "sha256": "631fdfdafdbb6a959f8da6205c4b4dbb4ad85323d862842e95f8f8e4efa26331",
+      "bytes": 11499,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.4.ts",
+      "sha256": "2388e6c070fac1e8102b9bfb46f9783d68da14120c1432b73060833830514b32",
+      "bytes": 9868,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.5.ts",
+      "sha256": "7a954efea6a2622d38ca5aa84a15973c60aba7dabf24597bab5841c3abb911ec",
+      "bytes": 10974,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.6.ts",
+      "sha256": "cbdd6b3f3ee0931fae7034e0e7d4c7c8f47e968a41196956170ba7dace472b78",
+      "bytes": 10181,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.7.ts",
+      "sha256": "08bfbff564215456d18c3612ab77bca0b36113840e3616b590d21caacfc7e3ab",
+      "bytes": 9664,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.8.ts",
+      "sha256": "59e4d1d7a10e620445dabe9bef16edec32dc84612d3cf21ae391903df5c4f942",
+      "bytes": 11208,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/course-3/3.9.ts",
+      "sha256": "b2c7e4b9448e77524ac13bc6c03bddae7a3978ea8d9079282961d9e9a561d867",
+      "bytes": 10732,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/curriculum.ts",
+      "sha256": "f2717bea255c7a79c44b8703b7a7c66298016a3b68d22ae9f22f2dbd90acfaab",
+      "bytes": 32120,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "content/learn/modules.ts",
+      "sha256": "e7788ce36750cc6fb9afe85637087607a6b8707c7f282f91d6f4e6f0def1dade",
+      "bytes": 1488,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "css/product/learn.css",
+      "sha256": "0eb220f17c677dd9ce9746a5734b5f2745da5079a2ca730d6aa2f22a8336699a",
+      "bytes": 12197,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "documents/redesign/courses-two-three-ko.md",
+      "sha256": "e02af08ed21a79407ee61f30d810f729a6d3dfbc3c394c363aefbcd759002c1e",
+      "bytes": 20855,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "documents/redesign/stage-runs/S25-progress.md",
+      "sha256": "f4b4e276c538aeca899466542626bba3791f93cd0e0350f59793e09b38f97cf7",
+      "bytes": 18012,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "documents/redesign/status.json",
+      "sha256": "b77b3538358a1498d434be0d29604b763f514cd6e3ef3c14ec65aecc3c3fcb52",
+      "bytes": 4343,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts",
+      "sha256": "5688c1873cdc922f19b1a3206b844934fcdbf2b0f907ad9aa9a05b1dfd8bb656",
+      "bytes": 14723,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-2-3-dark-chromium-win32.png",
+      "sha256": "da68262ecb265e58ab13ffec863021eaa9744ee39d46d6c8c82d5714008ed967",
+      "bytes": 31057,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-2-3-dark-mobile-chrome-win32.png",
+      "sha256": "9747a0c49640af5d00d73e12d1457752ae4683a9b8a0e4d84108bfa36baee2a5",
+      "bytes": 14068,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-2-3-light-chromium-win32.png",
+      "sha256": "f50be157ad68a3e75c03a4458625b3f0e44f42317b22c859496b3dd6cfd5762e",
+      "bytes": 31158,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-2-3-light-mobile-chrome-win32.png",
+      "sha256": "3c605a235eee86a50f95c0a877d49eef5c2a68fb84615c8a16be0ca68082dd50",
+      "bytes": 14289,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-1-dark-chromium-win32.png",
+      "sha256": "e338f8260e24d541dba5892c6fc2c1c9b29dcd520c29633a50bc8289abfb4078",
+      "bytes": 14263,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-1-dark-mobile-chrome-win32.png",
+      "sha256": "b85fcdf15643ea06cf772ac4be9965b06116a153cf6ebe04d4ce3da9ebc3b045",
+      "bytes": 12920,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-1-light-chromium-win32.png",
+      "sha256": "2655c22fd37667ecc5d045d9cddb6bef9fc799f62b0504f97498d50a95276f32",
+      "bytes": 14510,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-1-light-mobile-chrome-win32.png",
+      "sha256": "b3c387e1517c4c5601b131ac249944dbd8d341a563e9e3633326e627f5711f41",
+      "bytes": 13127,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-5-dark-chromium-win32.png",
+      "sha256": "3b7425d132c1e1b8d9e7231cfc9932ff5a63011e269827ce5a0d664da9aa30cc",
+      "bytes": 43954,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-5-dark-mobile-chrome-win32.png",
+      "sha256": "9e14ac34bd9270e54ed6ad054ede2d35f618084967eebdcf9cd0f2210023aa01",
+      "bytes": 24488,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-5-light-chromium-win32.png",
+      "sha256": "407c2a2cf251971b54e5c17d0014326e761b7dffce22675092c805133f838cca",
+      "bytes": 44123,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-5-light-mobile-chrome-win32.png",
+      "sha256": "987c4198c9de04777dcb93725e4fdf7afc24c8fd683d1e568e9d88e7c66882c5",
+      "bytes": 24757,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-8-dark-chromium-win32.png",
+      "sha256": "477c82f31aa2c810b9b9e7312e79a6a2c35990fc1e7954069baf3f9a7b3470e3",
+      "bytes": 40038,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-8-dark-mobile-chrome-win32.png",
+      "sha256": "d044551eb341d44a90bd0569a45ac39ef98948581e2361812fd24186b9d54ffd",
+      "bytes": 17999,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-8-light-chromium-win32.png",
+      "sha256": "d7d2e4ed771d8b01e82c5cadf3291d7cd5d8dae1ab33989eb86516181c74bd6f",
+      "bytes": 40219,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-8-light-mobile-chrome-win32.png",
+      "sha256": "c6d7a405c96a4b26be77d8eeb171523f8e85406ea9ab371a65f3ae929e80431e",
+      "bytes": 18175,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-9-dark-chromium-win32.png",
+      "sha256": "c98104d9f245f9673fbe145398c5e7fa6bb8f7a6b54b8d8c80adb90b5389e74b",
+      "bytes": 36843,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-9-dark-mobile-chrome-win32.png",
+      "sha256": "2b93d8dde8f091bbe8a15cf843be28b1f361433985ce5ba0b47abd83b33c0896",
+      "bytes": 16424,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-9-light-chromium-win32.png",
+      "sha256": "d93fbb7a002d22dd7c20f7212dc5ecd004d258cb7acc9c16bd1536f49866a6e6",
+      "bytes": 35538,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/curriculum-two-three.spec.ts-snapshots/s25-focus-3-9-light-mobile-chrome-win32.png",
+      "sha256": "43ef44520525f9d97c3f8c70648b55ebfa12ef501f19dfe50ba24317877d53f1",
+      "bytes": 16420,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/learn.spec.ts",
+      "sha256": "1679ab73d17e6cc88a2adc0cf49317198fccacf1155481b904c69ed1addcbdd6",
+      "bytes": 25038,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+      "sha256": "0c911f63a4a6e29a9d478316a88e8e3c0413d8b20dce08181bbb54ef1cb8bfb1",
+      "bytes": 93154,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+      "sha256": "0fcafdb438631fc01dbcfea26defab2e1fe89167565642e0c25d54e22dff36e5",
+      "bytes": 92202,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+      "sha256": "d9931ce879723ca09714b06d69dbd8b59342ab9da7acfc4f38feb905e4bcf265",
+      "bytes": 94733,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+      "sha256": "358b4846dcd0a67c3c7fd519bd20b44f1425f1117b12644058bbb73d7dcb1940",
+      "bytes": 93075,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-client.ts",
+      "sha256": "73bfe44cf8882b7f056cdefa303af59db4f70ab3976bfe0b7554111af5c992f0",
+      "bytes": 12673,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-compound.ts",
+      "sha256": "3341bb25494671f8af00799024f356ec071045fa8ba581ecfed983e52d9506aa",
+      "bytes": 3950,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-config.ts",
+      "sha256": "465bc28f18a0be120ae5cda96d00c5b7dd5519d9963c7a2ba1be2a5dddc33309",
+      "bytes": 8181,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-definitions.ts",
+      "sha256": "d109d79ab62a40d2718a04e3d8a8297ed9d7e9dde5b3db544ded626e84ce0fb6",
+      "bytes": 7820,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-numerical.ts",
+      "sha256": "e13974cccf79886d56999f8491cd4562da3e0120d139ae71d117bbb55374bb48",
+      "bytes": 20357,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-plots.ts",
+      "sha256": "073203ba3fe0bb1ae416ef8344c61e5dbc19103f996b12e090a1c81fe8816499",
+      "bytes": 11029,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-results.ts",
+      "sha256": "3530539114fade9369662be20e5b1037dec21b80ac8e1fbad06b5838c12d24df",
+      "bytes": 1917,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-runtime.ts",
+      "sha256": "72e61c64cf5ceb673fea1ce73da23b5fa79d1f9834ef1bebe71f8a36359ddb41",
+      "bytes": 6482,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-science.ts",
+      "sha256": "89808229f2ffbbbf33a83eb0c154b5f5ce996e7a3fc982d379111f96e12ff37a",
+      "bytes": 19212,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-transfer.ts",
+      "sha256": "0cda7e268de7418d1d56ce51e8f2e19b6cfeaf8da888852bcc26038b4fa31583",
+      "bytes": 2332,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-view.ts",
+      "sha256": "36be87231409d4623542d1b029c9e0ba67a0b95818ada4f6dae819d001ffe79b",
+      "bytes": 10324,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended-worker.ts",
+      "sha256": "04d484432551f773ebec45e5863cb8155ff9be63fd7de194e53fe72cc85600ae",
+      "bytes": 940,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/experiments/extended.worker.ts",
+      "sha256": "097255ef7a2099b2069a0e2027aa39a94d68a41189f70be1f500a174b590dbd5",
+      "bytes": 801,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/lab/views/chain-workspace.ts",
+      "sha256": "e457014e9a231c7971fcd617037eede6526ff57370917db4c0a24885ea1ccc1d",
+      "bytes": 14772,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/lab/views/constraint-workspace.ts",
+      "sha256": "0930043f6efb69dcb045f51e1bf24689aae3683d281c5beba63ba666923ac9a7",
+      "bytes": 21121,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/lab/views/learn-source.ts",
+      "sha256": "dad90a7e363f70201d1f8e11548dd1e8773f157356680e6eb9e30159770ede6e",
+      "bytes": 1109,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/lab/views/spatial-workspace.ts",
+      "sha256": "56c713355d08578677b37e6b9830c762a22cc0e0f227ea9b75949c6f71ac34df",
+      "bytes": 18518,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/authoring-course-three.ts",
+      "sha256": "29b87bc7202c2ffcbeff760cdc6876368027e0d046b81d7c3c186f021d6eab4f",
+      "bytes": 11124,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/blocks.ts",
+      "sha256": "3ce09e3285214e55d09f792b09cc5521593dcc97d056ae95bd6e49773f3f1170",
+      "bytes": 7438,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/focus-mount.ts",
+      "sha256": "001ca9768849ca90fae35fb398cb2e8af854968917bbec7514a6fd79ae61f917",
+      "bytes": 2707,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/schema.ts",
+      "sha256": "285d591ec8d8fd24eceb79e6d94a01e272089609523a2678a8c9110b07bc472d",
+      "bytes": 5611,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/validation-shapes.ts",
+      "sha256": "cb9201ba1273e760936a507caf76931050d4f12df534dfe6d2c25d339fdfc5b4",
+      "bytes": 6463,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/validation.ts",
+      "sha256": "dadc9bdf9f098fac7bffa7c6d2e27c0e6a4d4bba5287ca73432f93a102c8a7f3",
+      "bytes": 17620,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "src/product/learn/views.ts",
+      "sha256": "377d0e0192b569364d4cf3bdc80d94dc02774e744f61fb3399e2b81c5a215b4d",
+      "bytes": 11007,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/experiments/extended-boundaries.test.ts",
+      "sha256": "15dcf4fb56ad6bc3e3374a67d91e6a283ee6f5ed03bf061cfaa5b49685ece0dd",
+      "bytes": 13888,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/experiments/extended-compound.test.ts",
+      "sha256": "59f1ea14f5359163c24c6892063e33470645448b6ab8e930a42e224d8312e35d",
+      "bytes": 6642,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/experiments/extended-runtime.test.ts",
+      "sha256": "7b63ddd52e927de7f1281d80346a6ef099a0b01bb9da64a476e1c5ed7936a10d",
+      "bytes": 8138,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/experiments/extended-science.test.ts",
+      "sha256": "58361fe1426927a107669a039bf494c353b4b3e8255f07243fe3c1e37da67bb0",
+      "bytes": 17077,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/experiments/extended-systems.test.ts",
+      "sha256": "1f0b9dac438254f7774b466edbe0b5efefe7a99dcc5b1a7db5769b6718fb0397",
+      "bytes": 10473,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/learn/content.test.ts",
+      "sha256": "e4b4319f678b59c88a5f6997e4e6096d8b952bf3920434a692cf8ccd90e3e01e",
+      "bytes": 20779,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/learn/course-one-quality.test.ts",
+      "sha256": "298eafc768258f2b48887b86bbf927a51612171291eb09d174dce1c9ae61be49",
+      "bytes": 12071,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    },
+    {
+      "path": "tests/product/learn/courses-two-three-quality.test.ts",
+      "sha256": "bf9c630e33778c4125e7c28ab0960e4e368ae59bc7721f3883d1612eae9bbbe5",
+      "bytes": 9369,
+      "hashScope": "Git blob at verifiedImplementationCommit; control metadata may change in evidence/status commits."
+    }
+  ],
+  "verificationLogs": [
+    {
+      "path": "tmp/s25-full-vitest-final.json",
+      "sha256": "e491ae372a451f92bf6a8361fb348681afd7cb7a64ac8fa848285a0155ddfd05",
+      "bytes": 2170534
+    },
+    {
+      "path": "tmp/s25-quality-final.json",
+      "sha256": "a5cb7e8920bba38768fe7cb5395b4eb103c281b0e0bfc0267ce80661f9e944fb",
+      "bytes": 5131
+    },
+    {
+      "path": "tmp/s25-browser-final.json",
+      "sha256": "2b7b9d2b83334938eb81a48cbc0225256c253d2559055515bdb977447b3dea64",
+      "bytes": 71462
+    },
+    {
+      "path": "tmp/s25-browser-regression.json",
+      "sha256": "4eb04bd59b5954dd1a875a2613c9f1a6df3776c4ef5f7e8af567ccf99beb371f",
+      "bytes": 33650
+    },
+    {
+      "path": "tmp/s25-secrets-final.json",
+      "sha256": "2ee32a97220aaa89729f433514a0f7d8935a287c57697d88539e736f0430c4c3",
+      "bytes": 24838
+    },
+    {
+      "path": "tmp/s25-visual-none.json",
+      "sha256": "8d38dcdaf35cd8d1e016bba484a8c0bdfed3e45a85756c9bee6cec3f95ffc43f",
+      "bytes": 14859
+    },
+    {
+      "path": "tmp/s25-new-visual-before-fix.json",
+      "sha256": "48166c6410e1b8e336fa4e6587027bb8337c95566c4417fc314ae35d7af1062e",
+      "bytes": 2305
+    },
+    {
+      "path": "tmp/s25-new-visual-after-fix.json",
+      "sha256": "b535f4ce8d564f8476e1b0ea1629c575ef2add2774671fbd48588634fa4a155a",
+      "bytes": 2305
+    },
+    {
+      "path": "tmp/s25-learn-baseline-updates.json",
+      "sha256": "58b73f48b148842549d6c7771cdce1db3f050add9f129bfe3e3c1e171eb28d04",
+      "bytes": 1705
+    }
+  ],
+  "nextValidStage": 26
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "pendulum-S25-preservation/v1",
+  "baselineCommit": "831e7afeda1c5d94439a2bf52276b2ff5996587d",
+  "generatedAtUtc": "2026-11-04T11:59:20.107Z",
+  "categories": {
+    "protected": {
+      "total": 353,
+      "byteEqual": 353,
+      "lfNormalizedEqual": 353,
+      "changes": []
+    },
+    "oldTestsAndFixtures": {
+      "total": 441,
+      "byteEqual": 438,
+      "lfNormalizedEqual": 438,
+      "changes": [
+        {
+          "path": "e2e/redesign/learn.spec.ts",
+          "baselineSha256": "34df66eeaf03e2f5507ae6c6dd8a3561e6783281986e67a7ab8bcee1fcc26f6d",
+          "currentSha256": "1679ab73d17e6cc88a2adc0cf49317198fccacf1155481b904c69ed1addcbdd6",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": true
+        },
+        {
+          "path": "tests/product/learn/content.test.ts",
+          "baselineSha256": "33c12647b7ccaf2abdd7a5e0a4304be5dda3a649ecb623407c9f1f14d02951c4",
+          "currentSha256": "e4b4319f678b59c88a5f6997e4e6096d8b952bf3920434a692cf8ccd90e3e01e",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": true
+        },
+        {
+          "path": "tests/product/learn/course-one-quality.test.ts",
+          "baselineSha256": "7b82fbbab2af163a5724303ab2a920a1c33913e5c9f15971187f59df2e7fe803",
+          "currentSha256": "298eafc768258f2b48887b86bbf927a51612171291eb09d174dce1c9ae61be49",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": true
+        }
+      ]
+    },
+    "oldPng": {
+      "total": 218,
+      "byteEqual": 214,
+      "lfNormalizedEqual": 214,
+      "changes": [
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+          "baselineSha256": "385d8febb73a9dcc104bc7251f969a45b1c5d871b09452eb75e9f63c734b4d90",
+          "currentSha256": "0c911f63a4a6e29a9d478316a88e8e3c0413d8b20dce08181bbb54ef1cb8bfb1",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+          "baselineSha256": "bc3b996c85befd6c5da4d4a532360fddb9e70e4a3fed5a2cf489325c0b46ded1",
+          "currentSha256": "0fcafdb438631fc01dbcfea26defab2e1fe89167565642e0c25d54e22dff36e5",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+          "baselineSha256": "9332b6be18aa4673d0eb0c15385804eddb01eefea7e31210be40168742246ef0",
+          "currentSha256": "d9931ce879723ca09714b06d69dbd8b59342ab9da7acfc4f38feb905e4bcf265",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        },
+        {
+          "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+          "baselineSha256": "c71b8512a5d6b5d254b9ed2b21f8071b93c02089bd4afee18e208f1cf344a1b1",
+          "currentSha256": "358b4846dcd0a67c3c7fd519bd20b44f1425f1117b12644058bbb73d7dcb1940",
+          "byteEqual": false,
+          "lfNormalizedEqual": false,
+          "plannedMetadataUpdate": false
+        }
+      ]
+    }
+  },
+  "desktop": [
+    {
+      "original": "documents/redesign/master-roadmap-ko.md",
+      "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "originalSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "copySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "equal": true
+    },
+    {
+      "original": "documents/redesign/execution-plan-ko.md",
+      "copy": "C:/Users/junge/Desktop/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "originalSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "copySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "equal": true
+    }
+  ]
+}

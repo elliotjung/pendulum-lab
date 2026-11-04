@@ -112,3 +112,22 @@
 - 병렬 최종 실행에서 tools/host가 약1.2시간 정지해 browser context setup의30초 제한 실패가 발생했다 (`tmp/s25-browser-suspension.log`). 해당 실행과 함께 돌던 단위 실행은 중단하고 완료 증거로 쓰지 않았다. 임시 process wake request를 적용한 별도 전체 재실행은 통과했다. 사용자 전원 설정은 변경하지 않으며 helper의 finally/process 종료 때 요청을 해제한다.
 - 보호 helper의 PowerShell stderr 경고 처리 때문에 첫 시각 재실행이 시작 전에 중단됐다. 종료 코드로 판정하도록 수정했고, 남은 자체 preview PID13720의 경로/포트를 확인해 해당 process만 종료했다. 이후 정상8/8이 위 기록이다. 이 tooling 오류를 제품 실패/통과로 섞지 않는다.
 - 눈금 보강과 검증 정의/이미지를 먼저 원격 보존한 뒤 고정 원격 source에서 완료 후보 검증을 확정한다. 공통 threshold·retry·timeout을 완화하지 않는다. 두 browser project는 독립2workers로 실행하며 결과에 실제 조건을 기록한다.
+
+### CP4-V 원격 / CP4-E 최종 고정 source 검증
+
+- CP4-V `dad2866dae0d297c99f5b76916b83f209b19ca5d` commit/push exit0 및 실제 원격 hash 일치. 모든 제품·콘텐츠·E2E·baseline 수정이 원격에 있다. 원격 source를 기준으로 전체 필수 검증을 다시 확정한 뒤 증거/status를 별도 보존한다.
+- 최신 push notice는 default branch26개(15high/8moderate/3low)였다. 이전 push22개와 구분한다. package/lockfile은 보존했으며 새 dependency audit·부채 해소/수락을 수행한 것은 아니다. 알려진 위험은 S30 판정 범위로 남긴다.
+- 고정 source: 이후 제품·테스트·PNG를 변경하지 않는다. 문서/상태/검증 JSON만 갱신한다. 최종 source hash와 실행 조건·실패 이력·보존 결과를 S25-verification.json에 기록한다.
+
+## CP4-E 최종 통과 증거
+
+- 검증 source와 origin tracking/실제 원격은 `dad2866dae0d297c99f5b76916b83f209b19ca5d`로 일치하며 src/content/tests/e2e/css/app/package/lock의 diff가 없다. 모든 제품·테스트·이미지는 이 commit에서 고정했다.
+- 원격 구현 push 뒤 실행한 전체 Vitest **5684/5684,356files**, 실패·pending0 (`tmp/s25-full-vitest-final.json`). S24 대비195개 증가: 신규 native science/systems/compound/worker/session/runtime150개와 콘텐츠 품질45개다. 기존 golden **13/13**도 별도 재실행 통과했다 (`tmp/s25-golden-final.json`).
+- 최종 production 신규 여정 **54/54**, Chromium27/Pixel5 mobile27, 실패/skip/flaky/runner error0 (`tmp/s25-browser-final.json`). 18개 모든 단원의 노출값 편집·실제 계산·단위·JSON·canonical Lab export 동일성·복귀·새로고침, invalid/empty/error/cancel/chunk·320px·200%·keyboard·axe 및 새20PNG none 비교를 포함한다. 실제2workers, retries0, 원30초, threshold0.2/maxDiffPixels100, mask없음이다.
+- 기존 대표 **22/22**, 양쪽project11개씩, 실패/skip/flaky/runner error0 (`tmp/s25-browser-regression.json`). 86개 단원 전체 이동, 기존 진도 저장/복원·Focus→Lab·Lagrange 선택, 과정1 Focus와 기존 chain/constraint/spatial의 frozen 시각/접근성을 확인했다. 기존 test의60초/90초 지정은 그대로 유지했다.
+- 원격 구현 뒤9개 품질 명령 전부 exit0 (`tmp/s25-quality-final.json`): typecheck, lint(policy+ESLint), format, plan/catalog/Learn/inventory, module audit, build/privacy. source와 origin tracking을 각 실행에 기록했고 모든 로그 SHA를 재확인했다. inventory883files/6825facts/2548imports, broken/orphan/errors0; catalog135definitions; Learn8/86; module788files/ratchet0; privacy22text검사/1binary제외다.
+- known-pattern tracked-text scan은 findings0 (`tmp/s25-secrets-final.json`,1742textfiles). history·ignored·binary·외부서비스·임의password·최종 증거 JSON 추가 전이라는 범위를 명시한다. fresh dependency audit나 보안 위험 수락이 아니다. 최신 default-branch26경고는 위 기록과 같다.
+- 최종 보존 `S25-preservation.json`: protected353/353 바이트 동일, 기존test/fixture441 중438동일/3metadata·fixture 경로 수정, 기존e2ePNG218 중214동일/의도한과정목록4개수정, desktop전달본2개SHA일치. 새20PNG의 refresh 후 SHA와 최종 none 비교 후 SHA가 모두 같다. 기존physics/chaos/research/runtime/workers/validation/adapters·app.html·package/lock·과정1·golden과 저장/공유 형식을 변경하지 않았다.
+- `S25-verification.json`은 18개 단원/26공개·60계획, 원격source의82개 변경경로 Git-blob SHA, 검사/로그 SHA와 환경·실패 이력·보존·보안·과학검토 한계를 기록한다. 이 JSON은 최종 status push를 증명하지 않으며, 실제 원격 status commit이 완료의 권위다.
+- 과학 검토는18/18 automated-verified/source-checked, human-reviewed0/18이다. gate24는 사용자의25단계 요청으로 workflow 승인했으며 전문가 검토로 승격하지 않았다. 실기기·Firefox/WebKit·screen-reader 음성 인증은 하지 않았다.
+- 복구 기준은 S24 status `831e7af`와 보존된 `app.html`이다. S26 이후/전체parity·migration/cutover/master merge/force push/tag/release는 실행하지 않았다. 검증 증거를 원격 보존한 뒤 별도 완료 status를 push해야 다음 유효 단계가26이 된다.
