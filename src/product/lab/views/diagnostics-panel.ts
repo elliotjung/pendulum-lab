@@ -25,6 +25,7 @@ import {
   importCoreDiagnosticArtifact
 } from '../../adapters/analysis/core/artifact';
 import { createPlot } from './core-plots';
+import { restoredDiagnostic, toDiagnosticAnalysis } from './diagnostic-handoff';
 
 const labels: Record<string, string> = {
   coordinate: '관측 좌표 번호 (0부터)',
@@ -174,8 +175,11 @@ export function createDiagnosticsPanel(document: Document, options: DiagnosticsO
     output,
     files
   );
-  let kind: CoreDiagnosticKind = 'state-time';
-  let settings: CoreDiagnosticSettings = defaultCoreSettings(kind);
+  const initialExperiment = options.experiment();
+  const restored = initialExperiment.ok ? restoredDiagnostic(initialExperiment.value, 'core') : undefined;
+  let kind: CoreDiagnosticKind = (restored?.kind as CoreDiagnosticKind) ?? 'state-time';
+  let settings: CoreDiagnosticSettings = restored?.settings ?? defaultCoreSettings(kind);
+  select.value = kind;
   let snapshot: { experiment: ExperimentStateV1; series: DiagnosticSeries } | undefined;
   let sourceError = '';
   let cachedRejection: string | null = '기록을 새로 읽으세요.';
@@ -188,6 +192,15 @@ export function createDiagnosticsPanel(document: Document, options: DiagnosticsO
   const timers = new Set<ReturnType<typeof setTimeout>>();
   const numericControls = new Map<string, InputControl>();
   const isBusy = () => state === 'running';
+
+  function persistSettings() {
+    try {
+      validateCoreSettings(kind, settings);
+      options.saveDiagnostic?.(toDiagnosticAnalysis('core', { kind, settings }));
+    } catch {
+      // Invalid drafts remain visible; a valid canonical configuration is not overwritten.
+    }
+  }
 
   function readSource() {
     const canonical = options.experiment();
@@ -334,6 +347,7 @@ export function createDiagnosticsPanel(document: Document, options: DiagnosticsO
         control.addEventListener('change', () => {
           invalidate();
           settings[key] = control.value;
+          persistSettings();
           update(true);
         });
         const help = element(document, 'p', 'ds-field__help', fieldHelp(key));
@@ -352,6 +366,7 @@ export function createDiagnosticsPanel(document: Document, options: DiagnosticsO
             invalidate();
             const number = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text.trim()) ? Number(text) : NaN;
             settings[key] = number;
+            persistSettings();
             updateFieldHelp();
             update(true);
           }
@@ -570,7 +585,11 @@ export function createDiagnosticsPanel(document: Document, options: DiagnosticsO
     invalidate();
     kind = select.value as CoreDiagnosticKind;
     refreshSource();
-    settings = defaultCoreSettings(kind, snapshot?.experiment);
+    settings = snapshot
+      ? (restoredDiagnostic(snapshot.experiment, 'core', kind)?.settings ??
+        defaultCoreSettings(kind, snapshot.experiment))
+      : defaultCoreSettings(kind);
+    persistSettings();
     renderFields();
     update(true);
   });

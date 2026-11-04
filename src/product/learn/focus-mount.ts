@@ -54,9 +54,13 @@ export function mountFocus(document: Document, unit: LearnUnit) {
     try {
       const extended =
         unit.focusExperiment.kind === 'numerical-methods' || unit.focusExperiment.kind === 'extended-pendulum';
-      const create = extended
-        ? (await import('../experiments/extended-view')).createExtendedFocusView
-        : (await import('../experiments/view')).createFocusView;
+      const research =
+        unit.focusExperiment.kind === 'nonlinear-control' || unit.focusExperiment.kind === 'chaos-measurement';
+      const create = research
+        ? (await import('../experiments/research-focus-view')).createResearchFocusView
+        : extended
+          ? (await import('../experiments/extended-view')).createExtendedFocusView
+          : (await import('../experiments/view')).createFocusView;
       if (disposed || current !== generation) return;
       const view = create(document, unit);
       disposeView = view.dispose;

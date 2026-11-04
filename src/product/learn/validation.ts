@@ -10,6 +10,7 @@ import { inspectSafeData } from '../persistence/safe-data';
 import { MAX_LEARN_FOCUS_SECONDS, MAX_LEARN_FOCUS_STEPS, type LearnCourse, type LearnUnit } from './schema';
 import { array, courseShape, unitShape } from './validation-shapes';
 import { extendedFocusDeclaration, isExtendedFocus } from '../experiments/extended-definitions';
+import { checkResearchExperiment } from './validation-research';
 
 export type LearnValidation<T> =
   { readonly ok: true; readonly value: T } | { readonly ok: false; readonly errors: readonly string[] };
@@ -207,6 +208,16 @@ export function validateLearnUnit(
 
 function checkExperiment(value: LearnUnit, errors: string[]): void {
   const focus = value.focusExperiment;
+  if (
+    value.courseId === 'course-4' ||
+    value.courseId === 'course-5' ||
+    focus.kind === 'nonlinear-control' ||
+    focus.kind === 'chaos-measurement'
+  ) {
+    checkResearchExperiment(value, errors);
+    return;
+  }
+  if (!focus.analysisIds.length) errors.push('unit.focusExperiment.analysisIds: Expected array of 1–128 entries.');
   if (value.courseId === 'course-2' || value.courseId === 'course-3' || isExtendedFocus(focus)) {
     checkExtendedExperiment(value, errors);
     return;

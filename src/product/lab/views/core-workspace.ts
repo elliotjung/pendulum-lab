@@ -209,7 +209,12 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
   const coreDiagnostics = createDiagnostics(document, {
     experiment: () => toCanonicalPlanar(model.state.config),
     samples: () => model.state.samples,
-    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
+    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy,
+    saveDiagnostic(entry) {
+      const analyses = model.state.config.analyses ?? [];
+      const index = analyses.findIndex((item) => item.id === entry.id);
+      model.setAnalyses(index < 0 ? [...analyses, entry] : analyses.map((item, i) => (i === index ? entry : item)));
+    }
   });
   dock.element.append(coreDiagnostics.element);
   files.tray.append(coreDiagnostics.experiments);

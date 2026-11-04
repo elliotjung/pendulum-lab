@@ -21,6 +21,7 @@ import { drivenTrajectoryPlot, exportDrivenFigure, type DrivenPlotKind } from '.
 import { createDrivenSweep } from './driven-sweep';
 import { createPlot } from './core-plots';
 import { parseQuantityInput } from '../../design-system/quantity';
+import { createFocusNotice } from './focus-notice';
 
 const labels: Record<DrivenStatus, string> = {
   ready: '실행 준비 완료',
@@ -74,6 +75,8 @@ export function createDrivenWorkspace(document: Document, system: SystemDefiniti
     model = createDrivenModel(initial),
     sweep = createDrivenSweep(),
     id = initial.systemId;
+  const focusNotice = createFocusNotice(document, experiment);
+  if (focusNotice) view.append(focusNotice);
   view.append(
     element(
       document,

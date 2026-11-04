@@ -1,7 +1,7 @@
 import '../../../../css/product/diagnostics.css';
 import { element } from '../../app/dom';
 import { createButton } from '../../design-system/primitives';
-import type { ExperimentStateV1 } from '../../contracts/experiment';
+import type { AnalysisState, ExperimentStateV1 } from '../../contracts/experiment';
 import type { ContractResult } from '../../contracts/validation';
 import { createAdvancedDiagnostics } from './advanced-diagnostics';
 import { createStability } from './stability';
@@ -14,6 +14,8 @@ export interface DiagnosticsOptions {
   experiment(): ContractResult<ExperimentStateV1>;
   samples(): readonly unknown[];
   canRun(): boolean;
+  /** A workspace may preserve valid diagnostic edits in its canonical restart state. */
+  saveDiagnostic?(entry: AnalysisState): void;
 }
 
 /** Opening the dock loads analysis and family providers; ordinary Lab routes stay lazy. */

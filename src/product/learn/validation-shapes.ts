@@ -132,7 +132,9 @@ export const unitShape = object({
       'energy-exchange',
       'sensitivity',
       'numerical-methods',
-      'extended-pendulum'
+      'extended-pendulum',
+      'nonlinear-control',
+      'chaos-measurement'
     ),
     plotIds: array(
       enumeration(
@@ -157,7 +159,7 @@ export const unitShape = object({
       integratorId: pattern(/^(integrator:[a-z][a-z0-9-]*|internal)$/),
       fields: array(quantity, 1)
     }),
-    analysisIds: array(pattern(/^analysis:[a-z][a-z0-9-]*$/), 1),
+    analysisIds: array(pattern(/^analysis:[a-z][a-z0-9-]*$/)),
     guidance: array(textShape, 1),
     successCriteria: array(textShape, 1),
     tasks: array(

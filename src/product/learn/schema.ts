@@ -97,7 +97,9 @@ export interface FocusExperimentDefinition {
     | 'energy-exchange'
     | 'sensitivity'
     | 'numerical-methods'
-    | 'extended-pendulum';
+    | 'extended-pendulum'
+    | 'nonlinear-control'
+    | 'chaos-measurement';
   readonly plotIds: readonly (
     | 'configuration'
     | 'cartesian'

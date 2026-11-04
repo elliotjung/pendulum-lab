@@ -112,7 +112,11 @@ export function createCoreAnalysis(document: Document, model: CoreModel) {
       settings = undefined;
       return;
     }
-    const saved = model.state.config.analyses?.find((item) => item.id === `analysis:${kind}`);
+    const saved = model.state.config.analyses?.find(
+      (item) =>
+        item.id === `analysis:${kind}` &&
+        !['core-diagnostics-v1', 'advanced-diagnostics-v1'].includes(item.algorithmVersion)
+    );
     try {
       settings = saved
         ? fromPlanarAnalysisState(saved, model.state.config)
@@ -342,7 +346,11 @@ export function createCoreAnalysis(document: Document, model: CoreModel) {
     invalidate();
     const saved = [...(model.state.config.analyses ?? [])]
       .reverse()
-      .find((item) => item.id === 'analysis:poincare' || item.id === 'analysis:lyapunov');
+      .find(
+        (item) =>
+          (item.id === 'analysis:poincare' || item.id === 'analysis:lyapunov') &&
+          !['core-diagnostics-v1', 'advanced-diagnostics-v1'].includes(item.algorithmVersion)
+      );
     kind =
       saved?.id === 'analysis:poincare' ? 'poincare' : saved?.id === 'analysis:lyapunov' ? 'lyapunov' : 'state-time';
     select.value = kind;

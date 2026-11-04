@@ -17,6 +17,7 @@ import { createNonlinearModel, type NonlinearStatus } from './nonlinear-model';
 import { createNonlinearInspector } from './nonlinear-inspector';
 import { createNonlinearFiles } from './nonlinear-files';
 import { loadNonlinearConfig, nonlinearIsNormalized } from './nonlinear-storage';
+import { createFocusNotice } from './focus-notice';
 import {
   nonlinearPlotKinds,
   nonlinearPlotDescription,
@@ -77,6 +78,8 @@ export function createNonlinearWorkspace(document: Document, system: SystemDefin
     model = createNonlinearModel(initial),
     id = initial.systemId,
     normalized = nonlinearIsNormalized(id);
+  const focusNotice = createFocusNotice(document, experiment);
+  if (focusNotice) view.append(focusNotice);
   view.append(
     element(
       document,

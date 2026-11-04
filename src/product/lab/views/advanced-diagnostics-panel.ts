@@ -24,6 +24,7 @@ import {
 } from '../../adapters/analysis/advanced/artifact';
 import { advancedFieldLabels, advancedSettingDescription, advancedAssumptions } from './advanced-settings';
 import { advancedResultView } from './advanced-result';
+import { restoredDiagnostic, toDiagnosticAnalysis } from './diagnostic-handoff';
 
 export function createAdvancedDiagnosticsPanel(
   document: Document,
@@ -121,8 +122,11 @@ export function createAdvancedDiagnosticsPanel(
     files
   );
   container.append(body);
-  let kind: AdvancedDiagnosticKind = 'rqa';
-  let settings = defaultAdvancedSettings(kind);
+  const initialExperiment = options.experiment();
+  const restored = initialExperiment.ok ? restoredDiagnostic(initialExperiment.value, 'advanced') : undefined;
+  let kind: AdvancedDiagnosticKind = (restored?.kind as AdvancedDiagnosticKind) ?? 'rqa';
+  let settings = restored?.settings ?? defaultAdvancedSettings(kind);
+  select.value = kind;
   let snapshot: { experiment: ExperimentStateV1; series: DiagnosticSeries } | undefined;
   let sourceError = '';
   let cachedRejection: string | null = '기록을 새로 읽으세요.';
@@ -135,6 +139,14 @@ export function createAdvancedDiagnosticsPanel(
   const urls = new Set<string>();
   const timers = new Set<ReturnType<typeof setTimeout>>();
   const busy = () => state === 'running';
+  function persistSettings() {
+    try {
+      validateAdvancedSettings(kind, settings);
+      options.saveDiagnostic?.(toDiagnosticAnalysis('advanced', { kind, settings }));
+    } catch {
+      // Preserve the last valid canonical settings while an invalid draft is visible.
+    }
+  }
   function changeState(next: string) {
     state = next;
     container.dataset.advancedDiagnosticStatus = next;
@@ -225,6 +237,7 @@ export function createAdvancedDiagnosticsPanel(
         control.addEventListener('change', () => {
           invalidate();
           settings[key] = control.value;
+          persistSettings();
           updateFieldHelp();
           update(true);
         });
@@ -244,6 +257,7 @@ export function createAdvancedDiagnosticsPanel(
           onInput(text) {
             invalidate();
             settings[key] = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text.trim()) ? Number(text) : NaN;
+            persistSettings();
             updateFieldHelp();
             update(true);
           }
@@ -374,7 +388,12 @@ export function createAdvancedDiagnosticsPanel(
   select.addEventListener('change', () => {
     invalidate();
     kind = select.value as AdvancedDiagnosticKind;
-    settings = defaultAdvancedSettings(kind, snapshot?.experiment);
+    const canonical = options.experiment();
+    settings = canonical.ok
+      ? (restoredDiagnostic(canonical.value, 'advanced', kind)?.settings ??
+        defaultAdvancedSettings(kind, canonical.value))
+      : defaultAdvancedSettings(kind);
+    persistSettings();
     renderFields();
     refreshSource();
   });

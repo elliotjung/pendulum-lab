@@ -33,3 +33,23 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 유한시간 지표를 엄밀한 카오스 판정이나 UPO 안정화 증명으로 표현하지 않는다. 좌표/시간/에너지 단위와 tangent·sampling·threshold 한계를 각각 표시한다.
 - source-checked와 automated-verified는 실제 출처 대조 및 fixture 뒤에만 완료로 판단한다. human-reviewed는 미완료다.
 - 기존 dependency/CodeQL 부채는 S30 판정 범위이며 이번 단계가 새 보안 감사나 위험 수락을 의미하지 않는다.
+
+### CP0 원격 / CP1 구현 중
+
+- CP0 `10f44da79bd4db8048c6ffa62d45ae0f21aa0bc2` commit/push exit0, 실제 ls-remote hash 일치. next26/완료1..25 유지.
+- 신규 23개 실제 기본 실험과 worker 결과 계약 23/23, 별도 설정/worker/session 경계 25/25, 합계48/48 초기 통과 (`tmp/s26-integration-initial.json`). 후속 콘텐츠·과학 fixture·전체 여정 검증을 대체하지 않는다.
+- Lab의 S18/S19 panel이 canonical 분석을 기본값으로 열던 경로를 발견해 원래 versioned settings를 복원·저장하도록 UI adapter를 추가한다. 기존 physics/analysis adapter는 바꾸지 않는다.
+- Mathieu/Duffing/Van der Pol의 정규화 시간은 초와 구분해 표시한다. Poincare·recurrence 그래프는 실제 점 분포를 연결선 없이 표시한다. 부호 있는0은 JSON 경계에서0으로 정규화하며 비유한 수치는 거부한다.
+- 초기 typecheck 실패는 아직 작성 중인 단원 import와 공통 worker 타입/검사 narrowing이었다. 공통 타입을 수정했으며 전체 완료 검증 전까지 통과로 기록하지 않는다.
+- 개발 서버의 Vite style injection이 보존된 strict CSP에 막힌 handoff browser 실행은 최종 증거가 아니다. CSP를 완화하지 않고 production build에서 재검증한다.
+
+### CP1 검증 및 source 보존
+
+- 명시적 44개 staged 경로를 `tmp/s26-cp1-check`로 export해 새 콘텐츠 없이 기존 26개 단원만으로 독립 검증했다. 사용자 작업 폴더의 과정4/5 초안은 이동하거나 되돌리지 않았다.
+- export 표적 **611/611, 49files**, 실패0 (`tmp/s26-cp1-check/tmp/cp1-targeted.json`), typecheck/build/privacy/lint/format 모두 exit0. 포함: 실제 신규23개 실행, nonlinear21, chaos26, 설정/worker/session25, 독립 lifecycle/scatter7, Lab 분석 전달35 및 기존 Learn/Focus/모델 회귀.
+- production handoff **10/10**, Chromium5/Pixel5 5, 오류/skip/flaky0 (`tmp/s26-cp1-check/tmp/cp1-browser.json`). 실제 분석 종류·값 복원/편집·실행·save/share/export/reload, 과거 S07과 driven/Pyragas 복귀를 확인했다. retries0, snapshot none, 원30초 조건이다.
+- 독립 검토로 취소 subscriber가 emit 중 취소한 뒤 worker가 시작되는 경우를 재현하고 guard를 추가했다. 재현 테스트 포함32개 경계/검토 통과. 임의 유한 수치의 위조 인증을 주장하지 않고 구조·한도·계보를 검사한다.
+- 새 콘텐츠 수식의 제한 문법·기호 누락과 fixture helper 복사 누락을 교정했다. 표시 문법/과학 검사를 완화하지 않았다. 23개 독립 SI 검사는 통과했고 콘텐츠 최종70/70도 확인했다.
+- CP1 검증 뒤5.12의 로그 축을 `log(r / 1 rad)`로 명확히 했다. 수치 알고리즘 변경 없이 chaos26/26을 다시 확인했다 (`tmp/s26-cp1-check/tmp/cp1-axis-check.json`).
+- 첫 export format 검사는 task 생성 browser JSON이 snapshot 루트에 있어 실패했다. 해당 보고서를 export의 tmp로 이동한 뒤 동일 전체 format 검사 통과. 검사 자체와 허용 범위는 그대로다.
+- CP1은 새 실행·진단·Lab 전달 계층만 포함한다. 공개 콘텐츠와 metadata는 CP2/CP3로 분리하고, 최종 전체 회귀와 시각 검증 후에만 완료 상태를 기록한다.
