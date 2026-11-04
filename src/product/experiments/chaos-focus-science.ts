@@ -299,13 +299,20 @@ export function executeChaosFocus(
         matrix = d.matrix as number[],
         n = d.size as number;
       const recurrencePoints = matrix.flatMap((v, i) => (v ? [{ x: i % n, y: Math.floor(i / n) }] : []));
+      const displayedPoints =
+        recurrencePoints.length <= 2500
+          ? recurrencePoints
+          : Array.from(
+              { length: 2500 },
+              (_, i) => recurrencePoints[Math.round((i * (recurrencePoints.length - 1)) / 2499)]!
+            );
       charts.push({
         id: 'recurrence-matrix',
         mode: 'scatter',
-        title: '실제 재귀 연결 (최대 2500점 표시)',
+        title: '실제 재귀 연결 (최대 2500점 균일 추출)',
         xLabel: '지연 점 번호',
         yLabel: '지연 점 번호',
-        series: [{ label: '재귀', points: recurrencePoints.slice(0, 2500) }]
+        series: [{ label: '재귀', points: displayedPoints }]
       });
       metrics.push(
         metric('epsilon', '실제 epsilon', id === '5.10' ? native(primary).epsilon! : (d.epsilon as number), 'rad'),
@@ -333,6 +340,9 @@ export function executeChaosFocus(
       }
       warnings.push(
         '목표 재귀율이 epsilon을 선택합니다. 목표율과 실제율은 이산 거리·동률과 Theiler 제외 때문에 다를 수 있습니다. 행렬 그림은 표시 상한을 적용합니다.'
+      );
+      warnings.push(
+        '행렬 그림은 전체 재귀 연결 배열에서 균일한 간격으로 최대 2500개를 추출합니다. 실제 분석은 표시 전에 전체 제한된 점군으로 계산합니다.'
       );
       break;
     }

@@ -96,7 +96,15 @@ function chart(
     { color: 'var(--ds-accent, #137c8b)', label: '실선', dash: '' },
     { color: 'var(--ds-text, #334155)', label: '파선', dash: '5 3' },
     { color: 'var(--ds-warning, #b35414)', label: '점선', dash: '1 3' },
-    { color: 'var(--ds-color-danger, #b42318)', label: '일점쇄선', dash: '8 3 1 3' }
+    { color: 'var(--ds-color-danger, #b42318)', label: '일점쇄선', dash: '8 3 1 3' },
+    { color: 'var(--ds-accent, #137c8b)', label: '긴 파선', dash: '12 5' },
+    { color: 'var(--ds-text, #334155)', label: '이점쇄선', dash: '8 3 1 3 1 3' },
+    { color: 'var(--ds-warning, #b35414)', label: '넓은 점선', dash: '2 6' },
+    { color: 'var(--ds-color-danger, #b42318)', label: '긴 점쇄선', dash: '12 2 2 2' },
+    { color: 'var(--ds-accent, #137c8b)', label: '짧은 파선', dash: '3 2' },
+    { color: 'var(--ds-text, #334155)', label: '긴 이점쇄선', dash: '12 4 2 4 2 4' },
+    { color: 'var(--ds-warning, #b35414)', label: '좁은 점선', dash: '1 1' },
+    { color: 'var(--ds-color-danger, #b42318)', label: '넓은 파선', dash: '6 8' }
   ];
   series.forEach((s, i) => {
     const style = styles[i % styles.length]!;

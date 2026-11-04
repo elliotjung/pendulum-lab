@@ -74,3 +74,15 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 최종 Learn **312/312** (신규 품질70 포함), CP3 typecheck와 production build/privacy exit0. 실제 native/synthetic 과정5 fixture26개는 CP1 source에서 통과했으며 원래 분석 코드를 바꾸지 않았다.
 - production Chromium 과정5 **13/13**, 실패/skip/flaky/runner error0 (`tmp/s26-cp3-browser.json`). 노출값 편집·실제 분석·진단 JSON·axe·분석 옵션/단위를 포함한 canonical Lab export 동일성·복귀·새로고침을 전수 확인했다. retries0, 원30초, snapshot none이다.
 - 신규16PNG의 최초 생성16/16과 SVG text bounds 검사를 통과했다 (`tmp/s26-visual-create.json`). 이는 기준 생성이며 비교 통과로 취급하지 않는다. AI 시각 QA에서5개 Mathieu 곡선 중 첫/다섯 선의 모양이 겹쳐 CP4에서 구별되는12개 선 패턴으로 보강하고 해당4PNG만 갱신한다. 기존 시각 기준의 완화나 마스크 추가는 하지 않는다.
+
+### CP3 원격 / CP4 검증
+
+- CP3 `62e9cce8559d23f420d010d43ad97699eff162d6` push exit0, 실제 원격 hash 동일. 49개 공개 콘텐츠가 원격에 있다.
+- CP4 시각 QA에서 재귀 행렬의 앞2500개만 표시하면 뒤쪽 행이 잘리는 표시 편향도 확인했다. native 전체 계산은 유지하고 전체 연결 배열에서 첫/마지막을 포함해 균일 간격으로 최대2500개를 추출한다. 실제 연결만 표시하는 두 회귀를 추가해 과정5 **28/28** 통과 (`tmp/s26-display-sampling.json`). 표시 방식과 전체 분석의 차이를 경고에 명시한다.
+- 과정 목록 none 비교4건은 49공개/5개과정 확장의 의도한 차이를 검출했다 (`tmp/s26-learn-visual-before.json`). 확인한 actual4개만 해당 목록 baseline으로 복사하고 전후 SHA를 기록했다 (`tmp/s26-learn-baseline-updates.json`). 나머지 과거 PNG는 수정하지 않는다.
+- 보존 hash 초기 확인: 보호388/388 동일, 기존test/fixture443 중439동일/4metadata·fixture 수정, 과거PNG238 중234동일/4과정목록 변경, desktop 전달본2개 hash일치. 느린 순차 Git reader는 확인한 task 소유 process만 종료하고 동일 범위를 단일 Git batch reader로 검사했다. 사용자 파일은 삭제하지 않았다.
+- CP4-V에서 표시·E2E·시각 기준을 검증/push하고 고정된 원격 source로 전체 Vitest/golden·품질·production 여정을 확정한다. 완료 status는 그 뒤 별도 push한다.
+
+- CP4-V production 표적 **28/28**, Chromium14/Pixel5 14, 실패/skip/flaky/runner error0 (`tmp/s26-visual-boundaries-none.json`). 신규16PNG 및 기존 Learn12PNG를 snapshot none으로 비교했고, 빈 단면·invalid/corrupt draft 원본 보존·worker 시작 실패·취소/재실행·320px·키보드·200% 확대를 확인했다. 모든 표시 SVG text는 viewBox 안에 있었다. threshold0.2/maxDiffPixels100, mask없음, retries0, 새 test30초와 기존 Learn60초를 유지했다.
+- 선 패턴4PNG와 전체 재귀 표시4PNG만 신규 기준 생성 뒤 갱신했다. 이외 신규8PNG는 최초 생성과 같다. 새16개 최종 none 비교 전 SHA를 보존하고 비교 후 변경이 없음을 확인한다. 기존 이미지 변경은 과정 목록4개뿐이다.
+- 표시 보강 source는 native 과정5 **28/28**, 전체 typecheck와 production build/privacy 통과. 원래 수치·엔진은 그대로이며 regression2개는 표시된 모든 점이 native 연결이고 첫/마지막 행렬 범위를 보존하는지 검사한다.

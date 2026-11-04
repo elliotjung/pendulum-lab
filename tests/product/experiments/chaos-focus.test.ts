@@ -188,6 +188,40 @@ describe('S26 course five shared diagnostic Focus experiments', () => {
     expect(companion.rows[0]![0]).toBe(main.rows[0]![0]);
     expect(companion.rows[0]![1]).toBeGreaterThanOrEqual(main.rows[0]![1] as number);
   });
+  it.each(['5.10', '5.11'])(
+    '%s displays recurrence points across the full native matrix under the visual cap',
+    (id) => {
+      const f = field(id),
+        result = executeChaosFocus(id, f);
+      const rows = result.tables.find((table) => table.id === 'observed-run')!.rows as readonly (readonly number[])[];
+      const native = runAdvancedDiagnostic({
+        id: 'recurrence_display',
+        kind: id === '5.10' ? 'rqa' : 'recurrence-network',
+        experiment: result.canonical,
+        settings: chaosFocusSettings(id, f),
+        series: {
+          axisUnit: 's',
+          labels: ['theta1', 'theta2', 'omega1', 'omega2'],
+          units: ['rad', 'rad', 'rad/s', 'rad/s'],
+          times: rows.map((row) => row[0]!),
+          states: rows.map((row) => row.slice(1)),
+          warnings: []
+        }
+      });
+      const { matrix, size } = native.details as { matrix: number[]; size: number };
+      const connected = matrix.flatMap((value, index) =>
+        value ? [{ x: index % size, y: Math.floor(index / size) }] : []
+      );
+      const chart = result.charts.find((item) => item.id === 'recurrence-matrix')!,
+        points = chart.series[0]!.points;
+      expect(chart.mode).toBe('scatter');
+      expect(points).toHaveLength(Math.min(2500, connected.length));
+      expect(points[0]).toEqual(connected[0]);
+      expect(points.at(-1)).toEqual(connected.at(-1));
+      expect(points.every((point) => matrix[point.y * size + point.x] === 1)).toBe(true);
+      expect(result.warnings.join(' ')).toContain('균일한 간격');
+    }
+  );
   it('checks a known circle dimension and a uniform-segment generalized spectrum', () => {
     const circle = Array.from({ length: 512 }, (_, i) => [
       Math.cos((i * 2 * Math.PI) / 512),
