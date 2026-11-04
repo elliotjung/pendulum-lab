@@ -131,3 +131,10 @@
 - `S25-verification.json`은 18개 단원/26공개·60계획, 원격source의82개 변경경로 Git-blob SHA, 검사/로그 SHA와 환경·실패 이력·보존·보안·과학검토 한계를 기록한다. 이 JSON은 최종 status push를 증명하지 않으며, 실제 원격 status commit이 완료의 권위다.
 - 과학 검토는18/18 automated-verified/source-checked, human-reviewed0/18이다. gate24는 사용자의25단계 요청으로 workflow 승인했으며 전문가 검토로 승격하지 않았다. 실기기·Firefox/WebKit·screen-reader 음성 인증은 하지 않았다.
 - 복구 기준은 S24 status `831e7af`와 보존된 `app.html`이다. S26 이후/전체parity·migration/cutover/master merge/force push/tag/release는 실행하지 않았다. 검증 증거를 원격 보존한 뒤 별도 완료 status를 push해야 다음 유효 단계가26이 된다.
+
+## 별도 완료 상태 gate
+
+- CP4-E 증거 `28aceb6f6bc4047f50570c0a2251b846a67f83d1` commit/push exit0 및 실제 원격 hash 일치. 추가 증거 JSON까지 stage한 뒤 known-pattern1744textfiles findings0도 확인했다 (`tmp/s25-secrets-evidence.json`).
+- 모든 구현/검증/보존 증거가 원격에 있는 clean tree에서 `redesign:preflight -- 25`와 plan check가 exit0이었다. 이후 변경은 이 progress와 status 두 control 파일뿐이다.
+- 검증된 결과에 따라 lastCompleted25/next26/completed1..25, blocked/active/checkpoint null을 기록한다. workflow 승인[7,9,17,24]과 선택 프로필은 유지한다. human-reviewed0/18, 보안/모형/기기 검증 한계를 notes에 남긴다.
+- 별도 status commit을 push하고 실제 origin/codex/redesign이 그 commit을 가리키는지 확인한 뒤에만 완료를 보고한다. 정확한 status commit hash는 최종 Git 이력과 종료 보고로 확인한다. 다음 유효 입력은 “26단계 실행해줘.”다.
