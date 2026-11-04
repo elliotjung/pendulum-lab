@@ -95,3 +95,16 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 새 native test만10개 일괄 startup 대신 각 단원 검사에서 최초1회 계산하는 cache로 분리했다.21개 assertion·조건·수치 한도와 기존10/30초 설정은 그대로다. 표적21/21과 ESLint 통과. 제품 코드·계산·브라우저 정의·PNG는 수정하지 않았다.
 - 다른 browser/quality 종료 후 기존 인벤토리14/14가 통과했다 (`tmp/s26-inventory-quiet.json`). 정확한 baseline 검사는17.519초였다. 기존 scanner/compiler options/테스트/수치 golden은 전혀 수정하지 않았다.
 - 최종 전체 검증은 resource phase를 분리한다. 전체 Vitest는1worker/forks/isolate로 단독 실행하고, 품질/build를 마친 후 browser 전수를 별도 실행한다. retry·snapshot/시간 한도·threshold를 완화하지 않는다. 이 test 실행 분리 checkpoint를 먼저 push한 뒤 최종 결과로만 완료를 판정한다.
+
+- CP4-F `ca119977bc7d419fd861a729bf730db14497c84f` commit/push exit0 및 실제 원격 hash 동일. `src/content/e2e/css/app/package/lock`은 CP4-V와 바이트 동일하다.
+- 동일 원격 source의 최종 전체 Vitest **5893/5893,363files**, 실패·pending0 (`tmp/s26-full-vitest-final.json`). 명령은 `npm test -- --maxWorkers=1 --no-file-parallelism --pool=forks --isolate`이며 원래 test/hook 시간·assertion을 유지했다.
+- 새 revision의 품질8개+production build/privacy 총9개 exit0, golden13/13, known-pattern secrets findings0을 각각 재확정했다 (`tmp/s26-quality-final.json`, `s26-build-final.json`, `s26-golden-final.json`, `s26-secrets-final.json`). 이전54b900f 결과를 재사용하지 않았다.
+- 이후 새 browser80개와 기존 대표40개는 서로 다른 명령을 차례로 실행하며 각2workers만 사용한다. 같은 implementation·원래 retry0/timeout/none 비교로 최종 결과를 판정한다.
+
+### CP4-P 중복 관찰 복사 제거
+
+- ca11997의 browser 단독80개는78pass/2fail이었다.4.10의 양쪽 project에서5초 내 완료를 기다리는 assertion만 초과했고, 나머지78개는 통과했다 (`tmp/s26-browser-duplicate-snapshot.json`). 이를 최종 통과로 사용하지 않는다.
+- 실제 원인으로 `runNative`가 이미 분리 복사된 `simulation.step()` 반환값을 버리고 다시 `snapshot()`을 호출하는 중복 복사를 확인했다. 초기 snapshot은 유지하고 매 native step의 반환 표본을 그대로 관찰하도록 helper 한 파일만 수정했다. 엔진·native adapter·step·표본 수·관측 시각·설정·수식·지표는 바꾸지 않았다.
+- 변경 전ca11997과 변경 후10개 기본 실험의 입력 SHA, 전체 결과 JSON UTF8 bytes/SHA, 진행 이벤트 개수/SHA가 전부 동일했다 (`tmp/s26-native-snapshot-equivalence.json`, SHA `71c95a136bdb897f5c0ee4a0e2437ab7b36b0bb778b2b7614ff180406e87a7a0`). 비교 harness와 원 before 기록도 tmp에 보존했다. 관측 Node 실행 시간4.10은4553→1443ms였으며 성능 숫자를 수치 승인 기준으로 사용하지 않는다.
+- 관련 native/worker/boundary/review **76/76**, typecheck·ESLint·Prettier·production build/privacy 통과. 실제4.10 desktop/mobile **2/2**가 원래5초 expect·30초 test·retry0 조건으로 편집/계산/Lab 왕복을 통과했다 (`tmp/s26-browser-snapshot-proof.json`). 테스트 시간 한도는 늘리지 않았다.
+- 이 실제 helper 개선을 별도 checkpoint로 먼저 push한다. 최종 source에서 전체 Vitest 단독1worker, 품질/build/golden/secrets를 다시 실행한다. 마지막 browser는 새80+기존40을 한 명령/총2workers로 검증해 다른 CPU phase와 겹치지 않는다. 원본120개가 모두 통과해야만 파일별로 분리한80/40 요약을 인정하며 어떤 실패도 projection에서 제외하지 않는다.

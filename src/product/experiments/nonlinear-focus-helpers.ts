@@ -40,8 +40,7 @@ export function runNative(source: NonlinearFocusConfig, onProgress?: (p: number)
     ['system:duffing', 'system:van-der-pol', 'system:mathieu'].includes(source.config.systemId)
       ? '1'
       : 's';
-  function take() {
-    const raw = simulation.snapshot();
+  function take(raw: ReturnType<typeof simulation.snapshot>) {
     samples.push({
       time: raw.time,
       timeUnit,
@@ -54,10 +53,9 @@ export function runNative(source: NonlinearFocusConfig, onProgress?: (p: number)
       mode: 'mode' in raw ? raw.mode : 'smooth'
     });
   }
-  take();
+  take(simulation.snapshot());
   while (!simulation.done) {
-    simulation.step();
-    take();
+    take(simulation.step());
     if (samples.length % 128 === 0) onProgress?.(Math.min(1, samples.at(-1)!.time / source.config.duration));
   }
   onProgress?.(1);
