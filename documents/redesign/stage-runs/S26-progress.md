@@ -53,3 +53,13 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - CP1 검증 뒤5.12의 로그 축을 `log(r / 1 rad)`로 명확히 했다. 수치 알고리즘 변경 없이 chaos26/26을 다시 확인했다 (`tmp/s26-cp1-check/tmp/cp1-axis-check.json`).
 - 첫 export format 검사는 task 생성 browser JSON이 snapshot 루트에 있어 실패했다. 해당 보고서를 export의 tmp로 이동한 뒤 동일 전체 format 검사 통과. 검사 자체와 허용 범위는 그대로다.
 - CP1은 새 실행·진단·Lab 전달 계층만 포함한다. 공개 콘텐츠와 metadata는 CP2/CP3로 분리하고, 최종 전체 회귀와 시각 검증 후에만 완료 상태를 기록한다.
+
+### CP1 원격 / CP2 과정 4
+
+- CP1 `57c9cc58f14613c642c2701663b7470f1345c8c6` push exit0, 실제 원격 hash 일치.
+- 23개 전체 콘텐츠 초안의 Learn 표적312/312와 독립 새 콘텐츠 품질70/70 통과. 본문·기호·SI 차원과 출처·미검토 상태를 확인했다. 신규 운동식/적분기 중복은 없다.
+- CP2는 과정4의10개만 공개하는 snapshot을 stage한다. 최종 metadata/test의 과정5 부분과 13개 초안은 작업 폴더에 보존한다. staged tree export의36개 공개 단원과 관련 품질·실제10개 편집/계산/Lab 왕복을 검증한 뒤 보존한다.
+
+- CP2 export의 Learn 표적 **273/273** (기존 회귀+과정4에 제한한 동일 품질 checker31), typecheck/build/privacy exit0. `tmp/s26-cp2-check/tmp/cp2-content.json`과 typecheck/build 로그에 기록했다. 제한 checker와 브라우저 정의는 최종 전수 정의의 단원 집합만 좁힌 검증 입력이며 제품 source는 바꾸지 않았다.
+- production Chromium **10/10**, 실패/skip/flaky/runner error0 (`tmp/s26-cp2-check/tmp/cp2-browser.json`): 노출값 실제 편집, 수식/체크, 실제 계산·결과 JSON·axe·정확한 canonical Lab export·복귀 결과·새로고침 설정과 사용자 저장 원본 보존. retries0, 원30초, snapshot none이다.
+- 최초 CP2 typecheck/build 호출은 export의 tmp 로그 폴더가 없어 명령 자체가 실행되지 않았다. 디렉터리 생성 후 두 명령을 다시 실행해 실제 exit0을 확인했다. 처음 wrapper의 exit0을 검증 성공으로 사용하지 않았다.

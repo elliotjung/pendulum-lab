@@ -350,8 +350,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-4.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '실제 공용 엔진을 사용해 예측하고 관찰하는 단원입니다. 적용 전제와 수치적 한계를 함께 확인합니다.',
+      en: 'Predict and observe with the shared engines, checking assumptions and numerical limitations.'
     },
     units: [
       {
@@ -362,8 +362,8 @@ export const courses = [
           ko: '감쇠 이중진자의 위상공간 수축',
           en: 'Phase-space contraction of the damped double pendulum'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.2',
@@ -373,8 +373,8 @@ export const courses = [
           ko: '주기 구동과 공명·위상 지연',
           en: 'Periodic driving, resonance and phase lag'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.3',
@@ -384,8 +384,8 @@ export const courses = [
           ko: '매개변수 여기와 Mathieu 불안정성',
           en: 'Parametric excitation and Mathieu instability'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.4',
@@ -395,8 +395,8 @@ export const courses = [
           ko: 'Kapitza 진자와 유효 퍼텐셜',
           en: 'The Kapitza pendulum and effective potential'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.5',
@@ -406,8 +406,8 @@ export const courses = [
           ko: '역진자와 cart-pole의 선형 안정화',
           en: 'Linear stabilization of inverted pendulums and cart-poles'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.6',
@@ -417,8 +417,8 @@ export const courses = [
           ko: '결합 진자의 동기화와 모드 분할',
           en: 'Synchronization and mode splitting of coupled pendulums'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.7',
@@ -428,8 +428,8 @@ export const courses = [
           ko: 'Duffing 발진기의 다중안정성과 점프',
           en: 'Duffing multistability and jumps'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.8',
@@ -439,8 +439,8 @@ export const courses = [
           ko: 'Van der Pol 발진기와 한계주기',
           en: 'The Van der Pol oscillator and limit cycles'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.9',
@@ -450,8 +450,8 @@ export const courses = [
           ko: '마찰·stick-slip·불연속 동역학',
           en: 'Friction, stick–slip and discontinuous dynamics'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '4.10',
@@ -461,8 +461,8 @@ export const courses = [
           ko: 'Pyragas 지연 피드백과 불안정 궤도 제어',
           en: 'Pyragas delayed feedback and unstable-orbit control'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },

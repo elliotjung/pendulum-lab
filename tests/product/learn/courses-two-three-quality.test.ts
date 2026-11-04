@@ -154,13 +154,13 @@ describe('S25 complete courses two and three', () => {
     expect(validateLearnUnit(mutate(units[0]!)).ok).toBe(false);
   });
 
-  it('publishes exactly eighteen requested units and leaves later curriculum planned', () => {
+  it('publishes exactly eighteen requested units and preserves the S25 unit set', () => {
     expect(units.map((unit) => unit.id)).toEqual(ids);
-    expect(Object.keys(learnModules)).toEqual([
+    expect(Object.keys(learnModules).filter((key) => /^course-[123]\//.test(key))).toEqual([
       ...Array.from({ length: 8 }, (_, i) => `course-1/1.${i + 1}`),
       ...ids.map((id) => `course-${id[0]}/${id}`)
     ]);
-    expect(courses.slice(3).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
+    expect(courses.slice(4).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
       true
     );
     expect(new Set(units.map((unit) => unit.summary.ko)).size).toBe(18);

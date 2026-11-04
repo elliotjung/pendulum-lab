@@ -180,7 +180,7 @@ test.describe('S08 Learn content platform', () => {
         await expect(page).toHaveURL(new RegExp(`#/learn/${course}/${index + 1}\\.${order}$`));
         await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute(
           'data-content-state',
-          index < 3 ? 'ready' : 'planned'
+          index < 4 ? 'ready' : 'planned'
         );
         const navigation = page.getByRole('navigation', { name: '단원 이동' });
         await expect(navigation.getByRole('link', { name: '과정 목차', exact: true })).toHaveAttribute(
