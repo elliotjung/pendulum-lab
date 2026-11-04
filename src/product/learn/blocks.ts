@@ -119,9 +119,11 @@ export function renderUnitBlocks(document: Document, unit: LearnUnit): HTMLEleme
   const equations = section(document, '식을 읽고 기호 연결하기');
   for (const equation of unit.equations) equations.append(renderEquation(document, equation));
   content.append(equations);
-  const figures = section(document, '그림으로 확인하기');
-  for (const figure of unit.figures) figures.append(renderFigure(document, figure));
-  content.append(figures);
+  if (unit.figures.length) {
+    const figures = section(document, '그림으로 확인하기');
+    for (const figure of unit.figures) figures.append(renderFigure(document, figure));
+    content.append(figures);
+  }
   const glossary = section(document, '용어');
   const terms = element(document, 'dl', 'learn-glossary');
   for (const entry of unit.glossary) {

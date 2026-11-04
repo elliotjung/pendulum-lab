@@ -32,6 +32,12 @@ function navigation(document: Document, course: LearnCourse, unit: UnitSummary):
 }
 
 function showCourses(document: Document, root: HTMLElement): void {
+  const available = courses
+    .flatMap<UnitSummary>((course) => course.units)
+    .filter((unit) => unit.availability !== 'planned').length;
+  const publishedCourses = courses.filter((course) =>
+    course.units.some((unit) => unit.availability !== 'planned')
+  ).length;
   root.append(pageHeading(document, '움직임을 이해하는 배우기'));
   const intro = element(document, 'div', 'learn-intro');
   intro.append(element(document, 'p', 'product-lead', '하나의 질문에서 시작해, 식의 의미를 읽고 직접 확인합니다.'));
@@ -40,7 +46,7 @@ function showCourses(document: Document, root: HTMLElement): void {
       document,
       'p',
       '',
-      '8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 과정 1의 8개 단원에서 식을 읽고 전용 실험으로 확인한 뒤 실험실에서 탐구를 이어 가세요. 나머지 과정은 준비 중입니다.'
+      `8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 현재 ${publishedCourses}개 과정의 ${available}개 단원에서 식을 읽고 전용 실험으로 확인한 뒤 실험실에서 탐구를 이어 가세요. 나머지 단원은 준비 중입니다.`
     )
   );
   intro.append(link(document, '첫 단원 시작하기', '#/learn/course-1/1.1', 'ds-button ds-button--primary'));
@@ -200,7 +206,12 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
           )
         );
       footer.append(
-        link(document, '이중진자 실험실 열기', '#/lab/double', 'ds-button ds-button--primary'),
+        link(
+          document,
+          unit.courseId === 'course-1' ? '이중진자 실험실 열기' : '단원 시스템 실험실 열기',
+          `#/lab/${unit.labTransfer.systemId.replace('system:', '')}`,
+          'ds-button ds-button--primary'
+        ),
         renderReferences(document, unit)
       );
       body.append(footer);

@@ -24,6 +24,7 @@ import {
 } from './spatial-plots';
 import { createSpatialFiles } from './spatial-files';
 import { loadSpatialConfig } from './spatial-storage';
+import { createLearnSourceNotice } from './learn-source';
 
 const labels: Record<SpatialStatus, string> = {
   ready: '실행 준비 완료',
@@ -59,6 +60,8 @@ export function createSpatialWorkspace(document: Document, system: SystemDefinit
       return { element: view, dispose() {} };
     }
     initial = parsed.value;
+    const source = createLearnSourceNotice(document, experiment);
+    if (source) view.append(source);
   } else
     try {
       initial = loadSpatialConfig(document.defaultView!.localStorage, initial.systemId) ?? initial;

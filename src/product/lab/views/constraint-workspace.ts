@@ -22,6 +22,7 @@ import {
 } from './constraint-plots';
 import { createConstraintFiles } from './constraint-files';
 import { loadConstraintConfig } from './constraint-storage';
+import { createLearnSourceNotice } from './learn-source';
 
 const labels: Record<ConstraintStatus, string> = {
   ready: '실행 준비 완료',
@@ -61,6 +62,8 @@ export function createConstraintWorkspace(
       return { element: view, dispose() {} };
     }
     initial = parsed.value;
+    const source = createLearnSourceNotice(document, experiment);
+    if (source) view.append(source);
   } else
     try {
       initial = loadConstraintConfig(document.defaultView!.localStorage, initial.systemId) ?? initial;

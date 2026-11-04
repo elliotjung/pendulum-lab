@@ -95,7 +95,9 @@ export interface FocusExperimentDefinition {
     | 'term-balance'
     | 'normal-modes'
     | 'energy-exchange'
-    | 'sensitivity';
+    | 'sensitivity'
+    | 'numerical-methods'
+    | 'extended-pendulum';
   readonly plotIds: readonly (
     | 'configuration'
     | 'cartesian'
@@ -107,6 +109,7 @@ export interface FocusExperimentDefinition {
     | 'linear-modes'
     | 'energy-exchange'
     | 'sensitivity'
+    | 'diagnostics'
   )[];
   readonly systemId: string;
   readonly exposedFields: readonly string[];

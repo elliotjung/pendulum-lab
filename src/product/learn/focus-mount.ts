@@ -52,9 +52,13 @@ export function mountFocus(document: Document, unit: LearnUnit) {
       })
     );
     try {
-      const module = await import('../experiments/view');
+      const extended =
+        unit.focusExperiment.kind === 'numerical-methods' || unit.focusExperiment.kind === 'extended-pendulum';
+      const create = extended
+        ? (await import('../experiments/extended-view')).createExtendedFocusView
+        : (await import('../experiments/view')).createFocusView;
       if (disposed || current !== generation) return;
-      const view = module.createFocusView(document, unit);
+      const view = create(document, unit);
       disposeView = view.dispose;
       root.dataset.focusLoad = 'ready';
       root.removeAttribute('aria-busy');

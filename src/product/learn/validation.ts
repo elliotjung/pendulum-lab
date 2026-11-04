@@ -9,6 +9,7 @@ import {
 import { inspectSafeData } from '../persistence/safe-data';
 import { MAX_LEARN_FOCUS_SECONDS, MAX_LEARN_FOCUS_STEPS, type LearnCourse, type LearnUnit } from './schema';
 import { array, courseShape, unitShape } from './validation-shapes';
+import { extendedFocusDeclaration, isExtendedFocus } from '../experiments/extended-definitions';
 
 export type LearnValidation<T> =
   { readonly ok: true; readonly value: T } | { readonly ok: false; readonly errors: readonly string[] };
@@ -206,6 +207,10 @@ export function validateLearnUnit(
 
 function checkExperiment(value: LearnUnit, errors: string[]): void {
   const focus = value.focusExperiment;
+  if (value.courseId === 'course-2' || value.courseId === 'course-3' || isExtendedFocus(focus)) {
+    checkExtendedExperiment(value, errors);
+    return;
+  }
   unique(focus.plotIds, 'focusExperiment.plotIds', errors);
   unique(
     focus.tasks.map((task) => task.id),
@@ -273,7 +278,7 @@ function checkExperiment(value: LearnUnit, errors: string[]): void {
       'energy-exchange': ['energy-exchange'],
       sensitivity: ['sensitivity']
     } as const;
-    for (const plot of requiredPlots[focus.kind])
+    for (const plot of requiredPlots[focus.kind as keyof typeof requiredPlots])
       if (!focus.plotIds.includes(plot)) errors.push(`focusExperiment: ${focus.kind} requires plot ${plot}.`);
     for (const id of known.keys())
       if (!focus.exposedFields.includes(id) && !focus.fixedFields.some((field) => field.id === id))
@@ -301,4 +306,63 @@ function checkExperiment(value: LearnUnit, errors: string[]): void {
     errors.push('focusExperiment: invalid duration/step budget.');
   if (value.labTransfer.systemId !== focus.systemId || value.labTransfer.sourceUnitId !== value.id)
     errors.push('labTransfer: source/system reference mismatch.');
+}
+
+/** S25 declarations bind each public unit to its reviewed, bounded native-adapter preset. */
+function checkExtendedExperiment(value: LearnUnit, errors: string[]): void {
+  const focus = value.focusExperiment;
+  let declaration: ReturnType<typeof extendedFocusDeclaration>;
+  try {
+    declaration = extendedFocusDeclaration(value.id);
+  } catch {
+    errors.push('focusExperiment: unknown S25 experiment.');
+    return;
+  }
+  if (
+    value.courseId !== `course-${value.id[0]}` ||
+    focus.kind !== (value.id.startsWith('2.') ? 'numerical-methods' : 'extended-pendulum')
+  )
+    errors.push('focusExperiment: course/experiment mismatch.');
+  if (
+    focus.status !== 'ready' ||
+    value.labTransfer.status !== 'ready' ||
+    focus.systemId !== declaration.systemId ||
+    value.labTransfer.systemId !== declaration.systemId ||
+    value.labTransfer.sourceUnitId !== value.id
+  )
+    errors.push('focusExperiment: native system/transfer readiness mismatch.');
+  if (focus.defaultPreset.integratorId !== declaration.integratorId)
+    errors.push('focusExperiment: unsupported native integrator.');
+  if (JSON.stringify(focus.exposedFields) !== JSON.stringify(declaration.exposed))
+    errors.push('focusExperiment: exposed fields differ from reviewed declaration.');
+  const quantities = declaration.fields.map(({ id, value, unit }) => ({ id, value, unit }));
+  if (JSON.stringify(focus.defaultPreset.fields) !== JSON.stringify(quantities))
+    errors.push('focusExperiment: preset fields/units/ranges differ from reviewed declaration.');
+  if (
+    JSON.stringify(focus.fixedFields) !== JSON.stringify(quantities.filter((f) => !declaration.exposed.includes(f.id)))
+  )
+    errors.push('focusExperiment: fixed fields differ from preset.');
+  if (focus.plotIds.length !== 1 || focus.plotIds[0] !== 'diagnostics')
+    errors.push('focusExperiment: diagnostic view required.');
+  unique(
+    focus.tasks.map((t) => t.id),
+    'focusExperiment.tasks',
+    errors
+  );
+  unique(focus.analysisIds, 'focusExperiment.analysisIds', errors);
+  const system = catalog.systems.find((s) => s.id === focus.systemId);
+  if (!system) errors.push('focusExperiment: missing native system.');
+  if (focus.defaultPreset.integratorId === 'internal' && system?.stepping.kind !== 'internal')
+    errors.push('focusExperiment: system requires a selectable integrator.');
+  for (const id of focus.analysisIds) {
+    const analysis = catalog.analyses.find((a) => a.id === id);
+    if (!analysis || (system && !supportsSystem(analysis.compatibility, system)))
+      errors.push(`focusExperiment: incompatible analysis ${id}.`);
+  }
+  if (!focus.analysisIds.includes('analysis:energy'))
+    errors.push('focusExperiment: native energy diagnostic required.');
+  const duration = quantities.find((f) => f.id === 'duration')!.value,
+    step = quantities.find((f) => f.id === 'step')!.value;
+  if (duration > MAX_LEARN_FOCUS_SECONDS || Math.ceil(duration / step) > MAX_LEARN_FOCUS_STEPS)
+    errors.push('focusExperiment: bounded run budget exceeded.');
 }

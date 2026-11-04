@@ -402,14 +402,99 @@
 .focus-task + .focus-task {
   border-top: 1px solid var(--ds-color-border);
 }
+.extended-focus-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+  margin: var(--ds-space-5) 0;
+}
+.extended-focus-metrics > div {
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-sm);
+  padding: var(--ds-space-4);
+  background: var(--ds-color-surface-subtle);
+}
+.extended-focus-metrics dt {
+  color: var(--ds-color-text-secondary);
+  line-height: var(--ds-leading-body);
+}
+.extended-focus-metrics dd {
+  margin: var(--ds-space-2) 0 0;
+  font-family: var(--ds-font-mono);
+}
+.extended-focus-plot {
+  --ds-accent: var(--ds-color-accent);
+  --ds-text: var(--ds-color-text);
+  --ds-warning: var(--ds-color-warning);
+  margin: var(--ds-space-5) 0;
+  color: var(--ds-color-text);
+}
+.extended-focus-plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-surface-subtle);
+}
+.extended-focus-plot figcaption {
+  font-size: var(--ds-text-base);
+  line-height: var(--ds-leading-body);
+  margin-top: var(--ds-space-3);
+}
+.extended-focus-plot polyline:nth-of-type(3) {
+  stroke-dasharray: 2 3;
+}
+.extended-focus-table-wrap {
+  max-width: 100%;
+  max-height: 32rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-sm);
+}
+.extended-focus-table-wrap:focus-visible {
+  outline: 3px solid var(--ds-color-accent);
+  outline-offset: 3px;
+}
+.extended-focus-table {
+  width: 100%;
+  min-width: 24rem;
+  border-collapse: collapse;
+  font-size: var(--ds-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.extended-focus-table th,
+.extended-focus-table td {
+  padding: var(--ds-space-3);
+  border-bottom: 1px solid var(--ds-color-border);
+  text-align: start;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.extended-focus-table th {
+  background: var(--ds-color-surface-subtle);
+}
+.extended-focus-table caption {
+  text-align: start;
+  padding: var(--ds-space-3);
+  font-weight: var(--ds-weight-medium);
+  white-space: normal;
+}
+.extended-focus-experiment > .ds-button {
+  margin: var(--ds-space-2) var(--ds-space-3) var(--ds-space-2) 0;
+}
 @media (max-width: 640px) {
   /* The complete title, legend and numeric axis limits remain in the HTML caption. */
   .focus-chart .core-plot text {
     display: none;
   }
   .focus-controls,
-  .focus-values {
+  .focus-values,
+  .extended-focus-metrics {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .extended-focus-plot svg text {
+    display: none;
   }
   .learn-grid,
   .learn-symbols {
@@ -443,5 +528,9 @@
   }
   .learn-option:has(input:checked) {
     outline: 2px solid Highlight;
+  }
+  .extended-focus-plot polyline,
+  .extended-focus-plot path {
+    stroke: CanvasText;
   }
 }

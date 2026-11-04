@@ -130,7 +130,9 @@ export const unitShape = object({
       'term-balance',
       'normal-modes',
       'energy-exchange',
-      'sensitivity'
+      'sensitivity',
+      'numerical-methods',
+      'extended-pendulum'
     ),
     plotIds: array(
       enumeration(
@@ -143,14 +145,18 @@ export const unitShape = object({
         'acceleration',
         'linear-modes',
         'energy-exchange',
-        'sensitivity'
+        'sensitivity',
+        'diagnostics'
       ),
       1
     ),
     systemId: pattern(/^system:[a-z][a-z0-9-]*$/),
     exposedFields: array(fieldId, 1),
     fixedFields: array(quantity),
-    defaultPreset: object({ integratorId: pattern(/^integrator:[a-z][a-z0-9-]*$/), fields: array(quantity, 1) }),
+    defaultPreset: object({
+      integratorId: pattern(/^(integrator:[a-z][a-z0-9-]*|internal)$/),
+      fields: array(quantity, 1)
+    }),
     analysisIds: array(pattern(/^analysis:[a-z][a-z0-9-]*$/), 1),
     guidance: array(textShape, 1),
     successCriteria: array(textShape, 1),

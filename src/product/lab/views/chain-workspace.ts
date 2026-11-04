@@ -16,6 +16,7 @@ import { createChainInspector } from './chain-inspector';
 import { createChainScene, chainTrajectoryPlot } from './chain-plots';
 import { createChainFiles } from './chain-files';
 import { loadChainConfig } from './chain-storage';
+import { createLearnSourceNotice } from './learn-source';
 
 const labels: Record<ChainStatus, string> = {
   ready: '실행 준비 완료',
@@ -51,6 +52,8 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
       return { element: view, dispose() {} };
     }
     initial = parsed.value;
+    const source = createLearnSourceNotice(document, experiment);
+    if (source) view.append(source);
   } else
     try {
       initial = loadChainConfig(document.defaultView!.localStorage, initial.systemId) ?? initial;
