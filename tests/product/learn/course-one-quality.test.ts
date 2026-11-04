@@ -102,8 +102,10 @@ function assertLiteralData(node: ts.Expression): void {
 
 describe('S09 complete course-one authoring quality', () => {
   it('publishes precisely the requested eight units with unique questions and focused experiments', () => {
-    expect(Object.keys(learnModules)).toEqual(units.map((unit) => `course-1/${unit.id}`));
-    expect(courses.slice(1).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
+    expect(Object.keys(learnModules).filter((id) => id.startsWith('course-1/'))).toEqual(
+      units.map((unit) => `course-1/${unit.id}`)
+    );
+    expect(courses.slice(3).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
       true
     );
     expect(new Set(units.map((unit) => unit.summary.ko)).size).toBe(8);

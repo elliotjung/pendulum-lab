@@ -71,3 +71,13 @@
 - 첫 전체 Vitest는 시작 후 프로필 회귀 테스트/guard가 추가되던 실행으로, 캐시된 보강 전 validator에서 새 회귀1건만 실패했다 (5682/5683, `tmp/s25-full-vitest.json`). 이 혼합 시점 결과를 최종 전체 통과로 사용하지 않는다. 제품·테스트 source를 고정하고 전체 검증을 다시 실행한다 (`tmp/s25-full-vitest-stable.json`). 최종 실패가 남으면 checkpoint를 publish하지 않는다.
 
 - 고정 source 전체 Vitest **5683/5683 통과**, 실패·pending0 (`tmp/s25-full-vitest-stable.json`). 이 source에서 최종 관련441/441, typecheck, 콘텐츠 검사, lint/format/module audit/build 및 production 대표8/8을 확인했다. CP1 공통 실행 계층을 명시적 경로만 stage해 보존한다.
+
+### CP1 원격 확인 / CP2 과정 2
+
+- CP1 `d2b16684604dc15c69d6aa54086dc03ab4a6f0f4` push exit0, 실제 ls-remote 및 tracking hash가 정확히 일치한다. 구현 중간 상태에서도 next25/완료1..24를 유지한다.
+- CP2는 과정2 9개만 공개하는 독립 snapshot을 stage한다. 과정3의 작성된 파일은 작업 폴더에 그대로 두고, 4개 metadata/test 파일의 과정2 부분만 index에 적용한다. 사용자 파일을 옮기거나 되돌리지 않는다.
+- staged snapshot을 새 `tmp/s25-cp2-check/`에 export하여 과정1+2의17개 등록, orphan0, 타입/표적/실제9개 사용자 여정을 검증한다. 설치 파일은 기존 lockfile 환경의 node_modules junction을 사용한다. 원본 작업 폴더와 과정3 초안은 변하지 않는다.
+
+- CP2 export의 `redesign:learn:check`, typecheck, production build/privacy audit 모두 exit0. Learn/Focus **423/423 통과** (`tmp/s25-cp2-check/tmp/cp2-targeted.json`): 기존 회귀와 공통 native 과학/경계150개 이전149개, 과정2만 제한해 실행한 공통 quality27개를 포함한다. 임시 제한 checker는 최종 전수 checker를 복사해 단원 집합만 과정2로 정한 검증 입력이며 제품 source를 바꾸지 않았다.
+- CP2 export production Chromium **9/9 통과** (`tmp/s25-cp2-check/tmp/cp2-browser.json`). 각2.1~2.9에서 노출값을 실제 편집하고, 계산·진단 JSON·axe·정확한 canonical Lab export·복귀 결과·새로고침 후 편집값을 검사했다. retries0, 원30초, snapshot none이며 실패/skip/flaky/runner error0.
+- 과정2 구현은 위 독립 export와 일치하는 명시적 staged 경로만 commit한다. 과정3 파일·그래프 보강·최종 전수 브라우저 정의는 다음 checkpoint에 남긴다.

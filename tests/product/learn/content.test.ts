@@ -59,9 +59,18 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   mkdirSync(join(root, 'content/learn/course-1'), { recursive: true });
   mkdirSync(join(root, 'documents/redesign'), { recursive: true });
   writeFileSync(join(root, 'package.json'), '{"type":"module"}');
-  writeFileSync(join(root, 'content/learn/curriculum.ts'), `export const courses = ${JSON.stringify(courses)};`);
+  cpSync('content/learn/curriculum.ts', join(root, 'content/learn/curriculum.ts'));
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
   cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
+  for (const course of ['course-2'])
+    cpSync(`content/learn/${course}`, join(root, `content/learn/${course}`), { recursive: true });
+  // Published S25 lessons use computation-free authoring and input declaration helpers.
+  cpSync('src/product/learn', join(root, 'src/product/learn'), { recursive: true });
+  mkdirSync(join(root, 'src/product/experiments'), { recursive: true });
+  cpSync(
+    'src/product/experiments/extended-definitions.ts',
+    join(root, 'src/product/experiments/extended-definitions.ts')
+  );
   writeFileSync(join(root, 'content/learn/course-1/1.1.ts'), `export default ${JSON.stringify(unit)};`);
   cpSync('documents/redesign/curriculum-map-ko.md', join(root, 'documents/redesign/curriculum-map-ko.md'));
   return root;
@@ -82,7 +91,7 @@ afterEach(() => {
 });
 
 describe('Learn content schema and authoritative curriculum', () => {
-  it('reserves exactly 8 courses and 86 units, with the eight S09 course-one units available', () => {
+  it('reserves exactly 8 courses and 86 units, with the S09 and S25 units available', () => {
     expect(validateLearnCourses(courses).ok).toBe(true);
     expect(courses).toHaveLength(8);
     expect(courses.map((course) => course.units.length)).toEqual([8, 9, 9, 10, 13, 12, 13, 12]);
@@ -91,7 +100,10 @@ describe('Learn content schema and authoritative curriculum', () => {
         .flatMap<UnitSummary>((course) => course.units)
         .filter((unit) => unit.availability !== 'planned')
         .map((unit) => unit.id)
-    ).toEqual(['1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
+    ).toEqual([
+      ...Array.from({ length: 8 }, (_, i) => `1.${i + 1}`),
+      ...[2].flatMap((course) => Array.from({ length: 9 }, (_, i) => `${course}.${i + 1}`))
+    ]);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();
   });
@@ -173,7 +185,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     ],
     [
       'unavailable unit',
-      "export const learnModules = { 'course-2/2.1': () => import('./course-2/2.1') };",
+      "export const learnModules = { 'course-4/4.1': () => import('./course-4/4.1') };",
       'module is not an available curriculum unit'
     ],
     [

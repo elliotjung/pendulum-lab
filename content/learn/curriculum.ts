@@ -118,8 +118,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-2.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '실제 공용 엔진으로 상태공간, 적분 오차, 사건과 보존량을 확인하고 재현 가능한 비교 실험을 구성합니다.',
+      en: 'Use the shared engine to inspect state space, integration errors, events and invariants, and construct reproducible comparisons.'
     },
     units: [
       {
@@ -130,8 +130,8 @@ export const courses = [
           ko: '2차 운동방정식의 1차 상태공간 변환',
           en: 'First-order state-space form of second-order equations'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.2',
@@ -141,8 +141,8 @@ export const courses = [
           ko: '명시적 Euler와 국소 절단오차',
           en: 'Explicit Euler and local truncation error'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.3',
@@ -152,8 +152,8 @@ export const courses = [
           ko: 'Runge–Kutta 계열과 적응형 시간 간격',
           en: 'Runge–Kutta methods and adaptive time steps'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.4',
@@ -163,8 +163,8 @@ export const courses = [
           ko: 'symplectic 적분과 위상공간 보존',
           en: 'Symplectic integration and phase-space preservation'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.5',
@@ -174,8 +174,8 @@ export const courses = [
           ko: 'implicit 적분과 강성 문제',
           en: 'Implicit integration and stiffness'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.6',
@@ -185,8 +185,8 @@ export const courses = [
           ko: '사건 검출과 Poincaré 교차의 보간',
           en: 'Event detection and Poincaré crossing interpolation'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.7',
@@ -196,8 +196,8 @@ export const courses = [
           ko: '허용오차·step size·계산비용의 균형',
           en: 'Balancing tolerance, step size and computational cost'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.8',
@@ -207,8 +207,8 @@ export const courses = [
           ko: '에너지·구속·시간역전 검증',
           en: 'Energy, constraint and time-reversal checks'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '2.9',
@@ -218,8 +218,8 @@ export const courses = [
           ko: '적분기 비교 실험의 재현성',
           en: 'Reproducible integrator comparisons'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },
