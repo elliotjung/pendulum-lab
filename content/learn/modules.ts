@@ -16,5 +16,14 @@ export const learnModules: Readonly<Record<string, () => Promise<{ default: unkn
   'course-2/2.6': () => import('./course-2/2.6'),
   'course-2/2.7': () => import('./course-2/2.7'),
   'course-2/2.8': () => import('./course-2/2.8'),
-  'course-2/2.9': () => import('./course-2/2.9')
+  'course-2/2.9': () => import('./course-2/2.9'),
+  'course-3/3.1': () => import('./course-3/3.1'),
+  'course-3/3.2': () => import('./course-3/3.2'),
+  'course-3/3.3': () => import('./course-3/3.3'),
+  'course-3/3.4': () => import('./course-3/3.4'),
+  'course-3/3.5': () => import('./course-3/3.5'),
+  'course-3/3.6': () => import('./course-3/3.6'),
+  'course-3/3.7': () => import('./course-3/3.7'),
+  'course-3/3.8': () => import('./course-3/3.8'),
+  'course-3/3.9': () => import('./course-3/3.9')
 };

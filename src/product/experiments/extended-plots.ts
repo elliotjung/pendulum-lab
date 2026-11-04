@@ -90,15 +90,21 @@ function chart(
     ),
     svgNode(document, 'text', { x: '55', y: '18', 'font-size': '12', fill: 'currentColor' }, yLabel)
   );
-  const colors = ['var(--ds-accent, #137c8b)', 'var(--ds-text, #334155)', 'var(--ds-warning, #b35414)'];
+  const styles = [
+    { color: 'var(--ds-accent, #137c8b)', label: '실선', dash: '' },
+    { color: 'var(--ds-text, #334155)', label: '파선', dash: '5 3' },
+    { color: 'var(--ds-warning, #b35414)', label: '점선', dash: '1 3' },
+    { color: 'var(--ds-color-danger, #b42318)', label: '일점쇄선', dash: '8 3 1 3' }
+  ];
   series.forEach((s, i) => {
+    const style = styles[i % styles.length]!;
     svg.append(
       svgNode(document, 'polyline', {
         points: s.points.map((p) => `${x(p[0]).toFixed(3)},${y(p[1]).toFixed(3)}`).join(' '),
         fill: 'none',
-        stroke: colors[i % colors.length]!,
+        stroke: style.color,
         'stroke-width': '2',
-        ...(i === 1 ? { 'stroke-dasharray': '5 3' } : {})
+        ...(style.dash ? { 'stroke-dasharray': style.dash } : {})
       })
     );
   });
@@ -107,7 +113,7 @@ function chart(
     document,
     'p',
     '',
-    series.map((s, i) => `${s.label} · ${i === 1 ? '파선' : i === 2 ? '점선' : '실선'}`).join(' / ')
+    series.map((s, i) => `${s.label} · ${styles[i % styles.length]!.label}`).join(' / ')
   );
   caption.append(
     legend,
@@ -221,13 +227,20 @@ export function renderExtendedResults(document: Document, result: ExtendedResult
       )
     );
   } else if (result.unitId.startsWith('3.') && result.trace.some((s) => s.positions[0]?.z !== undefined)) {
+    const links = result.unitId === '3.8' ? result.trace[0]!.positions.length : 1;
     visual.append(
-      chart(document, `${result.unitId}-spatial`, '첫 링크 공간 운동의 수평 투영', 'x (m)', 'z (m)', [
-        {
-          label: '실제 x-z 궤적 · 시간 순서',
-          points: result.trace.map((s) => [s.positions[0]!.x, s.positions[0]!.z ?? 0])
-        }
-      ])
+      chart(
+        document,
+        `${result.unitId}-spatial`,
+        result.unitId === '3.8' ? '모든 질점 공간 운동의 수평 투영' : '첫 링크 공간 운동의 수평 투영',
+        'x (m)',
+        'z (m)',
+        Array.from({ length: links }, (_, index) => ({
+          label:
+            result.unitId === '3.8' ? `질점 ${index + 1}의 실제 x-z 궤적 · 시간 순서` : '실제 x-z 궤적 · 시간 순서',
+          points: result.trace.map((sample) => [sample.positions[index]!.x, sample.positions[index]!.z ?? 0] as const)
+        }))
+      )
     );
   } else if (!lookup('mass-matrix') && !lookup('compound-matrix')) {
     const spring = result.canonical.systemId === 'system:spring';

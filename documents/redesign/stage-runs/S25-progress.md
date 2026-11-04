@@ -78,6 +78,16 @@
 - CP2는 과정2 9개만 공개하는 독립 snapshot을 stage한다. 과정3의 작성된 파일은 작업 폴더에 그대로 두고, 4개 metadata/test 파일의 과정2 부분만 index에 적용한다. 사용자 파일을 옮기거나 되돌리지 않는다.
 - staged snapshot을 새 `tmp/s25-cp2-check/`에 export하여 과정1+2의17개 등록, orphan0, 타입/표적/실제9개 사용자 여정을 검증한다. 설치 파일은 기존 lockfile 환경의 node_modules junction을 사용한다. 원본 작업 폴더와 과정3 초안은 변하지 않는다.
 
-- CP2 export의 `redesign:learn:check`, typecheck, production build/privacy audit 모두 exit0. Learn/Focus **423/423 통과** (`tmp/s25-cp2-check/tmp/cp2-targeted.json`): 기존 회귀와 공통 native 과학/경계150개 이전149개, 과정2만 제한해 실행한 공통 quality27개를 포함한다. 임시 제한 checker는 최종 전수 checker를 복사해 단원 집합만 과정2로 정한 검증 입력이며 제품 source를 바꾸지 않았다.
+- CP2 export의 `redesign:learn:check`, typecheck, production build/privacy audit 모두 exit0. Learn/Focus **423/423 통과** (`tmp/s25-cp2-check/tmp/cp2-targeted.json`): 기존 회귀와 공통 native 과학·경계·runtime149개, 과정2만 제한해 실행한 공통 quality27개를 포함한다. 임시 제한 checker는 최종 전수 checker를 복사해 단원 집합만 과정2로 정한 검증 입력이며 제품 source를 바꾸지 않았다.
 - CP2 export production Chromium **9/9 통과** (`tmp/s25-cp2-check/tmp/cp2-browser.json`). 각2.1~2.9에서 노출값을 실제 편집하고, 계산·진단 JSON·axe·정확한 canonical Lab export·복귀 결과·새로고침 후 편집값을 검사했다. retries0, 원30초, snapshot none이며 실패/skip/flaky/runner error0.
 - 과정2 구현은 위 독립 export와 일치하는 명시적 staged 경로만 commit한다. 과정3 파일·그래프 보강·최종 전수 브라우저 정의는 다음 checkpoint에 남긴다.
+
+### CP2 원격 확인 / CP3 과정 3
+
+- CP2 `27b4ca3456cdd7360cf8daffa97b606d5987d622` commit/push exit0 및 실제 원격 hash 일치. CP3는 과정3의9개와 computation-free authoring helper·18개 전수 quality checker·사용 안내를 포함한다. 최종 metadata는26공개/60계획을 나타낸다.
+- 과정3 검토 보강: 3.8의 모든 질점 x-z 궤적(1–4개)을 네 가지 색/선 모양과 대응 범례로 표시한다. 3.5에 실제 양의 초기 장력에서 시작하는 theta2.2/omega3의 적분 이완→포획 과제를 추가했다. native fixture에서 t>0·시간순·이완잔차≤1e-7N·포획잔차≤1e-7m 확인 후 내용을 갱신했다. 기본 t=0 유효성 판정과 구분한다.
+- 새로운 과학/콘텐츠 검증과9개 실제 편집·Lab 왕복, typecheck/build를 통과한 후 CP3를 보존한다. 원래 엔진과 기존 adapter를 변경하지 않는다.
+
+- CP3 관련 Learn/Focus **442/442 통과** (`tmp/s25-cp3-targeted.json`), 전체 typecheck·Learn check·production build/privacy audit exit0. 신규 과학·worker/session/runtime150개와 콘텐츠 quality45개를 포함한다.
+- production Chromium 과정3 **9/9 통과** (`tmp/s25-browser-cp3.json`): 모든 노출값 편집, 실제 계산·단위·보고서·axe·canonical export 동일성·Lab/back/reload와3.8 가변 질점 그래프·범례 수 확인. retries0·30초·snapshot none, 실패/skip/flaky/runner error0.
+- 과정2와 과정3는 각각9개 단원의 독립 구현 checkpoint로 나누어 보존한다. 최종 모바일·키보드/zoom·시각 baseline 및 전체 source 회귀는 구현을 원격에 보존한 뒤 CP4에서 마무리한다.

@@ -93,6 +93,27 @@ describe('S25 course three independent scientific examples and boundaries', () =
     );
   });
 
+  it('3.5 records a true in-run tension-zero release before recapture for a permitted moving initial state', () => {
+    const result = executeExtendedExperiment('3.5', { ...extendedPresetFields('3.5'), theta: 2.2, omega: 3 });
+    const first = result.trace[0]!;
+    expect(first.phase).toBe('taut');
+    expect(first.tensions?.[0]).toBeGreaterThan(3);
+    const events = result.tables.find((table) => table.id === 'constraint-events')!.rows;
+    expect(events.every((row) => row[4] === 'integration')).toBe(true);
+    const release = events.find((row) => row[2] === 'slack');
+    const capture = events.find((row) => row[2] === 'capture');
+    expect(release).toBeDefined();
+    expect(capture).toBeDefined();
+    expect(Number(release![1])).toBeGreaterThan(0);
+    expect(Number(capture![1])).toBeGreaterThan(Number(release![1]));
+    expect(release![7]).toBe('N');
+    expect(Number(release![6])).toBeLessThanOrEqual(1e-7);
+    expect(capture![7]).toBe('m');
+    expect(Number(capture![6])).toBeLessThanOrEqual(1e-7);
+    expect(Number(capture![5])).toBeGreaterThanOrEqual(0);
+    expect(events.every((row, index) => Number(row[1]) >= Number(events[index - 1]?.[1] ?? 0))).toBe(true);
+  });
+
   it('3.6 identifies full-slack separately from the default outer-slack initial state', () => {
     const defaultSample = constraintSimulation('3.6').snapshot();
     const fullSample = constraintSimulation('3.6', { theta1: 2.5, theta2: 2.5 }).snapshot();

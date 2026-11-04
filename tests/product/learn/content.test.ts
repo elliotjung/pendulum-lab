@@ -62,7 +62,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   cpSync('content/learn/curriculum.ts', join(root, 'content/learn/curriculum.ts'));
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
   cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
-  for (const course of ['course-2'])
+  for (const course of ['course-2', 'course-3'])
     cpSync(`content/learn/${course}`, join(root, `content/learn/${course}`), { recursive: true });
   // Published S25 lessons use computation-free authoring and input declaration helpers.
   cpSync('src/product/learn', join(root, 'src/product/learn'), { recursive: true });
@@ -102,7 +102,7 @@ describe('Learn content schema and authoritative curriculum', () => {
         .map((unit) => unit.id)
     ).toEqual([
       ...Array.from({ length: 8 }, (_, i) => `1.${i + 1}`),
-      ...[2].flatMap((course) => Array.from({ length: 9 }, (_, i) => `${course}.${i + 1}`))
+      ...[2, 3].flatMap((course) => Array.from({ length: 9 }, (_, i) => `${course}.${i + 1}`))
     ]);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();

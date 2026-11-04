@@ -426,6 +426,7 @@
   --ds-accent: var(--ds-color-accent);
   --ds-text: var(--ds-color-text);
   --ds-warning: var(--ds-color-warning);
+  --ds-danger: var(--ds-color-danger);
   margin: var(--ds-space-5) 0;
   color: var(--ds-color-text);
 }

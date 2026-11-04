@@ -234,8 +234,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-3.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '삼중·다중·복합·용수철·줄·공간 진자의 실제 운동을 비교하고 각 좌표계와 구속 모형의 유효 범위를 확인합니다.',
+      en: 'Compare real multiple, compound, elastic, string and spatial pendulum motion, and inspect the limits of each coordinate and constraint model.'
     },
     units: [
       {
@@ -246,8 +246,8 @@ export const courses = [
           ko: '삼중진자의 질량행렬과 재귀 구조',
           en: 'The triple-pendulum mass matrix and recursive structure'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.2',
@@ -257,8 +257,8 @@ export const courses = [
           ko: 'N중 사슬의 일반화와 계산 복잡도',
           en: 'Generalizing to N links and computational complexity'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.3',
@@ -268,8 +268,8 @@ export const courses = [
           ko: '복합진자의 관성모멘트와 물리진자',
           en: 'Moment of inertia and the compound pendulum'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.4',
@@ -279,8 +279,8 @@ export const courses = [
           ko: '용수철 진자의 길이-각도 결합',
           en: 'Length–angle coupling in the spring pendulum'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.5',
@@ -290,8 +290,8 @@ export const courses = [
           ko: '줄 진자의 장력과 비매끈 사건',
           en: 'Rope tension and nonsmooth events'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.6',
@@ -301,8 +301,8 @@ export const courses = [
           ko: '이중 줄 진자의 구속 전환',
           en: 'Constraint transitions in the double-string pendulum'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.7',
@@ -312,8 +312,8 @@ export const courses = [
           ko: '구면진자의 3차원 운동과 세차',
           en: 'Three-dimensional motion and precession'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.8',
@@ -323,8 +323,8 @@ export const courses = [
           ko: '구면 사슬의 다체 3차원 역학',
           en: 'Many-body dynamics of spherical chains'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '3.9',
@@ -334,8 +334,8 @@ export const courses = [
           ko: '임베디드 좌표·구속식·좌표 특이점',
           en: 'Embedded coordinates, constraints and coordinate singularities'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },
