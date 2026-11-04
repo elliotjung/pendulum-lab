@@ -91,3 +91,24 @@
 - CP3 관련 Learn/Focus **442/442 통과** (`tmp/s25-cp3-targeted.json`), 전체 typecheck·Learn check·production build/privacy audit exit0. 신규 과학·worker/session/runtime150개와 콘텐츠 quality45개를 포함한다.
 - production Chromium 과정3 **9/9 통과** (`tmp/s25-browser-cp3.json`): 모든 노출값 편집, 실제 계산·단위·보고서·axe·canonical export 동일성·Lab/back/reload와3.8 가변 질점 그래프·범례 수 확인. retries0·30초·snapshot none, 실패/skip/flaky/runner error0.
 - 과정2와 과정3는 각각9개 단원의 독립 구현 checkpoint로 나누어 보존한다. 최종 모바일·키보드/zoom·시각 baseline 및 전체 source 회귀는 구현을 원격에 보존한 뒤 CP4에서 마무리한다.
+
+### CP3 원격 확인 / CP4 완료 후보
+
+- CP3 `0732f2e` push exit0 및 실제 원격 hash 일치를 확인했다. 모든 제품/콘텐츠 source가 원격에 있다. 이후 발견되는 검증 결함은 별도 수정 checkpoint로 검증·push하며, 완료 status는 전체 필수 검사 후에만 만든다.
+- candidate-complete: 새 전수 E2E의 Chromium/Pixel5 mobile 프로젝트, 320px·200%·keyboard·axe·로딩/빈/실패/취소·새20PNG 시각 비교, 기존 Learn/Focus와 기존 native workspace 대표 여정을 검증한다. 공개 수 변경으로 달라지는 기존 과정 목록4PNG만 명시 갱신하고 나머지 기존 baseline은 보존한다.
+- 그 뒤 최종 전체 Vitest/golden·10개 품질 명령, 보존 및 전달본 해시, source와 로그 digest를 고정해 검증 증거를 commit/push한다. 제품 source는 CP3에서 고정한다.
+
+### CP4 시각 확인과 눈금 여백 수정
+
+- 신규20PNG 첫 생성은 CI의 missing-baseline 기록4건으로 exit1이었다 (`tmp/s25-visual-create.json`). 모든20개 실제 결과를 기록했으며 이것을 비교 통과로 취급하지 않는다. 기존 Learn 목록4건의 none 비교는 26개 공개 수·과정2/3 카드 변경의 실제 차이를 검출했다 (`tmp/s25-learn-visual-before.json`). 검토한 actual PNG를 해당 목록4개에만 복사하고 원본/새 SHA를 기록했다 (`tmp/s25-learn-baseline-updates.json`). 과정1·단원 PNG는 갱신하지 않았다.
+- AI 시각 QA에서 새3.9 desktop SVG의 긴 y축 눈금이 왼쪽에서 일부 잘리는 것을 발견했다. HTML caption의 전체 값은 이미 접근 가능했으나 SVG 여백도55→90으로 넓히고 plotting width560→525로 조정했다. 수치·범위·canonical·native 결과는 바꾸지 않았다.
+- 최초 전수54 실행은 이 표시 수정을 반영하기 위해 중단했으며 완료 증거로 쓰지 않는다. 수정 후 새 visual baseline만 명시 갱신하고, 모든 표시된 SVG text의 getBBox가 viewBox 안에 있는 assertion과 none 비교를 포함해54건을 처음부터 다시 검증한다. threshold0.2/maxDiffPixels100, mask없음, retry/timeout 조건은 유지한다.
+- AI 확인은 사람·과학 전문가 검토가 아니며 human-reviewed0/18을 유지한다.
+
+### CP4-V 눈금·시각 checkpoint
+
+- 시각 none 비교 **8/8 통과** (`tmp/s25-visual-none.json`): 새20PNG와 Learn 목록/과정1/단원1의 기존 화면을 Chromium·Pixel5로 확인했다. SVG getBBox 검사로 표시되는 눈금/레이블이 viewBox 안에 있음을 검증했다. 새 matrix4PNG는 첫 생성 때와 같고, graph16PNG만 여백 수정에 맞춰 갱신했다. 기존 이미지 갱신은 계획한 과정 목록4개뿐이다.
+- 최종 source의 전체 Vitest **5684/5684**,356files, 실패·pending0 (`tmp/s25-full-vitest-final.json`) 및9개 품질 명령 모두 exit0 (`tmp/s25-quality-final.json`). 새 source 과학 fixture는150개, 콘텐츠 quality45개다. secrets는 새 E2E까지 stage한 뒤 따로 수행한다.
+- 병렬 최종 실행에서 tools/host가 약1.2시간 정지해 browser context setup의30초 제한 실패가 발생했다 (`tmp/s25-browser-suspension.log`). 해당 실행과 함께 돌던 단위 실행은 중단하고 완료 증거로 쓰지 않았다. 임시 process wake request를 적용한 별도 전체 재실행은 통과했다. 사용자 전원 설정은 변경하지 않으며 helper의 finally/process 종료 때 요청을 해제한다.
+- 보호 helper의 PowerShell stderr 경고 처리 때문에 첫 시각 재실행이 시작 전에 중단됐다. 종료 코드로 판정하도록 수정했고, 남은 자체 preview PID13720의 경로/포트를 확인해 해당 process만 종료했다. 이후 정상8/8이 위 기록이다. 이 tooling 오류를 제품 실패/통과로 섞지 않는다.
+- 눈금 보강과 검증 정의/이미지를 먼저 원격 보존한 뒤 고정 원격 source에서 완료 후보 검증을 확정한다. 공통 threshold·retry·timeout을 완화하지 않는다. 두 browser project는 독립2workers로 실행하며 결과에 실제 조건을 기록한다.

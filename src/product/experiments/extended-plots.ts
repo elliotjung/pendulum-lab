@@ -55,10 +55,10 @@ function chart(
     minY -= Math.max(0.5, Math.abs(minY) * 0.1);
     maxY += Math.max(0.5, Math.abs(maxY) * 0.1);
   }
-  const x = (v: number) => 55 + (560 * (v - minX)) / (maxX - minX),
+  const x = (v: number) => 90 + (525 * (v - minX)) / (maxX - minX),
     y = (v: number) => 220 - (180 * (v - minY)) / (maxY - minY);
   svg.append(
-    svgNode(document, 'path', { d: 'M55 40V220H615', fill: 'none', stroke: 'currentColor', 'stroke-width': '1' })
+    svgNode(document, 'path', { d: 'M90 40V220H615', fill: 'none', stroke: 'currentColor', 'stroke-width': '1' })
   );
   for (const [v, anchor] of [
     [minX, 'start'],
@@ -77,7 +77,7 @@ function chart(
       svgNode(
         document,
         'text',
-        { x: '50', y: String(y(v) + 4), 'text-anchor': 'end', 'font-size': '10', fill: 'currentColor' },
+        { x: '85', y: String(y(v) + 4), 'text-anchor': 'end', 'font-size': '10', fill: 'currentColor' },
         number(v)
       )
     );
@@ -85,10 +85,10 @@ function chart(
     svgNode(
       document,
       'text',
-      { x: '335', y: '262', 'text-anchor': 'middle', 'font-size': '12', fill: 'currentColor' },
+      { x: '352.5', y: '262', 'text-anchor': 'middle', 'font-size': '12', fill: 'currentColor' },
       xLabel
     ),
-    svgNode(document, 'text', { x: '55', y: '18', 'font-size': '12', fill: 'currentColor' }, yLabel)
+    svgNode(document, 'text', { x: '90', y: '18', 'font-size': '12', fill: 'currentColor' }, yLabel)
   );
   const styles = [
     { color: 'var(--ds-accent, #137c8b)', label: '실선', dash: '' },
