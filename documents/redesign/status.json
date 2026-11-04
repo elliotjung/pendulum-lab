@@ -12,10 +12,10 @@
   "nextStage": 25,
   "completedStages": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
   "blockedStage": null,
-  "activeStage": null,
-  "activeStageCheckpoint": null,
+  "activeStage": 25,
+  "activeStageCheckpoint": "CP0",
   "reviewGates": [7, 9, 17, 24, 28],
-  "approvedReviewGates": [7, 9, 17],
+  "approvedReviewGates": [7, 9, 17, 24],
   "notes": [
     "S24 adds project/session/run/artifact/narrative/figure/citation workflows, exact native raw-file retention, recorded-source SVG/CSV, notebook/report, strict checksummed ZIP, legacy ZIP bridge and offline/static plus hosted local-package reviewer. All supported native schemas reuse their preserved parsers; declared direct/nested canonical inputs and native IDs are checked against the selected project run.",
     "Batch plan.source and learning provenance canonical declarations cannot be attached to another parameter/seed/runtime; even rewritten outer checksums do not bypass this. Arbitrary S23 provenance remains intact. Source-free observation, external learning/eigen and configuration-free collections are explicitly user classifications, not proof of computation or external authenticity. Plot composer uses recorded coordinate projections; native analytical results and legacy figures/notebooks remain original attachments.",
