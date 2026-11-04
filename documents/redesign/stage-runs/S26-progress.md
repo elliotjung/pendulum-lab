@@ -86,3 +86,12 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - CP4-V production 표적 **28/28**, Chromium14/Pixel5 14, 실패/skip/flaky/runner error0 (`tmp/s26-visual-boundaries-none.json`). 신규16PNG 및 기존 Learn12PNG를 snapshot none으로 비교했고, 빈 단면·invalid/corrupt draft 원본 보존·worker 시작 실패·취소/재실행·320px·키보드·200% 확대를 확인했다. 모든 표시 SVG text는 viewBox 안에 있었다. threshold0.2/maxDiffPixels100, mask없음, retries0, 새 test30초와 기존 Learn60초를 유지했다.
 - 선 패턴4PNG와 전체 재귀 표시4PNG만 신규 기준 생성 뒤 갱신했다. 이외 신규8PNG는 최초 생성과 같다. 새16개 최종 none 비교 전 SHA를 보존하고 비교 후 변경이 없음을 확인한다. 기존 이미지 변경은 과정 목록4개뿐이다.
 - 표시 보강 source는 native 과정5 **28/28**, 전체 typecheck와 production build/privacy 통과. 원래 수치·엔진은 그대로이며 regression2개는 표시된 모든 점이 native 연결이고 첫/마지막 행렬 범위를 보존하는지 검사한다.
+
+### CP4-F 검증 실행 격리
+
+- CP4-V `54b900f7b7f5c30e6b3655f642224cf093a1d0d3` commit/push exit0 및 실제 원격 hash 일치. 전체 제품/콘텐츠/브라우저 정의·PNG는 여기서 고정했다.
+- 첫 동시 전체 실행은 Vitest5871pass/1fail/21skip of5893이었다. 신규 native10개를 모은 beforeAll이10초를 초과했고 기존 S24 exact inventory가37.56초로 원래30초를 초과했다. 다른 단독 실행도 browser3workers와 겹쳐30.82초였다. 수치·baseline assertion의 불일치가 아니며 이 결과를 완료 증거로 사용하지 않는다.
+- 같은 기간 신규 browser79/80은4.7 dark 계산완료의 원5초 expect를 초과했고, 기존 회귀37/40은 S18/S19 다중 진단의 원30초 test를 초과했다. 시각 기준·수치·접근성 assertion 실패는 없었다. 실패 보고서를 각각 `tmp/s26-full-vitest-contention.json`, `s26-browser-contention.json`, `s26-regression-contention.json`에 보존한다.
+- 새 native test만10개 일괄 startup 대신 각 단원 검사에서 최초1회 계산하는 cache로 분리했다.21개 assertion·조건·수치 한도와 기존10/30초 설정은 그대로다. 표적21/21과 ESLint 통과. 제품 코드·계산·브라우저 정의·PNG는 수정하지 않았다.
+- 다른 browser/quality 종료 후 기존 인벤토리14/14가 통과했다 (`tmp/s26-inventory-quiet.json`). 정확한 baseline 검사는17.519초였다. 기존 scanner/compiler options/테스트/수치 golden은 전혀 수정하지 않았다.
+- 최종 전체 검증은 resource phase를 분리한다. 전체 Vitest는1worker/forks/isolate로 단독 실행하고, 품질/build를 마친 후 browser 전수를 별도 실행한다. retry·snapshot/시간 한도·threshold를 완화하지 않는다. 이 test 실행 분리 checkpoint를 먼저 push한 뒤 최종 결과로만 완료를 판정한다.

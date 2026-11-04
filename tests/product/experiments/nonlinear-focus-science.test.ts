@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { nonlinearFocusDeclaration } from '../../../src/product/experiments/nonlinear-focus-definitions';
 import { executeNonlinearFocus } from '../../../src/product/experiments/nonlinear-focus-science';
 import { nonlinearFocusConfig } from '../../../src/product/experiments/nonlinear-focus-config';
@@ -15,18 +15,23 @@ const ids = Array.from({ length: 10 }, (_, i) => `4.${i + 1}`);
 const fields = (id: string): ResearchFields =>
   Object.fromEntries(nonlinearFocusDeclaration(id).fields.map((f) => [f.id, f.value]));
 const results = new Map<string, ResearchFocusResult>();
-const value = (id: string, key: string) => results.get(id)!.metrics.find((m) => m.id === key)!.value;
+/** Compute each bounded native run in its own test, rather than one aggregate startup hook. */
+function nativeResult(id: string): ResearchFocusResult {
+  const cached = results.get(id);
+  if (cached) return cached;
+  const result = executeNonlinearFocus(id, fields(id));
+  results.set(id, result);
+  return result;
+}
+const value = (id: string, key: string) => nativeResult(id)!.metrics.find((m) => m.id === key)!.value;
 function finiteTree(v: unknown) {
   if (typeof v === 'number') expect(Number.isFinite(v)).toBe(true);
   else if (v && typeof v === 'object') for (const x of Object.values(v)) finiteTree(x);
 }
-beforeAll(() => {
-  for (const id of ids) results.set(id, executeNonlinearFocus(id, fields(id)));
-});
 
 describe('S26 course four actual native experiments', () => {
   it.each(ids)('%s executes finite bounded diagnostics with exact native physical round trip', (id) => {
-    const result = results.get(id)!,
+    const result = nativeResult(id)!,
       source = nonlinearFocusConfig(id, fields(id));
     expect(result.unitId).toBe(id);
     expect(result.metrics.length).toBeGreaterThan(0);
@@ -60,7 +65,7 @@ describe('S26 course four actual native experiments', () => {
   it('4.3 native Floquet detects the principal tongue and resolves a passive stable limit', () => {
     expect(value('4.3', 'spectral-radius')).toBeCloseTo(2.4750457859, 5);
     expect(value('4.3', 'floquet-refinement')).toBeLessThan(1e-7);
-    expect(results.get('4.3')!.tables[0]!.rows).toHaveLength(25);
+    expect(nativeResult('4.3')!.tables[0]!.rows).toHaveLength(25);
     const passive = executeNonlinearFocus('4.3', { ...fields('4.3'), epsilon: 0 });
     expect(passive.metrics.find((m) => m.id === 'spectral-radius')!.value).toBeCloseTo(1, 7);
   });
@@ -85,7 +90,7 @@ describe('S26 course four actual native experiments', () => {
   });
   it('4.7 actually carries sweep endpoints and separately verifies native zero-drive wells', () => {
     expect(value('4.7', 'max-sweep-gap')).toBeGreaterThan(0.5);
-    const rows = results.get('4.7')!.tables[0]!.rows;
+    const rows = nativeResult('4.7')!.tables[0]!.rows;
     expect(rows).toHaveLength(10);
     expect(rows[0]![0]).toBe('상향');
     expect(rows[5]![0]).toBe('하향');
@@ -125,10 +130,10 @@ describe('S26 course four actual native experiments', () => {
     expect(stopped.charts.find((c) => c.id === 'contact-state')!.series[0]!.points.every((p) => p.y === 0)).toBe(true);
   });
   it('4.10 computes actual gain-delay candidates without claiming a UPO certificate', () => {
-    expect(results.get('4.10')!.tables[0]!.rows).toHaveLength(9);
+    expect(nativeResult('4.10')!.tables[0]!.rows).toHaveLength(9);
     expect(value('4.10', 'forcing-period')).toBeCloseTo(2 * Math.PI, 12);
     expect(value('4.10', 'smallest-periodicity-defect')).toBeGreaterThan(0);
-    expect(results.get('4.10')!.warnings.join(' ')).toContain('UPO');
+    expect(nativeResult('4.10')!.warnings.join(' ')).toContain('UPO');
     const base = defaultNonlinearConfig('system:pyragas'),
       sim = createNonlinearSimulation({
         ...base,
