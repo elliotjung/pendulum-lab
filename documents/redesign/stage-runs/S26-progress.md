@@ -133,3 +133,11 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 보존을 재계산해 보호388/388 동일, 기존 test/fixture439/443 동일(4개 metadata·fixture만 변경), 과거PNG234/238 동일(4개 과정목록만 변경)을 확인했다. 두 desktop 전달본도 저장소 원본 SHA와 같아 복사할 차이가 없다. 다른 tracked 제품/콘텐츠/test/PNG 변경은 없고 현재 diff는 진행/status control뿐이다.
 - 자동/출처 대조23/23, 사람 검토0/23이다.4.10 UPO 인증 미제공, 유한시간·표본·좌표/차원 한계, 실기기/Firefox/WebKit/음성 미인증, 영상on S19 시간 경계와 기존 dependency/CodeQL·S24 보안 한계는 남겨 둔다. 신규23개 외 S27 이후는 구현하지 않았다.
 - 이제 보존/검증 JSON과 진행/status control만 CP4-E로 commit/push한다. lastCompleted25/next26을 유지한 원격 증거를 확인하고 clean-tree preflight26/plan check를 통과한 뒤에만 별도 완료 status commit을 작성한다. 그 status commit의 실제 원격 hash 확인 전에는 S26 완료가 아니다.
+
+### CP4-E 원격 확인 / 별도 완료 상태 게이트
+
+- CP4-E `e2fe0097dd3135b06a210c5b54e3a3bf61c16415` commit/push exit0, 실제 `ls-remote` hash 일치.4개 명시 경로만 포함했고 lastCompleted25/next26을 유지했다. 원격 구현 source3174684 이후 제품/콘텐츠/test/PNG 변경은 없다.
+- staged 증거를 포함한 known-pattern scan은 추적2073files/텍스트1806files/findings0 (`tmp/s26-secrets-evidence.json`),4개 control 경로 Prettier와 staged diff check도 exit0이었다. 원본 source3174684의 primary scan을 덮어쓰지 않았다. GitHub의 default-branch26개 취약점 알림은 변함없고 해결·위험 수락을 주장하지 않는다.
+- 깨끗한 HEAD/tracking/live remote e2fe009에서 `npm run redesign:check`와 `npm run redesign:preflight -- 26`을 다시 실행해 모두 exit0을 확인했다. 로그는 `tmp/s26-candidate-plan-check.log`/`s26-candidate-preflight.log`다. 다음 단계 preflight나 구현은 실행하지 않았다.
+- 이제 status와 이 진행 문서2개만 별도 커밋한다. status는 lastCompleted26/next27/completed1..26/active null이며 기존 review 승인[7,9,17,24]는 그대로다. 완료 상태의 push exit0와 실제 원격 hash를 확인한 뒤에만 사용자 완료 보고를 한다. 자체 commit hash는 같은 commit에 내포할 수 없으므로 최종 원격 확인 결과와 사용자 보고가 그 마지막 hash의 직접 증거다.
+- 구현·표적·전체·시각·접근성·보존 증거는 위에 모두 남겼다. 사용자는 다음 유효 요청으로 `27단계 실행해줘`를 입력할 수 있다. 롤백은 보존된 `app.html` 또는 별도로 승인한 S25 완료 commit `04c770e3b1af185fda11748dbb1940adf328a9db` 복구다. 이번 작업에서 복구·전환·merge·release는 하지 않았다.
