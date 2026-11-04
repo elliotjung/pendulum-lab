@@ -29,7 +29,7 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 
 ## 진행과 위험
 
-- 현재 CP0. 이후 검증·commit·push 증거를 추가한다.
+- CP0에서 시작했으며 아래에 검증·commit·push 증거를 시간순으로 기록한다. 최신 상태는 마지막 CP4-E와 완료 상태 게이트 항목을 따른다.
 - 유한시간 지표를 엄밀한 카오스 판정이나 UPO 안정화 증명으로 표현하지 않는다. 좌표/시간/에너지 단위와 tangent·sampling·threshold 한계를 각각 표시한다.
 - source-checked와 automated-verified는 실제 출처 대조 및 fixture 뒤에만 완료로 판단한다. human-reviewed는 미완료다.
 - 기존 dependency/CodeQL 부채는 S30 판정 범위이며 이번 단계가 새 보안 감사나 위험 수락을 의미하지 않는다.
@@ -97,7 +97,7 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 최종 전체 검증은 resource phase를 분리한다. 전체 Vitest는1worker/forks/isolate로 단독 실행하고, 품질/build를 마친 후 browser 전수를 별도 실행한다. retry·snapshot/시간 한도·threshold를 완화하지 않는다. 이 test 실행 분리 checkpoint를 먼저 push한 뒤 최종 결과로만 완료를 판정한다.
 
 - CP4-F `ca119977bc7d419fd861a729bf730db14497c84f` commit/push exit0 및 실제 원격 hash 동일. `src/content/e2e/css/app/package/lock`은 CP4-V와 바이트 동일하다.
-- 동일 원격 source의 최종 전체 Vitest **5893/5893,363files**, 실패·pending0 (`tmp/s26-full-vitest-final.json`). 명령은 `npm test -- --maxWorkers=1 --no-file-parallelism --pool=forks --isolate`이며 원래 test/hook 시간·assertion을 유지했다.
+- 동일 원격 source의 전체 Vitest **5893/5893,363files**, 실패·pending0 (CP4-P 재검증 전에 `tmp/s26-full-vitest-pre-copy-optimization.json`으로 보존). 명령은 `npm test -- --maxWorkers=1 --no-file-parallelism --pool=forks --isolate`이며 원래 test/hook 시간·assertion을 유지했다. 이 이전 source 결과는 최종 완료 증거를 대체하지 않는다.
 - 새 revision의 품질8개+production build/privacy 총9개 exit0, golden13/13, known-pattern secrets findings0을 각각 재확정했다 (`tmp/s26-quality-final.json`, `s26-build-final.json`, `s26-golden-final.json`, `s26-secrets-final.json`). 이전54b900f 결과를 재사용하지 않았다.
 - 이후 새 browser80개와 기존 대표40개는 서로 다른 명령을 차례로 실행하며 각2workers만 사용한다. 같은 implementation·원래 retry0/timeout/none 비교로 최종 결과를 판정한다.
 
@@ -108,3 +108,28 @@ physics/chaos/research/runtime/workers/validation, 기존 product adapter, publi
 - 변경 전ca11997과 변경 후10개 기본 실험의 입력 SHA, 전체 결과 JSON UTF8 bytes/SHA, 진행 이벤트 개수/SHA가 전부 동일했다 (`tmp/s26-native-snapshot-equivalence.json`, SHA `71c95a136bdb897f5c0ee4a0e2437ab7b36b0bb778b2b7614ff180406e87a7a0`). 비교 harness와 원 before 기록도 tmp에 보존했다. 관측 Node 실행 시간4.10은4553→1443ms였으며 성능 숫자를 수치 승인 기준으로 사용하지 않는다.
 - 관련 native/worker/boundary/review **76/76**, typecheck·ESLint·Prettier·production build/privacy 통과. 실제4.10 desktop/mobile **2/2**가 원래5초 expect·30초 test·retry0 조건으로 편집/계산/Lab 왕복을 통과했다 (`tmp/s26-browser-snapshot-proof.json`). 테스트 시간 한도는 늘리지 않았다.
 - 이 실제 helper 개선을 별도 checkpoint로 먼저 push한다. 최종 source에서 전체 Vitest 단독1worker, 품질/build/golden/secrets를 다시 실행한다. 마지막 browser는 새80+기존40을 한 명령/총2workers로 검증해 다른 CPU phase와 겹치지 않는다. 원본120개가 모두 통과해야만 파일별로 분리한80/40 요약을 인정하며 어떤 실패도 projection에서 제외하지 않는다.
+
+- CP4-P `3174684c633a8cb9057aa257b8ed84a3bb86799e` commit/push exit0 및 실제 원격 hash 동일. CP4-F 이후 제품 변경은 위 helper 한 파일뿐이며, 그 외 control 문서만 변경했다.
+- 이 최종 원격 source에서 전체 Vitest **5893/5893,363files**, 실패·pending0 (`tmp/s26-full-vitest-final.json`)을 단독1worker로 다시 통과했다. 이전 통과 보고서와 구분한다.
+- 동일 source의 typecheck/lint/format/plan/catalog/Learn/inventory/modules 8명령과 production build/privacy, golden **13/13**, known-pattern secret findings0도 재실행해 모두 통과했다. 품질·build·golden·secret 보고서는 모두3174684 이후의 실제 실행이다.
+- 최종 browser 목록은 정확히8files/120tests다. 신규80과 기존40을 한 명령/총2workers로 실행 중이며, snapshot none·retry0·기존 timeout·시각 threshold를 유지한다. 다른 수치/품질/build 작업을 겹쳐 실행하지 않는다.
+
+### CP4-E 직렬 브라우저 확정
+
+- 위2worker 원본 실행은 **118pass/2fail/0skip/0flaky/0runner errors**였다 (`tmp/s26-browser-two-worker-timeout.json`). 신규80은 모두 통과했지만 기존 S19의12개 도구 연속 검사가 Chromium/Pixel5 양쪽에서 전체30초를 넘었다. 실패를 제외한120통과나 완료를 주장하지 않는다.
+- 두 실패 화면은 native12개 계산과 Wada artifact 재가져오기 및 잘못된 버전 거부까지 마친 상태였다. 마지막 download/equality/axe가 남아 있었고, 보존된 S24 초기 기록에도 같은 지점의30초 초과가 있다. S26 수치/worker 변경은 없으며, 현재 근거만으로 추가 canonical UI 처리와 CPU 경합의 기여도를 정량화할 수 없다.
+- 동일한 최종 source와8files/120tests 전부를 **1worker**로 직렬 재실행한다. 예외를 골라 재시도하지 않고 원본120개가 모두 성공해야 통과한다. retry0, 원5초 expect·30초 test 및 기존60/90초 특별 제한, snapshot none, threshold0.2/maxDiffPixels100, mask없음을 유지한다.
+- 진행을 확인할 수 있도록 line 로그와 원본 JSON reporter를 함께 사용하며 JSON은 Playwright가 직접 지정 파일에 쓴다. 원본 보고서의 실제1worker·120개·60개/project·80/40의 서로 겹치지 않는 전수 포함을 검증한다. 이전2worker 실패 원본과 해시를 별도 보존한다.
+- 영상 녹화를 유지한1worker 실행에서도 첫 S19 Chromium이30초를 초과했다. 이미 실패한 실행의 정확한 runner 명령/PID15264와 자식 tree를 확인한 후 task 프로세스만 종료했다. 부분 JSON을 완료 증거로 사용하지 않으며, 첫 실패 trace/error 및 로그 해시를 `tmp/s26-browser-one-worker-abort.json`에 보존했다.
+- trace의 초기 준비8.522초에는 context2.530초/page5.039초가 포함됐고12개 계산 대기는 합계7.078초였다. 마지막 axe 분석0.655초 뒤 임시 page 생성5.096초가 전체 제한과 겹쳤다. 도구 선택은 각57~117ms/합계1.022초여서 누적 canonical 설정이 커지는 stall은 관찰하지 못했다. 영상 캡처의 인과 기여도를 이 추적만으로 확정하지 않는다.
+- task-local `tmp/s26-playwright-no-video.config.ts`는 원래 config를 import하고 **진단용 영상 기록만 off**로 바꾼다. 임시 config 위치에 따른 testDir/webServer cwd는 절대 저장소 경로로 보정한다. 원래 config/소스/테스트/timeout/retry/snapshot/trace/실패 스크린샷은 그대로다. 별도 영상 off 대조의 S19 Chromium/Pixel5 **2/2**가28.159/25.090초로 원30초 안에 통과했다 (`tmp/s26-no-video-s19-probe.json`).
+- 최종 원본120개는 이 명시된 capture 예외와1worker로 재실행한다. fail-fast1은 첫 실패에서 실행을 끝내 불필요한 작업을 줄일 뿐, 완료 게이트는 여전히120/120·실패/skip/flaky/runner error0이다. 원래 조건의 영상 기록까지 통과했다고 주장하지 않는다. 검증 JSON에 runner config 내용/해시와 원본 config 보존 증거, 대조 결과, 실패 이력을 포함한다.
+
+### CP4-E candidate-complete — 검증 통과, 완료 상태 push 대기
+
+- 고정 원격 source `3174684c633a8cb9057aa257b8ed84a3bb86799e`의 최종 원본 browser **120/120**, Chromium60/Pixel5 60, 실패/skip/flaky/runner error0, 모든 leaf 결과1회/retry0이다 (`tmp/s26-browser-all-final.json`). 실제1worker·영상off·snapshot none이며 18.4분간 다른 무거운 검증과 겹치지 않았다. S19는21.527/27.745초로 원30초 안에 통과했다.
+- 8개 spec의 실제 결과 전체를 확인했다. 신규2files의80개와 기존6files의40개는 겹치거나 빠지는 결과가 없다. 원본120개가 모두 성공한 뒤에만 두 요약을 만든다. 실패한 이전118/120 또는 중단 실행을 통과로 합산하지 않는다.
+- 최종 전체 Vitest **5893/5893,363files**, 콘텐츠 품질70개 포함, numerical golden **13/13**, 품질8명령+build/privacy9개, known-pattern secret findings0이 모두 같은 최종 source에서 통과했다. 원래 test/expect 시간·수치 한도·시각 threshold를 늘리지 않았다.
+- 보존을 재계산해 보호388/388 동일, 기존 test/fixture439/443 동일(4개 metadata·fixture만 변경), 과거PNG234/238 동일(4개 과정목록만 변경)을 확인했다. 두 desktop 전달본도 저장소 원본 SHA와 같아 복사할 차이가 없다. 다른 tracked 제품/콘텐츠/test/PNG 변경은 없고 현재 diff는 진행/status control뿐이다.
+- 자동/출처 대조23/23, 사람 검토0/23이다.4.10 UPO 인증 미제공, 유한시간·표본·좌표/차원 한계, 실기기/Firefox/WebKit/음성 미인증, 영상on S19 시간 경계와 기존 dependency/CodeQL·S24 보안 한계는 남겨 둔다. 신규23개 외 S27 이후는 구현하지 않았다.
+- 이제 보존/검증 JSON과 진행/status control만 CP4-E로 commit/push한다. lastCompleted25/next26을 유지한 원격 증거를 확인하고 clean-tree preflight26/plan check를 통과한 뒤에만 별도 완료 status commit을 작성한다. 그 status commit의 실제 원격 hash 확인 전에는 S26 완료가 아니다.
