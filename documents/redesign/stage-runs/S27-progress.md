@@ -106,3 +106,9 @@
 - 이 CP4-E는 evidence 저장 checkpoint이며 status의 완료1..26/next27을 아직 유지한다. 최종 보존·secret·source equality·clean preflight를 확인하고 별도 완료 status를 push해야 S27 완료다. 다음 유효 단계는 그 이후 S28이다. migration/parity/cutover/merge/tag/release/Landing 변경은 없다.
 
 - 최종 보존 감사404/404와desktop rawSHA2/2가 통과했다. 기존test451/457·PNG256/260동일 및6개 metadata/fixture·4개홈PNG만 의도된 차이다. 검증JSON을 추가한 tracked known-pattern secret scan은1884text/0finding이며 최종 staged파일을 commit 전 다시 검사한다. 검증소스3d34cde 대비 non-control diff0을 확인했다.
+
+### CP4-E 원격 / 별도 완료 status
+
+- CP4-E `2f4c806bf8685f8a3d6a0d6c620082c07b568ec7` commit/push exit0, live ls-remote exact match. 당시 clean tree에서 `redesign:preflight -- 27` 및 plan check exit0을 확인했다.
+- 고정 소스3d34cde 이후 변경은 S27progress/preservation/verification/status 네 control 문서뿐이다. required test 실패·남은 필수 구현은 없다. S27은 human review gate가 아니며 사람/전문가 검토0/86을 유지한다.
+- 로컬 완료 status 후보는 lastCompleted27/next28/완료1..27/active null이다. 이 별도 status commit을 일반 push하고 live origin hash와 일치함을 확인하기 전까지 원격 완료로 주장하지 않는다. status와 최종진행 기록을 검사한 뒤 게시한다.

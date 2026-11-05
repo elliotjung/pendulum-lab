@@ -8,8 +8,8 @@
     "selectedByUser": true
   },
   "totalStages": 30,
-  "lastCompletedStage": 26,
-  "nextStage": 27,
+  "lastCompletedStage": 27,
+  "nextStage": 28,
   "completedStages": [
     1,
     2,
@@ -36,11 +36,12 @@
     23,
     24,
     25,
-    26
+    26,
+    27
   ],
   "blockedStage": null,
-  "activeStage": 27,
-  "activeStageCheckpoint": "CP4-E",
+  "activeStage": null,
+  "activeStageCheckpoint": null,
   "reviewGates": [
     7,
     9,
@@ -55,13 +56,12 @@
     24
   ],
   "notes": [
-    "S26 publishes all23 units4.1-4.10/5.1-5.13 with bilingual theory/derivations, SI and normalized-coordinate conventions, actual Focus calculations, prediction/observation tasks, checks, source locators and exact supported Lab transfer. There are49published/37planned units across8courses/86reservations; no S27+ content was implemented.",
-    "Verified product source3174684 reuses unchanged S07/S13/S14 physics and S18/S19 analyses. No equations of motion or integrators were reimplemented. Bounded versioned worker/results/session contracts and tested Lab UI adapters preserve exact physical settings, analysis quantities/options, source provenance, save/share formats and user data. Detached native step observations remove duplicate copying; ten input/result JSON byte/progress hashes are exactly equal to pre-optimization ca11997.",
-    "Final full Vitest5893/5893 in363files, new contentquality70/70, golden13/13 and all9quality/build commands passed. One original production Chromium/Pixel5 browser run passed120/120 (new80/existing40),60per project,1worker, retry0, snapshot none, no failures/skips/flaky/runner errors. A reviewed task-local wrapper disables diagnostic video only; original tests/5s expectations/30s defaults/existing60/90s limits/trace/failure screenshots/threshold0.2/maxDiffPixels100 are unchanged. Video-on S19 timeouts and one aborted failed attempt are retained and excluded from passing evidence.",
-    "Protected388files, all native physics/analysis adapters, public APIs, app.html, package/lockfile, courses1-3, numerical golden and authoritative plans are byte-identical. Existing tests/fixtures439/443 and PNG234/238 are identical; only4metadata/fixture paths and4course-list PNGs intentionally changed. New16PNG hashes stayed unchanged in final none comparisons. Both desktop transport copies match repository hashes.",
-    "All23new units are automated-verified/source-checked and human-reviewed0/23. Prior user workflow approvals[7,9,17,24] remain unchanged; no S26 human/expert approval is fabricated. Model selector UI was not exposed or verified. No physical-device, Firefox/WebKit or screen-reader-audio certification was performed.",
-    "4.10 provides a finite Pyragas gain-delay candidate scan and noninvasiveness examples, not shooting/Floquet-certified UPO stabilization. Finite-time chaos indicators, numerical shadowing references and sampled recurrence/dimension/multifractal estimates do not certify asymptotic dynamics. Scientific/coordinate/sampling limitations and video-on browser setup timing remain explicit in courses-four-five-ko.md and S26-progress.md.",
-    "GitHub default-branch push notice remains26 vulnerabilities(high15/moderate8/low3); packages/lockfile unchanged, no fresh dependency audit, debt remediation or risk acceptance. Historical dependency/CodeQL debt remains for S30. Known-pattern secret scans passed, including1806tracked text files after evidence staging, but exclude history/ignored/binary/external services/arbitrary passwords. S24 package bounds, attachment authenticity and legacy direct offset-Buffer SHA-helper limitations remain unchanged.",
-    "CP0 10f44da,CP1 57c9cc5,CP2 e22da19,CP3 62e9cce,CP4-V 54b900f,CP4-F ca11997,CP4-P 3174684 and CP4-E e2fe009 were individually pushed with exact live remote hashes. S26-verification.json/S26-preservation.json retain source-bound tests, runner configuration, failure history and preservation. Clean-tree preflight26 and plan check passed at e2fe0097dd3135b06a210c5b54e3a3bf61c16415. Completion authority is this separate status commit on origin/codex/redesign. Next valid stage27; rollback remains S25status04c770e and preserved app.html. No full parity/migration, cutover, master merge/force push/tag/release or Landing changes were performed."
+    "S27 publishes all37 new units6.1-6.12/7.1-7.13/8.1-8.12. Exactly8courses/86units are published, with94 source-linked glossary entries,131 unique citation URLs and3 independent recommended paths; broken internal refs0 and feature locks0. Every Focus calls shared native engines; no new governing equations or integrators were implemented.",
+    "Verified implementation3d34cde preserves404/404 protected baseline Git blobs, including native engines, existing physics/analysis adapters, public APIs, app.html, packages/lockfile, courses1-5 and golden fixtures. Repository text equivalence uses Git clean/EOL filters, not raw CRLF identity. Original tests/fixtures451/457 and PNG256/260 are identical; only6publication/negative-fixture paths and4course-home PNGs changed intentionally. New24PNG remain fixed in final none comparisons. Both desktop transport copies match raw SHA256.",
+    "Final full Vitest6239/6239 in370files, contentquality112/112, all86 actual census88/88, explicit golden13/13 and8quality/build commands passed. One original production Chromium/Pixel5 run passed284/284(142each), including172actual unit calculation/Lab/back/reload journeys. Failures/skips/flaky/runner errors0;1worker/retry0/snapshot none. A task-local wrapper disables diagnostic video only; original assertions,30s/5s defaults, existing60/90s limits, trace/failure screenshots and threshold0.2/maxDiff100 remain unchanged.",
+    "All86 units are automated-verified/source-checked; human-reviewed0/86(new0/37). Workflow approvals[7,9,17,24] remain unchanged; no S27/S28 or expert review is fabricated. Model selector was not exposed, observed or changed. Pixel5 is emulation; physical devices, Firefox/WebKit and screen-reader audio were not certified. New primary-source checks are documented in the three course reports; not all56 external URLs were freshly fetched by the final metadata audit.",
+    "Finite-time branches/grids/samples are numerical candidates, not asymptotic, codimension-two or rigorous Wada certification. Independent normal forms, linearized Kramers density, finite-chain impulse depinning/transient transport, N8QKR, observed HAVOK forcing and polynomial Hamiltonian regression retain explicit limitations. ZIP checksums prove bytes rather than external authenticity or human review. Prior4.10 Pyragas scan and S24 attachment bounds/authenticity/direct offset-Buffer SHA-helper limitations remain.",
+    "GitHub default-branch push notice remains26 vulnerabilities(high15/moderate8/low3); dependencies unchanged, no fresh dependency audit, debt remediation or risk acceptance. Final evidence-staged known-pattern secret scan passed1884tracked text files/0findings; history, ignored/binary contents, external services and arbitrary passwords remain outside scope. Security disposition remains for S30.",
+    "CP0f2b69c5,CP1fd091b4,CP202e3443,CP343add2a,CP43d34cde and CP4-E2f4c806 were individually pushed with exact live remote hashes. S27-verification.json/S27-preservation.json record source-bound tests, configuration, failure history and preservation. Clean preflight27 and plan check passed at2f4c806bf8685f8a3d6a0d6c620082c07b568ec7. Completion authority is this separate status commit after origin/codex/redesign hash verification. Next valid stage28. Rollback baseline9cfd984 and legacy app.html are preserved; no S28 migration/parity, cutover, master merge/force push/tag/release or Landing changes were performed."
   ]
 }
