@@ -1,0 +1,4951 @@
+{
+  "schema": "pendulum-s27-preservation/v1",
+  "generatedAtUtc": "2026-11-05T01:51:48.242700+00:00",
+  "baselineCommit": "9cfd9842570cdd3137e3ea866a1266de2585b941",
+  "inspectedHead": "3d34cde8980f7ca0c7f1b38e994eb323dc09d0f8",
+  "branch": "codex/redesign",
+  "repositoryRoot": ".",
+  "scope": {
+    "comparison": "Existing baseline file blobs vs current working files using Git hash-object --stdin-paths with repository clean/eol filters.",
+    "claim": "Git blob equivalence only; no claim of raw CRLF byte identity for repository text files.",
+    "symlinks": "Git blobs compare symlink link text, without hashing referenced target files.",
+    "fileModes": "Content equivalence does not certify executable mode changes; Git name-status changes are reported separately.",
+    "excludedControlFiles": [
+      "documents/redesign/status.json",
+      "documents/redesign/stage-runs/*"
+    ],
+    "execution": "No tests, numerical calculations, fetch, staging, commits or desktop copying were performed by this helper."
+  },
+  "categories": {
+    "authoritative-instructions-and-plans": {
+      "total": 6,
+      "equivalent": 6,
+      "changedPaths": []
+    },
+    "public-package-api-and-build-boundary": {
+      "total": 12,
+      "equivalent": 12,
+      "changedPaths": []
+    },
+    "legacy-entry-and-package-contract": {
+      "total": 3,
+      "equivalent": 3,
+      "changedPaths": []
+    },
+    "published-courses-one-through-five": {
+      "total": 49,
+      "equivalent": 49,
+      "changedPaths": []
+    },
+    "preserved-native-engines": {
+      "total": 207,
+      "equivalent": 207,
+      "changedPaths": []
+    },
+    "preserved-product-analysis-adapters": {
+      "total": 73,
+      "equivalent": 73,
+      "changedPaths": []
+    },
+    "preserved-product-physics-adapters": {
+      "total": 51,
+      "equivalent": 51,
+      "changedPaths": []
+    },
+    "numerical-golden-test-and-fixtures": {
+      "total": 3,
+      "equivalent": 3,
+      "changedPaths": []
+    }
+  },
+  "protected": {
+    "total": 404,
+    "equivalent": 404,
+    "changedPaths": [],
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "baselineGitBlob": "4a8b7d5edc3c7d834144427fe3c5322e55702500",
+        "currentNormalizedGitBlob": "4a8b7d5edc3c7d834144427fe3c5322e55702500",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "CITATION.cff",
+        "baselineGitBlob": "5d763dacc39fe0d2cbd1795c2233ca87ac3863eb",
+        "currentNormalizedGitBlob": "5d763dacc39fe0d2cbd1795c2233ca87ac3863eb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "LICENSE",
+        "baselineGitBlob": "24ca69c7ffac529664a6c5daaee5915f69f987ff",
+        "currentNormalizedGitBlob": "24ca69c7ffac529664a6c5daaee5915f69f987ff",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "app.html",
+        "baselineGitBlob": "965d6af9428cd6f00e5abce963a8641c23943a6e",
+        "currentNormalizedGitBlob": "965d6af9428cd6f00e5abce963a8641c23943a6e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "legacy-entry-and-package-contract"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.1.ts",
+        "baselineGitBlob": "fbd53bf1538e97fcabe40d27a821020fdd8342cd",
+        "currentNormalizedGitBlob": "fbd53bf1538e97fcabe40d27a821020fdd8342cd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.2.ts",
+        "baselineGitBlob": "6839e5a045fbc44226ba4f4456e3246dc09edd91",
+        "currentNormalizedGitBlob": "6839e5a045fbc44226ba4f4456e3246dc09edd91",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.3.ts",
+        "baselineGitBlob": "6bcec152b3077b19f600cd3c6c357d2ac5d3319f",
+        "currentNormalizedGitBlob": "6bcec152b3077b19f600cd3c6c357d2ac5d3319f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.4.ts",
+        "baselineGitBlob": "2fb012f39a1754712bd66fa263a251d0f00f578b",
+        "currentNormalizedGitBlob": "2fb012f39a1754712bd66fa263a251d0f00f578b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.5.ts",
+        "baselineGitBlob": "6326ebf905ca8b22089041c6b6a217be95f0d451",
+        "currentNormalizedGitBlob": "6326ebf905ca8b22089041c6b6a217be95f0d451",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.6.ts",
+        "baselineGitBlob": "e143126fd1f196442ed05137721442dc49bd9751",
+        "currentNormalizedGitBlob": "e143126fd1f196442ed05137721442dc49bd9751",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.7.ts",
+        "baselineGitBlob": "1bc950e1eef45f23daafb06fdd901dd252362a7b",
+        "currentNormalizedGitBlob": "1bc950e1eef45f23daafb06fdd901dd252362a7b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-1/1.8.ts",
+        "baselineGitBlob": "dfff0914e3744e595bb38a529dc93ad6908045e5",
+        "currentNormalizedGitBlob": "dfff0914e3744e595bb38a529dc93ad6908045e5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.1.ts",
+        "baselineGitBlob": "2952da0c2b1e0a7582ed8ff14bcbc1785dcaa0bb",
+        "currentNormalizedGitBlob": "2952da0c2b1e0a7582ed8ff14bcbc1785dcaa0bb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.2.ts",
+        "baselineGitBlob": "363879744f554041d0a752d1a65da3800ff25234",
+        "currentNormalizedGitBlob": "363879744f554041d0a752d1a65da3800ff25234",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.3.ts",
+        "baselineGitBlob": "ffc1517a3d7d6ce5085131cd05ca6dd198c4760a",
+        "currentNormalizedGitBlob": "ffc1517a3d7d6ce5085131cd05ca6dd198c4760a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.4.ts",
+        "baselineGitBlob": "e3ffcf23599fe696fe55f5818930a89f738903fd",
+        "currentNormalizedGitBlob": "e3ffcf23599fe696fe55f5818930a89f738903fd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.5.ts",
+        "baselineGitBlob": "32885a8966c8ed5890ac8546f8deb1d52ab5a536",
+        "currentNormalizedGitBlob": "32885a8966c8ed5890ac8546f8deb1d52ab5a536",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.6.ts",
+        "baselineGitBlob": "818d52cf149f344caa016190daf313eda9e76862",
+        "currentNormalizedGitBlob": "818d52cf149f344caa016190daf313eda9e76862",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.7.ts",
+        "baselineGitBlob": "b79d310d7005b009fa674952db8d1af834941b6e",
+        "currentNormalizedGitBlob": "b79d310d7005b009fa674952db8d1af834941b6e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.8.ts",
+        "baselineGitBlob": "e0b44009b88d7102eec5bb90a299d9b2d127fda9",
+        "currentNormalizedGitBlob": "e0b44009b88d7102eec5bb90a299d9b2d127fda9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-2/2.9.ts",
+        "baselineGitBlob": "74c930ccb4731ac6ae4582ffdc4e1f8ca8bd7d80",
+        "currentNormalizedGitBlob": "74c930ccb4731ac6ae4582ffdc4e1f8ca8bd7d80",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.1.ts",
+        "baselineGitBlob": "61785503ba06442ef8de68ff13ef2ccc41f753fd",
+        "currentNormalizedGitBlob": "61785503ba06442ef8de68ff13ef2ccc41f753fd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.2.ts",
+        "baselineGitBlob": "2823057e068ce8b017f9eacb8f9489d43cbcae41",
+        "currentNormalizedGitBlob": "2823057e068ce8b017f9eacb8f9489d43cbcae41",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.3.ts",
+        "baselineGitBlob": "8821c4b70b03302b466ddd1cfef6beba8a261789",
+        "currentNormalizedGitBlob": "8821c4b70b03302b466ddd1cfef6beba8a261789",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.4.ts",
+        "baselineGitBlob": "e82038d6e267b46215b48de1ffbcd8dafea37c17",
+        "currentNormalizedGitBlob": "e82038d6e267b46215b48de1ffbcd8dafea37c17",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.5.ts",
+        "baselineGitBlob": "eea460914ded7b5b95ea661ac03315a2dbb4a42d",
+        "currentNormalizedGitBlob": "eea460914ded7b5b95ea661ac03315a2dbb4a42d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.6.ts",
+        "baselineGitBlob": "62c342826aa345a119079fe24b28c6c0667dc476",
+        "currentNormalizedGitBlob": "62c342826aa345a119079fe24b28c6c0667dc476",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.7.ts",
+        "baselineGitBlob": "36fc9fa4cbba6b5a652dcdac0cfca1b820a73d9a",
+        "currentNormalizedGitBlob": "36fc9fa4cbba6b5a652dcdac0cfca1b820a73d9a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.8.ts",
+        "baselineGitBlob": "043e83c169fe9a90e0b898ace1f07d6494ac78b0",
+        "currentNormalizedGitBlob": "043e83c169fe9a90e0b898ace1f07d6494ac78b0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-3/3.9.ts",
+        "baselineGitBlob": "25b517fffd1108f7203903d526ebebaf53d8b640",
+        "currentNormalizedGitBlob": "25b517fffd1108f7203903d526ebebaf53d8b640",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.1.ts",
+        "baselineGitBlob": "26574ff588c7de94fd69cb8de0b3881212002a61",
+        "currentNormalizedGitBlob": "26574ff588c7de94fd69cb8de0b3881212002a61",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.10.ts",
+        "baselineGitBlob": "35ceca74b4ef2c93ab2900503286ee8a67c20024",
+        "currentNormalizedGitBlob": "35ceca74b4ef2c93ab2900503286ee8a67c20024",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.2.ts",
+        "baselineGitBlob": "eadbaccf77062318c6aaaaf9ef81a507fad4fd2f",
+        "currentNormalizedGitBlob": "eadbaccf77062318c6aaaaf9ef81a507fad4fd2f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.3.ts",
+        "baselineGitBlob": "aeee0161c1906fb1ee4cd3168f16facc033aef90",
+        "currentNormalizedGitBlob": "aeee0161c1906fb1ee4cd3168f16facc033aef90",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.4.ts",
+        "baselineGitBlob": "a00486c255e11f2a40c7dad81b54b0251e2ea7bf",
+        "currentNormalizedGitBlob": "a00486c255e11f2a40c7dad81b54b0251e2ea7bf",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.5.ts",
+        "baselineGitBlob": "adb7fc857f08a6baf389ee1c81d8e69f1fbb1c91",
+        "currentNormalizedGitBlob": "adb7fc857f08a6baf389ee1c81d8e69f1fbb1c91",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.6.ts",
+        "baselineGitBlob": "87df7b5bde1be88c1d2d5058985be8cd1ebf4211",
+        "currentNormalizedGitBlob": "87df7b5bde1be88c1d2d5058985be8cd1ebf4211",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.7.ts",
+        "baselineGitBlob": "5005b48190a0bcccbbde4e04be2210c8c5916a65",
+        "currentNormalizedGitBlob": "5005b48190a0bcccbbde4e04be2210c8c5916a65",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.8.ts",
+        "baselineGitBlob": "fc0ea5c74aeca84903abf884ebb76b33084da218",
+        "currentNormalizedGitBlob": "fc0ea5c74aeca84903abf884ebb76b33084da218",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-4/4.9.ts",
+        "baselineGitBlob": "fd6263e4b66b62749cac1084e7586c6382933bcf",
+        "currentNormalizedGitBlob": "fd6263e4b66b62749cac1084e7586c6382933bcf",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.1.ts",
+        "baselineGitBlob": "ad3a4126ec45219e952b796425db39e612c9ec0a",
+        "currentNormalizedGitBlob": "ad3a4126ec45219e952b796425db39e612c9ec0a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.10.ts",
+        "baselineGitBlob": "9c0851c38bf24d26f6ebf630788209dfcfa0fe8e",
+        "currentNormalizedGitBlob": "9c0851c38bf24d26f6ebf630788209dfcfa0fe8e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.11.ts",
+        "baselineGitBlob": "675ab4ecee4c069c4749aeb8572f507de3a55ce6",
+        "currentNormalizedGitBlob": "675ab4ecee4c069c4749aeb8572f507de3a55ce6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.12.ts",
+        "baselineGitBlob": "d9926926bef5256d86e9a78033c7a2dd7c8abe38",
+        "currentNormalizedGitBlob": "d9926926bef5256d86e9a78033c7a2dd7c8abe38",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.13.ts",
+        "baselineGitBlob": "08c89384a01660b1628f944342464edbdfc0d16d",
+        "currentNormalizedGitBlob": "08c89384a01660b1628f944342464edbdfc0d16d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.2.ts",
+        "baselineGitBlob": "dc938aa359b183d74b1876a131dd285d16fa0e17",
+        "currentNormalizedGitBlob": "dc938aa359b183d74b1876a131dd285d16fa0e17",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.3.ts",
+        "baselineGitBlob": "9b42605853b6c8be2c8a37fef9743bf9f5295712",
+        "currentNormalizedGitBlob": "9b42605853b6c8be2c8a37fef9743bf9f5295712",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.4.ts",
+        "baselineGitBlob": "a6a83a291e980e1f457f1fd2bcccacbd827bffb9",
+        "currentNormalizedGitBlob": "a6a83a291e980e1f457f1fd2bcccacbd827bffb9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.5.ts",
+        "baselineGitBlob": "0cf2319ae3fe49382986b03ab640e4472f5281de",
+        "currentNormalizedGitBlob": "0cf2319ae3fe49382986b03ab640e4472f5281de",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.6.ts",
+        "baselineGitBlob": "9dbe65a18d3425c2d8cced057286fe4086a0ead7",
+        "currentNormalizedGitBlob": "9dbe65a18d3425c2d8cced057286fe4086a0ead7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.7.ts",
+        "baselineGitBlob": "e187ce7ae0589fc98ed9ceaad4781db5e1c4bb3a",
+        "currentNormalizedGitBlob": "e187ce7ae0589fc98ed9ceaad4781db5e1c4bb3a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.8.ts",
+        "baselineGitBlob": "5e40dd79ebaa9ad0e3c622a816940716dce79442",
+        "currentNormalizedGitBlob": "5e40dd79ebaa9ad0e3c622a816940716dce79442",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "content/learn/course-5/5.9.ts",
+        "baselineGitBlob": "f635cbf5242be66d1434f611915a533c444534c0",
+        "currentNormalizedGitBlob": "f635cbf5242be66d1434f611915a533c444534c0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "published-courses-one-through-five"
+        ]
+      },
+      {
+        "path": "documents/redesign/README.md",
+        "baselineGitBlob": "b984c81466f27b3b0c6dc37aab2a2a3bab0dd0d4",
+        "currentNormalizedGitBlob": "b984c81466f27b3b0c6dc37aab2a2a3bab0dd0d4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "documents/redesign/curriculum-map-ko.md",
+        "baselineGitBlob": "1c6a64a704bf9f39e11a9ac3077af4684b0c998f",
+        "currentNormalizedGitBlob": "1c6a64a704bf9f39e11a9ac3077af4684b0c998f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "documents/redesign/execution-plan-ko.md",
+        "baselineGitBlob": "a9a11eb2d45ed111852c9dbec04562305fcef311",
+        "currentNormalizedGitBlob": "a9a11eb2d45ed111852c9dbec04562305fcef311",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "documents/redesign/master-roadmap-ko.md",
+        "baselineGitBlob": "e887c9ea5a57e7873a4b2e150da4e44bdb2a026c",
+        "currentNormalizedGitBlob": "e887c9ea5a57e7873a4b2e150da4e44bdb2a026c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "documents/redesign/stage-run-protocol-ko.md",
+        "baselineGitBlob": "d83b302f488426f1073d2c88dec09547797c3c39",
+        "currentNormalizedGitBlob": "d83b302f488426f1073d2c88dec09547797c3c39",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "authoritative-instructions-and-plans"
+        ]
+      },
+      {
+        "path": "package-lock.json",
+        "baselineGitBlob": "bda42f4c4cfee91c476a0e97d7cb4426f9815ba9",
+        "currentNormalizedGitBlob": "bda42f4c4cfee91c476a0e97d7cb4426f9815ba9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "legacy-entry-and-package-contract"
+        ]
+      },
+      {
+        "path": "package.json",
+        "baselineGitBlob": "0928337ef545f86634535e4d82b09f0043bb6bc4",
+        "currentNormalizedGitBlob": "0928337ef545f86634535e4d82b09f0043bb6bc4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "legacy-entry-and-package-contract"
+        ]
+      },
+      {
+        "path": "src/chaos/accelerationContract.ts",
+        "baselineGitBlob": "82158c0dd27c67593d13a8875e10f674b15f7687",
+        "currentNormalizedGitBlob": "82158c0dd27c67593d13a8875e10f674b15f7687",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/arclength.ts",
+        "baselineGitBlob": "aef95f650eab849a92eb2951b17a58061e80b715",
+        "currentNormalizedGitBlob": "aef95f650eab849a92eb2951b17a58061e80b715",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/arnoldTongue.ts",
+        "baselineGitBlob": "095c54ece821082548cc813fbec9e55c28da0f91",
+        "currentNormalizedGitBlob": "095c54ece821082548cc813fbec9e55c28da0f91",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/basin.ts",
+        "baselineGitBlob": "55d8367b32dcca908ae5a006f7a4b1996aa3ee99",
+        "currentNormalizedGitBlob": "55d8367b32dcca908ae5a006f7a4b1996aa3ee99",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/bifurcationDetect.ts",
+        "baselineGitBlob": "46df878d1f34572a4f2ec283576e680ec3cfc544",
+        "currentNormalizedGitBlob": "46df878d1f34572a4f2ec283576e680ec3cfc544",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/branchSwitching.ts",
+        "baselineGitBlob": "b2587bd0685a90a3fd5d98a18e10ce2214754680",
+        "currentNormalizedGitBlob": "b2587bd0685a90a3fd5d98a18e10ce2214754680",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/chaosControl.ts",
+        "baselineGitBlob": "f7f618470b1efad1932daa51766e068e04566255",
+        "currentNormalizedGitBlob": "f7f618470b1efad1932daa51766e068e04566255",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/chimera.ts",
+        "baselineGitBlob": "e5ec02f73804a4ce81d59625ca2fde00773184d3",
+        "currentNormalizedGitBlob": "e5ec02f73804a4ce81d59625ca2fde00773184d3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/clv.ts",
+        "baselineGitBlob": "ae29ad5af1fd598081c39fd99f8a4f7ccc3c6b84",
+        "currentNormalizedGitBlob": "ae29ad5af1fd598081c39fd99f8a4f7ccc3c6b84",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/codimTwo.ts",
+        "baselineGitBlob": "0932d4c2c1a90067e7b7825b38f3d9d54719268c",
+        "currentNormalizedGitBlob": "0932d4c2c1a90067e7b7825b38f3d9d54719268c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/continuation.ts",
+        "baselineGitBlob": "e4aed57961136b9530bc75543aebdd8d25c02ca8",
+        "currentNormalizedGitBlob": "e4aed57961136b9530bc75543aebdd8d25c02ca8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/correlationDimension.ts",
+        "baselineGitBlob": "1f3d93856ed6811410692bbcc027ee4e4c2dd4b9",
+        "currentNormalizedGitBlob": "1f3d93856ed6811410692bbcc027ee4e4c2dd4b9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/fixedPointClassify.ts",
+        "baselineGitBlob": "1cb351e9a4e9132236eb19d56f8b5191a714c21e",
+        "currentNormalizedGitBlob": "1cb351e9a4e9132236eb19d56f8b5191a714c21e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/floquet.ts",
+        "baselineGitBlob": "40c355e59ea52dc981a3068de0b501caf030ec62",
+        "currentNormalizedGitBlob": "40c355e59ea52dc981a3068de0b501caf030ec62",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/floquetLinear.ts",
+        "baselineGitBlob": "466d1cd4043667aaf72a43e68d2bfcd68944294f",
+        "currentNormalizedGitBlob": "466d1cd4043667aaf72a43e68d2bfcd68944294f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/ftle.ts",
+        "baselineGitBlob": "c50845c0947c9f3346c785e4624b954b676a17ca",
+        "currentNormalizedGitBlob": "c50845c0947c9f3346c785e4624b954b676a17ca",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/ftleRidge.ts",
+        "baselineGitBlob": "35c0899cc2aa62cec592e2b33a91d32ea1ea6fb3",
+        "currentNormalizedGitBlob": "35c0899cc2aa62cec592e2b33a91d32ea1ea6fb3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/index.ts",
+        "baselineGitBlob": "1e8f8064fee41a0fa2dc24bcd7c57aeee3d98ebc",
+        "currentNormalizedGitBlob": "1e8f8064fee41a0fa2dc24bcd7c57aeee3d98ebc",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/indicators.ts",
+        "baselineGitBlob": "ddb97079c1c6987f74b264074ac390ca1edd4cdb",
+        "currentNormalizedGitBlob": "ddb97079c1c6987f74b264074ac390ca1edd4cdb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/lyapunov.ts",
+        "baselineGitBlob": "d88f63177a3c8adbed3927cfcb9a92d231762dc9",
+        "currentNormalizedGitBlob": "d88f63177a3c8adbed3927cfcb9a92d231762dc9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/mathieuStability.ts",
+        "baselineGitBlob": "192d165393e770789323a21072502b733cb7e96e",
+        "currentNormalizedGitBlob": "192d165393e770789323a21072502b733cb7e96e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/melnikov.ts",
+        "baselineGitBlob": "bc7a05752ff7349d47ff3e7a0ee66a20f605edc6",
+        "currentNormalizedGitBlob": "bc7a05752ff7349d47ff3e7a0ee66a20f605edc6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/multifractal.ts",
+        "baselineGitBlob": "06f9e2bb6e6f093ed0d34a51e55f8870f7601ccf",
+        "currentNormalizedGitBlob": "06f9e2bb6e6f093ed0d34a51e55f8870f7601ccf",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/naff.ts",
+        "baselineGitBlob": "21f5beecf4b239d4a0ab55775e02fc288cddea8d",
+        "currentNormalizedGitBlob": "21f5beecf4b239d4a0ab55775e02fc288cddea8d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/neimarkSacker.ts",
+        "baselineGitBlob": "b1843bbf0f653e8205e7733230bf18dcd6f40de4",
+        "currentNormalizedGitBlob": "b1843bbf0f653e8205e7733230bf18dcd6f40de4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/neimarkSackerBranch.ts",
+        "baselineGitBlob": "de8b1ddc079e5c80ccaf6307dcd70b5570ccaf46",
+        "currentNormalizedGitBlob": "de8b1ddc079e5c80ccaf6307dcd70b5570ccaf46",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/periodicOrbitDatabase.ts",
+        "baselineGitBlob": "7ecd7dbe9186583ec7ed4a852dd9d9774580ed08",
+        "currentNormalizedGitBlob": "7ecd7dbe9186583ec7ed4a852dd9d9774580ed08",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/poincare.ts",
+        "baselineGitBlob": "a93e07b2fc829a139603b4659af1f2e094457f8a",
+        "currentNormalizedGitBlob": "a93e07b2fc829a139603b4659af1f2e094457f8a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/recurrenceNetwork.ts",
+        "baselineGitBlob": "ae9a74f6e4ae56084c97b2bcc855a19543d2ee6d",
+        "currentNormalizedGitBlob": "ae9a74f6e4ae56084c97b2bcc855a19543d2ee6d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/rqa.ts",
+        "baselineGitBlob": "66f25e78615612fa5545a2465bfabba064533ea0",
+        "currentNormalizedGitBlob": "66f25e78615612fa5545a2465bfabba064533ea0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/shadowing.ts",
+        "baselineGitBlob": "fcf6117f94bf8048095c2f0d780630acf28b4215",
+        "currentNormalizedGitBlob": "fcf6117f94bf8048095c2f0d780630acf28b4215",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/spectrumConsistency.ts",
+        "baselineGitBlob": "6dd694e8605c281b2c1a3404a5a951da3480b5d8",
+        "currentNormalizedGitBlob": "6dd694e8605c281b2c1a3404a5a951da3480b5d8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/topologicalEntropy.ts",
+        "baselineGitBlob": "cdaf6da5d66d4b2fb0bf291bed70e9cb507f5d15",
+        "currentNormalizedGitBlob": "cdaf6da5d66d4b2fb0bf291bed70e9cb507f5d15",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/torusAnalysis.ts",
+        "baselineGitBlob": "21179a53efb3d0bb40d5ec7877a72ed88b894312",
+        "currentNormalizedGitBlob": "21179a53efb3d0bb40d5ec7877a72ed88b894312",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/transferOperator.ts",
+        "baselineGitBlob": "278192c42b9752a4f4e88888b0091023209474fe",
+        "currentNormalizedGitBlob": "278192c42b9752a4f4e88888b0091023209474fe",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/variational.ts",
+        "baselineGitBlob": "1aea2d6cebcd244d4ca62f03528eea2ac67111fc",
+        "currentNormalizedGitBlob": "1aea2d6cebcd244d4ca62f03528eea2ac67111fc",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/wadaConvergence.ts",
+        "baselineGitBlob": "852043dab729edead093a2191ea120dfe55206f4",
+        "currentNormalizedGitBlob": "852043dab729edead093a2191ea120dfe55206f4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/chaos/zeroOneTest.ts",
+        "baselineGitBlob": "c453473ea79b67941c28f1d654cb6798064b8fc2",
+        "currentNormalizedGitBlob": "c453473ea79b67941c28f1d654cb6798064b8fc2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/lib.ts",
+        "baselineGitBlob": "4f076fcd50f1ec92ff72be9daf958168789da207",
+        "currentNormalizedGitBlob": "4f076fcd50f1ec92ff72be9daf958168789da207",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/analysis.ts",
+        "baselineGitBlob": "6b3fdc586c493834593eee6a28b165a8ee603b22",
+        "currentNormalizedGitBlob": "6b3fdc586c493834593eee6a28b165a8ee603b22",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/browser.ts",
+        "baselineGitBlob": "8b2aac4a716a9b97e03691417476306b3b6ef0c3",
+        "currentNormalizedGitBlob": "8b2aac4a716a9b97e03691417476306b3b6ef0c3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/core.ts",
+        "baselineGitBlob": "2be8949c69db67429dda2f392d8fba6106c41209",
+        "currentNormalizedGitBlob": "2be8949c69db67429dda2f392d8fba6106c41209",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/experimental.ts",
+        "baselineGitBlob": "db5a140a3c6f019a63731f341438da109a41fb3d",
+        "currentNormalizedGitBlob": "db5a140a3c6f019a63731f341438da109a41fb3d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/node.ts",
+        "baselineGitBlob": "fea87ec50e5ec5d35f3ccae06c58c0f9ef3ae7ee",
+        "currentNormalizedGitBlob": "fea87ec50e5ec5d35f3ccae06c58c0f9ef3ae7ee",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/research.ts",
+        "baselineGitBlob": "f7b3e9eefe0d0f95d736db92692d873d04bb5dd7",
+        "currentNormalizedGitBlob": "f7b3e9eefe0d0f95d736db92692d873d04bb5dd7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/lib/worker.ts",
+        "baselineGitBlob": "f05197d379854b2ae89b61b9de60d9d06c44c73f",
+        "currentNormalizedGitBlob": "f05197d379854b2ae89b61b9de60d9d06c44c73f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "src/physics/adaptive.ts",
+        "baselineGitBlob": "21490fdcaf068b832957237678e4403ff9c43924",
+        "currentNormalizedGitBlob": "21490fdcaf068b832957237678e4403ff9c43924",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/adaptiveController.ts",
+        "baselineGitBlob": "962d6e2ef3d776d770876a55886242ab6b8bf51b",
+        "currentNormalizedGitBlob": "962d6e2ef3d776d770876a55886242ab6b8bf51b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/autodiff.ts",
+        "baselineGitBlob": "ef3304550d7c7aaed76baf5d2ed7673ca91300a9",
+        "currentNormalizedGitBlob": "ef3304550d7c7aaed76baf5d2ed7673ca91300a9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/canonical.ts",
+        "baselineGitBlob": "7f66c9e419dfaab18548f778ed9796eb7a4e66e5",
+        "currentNormalizedGitBlob": "7f66c9e419dfaab18548f778ed9796eb7a4e66e5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/compoundDouble.ts",
+        "baselineGitBlob": "4d724da465bee5f49677a58d1a715448c2006e36",
+        "currentNormalizedGitBlob": "4d724da465bee5f49677a58d1a715448c2006e36",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/conservedQuantities.ts",
+        "baselineGitBlob": "e121dce57660d59166cf0a6ad308b6fd03b6f6e1",
+        "currentNormalizedGitBlob": "e121dce57660d59166cf0a6ad308b6fd03b6f6e1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/constants.ts",
+        "baselineGitBlob": "f21de97124d985f5fda2295cf657a0ac0673ecf2",
+        "currentNormalizedGitBlob": "f21de97124d985f5fda2295cf657a0ac0673ecf2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/double.ts",
+        "baselineGitBlob": "6f46e058e812eef6370ff28aa0198c146c2f49b4",
+        "currentNormalizedGitBlob": "6f46e058e812eef6370ff28aa0198c146c2f49b4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/doubleString.ts",
+        "baselineGitBlob": "5daf3287273de00558c1e33dff31f20e0a653283",
+        "currentNormalizedGitBlob": "5daf3287273de00558c1e33dff31f20e0a653283",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/driven.ts",
+        "baselineGitBlob": "bad6be381445e2c9b823f24ac9c8e8a12ffae81f",
+        "currentNormalizedGitBlob": "bad6be381445e2c9b823f24ac9c8e8a12ffae81f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/duffing.ts",
+        "baselineGitBlob": "112e3656907211713b8b6603979a334ac84d9223",
+        "currentNormalizedGitBlob": "112e3656907211713b8b6603979a334ac84d9223",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/embeddedIntegrators.ts",
+        "baselineGitBlob": "cd7172ccbc363773e3811118847a03d49760bbd1",
+        "currentNormalizedGitBlob": "cd7172ccbc363773e3811118847a03d49760bbd1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/energy.ts",
+        "baselineGitBlob": "a56711b8cd0dfd5fe7d0a47cdec1d1776c959125",
+        "currentNormalizedGitBlob": "a56711b8cd0dfd5fe7d0a47cdec1d1776c959125",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/errors.ts",
+        "baselineGitBlob": "606b94beebd739c40f29fc67d7a3b60c015f840a",
+        "currentNormalizedGitBlob": "606b94beebd739c40f29fc67d7a3b60c015f840a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/eventLocator.ts",
+        "baselineGitBlob": "cc1284720973594e1d8a5747bd7d506c9284bf9e",
+        "currentNormalizedGitBlob": "cc1284720973594e1d8a5747bd7d506c9284bf9e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/events.ts",
+        "baselineGitBlob": "858905ef0cc054f439115ee2ac7af97cfe957c04",
+        "currentNormalizedGitBlob": "858905ef0cc054f439115ee2ac7af97cfe957c04",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-factory.ts",
+        "baselineGitBlob": "11b9d788950379aab855c11296a7d97f72ae7da5",
+        "currentNormalizedGitBlob": "11b9d788950379aab855c11296a7d97f72ae7da5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-lyapunov.ts",
+        "baselineGitBlob": "f25af51665da27192d594bbe1e75103c8bea9c3f",
+        "currentNormalizedGitBlob": "f25af51665da27192d594bbe1e75103c8bea9c3f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-research-presets.ts",
+        "baselineGitBlob": "d74aca7543ab625b82d3b21e4613d548be78f850",
+        "currentNormalizedGitBlob": "d74aca7543ab625b82d3b21e4613d548be78f850",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-research.ts",
+        "baselineGitBlob": "756f00433975b58c61acae15af28cbe011e680a4",
+        "currentNormalizedGitBlob": "756f00433975b58c61acae15af28cbe011e680a4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-runners.ts",
+        "baselineGitBlob": "eee5ea4b548600e147a2b2cc2bbafce12069a52f",
+        "currentNormalizedGitBlob": "eee5ea4b548600e147a2b2cc2bbafce12069a52f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels-types.ts",
+        "baselineGitBlob": "fc45e80743a87d8bd8eedefd73b05537a19bc294",
+        "currentNormalizedGitBlob": "fc45e80743a87d8bd8eedefd73b05537a19bc294",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/expandedModels.ts",
+        "baselineGitBlob": "87b4e6082f14469c01a54bd89ef90a0825d7754e",
+        "currentNormalizedGitBlob": "87b4e6082f14469c01a54bd89ef90a0825d7754e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/fft.ts",
+        "baselineGitBlob": "89eb08c7736024fdaa2f097828d7f41ddcb8c212",
+        "currentNormalizedGitBlob": "89eb08c7736024fdaa2f097828d7f41ddcb8c212",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/fput.ts",
+        "baselineGitBlob": "6a121537f1d7b3031931bda7dc0e878c188fedc5",
+        "currentNormalizedGitBlob": "6a121537f1d7b3031931bda7dc0e878c188fedc5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/friction.ts",
+        "baselineGitBlob": "74ddfd353a6ad13d73ebe042b74dc947d22b36a8",
+        "currentNormalizedGitBlob": "74ddfd353a6ad13d73ebe042b74dc947d22b36a8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/implicitDiagnostics.ts",
+        "baselineGitBlob": "0c394ec87b44c6fb85098485a6118522fc63d10a",
+        "currentNormalizedGitBlob": "0c394ec87b44c6fb85098485a6118522fc63d10a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/index.ts",
+        "baselineGitBlob": "db42872dc987e1ae6d18592869e1ea98a1627f47",
+        "currentNormalizedGitBlob": "db42872dc987e1ae6d18592869e1ea98a1627f47",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/integratorRegistry.ts",
+        "baselineGitBlob": "8a72fa3493205aba952391c732998da9b38f5216",
+        "currentNormalizedGitBlob": "8a72fa3493205aba952391c732998da9b38f5216",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/integratorScratch.ts",
+        "baselineGitBlob": "369b3ead533f8b882e73c71005c296df129fd353",
+        "currentNormalizedGitBlob": "369b3ead533f8b882e73c71005c296df129fd353",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/integrators.ts",
+        "baselineGitBlob": "ab08453803370307f19228cb9d4189745dec40a8",
+        "currentNormalizedGitBlob": "ab08453803370307f19228cb9d4189745dec40a8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/jacobians.ts",
+        "baselineGitBlob": "b59f0df7ab3cd78c216924a76602ccab61bf44e1",
+        "currentNormalizedGitBlob": "b59f0df7ab3cd78c216924a76602ccab61bf44e1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/kapitza.ts",
+        "baselineGitBlob": "07f9d7d975f5b0343f581ef31f2298b6f9ff825d",
+        "currentNormalizedGitBlob": "07f9d7d975f5b0343f581ef31f2298b6f9ff825d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/kramersEscape.ts",
+        "baselineGitBlob": "b7e791ffc74771d9d1b5b1311c741ff90a39abf9",
+        "currentNormalizedGitBlob": "b7e791ffc74771d9d1b5b1311c741ff90a39abf9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/kuramoto.ts",
+        "baselineGitBlob": "a57a2efc57588ef5df9167f6684c6618b55768c5",
+        "currentNormalizedGitBlob": "a57a2efc57588ef5df9167f6684c6618b55768c5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/latticeDispersion.ts",
+        "baselineGitBlob": "1739988f918b92f363da6806bd05655ca092ea8c",
+        "currentNormalizedGitBlob": "1739988f918b92f363da6806bd05655ca092ea8c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/linearSolve.ts",
+        "baselineGitBlob": "6d0585acc8a99e1580dbd520cb97677cfbf13550",
+        "currentNormalizedGitBlob": "6d0585acc8a99e1580dbd520cb97677cfbf13550",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/magneticPendulum.ts",
+        "baselineGitBlob": "792cd2e1a08da8152e73617061709353a7946cd6",
+        "currentNormalizedGitBlob": "792cd2e1a08da8152e73617061709353a7946cd6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/nPendulum.ts",
+        "baselineGitBlob": "4221acd6ce4bab45ed1dae77cf84d2b63c3dea76",
+        "currentNormalizedGitBlob": "4221acd6ce4bab45ed1dae77cf84d2b63c3dea76",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/noiseCommutativity.ts",
+        "baselineGitBlob": "16f89fb95c4b3c5f0863dba8d5b42bbbda51f6e4",
+        "currentNormalizedGitBlob": "16f89fb95c4b3c5f0863dba8d5b42bbbda51f6e4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/pendulumNetwork.ts",
+        "baselineGitBlob": "5f959809962f918a38f0076fddbc5cbc674f9efb",
+        "currentNormalizedGitBlob": "5f959809962f918a38f0076fddbc5cbc674f9efb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/pyragasDde.ts",
+        "baselineGitBlob": "3acc806f0dd42b23e1d911c2dc7d4e16e5c16291",
+        "currentNormalizedGitBlob": "3acc806f0dd42b23e1d911c2dc7d4e16e5c16291",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/quantumKickedRotor.ts",
+        "baselineGitBlob": "beddae099a204cbb8dac910eef27e07e3a556c0f",
+        "currentNormalizedGitBlob": "beddae099a204cbb8dac910eef27e07e3a556c0f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/rope.ts",
+        "baselineGitBlob": "df7eecd170a8e27e173f2af5ac19aaf8f21ee3ff",
+        "currentNormalizedGitBlob": "df7eecd170a8e27e173f2af5ac19aaf8f21ee3ff",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sineGordon.ts",
+        "baselineGitBlob": "73123c858b9b9b2b53cd7cae2dc2dc8ff538b52f",
+        "currentNormalizedGitBlob": "73123c858b9b9b2b53cd7cae2dc2dc8ff538b52f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/spectrumConsistency.ts",
+        "baselineGitBlob": "7e20bda1c79a92a890dbf21105c5817d7d9c4366",
+        "currentNormalizedGitBlob": "7e20bda1c79a92a890dbf21105c5817d7d9c4366",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/spherical.ts",
+        "baselineGitBlob": "7e737f5bfe92c67a275d92c47edaacaa8502140f",
+        "currentNormalizedGitBlob": "7e737f5bfe92c67a275d92c47edaacaa8502140f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sphericalAutoChart.ts",
+        "baselineGitBlob": "735022fa2b6a372ce753ed185b9d5ed49a4154c9",
+        "currentNormalizedGitBlob": "735022fa2b6a372ce753ed185b9d5ed49a4154c9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sphericalChain.ts",
+        "baselineGitBlob": "d2e59570dac92f2c5b6d9e691592196e9fed4f21",
+        "currentNormalizedGitBlob": "d2e59570dac92f2c5b6d9e691592196e9fed4f21",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sphericalChainValidation.ts",
+        "baselineGitBlob": "8c0ab5072dd8fe1835635eb54acd94396c3e0bae",
+        "currentNormalizedGitBlob": "8c0ab5072dd8fe1835635eb54acd94396c3e0bae",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sphericalEmbedded.ts",
+        "baselineGitBlob": "52074a3b389616e49aa0520e60cba4449f45fab5",
+        "currentNormalizedGitBlob": "52074a3b389616e49aa0520e60cba4449f45fab5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/sphericalEmbeddedChain.ts",
+        "baselineGitBlob": "7e365c4359485a95111497d4f6e015e1ebfdb678",
+        "currentNormalizedGitBlob": "7e365c4359485a95111497d4f6e015e1ebfdb678",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/spring.ts",
+        "baselineGitBlob": "85d973320b203770e25fc50f4931840310c81a03",
+        "currentNormalizedGitBlob": "85d973320b203770e25fc50f4931840310c81a03",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/standardMap.ts",
+        "baselineGitBlob": "52788e43e30d71921ba041cd261d5acf8b267406",
+        "currentNormalizedGitBlob": "52788e43e30d71921ba041cd261d5acf8b267406",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stiff.ts",
+        "baselineGitBlob": "08ac9e78969d69a5deffff9380208ebc7d40d310",
+        "currentNormalizedGitBlob": "08ac9e78969d69a5deffff9380208ebc7d40d310",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochastic.ts",
+        "baselineGitBlob": "e63ba89c58c01363faf9b8e875cfd4538e28f187",
+        "currentNormalizedGitBlob": "e63ba89c58c01363faf9b8e875cfd4538e28f187",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticAdditive.ts",
+        "baselineGitBlob": "50a346e546b679d95e97478869702683606959f0",
+        "currentNormalizedGitBlob": "50a346e546b679d95e97478869702683606959f0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticMatrixNoise.ts",
+        "baselineGitBlob": "275fb0f35742ba8de63a132c458e357b1746d9d6",
+        "currentNormalizedGitBlob": "275fb0f35742ba8de63a132c458e357b1746d9d6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticMetadata.ts",
+        "baselineGitBlob": "e99bf6991c10939bac01bba4d3fedba2108eb207",
+        "currentNormalizedGitBlob": "e99bf6991c10939bac01bba4d3fedba2108eb207",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticMultiplicative.ts",
+        "baselineGitBlob": "c6a34b78f0857037c9e7f57c016b230e727c0f28",
+        "currentNormalizedGitBlob": "c6a34b78f0857037c9e7f57c016b230e727c0f28",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticResonance.ts",
+        "baselineGitBlob": "b61c9532585906405bee2f327fc2b9e1b660ea03",
+        "currentNormalizedGitBlob": "b61c9532585906405bee2f327fc2b9e1b660ea03",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticStepperShared.ts",
+        "baselineGitBlob": "b09abe57d1e49dcc59a0ff21a8cf9e1d97a649b5",
+        "currentNormalizedGitBlob": "b09abe57d1e49dcc59a0ff21a8cf9e1d97a649b5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/stochasticSteppers.ts",
+        "baselineGitBlob": "6775cb30925000a1091d09aa51b86c91582f760c",
+        "currentNormalizedGitBlob": "6775cb30925000a1091d09aa51b86c91582f760c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/systemSpec.ts",
+        "baselineGitBlob": "233d133e616a18c9290bcf30ce2dc7aaa35d09f9",
+        "currentNormalizedGitBlob": "233d133e616a18c9290bcf30ce2dc7aaa35d09f9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/triple.ts",
+        "baselineGitBlob": "275d7a6f845d8dc32adf91e54931a98dc5bb1f2c",
+        "currentNormalizedGitBlob": "275d7a6f845d8dc32adf91e54931a98dc5bb1f2c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/types.ts",
+        "baselineGitBlob": "1b5997cc65a86857327e83467720c93ff11df6aa",
+        "currentNormalizedGitBlob": "1b5997cc65a86857327e83467720c93ff11df6aa",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/vanDerPol.ts",
+        "baselineGitBlob": "a0b892c2fa9c46fb0658dbcb9d9db732dbcc2318",
+        "currentNormalizedGitBlob": "a0b892c2fa9c46fb0658dbcb9d9db732dbcc2318",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/physics/variational.ts",
+        "baselineGitBlob": "32bda2d62e0e8e7d6d6c9befa534708023e3e1f1",
+        "currentNormalizedGitBlob": "32bda2d62e0e8e7d6d6c9befa534708023e3e1f1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/advanced.worker.ts",
+        "baselineGitBlob": "c0a11dc4b2e34a8523d3c1b84e3365bbbaf73500",
+        "currentNormalizedGitBlob": "c0a11dc4b2e34a8523d3c1b84e3365bbbaf73500",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/artifact-detail-validation.ts",
+        "baselineGitBlob": "027d5f0ad08bb20954e1abe8b59e14a8ee50c128",
+        "currentNormalizedGitBlob": "027d5f0ad08bb20954e1abe8b59e14a8ee50c128",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/artifact-validation.ts",
+        "baselineGitBlob": "7d2239b7b2cbd8b250f185704f5ecf19dafc0916",
+        "currentNormalizedGitBlob": "7d2239b7b2cbd8b250f185704f5ecf19dafc0916",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/artifact.ts",
+        "baselineGitBlob": "53df32121ee69c40fe7207c9ba01b3a02af6cb7f",
+        "currentNormalizedGitBlob": "53df32121ee69c40fe7207c9ba01b3a02af6cb7f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/client.ts",
+        "baselineGitBlob": "eb53342739b61fb291f8370428d29ac29002c88c",
+        "currentNormalizedGitBlob": "eb53342739b61fb291f8370428d29ac29002c88c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/contracts.ts",
+        "baselineGitBlob": "c10a3386ebf2024503390f2e9006fd2638a2e4e5",
+        "currentNormalizedGitBlob": "c10a3386ebf2024503390f2e9006fd2638a2e4e5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/execute.ts",
+        "baselineGitBlob": "9ab8e86f3e7c62b5c43639993d02aea713acd96b",
+        "currentNormalizedGitBlob": "9ab8e86f3e7c62b5c43639993d02aea713acd96b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/native-flow.ts",
+        "baselineGitBlob": "0833de1d78c115f5a2c99c0bededce6112c2984a",
+        "currentNormalizedGitBlob": "0833de1d78c115f5a2c99c0bededce6112c2984a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/native-grid.ts",
+        "baselineGitBlob": "27fe6830846393cd267f63eb47d87b50b566c922",
+        "currentNormalizedGitBlob": "27fe6830846393cd267f63eb47d87b50b566c922",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/native-map.ts",
+        "baselineGitBlob": "ce64f0a78dd01040daca8b93fa0aa95f01dc5e95",
+        "currentNormalizedGitBlob": "ce64f0a78dd01040daca8b93fa0aa95f01dc5e95",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/native-series.ts",
+        "baselineGitBlob": "45ce4615e819ab6341997f72e761d0db433d9ff1",
+        "currentNormalizedGitBlob": "45ce4615e819ab6341997f72e761d0db433d9ff1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/result.ts",
+        "baselineGitBlob": "0027cc06c9efd776e4c59788689f54e2f96ddae6",
+        "currentNormalizedGitBlob": "0027cc06c9efd776e4c59788689f54e2f96ddae6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/settings.ts",
+        "baselineGitBlob": "bbfb39ec19f57d7d92145a37815d7bfbafa77df9",
+        "currentNormalizedGitBlob": "bbfb39ec19f57d7d92145a37815d7bfbafa77df9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/advanced/validation.ts",
+        "baselineGitBlob": "68546cf23af65951121689cc6820a55c08870412",
+        "currentNormalizedGitBlob": "68546cf23af65951121689cc6820a55c08870412",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/client.ts",
+        "baselineGitBlob": "c486a598e176c32eda75a644da5236cd8ca3a3a5",
+        "currentNormalizedGitBlob": "c486a598e176c32eda75a644da5236cd8ca3a3a5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/artifact-validation.ts",
+        "baselineGitBlob": "8489cf765f2933a221d1ebc92a009b31d115b274",
+        "currentNormalizedGitBlob": "8489cf765f2933a221d1ebc92a009b31d115b274",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/artifact.ts",
+        "baselineGitBlob": "300b90136642911ba110cf0bf28ade3283e9e656",
+        "currentNormalizedGitBlob": "300b90136642911ba110cf0bf28ade3283e9e656",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/client.ts",
+        "baselineGitBlob": "4e381a66b5e602d3b4f22e9a69730c3bd286f909",
+        "currentNormalizedGitBlob": "4e381a66b5e602d3b4f22e9a69730c3bd286f909",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/contracts.ts",
+        "baselineGitBlob": "370f6aadd1853d50649abdec492eed4c28bdfb71",
+        "currentNormalizedGitBlob": "370f6aadd1853d50649abdec492eed4c28bdfb71",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/core.worker.ts",
+        "baselineGitBlob": "8756982328e30c4efbddd92f40460eed4a96584e",
+        "currentNormalizedGitBlob": "8756982328e30c4efbddd92f40460eed4a96584e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/execute.ts",
+        "baselineGitBlob": "b51f119b7e70f7dda9343a49f16d25302967af81",
+        "currentNormalizedGitBlob": "b51f119b7e70f7dda9343a49f16d25302967af81",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/flow.ts",
+        "baselineGitBlob": "1b30238b51f0d3d3b2cd5db345005a771dff2668",
+        "currentNormalizedGitBlob": "1b30238b51f0d3d3b2cd5db345005a771dff2668",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/result.ts",
+        "baselineGitBlob": "4f42288c213c7b2e64ce3effc94794eb50515db2",
+        "currentNormalizedGitBlob": "4f42288c213c7b2e64ce3effc94794eb50515db2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/settings.ts",
+        "baselineGitBlob": "86af7af0d706d7b69777eacf300785f2ec7746d7",
+        "currentNormalizedGitBlob": "86af7af0d706d7b69777eacf300785f2ec7746d7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/signal.ts",
+        "baselineGitBlob": "87426fe776c80baedff11309c130ef04312b584d",
+        "currentNormalizedGitBlob": "87426fe776c80baedff11309c130ef04312b584d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/signature.ts",
+        "baselineGitBlob": "4cb5c30aaf763bef4ec48210614634f5c1ae8cf6",
+        "currentNormalizedGitBlob": "4cb5c30aaf763bef4ec48210614634f5c1ae8cf6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/source-config.ts",
+        "baselineGitBlob": "a46bc3af963f0ebe7344586288f9839bbffeafa3",
+        "currentNormalizedGitBlob": "a46bc3af963f0ebe7344586288f9839bbffeafa3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/source-flow.ts",
+        "baselineGitBlob": "46e65c76c2467bf3dfc41c994073f10d44ab3d71",
+        "currentNormalizedGitBlob": "46e65c76c2467bf3dfc41c994073f10d44ab3d71",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/source.ts",
+        "baselineGitBlob": "5640dde6ed58d60fa07070efa11ade482764dade",
+        "currentNormalizedGitBlob": "5640dde6ed58d60fa07070efa11ade482764dade",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/core/validation.ts",
+        "baselineGitBlob": "3e3f2eace4b68d7616d1ea78345fc71c32f09272",
+        "currentNormalizedGitBlob": "3e3f2eace4b68d7616d1ea78345fc71c32f09272",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/artifact.ts",
+        "baselineGitBlob": "8f095fe8f4cb0e2506cd8abbf883b1ebdb250637",
+        "currentNormalizedGitBlob": "8f095fe8f4cb0e2506cd8abbf883b1ebdb250637",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/client.ts",
+        "baselineGitBlob": "028de41fa571863ea14dfca04d4957e217c6ea65",
+        "currentNormalizedGitBlob": "028de41fa571863ea14dfca04d4957e217c6ea65",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/contracts.ts",
+        "baselineGitBlob": "b524e0b4c711bf3802bea6b032fd51a1f5443255",
+        "currentNormalizedGitBlob": "b524e0b4c711bf3802bea6b032fd51a1f5443255",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/data-driven.worker.ts",
+        "baselineGitBlob": "d1cc4e464706177d589b81ea32439517124b3d5c",
+        "currentNormalizedGitBlob": "d1cc4e464706177d589b81ea32439517124b3d5c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/eigen-contracts.ts",
+        "baselineGitBlob": "d25ddf902cfd9449429d750fe536aa994df24424",
+        "currentNormalizedGitBlob": "d25ddf902cfd9449429d750fe536aa994df24424",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/eigen-validation.ts",
+        "baselineGitBlob": "b0e3ee5c90d7f9856ab13eea27dba0f9ce902ee3",
+        "currentNormalizedGitBlob": "b0e3ee5c90d7f9856ab13eea27dba0f9ce902ee3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/eigen.ts",
+        "baselineGitBlob": "825875a262c2ebdd0c591686330e4da97cf1159b",
+        "currentNormalizedGitBlob": "825875a262c2ebdd0c591686330e4da97cf1159b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/execute.ts",
+        "baselineGitBlob": "0f9c74fc0b795bb2f9d6c3a69f2b6c0d10e5816e",
+        "currentNormalizedGitBlob": "0f9c74fc0b795bb2f9d6c3a69f2b6c0d10e5816e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-contracts.ts",
+        "baselineGitBlob": "07c0b64caa650b8e058de057e7b0db4de26b231f",
+        "currentNormalizedGitBlob": "07c0b64caa650b8e058de057e7b0db4de26b231f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-diagnostics.ts",
+        "baselineGitBlob": "1638fd9939480abb81c98f0da9b8aa997db8fd79",
+        "currentNormalizedGitBlob": "1638fd9939480abb81c98f0da9b8aa997db8fd79",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-havok.ts",
+        "baselineGitBlob": "7b23d91d55c9a2c15bff8875286b80ba642a519b",
+        "currentNormalizedGitBlob": "7b23d91d55c9a2c15bff8875286b80ba642a519b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-math.ts",
+        "baselineGitBlob": "142c9e45e51f9ff251d5e8e1ca3995d2088c218f",
+        "currentNormalizedGitBlob": "142c9e45e51f9ff251d5e8e1ca3995d2088c218f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-model.ts",
+        "baselineGitBlob": "e27f4e37566792edadde8335e6af9ca2dae5b0f5",
+        "currentNormalizedGitBlob": "e27f4e37566792edadde8335e6af9ca2dae5b0f5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning-validation.ts",
+        "baselineGitBlob": "d472ca6a16246db6a3d26215ff4068559c35e54a",
+        "currentNormalizedGitBlob": "d472ca6a16246db6a3d26215ff4068559c35e54a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/learning.ts",
+        "baselineGitBlob": "2b8f21c5b8ac0721b130e4aa127e0713e3fec073",
+        "currentNormalizedGitBlob": "2b8f21c5b8ac0721b130e4aa127e0713e3fec073",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/safe.ts",
+        "baselineGitBlob": "f57415aab0d34c379249b7fcac84a382994ef230",
+        "currentNormalizedGitBlob": "f57415aab0d34c379249b7fcac84a382994ef230",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/data-driven/source.ts",
+        "baselineGitBlob": "eb51d3865f9cb96210ae11adf6b543594a6cda52",
+        "currentNormalizedGitBlob": "eb51d3865f9cb96210ae11adf6b543594a6cda52",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/artifact.ts",
+        "baselineGitBlob": "3d33b7f11a0ed9aa651c1ac5fff1ff8b7aad48dc",
+        "currentNormalizedGitBlob": "3d33b7f11a0ed9aa651c1ac5fff1ff8b7aad48dc",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/client.ts",
+        "baselineGitBlob": "8e1df44c9b7b7e5936f3efe5412db1878a2517cd",
+        "currentNormalizedGitBlob": "8e1df44c9b7b7e5936f3efe5412db1878a2517cd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/contracts.ts",
+        "baselineGitBlob": "76f93030a5387e4fc27e0fd6ee7a1ea183b885cb",
+        "currentNormalizedGitBlob": "76f93030a5387e4fc27e0fd6ee7a1ea183b885cb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/data.ts",
+        "baselineGitBlob": "9aeb50b75739f9aa5d366a1beba1fcc79f5d20f1",
+        "currentNormalizedGitBlob": "9aeb50b75739f9aa5d366a1beba1fcc79f5d20f1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/estimate.ts",
+        "baselineGitBlob": "163a35b1444e8d5c59e8da32f94e9ac40ab5d066",
+        "currentNormalizedGitBlob": "163a35b1444e8d5c59e8da32f94e9ac40ab5d066",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/execute.ts",
+        "baselineGitBlob": "e93b5bf2798bde74403a103075a669c441ce289e",
+        "currentNormalizedGitBlob": "e93b5bf2798bde74403a103075a669c441ce289e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/inverse.worker.ts",
+        "baselineGitBlob": "9e5b7e947f3e21ae7c2c5b46ff873ae3eefc7cd8",
+        "currentNormalizedGitBlob": "9e5b7e947f3e21ae7c2c5b46ff873ae3eefc7cd8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/settings.ts",
+        "baselineGitBlob": "98dda0d795eabdf07c85e8e38c2b6a915f9e1861",
+        "currentNormalizedGitBlob": "98dda0d795eabdf07c85e8e38c2b6a915f9e1861",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/uq.ts",
+        "baselineGitBlob": "febfbf919ae01c6ffc8290919558de0808021d51",
+        "currentNormalizedGitBlob": "febfbf919ae01c6ffc8290919558de0808021d51",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/inverse/validation.ts",
+        "baselineGitBlob": "745c573c78b4fe8503a14caa7591a01bf7026d3e",
+        "currentNormalizedGitBlob": "745c573c78b4fe8503a14caa7591a01bf7026d3e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/planar.ts",
+        "baselineGitBlob": "10f4404a66fcef9e80cca98f06c79f31638adb9c",
+        "currentNormalizedGitBlob": "10f4404a66fcef9e80cca98f06c79f31638adb9c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/planar.worker.ts",
+        "baselineGitBlob": "e1d6026d237c9d496287ced23435ada289f74898",
+        "currentNormalizedGitBlob": "e1d6026d237c9d496287ced23435ada289f74898",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/settings.ts",
+        "baselineGitBlob": "5b7e0bcedf9329a4f4a176ca5a8edba6c3551e8c",
+        "currentNormalizedGitBlob": "5b7e0bcedf9329a4f4a176ca5a8edba6c3551e8c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/artifact-validation.ts",
+        "baselineGitBlob": "79d2bf4dfc9d54e2332d89cdf8ec32e135ff1b9a",
+        "currentNormalizedGitBlob": "79d2bf4dfc9d54e2332d89cdf8ec32e135ff1b9a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/artifact.ts",
+        "baselineGitBlob": "8aa824a180b9c835c5881984a8427d602127766a",
+        "currentNormalizedGitBlob": "8aa824a180b9c835c5881984a8427d602127766a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/client.ts",
+        "baselineGitBlob": "f4662e41737c782f68faafd672cc078858214dd0",
+        "currentNormalizedGitBlob": "f4662e41737c782f68faafd672cc078858214dd0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/contracts.ts",
+        "baselineGitBlob": "87fe9b95b984e3eae4e59f4211f84f5515074fdc",
+        "currentNormalizedGitBlob": "87fe9b95b984e3eae4e59f4211f84f5515074fdc",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/execute.ts",
+        "baselineGitBlob": "4d234c821454d622cdb003a8214e25cd4853b93e",
+        "currentNormalizedGitBlob": "4d234c821454d622cdb003a8214e25cd4853b93e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/native-benchmarks.ts",
+        "baselineGitBlob": "9764d831f40138e4bb86b886eadf4bf41ac6ad12",
+        "currentNormalizedGitBlob": "9764d831f40138e4bb86b886eadf4bf41ac6ad12",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/native-common.ts",
+        "baselineGitBlob": "ea5010908757c4fb3ecab2f0431e61a4692c40b3",
+        "currentNormalizedGitBlob": "ea5010908757c4fb3ecab2f0431e61a4692c40b3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/native-current.ts",
+        "baselineGitBlob": "225f98e2295129e12c5876e199706bff3d144a93",
+        "currentNormalizedGitBlob": "225f98e2295129e12c5876e199706bff3d144a93",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/result.ts",
+        "baselineGitBlob": "195be656be1fa27b051c507dae5549d241bc82ff",
+        "currentNormalizedGitBlob": "195be656be1fa27b051c507dae5549d241bc82ff",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/settings.ts",
+        "baselineGitBlob": "d76334b372200b2bbcab560d2fcc27365cab2e03",
+        "currentNormalizedGitBlob": "d76334b372200b2bbcab560d2fcc27365cab2e03",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/source.ts",
+        "baselineGitBlob": "9f0f9436afad1aad45b64d7935b3b26f372771bb",
+        "currentNormalizedGitBlob": "9f0f9436afad1aad45b64d7935b3b26f372771bb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/stability.worker.ts",
+        "baselineGitBlob": "8b86eb06e81d2999659dade332f27a4dffc6d277",
+        "currentNormalizedGitBlob": "8b86eb06e81d2999659dade332f27a4dffc6d277",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/analysis/stability/validation.ts",
+        "baselineGitBlob": "5f0a8235aa0354cc4072e26d1bd86299bef25f67",
+        "currentNormalizedGitBlob": "5f0a8235aa0354cc4072e26d1bd86299bef25f67",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-analysis-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain-client.ts",
+        "baselineGitBlob": "21c969d634f2641f5e8ae31c53a6773f642e380b",
+        "currentNormalizedGitBlob": "21c969d634f2641f5e8ae31c53a6773f642e380b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain-edit.ts",
+        "baselineGitBlob": "2ed60a3abf1e14868f9d46b306db0cb24b153bf5",
+        "currentNormalizedGitBlob": "2ed60a3abf1e14868f9d46b306db0cb24b153bf5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain-presets.ts",
+        "baselineGitBlob": "3e1cd61a92974deecd20669bdba9dbdc45323854",
+        "currentNormalizedGitBlob": "3e1cd61a92974deecd20669bdba9dbdc45323854",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain-schema.ts",
+        "baselineGitBlob": "29ad482866c46a5d16ea47e5cfea1429dcfdcd2b",
+        "currentNormalizedGitBlob": "29ad482866c46a5d16ea47e5cfea1429dcfdcd2b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain-worker-protocol.ts",
+        "baselineGitBlob": "bc8459d28bc1854b563a7e1394076aced169c15e",
+        "currentNormalizedGitBlob": "bc8459d28bc1854b563a7e1394076aced169c15e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain.ts",
+        "baselineGitBlob": "dad4d25532ca079a3ef6168d305c110b6b9ebbf3",
+        "currentNormalizedGitBlob": "dad4d25532ca079a3ef6168d305c110b6b9ebbf3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/chain.worker.ts",
+        "baselineGitBlob": "20bee3e993fbdb91ea1203d23294cb60e3c7dc5b",
+        "currentNormalizedGitBlob": "20bee3e993fbdb91ea1203d23294cb60e3c7dc5b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint-client.ts",
+        "baselineGitBlob": "a25a1a35752441b604b05c2106f2887d1bd5cfad",
+        "currentNormalizedGitBlob": "a25a1a35752441b604b05c2106f2887d1bd5cfad",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint-presets.ts",
+        "baselineGitBlob": "e903fa2c4148deda7563f9a29f0ce96a43302c0f",
+        "currentNormalizedGitBlob": "e903fa2c4148deda7563f9a29f0ce96a43302c0f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint-schema.ts",
+        "baselineGitBlob": "3e5d0a50340075f307518d4a586b641c6f2e4767",
+        "currentNormalizedGitBlob": "3e5d0a50340075f307518d4a586b641c6f2e4767",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint-worker-protocol.ts",
+        "baselineGitBlob": "2e103b7d8bc0a2db6886e84dd8ca374ddd844b3b",
+        "currentNormalizedGitBlob": "2e103b7d8bc0a2db6886e84dd8ca374ddd844b3b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint.ts",
+        "baselineGitBlob": "be84e95ec371ceefebe585bc8595ce5fbdfe13f7",
+        "currentNormalizedGitBlob": "be84e95ec371ceefebe585bc8595ce5fbdfe13f7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/constraint.worker.ts",
+        "baselineGitBlob": "50659f703bd8220bccd2e18491c5919f4492eafd",
+        "currentNormalizedGitBlob": "50659f703bd8220bccd2e18491c5919f4492eafd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete-client.ts",
+        "baselineGitBlob": "fe20040df8faaeda9ba1c513c16a8503386f7fb3",
+        "currentNormalizedGitBlob": "fe20040df8faaeda9ba1c513c16a8503386f7fb3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete-contract.ts",
+        "baselineGitBlob": "d6dcbac9d86267309b07dbbb40dd64fedc11eda9",
+        "currentNormalizedGitBlob": "d6dcbac9d86267309b07dbbb40dd64fedc11eda9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete-engine.ts",
+        "baselineGitBlob": "7d2acd89a28212e6b733db1902f617f8a9d5ab96",
+        "currentNormalizedGitBlob": "7d2acd89a28212e6b733db1902f617f8a9d5ab96",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete-schema.ts",
+        "baselineGitBlob": "5c5995181cb690fe4941e0dc2b1e59ef1477aaa2",
+        "currentNormalizedGitBlob": "5c5995181cb690fe4941e0dc2b1e59ef1477aaa2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete-worker-protocol.ts",
+        "baselineGitBlob": "3d7906145aee8461d40bf6c571cd07241808ab56",
+        "currentNormalizedGitBlob": "3d7906145aee8461d40bf6c571cd07241808ab56",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete.ts",
+        "baselineGitBlob": "3797c4a12fe63efd0f0d4661cec31792f0e94d68",
+        "currentNormalizedGitBlob": "3797c4a12fe63efd0f0d4661cec31792f0e94d68",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/discrete.worker.ts",
+        "baselineGitBlob": "7b68596ee6e187b15ac37a728cee7b9ddf761344",
+        "currentNormalizedGitBlob": "7b68596ee6e187b15ac37a728cee7b9ddf761344",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/driven-client.ts",
+        "baselineGitBlob": "8efef1885a5c2e7e0dc72642a3d65f663cbd7fa4",
+        "currentNormalizedGitBlob": "8efef1885a5c2e7e0dc72642a3d65f663cbd7fa4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/driven-schema.ts",
+        "baselineGitBlob": "4c238dd878c46b93b18aa4fc8bd731c845362232",
+        "currentNormalizedGitBlob": "4c238dd878c46b93b18aa4fc8bd731c845362232",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/driven-worker-protocol.ts",
+        "baselineGitBlob": "0bd1ff7c85172ad3a2088f2789855e7d8bc69541",
+        "currentNormalizedGitBlob": "0bd1ff7c85172ad3a2088f2789855e7d8bc69541",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/driven.ts",
+        "baselineGitBlob": "b99401ba2c5e5603818d6a6b27ffd5c172071dc6",
+        "currentNormalizedGitBlob": "b99401ba2c5e5603818d6a6b27ffd5c172071dc6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/driven.worker.ts",
+        "baselineGitBlob": "395a6335fc2fdc1d91d5b6daf69ee59d6b6cab18",
+        "currentNormalizedGitBlob": "395a6335fc2fdc1d91d5b6daf69ee59d6b6cab18",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field-client.ts",
+        "baselineGitBlob": "3243a4bb6e34ff937c747267fa4fa498c8ab1483",
+        "currentNormalizedGitBlob": "3243a4bb6e34ff937c747267fa4fa498c8ab1483",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field-contract.ts",
+        "baselineGitBlob": "4ae77797729d6277eee94a3d3048d4d038ce376d",
+        "currentNormalizedGitBlob": "4ae77797729d6277eee94a3d3048d4d038ce376d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field-schema.ts",
+        "baselineGitBlob": "3df48eb2c58f4a36cec47460620c8591245f30de",
+        "currentNormalizedGitBlob": "3df48eb2c58f4a36cec47460620c8591245f30de",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field-worker-protocol.ts",
+        "baselineGitBlob": "fbd35eef97c445fec28535f420abc9bd472187d9",
+        "currentNormalizedGitBlob": "fbd35eef97c445fec28535f420abc9bd472187d9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field.ts",
+        "baselineGitBlob": "d074fda2698e096caa608df44e7437462fe40efd",
+        "currentNormalizedGitBlob": "d074fda2698e096caa608df44e7437462fe40efd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/field.worker.ts",
+        "baselineGitBlob": "22521823244c956e7baf35ca5a0bf53cc8e10cb7",
+        "currentNormalizedGitBlob": "22521823244c956e7baf35ca5a0bf53cc8e10cb7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/focus-diagnostics.ts",
+        "baselineGitBlob": "9752ce6d76bfb9461161aa13042eb535e43e3ab3",
+        "currentNormalizedGitBlob": "9752ce6d76bfb9461161aa13042eb535e43e3ab3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network-client.ts",
+        "baselineGitBlob": "ed02003cc8ed91f0c8a8e01dcf7f8efffb478f7c",
+        "currentNormalizedGitBlob": "ed02003cc8ed91f0c8a8e01dcf7f8efffb478f7c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network-contract.ts",
+        "baselineGitBlob": "354b079e1c058a965893f8a8ba468c9024d6069d",
+        "currentNormalizedGitBlob": "354b079e1c058a965893f8a8ba468c9024d6069d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network-schema.ts",
+        "baselineGitBlob": "68e941858bff89345bf7bc454c731f5fc2df9710",
+        "currentNormalizedGitBlob": "68e941858bff89345bf7bc454c731f5fc2df9710",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network-worker-protocol.ts",
+        "baselineGitBlob": "cee2e07205fd6b3b1f698d89307f7a73307c57e1",
+        "currentNormalizedGitBlob": "cee2e07205fd6b3b1f698d89307f7a73307c57e1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network.ts",
+        "baselineGitBlob": "3a305d3237e7020f349a0214caa52b4a750714b7",
+        "currentNormalizedGitBlob": "3a305d3237e7020f349a0214caa52b4a750714b7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/network.worker.ts",
+        "baselineGitBlob": "039b6d9eb1e9c118209319d89e18f43f2e4344ec",
+        "currentNormalizedGitBlob": "039b6d9eb1e9c118209319d89e18f43f2e4344ec",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear-client.ts",
+        "baselineGitBlob": "c6f920fadd49f3d5a82b8634fd234918abe8171a",
+        "currentNormalizedGitBlob": "c6f920fadd49f3d5a82b8634fd234918abe8171a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear-contract.ts",
+        "baselineGitBlob": "7865f821d0d7cb4556a8f8d4efaa1f6915498a7d",
+        "currentNormalizedGitBlob": "7865f821d0d7cb4556a8f8d4efaa1f6915498a7d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear-schema.ts",
+        "baselineGitBlob": "2f3e4aa6b2373c28c39ac85574a025d2730ceda3",
+        "currentNormalizedGitBlob": "2f3e4aa6b2373c28c39ac85574a025d2730ceda3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear-worker-protocol.ts",
+        "baselineGitBlob": "10737d545f2c808889e89558c5ff133bf92305c1",
+        "currentNormalizedGitBlob": "10737d545f2c808889e89558c5ff133bf92305c1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear.ts",
+        "baselineGitBlob": "1627488f5a41a743c51ac0fa5f513573a0c34bcb",
+        "currentNormalizedGitBlob": "1627488f5a41a743c51ac0fa5f513573a0c34bcb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/nonlinear.worker.ts",
+        "baselineGitBlob": "877de6a1e8a6f756214d6ea278085b982d651450",
+        "currentNormalizedGitBlob": "877de6a1e8a6f756214d6ea278085b982d651450",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/planar-schema.ts",
+        "baselineGitBlob": "a500150616eae5d28fa911492056e6f805cdc3b5",
+        "currentNormalizedGitBlob": "a500150616eae5d28fa911492056e6f805cdc3b5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/planar.ts",
+        "baselineGitBlob": "f3adafa12f179cc28748eaa0bdafdce79a46a532",
+        "currentNormalizedGitBlob": "f3adafa12f179cc28748eaa0bdafdce79a46a532",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/spatial-client.ts",
+        "baselineGitBlob": "a1c52bcf0c65a6a3fa615c085f131604e3647996",
+        "currentNormalizedGitBlob": "a1c52bcf0c65a6a3fa615c085f131604e3647996",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/spatial-schema.ts",
+        "baselineGitBlob": "4c8c6b73af91e428ad8e5676a47f89b278009f13",
+        "currentNormalizedGitBlob": "4c8c6b73af91e428ad8e5676a47f89b278009f13",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/spatial-worker-protocol.ts",
+        "baselineGitBlob": "064a39c49190eee9452c2ff15441dc899c525772",
+        "currentNormalizedGitBlob": "064a39c49190eee9452c2ff15441dc899c525772",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/spatial.ts",
+        "baselineGitBlob": "86de782a92d975e90fb3ef0cc649ee297420a6aa",
+        "currentNormalizedGitBlob": "86de782a92d975e90fb3ef0cc649ee297420a6aa",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/product/adapters/physics/spatial.worker.ts",
+        "baselineGitBlob": "ac2aeafcfadef10db6ed7f1b160be3e432ec10c8",
+        "currentNormalizedGitBlob": "ac2aeafcfadef10db6ed7f1b160be3e432ec10c8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-product-physics-adapters"
+        ]
+      },
+      {
+        "path": "src/research/arnoldi.ts",
+        "baselineGitBlob": "c5c802c2f05cfa69efebd9bf8e147175a7b5c30b",
+        "currentNormalizedGitBlob": "c5c802c2f05cfa69efebd9bf8e147175a7b5c30b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/certifiedWorkbench.ts",
+        "baselineGitBlob": "cc6bc3cb9629244592ffbf89d70f2784cc117e0d",
+        "currentNormalizedGitBlob": "cc6bc3cb9629244592ffbf89d70f2784cc117e0d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimEvidenceSurfaces.ts",
+        "baselineGitBlob": "a3f2333befe3cbb8608d098a28930b1e609ec147",
+        "currentNormalizedGitBlob": "a3f2333befe3cbb8608d098a28930b1e609ec147",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimRegistry.ts",
+        "baselineGitBlob": "e598af3f5f7b57dfca0f75fe65e447b729ae24b8",
+        "currentNormalizedGitBlob": "e598af3f5f7b57dfca0f75fe65e447b729ae24b8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimRegistryContracts.ts",
+        "baselineGitBlob": "17bc2c7c14c46f2e9d9cb657f13644217329a20d",
+        "currentNormalizedGitBlob": "17bc2c7c14c46f2e9d9cb657f13644217329a20d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimRegistryEvaluation.ts",
+        "baselineGitBlob": "14d736600ae4989db34f38d570d4135655c733ae",
+        "currentNormalizedGitBlob": "14d736600ae4989db34f38d570d4135655c733ae",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimRegistryUtilities.ts",
+        "baselineGitBlob": "04a457bbaf32fcf31ed0a35f298c3942e567a76d",
+        "currentNormalizedGitBlob": "04a457bbaf32fcf31ed0a35f298c3942e567a76d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/claimRegistryValidation.ts",
+        "baselineGitBlob": "49b6c58b807d3ff75d0b74cadb9423271270b683",
+        "currentNormalizedGitBlob": "49b6c58b807d3ff75d0b74cadb9423271270b683",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/cliBatchSpec.ts",
+        "baselineGitBlob": "d9d8051b45f35eefa784d69b0f646512b47e0d88",
+        "currentNormalizedGitBlob": "d9d8051b45f35eefa784d69b0f646512b47e0d88",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/complexEig.ts",
+        "baselineGitBlob": "65940ca6ddf220654cff6d670d9acf8d639bdaaf",
+        "currentNormalizedGitBlob": "65940ca6ddf220654cff6d670d9acf8d639bdaaf",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/convergenceOrder.ts",
+        "baselineGitBlob": "0d5bce62ce2789bd3afb186fcaafef0eeadec1f4",
+        "currentNormalizedGitBlob": "0d5bce62ce2789bd3afb186fcaafef0eeadec1f4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/dmd.ts",
+        "baselineGitBlob": "7445a38d5152272b707fbbda106a81c0b4ef7b90",
+        "currentNormalizedGitBlob": "7445a38d5152272b707fbbda106a81c0b4ef7b90",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/eigenGeneral.ts",
+        "baselineGitBlob": "8706a35985f22f6d6604e9fed1e93ddf8ebcb72a",
+        "currentNormalizedGitBlob": "8706a35985f22f6d6604e9fed1e93ddf8ebcb72a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/evidenceSummary.ts",
+        "baselineGitBlob": "dd5558bc507cd07e00d27a02740501cfd272c27f",
+        "currentNormalizedGitBlob": "dd5558bc507cd07e00d27a02740501cfd272c27f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/experimentDesign.ts",
+        "baselineGitBlob": "15193c06c388ba8ba7aa2a9b38d10d144e6f4907",
+        "currentNormalizedGitBlob": "15193c06c388ba8ba7aa2a9b38d10d144e6f4907",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/experimentalDataImport.ts",
+        "baselineGitBlob": "53d25fb36f9e1330a25e58d4d440b94ae64e920b",
+        "currentNormalizedGitBlob": "53d25fb36f9e1330a25e58d4d440b94ae64e920b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/figurePipeline.ts",
+        "baselineGitBlob": "860a71aafcff2eb8d4ac543afca7178f477644c7",
+        "currentNormalizedGitBlob": "860a71aafcff2eb8d4ac543afca7178f477644c7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/flagshipCertification.ts",
+        "baselineGitBlob": "e7fa20cfd6063baea8e71a269a386424f57b85b7",
+        "currentNormalizedGitBlob": "e7fa20cfd6063baea8e71a269a386424f57b85b7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/hamiltonianLearning.ts",
+        "baselineGitBlob": "f7ccedfa5ca383f110b83f77379d5324b96bb8c8",
+        "currentNormalizedGitBlob": "f7ccedfa5ca383f110b83f77379d5324b96bb8c8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/havok.ts",
+        "baselineGitBlob": "951e2da32e7148f5328a11ebb5845b73034fefd2",
+        "currentNormalizedGitBlob": "951e2da32e7148f5328a11ebb5845b73034fefd2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/lanczos.ts",
+        "baselineGitBlob": "1d2a19e6b5a6adeee623c29851307a67a92ff5f2",
+        "currentNormalizedGitBlob": "1d2a19e6b5a6adeee623c29851307a67a92ff5f2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/libraryUx.ts",
+        "baselineGitBlob": "88078ed88755b4fad1107b9d50d8ddde77bb517c",
+        "currentNormalizedGitBlob": "88078ed88755b4fad1107b9d50d8ddde77bb517c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/notebookBuilder.ts",
+        "baselineGitBlob": "8904e067e1a34bf7e44a3274baaa563468c02cd3",
+        "currentNormalizedGitBlob": "8904e067e1a34bf7e44a3274baaa563468c02cd3",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/parameterEstimation.ts",
+        "baselineGitBlob": "3d459d8a797adf6e6f8de3287cdae91a170ed78d",
+        "currentNormalizedGitBlob": "3d459d8a797adf6e6f8de3287cdae91a170ed78d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/provenance.ts",
+        "baselineGitBlob": "81853ef56b763341826328216c9ef723d1d240bd",
+        "currentNormalizedGitBlob": "81853ef56b763341826328216c9ef723d1d240bd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/qkrFloquet.ts",
+        "baselineGitBlob": "3eeb0ae27f1218499e6af2e030a4191610bf74b2",
+        "currentNormalizedGitBlob": "3eeb0ae27f1218499e6af2e030a4191610bf74b2",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/qkrViewModel.ts",
+        "baselineGitBlob": "d2531cf166ef657b2fea9a6ee63df66158488378",
+        "currentNormalizedGitBlob": "d2531cf166ef657b2fea9a6ee63df66158488378",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/reproPackage.ts",
+        "baselineGitBlob": "fcd2df684202df96d30209238527af26f40be8ed",
+        "currentNormalizedGitBlob": "fcd2df684202df96d30209238527af26f40be8ed",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/researchDb.ts",
+        "baselineGitBlob": "3fbbe70af4af25fec32a0cea1aaf7b5913b633e5",
+        "currentNormalizedGitBlob": "3fbbe70af4af25fec32a0cea1aaf7b5913b633e5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/researchDbArchiveValidation.ts",
+        "baselineGitBlob": "a32dd90b48a35448aafde3e539fc3d70ab00f90c",
+        "currentNormalizedGitBlob": "a32dd90b48a35448aafde3e539fc3d70ab00f90c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/researchExportUtils.ts",
+        "baselineGitBlob": "8997d962b3d86c129bdb4d019f203e0af1d63a6d",
+        "currentNormalizedGitBlob": "8997d962b3d86c129bdb4d019f203e0af1d63a6d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/researchSampling.ts",
+        "baselineGitBlob": "d39e80d78d3b68fe5a9fe5c5b77a713dfb058436",
+        "currentNormalizedGitBlob": "d39e80d78d3b68fe5a9fe5c5b77a713dfb058436",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/reservoir.ts",
+        "baselineGitBlob": "e6359b786b4c127ef6ff01fd6b34800d468205de",
+        "currentNormalizedGitBlob": "e6359b786b4c127ef6ff01fd6b34800d468205de",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/sindy.ts",
+        "baselineGitBlob": "013c5eb7533d3a473f50fcb78cb39386c84133d8",
+        "currentNormalizedGitBlob": "013c5eb7533d3a473f50fcb78cb39386c84133d8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/sobolSensitivity.ts",
+        "baselineGitBlob": "240b9b13a1b6c64bb198c69edc0a739d5be9f6bb",
+        "currentNormalizedGitBlob": "240b9b13a1b6c64bb198c69edc0a739d5be9f6bb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/structurePreservation.ts",
+        "baselineGitBlob": "5bc0dacf7f163cfec267bbcd15845cb5258255b8",
+        "currentNormalizedGitBlob": "5bc0dacf7f163cfec267bbcd15845cb5258255b8",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/surrogate.ts",
+        "baselineGitBlob": "86b9ee5bf170854368c461859343726928975cbb",
+        "currentNormalizedGitBlob": "86b9ee5bf170854368c461859343726928975cbb",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/svd.ts",
+        "baselineGitBlob": "94b5afd3d4f9c809684a28204d946fa0cccf8346",
+        "currentNormalizedGitBlob": "94b5afd3d4f9c809684a28204d946fa0cccf8346",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/trainingProtocol.ts",
+        "baselineGitBlob": "e4f81482168d1fe0a99c2e5fc3f3c1e79035c8db",
+        "currentNormalizedGitBlob": "e4f81482168d1fe0a99c2e5fc3f3c1e79035c8db",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/unitaryFloquet.ts",
+        "baselineGitBlob": "4afc7087f138a74c44185db91933d2cbbd7d405e",
+        "currentNormalizedGitBlob": "4afc7087f138a74c44185db91933d2cbbd7d405e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/videoTracking.ts",
+        "baselineGitBlob": "51048d2359d77a9cfb165ef60312d6b0cf91248d",
+        "currentNormalizedGitBlob": "51048d2359d77a9cfb165ef60312d6b0cf91248d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/research/zipBundle.ts",
+        "baselineGitBlob": "11408fa1f22c6b5bd45368aa040b8f2b7d764bc9",
+        "currentNormalizedGitBlob": "11408fa1f22c6b5bd45368aa040b8f2b7d764bc9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/ChaosClient.ts",
+        "baselineGitBlob": "b1c944d88a8a419145f3330e01bf0172f85d3896",
+        "currentNormalizedGitBlob": "b1c944d88a8a419145f3330e01bf0172f85d3896",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/CommandRegistry.ts",
+        "baselineGitBlob": "52d4c80a9a5c3a00ab0265937a3bfda708407dd9",
+        "currentNormalizedGitBlob": "52d4c80a9a5c3a00ab0265937a3bfda708407dd9",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/EventBus.ts",
+        "baselineGitBlob": "29f38ea5424a90c72642ab27f6c873c3025b3583",
+        "currentNormalizedGitBlob": "29f38ea5424a90c72642ab27f6c873c3025b3583",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/JobClient.ts",
+        "baselineGitBlob": "0a5d0365d5f6697609f0526100920e6b084805b5",
+        "currentNormalizedGitBlob": "0a5d0365d5f6697609f0526100920e6b084805b5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/JobClientTransport.ts",
+        "baselineGitBlob": "798768b9c9f3b0153d9b5fcf225f0d66a35838da",
+        "currentNormalizedGitBlob": "798768b9c9f3b0153d9b5fcf225f0d66a35838da",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/PendulumRuntime.ts",
+        "baselineGitBlob": "51ae6eb6667fc45bf3a1d3695586d2b3e313d147",
+        "currentNormalizedGitBlob": "51ae6eb6667fc45bf3a1d3695586d2b3e313d147",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/ServiceContainer.ts",
+        "baselineGitBlob": "7beb2aa3e5fcd813f748ddb434769f3a4897a52c",
+        "currentNormalizedGitBlob": "7beb2aa3e5fcd813f748ddb434769f3a4897a52c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/WorkerBridge.ts",
+        "baselineGitBlob": "13d7cd3e6d21bce430a65a981c00a60e069306f6",
+        "currentNormalizedGitBlob": "13d7cd3e6d21bce430a65a981c00a60e069306f6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/globalApi.ts",
+        "baselineGitBlob": "d6315776bc90d1716f79c849bc8d2460eabfb29e",
+        "currentNormalizedGitBlob": "d6315776bc90d1716f79c849bc8d2460eabfb29e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuChaosPromotion.ts",
+        "baselineGitBlob": "4ea9120147a4ea8ccb667be38dc05590b8f13891",
+        "currentNormalizedGitBlob": "4ea9120147a4ea8ccb667be38dc05590b8f13891",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuChaosPromotionContracts.ts",
+        "baselineGitBlob": "74f6d4661109c2ae10dea33365895e42e5031449",
+        "currentNormalizedGitBlob": "74f6d4661109c2ae10dea33365895e42e5031449",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuClvPromotion.ts",
+        "baselineGitBlob": "5d432c5297f05da4bb966f3942d7b4278595eb76",
+        "currentNormalizedGitBlob": "5d432c5297f05da4bb966f3942d7b4278595eb76",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuEnsemble.ts",
+        "baselineGitBlob": "f8cb17c6930dedc0cbb04ad2450a57104e53f1c5",
+        "currentNormalizedGitBlob": "f8cb17c6930dedc0cbb04ad2450a57104e53f1c5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFieldContracts.ts",
+        "baselineGitBlob": "a6c778da375a1e4af7172fd81acb867baf2f7893",
+        "currentNormalizedGitBlob": "a6c778da375a1e4af7172fd81acb867baf2f7893",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFieldDispatch.ts",
+        "baselineGitBlob": "a9101a58059dd78f9b5f1f4075adbf831a803bb6",
+        "currentNormalizedGitBlob": "a9101a58059dd78f9b5f1f4075adbf831a803bb6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFieldKernels.ts",
+        "baselineGitBlob": "8bc38199abeaef5a82cce10abff900b7d9f8af4e",
+        "currentNormalizedGitBlob": "8bc38199abeaef5a82cce10abff900b7d9f8af4e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFields.ts",
+        "baselineGitBlob": "201685c85c2567bf1ee02c35518c72d266ce1e49",
+        "currentNormalizedGitBlob": "201685c85c2567bf1ee02c35518c72d266ce1e49",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFtlePromotion.ts",
+        "baselineGitBlob": "5a0de54620c82708f8459a7aece02ade1ffeef43",
+        "currentNormalizedGitBlob": "5a0de54620c82708f8459a7aece02ade1ffeef43",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFullSpectrumKernel.ts",
+        "baselineGitBlob": "2249187ec8eb8b574af12045bd1f536ee86db788",
+        "currentNormalizedGitBlob": "2249187ec8eb8b574af12045bd1f536ee86db788",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuFullSpectrumPromotion.ts",
+        "baselineGitBlob": "091e8b64e4e27077cbe412c0127e6a36beb91d62",
+        "currentNormalizedGitBlob": "091e8b64e4e27077cbe412c0127e6a36beb91d62",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuLyapunov.ts",
+        "baselineGitBlob": "7f1224c4a2f379d500791be1faad9c6f1220599c",
+        "currentNormalizedGitBlob": "7f1224c4a2f379d500791be1faad9c6f1220599c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuNChainVariational.ts",
+        "baselineGitBlob": "6d2b1505a1e1eff815e2d28e2a43851c14bea64f",
+        "currentNormalizedGitBlob": "6d2b1505a1e1eff815e2d28e2a43851c14bea64f",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuNChainVariationalKernel.ts",
+        "baselineGitBlob": "3034d4102c08cec8064e8d325e64f1e11681a529",
+        "currentNormalizedGitBlob": "3034d4102c08cec8064e8d325e64f1e11681a529",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/gpuVariationalFtleKernel.ts",
+        "baselineGitBlob": "790f6a4e590ed6bcd56378d7fc2a20e7879ecfb0",
+        "currentNormalizedGitBlob": "790f6a4e590ed6bcd56378d7fc2a20e7879ecfb0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/legacyCompat.ts",
+        "baselineGitBlob": "9fced0edc6913be2bde2cb5849c0b8d4082ef342",
+        "currentNormalizedGitBlob": "9fced0edc6913be2bde2cb5849c0b8d4082ef342",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/referralAttribution.ts",
+        "baselineGitBlob": "ae606fb1f4bd4e1d665d68263138599780dac5f1",
+        "currentNormalizedGitBlob": "ae606fb1f4bd4e1d665d68263138599780dac5f1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/retryableLazy.ts",
+        "baselineGitBlob": "3b15ea833c388a2ee04b4291165d1ec76871e3e6",
+        "currentNormalizedGitBlob": "3b15ea833c388a2ee04b4291165d1ec76871e3e6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/sharedRingBuffer.ts",
+        "baselineGitBlob": "16bb696c2354153589162913410eb5bdb2a76574",
+        "currentNormalizedGitBlob": "16bb696c2354153589162913410eb5bdb2a76574",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/version.ts",
+        "baselineGitBlob": "e06ea6ecfe734e4fd9982a7b6bfe80dda1486120",
+        "currentNormalizedGitBlob": "e06ea6ecfe734e4fd9982a7b6bfe80dda1486120",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/wasm/pendulum-kernel.wasm",
+        "baselineGitBlob": "1772db1086383e7cd301f6f87d26bd3b2dbb3747",
+        "currentNormalizedGitBlob": "1772db1086383e7cd301f6f87d26bd3b2dbb3747",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/wasmEnsemble.ts",
+        "baselineGitBlob": "c6c22ac461ba08c0441ec7d2a9e29c7c5bd9813a",
+        "currentNormalizedGitBlob": "c6c22ac461ba08c0441ec7d2a9e29c7c5bd9813a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/wasmNChain.ts",
+        "baselineGitBlob": "942bb325abc26aca757ff8c8bc540330b0d54c2d",
+        "currentNormalizedGitBlob": "942bb325abc26aca757ff8c8bc540330b0d54c2d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/runtime/workerFallbackNotice.ts",
+        "baselineGitBlob": "0f83a5755c2368eca254529b80fa1d8b1d6756bf",
+        "currentNormalizedGitBlob": "0f83a5755c2368eca254529b80fa1d8b1d6756bf",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/compoundDoubleReference.ts",
+        "baselineGitBlob": "f6757185e498c68e670a364790f37ba179459221",
+        "currentNormalizedGitBlob": "f6757185e498c68e670a364790f37ba179459221",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/doubleDouble.ts",
+        "baselineGitBlob": "4f2ea7092c09904c539b5dd0d1f61b1c3b6aac82",
+        "currentNormalizedGitBlob": "4f2ea7092c09904c539b5dd0d1f61b1c3b6aac82",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/doubleDoublePendulum.ts",
+        "baselineGitBlob": "4bf7a06f8dedb5fa111487e5e33d03166896a097",
+        "currentNormalizedGitBlob": "4bf7a06f8dedb5fa111487e5e33d03166896a097",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/formulationEquivalence.ts",
+        "baselineGitBlob": "1922a5897eea1e72611b892ec2db7909fd876072",
+        "currentNormalizedGitBlob": "1922a5897eea1e72611b892ec2db7909fd876072",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/importSchema.ts",
+        "baselineGitBlob": "8e8a7ecb243cc01fd84e40a2d6b2fed8a7b5c817",
+        "currentNormalizedGitBlob": "8e8a7ecb243cc01fd84e40a2d6b2fed8a7b5c817",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/literatureAnchors.ts",
+        "baselineGitBlob": "d3a5aeb24223c8c97b0aa8970867d1d950c261d5",
+        "currentNormalizedGitBlob": "d3a5aeb24223c8c97b0aa8970867d1d950c261d5",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/numericalBudgets.ts",
+        "baselineGitBlob": "4b28404b7ffcc376e52149b093a6fe23812b7689",
+        "currentNormalizedGitBlob": "4b28404b7ffcc376e52149b093a6fe23812b7689",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/referenceSuite.ts",
+        "baselineGitBlob": "1e274fe70556d94468bcd84e6f966b75338db083",
+        "currentNormalizedGitBlob": "1e274fe70556d94468bcd84e6f966b75338db083",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/sessionConstraints.ts",
+        "baselineGitBlob": "60400a3dcbd1eaf095b2db8a71c5ece7d0c965c7",
+        "currentNormalizedGitBlob": "60400a3dcbd1eaf095b2db8a71c5ece7d0c965c7",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/validation/validationSuite.ts",
+        "baselineGitBlob": "6fdd68d000d450dbad2de73585fe4e4b664dfd13",
+        "currentNormalizedGitBlob": "6fdd68d000d450dbad2de73585fe4e4b664dfd13",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/JobEngine.ts",
+        "baselineGitBlob": "b93c10e26bdc6b8f17e2c47493e3931f7cb3e6a1",
+        "currentNormalizedGitBlob": "b93c10e26bdc6b8f17e2c47493e3931f7cb3e6a1",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/angularObservable.ts",
+        "baselineGitBlob": "0d2a46f4cbed93ef88e41741d8ea0e80dda79e8e",
+        "currentNormalizedGitBlob": "0d2a46f4cbed93ef88e41741d8ea0e80dda79e8e",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/chaos.worker.ts",
+        "baselineGitBlob": "41a048c317f2f8dfdf1440eba1d35a67a4734b96",
+        "currentNormalizedGitBlob": "41a048c317f2f8dfdf1440eba1d35a67a4734b96",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/chaosJobHandlers.ts",
+        "baselineGitBlob": "56f5212f582903cf699087fe9ccd2f2ca619a5c4",
+        "currentNormalizedGitBlob": "56f5212f582903cf699087fe9ccd2f2ca619a5c4",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/chaosProtocol.ts",
+        "baselineGitBlob": "8395b5b95ee92648073ee3e25ba307a589ac59bd",
+        "currentNormalizedGitBlob": "8395b5b95ee92648073ee3e25ba307a589ac59bd",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/chaosProtocolSchema.ts",
+        "baselineGitBlob": "3a6ef435dd1b0dc95b91a9fba424e55b105d1f9b",
+        "currentNormalizedGitBlob": "3a6ef435dd1b0dc95b91a9fba424e55b105d1f9b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/chaosRequestValidation.ts",
+        "baselineGitBlob": "d89efe1363d70163f78f011dce89344375f39120",
+        "currentNormalizedGitBlob": "d89efe1363d70163f78f011dce89344375f39120",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/expansion.worker.ts",
+        "baselineGitBlob": "f5a235410417c1253bf97b9a69998336d293a901",
+        "currentNormalizedGitBlob": "f5a235410417c1253bf97b9a69998336d293a901",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/expansionJobProtocol.ts",
+        "baselineGitBlob": "463083eb133b5006301adade888f0d640bb2097b",
+        "currentNormalizedGitBlob": "463083eb133b5006301adade888f0d640bb2097b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/jobProtocol.ts",
+        "baselineGitBlob": "87ef2ffb101b19dfccc60faff5650d430c96b142",
+        "currentNormalizedGitBlob": "87ef2ffb101b19dfccc60faff5650d430c96b142",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/jobProtocolTypes.ts",
+        "baselineGitBlob": "4251c1324ab04492860f720ebf8f35984ceeb01d",
+        "currentNormalizedGitBlob": "4251c1324ab04492860f720ebf8f35984ceeb01d",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/jobProtocolValidation.ts",
+        "baselineGitBlob": "46215a6fa9d30410593d58e7c196e3c265ef189b",
+        "currentNormalizedGitBlob": "46215a6fa9d30410593d58e7c196e3c265ef189b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/labSidePlots.worker.ts",
+        "baselineGitBlob": "c8f5b75c3fe982983fba679b56ed043b5b25b9f0",
+        "currentNormalizedGitBlob": "c8f5b75c3fe982983fba679b56ed043b5b25b9f0",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/mainCanvas.worker.ts",
+        "baselineGitBlob": "c91029926437186101b0893e0d1e1be324778e59",
+        "currentNormalizedGitBlob": "c91029926437186101b0893e0d1e1be324778e59",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/physics.worker.ts",
+        "baselineGitBlob": "2c03bf5f03c6c6626fb75a2426fa373cc5ac2f2a",
+        "currentNormalizedGitBlob": "2c03bf5f03c6c6626fb75a2426fa373cc5ac2f2a",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "src/workers/protocolSafety.ts",
+        "baselineGitBlob": "a295ae2a73b60278076591b032f97e27e2226b1b",
+        "currentNormalizedGitBlob": "a295ae2a73b60278076591b032f97e27e2226b1b",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "preserved-native-engines"
+        ]
+      },
+      {
+        "path": "tests/characterization/numerical-golden-cases.ts",
+        "baselineGitBlob": "e604b261cc50c1a3b69a004943f17272902c4606",
+        "currentNormalizedGitBlob": "e604b261cc50c1a3b69a004943f17272902c4606",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "numerical-golden-test-and-fixtures"
+        ]
+      },
+      {
+        "path": "tests/characterization/numerical-golden.fixture.json",
+        "baselineGitBlob": "b6b791ea2dabd609885e4613ae32dfd9f8b35271",
+        "currentNormalizedGitBlob": "b6b791ea2dabd609885e4613ae32dfd9f8b35271",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "numerical-golden-test-and-fixtures"
+        ]
+      },
+      {
+        "path": "tests/characterization/numerical-golden.test.ts",
+        "baselineGitBlob": "c39aafeb6c35867a4121ec424ec9917d9b74ca3c",
+        "currentNormalizedGitBlob": "c39aafeb6c35867a4121ec424ec9917d9b74ca3c",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "numerical-golden-test-and-fixtures"
+        ]
+      },
+      {
+        "path": "tsconfig.lib.json",
+        "baselineGitBlob": "12212569d3b93ca0d404d5dc48b23eb2253984ba",
+        "currentNormalizedGitBlob": "12212569d3b93ca0d404d5dc48b23eb2253984ba",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      },
+      {
+        "path": "vite.config.lib.ts",
+        "baselineGitBlob": "a2f0db6ec07085952de4accf4be5ed8813fa26c6",
+        "currentNormalizedGitBlob": "a2f0db6ec07085952de4accf4be5ed8813fa26c6",
+        "gitBlobEquivalent": true,
+        "currentMissingOrNonfile": false,
+        "categories": [
+          "public-package-api-and-build-boundary"
+        ]
+      }
+    ]
+  },
+  "originalTestsAndFixtures": {
+    "total": 457,
+    "equivalent": 451,
+    "changed": [
+      {
+        "path": "e2e/redesign/learn.spec.ts",
+        "baselineGitBlob": "893f5f7667d2cd0e785db401692e5fe791a14f2c",
+        "currentNormalizedGitBlob": "3087092d6dc667c05d47a0f88dbecb7697d931f4",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      },
+      {
+        "path": "tests/product/experiments/research-focus-boundaries.test.ts",
+        "baselineGitBlob": "f83ef6b63bee5a3027b9d104b107225b70d985df",
+        "currentNormalizedGitBlob": "62c25c294c77af429edbae1ebb16ca423bfc8edf",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      },
+      {
+        "path": "tests/product/learn/content.test.ts",
+        "baselineGitBlob": "999f328e24b997b8fd010ea9fc98c4731fd80f23",
+        "currentNormalizedGitBlob": "43f285ed849eb36c20583bc17d4042229afcd538",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      },
+      {
+        "path": "tests/product/learn/course-one-quality.test.ts",
+        "baselineGitBlob": "0fa635baaae5bfca3985694c7a80b48318c26778",
+        "currentNormalizedGitBlob": "632474fedbf0e39224e894852432aa9fc77ed6d2",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      },
+      {
+        "path": "tests/product/learn/courses-four-five-quality.test.ts",
+        "baselineGitBlob": "cddad3df7e8d0a08a4e1607ebea6938ddb312d87",
+        "currentNormalizedGitBlob": "6a489664867f54d786f5fd5b07d34df15727b686",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      },
+      {
+        "path": "tests/product/learn/courses-two-three-quality.test.ts",
+        "baselineGitBlob": "c0d7a1c2be5769e86d344acb583fd09ea9efffdf",
+        "currentNormalizedGitBlob": "e6d1de3f13ccbdc840e38c338983ce45e5fd9651",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false
+      }
+    ],
+    "intent": "Changes are enumerated for independent review, not automatically approved."
+  },
+  "originalPngs": {
+    "total": 260,
+    "equivalent": 256,
+    "intentionalOverviewAllowlist": [
+      "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+      "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+      "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+      "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png"
+    ],
+    "changed": [
+      {
+        "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png",
+        "baselineGitBlob": "cf3039318c32ab3754f8595e57eecea0c60dcd04",
+        "currentNormalizedGitBlob": "4afdca057691011450f4de126c189109d5988d91",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false,
+        "intentionalOverviewAllowlist": true
+      },
+      {
+        "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png",
+        "baselineGitBlob": "412b441b9355509919f212192d02116f88c0071f",
+        "currentNormalizedGitBlob": "e67b742410fbea144c8e7e1594d00b25e8a5acc5",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false,
+        "intentionalOverviewAllowlist": true
+      },
+      {
+        "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png",
+        "baselineGitBlob": "1aa0d059f90c8b257ccc9669c6d3dcebf9067194",
+        "currentNormalizedGitBlob": "94c890bd6bb932bbd0c22595de4c8912deb2b7e1",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false,
+        "intentionalOverviewAllowlist": true
+      },
+      {
+        "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png",
+        "baselineGitBlob": "877777d17430fcdbc3f8d7de1f4e247176d98fde",
+        "currentNormalizedGitBlob": "a2440d5d8137571421596404d9ea8530096be512",
+        "gitBlobEquivalent": false,
+        "currentMissingOrNonfile": false,
+        "intentionalOverviewAllowlist": true
+      }
+    ],
+    "unexpectedChangedPaths": []
+  },
+  "newPathsSinceBaseline": [
+    "content/learn/course-6/6.1.ts",
+    "content/learn/course-6/6.10.ts",
+    "content/learn/course-6/6.11.ts",
+    "content/learn/course-6/6.12.ts",
+    "content/learn/course-6/6.2.ts",
+    "content/learn/course-6/6.3.ts",
+    "content/learn/course-6/6.4.ts",
+    "content/learn/course-6/6.5.ts",
+    "content/learn/course-6/6.6.ts",
+    "content/learn/course-6/6.7.ts",
+    "content/learn/course-6/6.8.ts",
+    "content/learn/course-6/6.9.ts",
+    "content/learn/course-7/7.1.ts",
+    "content/learn/course-7/7.10.ts",
+    "content/learn/course-7/7.11.ts",
+    "content/learn/course-7/7.12.ts",
+    "content/learn/course-7/7.13.ts",
+    "content/learn/course-7/7.2.ts",
+    "content/learn/course-7/7.3.ts",
+    "content/learn/course-7/7.4.ts",
+    "content/learn/course-7/7.5.ts",
+    "content/learn/course-7/7.6.ts",
+    "content/learn/course-7/7.7.ts",
+    "content/learn/course-7/7.8.ts",
+    "content/learn/course-7/7.9.ts",
+    "content/learn/course-8/8.1.ts",
+    "content/learn/course-8/8.10.ts",
+    "content/learn/course-8/8.11.ts",
+    "content/learn/course-8/8.12.ts",
+    "content/learn/course-8/8.2.ts",
+    "content/learn/course-8/8.3.ts",
+    "content/learn/course-8/8.4.ts",
+    "content/learn/course-8/8.5.ts",
+    "content/learn/course-8/8.6.ts",
+    "content/learn/course-8/8.7.ts",
+    "content/learn/course-8/8.8.ts",
+    "content/learn/course-8/8.9.ts",
+    "documents/redesign/course-eight-ko.md",
+    "documents/redesign/course-seven-ko.md",
+    "documents/redesign/courses-six-ko.md",
+    "documents/redesign/stage-runs/S27-progress.md",
+    "e2e/redesign/curriculum-index.spec.ts",
+    "e2e/redesign/curriculum-six-eight.spec.ts",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-light-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-light-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-light-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-light-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-light-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-dark-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-dark-mobile-chrome-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-light-chromium-win32.png",
+    "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-light-mobile-chrome-win32.png",
+    "e2e/redesign/research-curriculum-packages.spec.ts",
+    "scripts/redesign/s27-preservation.py",
+    "src/product/adapters/analysis/stability/state.ts",
+    "src/product/experiments/frontier-focus-config.ts",
+    "src/product/experiments/frontier-focus-definitions.ts",
+    "src/product/experiments/frontier-focus-discrete.ts",
+    "src/product/experiments/frontier-focus-field.ts",
+    "src/product/experiments/frontier-focus-fk.ts",
+    "src/product/experiments/frontier-focus-network.ts",
+    "src/product/experiments/frontier-focus-science.ts",
+    "src/product/experiments/reproducibility-focus-config.ts",
+    "src/product/experiments/reproducibility-focus-definitions.ts",
+    "src/product/experiments/reproducibility-focus-diagnostics.ts",
+    "src/product/experiments/reproducibility-focus-learning.ts",
+    "src/product/experiments/reproducibility-focus-project.ts",
+    "src/product/experiments/reproducibility-focus-science.ts",
+    "src/product/experiments/s27-authoring.ts",
+    "src/product/experiments/s27-science.ts",
+    "src/product/experiments/stability-focus-cascade.ts",
+    "src/product/experiments/stability-focus-config.ts",
+    "src/product/experiments/stability-focus-definitions.ts",
+    "src/product/experiments/stability-focus-manifolds.ts",
+    "src/product/experiments/stability-focus-science.ts",
+    "src/product/lab/views/driven-diagnostics.ts",
+    "src/product/learn/index-data.ts",
+    "src/product/learn/index-view.ts",
+    "tests/product/experiments/frontier-focus.test.ts",
+    "tests/product/experiments/reproducibility-focus.test.ts",
+    "tests/product/experiments/s27-worker.test.ts",
+    "tests/product/experiments/stability-focus.test.ts",
+    "tests/product/lab/stability-handoff.test.ts",
+    "tests/product/learn/courses-six-eight-quality.test.ts",
+    "tests/product/learn/curriculum-completeness.test.ts"
+  ],
+  "newS27ContentAndFocusPaths": [
+    "content/learn/course-6/6.1.ts",
+    "content/learn/course-6/6.10.ts",
+    "content/learn/course-6/6.11.ts",
+    "content/learn/course-6/6.12.ts",
+    "content/learn/course-6/6.2.ts",
+    "content/learn/course-6/6.3.ts",
+    "content/learn/course-6/6.4.ts",
+    "content/learn/course-6/6.5.ts",
+    "content/learn/course-6/6.6.ts",
+    "content/learn/course-6/6.7.ts",
+    "content/learn/course-6/6.8.ts",
+    "content/learn/course-6/6.9.ts",
+    "content/learn/course-7/7.1.ts",
+    "content/learn/course-7/7.10.ts",
+    "content/learn/course-7/7.11.ts",
+    "content/learn/course-7/7.12.ts",
+    "content/learn/course-7/7.13.ts",
+    "content/learn/course-7/7.2.ts",
+    "content/learn/course-7/7.3.ts",
+    "content/learn/course-7/7.4.ts",
+    "content/learn/course-7/7.5.ts",
+    "content/learn/course-7/7.6.ts",
+    "content/learn/course-7/7.7.ts",
+    "content/learn/course-7/7.8.ts",
+    "content/learn/course-7/7.9.ts",
+    "content/learn/course-8/8.1.ts",
+    "content/learn/course-8/8.10.ts",
+    "content/learn/course-8/8.11.ts",
+    "content/learn/course-8/8.12.ts",
+    "content/learn/course-8/8.2.ts",
+    "content/learn/course-8/8.3.ts",
+    "content/learn/course-8/8.4.ts",
+    "content/learn/course-8/8.5.ts",
+    "content/learn/course-8/8.6.ts",
+    "content/learn/course-8/8.7.ts",
+    "content/learn/course-8/8.8.ts",
+    "content/learn/course-8/8.9.ts",
+    "src/product/experiments/frontier-focus-config.ts",
+    "src/product/experiments/frontier-focus-definitions.ts",
+    "src/product/experiments/frontier-focus-discrete.ts",
+    "src/product/experiments/frontier-focus-field.ts",
+    "src/product/experiments/frontier-focus-fk.ts",
+    "src/product/experiments/frontier-focus-network.ts",
+    "src/product/experiments/frontier-focus-science.ts",
+    "src/product/experiments/reproducibility-focus-config.ts",
+    "src/product/experiments/reproducibility-focus-definitions.ts",
+    "src/product/experiments/reproducibility-focus-diagnostics.ts",
+    "src/product/experiments/reproducibility-focus-learning.ts",
+    "src/product/experiments/reproducibility-focus-project.ts",
+    "src/product/experiments/reproducibility-focus-science.ts",
+    "src/product/experiments/s27-authoring.ts",
+    "src/product/experiments/s27-science.ts",
+    "src/product/experiments/stability-focus-cascade.ts",
+    "src/product/experiments/stability-focus-config.ts",
+    "src/product/experiments/stability-focus-definitions.ts",
+    "src/product/experiments/stability-focus-manifolds.ts",
+    "src/product/experiments/stability-focus-science.ts"
+  ],
+  "currentDiffPathsAgainstBaseline": [
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.1.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.10.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.11.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.12.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.2.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.3.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.4.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.5.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.6.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.7.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.8.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-6/6.9.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.1.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.10.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.11.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.12.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.13.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.2.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.3.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.4.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.5.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.6.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.7.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.8.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-7/7.9.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.1.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.10.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.11.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.12.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.2.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.3.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.4.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.5.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.6.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.7.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.8.ts"
+    },
+    {
+      "status": "A",
+      "path": "content/learn/course-8/8.9.ts"
+    },
+    {
+      "status": "M",
+      "path": "content/learn/curriculum.ts"
+    },
+    {
+      "status": "M",
+      "path": "content/learn/modules.ts"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/course-eight-ko.md"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/course-seven-ko.md"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/courses-six-ko.md"
+    },
+    {
+      "status": "A",
+      "path": "documents/redesign/stage-runs/S27-progress.md"
+    },
+    {
+      "status": "M",
+      "path": "documents/redesign/status.json"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-index.spec.ts"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-6-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-6-9-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-13-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-7-7-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-12-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-dark-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-light-chromium-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/curriculum-six-eight.spec.ts-snapshots/s27-focus-8-8-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "M",
+      "path": "e2e/redesign/learn.spec.ts"
+    },
+    {
+      "status": "M",
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-chromium-win32.png"
+    },
+    {
+      "status": "M",
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-dark-mobile-chrome-win32.png"
+    },
+    {
+      "status": "M",
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-chromium-win32.png"
+    },
+    {
+      "status": "M",
+      "path": "e2e/redesign/learn.spec.ts-snapshots/s09-learn-courses-light-mobile-chrome-win32.png"
+    },
+    {
+      "status": "A",
+      "path": "e2e/redesign/research-curriculum-packages.spec.ts"
+    },
+    {
+      "status": "A",
+      "path": "scripts/redesign/s27-preservation.py"
+    },
+    {
+      "status": "A",
+      "path": "src/product/adapters/analysis/stability/state.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-config.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-definitions.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-discrete.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-field.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-fk.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-network.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/frontier-focus-science.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-config.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-definitions.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-diagnostics.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-learning.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-project.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/reproducibility-focus-science.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/experiments/research-focus-config.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/experiments/research-focus-definitions.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/experiments/research-focus-science.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/experiments/research-focus-view.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/experiments/research-focus.worker.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/s27-authoring.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/s27-science.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/stability-focus-cascade.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/stability-focus-config.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/stability-focus-definitions.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/stability-focus-manifolds.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/experiments/stability-focus-science.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/discrete-workspace.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/lab/views/driven-diagnostics.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-files.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-inspector.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-model.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-storage.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-sweep.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/driven-workspace.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/field-workspace.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/network-workspace.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/lab/views/stability-panel.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/focus-mount.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/learn/index-data.ts"
+    },
+    {
+      "status": "A",
+      "path": "src/product/learn/index-view.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/schema.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/validation-research.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/validation-shapes.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/validation.ts"
+    },
+    {
+      "status": "M",
+      "path": "src/product/learn/views.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/experiments/frontier-focus.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/experiments/reproducibility-focus.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/experiments/research-focus-boundaries.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/experiments/s27-worker.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/experiments/stability-focus.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/lab/stability-handoff.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/learn/content.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/learn/course-one-quality.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/learn/courses-four-five-quality.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/learn/courses-six-eight-quality.test.ts"
+    },
+    {
+      "status": "M",
+      "path": "tests/product/learn/courses-two-three-quality.test.ts"
+    },
+    {
+      "status": "A",
+      "path": "tests/product/learn/curriculum-completeness.test.ts"
+    }
+  ],
+  "stagedChangesAgainstHead": [
+    {
+      "status": "M",
+      "path": "documents/redesign/stage-runs/S27-progress.md"
+    },
+    {
+      "status": "M",
+      "path": "documents/redesign/status.json"
+    }
+  ],
+  "unstagedChanges": [],
+  "untrackedNonignoredPaths": [],
+  "desktopTransportCopies": [
+    {
+      "name": "master-roadmap",
+      "repositoryPath": "documents/redesign/master-roadmap-ko.md",
+      "desktopPath": "<Desktop>/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+      "method": "raw-file SHA256 (read-only, no copying)",
+      "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+      "matches": true,
+      "status": "matched"
+    },
+    {
+      "name": "execution-plan",
+      "repositoryPath": "documents/redesign/execution-plan-ko.md",
+      "desktopPath": "<Desktop>/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+      "method": "raw-file SHA256 (read-only, no copying)",
+      "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+      "matches": true,
+      "status": "matched"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "documents/redesign/stage-runs/S27-progress.md",
+      "rawSha256": "454b5d3c957631e53f4da64fb8d9a17d76187cb86ee952a6b6a78dcaf0e3668f"
+    }
+  ],
+  "reviewAndModelLimits": {
+    "modelSelectorObserved": false,
+    "modelSelectorState": "unknown; not exposed or verified by this helper",
+    "humanOrExpertReviewCertified": false,
+    "humanReviewState": "unknown; Git/file hashes cannot establish an actual human review",
+    "testExecutionCertified": false,
+    "remotePushCertified": false
+  },
+  "preservationChecksPass": true,
+  "desktopRawHashesAllMatch": true
+}

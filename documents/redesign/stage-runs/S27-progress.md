@@ -84,3 +84,25 @@
 - 학습 홈의86공개/추천경로 표시로 의도된 기존PNG4개만 갱신한다. 과정1/단원1 PNG와 나머지 기존 시각 기준은 변경하지 않는다. 새로운 보존 helper는 Git blob 동일성과 raw desktopSHA를 구분하며 기존 product 분석 adapter도 보호한다.
 
 - CP4 홈PNG4개를 직접 검토했다. original Learn 시각4/4가 갱신 및 none재비교 모두 통과했고 과정1/단원1 PNG는 unchanged다. CP4 known-pattern tracked secret scan exit0. 구현 checkpoint 검증 완료, 전체 최종 검증과 별도 완료 status는 아직 남아 있다.
+
+### CP4 원격 / candidate-complete 검증
+
+- CP4 `3d34cde8980f7ca0c7f1b38e994eb323dc09d0f8` 일반 push exit0, ls-remote exact match, 게시 직후 clean tree를 확인했다. 완료1..26/next27을 유지했다.
+- 상태: candidate-complete, 전체 필수 검증 대기. 제품/테스트/스크립트 소스는 위 commit으로 고정한다. 이후 evidence/status 문서만 바뀌는지 Git으로 다시 검사한다.
+- 원본14개 spec의 지정 grep는 프로젝트당142개, Chromium/Pixel5 합284개를 선택한다. 실제86단원왕복×2=172개를 포함한다. full Learn17개와 S27전체/ZIP/색인, 기존11+12+11종 분석 실행·정확한handoff·network/field/discrete 시각 회귀를 포함한다. 이전 과정 전용 시각 전부를 재실행했다는 뜻은 아니다.
+
+- 고정 CP4 소스의 최종 전체 Vitest는370개 파일6239/6239, pending/failed0으로 통과했다. explicit golden13/13도 통과했다. plan/catalog/learn/inventory/typecheck/lint/format/build8개 명령은 전부 exit0, build privacy22text/1binary-skip 통과다. source-pinned 카탈로그135개(35systems/51analyses/21integrators/28aux)와86개 공개 단원 계약이 통과했다.
+- 검토 metadata 추출:86schema/86automated/86source-checked/0human,37신규단원도0human. 인용184건/고유URL131개, pinnedGitURL75개 object 존재,94용어/3추천경로. 이번 추출은56외부URL을 모두 재접속한 검사가 아니다. 새 자료 대조 근거는 과정별 보고서에 남긴다.
+- 사전 보존 감사:404/404보호파일 동일, 기존tests/fixtures451/457동일(6개 publication/negative fixture 보강만 변경), PNG256/260동일(허용 홈4개만 변경), desktop두 전달본 rawSHA 일치. 최종 evidence stage 뒤 재감사한다.
+
+### CP4-E 최종 증거 — 전체 필수 검증 통과
+
+- 원본 production Chromium/Pixel5 단일 실행284/284 통과(각142), skip/flaky/failed/runner오류0. 실제86단원왕복×2=172개와 각17개 full Learn, S27전체/색인/실제ZIP, 기존11+12+11종 분석/정확한handoff/장·양자·네트워크 시각 회귀를 포함한다. 시작2026-11-05T01:15:25.040Z, duration2129020.422ms. final none 비교에서24새PNG와4의도된 홈PNG를 포함한64회 시각 assertion을 수행했다. 이전 모든 과정 전용시각 전체 재실행을 주장하지 않는다.
+- 단일 원본 실행은1worker/retry0/max-failures1/snapshot none이다. wrapper는 진단 video만off이며 원본 테스트·30초기본/5초expect/기존60·90초 한도·trace/실패스크린샷·threshold0.2/maxDiffPixels100을 유지한다. Pixel5는 emulation이며 실기기/Firefox/WebKit/screen-reader음성 인증은 하지 않았다.
+- 최종 전체6239/6239(370files), explicit golden13/13, quality8명령 모두 통과했다. 신규7testfiles346개는 native117(34+37+46), worker4, handoff25, 콘텐츠112, 전체census88로 구성되며 이 수를 전체6239에 다시 더하지 않는다. source는 remote3d34cde 그대로이며 이후 evidence/status만 수정한다.
+- sourceChecked/automated86, human0/86이다. finite branch/grid/sample/time, 독립 정규형/선형화 밀도/finite impulse chain/N8QKR/관측 forcing/ZIP authenticity 한계는 각 단원과 과정 보고서에 유지한다. native engine/API/기존저장·공유/사용자 원본 데이터는 보존한다.
+- 기존 default-branch push notice26건(high15/moderate8/low3)은 유지되며 package/lockfile 변경·새dependency audit·위험수락·릴리스 인증은 수행하지 않았다. S24 attachment authenticity/direct offset-Buffer SHA helper 한계도 그대로다.
+- 복구 기준은 S26status `9cfd9842570cdd3137e3ea866a1266de2585b941`와 unchanged `app.html`이다. 기존 진입점을 계속 사용하거나 별도 worktree에서 이 기준을 검증해 복구할 수 있다. 현재 사용자 working tree를 reset/clean하지 않는다.
+- 이 CP4-E는 evidence 저장 checkpoint이며 status의 완료1..26/next27을 아직 유지한다. 최종 보존·secret·source equality·clean preflight를 확인하고 별도 완료 status를 push해야 S27 완료다. 다음 유효 단계는 그 이후 S28이다. migration/parity/cutover/merge/tag/release/Landing 변경은 없다.
+
+- 최종 보존 감사404/404와desktop rawSHA2/2가 통과했다. 기존test451/457·PNG256/260동일 및6개 metadata/fixture·4개홈PNG만 의도된 차이다. 검증JSON을 추가한 tracked known-pattern secret scan은1884text/0finding이며 최종 staged파일을 commit 전 다시 검사한다. 검증소스3d34cde 대비 non-control diff0을 확인했다.
