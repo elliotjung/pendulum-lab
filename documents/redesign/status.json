@@ -39,9 +39,9 @@
     26,
     27
   ],
-  "blockedStage": 28,
+  "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP2-parity-blocked",
+  "activeStageCheckpoint": "CP3-integrators-and-links",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 resumed2026-11-06 on explicit continue request at clean fetched696dd23. Work proceeds through bounded numerical/link/control/runtime/migration checkpoints and actual134row execution evidence. nextStage28/completed1..27 and user review approvals remain unchanged; no S29 authorization or parity100 claim. See S28-progress.md resumption plan.",
     "S28 is INCOMPLETE: validated CP1 migration06757a5 adds strict v10/v11 double/compound/triple Euler/RK2/RK4 bounded restart, explicit preview/confirmation and exact UTF8 text backup. Legacy share/query/expansion/workspace/researchDB and unsupported settings are retained with recoverable guidance; this is not complete canonical migration or solver continuation. app.html/engines/APIs/user storage remain preserved.",
     "S28 exhaustive audit accounts for883files/118semantic capabilities/6825facts. Executable134rows contain35known implementation gaps and99without complete runtime attestations;0certified rows is missing S28 certification, not a claim that every product feature is broken. Catalog registration, preserved source and legacy-app links cannot grant parity. --check passes; --certify exits1. S29 remains prohibited; next valid stage28. See parity/README.md and stage-runs/S28-progress.md for exact source evidence and required remediation.",
     "S28 full Vitest6346/6346(372files), migration/legacy/golden505/505 and production legacy16/new20 journeys passed. A subsequent lint-only callback wrapper fix passed final typecheck/lint/format/build, affected migration6/6 browser journeys and parity12/12. Verification records separate source binding and initial resource/timeouts/false-positive diagnostic failures. Workflow approval28 is NOT recorded;86units remain automated/source-checked and0human-reviewed. No cutover/master merge/tag/release/Landing change or fresh dependency risk acceptance occurred.",

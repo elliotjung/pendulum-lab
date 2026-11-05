@@ -1,6 +1,6 @@
 # S28 — 저장·공유 migration과 기능 동등성 심사
 
-- 상태: in-progress / CP0
+- 상태: in-progress / CP3 (2026-11-06 재개)
 - 시작일: 2026-11-05 (Asia/Seoul)
 - 기준 HEAD / fetched origin/codex/redesign: `b78cdae4ea8e707e70ecd5a454173507f60aca2a`
 - 작업 branch/upstream: `codex/redesign` / `origin/codex/redesign`; 시작 시 clean, ahead/behind 0/0.
@@ -90,3 +90,15 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 다음 유효 단계는 **S28 재개/보완**이다. parity100%와 migration 전체 gate를 닫기 전에는 S29 요청도 실행할 수 없다. 본 보고 뒤 다음 번호를 입력하는 것만으로 실패 gate가 통과된 것으로 기록하지 않는다.
 
 - 최종 evidence stage 뒤 known-pattern secret scan은1897text/0finding이다. 감사/검증/보존 JSON과 모든 신규 source를 포함한다. 모든 필수 targeted 검사는 통과했고, 남은 실패는 실제 parity completion gate다. CP2는 이 차단 결과를 게시하는 감사 checkpoint이며 완료 status commit이 아니다.
+
+## 2026-11-06 재개 — 차이 구현과 실행 인증
+
+- 사용자 요청 `그러면 계속해`에 따라 S28을 재개한다. 기준 로컬/원격은 `696dd23df56ecc2e2816fa2b7b48032b89a6305e`, clean 및 ahead/behind0/0을 확인했다. Fetch, plan check, preflight28 모두 통과했다. 직전 checkpoint push 복구는 필요 없다.
+- 정적 감사는 출발점이다. 실제 기능 차이를 구현하고 각134행에 새 UI 조작·native 결과 비교·저장/공유 왕복·실제 runner 결과·export 증거를 연결한다. 카탈로그 이름, legacy 앱 링크, 임의 pass 또는 테스트 파일 존재만으로 인증하지 않는다.
+- **CP3**: 기존16종 ODE 적분기를 planar/chain의 실행·설정·저장에 연결한다. 기존 native step/adaptive/rejection/constraint 정책을 재사용하고 tolerance를 버전/단위와 함께 보존한다. 동일 상태·설정에서 native 비교, 실패 원자성, worker 취소, round-trip을 검증한다.
+- **CP4**: legacy share v1–v4, Landing query/tab, expansion과 session/run의 versioned migration을 실제 새 UI에 연결한다. 원문 백업과 explicit preview/confirm은 유지하며, 실행·ensemble·workflow·표시 정보의 전달 여부를 개별 검증한다. 표현하지 못한 의미를 조용히 버리지 않는다.
+- **CP5**: 소리화/OGY/명령·정밀 입력/기록·재생/언어 등 기존 control의 새 제품 접근을 공용 native 도구로 연결한다. 권한·오류·취소·해제·export 경로를 포함한다.
+- **CP6**: 관측 capture, 확률 steppers, GPU/Wasm, browser API, workspace/연구 DB의 남은 연결과 복구를 bounded checkpoint로 구현한다. 실제 가능한 기능과 환경 한계를 구분하고 실패 경로를 검증한다.
+- **CP7**:134개 실행 행에 실제 source-bound Vitest/production browser 결과와 artifact 증거를 결속하고 negative/mutation 검사를 수행한다. 부족한 행은 fail로 유지하며 계속 구현·검증한다. 모든 구현 checkpoint를 push한 뒤 전체 필수 gate를 통과해야만 별도 완료 status를 만든다.
+- CP3~CP7은 내부 작업 묶음이며 사용자가 하위 번호를 다시 요청할 필요가 없다. 필요하면 review 가능한 더 작은 구현 commit으로 나눈다. 이후 단계/S29 cutover, 엔진 재작성, 기존 데이터 덮어쓰기, master merge/release/Landing 변경은 수행하지 않는다.
+- 현재 source/목록 변경 전 세부 계약 조사 중이다. 모델 selector는 여전히 노출되지 않았으며 확인/변경했다고 주장하지 않는다. 교육 사람 검토0/86 및 승인 gates[7,9,17,24]를 유지한다.
