@@ -66,3 +66,27 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 이후 최종 ESLint가 새 lazy preview 클릭 콜백의 `no-misused-promises` 1건을 발견했다. 동일한 async body를 동기 void callback에서 호출하도록만 수정했다. 물리/migration API/기존 계약 테스트는 바뀌지 않았다. 수정 뒤 typecheck/전체 lint/대상 format/production build 모두 exit0, 최종 영향 browser6/6 및 parity12/12를 재검증했다. 전체6346과 기존16/새20 증거는 이 callback-only 수정 직전 소스에 결속되며, 후속6개 여정과 품질 검사는 최종 소스에 결속된다. 이 소스 차이를 S28-verification.json에도 구분한다.
 - 최종 source fingerprint는 `78dd9f786bec7274fa503b5c73e23661aae7325f9fcfd118934902f7ca801de4`다. known-pattern secret scan은 CP1 명시적 stage 뒤1890text/0finding으로 통과했다. history/ignored/binary/임의 password 및 외부 서비스는 범위 밖이다.
 - CP1 구현·targeted gate는 통과했으며 일반 push를 준비한다. 단계 완료 또는 S28 사용자 승인 상태는 아니다.
+
+## CP1 게시 / CP2 동등성 심사 — S28 미완료
+
+- CP1 `06757a5f4e2ce7916f59d3cf52924ca7a001bd7e` commit 및 일반 push exit0, live ls-remote exact match 확인. CP0부터 CP1까지 구현 checkpoint push는 모두 성공했다.
+- 자동 ledger는 동결 S01 SHA256, 기존 source projection/AST와 새 product source fingerprint에 결속된다. 파일883/883, 의미 기능118/118, 관찰6825/6825를 모두 보존한다. 실제 심사134행 중 **35gap/99unverified/0certified**다. 인증0은 S28 실행 증거가 닫히지 않았다는 뜻이며 실제 제품의 모든 기능이 고장났다는 뜻이 아니다.
+- 주요 차이: 자유 Lab의13개 기존 적분기, 일부 확률 적분기, 소리화/OGY/실시간 camera·IMU/명령 팔레트/언어/정밀 표현/기록·재생/GPU·Wasm/공개 browser namespace, 기존 share·query·tab·workspace·DB 및 제한적 session/run migration. 각 항목의 근거와 소유 경로는 matrix.gaps에 있다. 남은99행에는 실제 조작·결과 비교·round trip·test result·export attestation을 연결해야 한다. 현재 감사 도구는 정적 등록이나 임의 pass를 인증으로 받아들이지 않는다.
+- `--check`는 manifest 동일성 검사이며 통과했다. `--check --certify`는35known gaps/99missing runtime evidence로 exit1이다. 이는 남은 **단계 완료 gate 실패**이고, audit targeted12/12 통과와 구분한다. 필수 기능 차이를 숨기거나 원래 app 링크로 대체해100%를 만들지 않는다.
+- `blockedStage=28`, `activeStage=28`, `activeStageCheckpoint=CP2-parity-blocked`, 완료1..27/next28을 유지한다. S28 완료 status commit은 만들지 않는다. 사용자 승인28도 기록하지 않는다. S29 기본 앱 전환/old audience 제거/master merge/tag/release/Landing 변경을 시작하지 않는다.
+- S28 R 범위 중 migration/기존·새 저장 여정과 동등성 감사를 실행했다. 전체 릴리스 R(전체 모든 E2E 프로젝트, standalone/PWA/성능/새 dependency audit)은 완료하지 않았으며 그 인증을 주장하지 않는다. Chromium/Pixel5 emulation 외 browser·실기기·screen-reader 음성 검토도 남는다.
+- default-branch GitHub push notice26건(high15/moderate8/low3)은 기존 상태다. package/lockfile 변경·새 dependency audit·취약성 해결/사용자 위험 수락은 없다. S30 security disposition과 S24 offset-Buffer helper/attachment authenticity 및 기존 유한시간 과학적 제한은 유지한다. 새로운 strict import/preview 보안 검사는 통과했다.
+
+## 사용자 확인과 복구
+
+미리보기: production 또는 dev의 `/next.html#/lab`에서 아래쪽 **기존 데이터 가져오기**를 연다. 기본 `/app.html`은 계속 기존 앱이다.
+
+- [ ] 지원 session을 미리보기해 값·단위·적분기·시각·seed와 backup-only 설정을 확인하고 원문 백업을 내려받는다.
+- [ ] 미지원/손상 링크·파일에서 적용이 막히고 원문을 내려받을 수 있는지 확인한다. 기존 앱에서 원본을 다시 연다.
+- [ ] [동등성 심사](../parity/README.md)의35개 차이와99개 미인증 항목이 남아 있음을 확인한다. 현재는 전환 승인 대상이 아니다.
+- [ ] [복구·URL 계약](../parity/S28-compatibility-and-rollback.md), 기존 `app.html`, S27 기준 `b78cdae`와 별도 백업을 확인한다. 사용자 폴더를 reset/clean하지 않는다.
+- [ ] 교육86개 단원은 automated/source-checked이나 사람·물리 전문가 검토는0/86이라는 제품 표시를 확인한다. AI/자동 검사 결과를 human-reviewed로 바꾸지 않는다.
+
+다음 유효 단계는 **S28 재개/보완**이다. parity100%와 migration 전체 gate를 닫기 전에는 S29 요청도 실행할 수 없다. 본 보고 뒤 다음 번호를 입력하는 것만으로 실패 gate가 통과된 것으로 기록하지 않는다.
+
+- 최종 evidence stage 뒤 known-pattern secret scan은1897text/0finding이다. 감사/검증/보존 JSON과 모든 신규 source를 포함한다. 모든 필수 targeted 검사는 통과했고, 남은 실패는 실제 parity completion gate다. CP2는 이 차단 결과를 게시하는 감사 checkpoint이며 완료 status commit이 아니다.

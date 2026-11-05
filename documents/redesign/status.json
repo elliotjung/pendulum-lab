@@ -39,9 +39,9 @@
     26,
     27
   ],
-  "blockedStage": null,
+  "blockedStage": 28,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP1",
+  "activeStageCheckpoint": "CP2-parity-blocked",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,9 @@
     24
   ],
   "notes": [
+    "S28 is INCOMPLETE: validated CP1 migration06757a5 adds strict v10/v11 double/compound/triple Euler/RK2/RK4 bounded restart, explicit preview/confirmation and exact UTF8 text backup. Legacy share/query/expansion/workspace/researchDB and unsupported settings are retained with recoverable guidance; this is not complete canonical migration or solver continuation. app.html/engines/APIs/user storage remain preserved.",
+    "S28 exhaustive audit accounts for883files/118semantic capabilities/6825facts. Executable134rows contain35known implementation gaps and99without complete runtime attestations;0certified rows is missing S28 certification, not a claim that every product feature is broken. Catalog registration, preserved source and legacy-app links cannot grant parity. --check passes; --certify exits1. S29 remains prohibited; next valid stage28. See parity/README.md and stage-runs/S28-progress.md for exact source evidence and required remediation.",
+    "S28 full Vitest6346/6346(372files), migration/legacy/golden505/505 and production legacy16/new20 journeys passed. A subsequent lint-only callback wrapper fix passed final typecheck/lint/format/build, affected migration6/6 browser journeys and parity12/12. Verification records separate source binding and initial resource/timeouts/false-positive diagnostic failures. Workflow approval28 is NOT recorded;86units remain automated/source-checked and0human-reviewed. No cutover/master merge/tag/release/Landing change or fresh dependency risk acceptance occurred.",
     "S27 publishes all37 new units6.1-6.12/7.1-7.13/8.1-8.12. Exactly8courses/86units are published, with94 source-linked glossary entries,131 unique citation URLs and3 independent recommended paths; broken internal refs0 and feature locks0. Every Focus calls shared native engines; no new governing equations or integrators were implemented.",
     "Verified implementation3d34cde preserves404/404 protected baseline Git blobs, including native engines, existing physics/analysis adapters, public APIs, app.html, packages/lockfile, courses1-5 and golden fixtures. Repository text equivalence uses Git clean/EOL filters, not raw CRLF identity. Original tests/fixtures451/457 and PNG256/260 are identical; only6publication/negative-fixture paths and4course-home PNGs changed intentionally. New24PNG remain fixed in final none comparisons. Both desktop transport copies match raw SHA256.",
     "Final full Vitest6239/6239 in370files, contentquality112/112, all86 actual census88/88, explicit golden13/13 and8quality/build commands passed. One original production Chromium/Pixel5 run passed284/284(142each), including172actual unit calculation/Lab/back/reload journeys. Failures/skips/flaky/runner errors0;1worker/retry0/snapshot none. A task-local wrapper disables diagnostic video only; original assertions,30s/5s defaults, existing60/90s limits, trace/failure screenshots and threshold0.2/maxDiff100 remain unchanged.",
