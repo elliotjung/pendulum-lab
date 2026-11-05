@@ -193,7 +193,17 @@ test.describe('S04 parallel application shell', () => {
     expect(
       requests.filter((path) => /\/src\/(main\.ts|app\/|physics\/|chaos\/|runtime\/|workers\/|research\/)/.test(path))
     ).toEqual([]);
-    expect(requests.filter((path) => /\/assets\/(?:app|physics|chaos|research|.*worker)-/.test(path))).toEqual([]);
+    // Curriculum declarations share the research/chaos prefix but contain no
+    // runtime kernels. Keep every original runtime/worker-prefix prohibition,
+    // exempting only these two exact data chunks. Imported engines still get
+    // separate physics/chaos/research chunks from Vite's manualChunks policy.
+    expect(
+      requests.filter(
+        (path) =>
+          /\/assets\/(?:app|physics|chaos|research|.*worker)-/.test(path) &&
+          !/\/assets\/(?:research|chaos)-focus-definitions-[A-Za-z0-9_-]{8}\.js$/.test(path)
+      )
+    ).toEqual([]);
   });
 
   test('supports skip navigation and keyboard space changes with route focus', async ({ page }) => {

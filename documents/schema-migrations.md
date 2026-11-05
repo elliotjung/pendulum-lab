@@ -44,7 +44,7 @@ versions evolve and the compatibility matrix for reading old archives.
 | Notebook | `pendulum-research-notebook/v2` | `buildNotebookV2` | `npm run notebook:validate` |
 | Snapshot | `pendulum-snapshot/v2` | `currentSnapshot` export | `StateStore.validate` |
 | Live session | `pendulum-session/v11-ts` | `currentSnapshot` / session export | `StateStore.validate` (`v10-ts` point-mass migration) |
-| Shared experiment URL | share payload `v3` | `captureSharedExperiment` | `decodeSharedExperiment` (`v1`/`v2` migration) |
+| Shared experiment URL | share payload `v4` | `captureSharedExperiment` | `decodeSharedExperiment` (`v1`/`v2`/`v3` migration) |
 | Provenance | `pendulum-provenance/v1` | `ProvenanceBuilder` | viewers |
 | 3D diagnostics | `pendulum-3d-diagnostics/v1` | lab3d snapshot exports | external |
 | Batch checkpoint | `pendulum-batch-checkpoint/v1` | study batch runner | `sanitizeBatchCheckpoint` |
@@ -64,8 +64,12 @@ The live-session writer now emits `pendulum-session/v11-ts`: this is the first
 session version that defines `compound-double`. A v10 point-mass session is
 migrated to v11; a v10 payload that claims `compound-double` is rejected because
 that model identifier had no valid meaning in v10. Shared setup links follow the
-same boundary: v1/v2 point-mass payloads migrate to share v3, while new compound
-setups are emitted only as v3 with v11 physics provenance.
+same physics boundary: v1/v2 point-mass payloads and v3 payloads migrate to
+share v4. V3 first introduced compound setups with v11 physics provenance;
+the current writer emits v4. V4 preserves canonical perturbation epsilon,
+variable, pattern and seed, angle-display preference, and guided-workflow
+position. Older payloads receive explicit migration diagnostics for missing
+settings; a setup link contains no simulation results.
 
 Rows: artifact version found in a file. Columns: app build reading it.
 
@@ -85,8 +89,9 @@ Rows: artifact version found in a file. Columns: app build reading it.
 | session `v10-ts` point-mass | ✅ native | ✅ native | ✅ native | ✅ migrated → `v11-ts` |
 | session `v10-ts` + `compound-double` | ❌ undefined model | ❌ undefined model | ❌ undefined model | ❌ rejected as historically invalid |
 | session `v11-ts` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ native |
-| share payload `v1`/`v2` | ✅ native | ✅ native | ✅ native | ✅ migrated → v3 (point-mass only) |
-| share payload `v3` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ native; compound model allowed |
+| share payload `v1`/`v2` | ✅ native | ✅ native | ✅ native | ✅ migrated → v4 (point-mass only) |
+| share payload `v3` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ migrated → v4; compound model allowed |
+| share payload `v4` | ❌ unsupported | ❌ unsupported | ❌ unsupported | ✅ native; complete perturbation/workflow setup |
 | 3d-diagnostics `/v1` | — | ✅ | ✅ | ✅ |
 
 Legend: ✅ reads cleanly · ⚠️ reads, ignores unknown fields · ❌ not supported
