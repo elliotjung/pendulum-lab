@@ -55,7 +55,9 @@ export function mountFocus(document: Document, unit: LearnUnit) {
       const extended =
         unit.focusExperiment.kind === 'numerical-methods' || unit.focusExperiment.kind === 'extended-pendulum';
       const research =
-        unit.focusExperiment.kind === 'nonlinear-control' || unit.focusExperiment.kind === 'chaos-measurement';
+        unit.focusExperiment.kind === 'nonlinear-control' ||
+        unit.focusExperiment.kind === 'chaos-measurement' ||
+        unit.focusExperiment.kind === 'research-workflow';
       const create = research
         ? (await import('../experiments/research-focus-view')).createResearchFocusView
         : extended

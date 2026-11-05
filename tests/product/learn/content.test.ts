@@ -62,7 +62,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   cpSync('content/learn/curriculum.ts', join(root, 'content/learn/curriculum.ts'));
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
   cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
-  for (const course of ['course-2', 'course-3', 'course-4', 'course-5'])
+  for (const course of ['course-2', 'course-3', 'course-4', 'course-5', 'course-6'])
     cpSync(`content/learn/${course}`, join(root, `content/learn/${course}`), { recursive: true });
   // Published S25 lessons use computation-free authoring and input declaration helpers.
   cpSync('src/product/learn', join(root, 'src/product/learn'), { recursive: true });
@@ -71,9 +71,14 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
     'extended-definitions.ts',
     'nonlinear-focus-definitions.ts',
     'nonlinear-focus-authoring.ts',
-    'chaos-focus-definitions.ts'
+    'chaos-focus-definitions.ts',
+    'research-focus-definitions.ts',
+    'stability-focus-definitions.ts',
+    's27-authoring.ts'
   ])
     cpSync(`src/product/experiments/${name}`, join(root, `src/product/experiments/${name}`));
+  cpSync('src/product/persistence/safe-data.ts', join(root, 'src/product/persistence/safe-data.ts'));
+  cpSync('src/product/contracts/validation.ts', join(root, 'src/product/contracts/validation.ts'));
   writeFileSync(join(root, 'content/learn/course-1/1.1.ts'), `export default ${JSON.stringify(unit)};`);
   cpSync('documents/redesign/curriculum-map-ko.md', join(root, 'documents/redesign/curriculum-map-ko.md'));
   return root;
@@ -107,7 +112,8 @@ describe('Learn content schema and authoritative curriculum', () => {
       ...Array.from({ length: 8 }, (_, i) => `1.${i + 1}`),
       ...[2, 3].flatMap((course) => Array.from({ length: 9 }, (_, i) => `${course}.${i + 1}`)),
       ...Array.from({ length: 10 }, (_, i) => `4.${i + 1}`),
-      ...Array.from({ length: 13 }, (_, i) => `5.${i + 1}`)
+      ...Array.from({ length: 13 }, (_, i) => `5.${i + 1}`),
+      ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`)
     ]);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();
@@ -190,7 +196,7 @@ describe('Learn content schema and authoritative curriculum', () => {
     ],
     [
       'unavailable unit',
-      "export const learnModules = { 'course-6/6.1': () => import('./course-6/6.1') };",
+      "export const learnModules = { 'course-9/9.1': () => import('./course-9/9.1') };",
       'module is not an available curriculum unit'
     ],
     [

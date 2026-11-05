@@ -211,8 +211,10 @@ function checkExperiment(value: LearnUnit, errors: string[]): void {
   if (
     value.courseId === 'course-4' ||
     value.courseId === 'course-5' ||
+    /^course-[678]$/.test(value.courseId) ||
     focus.kind === 'nonlinear-control' ||
-    focus.kind === 'chaos-measurement'
+    focus.kind === 'chaos-measurement' ||
+    focus.kind === 'research-workflow'
   ) {
     checkResearchExperiment(value, errors);
     return;

@@ -1,6 +1,6 @@
 import { element, link } from '../../app/dom';
 import { createButton, createSection } from '../../design-system/primitives';
-import { toCanonicalDriven, type DrivenConfig } from '../../adapters/physics/driven';
+import { toCanonicalDriven, type DrivenConfig } from './driven-diagnostics';
 import { createExperimentRoute } from '../../persistence';
 import {
   DRIVEN_IMPORT_MAX_BYTES,
@@ -98,7 +98,7 @@ export function createDrivenFiles(
     id: 'driven-export',
     title: '내보내기와 복원',
     description:
-      '상태 JSON은 SI 플랜트·구동·제어·초기조건·적분기·실행 조건입니다. 궤적 CSV는 상태·위치·구동값·제어값·기준값·오차와 진단 에너지를 담습니다. SVG는 현재 선택한 분석 그래프입니다. JSON 복원은 초기조건에서 다시 시작합니다. 별도 분석 요청이 담긴 파일은 원본을 보존하고 가져오기를 거부합니다.'
+      '상태 JSON은 SI 플랜트·구동·제어·초기조건·적분기·실행 조건입니다. 궤적 CSV는 상태·위치·구동값·제어값·기준값·오차와 진단 에너지를 담습니다. SVG는 현재 선택한 분석 그래프입니다. JSON 복원은 초기조건에서 다시 시작합니다. 지원 버전의 안정성 분석 설정은 물리 상태와 구분해 함께 복원합니다. 지원하지 않는 분석 요청이 담긴 파일은 원본을 보존하고 가져오기를 거부합니다.'
   });
   const message = element(document, 'p', 'lab-muted');
   message.setAttribute('role', 'status');

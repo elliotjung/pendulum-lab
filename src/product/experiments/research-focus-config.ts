@@ -1,3 +1,4 @@
+import { stabilityFocusCanonical } from './stability-focus-config';
 import type { LearnUnit } from '../learn/schema';
 import type { ExperimentStateV1 } from '../contracts/experiment';
 import { serializeExperiment } from '../persistence/serialization';
@@ -17,7 +18,9 @@ export function researchCanonical(unit: Source, input: ResearchFields): Experime
   const fields = validateResearchFields(unit.id, input);
   const value = unit.id.startsWith('4.')
     ? nonlinearFocusCanonical(unit.id, fields)
-    : chaosFocusCanonical(unit.id, fields);
+    : unit.id.startsWith('5.')
+      ? chaosFocusCanonical(unit.id, fields)
+      : stabilityFocusCanonical(unit.id, fields);
   const canonical: ExperimentStateV1 = {
     ...value,
     provenance: {

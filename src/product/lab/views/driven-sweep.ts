@@ -1,9 +1,4 @@
-import {
-  drivenHasForcing,
-  validateDrivenConfig,
-  type DrivenConfig,
-  type DrivenSample
-} from '../../adapters/physics/driven';
+import { drivenHasForcing, validateDrivenConfig, type DrivenConfig, type DrivenSample } from './driven-diagnostics';
 import { createDrivenWorkerClient, type DrivenWorkerFactory } from '../../adapters/physics/driven-client';
 import { DRIVEN_WORKER_MAX_STEPS } from '../../adapters/physics/driven-worker-protocol';
 
@@ -85,7 +80,7 @@ export function createDrivenSweep(workerFactory?: DrivenWorkerFactory) {
           }
         };
         client = createDrivenWorkerClient(
-          settings,
+          { ...settings, analyses: [] },
           (event) => {
             if (disposed || generation !== current) return;
             if (event.type === 'error') {

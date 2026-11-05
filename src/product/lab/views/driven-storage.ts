@@ -5,7 +5,7 @@ import {
   type DrivenConfig,
   type DrivenSample,
   type DrivenSystemId
-} from '../../adapters/physics/driven';
+} from './driven-diagnostics';
 import { parseExperiment, serializeExperiment } from '../../persistence';
 
 export const DRIVEN_STORAGE_PREFIX = 'pendulum-product/driven/v1/';

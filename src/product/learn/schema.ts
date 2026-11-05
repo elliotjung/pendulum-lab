@@ -99,7 +99,8 @@ export interface FocusExperimentDefinition {
     | 'numerical-methods'
     | 'extended-pendulum'
     | 'nonlinear-control'
-    | 'chaos-measurement';
+    | 'chaos-measurement'
+    | 'research-workflow';
   readonly plotIds: readonly (
     | 'configuration'
     | 'cartesian'

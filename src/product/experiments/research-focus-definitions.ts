@@ -1,3 +1,4 @@
+import { stabilityFocusDeclaration } from './stability-focus-definitions';
 import { nonlinearFocusDeclaration } from './nonlinear-focus-definitions';
 import { chaosFocusDeclaration } from './chaos-focus-definitions';
 import type { ResearchFields, ResearchFocusDeclaration } from './research-focus-contracts';
@@ -7,7 +8,8 @@ import { inspectSafeData } from '../persistence/safe-data';
 export function researchFocusDeclaration(id: string): ResearchFocusDeclaration {
   if (/^4\.(?:[1-9]|10)$/.test(id)) return nonlinearFocusDeclaration(id);
   if (/^5\.(?:[1-9]|1[0-3])$/.test(id)) return chaosFocusDeclaration(id);
-  throw new Error('S26의 23개 단원 중 하나가 필요합니다.');
+  if (/^6\.(?:[1-9]|1[0-2])$/.test(id)) return stabilityFocusDeclaration(id);
+  throw new Error('등록된 연구 전용 실험 단원이 필요합니다.');
 }
 export const researchPresetFields = (id: string): ResearchFields =>
   Object.fromEntries(researchFocusDeclaration(id).fields.map((f) => [f.id, f.value]));

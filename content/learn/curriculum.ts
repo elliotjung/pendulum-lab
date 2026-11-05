@@ -637,8 +637,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-6.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '실제 공용 계산과 기준 문제로 안정성·분기·인력권을 탐구하고, 가정과 유한 수치 판정의 한계를 확인합니다.',
+      en: 'Explore stability, bifurcations and basins with shared computations and benchmarks, including assumptions and finite numerical limits.'
     },
     units: [
       {
@@ -649,8 +649,8 @@ export const courses = [
           ko: '고정점과 선형화 안정성',
           en: 'Fixed points and linearized stability'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.2',
@@ -660,8 +660,8 @@ export const courses = [
           ko: '주기궤도 탐색과 shooting',
           en: 'Periodic-orbit search and shooting'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.3',
@@ -671,8 +671,8 @@ export const courses = [
           ko: 'Floquet multiplier와 궤도 안정성',
           en: 'Floquet multipliers and orbit stability'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.4',
@@ -682,8 +682,8 @@ export const courses = [
           ko: 'Melnikov 방법과 횡단 교차',
           en: 'The Melnikov method and transverse intersections'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.5',
@@ -693,8 +693,8 @@ export const courses = [
           ko: '매개변수 continuation',
           en: 'Parameter continuation'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.6',
@@ -704,8 +704,8 @@ export const courses = [
           ko: 'pseudo-arclength와 fold 통과',
           en: 'Pseudo-arclength and passage through folds'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.7',
@@ -715,8 +715,8 @@ export const courses = [
           ko: 'branch switching과 대칭 깨짐',
           en: 'Branch switching and symmetry breaking'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.8',
@@ -726,8 +726,8 @@ export const courses = [
           ko: 'period-doubling cascade',
           en: 'Period-doubling cascades'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.9',
@@ -737,8 +737,8 @@ export const courses = [
           ko: 'Neimark–Sacker 분기와 invariant circle',
           en: 'Neimark–Sacker bifurcations and invariant circles'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.10',
@@ -748,8 +748,8 @@ export const courses = [
           ko: 'torus·주파수 잠김·Arnold tongue',
           en: 'Tori, frequency locking and Arnold tongues'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.11',
@@ -759,8 +759,8 @@ export const courses = [
           ko: 'codimension-2 분기 지도',
           en: 'Codimension-two bifurcation maps'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '6.12',
@@ -770,8 +770,8 @@ export const courses = [
           ko: 'basin boundary·불확실성·Wada',
           en: 'Basin boundaries, uncertainty and Wada'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },

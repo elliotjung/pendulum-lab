@@ -1,5 +1,5 @@
 import { createDiagnostics } from './diagnostics';
-import { toCanonicalDriven } from '../../adapters/physics/driven';
+import { toCanonicalDriven } from './driven-diagnostics';
 import { element, link, pageHeading } from '../../app/dom';
 import { createButton, createProgress, createSection } from '../../design-system/primitives';
 import { createTabs } from '../../design-system/tabs';
@@ -12,7 +12,7 @@ import {
   fromCanonicalDriven,
   type DrivenConfig,
   type DrivenSystemId
-} from '../../adapters/physics/driven';
+} from './driven-diagnostics';
 import { createDrivenModel, type DrivenStatus } from './driven-model';
 import { createDrivenInspector } from './driven-inspector';
 import { createDrivenFiles } from './driven-files';
@@ -430,7 +430,9 @@ export function createDrivenWorkspace(document: Document, system: SystemDefiniti
   const coreDiagnostics = createDiagnostics(document, {
     experiment: () => toCanonicalDriven(model.state.config),
     samples: () => model.state.samples,
-    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy,
+    saveDiagnostic: (entry) =>
+      model.setAnalyses([...(model.state.config.analyses?.filter((a) => a.id !== entry.id) ?? []), entry])
   });
   analysis.body.append(coreDiagnostics.element);
   files.tray.append(coreDiagnostics.experiments);

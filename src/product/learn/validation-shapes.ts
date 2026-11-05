@@ -134,7 +134,8 @@ export const unitShape = object({
       'numerical-methods',
       'extended-pendulum',
       'nonlinear-control',
-      'chaos-measurement'
+      'chaos-measurement',
+      'research-workflow'
     ),
     plotIds: array(
       enumeration(

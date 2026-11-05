@@ -72,7 +72,7 @@ describe('S26 isolated research focus contracts', () => {
     const token = new URLSearchParams(href.split('?')[1]).get('state')!;
     expect(decodeShareToken(token)).toEqual({ ok: true, value: researchCanonical(unit, fields) });
   });
-  it.each(['4.0', '4.11', '5.14', '6.1', '../4.1'])('rejects unreviewed unit %s', (id) =>
+  it.each(['4.0', '4.11', '5.14', '6.13', '../4.1'])('rejects unreviewed unit %s', (id) =>
     expect(() => researchFocusDeclaration(id)).toThrow()
   );
   it('rejects hidden, extra, nonfinite, accessor and prototype settings without invoking getters', () => {

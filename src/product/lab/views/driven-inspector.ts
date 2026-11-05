@@ -9,7 +9,7 @@ import {
   drivenWarnings,
   validateDrivenConfig,
   type DrivenConfig
-} from '../../adapters/physics/driven';
+} from './driven-diagnostics';
 import type { DrivenModel } from './driven-model';
 import { drivenInputUnit, drivenStateFields } from './driven-storage';
 

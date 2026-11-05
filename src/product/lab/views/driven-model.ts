@@ -3,7 +3,7 @@ import {
   validateDrivenConfig,
   type DrivenConfig,
   type DrivenSample
-} from '../../adapters/physics/driven';
+} from './driven-diagnostics';
 import { createDrivenWorkerClient, type DrivenWorkerFactory } from '../../adapters/physics/driven-client';
 import {
   DRIVEN_MAX_SAMPLES,
@@ -74,7 +74,7 @@ export function createDrivenModel(initial: DrivenConfig, workerFactory?: DrivenW
     const current = generation;
     busy = true;
     client = createDrivenWorkerClient(
-      config,
+      { ...config, analyses: [] },
       (event) => {
         if (disposed || generation !== current) return;
         busy = false;

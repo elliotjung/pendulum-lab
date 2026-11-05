@@ -1,3 +1,4 @@
+import { restoredStability, toStabilityAnalysis } from '../../adapters/analysis/stability/state';
 import { element } from '../../app/dom';
 import { createButton, createInput, createProgress, type InputControl } from '../../design-system/primitives';
 import type { ExperimentStateV1 } from '../../contracts/experiment';
@@ -151,19 +152,23 @@ export function createStabilityPanel(document: Document, options: DiagnosticsOpt
     files
   );
   container.append(body);
-  let kind: StabilityKind = 'fixed-point';
-  let settings = defaultStabilitySettings(kind);
+  const initialExperiment = options.experiment();
+  const restored = initialExperiment.ok ? restoredStability(initialExperiment.value) : undefined;
+  let kind: StabilityKind = restored?.kind ?? 'fixed-point';
+  let settings = restored?.settings ?? defaultStabilitySettings(kind);
+  select.value = kind;
   let snapshot: ExperimentStateV1 | undefined;
   let sourceError = '';
   let state = 'empty',
     generation = 0,
     disposed = false,
-    initialized = false;
+    initialized = Boolean(restored);
   let job: ReturnType<typeof createStabilityJob> | undefined;
   let artifact: StabilityArtifact | undefined;
   let pendingParent: StabilityArtifact | undefined;
   let pendingHandoff = false;
   let cachedRejection: string | null = '실험 설정을 새로 읽으세요.';
+  let settingsEdited = false;
   const numericControls = new Map<string, InputControl>();
   const urls = new Set<string>();
   const timers = new Set<ReturnType<typeof setTimeout>>();
@@ -219,6 +224,7 @@ export function createStabilityPanel(document: Document, options: DiagnosticsOpt
     }
   }
   function changed() {
+    settingsEdited = true;
     generation++;
     error.hidden = true;
     attempt.replaceChildren();
@@ -486,7 +492,8 @@ export function createStabilityPanel(document: Document, options: DiagnosticsOpt
     pendingParent = undefined;
     pendingHandoff = false;
     kind = select.value as StabilityKind;
-    settings = defaultStabilitySettings(kind, snapshot);
+    settings =
+      (snapshot ? restoredStability(snapshot, kind)?.settings : undefined) ?? defaultStabilitySettings(kind, snapshot);
     renderFields();
     refreshSource();
   });
@@ -496,6 +503,14 @@ export function createStabilityPanel(document: Document, options: DiagnosticsOpt
   function update(revalidate = false) {
     if (revalidate) {
       cachedRejection = reason();
+      if (settingsEdited && !pendingParent && !cachedRejection) {
+        try {
+          options.saveDiagnostic?.(toStabilityAnalysis({ kind, settings }));
+          settingsEdited = false;
+        } catch {
+          /* Preserve invalid drafts and the original canonical configuration. */
+        }
+      }
       for (const [key, control] of numericControls)
         control.setError(
           typeof settings[key] !== 'number' || !Number.isFinite(settings[key])

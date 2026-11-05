@@ -1,21 +1,26 @@
 import { researchFocusDeclaration } from '../experiments/research-focus-definitions';
 import { catalog, supportsSystem } from '../catalog';
 import type { LearnUnit } from './schema';
-/** Bind every S26 unit to the exact reviewed adapter declaration, even if its kind is forged. */
+/** Bind every research unit to the exact reviewed adapter declaration, even if its kind is forged. */
 export function checkResearchExperiment(value: LearnUnit, errors: string[]): void {
   let declaration: ReturnType<typeof researchFocusDeclaration>;
   try {
     declaration = researchFocusDeclaration(value.id);
   } catch {
-    errors.push('focusExperiment: unknown S26 experiment.');
+    errors.push('focusExperiment: unknown research experiment.');
     return;
   }
   const focus = value.focusExperiment;
   if (
     value.courseId !== `course-${value.id.split('.')[0]}` ||
-    focus.kind !== (value.id.startsWith('4.') ? 'nonlinear-control' : 'chaos-measurement')
+    focus.kind !==
+      (value.id.startsWith('4.')
+        ? 'nonlinear-control'
+        : value.id.startsWith('5.')
+          ? 'chaos-measurement'
+          : 'research-workflow')
   )
-    errors.push('focusExperiment: S26 course/experiment mismatch.');
+    errors.push('focusExperiment: research course/experiment mismatch.');
   if (
     focus.status !== 'ready' ||
     value.labTransfer.status !== 'ready' ||
@@ -34,9 +39,9 @@ export function checkResearchExperiment(value: LearnUnit, errors: string[]): voi
   };
   for (const key of Object.keys(expected) as (keyof typeof expected)[])
     if (JSON.stringify(focus[key]) !== JSON.stringify(expected[key]))
-      errors.push(`focusExperiment: ${key} differs from the reviewed S26 declaration.`);
+      errors.push(`focusExperiment: ${key} differs from the reviewed research declaration.`);
   const system = catalog.systems.find((s) => s.id === declaration.systemId);
-  if (!system) errors.push('focusExperiment: missing native S26 system.');
+  if (!system) errors.push('focusExperiment: missing native research system.');
   if (declaration.integratorId === 'internal') {
     if (system?.stepping.kind !== 'internal') errors.push('focusExperiment: unsupported internal stepper.');
   } else {
@@ -56,5 +61,5 @@ export function checkResearchExperiment(value: LearnUnit, errors: string[]): voi
       errors.push(`focusExperiment: incompatible analysis ${id}.`);
   }
   if (new Set(focus.tasks.map((t) => t.id)).size !== focus.tasks.length)
-    errors.push('focusExperiment.tasks: duplicate S26 task.');
+    errors.push('focusExperiment.tasks: duplicate research task.');
 }

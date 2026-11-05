@@ -33,3 +33,22 @@
 - 유한 branch/grid/표본 실험은 전역 분기/엄밀한 Wada/비국소화 증명이 아니다. 단위·정규화 시간·근사·표본 한계를 단원에 기록한다.
 - source-checked는 공용 소스 및 1차 자료 대조로, automated-verified는 실제 fixture로 검증한다. human-reviewed는 미완료다.
 - 기존 보안·dependency 부채의 릴리스 판정은 S30 범위이며 이번 단계 완료가 위험 수락을 뜻하지 않는다.
+
+### CP0 원격 및 공통 연결 작업
+
+- CP0 `f2b69c57ef237155aaabac27aac2f6cdaaffdb72` commit/push exit0, live ls-remote 일치. next27/완료1..26 유지.
+- S01~S26 별도 status commit 이력과 S26 verification/preservation 존재 확인.
+- 공통 연구 Focus 계약에 과정6 연결 중. 기존 S26 경계25/25 통과. 동시 작성 중이던 신규 cascade helper의 구문 오류로 초기 integration suite는 실행 전 transform 실패했으며 통과 증거로 사용하지 않는다 (`tmp/s27-shared-regression.json`). 수정 후 고정된 checkpoint에서 재검증한다.
+- 과정별 adapter 조사에서 실제 지원 범위를 확인했다. native 계산과 독립 정규형·해석 근사의 차이, 유한 격자/기간/추정의 한계를 명시하며 엄밀한 인증으로 표현하지 않는다.
+
+### CP1 독립 검증과 보존 어댑터
+
+- 다른 과정 초안이 포함되지 않도록 명시적 CP1 색인을 `tmp/s27-cp1-check/`에 export했다. 기존 node_modules를 junction으로 연결해 실제 build-gate fixture도 검사한다.
+- 초기 표적1201통과/5실패: 작성 중이던6.10 중복 block ID와6.2 실패 조건 서술 및 export의 node_modules 연결 문제였다. 이를 수정한 표적185/185가 통과했고 최종 native/content/SI 독립71/71도 통과했다. 초기 실패는 완료 증거로 사용하지 않는다.
+- 최종 CP1 타입검사, production build/개인정보 검사, 전체 lint 통과. 포맷 검사에서 신규 E2E 한 chained-call의 재포맷이 필요해 공백만 정리했다.
+- 기존 DrivenConfig는 별도 분석을 거부한다. 기존 native API/물리 adapter를 수정하지 않고 새 UI codec `driven-diagnostics.ts`가 검증된 stability-workflow-v1 설정을 보존하고 물리 worker에는 analyses[]만 전달한다. 새25개 전달·저장·worker 테스트가 통과했다.
+- 독립 리뷰에서 imported parent artifact의 설정이 현재 실험에 저장되는 경로를 발견해 pendingParent 동안 저장하지 않도록 보완했고 별도 browser 검증을 추가했다. 열기만으로 기본 분석을 저장하지 않는다.
+- 과정6 browser 최초 실행은 새 시각 기준 생성 중이다. 새 기준의 최초 missing 기록은 passing evidence와 구분하며 재비교 none 이후에만 checkpoint를 게시한다.
+
+- CP1 browser: production Chromium/Pixel5 최초34기능여정 통과, 신규8 PNG missing 생성 기록8건. 새 그래프를 직접 시각 확인한 뒤 `--update-snapshots=none` 재비교8/8통과, runner오류/skip/flaky0. 원 테스트 timeout/expect/retry/video 설정을 유지했고8개 PNG만 추가했다. 모든42개 고유 case의 최종 성공 증거가 있으며 최종 S27 검증에서는 전체를 다시 실행한다.
+- 과정6 12단원의 bilingual 이론·유도·예측/관찰·검사·출처와 shared native 계산이 준비됐다.1→2→4 실제 cascade와 원시P4 잔차/승수, 비영 collocation 불변 원을 검증했다. 사람 검토0/12.
