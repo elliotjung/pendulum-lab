@@ -1,3 +1,4 @@
+import { createFocusNotice } from './focus-notice';
 import { createDiagnostics } from './diagnostics';
 import { toCanonicalField } from '../../adapters/physics/field';
 import { element, link, pageHeading } from '../../app/dom';
@@ -74,6 +75,8 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
   const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id,
     retained = session.get(key);
   initial = retained?.config ?? initial;
+  const focusNotice = createFocusNotice(document, experiment);
+  if (focusNotice) view.append(focusNotice);
   const tray = retained?.tray ?? [],
     model = createFieldModel(initial),
     diagnostic = fieldIsDiagnostic(initial.systemId),

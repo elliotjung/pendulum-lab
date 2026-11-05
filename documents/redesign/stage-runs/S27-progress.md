@@ -52,3 +52,13 @@
 
 - CP1 browser: production Chromium/Pixel5 최초34기능여정 통과, 신규8 PNG missing 생성 기록8건. 새 그래프를 직접 시각 확인한 뒤 `--update-snapshots=none` 재비교8/8통과, runner오류/skip/flaky0. 원 테스트 timeout/expect/retry/video 설정을 유지했고8개 PNG만 추가했다. 모든42개 고유 case의 최종 성공 증거가 있으며 최종 S27 검증에서는 전체를 다시 실행한다.
 - 과정6 12단원의 bilingual 이론·유도·예측/관찰·검사·출처와 shared native 계산이 준비됐다.1→2→4 실제 cascade와 원시P4 잔차/승수, 비영 collocation 불변 원을 검증했다. 사람 검토0/12.
+
+### CP1 원격 / CP2 통합
+
+- CP1 `fd091b4e8555d0e9ed553887327743704a50a52b` commit/push exit0, 실제 ls-remote hash 일치. 완료 목록1..26/next27 유지.
+- CP2는 과정7 13단원과 실제 S15~S17 native 연결을 추가한다. 독립 native37/37, 좁은 lint/format 통과.7.11은 유한 평균 비정합·초기 impulse depinning/수송을 실제 native force/Newton/stepper로 비교하며 지속 외력 정상 이동도·무한 Aubry 인증은 주장하지 않는다.
+
+- CP2 독립 표적788/788, 타입검사와 production build/개인정보 검사 통과. 실제 browser에서 network/field/discrete Lab에 출처 단원 복귀 notice가 빠진 UI 연결을 발견해 기존 검증된 Focus notice를 추가한다. 실패 여정은 수정 후 재실행하며 완료로 세지 않는다.
+
+- CP2 수정 후 production Chromium/Pixel5 browser34/34 통과(13개 전수여정×2 + 새시각8), skip/flaky/runner오류0. 새PNG8개 직접 검토 후 none재비교8/8 통과. diagnostic video만 off인 보존된 task-local wrapper를 사용했으며 원본 테스트·30초/5초 한도·retry0·trace/실패스크린샷·threshold0.2/maxDiffPixels100은 유지했다. 이전 복귀 notice 누락 실행은 중단/실패 증거로만 보존한다.
+- network/field/discrete workspace에 검증된 공통 출처 복귀 notice만 추가했으며 native physics API·worker와 기존 일반 Lab 시각 경로는 그대로다. 새/변경 연결의 표적 ESLint exit0. 과정7 사람 검토0/13.

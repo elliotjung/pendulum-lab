@@ -5,7 +5,10 @@ import { courses } from '../../../content/learn/curriculum';
 import { learnModules } from '../../../content/learn/modules';
 import type { EquationBlock, LearnUnit } from '../../../src/product/learn/schema';
 import { validateLearnUnit } from '../../../src/product/learn/validation';
-const ids = [...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`)];
+const ids = [
+  ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`),
+  ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`)
+];
 const units = await Promise.all(
   ids.map(async (id) => {
     return (await learnModules[`course-${id[0]}/${id}`]!()).default as LearnUnit;
@@ -89,12 +92,12 @@ function dimensionOf(source: string, symbols: EquationBlock['symbols']): Dim {
 }
 
 describe('S27 complete bifurcation extended systems and research curricula', () => {
-  it('publishes all12 course-six units and61 total at the first checkpoint', () => {
+  it('publishes all25 course-six/seven units and74 total at the second checkpoint', () => {
     expect(units.map((u) => u.id)).toEqual(ids);
-    expect(Object.keys(learnModules)).toHaveLength(61);
-    expect(courses.slice(0, 6).every((c) => c.units.every((u) => u.availability === 'published'))).toBe(true);
-    expect(new Set(units.map((u) => u.summary.ko)).size).toBe(12);
-    expect(new Set(units.map((u) => u.focusExperiment.tasks[0]?.prediction.ko)).size).toBe(12);
+    expect(Object.keys(learnModules)).toHaveLength(74);
+    expect(courses.slice(0, 7).every((c) => c.units.every((u) => u.availability === 'published'))).toBe(true);
+    expect(new Set(units.map((u) => u.summary.ko)).size).toBe(25);
+    expect(new Set(units.map((u) => u.focusExperiment.tasks[0]?.prediction.ko)).size).toBe(25);
   });
   it.each(units.map((u) => [u.id, u] as const))(
     '%s provides a sourced bilingual inquiry, failure case and two checks',

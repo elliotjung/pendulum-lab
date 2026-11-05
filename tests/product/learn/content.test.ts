@@ -62,7 +62,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   cpSync('content/learn/curriculum.ts', join(root, 'content/learn/curriculum.ts'));
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
   cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
-  for (const course of ['course-2', 'course-3', 'course-4', 'course-5', 'course-6'])
+  for (const course of ['course-2', 'course-3', 'course-4', 'course-5', 'course-6', 'course-7'])
     cpSync(`content/learn/${course}`, join(root, `content/learn/${course}`), { recursive: true });
   // Published S25 lessons use computation-free authoring and input declaration helpers.
   cpSync('src/product/learn', join(root, 'src/product/learn'), { recursive: true });
@@ -74,6 +74,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
     'chaos-focus-definitions.ts',
     'research-focus-definitions.ts',
     'stability-focus-definitions.ts',
+    'frontier-focus-definitions.ts',
     's27-authoring.ts'
   ])
     cpSync(`src/product/experiments/${name}`, join(root, `src/product/experiments/${name}`));
@@ -113,7 +114,8 @@ describe('Learn content schema and authoritative curriculum', () => {
       ...[2, 3].flatMap((course) => Array.from({ length: 9 }, (_, i) => `${course}.${i + 1}`)),
       ...Array.from({ length: 10 }, (_, i) => `4.${i + 1}`),
       ...Array.from({ length: 13 }, (_, i) => `5.${i + 1}`),
-      ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`)
+      ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`),
+      ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`)
     ]);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();

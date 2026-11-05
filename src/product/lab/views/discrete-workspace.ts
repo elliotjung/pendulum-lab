@@ -1,3 +1,4 @@
+import { createFocusNotice } from './focus-notice';
 import { createDiagnostics } from './diagnostics';
 import { toCanonicalDiscrete } from '../../adapters/physics/discrete';
 import { element, link, pageHeading } from '../../app/dom';
@@ -70,6 +71,8 @@ export function createDiscreteWorkspace(document: Document, system: SystemDefini
   const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id,
     retained = session.get(key);
   initial = retained?.config ?? initial;
+  const focusNotice = createFocusNotice(document, experiment);
+  if (focusNotice) view.append(focusNotice);
   const tray = retained?.tray ?? [],
     map = initial.systemId === 'system:standard-map',
     spectral = initial.systemId === 'system:unitary-floquet',

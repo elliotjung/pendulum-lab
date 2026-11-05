@@ -1,3 +1,4 @@
+import { frontierFocusCanonical } from './frontier-focus-config';
 import { stabilityFocusCanonical } from './stability-focus-config';
 import type { LearnUnit } from '../learn/schema';
 import type { ExperimentStateV1 } from '../contracts/experiment';
@@ -20,7 +21,9 @@ export function researchCanonical(unit: Source, input: ResearchFields): Experime
     ? nonlinearFocusCanonical(unit.id, fields)
     : unit.id.startsWith('5.')
       ? chaosFocusCanonical(unit.id, fields)
-      : stabilityFocusCanonical(unit.id, fields);
+      : unit.id.startsWith('6.')
+        ? stabilityFocusCanonical(unit.id, fields)
+        : frontierFocusCanonical(unit.id, fields);
   const canonical: ExperimentStateV1 = {
     ...value,
     provenance: {

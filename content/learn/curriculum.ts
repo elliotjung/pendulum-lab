@@ -786,8 +786,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-7.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '공용 엔진의 네트워크·확률·격자·장·양자 실험을 통해 집단 현상과 모형의 단위·근사·유한 표본 한계를 확인합니다.',
+      en: 'Explore collective phenomena using shared network, stochastic, lattice, field and quantum engines with explicit units, approximations and finite-sample limits.'
     },
     units: [
       {
@@ -798,8 +798,8 @@ export const courses = [
           ko: '자기 진자의 다중 basin',
           en: 'Multiple basins of the magnetic pendulum'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.2',
@@ -809,8 +809,8 @@ export const courses = [
           ko: '진자 네트워크의 정상모드와 graph spectrum',
           en: 'Pendulum network normal modes and graph spectra'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.3',
@@ -820,8 +820,8 @@ export const courses = [
           ko: 'Huygens 동기화',
           en: 'Huygens synchronization'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.4',
@@ -831,8 +831,8 @@ export const courses = [
           ko: 'Kuramoto 질서매개변수',
           en: 'The Kuramoto order parameter'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.5',
@@ -842,8 +842,8 @@ export const courses = [
           ko: 'chimera 상태와 국소 coherence',
           en: 'Chimera states and local coherence'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.6',
@@ -853,8 +853,8 @@ export const courses = [
           ko: '확률 진자와 Langevin 동역학',
           en: 'Stochastic pendulums and Langevin dynamics'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.7',
@@ -864,8 +864,8 @@ export const courses = [
           ko: 'Fokker–Planck 기술과 ensemble',
           en: 'Fokker–Planck descriptions and ensembles'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.8',
@@ -875,8 +875,8 @@ export const courses = [
           ko: 'FPUT 사슬과 에너지 재귀',
           en: 'FPUT chains and energy recurrence'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.9',
@@ -886,8 +886,8 @@ export const courses = [
           ko: '비선형 격자의 breather와 수송',
           en: 'Breathers and transport in nonlinear lattices'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.10',
@@ -897,8 +897,8 @@ export const courses = [
           ko: 'sine-Gordon 장의 kink·breather',
           en: 'Kinks and breathers in sine-Gordon fields'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.11',
@@ -908,8 +908,8 @@ export const courses = [
           ko: 'Frenkel–Kontorova와 pinning',
           en: 'Frenkel–Kontorova systems and pinning'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.12',
@@ -919,8 +919,8 @@ export const courses = [
           ko: 'standard map의 KAM 섬과 확산',
           en: 'KAM islands and diffusion in the standard map'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '7.13',
@@ -930,8 +930,8 @@ export const courses = [
           ko: 'quantum kicked rotor와 unitary Floquet',
           en: 'Quantum kicked rotors and unitary Floquet dynamics'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   },

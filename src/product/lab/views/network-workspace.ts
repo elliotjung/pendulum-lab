@@ -1,3 +1,4 @@
+import { createFocusNotice } from './focus-notice';
 import { createDiagnostics } from './diagnostics';
 import { toCanonicalNetwork } from '../../adapters/physics/network';
 import { element, link, pageHeading } from '../../app/dom';
@@ -71,6 +72,8 @@ export function createNetworkWorkspace(document: Document, system: SystemDefinit
   const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id,
     retained = session.get(key);
   initial = retained?.config ?? initial;
+  const focusNotice = createFocusNotice(document, experiment);
+  if (focusNotice) view.append(focusNotice);
   const tray = retained?.tray ?? [],
     model = createNetworkModel(initial),
     id = initial.systemId,

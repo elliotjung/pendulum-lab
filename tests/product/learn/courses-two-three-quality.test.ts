@@ -160,7 +160,7 @@ describe('S25 complete courses two and three', () => {
       ...Array.from({ length: 8 }, (_, i) => `course-1/1.${i + 1}`),
       ...ids.map((id) => `course-${id[0]}/${id}`)
     ]);
-    expect(courses.slice(6).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
+    expect(courses.slice(7).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
       true
     );
     expect(new Set(units.map((unit) => unit.summary.ko)).size).toBe(18);

@@ -1,3 +1,4 @@
+import { executeFrontierFocus } from './frontier-focus-science';
 import { executeStabilityFocus } from './stability-focus-science';
 import { executeNonlinearFocus } from './nonlinear-focus-science';
 import { executeChaosFocus } from './chaos-focus-science';
@@ -27,7 +28,9 @@ export function executeResearchFocus(
     ? executeNonlinearFocus(id, fields, progress)
     : id.startsWith('5.')
       ? executeChaosFocus(id, fields, progress)
-      : executeStabilityFocus(id, fields, progress);
+      : id.startsWith('6.')
+        ? executeStabilityFocus(id, fields, progress)
+        : executeFrontierFocus(id, fields, progress);
   return normalizeResearchFocusResult({
     ...result,
     fields,
