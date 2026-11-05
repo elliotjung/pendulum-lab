@@ -62,3 +62,13 @@
 
 - CP2 수정 후 production Chromium/Pixel5 browser34/34 통과(13개 전수여정×2 + 새시각8), skip/flaky/runner오류0. 새PNG8개 직접 검토 후 none재비교8/8 통과. diagnostic video만 off인 보존된 task-local wrapper를 사용했으며 원본 테스트·30초/5초 한도·retry0·trace/실패스크린샷·threshold0.2/maxDiffPixels100은 유지했다. 이전 복귀 notice 누락 실행은 중단/실패 증거로만 보존한다.
 - network/field/discrete workspace에 검증된 공통 출처 복귀 notice만 추가했으며 native physics API·worker와 기존 일반 Lab 시각 경로는 그대로다. 새/변경 연결의 표적 ESLint exit0. 과정7 사람 검토0/13.
+
+### CP2 원격 / CP3 통합
+
+- CP2 `02e344394e8487471cdd4596c04897f835a9d4e7` commit/push exit0, 실제 ls-remote hash 일치. 완료 목록/next27 유지.
+- 과정8 12단원을 통합한다. 실제 batch/import/inverse/UQ/data-driven/Krylov/project/ZIP native46/46와 좁은 lint/format 통과. 독립 리뷰의 혼합 RMSE 단위와 DMD/HAVOK spectrum·관측 forcing 누락을 수정했다.
+- 비동기 worker dispatch가 이전 동기 API를 유지하고 native Promise 완료/오류를 처리한다. 완료된8.11/8.12에서 실제 검증 ZIP 다운로드를 추가하며 단원 출처와 화면 artifact hash를 보존한다. 무효·변경 입력 또는 dispose 뒤의 저장은 차단한다.
+
+- CP3 초기 표적906통과/3서술 품질 실패를 보존한다. 기존 한계 설명의 제목을 명확히 한37단원 품질112/112 재검증이 통과했다. worker Promise/void 정적 경계도 수정 후4/4 재검증과 표적 ESLint, 최종 타입검사/build/privacy가 통과했다. 수치 기준·허용오차를 완화하지 않았다.
+- CP3 production Chromium/Pixel5 36/36 통과:12단원 전수왕복24 + 새시각8 + 실제ZIP/실패복구/offline reviewer4. 추가 stale ZIP(무효입력)2/2, none재비교8/8, 중복단위 표시 정리 후 DMD/HAVOK4/4 생성·none재비교4/4도 통과. skip/flaky/runner오류0, 원래 제한·assertion 유지 및 video만 off. 모든38개 고유 case의 성공 증거가 있다.
+- 결과 보고서 artifact SHA와 실제 다운로드 ZIP의 원 run/단원 canonical 출처가 일치한다.8.12는 실제 notebook/figure/report/offline reviewer 파일을 포함한다. 사람 검토0/12.

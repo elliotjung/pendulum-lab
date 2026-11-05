@@ -105,9 +105,7 @@ describe('S09 complete course-one authoring quality', () => {
     expect(Object.keys(learnModules).filter((id) => id.startsWith('course-1/'))).toEqual(
       units.map((unit) => `course-1/${unit.id}`)
     );
-    expect(courses.slice(7).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
-      true
-    );
+    expect(courses.every((course) => course.units.every((unit) => unit.availability === 'published'))).toBe(true);
     expect(new Set(units.map((unit) => unit.summary.ko)).size).toBe(8);
     expect(units.map((unit) => unit.focusExperiment.kind)).toEqual([
       'configuration',

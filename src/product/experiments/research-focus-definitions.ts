@@ -1,3 +1,4 @@
+import { reproducibilityFocusDeclaration } from './reproducibility-focus-definitions';
 import { frontierFocusDeclaration } from './frontier-focus-definitions';
 import { stabilityFocusDeclaration } from './stability-focus-definitions';
 import { nonlinearFocusDeclaration } from './nonlinear-focus-definitions';
@@ -11,6 +12,7 @@ export function researchFocusDeclaration(id: string): ResearchFocusDeclaration {
   if (/^5\.(?:[1-9]|1[0-3])$/.test(id)) return chaosFocusDeclaration(id);
   if (/^6\.(?:[1-9]|1[0-2])$/.test(id)) return stabilityFocusDeclaration(id);
   if (/^7\.(?:[1-9]|1[0-3])$/.test(id)) return frontierFocusDeclaration(id);
+  if (/^8\.(?:[1-9]|1[0-2])$/.test(id)) return reproducibilityFocusDeclaration(id);
   throw new Error('등록된 연구 전용 실험 단원이 필요합니다.');
 }
 export const researchPresetFields = (id: string): ResearchFields =>

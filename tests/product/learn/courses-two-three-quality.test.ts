@@ -160,9 +160,7 @@ describe('S25 complete courses two and three', () => {
       ...Array.from({ length: 8 }, (_, i) => `course-1/1.${i + 1}`),
       ...ids.map((id) => `course-${id[0]}/${id}`)
     ]);
-    expect(courses.slice(7).every((course) => course.units.every((unit) => unit.availability === 'planned'))).toBe(
-      true
-    );
+    expect(courses.every((course) => course.units.every((unit) => unit.availability === 'published'))).toBe(true);
     expect(new Set(units.map((unit) => unit.summary.ko)).size).toBe(18);
     expect(new Set(units.map((unit) => unit.focusExperiment.tasks[0]?.prediction.ko)).size).toBe(18);
   });

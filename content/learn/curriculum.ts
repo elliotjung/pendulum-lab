@@ -946,8 +946,8 @@ export const courses = [
     },
     description: {
       key: 'learn.course-8.description',
-      ko: '교육과정 지도에 예약된 과정입니다. 공개된 샘플과 앞으로 제작할 단원을 함께 탐색합니다.',
-      en: 'A course reserved in the curriculum map. Explore available samples and planned units.'
+      ko: '공용 비교·관측·추정·학습·고유해석과 실제 연구 패키지로 재현 가능한 계산 실험을 완성합니다.',
+      en: 'Build reproducible computational experiments with shared comparison, observation, inference, learning, eigenanalysis and real research packages.'
     },
     units: [
       {
@@ -958,8 +958,8 @@ export const courses = [
           ko: '비교 실험과 대조군 설계',
           en: 'Comparative experiments and controls'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.2',
@@ -969,8 +969,8 @@ export const courses = [
           ko: 'parameter sweep과 ensemble 설계',
           en: 'Designing parameter sweeps and ensembles'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.3',
@@ -980,8 +980,8 @@ export const courses = [
           ko: '매개변수 추정과 식별 가능성',
           en: 'Parameter estimation and identifiability'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.4',
@@ -991,8 +991,8 @@ export const courses = [
           ko: '영상·센서·CSV 데이터 가져오기',
           en: 'Importing video, sensor and CSV data'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.5',
@@ -1002,8 +1002,8 @@ export const courses = [
           ko: '민감도·Sobol 지수',
           en: 'Sensitivity and Sobol indices'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.6',
@@ -1013,8 +1013,8 @@ export const courses = [
           ko: 'polynomial chaos와 surrogate',
           en: 'Polynomial chaos and surrogates'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.7',
@@ -1024,8 +1024,8 @@ export const courses = [
           ko: 'SINDy로 지배방정식 발견',
           en: 'Discovering governing equations with SINDy'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.8',
@@ -1035,8 +1035,8 @@ export const courses = [
           ko: 'DMD·HAVOK와 Koopman 관점',
           en: 'DMD, HAVOK and the Koopman perspective'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.9',
@@ -1046,8 +1046,8 @@ export const courses = [
           ko: 'reservoir·Hamiltonian 학습',
           en: 'Reservoir and Hamiltonian learning'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.10',
@@ -1057,8 +1057,8 @@ export const courses = [
           ko: 'Arnoldi·Lanczos 대규모 고유해석',
           en: 'Large-scale eigenanalysis with Arnoldi and Lanczos'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.11',
@@ -1068,8 +1068,8 @@ export const courses = [
           ko: 'run·artifact·provenance와 재현성',
           en: 'Runs, artifacts, provenance and reproducibility'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       },
       {
         id: '8.12',
@@ -1079,8 +1079,8 @@ export const courses = [
           ko: 'notebook·figure·report·검토 패키지',
           en: 'Notebooks, figures, reports and review packages'
         },
-        availability: 'planned',
-        contentVersion: null
+        availability: 'published',
+        contentVersion: 1
       }
     ]
   }

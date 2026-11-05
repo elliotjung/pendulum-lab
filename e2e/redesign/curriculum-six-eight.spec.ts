@@ -13,7 +13,8 @@ import { researchFocusDeclaration } from '../../src/product/experiments/research
 
 const ids = [
   ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`),
-  ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`)
+  ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`),
+  ...Array.from({ length: 12 }, (_, i) => `8.${i + 1}`)
 ];
 const draftKey = (id: string) => `pendulum-product/research-focus/v1/course-${id[0]}/${id}`;
 async function openUnit(page: Page, id: string) {
@@ -228,7 +229,7 @@ test.describe('S27 bifurcation extended systems and reproducible research curric
     await audit(page);
     await expect(page.getByRole('button', { name: '실험실에서 계속', exact: true })).toBeEnabled();
   });
-  for (const id of ['6.6', '6.9', '7.7', '7.13'])
+  for (const id of ['6.6', '6.9', '7.7', '7.13', '8.8', '8.12'])
     for (const theme of ['light', 'dark']) {
       test(`visual ${id} ${theme}`, async ({ page }) => {
         await page.goto('/next.html#/learn');

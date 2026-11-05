@@ -97,7 +97,7 @@ async function finishFrames(page: Page): Promise<void> {
 }
 
 test.describe('S08 Learn content platform', () => {
-  test('keeps course and planned-unit routes independent of learning completion', async ({ page }) => {
+  test('keeps all published course and unit routes independent of learning completion', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('console', (message) => {
@@ -122,7 +122,8 @@ test.describe('S08 Learn content platform', () => {
     await expect(page).toHaveURL(/#\/lab$/);
     await page.goto('/next.html#/learn/course-8/8.12');
     await ready(page);
-    await expect(main).toContainText(/준비|예정|아직/);
+    await expect(main.locator('.learn-unit')).toHaveAttribute('data-content-state', 'ready');
+    await expect(main).toContainText('전용 실험');
     await expect(main.locator('canvas')).toHaveCount(0);
     await expect(
       page.getByRole('navigation', { name: '학습 경로' }).locator('a[href="#/learn/course-8"]')
@@ -178,10 +179,7 @@ test.describe('S08 Learn content platform', () => {
       for (let order = 1; order <= expectedCounts[index]!; order += 1) {
         await ready(page);
         await expect(page).toHaveURL(new RegExp(`#/learn/${course}/${index + 1}\\.${order}$`));
-        await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute(
-          'data-content-state',
-          index < 7 ? 'ready' : 'planned'
-        );
+        await expect(page.locator('.learn-unit[data-content-state]')).toHaveAttribute('data-content-state', 'ready');
         const navigation = page.getByRole('navigation', { name: '단원 이동' });
         await expect(navigation.getByRole('link', { name: '과정 목차', exact: true })).toHaveAttribute(
           'href',

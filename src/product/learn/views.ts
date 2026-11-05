@@ -32,10 +32,11 @@ function navigation(document: Document, course: LearnCourse, unit: UnitSummary):
 }
 
 function showCourses(document: Document, root: HTMLElement): void {
-  const available = courses
+  const courseList: readonly LearnCourse[] = courses;
+  const available = courseList
     .flatMap<UnitSummary>((course) => course.units)
     .filter((unit) => unit.availability !== 'planned').length;
-  const publishedCourses = courses.filter((course) =>
+  const publishedCourses = courseList.filter((course) =>
     course.units.some((unit) => unit.availability !== 'planned')
   ).length;
   root.append(pageHeading(document, '움직임을 이해하는 배우기'));
@@ -46,13 +47,13 @@ function showCourses(document: Document, root: HTMLElement): void {
       document,
       'p',
       '',
-      `8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 현재 ${publishedCourses}개 과정의 ${available}개 단원에서 식을 읽고 전용 실험으로 확인한 뒤 실험실에서 탐구를 이어 가세요. 나머지 단원은 준비 중입니다.`
+      `8개 과정 · 86개 단원으로 이어지는 탐구 지도입니다. 현재 ${publishedCourses}개 과정의 ${available}개 단원에서 식을 읽고 전용 실험으로 확인한 뒤 실험실에서 탐구를 이어 가세요.${available < 86 ? ' 나머지 단원은 준비 중입니다.' : ''}`
     )
   );
   intro.append(link(document, '첫 단원 시작하기', '#/learn/course-1/1.1', 'ds-button ds-button--primary'));
   root.append(intro);
   const grid = element(document, 'div', 'learn-grid');
-  for (const course of courses) {
+  for (const course of courseList) {
     const card = element(document, 'article', 'learn-course-card');
     card.append(element(document, 'span', 'learn-course-number', `과정 ${course.order} · ${course.units.length}단원`));
     card.append(textNode(document, 'h2', '', course.title));

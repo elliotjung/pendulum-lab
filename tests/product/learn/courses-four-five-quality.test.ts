@@ -92,10 +92,10 @@ function dimensionOf(source: string, symbols: EquationBlock['symbols']): Dim {
 }
 
 describe('S26 complete nonlinear control and chaos measurement curricula', () => {
-  it('publishes exactly23 requested units and74 total with S27 courses six and seven', () => {
+  it('publishes exactly23 requested units and86 total alongside the complete S27 curricula', () => {
     expect(units.map((u) => u.id)).toEqual(ids);
-    expect(Object.keys(learnModules)).toHaveLength(74);
-    expect(courses.slice(7).every((c) => c.units.every((u) => u.availability === 'planned'))).toBe(true);
+    expect(Object.keys(learnModules)).toHaveLength(86);
+    expect(courses.every((c) => c.units.every((u) => u.availability === 'published'))).toBe(true);
     expect(new Set(units.map((u) => u.summary.ko)).size).toBe(23);
     expect(new Set(units.map((u) => u.focusExperiment.tasks[0]?.prediction.ko)).size).toBe(23);
   });

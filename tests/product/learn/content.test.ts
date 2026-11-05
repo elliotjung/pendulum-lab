@@ -1,3 +1,4 @@
+import * as curriculum from '../../../content/learn/curriculum';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   cpSync,
@@ -62,7 +63,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
   cpSync('content/learn/curriculum.ts', join(root, 'content/learn/curriculum.ts'));
   writeFileSync(join(root, 'content/learn/modules.ts'), modules);
   cpSync('content/learn/course-1', join(root, 'content/learn/course-1'), { recursive: true });
-  for (const course of ['course-2', 'course-3', 'course-4', 'course-5', 'course-6', 'course-7'])
+  for (const course of ['course-2', 'course-3', 'course-4', 'course-5', 'course-6', 'course-7', 'course-8'])
     cpSync(`content/learn/${course}`, join(root, `content/learn/${course}`), { recursive: true });
   // Published S25 lessons use computation-free authoring and input declaration helpers.
   cpSync('src/product/learn', join(root, 'src/product/learn'), { recursive: true });
@@ -75,6 +76,7 @@ function contentFixture(unit: unknown = sample, modules = readFileSync('content/
     'research-focus-definitions.ts',
     'stability-focus-definitions.ts',
     'frontier-focus-definitions.ts',
+    'reproducibility-focus-definitions.ts',
     's27-authoring.ts'
   ])
     cpSync(`src/product/experiments/${name}`, join(root, `src/product/experiments/${name}`));
@@ -100,7 +102,7 @@ afterEach(() => {
 });
 
 describe('Learn content schema and authoritative curriculum', () => {
-  it('reserves exactly 8 courses and 86 units, with the S09, S25 and S26 units available', () => {
+  it('reserves exactly 8 courses and 86 units, with every S09/S25/S26/S27 unit available', () => {
     expect(validateLearnCourses(courses).ok).toBe(true);
     expect(courses).toHaveLength(8);
     expect(courses.map((course) => course.units.length)).toEqual([8, 9, 9, 10, 13, 12, 13, 12]);
@@ -115,7 +117,8 @@ describe('Learn content schema and authoritative curriculum', () => {
       ...Array.from({ length: 10 }, (_, i) => `4.${i + 1}`),
       ...Array.from({ length: 13 }, (_, i) => `5.${i + 1}`),
       ...Array.from({ length: 12 }, (_, i) => `6.${i + 1}`),
-      ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`)
+      ...Array.from({ length: 13 }, (_, i) => `7.${i + 1}`),
+      ...Array.from({ length: 12 }, (_, i) => `8.${i + 1}`)
     ]);
     expect(findCourse('course-9')).toBeUndefined();
     expect(findUnitSummary('course-2', '1.1')).toBeUndefined();
@@ -389,8 +392,16 @@ describe('Learn asynchronous loading', () => {
   it('loads the sample as a safe ready snapshot and keeps planned routes explicit', async () => {
     expect(await loadLearnUnit('course-1', '1.1')).toEqual({ status: 'ready', unit: sample });
     const importUnit = vi.fn();
-    expect(await loadLearnUnit('course-8', '8.12', { importUnit })).toMatchObject({ status: 'planned' });
-    expect(importUnit).not.toHaveBeenCalled();
+    expect(await loadLearnUnit('course-8', '8.12')).toMatchObject({ status: 'ready' });
+    const reserved = vi
+      .spyOn(curriculum, 'findUnitSummary')
+      .mockReturnValue({ ...courses[7]!.units[11]!, availability: 'planned', contentVersion: null });
+    try {
+      expect(await loadLearnUnit('course-8', '8.12', { importUnit })).toMatchObject({ status: 'planned' });
+      expect(importUnit).not.toHaveBeenCalled();
+    } finally {
+      reserved.mockRestore();
+    }
   });
   it.each([
     ['course-9', '9.1'],

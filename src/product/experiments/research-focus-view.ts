@@ -1,3 +1,4 @@
+import { researchCanonical } from './research-focus-config';
 import { element, link } from '../app/dom';
 import { createButton, createProgress } from '../design-system/primitives';
 import { createQuantity, type QuantityControl } from '../design-system/quantity';
@@ -187,6 +188,62 @@ export function createResearchFocusView(document: Document, unit: LearnUnit) {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
   });
+  let viewDisposed = false,
+    packageBusy = false;
+  const packageStatus = element(document, 'p', 'focus-package-status');
+  packageStatus.setAttribute('role', 'status');
+  const packageDownload = ['8.11', '8.12'].includes(unit.id)
+    ? createButton(document, {
+        label: '연구 ZIP 내보내기',
+        variant: 'secondary',
+        onClick() {
+          void downloadPackage();
+        }
+      })
+    : undefined;
+  async function downloadPackage() {
+    const snapshot = runtime.getSnapshot();
+    if (viewDisposed || packageBusy || snapshot.status !== 'completed' || !snapshot.result || !valid) return;
+    packageBusy = true;
+    update(snapshot);
+    packageStatus.textContent = '현재 단원 설정과 같은 출처의 연구 ZIP을 검증하고 있습니다.';
+    try {
+      const { buildReproducibilityPackage } = await import('./reproducibility-focus-project');
+      if (viewDisposed) return;
+      const bytes = await buildReproducibilityPackage(
+        unit.id as '8.11' | '8.12',
+        snapshot.fields,
+        researchCanonical(unit, snapshot.fields)
+      );
+      const currentSnapshot = runtime.getSnapshot();
+      if (viewDisposed) return;
+      if (
+        !valid ||
+        currentSnapshot.status !== 'completed' ||
+        JSON.stringify(currentSnapshot.fields) !== JSON.stringify(snapshot.fields)
+      ) {
+        packageStatus.textContent =
+          '설정이 바뀌어 이전 ZIP을 저장하지 않았습니다. 새 실험을 완료한 뒤 다시 내보내세요.';
+        return;
+      }
+      const url = URL.createObjectURL(new Blob([new Uint8Array(bytes).buffer], { type: 'application/zip' })),
+        anchor = element(document, 'a', '');
+      anchor.href = url;
+      anchor.download = `learn-${unit.id}-research.zip`;
+      root.append(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      packageStatus.textContent = '현재 단원 출처와 원 run·artifact 체크섬을 검증한 연구 ZIP을 저장했습니다.';
+    } catch {
+      if (!viewDisposed)
+        packageStatus.textContent =
+          '연구 ZIP을 만들지 못했습니다. 원 설정과 결과는 유지했습니다. 다시 시도할 수 있습니다.';
+    } finally {
+      packageBusy = false;
+      if (!viewDisposed) update(runtime.getSnapshot());
+    }
+  }
   const transfer = createButton(document, {
     label: '실험실에서 계속',
     onClick() {
@@ -206,6 +263,17 @@ export function createResearchFocusView(document: Document, unit: LearnUnit) {
     element(document, 'p', '', unit.labTransfer.description.ko),
     link(document, '실험실 라이브러리', '#/lab')
   );
+  if (packageDownload)
+    root.append(
+      packageDownload,
+      packageStatus,
+      element(
+        document,
+        'p',
+        '',
+        'ZIP 내보내기는 완료한 단원과 같은 설정·출처로 제한된 실제 run을 다시 생성하고, manifest·checksum·원 기록을 검증합니다. 8.12는 notebook·figure·report·offline reviewer도 포함합니다.'
+      )
+    );
   function update(s: ResearchSnapshot) {
     root.dataset.focusStatus = s.status;
     status.textContent = valid ? labels[s.status] : '입력한 조건을 수정하세요.';
@@ -221,6 +289,7 @@ export function createResearchFocusView(document: Document, unit: LearnUnit) {
     cancel.disabled = !busy;
     transfer.disabled = busy || !valid;
     download.disabled = !s.result || busy;
+    if (packageDownload) packageDownload.disabled = !s.result || busy || packageBusy || !valid;
     for (const c of fields.values()) c.input.disabled = busy;
     progress.setValue(s.progress * 100, `${(s.progress * 100).toFixed(1)}%`);
     const currentTime = s.result ? (s.fields.duration ?? 0) : 0;
@@ -247,6 +316,7 @@ export function createResearchFocusView(document: Document, unit: LearnUnit) {
   return {
     element: root,
     dispose() {
+      viewDisposed = true;
       unsubscribe();
       runtime.cancel();
     }
