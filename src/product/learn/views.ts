@@ -1,3 +1,4 @@
+import { createLearningIndex } from './index-view';
 import { courses, findCourse, findUnitSummary } from '../../../content/learn/curriculum';
 import { availabilityNote, element, link, pageHeading } from '../app/dom';
 import type { ResolvedRoute, RouteView } from '../app/types';
@@ -117,7 +118,9 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
   const route = context.route;
   if (route.kind === 'learn') {
     showCourses(document, root);
-    return { element: root, title: '배우기' };
+    const index = createLearningIndex(document);
+    root.append(index.element);
+    return { element: root, title: '배우기', dispose: index.dispose };
   }
   if (route.kind !== 'learn-course' && route.kind !== 'learn-unit') throw new Error('Expected Learn route');
   const course = findCourse(route.courseId);

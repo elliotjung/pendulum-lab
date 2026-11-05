@@ -72,3 +72,15 @@
 - CP3 초기 표적906통과/3서술 품질 실패를 보존한다. 기존 한계 설명의 제목을 명확히 한37단원 품질112/112 재검증이 통과했다. worker Promise/void 정적 경계도 수정 후4/4 재검증과 표적 ESLint, 최종 타입검사/build/privacy가 통과했다. 수치 기준·허용오차를 완화하지 않았다.
 - CP3 production Chromium/Pixel5 36/36 통과:12단원 전수왕복24 + 새시각8 + 실제ZIP/실패복구/offline reviewer4. 추가 stale ZIP(무효입력)2/2, none재비교8/8, 중복단위 표시 정리 후 DMD/HAVOK4/4 생성·none재비교4/4도 통과. skip/flaky/runner오류0, 원래 제한·assertion 유지 및 video만 off. 모든38개 고유 case의 성공 증거가 있다.
 - 결과 보고서 artifact SHA와 실제 다운로드 ZIP의 원 run/단원 canonical 출처가 일치한다.8.12는 실제 notebook/figure/report/offline reviewer 파일을 포함한다. 사람 검토0/12.
+
+### CP3 원격 / CP4 전체 교육과정 마감
+
+- CP3 `43add2ac45424cfabaeacb71d7196d5e5bad632b` commit/push exit0, 실제 ls-remote hash 일치. next27/완료1..26 유지.
+- 전체86단원 실제 실행·schema·route·canonical·share·Lab 전달을 하나의 독립 census로 검사하고,94개 용어·중복 URL을 합친 참고 문헌 색인·3개 추천 경로를 완성한다. 색인은 펼칠 때만 콘텐츠를 읽으며 progress/권한을 변경하지 않는다. 취소/실패 재읽기/dispose 뒤 toggle/빈 검색을 검증한다.
+- 최종 전체 Vitest/golden/typecheck/lint/format/build 및 original Chromium/Pixel5 86개 실제왕복·전수route/접근성·기존분석/시각 회귀를 실행하고 Git blob 보존·기존PNG·전달본 rawSHA를 감사한다. 모델selector/사람검토/실기기나screen-reader음성 검증을 가장하지 않는다.
+
+- CP4 전수 census88/88 통과(86개 실제 shared 실행 + publication/index 계약2). canonical의 엄격한 SI/JSON/서명0 계약과 정확한 share/transfer 비교를 유지했다. 신규 색인의 optional signal 인자 타입 오류1건은 수정 후 typecheck exit0.
+- CP4 전체 format:check/lint exit0, production build/privacy exit0. 새 색인 browser 최초6통과/2실패는 보류한 route를 unroute로 정리하던 테스트 harness 경쟁이었다. pending handler를 wait하도록 수정 후8/8 통과, skip/flaky/runner오류0. 제품 계산이나 assertion/시간한도를 완화하지 않았다. 최초 JSON과 수정 후 JSON을 구분 보관한다.
+- 학습 홈의86공개/추천경로 표시로 의도된 기존PNG4개만 갱신한다. 과정1/단원1 PNG와 나머지 기존 시각 기준은 변경하지 않는다. 새로운 보존 helper는 Git blob 동일성과 raw desktopSHA를 구분하며 기존 product 분석 adapter도 보호한다.
+
+- CP4 홈PNG4개를 직접 검토했다. original Learn 시각4/4가 갱신 및 none재비교 모두 통과했고 과정1/단원1 PNG는 unchanged다. CP4 known-pattern tracked secret scan exit0. 구현 checkpoint 검증 완료, 전체 최종 검증과 별도 완료 status는 아직 남아 있다.
