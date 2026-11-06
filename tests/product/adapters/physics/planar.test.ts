@@ -12,7 +12,6 @@ import {
   toCanonicalPlanar,
   planarPositions,
   planarWarnings,
-  PLANAR_INTEGRATOR_IDS,
   PLANAR_SYSTEM_IDS,
   PLANAR_FIELDS,
   type PlanarConfig,
@@ -81,32 +80,35 @@ describe('S07 legacy planar physics adapter', () => {
   });
 
   for (const systemId of PLANAR_SYSTEM_IDS) {
-    test.each(PLANAR_INTEGRATOR_IDS)(`${systemId} %s exactly reuses the legacy step and damping`, (integratorId) => {
-      const config: PlanarConfig = {
-        ...defaultPlanarConfig(systemId),
-        gamma: 0.09,
-        integratorId,
-        duration: 0.04,
-        step: 0.001
-      };
-      const run = createPlanarSimulation(config);
-      const derivative =
-        systemId === 'system:double' ? createDoublePendulumDerivative : createCompoundDoublePendulumDerivative;
-      const energy = systemId === 'system:double' ? energyDouble : energyCompoundDouble;
-      const rhs = derivative(config.parameters, config.gamma);
-      const stepper =
-        integratorId === 'integrator:rk4' ? rk4Step : integratorId === 'integrator:rk2' ? rk2Step : eulerStep;
-      const legacy = Float64Array.from(config.initialState);
-      const out = new Float64Array(4);
-      while (!run.done) {
-        stepper(legacy, config.step, rhs, out);
-        legacy.set(out);
-        const sample = run.step();
-        expect(sample.state).toEqual(Array.from(legacy));
-        expect(sample.energy).toEqual(energy(legacy, config.parameters));
+    test.each(['integrator:rk4', 'integrator:rk2', 'integrator:euler'] as const)(
+      `${systemId} %s exactly reuses the legacy step and damping`,
+      (integratorId) => {
+        const config: PlanarConfig = {
+          ...defaultPlanarConfig(systemId),
+          gamma: 0.09,
+          integratorId,
+          duration: 0.04,
+          step: 0.001
+        };
+        const run = createPlanarSimulation(config);
+        const derivative =
+          systemId === 'system:double' ? createDoublePendulumDerivative : createCompoundDoublePendulumDerivative;
+        const energy = systemId === 'system:double' ? energyDouble : energyCompoundDouble;
+        const rhs = derivative(config.parameters, config.gamma);
+        const stepper =
+          integratorId === 'integrator:rk4' ? rk4Step : integratorId === 'integrator:rk2' ? rk2Step : eulerStep;
+        const legacy = Float64Array.from(config.initialState);
+        const out = new Float64Array(4);
+        while (!run.done) {
+          stepper(legacy, config.step, rhs, out);
+          legacy.set(out);
+          const sample = run.step();
+          expect(sample.state).toEqual(Array.from(legacy));
+          expect(sample.energy).toEqual(energy(legacy, config.parameters));
+        }
+        expect(run.snapshot().step).toBe(40);
       }
-      expect(run.snapshot().step).toBe(40);
-    });
+    );
   }
 
   test.each(PLANAR_SYSTEM_IDS)('%s preserves rest geometry, rod centers and gravitational energy', (systemId) => {
@@ -197,7 +199,7 @@ describe('S07 legacy planar physics adapter', () => {
     { startTime: null },
     { sampleEvery: null },
     { gamma: Number.NaN },
-    { integratorId: 'integrator:dopri5' },
+    { integratorId: 'integrator:unknown' },
     { systemId: 'system:triple' },
     { initialState: [1, 2, 3] },
     { initialState: [1, 2, 3, 4, 5] },
@@ -294,7 +296,8 @@ describe('S07 canonical restart boundary', () => {
     if (kind === 'extra-parameter') parameters.mass = { kind: 'scalar', value: 1, unit: 'kg' };
     if (kind === 'wrong-model-version') source.modelVersion = '999';
     if (kind === 'wrong-integrator-version') integrator.version = '999';
-    if (kind === 'integrator-settings') integrator.settings = { tolerance: { kind: 'scalar', value: 1e-8, unit: '1' } };
+    if (kind === 'integrator-settings')
+      integrator.settings = { maxIterations: { kind: 'scalar', value: 10, unit: '1' } };
     if (kind === 'model-options') source.modelOptions = {};
     if (kind === 'integrator-options') integrator.options = {};
     const before = JSON.stringify(source);

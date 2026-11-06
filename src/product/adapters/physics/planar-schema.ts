@@ -1,11 +1,12 @@
 import type { EnergyBreakdown, PendulumParameters } from '../../../types/domain';
 import type { AnalysisState, ExperimentProvenance, SeedState } from '../../contracts/experiment';
 import type { CanonicalUnit } from '../../contracts/quantities';
+import { LEGACY_ODE_INTEGRATOR_IDS, odeIntegratorWarnings } from './planar-integrators';
 
 export const PLANAR_SYSTEM_IDS = ['system:double', 'system:compound-double'] as const;
 export type PlanarSystemId = (typeof PLANAR_SYSTEM_IDS)[number];
 /** Only methods whose product execution paths have parity evidence are offered. */
-export const PLANAR_INTEGRATOR_IDS = ['integrator:rk4', 'integrator:rk2', 'integrator:euler'] as const;
+export const PLANAR_INTEGRATOR_IDS = LEGACY_ODE_INTEGRATOR_IDS;
 export type PlanarIntegratorId = (typeof PLANAR_INTEGRATOR_IDS)[number];
 export const PLANAR_MODEL_VERSION = 'planar-model-v1';
 export const PLANAR_INTEGRATOR_VERSION = 'planar-integrator-v1';
@@ -19,6 +20,8 @@ export interface PlanarConfig {
   readonly gamma: number;
   readonly initialState: PlanarState;
   readonly integratorId: PlanarIntegratorId;
+  /** Absent preserves each native method's existing default residual tolerance. */
+  readonly tolerance?: number;
   readonly step: number;
   readonly duration: number;
   readonly startTime?: number;
@@ -208,6 +211,7 @@ export function planarWarnings(config: PlanarConfig): readonly string[] {
     ...(config.integratorId === 'integrator:euler'
       ? ['명시적 오일러는 비교용이며 큰 에너지 오차가 생길 수 있습니다.']
       : []),
+    ...odeIntegratorWarnings(config.integratorId, config.tolerance),
     ...(config.step > 0.006 ? ['시간 간격이 큽니다. 간격을 줄여 결과와 에너지 오차의 수렴을 확인하세요.'] : [])
   ];
 }

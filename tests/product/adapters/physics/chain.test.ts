@@ -121,7 +121,7 @@ describe('S10 variable-DOF physical contract', () => {
     { parameters: { masses: [1], lengths: [1], g: 0 } },
     { unknown: 'preserve' },
     { initialState: new Array(8) },
-    { integratorId: 'integrator:yoshida4' },
+    { integratorId: 'integrator:unknown' },
     { parameters: { masses: [1], lengths: [1, 2], g: 9.81 } }
   ])('rejects malformed or unsupported settings without source mutation: %j', (patch) => {
     const config = { ...defaultChainConfig(), ...patch };

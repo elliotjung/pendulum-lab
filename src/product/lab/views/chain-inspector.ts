@@ -11,6 +11,8 @@ import {
 import { addChainLink, removeChainLink, bulkChainLinks, resizeChainLinks } from '../../adapters/physics/chain-edit';
 import { chainPresets } from '../../adapters/physics/chain-presets';
 import type { ChainModel } from './chain-model';
+import { odeIntegratorLabel } from '../../adapters/physics/planar-integrators';
+import { createOdeToleranceControl } from './ode-tolerance-control';
 
 export function createChainInspector(document: Document, model: ChainModel, onChange: () => void) {
   const section = createSection(document, {
@@ -74,8 +76,9 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
   const integrator = select(
     'chain-integrator',
     '적분기',
-    CHAIN_INTEGRATOR_IDS.map((id) => [id, id.slice(11).toUpperCase()])
+    CHAIN_INTEGRATOR_IDS.map((id) => [id, odeIntegratorLabel(id)])
   );
+  const tolerance = createOdeToleranceControl(document, 'chain-tolerance', edit);
   function apply(next: ChainConfig) {
     const checked = validateChainConfig(next);
     errors.hidden = checked.ok;
@@ -91,7 +94,8 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
   function edit() {
     if (syncing) return;
     const values: Record<string, number> = {};
-    let valid = true;
+    const selectedTolerance = tolerance.read();
+    let valid = selectedTolerance.ok;
     for (const [id, control] of controls) {
       const result = control.read();
       if (result.ok) values[id] = result.quantity.value;
@@ -110,7 +114,7 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
     lengths[selected] = values.length!;
     initial[selected] = values.theta!;
     initial[n + selected] = values.omega!;
-    apply({
+    const next: ChainConfig = {
       ...current,
       parameters: { masses, lengths, g: values.g! },
       gamma: values.gamma!,
@@ -119,7 +123,11 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
       step: values.step!,
       sampleEvery: values.sampleEvery!,
       integratorId: integrator.control.value as ChainConfig['integratorId']
-    });
+    };
+    if (selectedTolerance.ok && selectedTolerance.value !== undefined)
+      Reflect.set(next, 'tolerance', selectedTolerance.value);
+    else Reflect.deleteProperty(next, 'tolerance');
+    apply(next);
   }
   for (const [id, range] of Object.entries(ranges)) {
     const control = createQuantity(document, {
@@ -261,7 +269,10 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
       showError(cause);
     }
   });
-  integrator.control.addEventListener('change', edit);
+  integrator.control.addEventListener('change', () => {
+    edit();
+    if (model.state.valid) tolerance.sync(model.state.config.tolerance, model.state.config.integratorId);
+  });
   const warning = element(document, 'p', 'lab-preview-note');
   section.body.append(
     preset.wrap,
@@ -273,6 +284,7 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
     element(document, 'h3', '', '공통 실행 조건'),
     parameters,
     integrator.wrap,
+    tolerance.element,
     errors,
     notice,
     warning,
@@ -280,7 +292,7 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
       document,
       'p',
       'lab-muted',
-      '최대 300 s·100,000 단계. RK4·RK2·Euler를 지원합니다. 프리셋과 상태 JSON을 적용하면 초기조건부터 다시 실행합니다.'
+      '최대 300 s·100,000 단계. 기존 ODE 적분기 16개와 잔차 허용오차를 지원합니다. 프리셋과 상태 JSON을 적용하면 초기조건부터 다시 실행합니다.'
     )
   );
   function sync() {
@@ -310,6 +322,7 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
     };
     for (const [id, control] of controls) control.setValue(values[id]!);
     integrator.control.value = c.integratorId;
+    tolerance.sync(c.tolerance, c.integratorId);
     errors.hidden = true;
     errors.textContent = '';
     syncing = false;
@@ -328,6 +341,7 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
     count.control.disabled = busy || !state.valid;
     link.control.disabled = busy || !state.valid;
     bulkApply.disabled = busy || !state.valid;
+    tolerance.setDisabled(busy);
     warning.textContent = chainWarnings(state.config).join(' ');
   }
   sync();

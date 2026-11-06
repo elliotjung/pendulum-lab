@@ -10,6 +10,8 @@ import {
   type PlanarState
 } from '../../adapters/physics/planar';
 import type { CoreModel } from './core-model';
+import { odeIntegratorLabel } from '../../adapters/physics/planar-integrators';
+import { createOdeToleranceControl } from './ode-tolerance-control';
 
 export function createCoreInspector(document: Document, model: CoreModel, onChange: () => void) {
   const section = createSection(document, {
@@ -37,11 +39,15 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
     step: config.step
   });
   const initial = readValues(model.state.config);
+  const tolerance = createOdeToleranceControl(document, 'lab-tolerance', edit);
+  tolerance.sync(model.state.config.tolerance, model.state.config.integratorId);
+  advanced.append(tolerance.element);
   let syncing = false;
   function edit() {
     if (syncing) return;
+    const selectedTolerance = tolerance.read();
     const values: Record<string, number> = {};
-    let valid = true;
+    let valid = selectedTolerance.ok;
     for (const [id, control] of controls) {
       const parsed = control.read();
       if (parsed.ok) values[id] = parsed.quantity.value;
@@ -61,6 +67,9 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
       step: values.step!,
       integratorId: integrator.value as PlanarConfig['integratorId']
     };
+    if (selectedTolerance.ok && selectedTolerance.value !== undefined)
+      Reflect.set(next, 'tolerance', selectedTolerance.value);
+    else Reflect.deleteProperty(next, 'tolerance');
     const checked = validatePlanarConfig(next);
     errors.hidden = checked.ok;
     errors.textContent = checked.ok ? '' : checked.issues.map((item) => item.message).join(' ');
@@ -92,17 +101,15 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
   const integrator = element(document, 'select', 'ds-field__control');
   integrator.id = 'lab-integrator';
   for (const id of PLANAR_INTEGRATOR_IDS) {
-    const option = element(
-      document,
-      'option',
-      '',
-      id === 'integrator:rk4' ? 'RK4 (4차)' : id === 'integrator:rk2' ? 'RK2 (2차)' : '명시적 Euler (1차)'
-    );
+    const option = element(document, 'option', '', odeIntegratorLabel(id));
     option.value = id;
     integrator.append(option);
   }
   integrator.value = model.state.config.integratorId;
-  integrator.addEventListener('change', edit);
+  integrator.addEventListener('change', () => {
+    edit();
+    if (model.state.valid) tolerance.sync(model.state.config.tolerance, model.state.config.integratorId);
+  });
   const warnings = element(document, 'div', 'lab-preview-note');
   section.body.append(
     basic,
@@ -115,7 +122,7 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
       document,
       'p',
       'lab-muted',
-      '이 화면은 RK4·RK2·Euler를 제공합니다. 최대 100,000 단계, 관찰 시간 300 s. 저장은 초기조건 재실행 설정입니다.'
+      '기존 ODE 적분기 16개와 잔차 허용오차를 제공합니다. 최대 100,000 단계, 관찰 시간 300 s. 저장은 초기조건 재실행 설정입니다.'
     )
   );
   return {
@@ -124,6 +131,7 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
       const busy = model.state.status === 'running';
       for (const control of controls.values()) control.input.disabled = busy;
       integrator.disabled = busy;
+      tolerance.setDisabled(busy);
       const text = planarWarnings(model.state.config).join(' ');
       if (warnings.textContent !== text) warnings.textContent = text;
     },
@@ -132,6 +140,7 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
       const values = readValues(model.state.config);
       for (const [id, control] of controls) control.setValue(values[id]!);
       integrator.value = model.state.config.integratorId;
+      tolerance.sync(model.state.config.tolerance, model.state.config.integratorId);
       errors.hidden = true;
       errors.textContent = '';
       syncing = false;

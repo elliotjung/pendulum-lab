@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "pendulum-s28-numerical-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP3",
+  "baseline": "122cd7249464146b61d0d38f0ed9a1a577700c3c",
+  "completion": false,
+  "scope": "all16exactnativeODEIDs,optionalSIunit1tolerance;unchangednativephysics;boundedtransactionalacceptancepolicy;oldsettings{}remainomitted",
+  "methods": [
+    "euler",
+    "rk2",
+    "rk4",
+    "verlet",
+    "leapfrog",
+    "symplectic",
+    "yoshida4",
+    "yoshida6",
+    "yoshida8",
+    "hmidpoint",
+    "gauss2",
+    "rkf45",
+    "dopri5",
+    "dop853",
+    "gbs",
+    "bdf2"
+  ],
+  "sourceSha256Basis": "UTF8textwithCRLFnormalizedtoLF",
+  "sources": [
+    {
+      "path": "src/product/adapters/physics/planar.ts",
+      "sha256": "dedb5bbcc8fc4b5d0f2036033a35e72f80a0ad44de2a28c13d1d0bbc2b69665c"
+    },
+    {
+      "path": "src/product/adapters/physics/planar-schema.ts",
+      "sha256": "ac58a40880877ea93d024627a3ad8bc225fa5daddcb33feaf44091717e4d8d16"
+    },
+    {
+      "path": "src/product/adapters/physics/chain.ts",
+      "sha256": "8779678f34d123e368f946d11391073631b6449b0ab9f8fab7acdff5b4d24ecd"
+    },
+    {
+      "path": "src/product/adapters/physics/chain-schema.ts",
+      "sha256": "f543129e003311146bfbd6e3bb0f6019e317249c7025e15b1869f5ca4b27dca4"
+    },
+    {
+      "path": "src/product/adapters/physics/planar-integrators.ts",
+      "sha256": "bbe91b749490f69ef1e6e03f01b157d0e14d83670bc933ef622956b6e76a338a"
+    },
+    {
+      "path": "src/product/adapters/physics/planar-step-policy.ts",
+      "sha256": "edd754dacabef967e2d4e91082bfab7b7ccaaffb0fb3c2570d7953db4ef3ef04"
+    },
+    {
+      "path": "src/product/lab/views/core-inspector.ts",
+      "sha256": "d2f6f5e6341dd8c562c0bffe9a354d87e16c704b384f7f9bf0dcfd7b995eda3a"
+    },
+    {
+      "path": "src/product/lab/views/chain-inspector.ts",
+      "sha256": "bf67b64139e54b9563e410a4ca6c6dcedb6d68350faf447470cc17d5bf28c248"
+    },
+    {
+      "path": "src/product/lab/views/ode-tolerance-control.ts",
+      "sha256": "cd25ce8c9ded4f83e926ced307ca1822fc2f11971caa68f23e0ba0444e2f7a53"
+    },
+    {
+      "path": "tests/product/adapters/physics/planar.test.ts",
+      "sha256": "41195654b625bdd6d39cde94200778075225f4d34720010b1f97c4c0daf228f0"
+    },
+    {
+      "path": "tests/product/adapters/physics/chain.test.ts",
+      "sha256": "2cf6503ba6df7ac8d19718cc443c79d22060fdca8edd1b6b5e42ecfc184f9e18"
+    },
+    {
+      "path": "tests/product/adapters/physics/planar-integrator-parity.test.ts",
+      "sha256": "119808e6717d5103894cee38ba82fc759f36dabfaccd107cc55856733e6b2eb9"
+    }
+  ],
+  "vitest": {
+    "files": 7,
+    "tests": 453,
+    "passed": 453,
+    "failed": 0,
+    "pending": 0,
+    "report": "tmp/S28-CP3-integrators-vitest.json",
+    "sha256": "a5161e4f4301f208385080391aa5813edaa7e58b0f25a4a225ed5fcb0d506c7b",
+    "fileResults": [
+      {
+        "path": "tests/product/experiments/runtime.test.ts",
+        "tests": 29,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/lab/chain-storage.test.ts",
+        "tests": 10,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/lab/core-model.test.ts",
+        "tests": 32,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/adapters/physics/chain-worker.test.ts",
+        "tests": 16,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/adapters/physics/chain.test.ts",
+        "tests": 170,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/adapters/physics/planar-integrator-parity.test.ts",
+        "tests": 144,
+        "status": "passed"
+      },
+      {
+        "path": "tests/product/adapters/physics/planar.test.ts",
+        "tests": 52,
+        "status": "passed"
+      }
+    ]
+  },
+  "characterization": [
+    "double/compound/triple16methods40stepswithnativeLabSimulationstateenergyandStepReportincludingtolerance",
+    "N4all16nativedispatcher",
+    "failed/retriedimplicitintervalatomicity",
+    "finalshortenedinterval",
+    "sameorpartlyoverlappingbuffersanddimensionmismatchrefusedbeforemutation",
+    "canonicalfile/storage/worker/cancelregression"
+  ],
+  "quality": [
+    "wholeTypecheckexit0afterguard",
+    "targetedESLint12pathsmaxwarnings0",
+    "targetedPrettier",
+    "isolatedViteproductioncompileexit0",
+    "publicartifactprivacy22text1binaryskip"
+  ],
+  "build": {
+    "path": "tmp/S28-CP3-build.log",
+    "sha256": "25ac25f3d3ac4affb8dfcdd7d029ce8068b32c28e08af2317a6fa7d8690707c0",
+    "scope": "isolatedtmp/S28-CP3-122cd72-dist;css+existingreports+indexsupportcopiedseparately",
+    "correctedToolingFailure": "initialpublicreportauditpathabsentbeforecopy;aftercopysame22reportauditpassed"
+  },
+  "preservation": "Nochangesinsrc/physics,chaos,research,runtime,workers,validation,publicAPI,app.htmlorpackages;testedproductadaptersandinspectorsonly.",
+  "remaining": [
+    "newUIall16productionjourneys(CP3-E)",
+    "legacyimportall16+toleranceconsumer(CP4)",
+    "remainingS28parity/migrations;noS29approval"
+  ]
+}

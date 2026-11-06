@@ -102,3 +102,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - **CP7**:134개 실행 행에 실제 source-bound Vitest/production browser 결과와 artifact 증거를 결속하고 negative/mutation 검사를 수행한다. 부족한 행은 fail로 유지하며 계속 구현·검증한다. 모든 구현 checkpoint를 push한 뒤 전체 필수 gate를 통과해야만 별도 완료 status를 만든다.
 - CP3~CP7은 내부 작업 묶음이며 사용자가 하위 번호를 다시 요청할 필요가 없다. 필요하면 review 가능한 더 작은 구현 commit으로 나눈다. 이후 단계/S29 cutover, 엔진 재작성, 기존 데이터 덮어쓰기, master merge/release/Landing 변경은 수행하지 않는다.
 - 현재 source/목록 변경 전 세부 계약 조사 중이다. 모델 selector는 여전히 노출되지 않았으며 확인/변경했다고 주장하지 않는다. 교육 사람 검토0/86 및 승인 gates[7,9,17,24]를 유지한다.
+
+### 재개 준비 게시 / CP3 native 적분기
+
+- 재개 준비 `122cd7249464146b61d0d38f0ed9a1a577700c3c` commit/push exit0 및 live remote exact match 확인. plan/typecheck 통과, next28 유지.
+- CP3는 기존16종 method ID와 verlet alias를 planar/chain 실행·Inspector·canonical/storage에 연결했다. optional tolerance는 integrator.settings의 unit1 scalar로 저장하며 기존 settings{}의 생략 의미와 방법별 기본값을 유지한다. 기존 운동방정식·native step dispatcher·public API는 수정하지 않았다.
+- 기존 native LabSimulation의 수락/거부 및 최대 두 half-step 재시도 정책을 adapter에서 보존한다. 실패 시 상태/시간을 commit하지 않는다. 입력/출력 buffer의 동일·부분 겹침과 차원 불일치도 native 호출 전에 거부한다. 오차 감시 고정 macro-step을 tolerance 기반 adaptive rejection으로 가장하지 않는다.
+- targeted7파일453/453, 실패·pending0 통과.3시스템×16방법×두 tolerance 설정의40step native state/energy/accepted-step 진단, N4 native dispatcher, shortening/retry/rejection, storage/worker/cancel 및9개 buffer/dimension negative case를 포함한다. 초기 test typing·compound Jacobian 설명 오류는 최종 characterization으로 수정했다.
+- post-guard whole typecheck, 대상12파일 ESLint/Prettier 통과. 실행 중 browser검사와 분리된 `tmp/S28-CP3-122cd72-dist` production compile 통과. 지원 CSS/reports/index를 복사한 뒤 공개 artifact privacy22text/1binary-skip 통과(복사 전 reports 경로 미존재 오류는 도구 이력으로 기록). native engine/public API/package/app.html diff0을 확인했다.
+- 코드·검증 결속은 [S28-CP3-numerical.json](./S28-CP3-numerical.json)에 기록한다. 전체16방법의 실제 화면 여정은 CP3-E에서 별도로 검증한다. 현재는 source/targeted checkpoint이며 전체 S28 인증 또는 완료가 아니다. 각 feature의 최종 parity는 실제 runner evidence가 모인 뒤에만 갱신한다.

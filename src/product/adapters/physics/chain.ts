@@ -1,12 +1,13 @@
 import { createChainWorkspace, rhsChain, energyChain } from '../../../physics/nPendulum';
 import { createTripleRhsWorkspace, rhsTriple } from '../../../physics/triple';
 import { energyTriple } from '../../../physics/energy';
-import { eulerStep, rk2Step, rk4Step } from '../../../physics/integrators';
 import type { Derivative } from '../../../physics/types';
 import { inspectSafeData } from '../../persistence/safe-data';
 import { validateExperimentState } from '../../contracts/experiment-validation';
 import { EXPERIMENT_SCHEMA, type ExperimentStateV1 } from '../../contracts/experiment';
 import { issue, success, type ContractIssue, type ContractResult } from '../../contracts/validation';
+import { odeIntegratorSettings, readOdeTolerance, validateOdeTolerance } from './planar-integrators';
+import { createLegacyOdeIntervalStepper } from './planar-step-policy';
 import {
   CHAIN_SYSTEM_IDS,
   CHAIN_INTEGRATOR_IDS,
@@ -50,7 +51,12 @@ function rawCanonical(config: ChainConfig): ExperimentStateV1 {
       theta: { kind: 'vector', values: config.initialState.slice(0, n), unit: 'rad' },
       omega: { kind: 'vector', values: config.initialState.slice(n), unit: 'rad/s' }
     },
-    integrator: { kind: 'selectable', id: config.integratorId, version: CHAIN_INTEGRATOR_VERSION, settings: {} },
+    integrator: {
+      kind: 'selectable',
+      id: config.integratorId,
+      version: CHAIN_INTEGRATOR_VERSION,
+      settings: odeIntegratorSettings(config.tolerance)
+    },
     runtime: {
       domain: 'time',
       start: { value: config.startTime === undefined ? 0 : config.startTime, unit: 's' },
@@ -96,6 +102,7 @@ export function validateChainConfig(input: unknown): ContractResult<ChainConfig>
       'gamma',
       'initialState',
       'integratorId',
+      'tolerance',
       'step',
       'duration',
       'startTime',
@@ -110,7 +117,8 @@ export function validateChainConfig(input: unknown): ContractResult<ChainConfig>
   if (!(CHAIN_SYSTEM_IDS as readonly unknown[]).includes(value.systemId))
     issues.push(issue('unsupported-system', '$.systemId', '삼중 진자 또는 N중 사슬을 선택하세요.'));
   if (!(CHAIN_INTEGRATOR_IDS as readonly unknown[]).includes(value.integratorId))
-    issues.push(issue('unsupported-integrator', '$.integratorId', 'RK4, RK2, 명시적 Euler만 지원합니다.'));
+    issues.push(issue('unsupported-integrator', '$.integratorId', '기존 ODE 적분기 16개 중 하나를 선택하세요.'));
+  validateOdeTolerance(value.tolerance, issues);
   const parameters = record(value.parameters) ? value.parameters : {};
   closedKeys(parameters, ['masses', 'lengths', 'g'], '$.parameters', issues);
   const masses = Array.isArray(parameters.masses) ? parameters.masses : [];
@@ -184,8 +192,7 @@ export function createChainSimulation(input: ChainConfig) {
     next = new Float64Array(state.length);
   const ratio = config.duration / config.step;
   const total = Math.ceil(ratio - 8 * Number.EPSILON * ratio);
-  const stepper =
-    config.integratorId === 'integrator:rk4' ? rk4Step : config.integratorId === 'integrator:rk2' ? rk2Step : eulerStep;
+  const stepper = createLegacyOdeIntervalStepper(config.integratorId, derivative, state.length, config.tolerance);
   let index = 0;
   function sample(vector: Float64Array, step: number): ChainSample {
     const currentEnergy = energy(vector);
@@ -214,6 +221,7 @@ export function createChainSimulation(input: ChainConfig) {
       return index >= total;
     },
     snapshot: () => sample(state, index),
+    lastStepReport: stepper.lastStepReport,
     step() {
       if (index >= total) return sample(state, index);
       const remaining = config.duration - index * config.step;
@@ -221,8 +229,14 @@ export function createChainSimulation(input: ChainConfig) {
         Math.abs(remaining - config.step) <= 8 * Number.EPSILON * config.duration
           ? config.step
           : Math.min(config.step, remaining);
-      stepper(state, dt, derivative, next);
-      const result = sample(next, index + 1);
+      stepper.advance(state, dt, next);
+      let result: ChainSample;
+      try {
+        result = sample(next, index + 1);
+      } catch (cause) {
+        stepper.rejectCandidate();
+        throw cause;
+      }
       state.set(next);
       index++;
       return result;
@@ -242,8 +256,9 @@ export function fromCanonicalChain(input: unknown): ContractResult<ChainConfig> 
     issues.push(
       issue('unsupported-version', '$', '지원하지 않는 사슬 모델/적분기 버전입니다.', 'use-supported-version')
     );
-  if (v.modelOptions !== undefined || v.integrator.options !== undefined || Object.keys(v.integrator.settings).length)
+  if (v.modelOptions !== undefined || v.integrator.options !== undefined)
     issues.push(issue('unsupported-options', '$', '이 경로가 표현할 수 없는 모델·적분기 옵션입니다.', 'keep-original'));
+  const tolerance = readOdeTolerance(v.integrator.settings, issues);
   if (v.runtime.domain !== 'time' || v.integrator.kind !== 'selectable')
     return {
       ok: false,
@@ -281,6 +296,7 @@ export function fromCanonicalChain(input: unknown): ContractResult<ChainConfig> 
     gamma: scalars.gamma,
     initialState: [...vectors.theta!, ...vectors.omega!],
     integratorId: v.integrator.id,
+    ...(tolerance === undefined ? {} : { tolerance }),
     startTime: v.runtime.start.value,
     step: v.runtime.step.value,
     duration: v.runtime.duration.value,

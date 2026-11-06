@@ -1,12 +1,15 @@
 import { createDoublePendulumDerivative, energyDouble } from '../../../physics/double';
 import { createCompoundDoublePendulumDerivative, energyCompoundDouble } from '../../../physics/compoundDouble';
-import { eulerStep, rk2Step, rk4Step } from '../../../physics/integrators';
+import { physicsAdapter } from '../../../physics';
 import type { Derivative } from '../../../physics/types';
 import { inspectSafeData } from '../../persistence/safe-data';
 import { issue, success, type ContractIssue, type ContractResult } from '../../contracts/validation';
 import { validateExperimentState } from '../../contracts/experiment-validation';
 import { EXPERIMENT_SCHEMA, type ExperimentStateV1 } from '../../contracts/experiment';
 import type { QuantityMap } from '../../contracts/quantities';
+import { odeIntegratorSettings, readOdeTolerance, validateOdeTolerance } from './planar-integrators';
+import { createLegacyOdeIntervalStepper } from './planar-step-policy';
+import type { LabStepReport } from '../../../app/LabSimulation';
 import {
   PLANAR_FIELDS,
   PLANAR_SYSTEM_IDS,
@@ -68,7 +71,12 @@ function rawCanonical(config: PlanarConfig): ExperimentStateV1 {
     modelVersion: PLANAR_MODEL_VERSION,
     parameters,
     initialConditions,
-    integrator: { kind: 'selectable', id: config.integratorId, version: PLANAR_INTEGRATOR_VERSION, settings: {} },
+    integrator: {
+      kind: 'selectable',
+      id: config.integratorId,
+      version: PLANAR_INTEGRATOR_VERSION,
+      settings: odeIntegratorSettings(config.tolerance)
+    },
     runtime: {
       domain: 'time',
       start: { value: config.startTime ?? 0, unit: 's' },
@@ -103,6 +111,7 @@ export function validatePlanarConfig(input: unknown): ContractResult<PlanarConfi
       'gamma',
       'initialState',
       'integratorId',
+      'tolerance',
       'step',
       'duration',
       'startTime',
@@ -117,7 +126,8 @@ export function validatePlanarConfig(input: unknown): ContractResult<PlanarConfi
   if (!(PLANAR_SYSTEM_IDS as readonly unknown[]).includes(value.systemId))
     issues.push(issue('unsupported-system', '$.systemId', '이중 또는 복합진자만 지원합니다.'));
   if (!(PLANAR_INTEGRATOR_IDS as readonly unknown[]).includes(value.integratorId))
-    issues.push(issue('unsupported-integrator', '$.integratorId', '이 경로는 RK4, RK2, 명시적 오일러를 지원합니다.'));
+    issues.push(issue('unsupported-integrator', '$.integratorId', '기존 ODE 적분기 16개 중 하나를 선택하세요.'));
+  validateOdeTolerance(value.tolerance, issues);
   const parameters = record(value.parameters) ? value.parameters : {};
   if (!record(value.parameters))
     issues.push(issue('invalid-parameter', '$.parameters', '질량·길이·중력 설정이 필요합니다.'));
@@ -228,14 +238,21 @@ export interface PlanarSimulation {
 }
 
 /** Caller schedules chunks; no timers, rendering, workers, storage or application globals. */
-export function createPlanarSimulation(input: PlanarConfig): PlanarSimulation {
+export function createPlanarSimulation(input: PlanarConfig): PlanarSimulation & { lastStepReport(): LabStepReport } {
   const validated = validatePlanarConfig(input);
   if (!validated.ok) throw new PlanarConfigurationError(validated.issues);
   const config = validated.value;
+  // Preserve the native live-Lab Jacobian policy: double exposes its analytic
+  // callback; compound uses the adapter callback and fixed-point fallback.
   const derivative = derivativeUnchecked(config);
+  const stepDerivative: Derivative =
+    config.systemId === 'system:double'
+      ? derivative
+      : (s, out) => {
+          physicsAdapter.derivative('compound-double', s, config.parameters, config.gamma, out);
+        };
   const energy = config.systemId === 'system:double' ? energyDouble : energyCompoundDouble;
-  const stepper =
-    config.integratorId === 'integrator:rk4' ? rk4Step : config.integratorId === 'integrator:rk2' ? rk2Step : eulerStep;
+  const stepper = createLegacyOdeIntervalStepper(config.integratorId, stepDerivative, 4, config.tolerance);
   const state = Float64Array.from(config.initialState);
   const next = new Float64Array(4);
   const ratio = config.duration / config.step;
@@ -264,6 +281,7 @@ export function createPlanarSimulation(input: PlanarConfig): PlanarSimulation {
       return index >= totalSteps;
     },
     snapshot: () => sample(state, index),
+    lastStepReport: stepper.lastStepReport,
     step() {
       if (index >= totalSteps) return sample(state, index);
       const remaining = config.duration - index * config.step;
@@ -271,8 +289,14 @@ export function createPlanarSimulation(input: PlanarConfig): PlanarSimulation {
         Math.abs(remaining - config.step) <= 8 * Number.EPSILON * config.duration
           ? config.step
           : Math.min(config.step, remaining);
-      stepper(state, dt, derivative, next);
-      const result = sample(next, index + 1);
+      stepper.advance(state, dt, next);
+      let result: PlanarSample;
+      try {
+        result = sample(next, index + 1);
+      } catch (cause) {
+        stepper.rejectCandidate();
+        throw cause;
+      }
       // Commit after all checks: failed steps leave the previous state and time intact.
       state.set(next);
       index += 1;
@@ -300,14 +324,11 @@ export function fromCanonicalPlanar(input: unknown): ContractResult<PlanarConfig
     issues.push(
       issue('unsupported-version', '$.integrator.version', '지원하지 않는 적분기 버전입니다.', 'use-supported-version')
     );
-  if (
-    value.modelOptions !== undefined ||
-    value.integrator.options !== undefined ||
-    Object.keys(value.integrator.settings).length
-  )
+  if (value.modelOptions !== undefined || value.integrator.options !== undefined)
     issues.push(
       issue('unsupported-options', '$', '이 경로에서 표현할 수 없는 모델·적분기 설정입니다.', 'keep-original')
     );
+  const tolerance = readOdeTolerance(value.integrator.settings, issues);
   if (value.integrator.kind !== 'selectable' || value.runtime.domain !== 'time')
     return {
       ok: false,
@@ -336,6 +357,7 @@ export function fromCanonicalPlanar(input: unknown): ContractResult<PlanarConfig
     gamma: values.gamma,
     initialState: initialNames.map((name) => values[name]),
     integratorId: value.integrator.id,
+    ...(tolerance === undefined ? {} : { tolerance }),
     startTime: value.runtime.start.value,
     step: value.runtime.step.value,
     duration: value.runtime.duration.value,

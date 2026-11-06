@@ -2,10 +2,11 @@ import type { EnergyBreakdown } from '../../../types/domain';
 import { MAX_DENSE_PHYSICS_DIMENSION } from '../../../physics/errors';
 import type { ChainParameters } from '../../../physics/nPendulum';
 import type { AnalysisState, ExperimentProvenance, SeedState } from '../../contracts/experiment';
+import { LEGACY_ODE_INTEGRATOR_IDS, odeIntegratorWarnings } from './planar-integrators';
 
 export const CHAIN_SYSTEM_IDS = ['system:triple', 'system:chain'] as const;
 export type ChainSystemId = (typeof CHAIN_SYSTEM_IDS)[number];
-export const CHAIN_INTEGRATOR_IDS = ['integrator:rk4', 'integrator:rk2', 'integrator:euler'] as const;
+export const CHAIN_INTEGRATOR_IDS = LEGACY_ODE_INTEGRATOR_IDS;
 export type ChainIntegratorId = (typeof CHAIN_INTEGRATOR_IDS)[number];
 export const CHAIN_MODEL_VERSION = 'chain-model-v1';
 export const CHAIN_INTEGRATOR_VERSION = 'chain-integrator-v1';
@@ -19,6 +20,8 @@ export interface ChainConfig {
   readonly gamma: number;
   readonly initialState: readonly number[];
   readonly integratorId: ChainIntegratorId;
+  /** Absent preserves each native method's existing default residual tolerance. */
+  readonly tolerance?: number;
   readonly step: number;
   readonly duration: number;
   readonly startTime?: number;
@@ -89,6 +92,7 @@ export function chainWarnings(config: ChainConfig): readonly string[] {
     ...(config.integratorId === 'integrator:euler'
       ? ['명시적 오일러는 비교용이며 큰 에너지 오차가 생길 수 있습니다.']
       : []),
+    ...odeIntegratorWarnings(config.integratorId, config.tolerance),
     ...(config.step > 0.006 ? ['시간 간격이 큽니다. 간격을 줄여 궤적과 에너지 오차의 수렴을 확인하세요.'] : [])
   ];
 }
