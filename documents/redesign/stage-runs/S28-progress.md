@@ -111,3 +111,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - targeted7파일453/453, 실패·pending0 통과.3시스템×16방법×두 tolerance 설정의40step native state/energy/accepted-step 진단, N4 native dispatcher, shortening/retry/rejection, storage/worker/cancel 및9개 buffer/dimension negative case를 포함한다. 초기 test typing·compound Jacobian 설명 오류는 최종 characterization으로 수정했다.
 - post-guard whole typecheck, 대상12파일 ESLint/Prettier 통과. 실행 중 browser검사와 분리된 `tmp/S28-CP3-122cd72-dist` production compile 통과. 지원 CSS/reports/index를 복사한 뒤 공개 artifact privacy22text/1binary-skip 통과(복사 전 reports 경로 미존재 오류는 도구 이력으로 기록). native engine/public API/package/app.html diff0을 확인했다.
 - 코드·검증 결속은 [S28-CP3-numerical.json](./S28-CP3-numerical.json)에 기록한다. 전체16방법의 실제 화면 여정은 CP3-E에서 별도로 검증한다. 현재는 source/targeted checkpoint이며 전체 S28 인증 또는 완료가 아니다. 각 feature의 최종 parity는 실제 runner evidence가 모인 뒤에만 갱신한다.
+
+### CP3-E — 16방법 실제 화면 검증
+
+- CP3 구현 commit `b48519a78f0a1cf7886c5efd1df53acd69256dc2` push exit0, live origin exact match 확인. 이후 동결 production build의 이중·복합·삼중 ×16방법 ×Chromium/Pixel5 총96/96 여정 통과. 실패·skip·flaky·retry·runner error0. 실제 selector, 한 단계 실행, canonical JSON 및 CSV 다운로드를 native 결과와 비교했다.
+- 동일 runtime453검사는 exact equality를 유지한다. Node/Chromium의 Math 초월함수 ULP 차이는 기존 S01 수치 오차 fixture로 비교하며 golden·오차 한도·기본 timeout을 변경하지 않았다. 최대 state 절대 차8.673617379884035e-18, 에너지1.4210854715202004e-14. 최초 cross-runtime exact assertion5건 실패 및 새 test의 startup 교정 이력은 증거에 구분했다.
+- `S28-CP3-E-ode.json`은12개 native 연결 source의 CP3 일치,257개 동결 build 파일 digest, runner JSON digest와 test/fixture SHA를 기록한다. 이후 control/migration 변경은 이 동결 build 결과로 인증하지 않으며 별도 재검증한다.
+- CP4 링크·전체 작업공간 이전, CP5 실제 control, CP6 나머지 연결, CP7 전체134행 인증을 계속 진행한다. S28 완료·cutover 또는 사람 승인 주장이 아니다. next28 및 사람 science review0/86을 유지한다.

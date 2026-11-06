@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "pendulum-s28-ode-ui-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP3-E",
+  "completion": false,
+  "implementationCommit": "b48519a78f0a1cf7886c5efd1df53acd69256dc2",
+  "implementationCommitVerification": "Parent reported exact live origin/codex/redesign hash before this isolated build; child made no Git operations.",
+  "scope": "Real free-Lab DOM selection, native one-step execution and downloaded canonical/trajectory evidence for double/compound/triple times all16 exact method IDs on Chromium and Pixel5 emulation.",
+  "sourceSha256Basis": "UTF8 text with CRLF normalized to LF",
+  "frozenNumericalSources": [
+    {
+      "path": "src/product/adapters/physics/planar.ts",
+      "sha256": "dedb5bbcc8fc4b5d0f2036033a35e72f80a0ad44de2a28c13d1d0bbc2b69665c",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/adapters/physics/planar-schema.ts",
+      "sha256": "ac58a40880877ea93d024627a3ad8bc225fa5daddcb33feaf44091717e4d8d16",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/adapters/physics/chain.ts",
+      "sha256": "8779678f34d123e368f946d11391073631b6449b0ab9f8fab7acdff5b4d24ecd",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/adapters/physics/chain-schema.ts",
+      "sha256": "f543129e003311146bfbd6e3bb0f6019e317249c7025e15b1869f5ca4b27dca4",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/adapters/physics/planar-integrators.ts",
+      "sha256": "bbe91b749490f69ef1e6e03f01b157d0e14d83670bc933ef622956b6e76a338a",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/adapters/physics/planar-step-policy.ts",
+      "sha256": "edd754dacabef967e2d4e91082bfab7b7ccaaffb0fb3c2570d7953db4ef3ef04",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/lab/views/core-inspector.ts",
+      "sha256": "d2f6f5e6341dd8c562c0bffe9a354d87e16c704b384f7f9bf0dcfd7b995eda3a",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/lab/views/chain-inspector.ts",
+      "sha256": "bf67b64139e54b9563e410a4ca6c6dcedb6d68350faf447470cc17d5bf28c248",
+      "matchesCp3": true
+    },
+    {
+      "path": "src/product/lab/views/ode-tolerance-control.ts",
+      "sha256": "cd25ce8c9ded4f83e926ced307ca1822fc2f11971caa68f23e0ba0444e2f7a53",
+      "matchesCp3": true
+    },
+    {
+      "path": "tests/product/adapters/physics/planar.test.ts",
+      "sha256": "41195654b625bdd6d39cde94200778075225f4d34720010b1f97c4c0daf228f0",
+      "matchesCp3": true
+    },
+    {
+      "path": "tests/product/adapters/physics/chain.test.ts",
+      "sha256": "2cf6503ba6df7ac8d19718cc443c79d22060fdca8edd1b6b5e42ecfc184f9e18",
+      "matchesCp3": true
+    },
+    {
+      "path": "tests/product/adapters/physics/planar-integrator-parity.test.ts",
+      "sha256": "119808e6717d5103894cee38ba82fc759f36dabfaccd107cc55856733e6b2eb9",
+      "matchesCp3": true
+    }
+  ],
+  "runnerSources": [
+    {
+      "path": "e2e/redesign/ode-method-parity.spec.ts",
+      "sha256": "cb0942bc2e4cebe5629b077df6d3c764604e97f12039d8f632cc2f2a7c1d4ffd"
+    },
+    {
+      "path": "tests/characterization/numerical-golden.fixture.json",
+      "sha256": "79d36988f19f22d4ce3d622081c20024de839a08a5a42145969a52273a4d5430"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "a58c9ddb4fb2c7bfe47b512f2aee23a873a4054207b5d7b50ba5807b42655819"
+    },
+    {
+      "path": "tmp/s28-playwright-no-video.config.ts",
+      "sha256": "041c9f3640153c0e4e120bf86b419aa6c822710d4d688d2b39eb54f3fcfe763c"
+    }
+  ],
+  "build": {
+    "command": "npx vite build --outDir tmp/s28-cp3-ode-dist",
+    "outcome": "exit0",
+    "root": "tmp/s28-cp3-ode-dist",
+    "builtBeforeStochasticEdits": true,
+    "note": "Isolated distribution remains frozen. Parallel later workspace edits are not certified by this run.",
+    "files": 257,
+    "manifest": {
+      "path": "tmp/S28-CP3-E-build-manifest.json",
+      "bytes": 41902,
+      "sha256": "b40c9470153a954b54a36b1ac12653f6c7cf51b68de0dabd3270554ee83ca3be"
+    },
+    "aggregateSha256": "69ae75d29fd4b0ce920e72bfaa408502877a76041b54374645930c3109f0faf3",
+    "selectedAssets": [
+      {
+        "path": "assets/chain-lab-Bcnp_PPx.css",
+        "bytes": 975,
+        "sha256": "f84107281fc0e1a78ca29c9f8b66695e1845b3a4495273655b2a3af0720b7dcd"
+      },
+      {
+        "path": "assets/chain-lab-CApmYhRF.js",
+        "bytes": 32713,
+        "sha256": "4c5b01b492b2081e7a119286fd147c6212587e4303d4792d3b678c5ed6fff897"
+      },
+      {
+        "path": "assets/chain.worker-CNh5zFmC.js",
+        "bytes": 202290,
+        "sha256": "064bbefdedbb7585e5cb864f74452a3a37d239e2164ea0ff146176381903f845"
+      },
+      {
+        "path": "assets/core-lab-Bp_bXU_T.js",
+        "bytes": 36527,
+        "sha256": "d942ff40352baaca9ceca6ec44782766bd981c8991f88aecffee28ca3eb90347"
+      },
+      {
+        "path": "assets/physics-jqhSZ9mo.js",
+        "bytes": 106810,
+        "sha256": "e6899cd1f5eefe49b382c84f8319e465b9a3ef8e203d28fc0c7f432338ec6fbc"
+      },
+      {
+        "path": "assets/planar.worker-DIqWMlKv.js",
+        "bytes": 211128,
+        "sha256": "1d60852f469c61981b2117f8a703b5e2196ed0831dbb2c7d25fb3a27ac2046a5"
+      },
+      {
+        "path": "next.html",
+        "bytes": 1218,
+        "sha256": "f45fca43519c7d14037c067d546f9a5a332533f8e2a4fb71e0e889edb16e44f5"
+      }
+    ]
+  },
+  "command": "PLAYWRIGHT_BASE_URL=http://127.0.0.1:5175 PLAYWRIGHT_PORT=5175 PLAYWRIGHT_USE_PREVIEW=1 npx playwright test e2e/redesign/ode-method-parity.spec.ts --config tmp/s28-playwright-no-video.config.ts --project=chromium --project=mobile-chrome --workers=1 --retries=0 --reporter=list,json --output tmp/S28-CP3-E-ode-final-results",
+  "report": {
+    "path": "tmp/S28-CP3-E-ode-playwright-final.json",
+    "bytes": 169242,
+    "sha256": "204a123764541ac03fa8369b4e0a15da64d1c43c8170f2d4f878bcbf1280d66c"
+  },
+  "runtime": {
+    "node": "v26.3.0",
+    "platform": "win32",
+    "arch": "x64",
+    "browserVersions": "Not captured by this runner; configured Chromium and Pixel5 mobile-chrome projects were used. Pixel5 is emulation, not physical-device certification."
+  },
+  "results": {
+    "tests": 96,
+    "expected": 96,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "runnerErrors": 0,
+    "everyCasePassedOnce": true,
+    "startTime": "2026-11-06T00:17:28.398Z",
+    "durationMs": 571653.401,
+    "byProject": {
+      "chromium": {
+        "tests": 48,
+        "passed": 48
+      },
+      "mobile-chrome": {
+        "tests": 48,
+        "passed": 48
+      }
+    }
+  },
+  "assertions": {
+    "methodIds": "exact",
+    "canonicalSettings": "exact scalar tolerance=1e-8 unit1; exact method IDs including verlet",
+    "runtimeAndInitialState": "exact",
+    "csv": "actual browser download; exactly initial and one accepted sample; all finite",
+    "crossRuntimeResult": "Each state component and total energy compared against unchanged Node LabSimulation using unchanged S01 numeric bound.",
+    "tolerance": {
+      "absolute": 1e-11,
+      "relative": 1e-10
+    },
+    "observedMaxStateAbsolute": 8.673617379884035e-18,
+    "observedMaxEnergyAbsolute": 1.4210854715202004e-14,
+    "measuredCases": 96,
+    "accessibility": "axe WCAG2A/2AA/2.1A/2.1AA in hmidpoint case for all three routes and both projects",
+    "sameRuntimeProof": "Separate CP3 numerical evidence retains453/453 tests, including bit-exact native state, energy and step-report assertions."
+  },
+  "runnerConfiguration": {
+    "workers": 1,
+    "retries": 0,
+    "perTestTimeoutMs": 30000,
+    "expectTimeoutMs": 5000,
+    "screenshotThreshold": 0.2,
+    "maxDiffPixels": 100,
+    "snapshotsUpdated": false,
+    "onlyOverride": "Diagnostic video disabled by existing task-local wrapper. Original assertions, projects, trace and failure screenshots remain."
+  },
+  "initialFailureHistory": [
+    {
+      "kind": "cross-runtime-exact-equality",
+      "disposition": "Stopped initial run after final-ULP Node/Chromium differences in newly authored assertions; actual failure screenshots/traces preserved locally.",
+      "example": {
+        "method": "hmidpoint",
+        "expectedOmega2": 0.0030438933651840095,
+        "observedOmega2": 0.0030438933651840082
+      },
+      "correction": "Read unchanged existing S01 numeric tolerance, retain exact IDs/settings/initial state, record numeric errors for every final case. No golden or existing threshold changed.",
+      "failureContexts": [
+        {
+          "path": "tmp/S28-CP3-E-ode-results/redesign-ode-method-parity-13d44-t-native-restart-and-result-chromium/error-context.md",
+          "bytes": 11208,
+          "sha256": "36913b01a455fadd019901461e8ddbec27ae5ec9ea76c5f987e9de67277e5791"
+        },
+        {
+          "path": "tmp/S28-CP3-E-ode-results/redesign-ode-method-parity-57b62-t-native-restart-and-result-chromium/error-context.md",
+          "bytes": 11182,
+          "sha256": "06d54b56fb672c0df88358795e2e68387015f6e7545fc488972850c190943aa0"
+        },
+        {
+          "path": "tmp/S28-CP3-E-ode-results/redesign-ode-method-parity-7936e-t-native-restart-and-result-chromium/error-context.md",
+          "bytes": 11184,
+          "sha256": "86068d6330dda3b8724b191b73f9d0fa5e10d23e7760e79455b47071274efa21"
+        },
+        {
+          "path": "tmp/S28-CP3-E-ode-results/redesign-ode-method-parity-85e64-t-native-restart-and-result-chromium/error-context.md",
+          "bytes": 11180,
+          "sha256": "97422f7c18532c72273adf6e8dcf9c0ad2e47b55b7e1bc822d2723f59f49f437"
+        },
+        {
+          "path": "tmp/S28-CP3-E-ode-results/redesign-ode-method-parity-b24b7-t-native-restart-and-result-chromium/error-context.md",
+          "bytes": 11182,
+          "sha256": "3f6ac7dbd0b20cf073142be3b04dde487e214de481759c9d324954ca3419d332"
+        }
+      ]
+    },
+    {
+      "kind": "new-test-startup",
+      "issues": [
+        "Duplicate local numeric error variable",
+        "Playwright ESM JSON import required an import attribute"
+      ],
+      "disposition": "Corrected variable name and read existing fixture through node:fs before successful final96-case run; no browser/product settings changed."
+    }
+  ],
+  "limitations": [
+    "Certifies this bounded one-step UI journey and the separate CP3 native numerical suite, not every long-run scientific regime.",
+    "No full-suite, Firefox/WebKit, physical device, screen-reader audio, human scientific review or S28 completion is claimed by this checkpoint."
+  ]
+}
