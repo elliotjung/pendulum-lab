@@ -18,6 +18,7 @@ import { createFieldModel, type FieldStatus } from './field-model';
 import { createFieldInspector } from './field-inspector';
 import { createFieldFiles } from './field-files';
 import { createFieldDiagnostics } from './field-diagnostics';
+import { createFieldResonancePanel } from './field-resonance-panel';
 import { loadFieldConfig } from './field-storage';
 import { fieldTrajectoryPlot, fieldPlotDescription, exportFieldFigure, type FieldPlotKind } from './field-plots';
 
@@ -41,7 +42,7 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
       'p',
       'product-lead',
       system.id === 'system:langevin'
-        ? '정규화 단일 진자에 가산 Itô 속도 잡음을 넣어 seed 기반 앙상블을 계산합니다.'
+        ? '정규화 단일 진자에서 가산·곱셈·행렬 잡음과 확률 해석을 선택해 seed 기반 앙상블을 계산합니다.'
         : system.description.ko
     )
   );
@@ -223,6 +224,8 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
     caption,
     createFieldDiagnostics(document, initial.systemId)
   );
+  const resonance = stochastic ? createFieldResonancePanel(document) : undefined;
+  if (resonance) analysis.body.append(resonance.element);
   kind.control.addEventListener('change', () => updatePlot(true));
   let lastPlotSignature = '',
     nodeCount = 0,
@@ -358,6 +361,7 @@ export function createFieldWorkspace(document: Document, system: SystemDefinitio
       model.dispose();
       coreDiagnostics.dispose();
       files.dispose();
+      resonance?.dispose();
       session!.delete(key);
       session!.set(key, { config: model.state.config, tray });
       while (session!.size > 8) session!.delete(session!.keys().next().value!);

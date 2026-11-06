@@ -2,6 +2,7 @@ import { createFputModeState } from '../../../physics/fput';
 import { sineGordonKink, sineGordonKinkRate } from '../../../physics/sineGordon';
 import type { AnalysisState, ExperimentProvenance, SeedState } from '../../contracts/experiment';
 import type { CanonicalUnit } from '../../contracts/quantities';
+import { fieldStochasticWarnings, type FieldStochasticOptions } from './field-stochastic';
 
 export const FIELD_SYSTEM_IDS = [
   'system:langevin',
@@ -40,6 +41,7 @@ export interface FieldConfig {
   readonly ensemble: { readonly members: number };
   readonly analyses?: readonly AnalysisState[];
   readonly provenance?: ExperimentProvenance;
+  readonly stochastic?: FieldStochasticOptions;
 }
 export type FieldRunConfig = FieldConfig;
 export interface FieldEnsembleProvenance {
@@ -88,7 +90,7 @@ const f = (key: string, label: string, min: number, max: number, step = 0.01): F
   step
 });
 export function fieldParameterFields(id: FieldSystemId): readonly FieldParameterField[] {
-  if (id === 'system:langevin') return [f('damping', '감쇠 γ', 0, 10), f('noise', '가산 속도 잡음 σ', 0, 5)];
+  if (id === 'system:langevin') return [f('damping', '감쇠 γ', 0, 10), f('noise', '잡음 세기 σ', 0, 5)];
   if (id === 'system:fput') return [f('alpha', '3차 결합 α', -2, 2), f('beta', '4차 결합 β', 0, 5)];
   if (id === 'system:lattice-fk-limit')
     return [f('onsiteOmegaSq', '기판 고유진동수 제곱', 0, 20), f('couplingRate', '결합률', 0, 20)];
@@ -209,9 +211,11 @@ export function fieldWarnings(c: FieldConfig): string[] {
     '이 adapter의 시간·공간·상태·에너지는 정규화 값입니다. canonical 시간 슬롯의 s는 저장 호환용이며 modelOptions.timeConvention=normalized가 해석을 지정합니다.',
     `격자 최대 ${MAX_FIELD_POINTS}, 앙상블 최대 ${MAX_FIELD_MEMBERS}, 최대 ${MAX_FIELD_STEPS} 단계·${MAX_FIELD_WORK} member/grid 작업. 시간 간격과 공간 격자를 세분화하여 수렴을 확인하세요.`,
     ...(c.systemId === 'system:langevin'
-      ? [
-          '단위 질량·길이·중력의 단일 진자에 속도 가산 Itô 잡음을 넣은 Euler–Maruyama 모델입니다. 잡음과 감쇠는 독립 설정이며 열평형 fluctuation–dissipation 관계를 강제하지 않습니다. 평균은 unwrapped θ의 산술 평균이며 분산은 n−1 표본 분산입니다. 같은 seed·설정·버전에서 같은 경로를 재현하며 dt 변경 시 동일 Brownian path를 보장하지 않습니다.'
-        ]
+      ? c.stochastic
+        ? fieldStochasticWarnings(c.stochastic)
+        : [
+            '단위 질량·길이·중력의 단일 진자에 속도 가산 Itô 잡음을 넣은 Euler–Maruyama 모델입니다. 잡음과 감쇠는 독립 설정이며 열평형 fluctuation–dissipation 관계를 강제하지 않습니다. 평균은 unwrapped θ의 산술 평균이며 분산은 n−1 표본 분산입니다. 같은 seed·설정·버전에서 같은 경로를 재현하며 dt 변경 시 동일 Brownian path를 보장하지 않습니다.'
+          ]
       : []),
     ...(c.systemId === 'system:fput'
       ? [

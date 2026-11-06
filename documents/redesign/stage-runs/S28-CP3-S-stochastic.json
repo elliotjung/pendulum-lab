@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "pendulum-s28-stochastic-native-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP3-S",
+  "completion": false,
+  "scope": "Existing native stochastic steppers applied to the inertial pendulum field, with complete canonical/storage/UI round trips; separate existing native overdamped quartic stochastic-resonance curve in a cancellable worker.",
+  "sourceSha256Basis": "UTF8 text with CRLF normalized to LF",
+  "sources": [
+    {
+      "path": "src/product/adapters/physics/field.ts",
+      "sha256": "50bc0d5806591bae68523c0a19521d841797534631ad939713c83b0dac880186"
+    },
+    {
+      "path": "src/product/adapters/physics/field-schema.ts",
+      "sha256": "7b747343732e04e266610f58e29ab8b0ab9ed7ed338ab54c2fab612cfa924d04"
+    },
+    {
+      "path": "src/product/adapters/physics/field-contract.ts",
+      "sha256": "84c7df97353831dc3646753288e1a7b0b173abaa241464afc2b711d9f582021f"
+    },
+    {
+      "path": "src/product/adapters/physics/field-stochastic.ts",
+      "sha256": "3d3c967a5a14ab837fc351251af0ad1103f40855f98d039bdc865fee99d3483d"
+    },
+    {
+      "path": "src/product/adapters/physics/field-resonance.ts",
+      "sha256": "d129ef1f91f5c70dd2083af01e610995e726d14a16d6d44a16cbeb6721611b8f"
+    },
+    {
+      "path": "src/product/adapters/physics/field-resonance-worker-protocol.ts",
+      "sha256": "4b9d4c3cfcfb0345f4b23889bb3cfe90d967b37d7f1a9a38eee3d310ea606307"
+    },
+    {
+      "path": "src/product/adapters/physics/field-resonance.worker.ts",
+      "sha256": "b0c81953f73b002ebd198c87f356ab527bf61a9f92020a528209350ee775eede"
+    },
+    {
+      "path": "src/product/adapters/physics/field-resonance-client.ts",
+      "sha256": "bfdb0271f1978c3c518172fc90c433583489e14b69e407785d1cebd0e56f9f31"
+    },
+    {
+      "path": "src/product/lab/views/field-inspector.ts",
+      "sha256": "833e4c806f27752fe8f8e866c32e2f9d81f70f763b1a3ecb6992cf22ef9951f8"
+    },
+    {
+      "path": "src/product/lab/views/field-workspace.ts",
+      "sha256": "d01fe76de6ef754a71bb04ba74005e6069f3c354c573355c05274b30ce577e27"
+    },
+    {
+      "path": "src/product/lab/views/field-stochastic-controls.ts",
+      "sha256": "a49b2c45ba453fb96aff7f2b77bab0e77fc0d1bcc032d4fc49144cb277d026e0"
+    },
+    {
+      "path": "src/product/lab/views/field-resonance-panel.ts",
+      "sha256": "5cda96a3a7171a98e0e0984b86089bbfae9e3b42898f5933e31338f5291b9d0e"
+    },
+    {
+      "path": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "sha256": "8d7f6eeda7003a516efc1911f85c7b3597a5012e3d1fd297e99011ea25e4d8d8"
+    },
+    {
+      "path": "tests/product/adapters/physics/field-resonance.test.ts",
+      "sha256": "35e60aa2dfafda99152d22fbd9a8492aa80206ad82cc6ed270a229fe2e4e129a"
+    },
+    {
+      "path": "e2e/redesign/stochastic-methods.spec.ts",
+      "sha256": "4e3ef12d1c7fc552828018996c53d9c6a28bd2013578a5ac12f74c057ed3655f"
+    }
+  ],
+  "preservedNativeSources": [
+    {
+      "path": "src/physics/stochastic.ts",
+      "sha256": "0982b101f9a7f7b2c4024552c8ef8108ef3ba4fa17136fafdbb3d7eaafeba59c"
+    },
+    {
+      "path": "src/physics/stochasticResonance.ts",
+      "sha256": "7e47038d2dc5252a0f13fa13dfc0306c45e42b93ecc168ee455c3dcc9b9b123a"
+    },
+    {
+      "path": "src/physics/stochasticSteppers.ts",
+      "sha256": "ba4a9c0514820bee961ff82ebf589fbd952c51e037f787f5cdb3dae44f665b7c"
+    },
+    {
+      "path": "src/physics/stochasticStepperShared.ts",
+      "sha256": "7dd4004b9d7038802941df3fa6dd6dd2de820bcf2bd64ff7729f6fe22cf2325f"
+    },
+    {
+      "path": "src/physics/stochasticMultiplicative.ts",
+      "sha256": "89c2a44cdd1105e8a63136b7f9cdc75a78747b2d1338dd3077f956271d13a3f8"
+    },
+    {
+      "path": "src/physics/stochasticMatrixNoise.ts",
+      "sha256": "2588f756e20272a59bb0b96181c7b1f8cf96f93868d58ad66a9b56151ed7b823"
+    },
+    {
+      "path": "src/physics/stochasticAdditive.ts",
+      "sha256": "6e8ae72aa6bb6df86b5256b0f0821d2a874bd76db9c7a8c928c7c6b9944424e8"
+    },
+    {
+      "path": "src/physics/pendulumNetwork.ts",
+      "sha256": "c55f0b343141dffab468516ab6c2be00c605ae6866ae1b8c1f11ce08fae2f678"
+    }
+  ],
+  "schemes": ["euler-maruyama", "milstein", "heun-stratonovich", "commutative-milstein"],
+  "canonicalContract": {
+    "fieldVersionUnchanged": true,
+    "omittedModifier": "Retains exact old additive velocity Euler-Maruyama results and settings{}; no options property added.",
+    "explicitModifier": "Integrator options scheme + diffusionModel=row-affine-v1; dimensionless diffusionOffset/diffusionSlope vectors, and diffusionMatrix only for matrix schemes.",
+    "interpretation": "Explicit Ito/Stratonovich wording; same drift with state-dependent Stratonovich describes a different SDE. Matrix noise is restricted to the analytically commuting row-affine family.",
+    "restart": "Seeded restart only. Existing live Gaussian-cursor resume refusal remains."
+  },
+  "unit": {
+    "command": "npx vitest run tests/product/adapters/physics/field-stochastic-parity.test.ts tests/product/adapters/physics/field-resonance.test.ts tests/product/adapters/physics/field.test.ts tests/product/adapters/physics/field-worker.test.ts tests/product/lab/field-edit.test.ts tests/product/lab/field-storage.test.ts --reporter=json --outputFile=tmp/S28-stochastic-native-vitest.json",
+    "report": {
+      "path": "tmp/S28-stochastic-native-vitest.json",
+      "bytes": 50542,
+      "sha256": "0f2ac0ec9f9eb38c8674091c97b9abc86dc643eb2fd0c559bfe3a68158ffa373"
+    },
+    "passed": 123,
+    "failed": 0,
+    "assertions": [
+      "Bit-exact native four-scheme trajectories against independent native step construction, old omitted-config seed results and member prefix stability.",
+      "Analytic Jacobian and commutativity defect; strict options/coefficients/units, detached config metadata, canonical/storage/worker/cancel round trips.",
+      "Each scheme numerical-failure path preserves last complete field snapshot; no partial ensemble exposed.",
+      "Quartic full native curve aggregation and uint32 seed wrap exact; strict bounded settings, malformed/prototype/accessor requests, timeout/error/cancel/dispose and premature worker artifacts."
+    ]
+  },
+  "build": {
+    "command": "npx vite build --outDir tmp/s28-stochastic-dist",
+    "outcome": "exit0",
+    "root": "tmp/s28-stochastic-dist",
+    "files": 273,
+    "manifest": {
+      "path": "tmp/S28-stochastic-build-manifest.json",
+      "bytes": 44597,
+      "sha256": "a3c314ffaea4ba406d2f974b86b7ced57256b7160147541cd5854e13e3d3cf55"
+    },
+    "aggregateSha256": "13cc56578e4f98dd718eec0a039faa2dfce77794296fae3234318007c9720dc1",
+    "selectedAssets": [
+      {
+        "path": "assets/field-lab-C1QA6JDa.js",
+        "bytes": 66294,
+        "sha256": "6b8314c5475cefb17bba3c1807b2f5dbec4e0378c754aa40639f5d3892e5b737"
+      },
+      {
+        "path": "assets/field-lab-dzuszA5d.css",
+        "bytes": 1884,
+        "sha256": "bc4cc43c919b3c70680526ec9df27132a5afc8dde7367b83a46f9a437fb1043f"
+      },
+      {
+        "path": "assets/field-resonance.worker-ete_GC3G.js",
+        "bytes": 15244,
+        "sha256": "fcb8597ed7141b96731b9064f2b5bd7bfeb524b223c5fd1ffc3fdcb8c442d5fd"
+      },
+      {
+        "path": "assets/field.worker-Ba1rB50f.js",
+        "bytes": 189092,
+        "sha256": "e8aff378372d8449fbabdee14b4944011bfd6b8e98fa2a5307a0cda70ff0787a"
+      },
+      {
+        "path": "next.html",
+        "bytes": 1218,
+        "sha256": "1a65b95572044d0692bb738543954bc4f5ef0c43572ec9daa43b1ad5365ac5f5"
+      }
+    ],
+    "binding": "The twelve field production source files were frozen before this isolated build and browser run; the build manifest identifies exact served bytes. Parallel changes outside this scope are not certified."
+  },
+  "browser": {
+    "command": "PLAYWRIGHT_BASE_URL=http://127.0.0.1:5176 PLAYWRIGHT_PORT=5176 PLAYWRIGHT_USE_PREVIEW=1 npx playwright test e2e/redesign/stochastic-methods.spec.ts --config tmp/s28-playwright-no-video.config.ts --project=chromium --project=mobile-chrome --workers=1 --retries=0 --reporter=list,json --output tmp/S28-stochastic-browser-results",
+    "report": {
+      "path": "tmp/S28-stochastic-playwright.json",
+      "bytes": 20063,
+      "sha256": "ffeb551b8b076ce0b1bb29f49686980199b72348021c6787035a2a3416ace294"
+    },
+    "tests": 12,
+    "passed": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "startTime": "2026-11-06T00:40:57.748Z",
+    "durationMs": 97456.834,
+    "byProject": {
+      "chromium": 6,
+      "mobile-chrome": 6
+    },
+    "assertions": [
+      "Each of four actual UI-selected schemes executes through the production worker, exports complete state/provenance, reloads storage and imports the exact settings.",
+      "Quartic production worker curve download matches existing native curve under unchanged S01 numeric bound; cancel preserves last completed result and leaves the main pendulum time unchanged.",
+      "Malformed matrix draft refuses application, preserves applied state and has explicit undo recovery; axe WCAG and mobile width checks cover matrix/resonance journeys."
+    ],
+    "numericTolerance": {
+      "absolute": 1e-11,
+      "relative": 1e-10
+    },
+    "runnerConfiguration": {
+      "workers": 1,
+      "retries": 0,
+      "perTestTimeoutMs": 30000,
+      "expectTimeoutMs": 5000,
+      "screenshotThreshold": 0.2,
+      "maxDiffPixels": 100,
+      "snapshotsUpdated": false,
+      "onlyOverride": "Diagnostic video disabled by existing task-local wrapper; original project, assertions, trace and failure screenshots retained."
+    }
+  },
+  "checks": {
+    "targetEslint": "exit0",
+    "targetPrettier": "exit0",
+    "wholeTypecheck": "exit0 before final test-only additions; parent repeats before publishing"
+  },
+  "runnerSources": [
+    {
+      "path": "tests/characterization/numerical-golden.fixture.json",
+      "sha256": "79d36988f19f22d4ce3d622081c20024de839a08a5a42145969a52273a4d5430"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "a58c9ddb4fb2c7bfe47b512f2aee23a873a4054207b5d7b50ba5807b42655819"
+    },
+    {
+      "path": "tmp/s28-playwright-no-video.config.ts",
+      "sha256": "041c9f3640153c0e4e120bf86b419aa6c822710d4d688d2b39eb54f3fcfe763c"
+    }
+  ],
+  "runtime": {
+    "node": "v26.3.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "initialFailureHistory": [
+    {
+      "kind": "environment",
+      "detail": "Sandbox Playwright worker spawn returned EPERM before any case ran; authorized identical escalated command completed12/12. No assertion, timeout or product correction was required."
+    }
+  ],
+  "limitations": [
+    "No strong-order convergence measurement, universal optimal-noise claim, arbitrary noncommuting diffusion or Gaussian cursor resume is certified.",
+    "Quartic resonance is a separately labeled normalized overdamped model, independent of the inertial pendulum trace.",
+    "Pixel5 uses emulation. No physical device, human scientific review, full-suite or S28 completion is claimed."
+  ]
+}

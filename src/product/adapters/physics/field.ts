@@ -12,7 +12,8 @@ import {
   stepSineGordon,
   topologicalCharge
 } from '../../../physics/sineGordon';
-import { eulerMaruyamaStep, gaussianSampler } from '../../../physics/stochasticSteppers';
+import { gaussianSampler } from '../../../physics/stochasticSteppers';
+import { createFieldStochasticStepper } from './field-stochastic';
 import type { ContractIssue } from '../../contracts/validation';
 import { fieldStepCount, validateFieldConfig } from './field-contract';
 import { fieldEnsembleProvenance, fieldWarnings, type FieldConfig, type FieldSample } from './field-schema';
@@ -51,6 +52,9 @@ export function createFieldSimulation(input: FieldConfig) {
     Float64Array.from(config.initialState)
   );
   const samplers = ensemble.seeds.map((seed) => gaussianSampler(seed));
+  const stochasticStepper = createFieldStochasticStepper(p.noise ?? 0, config.stochastic, (v, out) => {
+    rhsPendulumNetwork(v, nativePendulum, out);
+  });
   const scratch = createFputVerletScratch(n);
   const field =
     id === 'system:sine-gordon'
@@ -174,7 +178,9 @@ export function createFieldSimulation(input: FieldConfig) {
   }
   let accepted = makeSample();
   return {
-    config,
+    get config() {
+      return structuredClone(config);
+    },
     get done() {
       return index >= total;
     },
@@ -186,14 +192,7 @@ export function createFieldSimulation(input: FieldConfig) {
         if (id === 'system:langevin') {
           members.forEach((s, i) => {
             const next = new Float64Array(2);
-            eulerMaruyamaStep(
-              s,
-              config.step,
-              (v, out) => rhsPendulumNetwork(v, nativePendulum, out),
-              [0, p.noise!],
-              samplers[i]!,
-              next
-            );
+            stochasticStepper(s, config.step, samplers[i]!, next);
             finite(Array.from(next));
             s.set(next);
           });

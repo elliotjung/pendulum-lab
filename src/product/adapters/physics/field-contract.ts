@@ -4,6 +4,7 @@ import { fields, invalid, isRecord } from '../../contracts/contract-checks';
 import type { QuantityValue } from '../../contracts/quantities';
 import { issue, success, type ContractIssue, type ContractResult } from '../../contracts/validation';
 import { inspectSafeData } from '../../persistence/safe-data';
+import { validateFieldStochastic, fieldStochasticCanonical, readFieldStochastic } from './field-stochastic';
 import {
   FIELD_INTEGRATOR_VERSION,
   FIELD_MODEL_VERSION,
@@ -29,7 +30,7 @@ export function validateFieldConfig(input: unknown): ContractResult<FieldConfig>
     !fields(
       safe.value,
       ['systemId', 'parameters', 'grid', 'initialState', 'integratorId', 'step', 'duration', 'seed', 'ensemble'],
-      ['previousField', 'startTime', 'sampleEvery', 'analyses', 'provenance'],
+      ['previousField', 'startTime', 'sampleEvery', 'analyses', 'provenance', 'stochastic'],
       '$',
       issues
     )
@@ -39,6 +40,7 @@ export function validateFieldConfig(input: unknown): ContractResult<FieldConfig>
   if (!(FIELD_SYSTEM_IDS as readonly unknown[]).includes(c.systemId))
     return { ok: false, issues: [issue('unsupported-system', '$.systemId', '지원하는 장 모델이 아닙니다.')] };
   const id = c.systemId as FieldSystemId;
+  validateFieldStochastic(c.stochastic, id, issues);
   const range = (v: unknown, min: number, max: number, path: string, integer = false) => {
     if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max || (integer && !Number.isInteger(v)))
       invalid(issues, path, `${min}–${max} 범위의 유한${integer ? ' 정수' : '한 수'}가 필요합니다.`);
@@ -182,7 +184,7 @@ function rawCanonical(c: FieldConfig): ExperimentStateV1 {
     parameters,
     initialConditions,
     modelOptions: { timeConvention: 'normalized', boundary: c.grid.boundary },
-    integrator: { kind: 'internal', version: FIELD_INTEGRATOR_VERSION, settings: {} },
+    integrator: { kind: 'internal', version: FIELD_INTEGRATOR_VERSION, ...fieldStochasticCanonical(c.stochastic) },
     runtime: fieldIsDiagnostic(c.systemId)
       ? { domain: 'evaluation' }
       : {
@@ -219,10 +221,11 @@ export function fromCanonicalField(input: unknown): ContractResult<FieldConfig> 
   if (
     v.integrator.kind !== 'internal' ||
     v.integrator.version !== FIELD_INTEGRATOR_VERSION ||
-    v.integrator.options !== undefined ||
-    Object.keys(v.integrator.settings).length
+    (id !== 'system:langevin' && (v.integrator.options !== undefined || Object.keys(v.integrator.settings).length > 0))
   )
     invalid(issues, '$.integrator', '표현할 수 없는 내부 stepper 설정입니다.');
+  const stochastic =
+    id === 'system:langevin' ? readFieldStochastic(v.integrator.settings, v.integrator.options, issues) : undefined;
   const keys = [
     'gridPoints',
     'gridLength',
@@ -284,6 +287,7 @@ export function fromCanonicalField(input: unknown): ContractResult<FieldConfig> 
     seed: v.seed,
     ensemble: { members: scalar('ensembleMembers') },
     analyses: v.analyses,
+    ...(stochastic === undefined ? {} : { stochastic }),
     ...(v.provenance ? { provenance: v.provenance } : {})
   };
   return issues.length ? { ok: false, issues } : validateFieldConfig(config);

@@ -13,13 +13,16 @@ import {
   type FieldConfig
 } from '../../adapters/physics/field';
 import type { FieldModel } from './field-model';
+import { createFieldStochasticControls } from './field-stochastic-controls';
+import type { FieldStochasticOptions } from '../../adapters/physics/field-stochastic';
 
 export function applyFieldDraft(
   current: FieldConfig,
   values: Readonly<Record<string, number>>,
   text: string,
   boundary: FieldConfig['grid']['boundary'],
-  seed: string
+  seed: string,
+  stochasticDraft?: { readonly value: FieldStochasticOptions | undefined }
 ): FieldConfig {
   const parsed = parseContractJson(text);
   if (
@@ -60,6 +63,10 @@ export function applyFieldDraft(
         ? { previousField: previous }
         : {})
     };
+  if (stochasticDraft) {
+    if (stochasticDraft.value === undefined) Reflect.deleteProperty(candidate, 'stochastic');
+    else Reflect.set(candidate, 'stochastic', stochasticDraft.value);
+  }
   const checked = validateFieldConfig(candidate);
   if (!checked.ok) throw new Error(checked.issues.map((issue) => `${issue.path}: ${issue.message}`).join(' '));
   return checked.value;
@@ -134,6 +141,8 @@ export function createFieldInspector(document: Document, model: FieldModel, onCh
     );
   if (!Object.keys(initial.parameters).length)
     plant.append(element(document, 'p', 'lab-muted', 'sine-Gordon은 c=1, 기판 진동수=1로 정규화합니다.'));
+  const stochasticControls = stochastic ? createFieldStochasticControls(document, edited) : undefined;
+  if (stochasticControls) section.body.append(stochasticControls.element);
   const mesh = group(
     '경계와 격자',
     '격자를 바꾸면 초기조건 배열의 길이도 함께 맞춰야 합니다. 격자 예제 적용은 입력한 격자에 맞는 native 초기조건을 만듭니다.'
@@ -276,7 +285,8 @@ export function createFieldInspector(document: Document, model: FieldModel, onCh
             values,
             state.value,
             boundary.value as FieldConfig['grid']['boundary'],
-            seed.value
+            seed.value,
+            stochasticControls ? { value: stochasticControls.read() } : undefined
           )
         );
         sync();
@@ -321,6 +331,7 @@ export function createFieldInspector(document: Document, model: FieldModel, onCh
     boundary.value = config.grid.boundary;
     seed.value = config.seed.value;
     state.value = JSON.stringify(config.initialState);
+    stochasticControls?.sync(config.stochastic);
     origin.textContent = `시작 τ=${config.startTime ?? 0} · ${config.previousField?.length ? '저장한 이전 leapfrog 시간층을 보존합니다. 초기조건·격자·Δτ 변경 시 새로 초기화합니다.' : '저장한 이전 시간층이 없습니다.'}`;
     error.hidden = true;
     syncing = false;

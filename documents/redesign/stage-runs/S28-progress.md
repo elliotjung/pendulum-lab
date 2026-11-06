@@ -118,3 +118,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 동일 runtime453검사는 exact equality를 유지한다. Node/Chromium의 Math 초월함수 ULP 차이는 기존 S01 수치 오차 fixture로 비교하며 golden·오차 한도·기본 timeout을 변경하지 않았다. 최대 state 절대 차8.673617379884035e-18, 에너지1.4210854715202004e-14. 최초 cross-runtime exact assertion5건 실패 및 새 test의 startup 교정 이력은 증거에 구분했다.
 - `S28-CP3-E-ode.json`은12개 native 연결 source의 CP3 일치,257개 동결 build 파일 digest, runner JSON digest와 test/fixture SHA를 기록한다. 이후 control/migration 변경은 이 동결 build 결과로 인증하지 않으며 별도 재검증한다.
 - CP4 링크·전체 작업공간 이전, CP5 실제 control, CP6 나머지 연결, CP7 전체134행 인증을 계속 진행한다. S28 완료·cutover 또는 사람 승인 주장이 아니다. next28 및 사람 science review0/86을 유지한다.
+
+### CP3-S — 기존 확률 stepper와 확률 공명 연결
+
+- CP3-E `4f23f733f34f71aaadd0d3e09d39276e5cf59353` commit/push exit0 및 live remote exact match 확인.
+- Langevin 경로에서 기존 Euler–Maruyama, scalar Milstein, Stratonovich Heun, commutative matrix Milstein을 선택할 수 있다. optional row-affine diffusion offset/slope/matrix와 정확한 Jacobian을 versioned canonical settings에 보존한다. stochastic 옵션이 없는 기존 canonical/options{} 및 난수 stream·실행 결과는 그대로다.
+- 독립 과감쇠 사차 이중 우물의 기존 stochasticResonanceCurve를 별도 worker 카드로 연결했다. 현재 진자의 공명인 것처럼 표시하지 않는다. seed·진행·취소·실패·native 결과 및 JSON/SVG 내보내기를 포함한다.
+- 대상6파일123/123 단위 검사, 실제 Chromium/Pixel5 12/12 화면 여정, whole typecheck·대상 ESLint/Prettier·동결 production build 통과.4scheme 고잡음 실패는 마지막 완성 앙상블 상태를 보존하며 계속된 stream을 허용하지 않는다. 실패·skip·flaky·retry0.
+- `S28-CP3-S-stochastic.json`은15개 source와 native 보존 SHA, 두 runner report 및273개 동결 asset manifest를 결속한다. 전체 S28 parity 또는 사용자·전문가 검토 완료를 뜻하지 않는다.
