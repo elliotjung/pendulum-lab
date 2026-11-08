@@ -119,7 +119,7 @@ test('S28 preserves unsupported and malicious input, invalidates edited previews
   await openMigration(page);
   const source = page.getByLabel('기존 JSON 또는 공유 링크', { exact: true });
   const adopt = page.getByRole('button', { name: '확인하고 새 실험실에서 열기', exact: true });
-  const unsupported = JSON.stringify({ ...session, method: 'yoshida4' });
+  const unsupported = JSON.stringify({ ...session, method: 'unsupported-solver' });
   await source.fill(unsupported);
   await page.getByRole('button', { name: '가져오기 미리보기', exact: true }).click();
   await expect(page.getByRole('heading', { name: '원본을 보존하고 복구가 필요합니다', exact: true })).toBeVisible();

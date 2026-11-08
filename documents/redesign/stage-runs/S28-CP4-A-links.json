@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "pendulum-s28-link-contract-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP4-A",
+  "completion": false,
+  "scope": "Strict legacy session/all16-method+tolerance, share v1-v4, query with explicit base, expansion envelope, original-text preservation, issued confirmation, separate product-key handoff and full-envelope revalidation. UI consumers are a later checkpoint.",
+  "sourceSha256Basis": "Post-test snapshot of owned files; UTF8 CRLF normalized to LF. Not a pre/post runner capture; final execution certification remains pending.",
+  "sources": [
+    {
+      "path": "src/product/persistence/legacy-link.ts",
+      "sha256": "328b8fe191a03895224503935fc0589a3b8e63c7cd8d07874d2e95b71ee1120d"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-contracts.ts",
+      "sha256": "b09d4d4b43d87174c8821a0c3a05b6a4288a4ed08da6851061300147363eb5af"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-share.ts",
+      "sha256": "6839c89efd1f4a8a3d00bbaaa91e19ff9d2208433ef783a28fbd7b959a53c333"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-query.ts",
+      "sha256": "9f71620041230694001edc69aaadf724784f9866ecc2f5aa3157a83fb653477a"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-expansion.ts",
+      "sha256": "2b70bc8f75d36e5bd722788b4aa1d40b6b7026da3e97f9ff875a28208fb1814c"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-session.ts",
+      "sha256": "228c1bea7ddcf8809dc577e6707eb4a5bdad427ac2a6aba4507e721ad075aa4e"
+    },
+    {
+      "path": "src/product/persistence/legacy-migration.ts",
+      "sha256": "da9daee0e2be8106ede256227f6e11b91d6d7d01911aea755d928e527d913665"
+    },
+    {
+      "path": "src/product/persistence/legacy-migration-session.ts",
+      "sha256": "2d1f263a0432f77e946b45b8b1ab210f6f839a1899b729477093ba3eb1b5d93d"
+    },
+    {
+      "path": "tests/product/contracts/legacy-link.test.ts",
+      "sha256": "256475107ece83888991b1dc91d4bc1db7876608318d9c0ed1eb87c9e584467e"
+    },
+    {
+      "path": "tests/product/persistence/legacy-link-session.test.ts",
+      "sha256": "2156261fa1cb2574b640634255b6d25a77166eed2b5f66eda8536b7101678225"
+    },
+    {
+      "path": "tests/product/persistence/legacy-migration.test.ts",
+      "sha256": "47a643c278157e3b9eba5504adb1ee6142f6e803d893d098caf4751d3e5c4d70"
+    },
+    {
+      "path": "e2e/redesign/migration.spec.ts",
+      "sha256": "2c02e090d740d1c2ac7fd29a2f09bebed2dfb52451f421775d007b9432f2395b"
+    }
+  ],
+  "tests": {
+    "runner": "Vitest",
+    "report": "tmp/S28-CP4-A-vitest.json",
+    "sha256": "d27edf191886a20fca0d7702bf09c3bd6680e2eab605a9bc0f2860acdcf1759a",
+    "passed": 216,
+    "failed": 0,
+    "coverage": [
+      "share v1-v4 strict native decoder and exact original fields",
+      "all16 session methods and tolerance",
+      "seven native expansion models under representable RK4 projections",
+      "full downloaded envelope roundtrip and forged mapping/source rejection",
+      "source BOM/whitespace/CRLF backup and issued preview identity",
+      "quota/conflicting-key/corrupt-store refusal without source writes",
+      "valid native expansion suite remains pending when canonical method is unavailable"
+    ]
+  },
+  "checks": {
+    "scopedTypecheck": {
+      "exitCode": 0,
+      "command": "npx tsc --noEmit -p tmp/tsconfig-S28-CP4-A.json",
+      "configSha256": "24ee69572792c66cd68eb1bcb3f99efa50aaff63eee15d568ec2d747d701ebdc"
+    },
+    "targetEslint": {
+      "exitCode": 0,
+      "log": "tmp/S28-CP4-A-eslint.log"
+    },
+    "wholeTypecheck": "Latest run blocked only by a concurrent research API test readonly-mutation typing error; no foundation diagnostics. Not asserted passed."
+  },
+  "remaining": [
+    "Complete UI/workflow/tab/render consumers and exact queues",
+    "Source-captured whole-suite certification and134-row matrix",
+    "S28 completion/status push and user review checklist"
+  ],
+  "preservation": "No native engine/runtime/worker/validation/state/public-API/dependency or legacy app.html source changes; only product persistence adapters and targeted tests."
+}

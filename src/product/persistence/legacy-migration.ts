@@ -1,16 +1,26 @@
-import { decodeBase64UrlText } from '../../app/base64UrlText';
 import type { ExperimentStateV1 } from '../contracts/experiment';
 import { isRecord } from '../contracts/contract-checks';
 import { failure, success, type ContractIssue, type ContractResult } from '../contracts/validation';
 import { parseContractJson } from './json';
 import { canonicalJson, DATA_LIMITS, type JsonValue } from './safe-data';
 import { migrateLegacySession, type MigratedLegacySession } from './legacy-migration-session';
+import {
+  migrateLegacyLink,
+  serializeLegacyLinkCompatibility,
+  restoreLegacyLinkCompatibility,
+  legacyLinkRestorationOptions,
+  LEGACY_LINK_COMPATIBILITY_SCHEMA,
+  type LegacyLinkCompatibilityV1
+} from './legacy-link';
+import type { LegacyLinkOptions } from './legacy-link-contracts';
+import { defaultPlanarConfig, toCanonicalPlanar } from '../adapters/physics/planar';
 
 export const LEGACY_MIGRATION_PREVIEW_SCHEMA = 'pendulum-legacy-migration-preview/v1';
 export type LegacyMigrationSourceKind =
   'session' | 'modern-run' | 'legacy-share' | 'legacy-url' | 'workspace' | 'research' | 'expansion' | 'unknown';
 export interface LegacyMigrationOptions {
   readonly durationSeconds: number;
+  readonly queryBase?: ExperimentStateV1;
 }
 export interface LegacyMigrationBackup {
   readonly fileName: string;
@@ -24,17 +34,19 @@ export interface LegacyMigrationPreview {
   readonly id: string;
   readonly sourceText: string;
   readonly sourceKind: LegacyMigrationSourceKind;
-  readonly status: 'ready' | 'recovery-required';
+  readonly status: 'ready' | 'needs-transfer' | 'recovery-required';
   readonly canonical: ExperimentStateV1 | null;
   readonly issues: readonly ContractIssue[];
   readonly warnings: readonly string[];
   readonly summary: readonly string[];
   readonly backup: LegacyMigrationBackup;
+  readonly compatibility?: LegacyLinkCompatibilityV1;
 }
 
 // Confirmation is intentionally tied to an issued, immutable in-memory preview.
 // An ID collision or a fabricated/restored JSON object cannot authorize a run.
 const issued = new WeakMap<LegacyMigrationPreview, ExperimentStateV1 | null>();
+const issuedLinkOptions = new WeakMap<LegacyMigrationPreview, LegacyLinkOptions>();
 function freezeTree<T>(value: T): T {
   if (value && typeof value === 'object') {
     for (const child of Object.values(value)) freezeTree(child);
@@ -63,6 +75,7 @@ export function previewLegacyMigration(sourceText: string, options?: LegacyMigra
   const id = previewId(sourceText, duration);
   let sourceKind: LegacyMigrationSourceKind = 'unknown';
   let result: ContractResult<MigratedLegacySession>;
+  let compatibility: LegacyLinkCompatibilityV1 | undefined;
   const trimmed = sourceText.trim();
   if (sourceText.length > DATA_LIMITS.bytes || new TextEncoder().encode(sourceText).length > DATA_LIMITS.bytes) {
     result = failure(
@@ -71,7 +84,7 @@ export function previewLegacyMigration(sourceText: string, options?: LegacyMigra
       '변환 미리보기는 UTF-8 256 KiB 이하만 읽습니다. 큰 원본은 백업하고 기존 앱의 가져오기·복구 도구를 사용하세요.',
       'keep-original'
     );
-  } else if (/^(?:https?:\/\/|#)/i.test(trimmed)) {
+  } else if (/^(?:https?:\/\/|[?#])/i.test(trimmed)) {
     let hash: string;
     try {
       hash = trimmed.startsWith('#') ? trimmed : new URL(trimmed).hash;
@@ -80,22 +93,57 @@ export function previewLegacyMigration(sourceText: string, options?: LegacyMigra
     }
     if (hash.startsWith('#experiment=')) {
       sourceKind = 'legacy-share';
-      result = inspectLegacyShare(hash);
     } else {
       sourceKind = hash.startsWith('#expansion=') ? 'expansion' : 'legacy-url';
-      result = failure(
-        'legacy-link-recovery-required',
-        '$',
-        '이 기존 query·tab·expansion 링크를 새 설정으로 추측하지 않았습니다. 원본 링크를 백업하고 기존 앱에서 여세요.',
-        'keep-original'
-      );
+    }
+    const linked = migrateLegacyLink(sourceText, {
+      sourceId: id,
+      ...(duration === undefined ? {} : { durationSeconds: duration }),
+      ...(options?.queryBase === undefined ? {} : { queryBase: options.queryBase })
+    });
+    if (!linked.ok) result = linked;
+    else {
+      compatibility = linked.value.compatibility;
+      sourceKind = compatibility.sourceKind;
+      result = linked.value.canonical
+        ? success({ canonical: linked.value.canonical, summary: linked.value.summary, warnings: linked.value.warnings })
+        : failure(
+            'legacy-link-transfer-required',
+            '$',
+            '별도 base·실행·표시 설정을 확인해야 합니다. 호환 설정 파일과 원본을 내려받아 보존하세요.',
+            'keep-original'
+          );
     }
   } else {
     const parsed = parseContractJson(trimmed);
     if (!parsed.ok) result = parsed;
     else {
       const value = parsed.value;
-      if (
+      if (isRecord(value) && value.schema === LEGACY_LINK_COMPATIBILITY_SCHEMA) {
+        const restored = restoreLegacyLinkCompatibility(value);
+        if (!restored.ok) result = restored;
+        else {
+          compatibility = restored.value.compatibility;
+          sourceKind = compatibility.sourceKind;
+          const canonical = restored.value.canonical;
+          result =
+            canonical?.runtime.domain === 'time' && duration !== canonical.runtime.duration.value
+              ? failure(
+                  'legacy-envelope-duration-conflict',
+                  '$.durationSeconds',
+                  `호환 파일의 관찰 기간은 ${canonical.runtime.duration.value}s입니다. 입력한 기간과 달라 적용하지 않았습니다. 원본 기간을 입력해 미리보기를 다시 실행하세요.`,
+                  'keep-original'
+                )
+              : canonical
+                ? success({ canonical, summary: restored.value.summary, warnings: restored.value.warnings })
+                : failure(
+                    'legacy-envelope-native-consumer-required',
+                    '$',
+                    '이 파일은 전용 native suite consumer에서 확인하세요.',
+                    'keep-original'
+                  );
+        }
+      } else if (
         isRecord(value) &&
         typeof value.schemaVersion === 'string' &&
         value.schemaVersion.startsWith('pendulum-session/')
@@ -127,17 +175,40 @@ export function previewLegacyMigration(sourceText: string, options?: LegacyMigra
     id,
     sourceText,
     sourceKind,
-    status: result.ok ? 'ready' : 'recovery-required',
+    status:
+      compatibility?.sourceKind === 'expansion'
+        ? 'needs-transfer'
+        : result.ok
+          ? compatibility?.transferRequirements.length
+            ? 'needs-transfer'
+            : 'ready'
+          : 'recovery-required',
     canonical: result.ok ? result.value.canonical : null,
     issues: result.ok ? [] : result.issues.map((entry) => ({ ...entry, recovery: 'keep-original' as const })),
     warnings: result.ok
       ? result.value.warnings
       : ['변환·저장·실행·원본 변경을 수행하지 않았습니다. 백업에는 입력한 텍스트 전체가 포함됩니다.'],
     summary: result.ok ? result.value.summary : ['원본 백업을 내려받은 뒤 기존 앱에서 복구하세요.'],
-    backup: { fileName: `${id}-original.txt`, mediaType: 'text/plain;charset=utf-8', text: sourceText }
+    backup: { fileName: `${id}-original.txt`, mediaType: 'text/plain;charset=utf-8', text: sourceText },
+    ...(compatibility ? { compatibility } : {})
   });
   issued.set(preview, result.ok ? result.value.canonical : null);
+  if (compatibility) issuedLinkOptions.set(preview, legacyLinkRestorationOptions(compatibility));
   return preview;
+}
+
+/** Opens the complete compatibility workspace. Pending consumers are still
+ * explicit; this does not relabel a physical-only restart as a full migration. */
+export function confirmLegacyLinkTransfer(preview: LegacyMigrationPreview, id: string) {
+  const options = issuedLinkOptions.get(preview),
+    canonical = issued.get(preview);
+  if (!options || !canonical || !preview.compatibility || id !== preview.id)
+    throw new TypeError('변환 가능한 issued 링크 미리보기를 다시 확인하세요.');
+  return {
+    canonical: structuredClone(canonical),
+    sourceText: preview.compatibility.sourceText,
+    options: structuredClone(options)
+  };
 }
 
 /** Explicit confirmation returns a detached copy; the caller chooses storage/navigation. */
@@ -146,7 +217,7 @@ export function confirmLegacyMigration(
   previewIdValue: string
 ): ContractResult<ExperimentStateV1> {
   const canonical = issued.get(preview);
-  if (!canonical || previewIdValue !== preview.id)
+  if (!canonical || preview.status !== 'ready' || previewIdValue !== preview.id)
     return failure(
       'legacy-preview-not-confirmed',
       '$',
@@ -161,35 +232,19 @@ export function exportLegacyMigrationBackup(preview: LegacyMigrationPreview): Le
   return { ...preview.backup };
 }
 
-function inspectLegacyShare(hash: string): ContractResult<MigratedLegacySession> {
-  if (hash.length > 8192)
-    return failure('legacy-share-size-limit', '$', '기존 공유 링크가 8192자 상한을 넘습니다.', 'keep-original');
-  let decoded: string;
-  try {
-    decoded = decodeBase64UrlText(hash.slice('#experiment='.length));
-  } catch {
-    return failure(
-      'invalid-legacy-share',
-      '$',
-      '공유 링크의 base64url 또는 UTF-8을 읽을 수 없습니다.',
-      'keep-original'
-    );
-  }
-  const parsed = parseContractJson(decoded);
-  if (!parsed.ok) return parsed;
-  if (!isRecord(parsed.value) || ![1, 2, 3, 4].includes(Number(parsed.value.v)) || typeof parsed.value.v !== 'number')
-    return failure(
-      'unsupported-legacy-share-version',
-      '$.v',
-      '기존 share v1–v4만 인식합니다. 다른 버전은 원본을 보존하세요.',
-      'keep-original'
-    );
-  return failure(
-    'legacy-share-recovery-required',
-    '$',
-    `기존 share v${parsed.value.v}의 실행·ensemble·workflow·표시 설정 전체를 새 실험으로 표현하지 못합니다. 값을 보정하거나 버리지 않았습니다. 원본 링크를 기존 앱에서 여세요.`,
-    'keep-original'
-  );
+export function defaultLegacyMigrationBase(): ExperimentStateV1 {
+  const result = toCanonicalPlanar(defaultPlanarConfig('system:double'));
+  if (!result.ok) throw new Error('Default query base is invalid.');
+  return result.value;
+}
+export function exportLegacyMigrationCompatibility(preview: LegacyMigrationPreview) {
+  if (!issued.has(preview) || !preview.compatibility)
+    throw new TypeError('An issued compatibility preview is required.');
+  return {
+    fileName: `${preview.id}-compatibility.json`,
+    mediaType: 'application/json',
+    text: serializeLegacyLinkCompatibility(preview.compatibility)
+  };
 }
 
 function migrateModernRun(

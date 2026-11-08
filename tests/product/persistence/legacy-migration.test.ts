@@ -16,6 +16,7 @@ import {
   type LegacyMigrationPreview
 } from '../../../src/product/persistence/legacy-migration';
 import { migrateLegacySession } from '../../../src/product/persistence/legacy-migration-session';
+import { LEGACY_ODE_INTEGRATOR_IDS } from '../../../src/product/adapters/physics/planar-integrators';
 
 function fixture(systemType: 'double' | 'compound-double' | 'triple' = 'double'): RuntimeSnapshot {
   return {
@@ -54,6 +55,18 @@ function confirmed(source: unknown) {
 }
 
 describe('S28 explicit source-preserving legacy restart migration', () => {
+  for (const system of ['double', 'compound-double', 'triple'] as const) {
+    it.each(LEGACY_ODE_INTEGRATOR_IDS)(`%s preserves the exact ${system} legacy method ID and tolerance`, (id) => {
+      const source = { ...fixture(system), method: id.slice('integrator:'.length), tolerance: 1e-8 };
+      const canonical = confirmed(source);
+      expect(canonical.integrator.kind === 'selectable' && canonical.integrator.id).toBe(id);
+      expect(canonical.integrator.settings).toEqual({ tolerance: { kind: 'scalar', value: 1e-8, unit: '1' } });
+      expect(canonical.initialConditions).toBeDefined();
+      expect(exportLegacyMigrationBackup(previewLegacyMigration(JSON.stringify(source), options)).text).toBe(
+        JSON.stringify(source)
+      );
+    });
+  }
   it.each(['double', 'compound-double', 'triple'] as const)(
     '%s preserves physical inputs, winding, time and exact signed seed',
     (system) => {
@@ -171,7 +184,7 @@ describe('S28 explicit source-preserving legacy restart migration', () => {
     expect(preview.summary.join(' ')).toContain('매 step 1개');
     for (const field of ['mode=research', 'stepsPerFrame=8', 'hash=original-hash', 'tolerance=1e-7', 'm3/l3', 'resume'])
       expect(preview.warnings.join(' ')).toContain(field);
-    expect(preview.canonical?.integrator.settings).toEqual({});
+    expect(preview.canonical?.integrator.settings).toEqual({ tolerance: { kind: 'scalar', value: 1e-7, unit: '1' } });
     expect(exportLegacyMigrationBackup(preview).text).toBe(raw);
   });
 
@@ -285,10 +298,10 @@ describe('S28 unsupported and hostile input recovery', () => {
   it.each([
     { schemaVersion: 'pendulum-session/v12-ts' },
     { schemaVersion: 'pendulum-session/v9-ts' },
-    { method: 'verlet' },
-    { method: 'leapfrog' },
-    { method: 'dopri5' },
-    { method: 'bdf2' },
+    { method: 'unsupported-solver' },
+    { method: 'RK4' },
+    { tolerance: 0 },
+    { tolerance: 2 },
     { systemType: 'spherical' },
     { mode: null },
     { hash: 123 },
@@ -343,7 +356,7 @@ describe('S28 unsupported and hostile input recovery', () => {
       const preview = previewLegacyMigration(raw, options);
       expect(preview.sourceKind).toBe('legacy-share');
       expect(preview.status).toBe('recovery-required');
-      expect(preview.issues[0]?.code).toBe('legacy-share-recovery-required');
+      expect(preview.issues[0]?.recovery).toBe('keep-original');
       expect(exportLegacyMigrationBackup(preview).text).toBe(raw);
     }
   });

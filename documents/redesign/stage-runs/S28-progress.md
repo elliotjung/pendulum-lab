@@ -126,3 +126,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 독립 과감쇠 사차 이중 우물의 기존 stochasticResonanceCurve를 별도 worker 카드로 연결했다. 현재 진자의 공명인 것처럼 표시하지 않는다. seed·진행·취소·실패·native 결과 및 JSON/SVG 내보내기를 포함한다.
 - 대상6파일123/123 단위 검사, 실제 Chromium/Pixel5 12/12 화면 여정, whole typecheck·대상 ESLint/Prettier·동결 production build 통과.4scheme 고잡음 실패는 마지막 완성 앙상블 상태를 보존하며 계속된 stream을 허용하지 않는다. 실패·skip·flaky·retry0.
 - `S28-CP3-S-stochastic.json`은15개 source와 native 보존 SHA, 두 runner report 및273개 동결 asset manifest를 결속한다. 전체 S28 parity 또는 사용자·전문가 검토 완료를 뜻하지 않는다.
+
+### CP4-A — 링크·세션·전체 호환 파일 계약
+
+- CP3-S `2e35d3a010cfb46cf8e71f235eb4929b3ddab886` push exit0 및 live remote exact match 확인.
+- 세션의16개 방법·tolerance를 보존하고 share v1–v4·명시적 base query·7개 native expansion 형식을 엄격한 versioned envelope로 변환한다. decoder의 보정이 필요한 입력을 조용히 수락하지 않는다. 전체 원문·매핑·기본값·inactive/provenance·workflow·표시·ensemble 요구를 따로 보존한다.
+- 원문에서 전체 호환 파일을 다시 변환하여 매핑까지 비교하며, 프로그램으로 만든 위조 객체나 clone만으로 확정할 수 없다. 전용 product 저장 키만 명시적 확인 뒤 쓰며 기존 키 충돌·quota·손상은 원본을 덮어쓰지 않고 실패한다. 별도 UI consumer가 필요한 링크는 needs-transfer로 유지한다.
+- 대상216/216 단위 검사와 대상 ESLint 통과. 병렬 개발 중 신규 연구 API test의 readonly typing 오류와 분리하여 실제 의존성을 포함한 scoped tsc도 exit0으로 통과했다. 최신 whole tsc는 그 test 오류 때문에 아직 통과했다고 보고하지 않는다.
+- 이 commit은 persistence 계약 checkpoint다. 전체 UI 연결은 다음 checkpoint이며, 이전 production50검사의44통과/6실패를 현재 전체 소스 인증으로 사용하지 않는다. 실패는 새 버튼 문구4건과 새 검색 test의 모호한 선택자2건이며 수정·별도 재검증을 진행 중이다.
+- `S28-CP4-A-links.json`은216개 runner 결과와 소유 source의 사후 SHA를 기록한다. 최종134행 인증은 새로운 실행 전후 source capture로 별도 수행한다. 사용자/전문가 review나 완료·cutover를 주장하지 않는다.

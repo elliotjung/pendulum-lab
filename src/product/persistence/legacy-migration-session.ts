@@ -7,6 +7,7 @@ import type { ExperimentStateV1 } from '../contracts/experiment';
 import { isRecord } from '../contracts/contract-checks';
 import { failure, success, type ContractResult } from '../contracts/validation';
 import { inspectSafeData } from './safe-data';
+import { LEGACY_ODE_INTEGRATOR_IDS, type LegacyOdeIntegratorId } from '../adapters/physics/planar-integrators';
 
 const SESSION_FIELDS = [
   'schemaVersion',
@@ -71,11 +72,11 @@ export function migrateLegacySession(
   if (!checked.ok || !checked.value)
     return failure('invalid-session', '$', `기존 session 검증 실패: ${checked.problems.join('; ')}`, 'keep-original');
   const snapshot = checked.value;
-  if (source.method !== 'rk4' && source.method !== 'rk2' && source.method !== 'euler')
+  if (!(LEGACY_ODE_INTEGRATOR_IDS as readonly string[]).includes(`integrator:${String(source.method)}`))
     return failure(
       'unsupported-legacy-integrator',
       '$.method',
-      '이 재시작 변환은 Euler/RK2/RK4만 실행할 수 있습니다. 적분기를 바꾸지 않았습니다. 원본은 기존 앱에서 여세요.',
+      '등록된 기존 적분기를 확인할 수 없습니다. 다른 적분기로 바꾸지 않았습니다. 원본을 보존하세요.',
       'keep-original'
     );
   if (durationSeconds === undefined || !Number.isFinite(durationSeconds) || durationSeconds <= 0)
@@ -85,10 +86,11 @@ export function migrateLegacySession(
       '원본 session에는 향후 관찰 시간이 없습니다. 재시작할 관찰 시간(s)을 직접 지정한 뒤 다시 미리보기 하세요.',
       'correct-input'
     );
-  const method = `integrator:${source.method}` as const;
+  const method = `integrator:${source.method}` as LegacyOdeIntegratorId;
   const { parameters: p } = snapshot;
   const common = {
     gamma: snapshot.damping,
+    tolerance: snapshot.tolerance,
     integratorId: method,
     step: snapshot.dt,
     duration: durationSeconds,
@@ -140,7 +142,7 @@ export function migrateLegacySession(
 function sessionWarnings(snapshot: RuntimeSnapshot, sourceSchema: string): string[] {
   return [
     '중단된 계산의 solver buffer·실행 이력·난수 스트림을 이어받는 resume가 아닙니다. 새 결과는 원본 결과 인증을 뜻하지 않습니다.',
-    `원본 mode=${snapshot.mode}, stepsPerFrame=${snapshot.stepsPerFrame}, hash=${snapshot.hash}, tolerance=${snapshot.tolerance}는 전체 원본 백업에 보존됩니다. 고정 step 계산의 관찰·렌더링 설정이나 기존 hash를 새 run의 검증값으로 사용하지 않습니다.`,
+    `원본 mode=${snapshot.mode}, stepsPerFrame=${snapshot.stepsPerFrame}, hash=${snapshot.hash}는 전체 원본 백업에 보존됩니다. tolerance=${snapshot.tolerance}는 적분기 설정에도 보존했습니다. 고정 step을 자동 적응형으로 바꾸거나 기존 hash를 새 run의 검증값으로 사용하지 않습니다.`,
     ...(sourceSchema === LEGACY_SESSION_SCHEMA_V10
       ? ['v10의 질점 모델을 현재 동일 모델 adapter로 읽습니다. compound-double로 추측하거나 바꾸지 않습니다.']
       : []),

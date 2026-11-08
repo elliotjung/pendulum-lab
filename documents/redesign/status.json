@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP4-links-and-CP5-controls",
+  "activeStageCheckpoint": "CP4-A-link-contracts",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP4-A strict links/session/envelope foundation validated216/216 plusscopedtypecheck/targetlint. Original16method IDs+tolerance, explicitquerybase, fulloriginal/envelope, immutable issuedconfirmation andseparateproductkey preserved; nativeexpansion-only casesremainneeds-transfer. UI/workflow/tab consumers and134-row source-captured certification stillpending. CP3-S2e35d3a010cfb46cf8e71f235eb4929b3ddab886 pushed exit0/live remote exact verified. Next28/review28 unapproved.",
     "S28 CP3-E4f23f733f34f71aaadd0d3e09d39276e5cf59353 pushed exit0 and exact live remote verified. CP3-S adds opt-in native four-scheme affine diffusion/matrix noise and independent quartic stochastic resonance:123/123 unit,12/12 productionChromium+Pixel5, whole typecheck/targetlint/format/build passed. Existing omitted stochastic options retain identical stream/results. S28 remains active, full parity/migration/cutover pending.",
     "S28 CP3-E production method journeys passed96/96:48Chromium+48Pixel5,0failed/skipped/flaky/retries/runnererrors. Same-runtime native453cases remain exact; cross-runtime comparisons use unchanged S01 tolerances(max state8.674e-18,energy1.422e-14). Full migration/parity completion remains pending; active28/next28, review28 not approved.",
     "S28 CP3 implements all16exactlegacyODEIDs/alias+tolerance forplanar/chain through unchanged native engines.453/453targeted7files,wholetypecheck,targetlint/format,isolatedproductioncompile/privacy22 passed. Oldcanonicalsettings{} staysomitted; native implicitaccept/retry/failureatomicity ischaracterized. UI48methodjourneys andall16legacyimportconsumer remain nextcheckpointwork; no parity100/complete/cutover claim.",
