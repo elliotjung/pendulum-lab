@@ -144,3 +144,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 제품 quantity editor에 native와 같은 π·Unicode·decimal comma·과학 표기 및 명시 rad/deg 입력을 연결했다. 단위 선택은 cached canonical SI를 변환 표시하며 물리 입력을 다시 쓰지 않는다. 기존 strict decimal API와 native precision/physics는 보존한다.
 - 대상2파일66/66 단위 검사, scoped typecheck·대상 ESLint·Prettier exit0. 소유3파일의 사후 SHA와 runner digest는 `S28-CP5-P-precision.json`에 기록했다. DOM 왕복·전체 통합 및134행 source-captured 인증은 뒤의 gate이며 이 단위 검사로 대체하지 않는다.
 - S28은 계속 active/next28이다. 후속 단계·완료 status·사용자/전문가 review는 기록하지 않았다.
+
+
+### CP4-Q — 정확한 원본 조건 목록·재개 기반
+
+- CP5-P `ed058ea901954b42bbe9f64bc1f84554d5b54b46` push exit0/live remote exact match 확인.
+- 기존 BatchExecutor를 사용해 원본 ID·입력·seed·순서를 보존하는 독립 조건 큐를 추가했다. byte-aware part를 모두 유지하고, 중단 run만 원래 입력에서 재개한다. 서로 다른 모델의 metric을 임의 평균하지 않으며16MiB 초과 결과는 명시 실패한다.
+- 소유4파일 pre/post SHA 일치와 대상21/21 runner exit0, 대상 ESLint exit0. staged index만 새 임시 폴더에 복사해 후속 미커밋 통합을 제외한 whole typecheck도 exit0으로 검증했다. `S28-CP4-Q-queue.json`에 증거를 기록한다.
+- 사용자 저장소·기존 executor/physics를 변경하지 않는다. 화면 연결과 전체134행 인증은 다음 검증이며 S28 완료·cutover·review28 승인으로 세지 않는다.

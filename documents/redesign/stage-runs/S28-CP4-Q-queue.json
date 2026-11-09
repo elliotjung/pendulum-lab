@@ -1,0 +1,74 @@
+{
+  "schema": "pendulum-checkpoint-test-execution/v1",
+  "checkpoint": "S28-CP4-Q",
+  "purpose": "Bounded foundation checkpoint validation only, not134-row final parity certification.",
+  "command": [
+    "C:\\Program Files\\nodejs\\node.exe",
+    "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "tests/product/lab/experiments/legacy-run-list.test.ts",
+    "--reporter=json",
+    "--outputFile=tmp/S28-CP4-Q-vitest.json"
+  ],
+  "startedAt": "2026-11-09T05:14:41.869Z",
+  "finishedAt": "2026-11-09T05:15:17.318Z",
+  "exitCode": 0,
+  "spawnError": null,
+  "valid": true,
+  "sourcePolicy": "exact-four-files-pre-post/LF/v1",
+  "before": [
+    {
+      "path": "src/product/lab/experiments/legacy-run-list-panel.ts",
+      "sha256": "f98285965651d535bc898e7408d7b97bbba10579b17c2ba8c379da79075ac1b8"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-run-list-queue.ts",
+      "sha256": "d35e3833090d7d92d4fae560dfbf2ec18eaeb725dd3db3448db1296951c68717"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-run-list.ts",
+      "sha256": "b518b3a1fad3a2b0bd98c51918375b164faad3cf5d434e1f4271dcff99fc2f85"
+    },
+    {
+      "path": "tests/product/lab/experiments/legacy-run-list.test.ts",
+      "sha256": "a3b069f264caeecce307e80fcdf5155d79b5ed7aa1ad91a33bfe2cbea73604f8"
+    }
+  ],
+  "after": [
+    {
+      "path": "src/product/lab/experiments/legacy-run-list-panel.ts",
+      "sha256": "f98285965651d535bc898e7408d7b97bbba10579b17c2ba8c379da79075ac1b8"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-run-list-queue.ts",
+      "sha256": "d35e3833090d7d92d4fae560dfbf2ec18eaeb725dd3db3448db1296951c68717"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-run-list.ts",
+      "sha256": "b518b3a1fad3a2b0bd98c51918375b164faad3cf5d434e1f4271dcff99fc2f85"
+    },
+    {
+      "path": "tests/product/lab/experiments/legacy-run-list.test.ts",
+      "sha256": "a3b069f264caeecce307e80fcdf5155d79b5ed7aa1ad91a33bfe2cbea73604f8"
+    }
+  ],
+  "sourceFingerprint": "6b97a9699c928eecede8999e76fb5881b24fa064a4fb99f443ac59225a3deb6e",
+  "report": {
+    "path": "tmp/S28-CP4-Q-vitest.json",
+    "sha256": "58c3743b93f4eb49f088a65f8e8ebdf0c23c3f94d60bf1495b3a96ec34fed6af",
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "pending": 0
+  },
+  "verification": {
+    "stagedIndexWholeTypecheck": {
+      "exitCode": 0,
+      "project": "tmp/S28-cp4q-index/tsconfig.json",
+      "scope": "Clean staged index checkout; excludes all later unstaged integrations."
+    },
+    "targetedEslintExitCode": 0
+  },
+  "preservation": "Unchanged native BatchExecutor/physics. Immutable IDs, order, exact canonical inputs, independent seed/result records, all byte-aware parts and run-boundary recovery retained. No user storage write.",
+  "remaining": "Foundation only; runtime UI integration and source-captured final134-row certification remain pending. No S28 completion/cutover/human review."
+}
