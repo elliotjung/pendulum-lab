@@ -152,3 +152,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 기존 BatchExecutor를 사용해 원본 ID·입력·seed·순서를 보존하는 독립 조건 큐를 추가했다. byte-aware part를 모두 유지하고, 중단 run만 원래 입력에서 재개한다. 서로 다른 모델의 metric을 임의 평균하지 않으며16MiB 초과 결과는 명시 실패한다.
 - 소유4파일 pre/post SHA 일치와 대상21/21 runner exit0, 대상 ESLint exit0. staged index만 새 임시 폴더에 복사해 후속 미커밋 통합을 제외한 whole typecheck도 exit0으로 검증했다. `S28-CP4-Q-queue.json`에 증거를 기록한다.
 - 사용자 저장소·기존 executor/physics를 변경하지 않는다. 화면 연결과 전체134행 인증은 다음 검증이며 S28 완료·cutover·review28 승인으로 세지 않는다.
+
+
+### CP4-W-workspace — 검증된 기반 모듈
+
+- 원본 workspace·Research DB의 typed 전체 기록·원문 bytes/SHA·artifact를 별도 product 저장 공간에 명시 채택하며, 실행 가능한 canonical run과 원래 입력이 없는 partial 기록을 구분한다.
+- 소유 파일 pre/post SHA 일치와 실제 runner 22/22 exit0, 대상 ESLint exit0. 후속 미커밋 통합을 제외한 staged-index whole typecheck도 exit0이다. S28-CP4-W-workspace.json에 정확한 경로·시간·hash를 기록했다.
+- 중앙 화면 연결과 실제 브라우저 증거는 이 기반 commit의 인증이 아니며 별도 통합 checkpoint/최종 capture에서 검증한다. S28 완료·134행 parity·cutover·사용자/전문가 검토 주장이 아니다.

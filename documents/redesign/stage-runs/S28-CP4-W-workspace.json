@@ -1,0 +1,136 @@
+{
+  "schema": "pendulum-checkpoint-test-execution/v1",
+  "checkpoint": "S28-foundation-workspace",
+  "purpose": "Bounded exact-file foundation validation only; centralUI/E2E remain unbound until separately captured. Not final134-row parity.",
+  "command": [
+    "node",
+    "node_modules\\vitest\\vitest.mjs",
+    "run",
+    "tests/product/persistence/legacy-workspace.test.ts",
+    "tests/product/persistence/legacy-workspace-store.test.ts",
+    "--reporter=json",
+    "--outputFile=tmp/S28-foundation-workspace-vitest.json"
+  ],
+  "startedAt": "2026-11-09T05:21:34.822Z",
+  "finishedAt": "2026-11-09T05:21:37.832Z",
+  "exitCode": 0,
+  "spawnError": null,
+  "valid": true,
+  "sourcePolicy": "exact-owned-files-pre-post/LF/v1",
+  "commitFiles": [
+    "src/product/persistence/legacy-workspace-contracts.ts",
+    "src/product/persistence/legacy-workspace-records.ts",
+    "src/product/persistence/legacy-workspace-project.ts",
+    "src/product/persistence/legacy-workspace.ts",
+    "src/product/persistence/legacy-workspace-store.ts",
+    "src/product/persistence/legacy-workspace-view.ts",
+    "src/product/persistence/legacy-workspace-panel.ts",
+    "tests/product/persistence/legacy-workspace.test.ts",
+    "tests/product/persistence/legacy-workspace-store.test.ts",
+    "tests/product/persistence/legacy-workspace-fixtures.ts"
+  ],
+  "before": [
+    {
+      "path": "src/product/persistence/legacy-workspace-contracts.ts",
+      "sha256": "47be1e43bebd6af57444dead1e6ff90e8d338b9e8a4a65ccc45c443a0cf2c0a0"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-panel.ts",
+      "sha256": "26baf7d027566935e58d24cbd81b70b593fe0b9d8086b12101b1ce9b9b9d0133"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-project.ts",
+      "sha256": "800319bbad06b737aaac955b774a64fd3ffe7c973b868bf3906e16e5c3fef08e"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-records.ts",
+      "sha256": "460bcc737255df4862241fc51efb3c73e5bcf45ff389b8b64a8e88f56543ee1e"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-store.ts",
+      "sha256": "c07b2a91ecd1aca4d6290740415cf22a5c7b1db7f8ada1db564e7d3dda0693b0"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-view.ts",
+      "sha256": "3b80b43d690b48c6da1ea535e2fce856921715bd1f0037fbbbb6fcb186c2eb4c"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace.ts",
+      "sha256": "7961818e04fa3cb659442da59977dabc4c08880ac3f7239ff3f71b5bcdaf7d85"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace-fixtures.ts",
+      "sha256": "0ff183562c22ac22da92cd34687fdd5f55e447280f897298ea1f9ed29ed72a20"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace-store.test.ts",
+      "sha256": "2078060e132152e3ced8ff79e4bdcb8134430d1c7389f3ef2b60cbd77564c22b"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace.test.ts",
+      "sha256": "d3a30412e70bfe3afa4de72d899f6bd84dd36b65a2866cab7644bd571203b7e5"
+    }
+  ],
+  "after": [
+    {
+      "path": "src/product/persistence/legacy-workspace-contracts.ts",
+      "sha256": "47be1e43bebd6af57444dead1e6ff90e8d338b9e8a4a65ccc45c443a0cf2c0a0"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-panel.ts",
+      "sha256": "26baf7d027566935e58d24cbd81b70b593fe0b9d8086b12101b1ce9b9b9d0133"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-project.ts",
+      "sha256": "800319bbad06b737aaac955b774a64fd3ffe7c973b868bf3906e16e5c3fef08e"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-records.ts",
+      "sha256": "460bcc737255df4862241fc51efb3c73e5bcf45ff389b8b64a8e88f56543ee1e"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-store.ts",
+      "sha256": "c07b2a91ecd1aca4d6290740415cf22a5c7b1db7f8ada1db564e7d3dda0693b0"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-view.ts",
+      "sha256": "3b80b43d690b48c6da1ea535e2fce856921715bd1f0037fbbbb6fcb186c2eb4c"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace.ts",
+      "sha256": "7961818e04fa3cb659442da59977dabc4c08880ac3f7239ff3f71b5bcdaf7d85"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace-fixtures.ts",
+      "sha256": "0ff183562c22ac22da92cd34687fdd5f55e447280f897298ea1f9ed29ed72a20"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace-store.test.ts",
+      "sha256": "2078060e132152e3ced8ff79e4bdcb8134430d1c7389f3ef2b60cbd77564c22b"
+    },
+    {
+      "path": "tests/product/persistence/legacy-workspace.test.ts",
+      "sha256": "d3a30412e70bfe3afa4de72d899f6bd84dd36b65a2866cab7644bd571203b7e5"
+    }
+  ],
+  "sourceFingerprint": "d5396e0724e9a95711bbc640cbd2fef3b0a676bcfc6bc27788fb26be45042af0",
+  "report": {
+    "path": "tmp/S28-foundation-workspace-vitest.json",
+    "sha256": "e2f286265c7593bdfa9186f4a098adc71834d323bb7868b351c93d7c26151cf4",
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "pending": 0
+  },
+  "verification": {
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp4w-index/tsconfig.json",
+      "exitCode": 0,
+      "scope": "Clean staged index checkout excludes all later unstaged integrations."
+    },
+    "targetedEslintExitCode": 0
+  },
+  "scopeDescription": "원본 workspace·Research DB의 typed 전체 기록·원문 bytes/SHA·artifact를 별도 product 저장 공간에 명시 채택하며, 실행 가능한 canonical run과 원래 입력이 없는 partial 기록을 구분한다.",
+  "stage": 28,
+  "completionClaim": false
+}
