@@ -1,0 +1,40 @@
+{
+  "schema": "pendulum-stage-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP5-P-precision",
+  "recordedAt": "2026-11-09T05:06:13.526Z",
+  "scope": "Native scientific/Unicode pi and decimal-comma grammar in product quantity editors; canonical SI cache survives rad/deg toggles without conversion writeback.",
+  "nativeSourceChanged": false,
+  "verification": {
+    "unit": {
+      "path": "tmp/S28-precision-vitest.json",
+      "sha256": "23e46d3382f52892bcaf0a1e69391643e5c777d99e87a411e4e13c6a01327b57",
+      "passed": 66,
+      "failed": 0,
+      "pending": 0,
+      "processExitCode": 0
+    },
+    "scopedTypecheckExitCode": 0,
+    "targetedEslintExitCode": 0,
+    "targetedPrettierExitCode": 0
+  },
+  "sources": [
+    {
+      "path": "src/product/design-system/quantity.ts",
+      "normalizedSha256": "f99b4aacc88064a99ad67036d8e1713e1762df35a20dfc1f408eecd74bee58f9"
+    },
+    {
+      "path": "src/product/design-system/display-quantity.ts",
+      "normalizedSha256": "ba1e9d34e7ade2b9c4402f360396378fa49f451bf7f22d46c9cd2046a1ebcbf3"
+    },
+    {
+      "path": "tests/product/design-system/display-quantity.test.ts",
+      "normalizedSha256": "64adc1fb36f84e8eb832b8eb516e4528bb7d7dad6dfcc71ae70a1b0c78466d80"
+    }
+  ],
+  "evidenceBinding": "Post-run owned source hashes; final source-captured UI certification is separate. Prettier reported every owned file unchanged.",
+  "limitations": [
+    "DOM round trip and full integration remain in the subsequent browser gate.",
+    "No S28 completion, parity100, human review or cutover claim."
+  ]
+}

@@ -1,5 +1,11 @@
 import { validateQuantityValue, type CanonicalUnit, type QuantityValue } from '../contracts/quantities';
 import { createInput, type InputControl } from './primitives';
+import {
+  displayQuantityValue,
+  isAngularUnit,
+  parseDisplayQuantityInput,
+  type AngleDisplayUnit
+} from './display-quantity';
 
 export interface QuantityRange {
   readonly unit: CanonicalUnit;
@@ -57,6 +63,7 @@ export interface QuantityOptions extends QuantityRange {
 export interface QuantityControl extends InputControl {
   read(): QuantityInputResult;
   setValue(value: number): void;
+  setDisplayUnit(unit: AngleDisplayUnit): void;
 }
 
 function checkedValue(value: number, range: QuantityRange): QuantityInputResult & { readonly ok: true } {
@@ -66,14 +73,17 @@ function checkedValue(value: number, range: QuantityRange): QuantityInputResult 
   return parsed;
 }
 
-/** S05 controls accept canonical SI units; display-unit adapters belong to their tested integration stages. */
+/** Canonical SI values remain independent of the precision/display-unit editor. */
 export function createQuantity(document: Document, options: QuantityOptions): QuantityControl {
   checkedValue(options.defaultValue, options);
   const initial = checkedValue(options.value ?? options.defaultValue, options);
+  let displayUnit: AngleDisplayUnit = document.documentElement.dataset.productAngleUnit === 'deg' ? 'deg' : 'rad';
+  let canonicalValue = initial.quantity.value;
+  let displayedText = displayQuantityValue(canonicalValue, options.unit, displayUnit);
   const field = createInput(document, {
     id: options.id,
-    label: `${options.label} · ${options.symbol} (${options.unit})`,
-    value: String(initial.quantity.value),
+    label: `${options.label} · ${options.symbol} (${isAngularUnit(options.unit) && displayUnit === 'deg' ? (options.unit === 'rad/s' ? 'deg/s' : 'deg') : options.unit})`,
+    value: displayedText,
     help: `${options.meaning} 범위: ${options.min}–${options.max} ${options.unit}. 기본값: ${options.defaultValue} ${options.unit}.`,
     required: true,
     disabled: options.disabled ?? false,
@@ -86,11 +96,57 @@ export function createQuantity(document: Document, options: QuantityOptions): Qu
   field.input.inputMode = 'decimal';
   field.input.autocomplete = 'off';
   field.element.querySelector('.ds-field__help')?.classList.add('ds-quantity__meta');
+  const angular = isAngularUnit(options.unit);
+  const unitControl = document.createElement('select');
+  if (angular) {
+    unitControl.id = `${options.id}-display-unit`;
+    unitControl.className = 'ds-field__control';
+    unitControl.setAttribute('aria-label', `표시 단위 · ${options.symbol}`);
+    unitControl.disabled = options.disabled ?? false;
+    for (const unit of ['rad', 'deg'] as const) {
+      const option = document.createElement('option');
+      option.value = unit;
+      option.textContent = options.unit === 'rad/s' ? `${unit}/s` : unit;
+      unitControl.append(option);
+    }
+    unitControl.value = displayUnit;
+    unitControl.addEventListener('change', () => setDisplayUnit(unitControl.value === 'deg' ? 'deg' : 'rad'));
+    field.element.append(unitControl);
+  }
 
   function read(): QuantityInputResult {
-    const parsed = parseQuantityInput(field.input.value, options);
+    const parsed =
+      field.input.value === displayedText
+        ? checkedValue(canonicalValue, options)
+        : parseDisplayQuantityInput(field.input.value, options, displayUnit);
     field.setError(parsed.ok ? '' : parsed.message);
+    if (parsed.ok) {
+      canonicalValue = parsed.quantity.value;
+      displayedText = field.input.value;
+    }
     return parsed;
+  }
+  function setDisplayUnit(unit: AngleDisplayUnit): void {
+    if (!angular || unit === displayUnit) return;
+    const parsed = read();
+    if (!parsed.ok) {
+      unitControl.value = displayUnit;
+      return;
+    }
+    try {
+      displayedText = displayQuantityValue(canonicalValue, options.unit, unit);
+    } catch {
+      unitControl.value = displayUnit;
+      field.setError('이 단위로 유한하게 표시할 수 없습니다. 원래 값과 단위를 유지합니다.');
+      return;
+    }
+    displayUnit = unit;
+    unitControl.value = unit;
+    field.input.value = displayedText;
+    const label = field.element.querySelector('label');
+    if (label)
+      label.textContent = `${options.label} · ${options.symbol} (${options.unit === 'rad/s' ? `${unit}/s` : unit})`;
+    field.setError('');
   }
 
   return {
@@ -98,8 +154,11 @@ export function createQuantity(document: Document, options: QuantityOptions): Qu
     read,
     setValue(value) {
       const parsed = checkedValue(value, options);
-      field.input.value = String(parsed.quantity.value);
+      canonicalValue = parsed.quantity.value;
+      displayedText = displayQuantityValue(canonicalValue, options.unit, displayUnit);
+      field.input.value = displayedText;
       field.setError('');
-    }
+    },
+    setDisplayUnit
   };
 }

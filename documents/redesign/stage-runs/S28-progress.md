@@ -135,3 +135,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 대상216/216 단위 검사와 대상 ESLint 통과. 병렬 개발 중 신규 연구 API test의 readonly typing 오류와 분리하여 실제 의존성을 포함한 scoped tsc도 exit0으로 통과했다. 최신 whole tsc는 그 test 오류 때문에 아직 통과했다고 보고하지 않는다.
 - 이 commit은 persistence 계약 checkpoint다. 전체 UI 연결은 다음 checkpoint이며, 이전 production50검사의44통과/6실패를 현재 전체 소스 인증으로 사용하지 않는다. 실패는 새 버튼 문구4건과 새 검색 test의 모호한 선택자2건이며 수정·별도 재검증을 진행 중이다.
 - `S28-CP4-A-links.json`은216개 runner 결과와 소유 source의 사후 SHA를 기록한다. 최종134행 인증은 새로운 실행 전후 source capture로 별도 수행한다. 사용자/전문가 review나 완료·cutover를 주장하지 않는다.
+
+
+### CP5-P — 정밀 입력과 표시 단위
+
+- CP4-A `be5c19a0d1a0f0b89d77d99c3a5ecb08b4fb1b11` 일반 push exit0, live remote exact match 확인.
+- 2026-11-09 계속 요청의 fetch 후 branch/HEAD/origin 일치와 plan 검사를 재확인했다. preflight28은 진행 중인 허가된 S28 파일 때문에 clean-tree 검사만 실패했다. 사용자 자료를 지우거나 덮어쓰지 않았으며 이 checkpoint 이후 clean preflight를 다시 실행한다.
+- 제품 quantity editor에 native와 같은 π·Unicode·decimal comma·과학 표기 및 명시 rad/deg 입력을 연결했다. 단위 선택은 cached canonical SI를 변환 표시하며 물리 입력을 다시 쓰지 않는다. 기존 strict decimal API와 native precision/physics는 보존한다.
+- 대상2파일66/66 단위 검사, scoped typecheck·대상 ESLint·Prettier exit0. 소유3파일의 사후 SHA와 runner digest는 `S28-CP5-P-precision.json`에 기록했다. DOM 왕복·전체 통합 및134행 source-captured 인증은 뒤의 gate이며 이 단위 검사로 대체하지 않는다.
+- S28은 계속 active/next28이다. 후속 단계·완료 status·사용자/전문가 review는 기록하지 않았다.
