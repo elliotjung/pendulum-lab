@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP4-E-expansion",
+  "activeStageCheckpoint": "CP3-D-native-design",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP3-D-native-design foundation validated28/28 with exactowned pre/post SHA, targetedlint and clean staged-index whole typecheck exit0. CentralUI/browser evidence remains explicitly unbound until its separate integration checkpoint and finalcapture. Native engines/userdata preserved; next28/review28 unapproved.",
     "S28 CP4-E-expansion foundation validated27/27 with exactowned pre/post SHA, targetedlint and clean staged-index whole typecheck exit0. CentralUI/browser evidence remains explicitly unbound until its separate integration checkpoint and finalcapture. Native engines/userdata preserved; next28/review28 unapproved.",
     "S28 CP4-W-workspace foundation validated22/22 with exactowned pre/post SHA, targetedlint and clean staged-index whole typecheck exit0. CentralUI/browser evidence remains explicitly unbound until its separate integration checkpoint and finalcapture. Native engines/userdata preserved; next28/review28 unapproved.",
     "S28 CP4-Q immutable native condition queue foundation passed21/21 with exact4-file pre/post capture, targetedlint and clean staged-index whole typecheck exit0. Allparts, originalIDs/order/seeds/inputs and bounded run-level recovery preserved. CP5-P ed058ea901954b42bbe9f64bc1f84554d5b54b46 pushed exit0/live exact. Runtime integration/final134-row certification and S28 completion remain pending; next28/review28 unapproved.",

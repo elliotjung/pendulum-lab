@@ -166,3 +166,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 7개 기존 확장 모델과16개 native 방법을 전용 worker suite에 연결하고 전체 입력·결과·IEEE 비유한 tag·진행/취소/재개·원본 archive를 보존한다.
 - 소유 파일 pre/post SHA 일치와 실제 runner 27/27 exit0, 대상 ESLint exit0. 후속 미커밋 통합을 제외한 staged-index whole typecheck도 exit0이다. S28-CP4-E-expansion.json에 정확한 경로·시간·hash를 기록했다.
 - 중앙 화면 연결과 실제 브라우저 증거는 이 기반 commit의 인증이 아니며 별도 통합 checkpoint/최종 capture에서 검증한다. S28 완료·134행 parity·cutover·사용자/전문가 검토 주장이 아니다.
+
+
+### CP3-D-native-design — 검증된 기반 모듈
+
+- 기존 Sobol/LHS/grid와 adaptive·boundary·uncertainty refinement를 실제 native studyPoint worker에 연결하고 입력·seed·정확한 원본 반환값·재개를 보존한다.
+- 소유 파일 pre/post SHA 일치와 실제 runner 28/28 exit0, 대상 ESLint exit0. 후속 미커밋 통합을 제외한 staged-index whole typecheck도 exit0이다. S28-CP3-D-native-design.json에 정확한 경로·시간·hash를 기록했다.
+- 중앙 화면 연결과 실제 브라우저 증거는 이 기반 commit의 인증이 아니며 별도 통합 checkpoint/최종 capture에서 검증한다. S28 완료·134행 parity·cutover·사용자/전문가 검토 주장이 아니다.

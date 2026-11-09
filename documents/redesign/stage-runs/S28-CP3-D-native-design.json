@@ -1,0 +1,81 @@
+{
+  "schema": "pendulum-checkpoint-test-execution/v1",
+  "checkpoint": "S28-foundation-native-design",
+  "purpose": "Bounded exact-file foundation validation only; centralUI/E2E remain unbound until separately captured. Not final134-row parity.",
+  "command": [
+    "node",
+    "node_modules\\vitest\\vitest.mjs",
+    "run",
+    "tests/product/lab/native-design.test.ts",
+    "--reporter=json",
+    "--outputFile=tmp/S28-foundation-native-design-vitest.json"
+  ],
+  "startedAt": "2026-11-09T05:21:39.820Z",
+  "finishedAt": "2026-11-09T05:21:42.636Z",
+  "exitCode": 0,
+  "spawnError": null,
+  "valid": true,
+  "sourcePolicy": "exact-owned-files-pre-post/LF/v1",
+  "commitFiles": [
+    "src/product/lab/experiments/native-design.ts",
+    "src/product/lab/experiments/native-design-queue.ts",
+    "src/product/lab/experiments/native-design-panel.ts",
+    "tests/product/lab/native-design.test.ts"
+  ],
+  "before": [
+    {
+      "path": "src/product/lab/experiments/native-design-panel.ts",
+      "sha256": "98a48076577acab01e752eb23164d0d78d19b138a05cbce94f2baa8f472afc84"
+    },
+    {
+      "path": "src/product/lab/experiments/native-design-queue.ts",
+      "sha256": "25a1e8ea529c4c296d0a222671b906d76f342a9e370b6c07c29c8536fb234a2b"
+    },
+    {
+      "path": "src/product/lab/experiments/native-design.ts",
+      "sha256": "9f94b864f92bc1cbf32829e39650c73e765ac9b3ee9aacbb9cfc24c085e7e73d"
+    },
+    {
+      "path": "tests/product/lab/native-design.test.ts",
+      "sha256": "783e5474eb00a7c477dfcc27a54308d44d29cd9a2c367f1a2fe52654a49bfc64"
+    }
+  ],
+  "after": [
+    {
+      "path": "src/product/lab/experiments/native-design-panel.ts",
+      "sha256": "98a48076577acab01e752eb23164d0d78d19b138a05cbce94f2baa8f472afc84"
+    },
+    {
+      "path": "src/product/lab/experiments/native-design-queue.ts",
+      "sha256": "25a1e8ea529c4c296d0a222671b906d76f342a9e370b6c07c29c8536fb234a2b"
+    },
+    {
+      "path": "src/product/lab/experiments/native-design.ts",
+      "sha256": "9f94b864f92bc1cbf32829e39650c73e765ac9b3ee9aacbb9cfc24c085e7e73d"
+    },
+    {
+      "path": "tests/product/lab/native-design.test.ts",
+      "sha256": "783e5474eb00a7c477dfcc27a54308d44d29cd9a2c367f1a2fe52654a49bfc64"
+    }
+  ],
+  "sourceFingerprint": "714c96d2c43b932eeaf16b9ae997dfc12eed1ed9a213d6929a985520e00ba101",
+  "report": {
+    "path": "tmp/S28-foundation-native-design-vitest.json",
+    "sha256": "4ad39f4832c7951c9f7c39fe147e3c7ecaad728e0bcd43397af872c89516be80",
+    "total": 28,
+    "passed": 28,
+    "failed": 0,
+    "pending": 0
+  },
+  "verification": {
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp3d-index/tsconfig.json",
+      "exitCode": 0,
+      "scope": "Clean staged index checkout excludes all later unstaged integrations."
+    },
+    "targetedEslintExitCode": 0
+  },
+  "scopeDescription": "기존 Sobol/LHS/grid와 adaptive·boundary·uncertainty refinement를 실제 native studyPoint worker에 연결하고 입력·seed·정확한 원본 반환값·재개를 보존한다.",
+  "stage": 28,
+  "completionClaim": false
+}
