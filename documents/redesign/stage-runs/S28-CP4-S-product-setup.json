@@ -1,0 +1,599 @@
+{
+  "schema": "pendulum-redesign/s28-product-setup-evidence/v1",
+  "stage": 28,
+  "checkpoint": "CP4-S",
+  "completion": false,
+  "generatedAt": "2026-11-09T05:50:43.461588+00:00",
+  "scope": "Additive ps1 public full setup codec, typed controls, route resolution, explicit session execution adoption and opt-in library importer loading. Product UI integration and pure native integrator descriptor separation were parent-owned changes included in this scoped test cohort.",
+  "contracts": {
+    "schema": "pendulum-product-setup/v1",
+    "tokenPrefix": "ps1.",
+    "tokenLengthLimit": 32768,
+    "jsonByteLimit": 262144,
+    "families": [
+      "system:double",
+      "system:compound-double",
+      "system:triple"
+    ],
+    "validationStages": "Metadata-only route layer validates canonical schema/privacy and closed exact controls. Existing explicitly loaded lab fromCanonical adapters retain native model/version/physical execution validation. A structurally valid future native model version remains rejectable by the native lab; route validation does not certify numerical execution.",
+    "privacy": "Existing encodeShareToken privacy-before-size rejection reused. Raw legacy source, notes, results, private extra metadata and audio activation are absent from the closed setup DTO. CRC32 detects accidental damage, not authenticity.",
+    "compatibility": "Existing pe1 bytes/creator/physical-only resolution remain unchanged. ps1 is additive stateToken syntax. Non-classical systems continue physical-only sharing."
+  },
+  "browser": {
+    "ui": {
+      "path": "tmp/S28-product-setup-final-browser.json",
+      "sha256": "3290311166e317feea1eff9e468a675c75f3710528bf5ae63fe2b873376ca44c",
+      "exitCode": 0,
+      "stats": {
+        "startTime": "2026-11-09T05:41:19.176Z",
+        "duration": 181065.176,
+        "expected": 24,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "log": {
+        "path": "tmp/S28-product-setup-final-browser.log",
+        "sha256": "fa22666c11ae27134b6f11ee6fcb6aff2cdfd1a26198f3d651cd0cf3899de428"
+      }
+    },
+    "unchangedMetadataGate": {
+      "path": "tmp/S28-product-setup-metadata-ready3-browser.json",
+      "sha256": "0b03e0426c38a5d888f00fef4220f75bf9c93c04201d069f63b340a0c69db22b",
+      "exitCode": 0,
+      "stats": {
+        "startTime": "2026-11-09T05:40:14.753Z",
+        "duration": 19803.387000000002,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "log": {
+        "path": "tmp/S28-product-setup-metadata-ready3-browser.log",
+        "sha256": "245c9fe00fd019060449c7753dcbafac9504a79043294d08617ec8aa69f2f873"
+      }
+    },
+    "projects": [
+      "chromium",
+      "mobile-chrome"
+    ],
+    "retries": 0,
+    "nativeComparisons": [
+      {
+        "project": "chromium",
+        "title": "S28 public setup current alternating queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "chromium",
+        "title": "S28 public setup current symmetric queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "chromium",
+        "title": "S28 public setup current random queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "chromium",
+        "title": "S28 public setup current normalized queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "mobile-chrome",
+        "title": "S28 public setup current alternating queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "mobile-chrome",
+        "title": "S28 public setup current symmetric queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "mobile-chrome",
+        "title": "S28 public setup current random queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      },
+      {
+        "project": "mobile-chrome",
+        "title": "S28 public setup current normalized queue preserves every native member and executes real worker results",
+        "maxAbsoluteError": 0.0
+      }
+    ],
+    "comparisonBounds": "Unmodified S01 tolerance.numeric absolute1e-11 plus relative1e-10; actual native perturbation member inputs, physical settings, native method/tolerance, seeds, ordering, step/sample counts and axes remain exact."
+  },
+  "sourceCapture": {
+    "before": {
+      "path": "tmp/S28-product-setup-source-ready3-before.json",
+      "sha256": "6c6f4cb526207c73143cf728398ae21841f24e7aceb9e94b7adff0cfc037a73d"
+    },
+    "after": {
+      "path": "tmp/S28-product-setup-source-ready3-after.json",
+      "sha256": "6c6f4cb526207c73143cf728398ae21841f24e7aceb9e94b7adff0cfc037a73d"
+    },
+    "matched": true,
+    "files": [
+      {
+        "path": "src/product/persistence/product-setup.ts",
+        "sha256": "b0fc3e5df33f4097187674e29ff7100cf6ea5519d68e505cf928d98d88e55088"
+      },
+      {
+        "path": "src/product/persistence/product-setup-codec.ts",
+        "sha256": "29896055d4d44b21c5bede902603310096c8b776a02bf9f115b145e60b82558c"
+      },
+      {
+        "path": "src/product/persistence/product-setup-legacy.ts",
+        "sha256": "67b4a3a87595d5dfa8454ade4cf9617e6130fe5c428bbc8cc78c667be673ddc1"
+      },
+      {
+        "path": "src/product/persistence/share.ts",
+        "sha256": "80485d5c071574b14e5297d83f72e11347a7b072a2fa819fed5041dab4577a21"
+      },
+      {
+        "path": "src/product/persistence/share-route.ts",
+        "sha256": "da2ec2883f8259e0568e1eaff0494835e34759a585037ee5dbd453d22c64882c"
+      },
+      {
+        "path": "src/product/persistence/index.ts",
+        "sha256": "df52abe428767dcf95d57aa6f428309a373671e95da73bed4ebbece3a6944ce8"
+      },
+      {
+        "path": "src/product/contracts/routes.ts",
+        "sha256": "033d5f2d005855561038367adf9eb9514932e00b6c9250e48178f60d0b187828"
+      },
+      {
+        "path": "src/product/app/types.ts",
+        "sha256": "1db51fc951f7fc5385f4ffb1580ddd60be2d51a622a1f67607bff76b9747057c"
+      },
+      {
+        "path": "src/product/app/views/core-lab.ts",
+        "sha256": "19d28f9b1b6cf3a038ec8a72d3301c4f21cc4c16203c1c9bec74d1b1a79f5f47"
+      },
+      {
+        "path": "src/product/app/views/chain-lab.ts",
+        "sha256": "4eebbcbb1a51f09070a30725b520d9f9c3b0b575b6e0860002f1066e7ebce558"
+      },
+      {
+        "path": "src/product/app/views/lab.ts",
+        "sha256": "f865906a29fe37d5b4916de9d03433106469123043ec9a9252eb4f44214724ec"
+      },
+      {
+        "path": "src/product/persistence/legacy-workspace-retry.d.ts",
+        "sha256": "dcb57924710931d7ef3431f2827d8bc77e80362c06c88c019359e8677335cb3c"
+      },
+      {
+        "path": "src/product/adapters/physics/planar-integrators.ts",
+        "sha256": "495fcbf861841b83794a617277539aba5ec540cb4d8594d518caeca7658dc905"
+      },
+      {
+        "path": "tests/product/adapters/physics/ode-presentation.test.ts",
+        "sha256": "7b017dede5ddffe06b5ccb063cb87689ccbfea3717247dc0c6e38ca36867b2c6"
+      },
+      {
+        "path": "tests/product/contracts/product-setup.test.ts",
+        "sha256": "09b6d03110cc04a2eaf0c4d441754accc14fe421ed51bdc79652cf0a455846bc"
+      },
+      {
+        "path": "tests/product/persistence/product-setup-legacy.test.ts",
+        "sha256": "4ed1d711b6f8c00dd9d0baa11385dc5ace412bdbb73052f7e1fe01dd2a9285d6"
+      },
+      {
+        "path": "e2e/redesign/product-setup.spec.ts",
+        "sha256": "917f8e6f0533c1c19fb8993032fe51f60db552973d23b9ebc51cd032442fdd73"
+      },
+      {
+        "path": "e2e/redesign/shell.spec.ts",
+        "sha256": "6525315171f0b0a9316ab7115fb60e0869a97b15e2250a374f479b55afb075ea"
+      },
+      {
+        "path": "src/product/lab/views/core-workspace.ts",
+        "sha256": "fc3b52f9945ed40539091530a06a4c4de3ac3e96da1c9adb4e69afca968fcec6"
+      },
+      {
+        "path": "src/product/lab/views/chain-workspace.ts",
+        "sha256": "dd625b7c95f8db1f771309898bdbb009cdbea6596f447a29ca1b9ded3c70965e"
+      },
+      {
+        "path": "src/product/lab/views/core-files.ts",
+        "sha256": "cb6c8a6ffdecfce8f2c3de2b683bfe873406ce1b28bf89f85c4e6cc7139c7b57"
+      },
+      {
+        "path": "src/product/lab/views/chain-files.ts",
+        "sha256": "d11d755c3e1cbad439209cbe2c1b3b47ecd14e0057b5f1dc9f9a404364c03836"
+      },
+      {
+        "path": "src/product/lab/views/core-inspector.ts",
+        "sha256": "532270bd403ddca7bec70dfaed7751bc46c877d01d88df02835632512ed3b6c6"
+      },
+      {
+        "path": "src/product/lab/views/chain-inspector.ts",
+        "sha256": "56c3db44556cfbc75ef97fed1b23537f033471945481ed6cf56f065f7eaa1412"
+      },
+      {
+        "path": "src/product/lab/views/core-model.ts",
+        "sha256": "b5ef5c2639c946eb0bdd38321c5b5050f4b918932e3423ce1b9e1fbcf5f1cff1"
+      },
+      {
+        "path": "src/product/lab/views/chain-model.ts",
+        "sha256": "a229ec70ecc35109f971e249580c4d9090f4d5ab7662cc6582d81347889df2e3"
+      },
+      {
+        "path": "src/product/lab/views/native-setup-panel.ts",
+        "sha256": "d4a7c7d90a08651a5adf8b5a79bccb9797634ad075b0d7744295cb5c71f22d58"
+      },
+      {
+        "path": "src/product/persistence/product-setup-file-control.ts",
+        "sha256": "ad5e30e9f6e510805403194c90473d372f28c6193aacb4894ce91dc0e7f46991"
+      },
+      {
+        "path": "src/product/lab/views/legacy-workflow.ts",
+        "sha256": "bba27a080324f4635183cd9b4474af8a8ef90e4e01a121ccabe84a9084d6e2b2"
+      },
+      {
+        "path": "src/product/lab/views/native-display.ts",
+        "sha256": "fe0d33b593c8de925369d71f2a9835b4cbae50133454347e777c498e5930f481"
+      },
+      {
+        "path": "src/product/lab/views/playback-clock.ts",
+        "sha256": "c338e7350b5275c0e85ebb5a0020cad3bbbd099e300549896c31c6deb8bdff57"
+      },
+      {
+        "path": "src/product/lab/views/playback-controls.ts",
+        "sha256": "7d9c8f522e808a6cc5e241b625424f9fd4b211b26e2f84afce9cfaf26726f7f3"
+      },
+      {
+        "path": "src/product/design-system/quantity.ts",
+        "sha256": "f99b4aacc88064a99ad67036d8e1713e1762df35a20dfc1f408eecd74bee58f9"
+      },
+      {
+        "path": "src/product/persistence/legacy-link-consumer.ts",
+        "sha256": "2aa0fbfbfa1b4ce8f8da76e066fb7826263afe519dc333cd18613808204863d9"
+      },
+      {
+        "path": "src/product/persistence/legacy-migration-panel.ts",
+        "sha256": "db5860d80041fa45dee69a35d565907604d3f6dad4d7a9bf51ea792f3e03118c"
+      },
+      {
+        "path": "src/product/lab/experiments/legacy-run-list.ts",
+        "sha256": "b518b3a1fad3a2b0bd98c51918375b164faad3cf5d434e1f4271dcff99fc2f85"
+      },
+      {
+        "path": "src/product/lab/experiments/legacy-run-list-panel.ts",
+        "sha256": "f98285965651d535bc898e7408d7b97bbba10579b17c2ba8c379da79075ac1b8"
+      },
+      {
+        "path": "src/product/lab/experiments/legacy-run-list-queue.ts",
+        "sha256": "d35e3833090d7d92d4fae560dfbf2ec18eaeb725dd3db3448db1296951c68717"
+      },
+      {
+        "path": "tests/characterization/numerical-golden.fixture.json",
+        "sha256": "79d36988f19f22d4ce3d622081c20024de839a08a5a42145969a52273a4d5430"
+      },
+      {
+        "path": "tmp/s28-product-setup-playwright.config.ts",
+        "sha256": "ae8d4ad60b1936a37a939e91dd920ac733002281a1714e8f9d60ef14b30c84fa"
+      },
+      {
+        "path": "tmp/s28-product-setup-metadata-playwright.config.ts",
+        "sha256": "7aa1a183ad9a7e3bef64066d9873fd3950ec3bd6168a1946de38c5d13db932c4"
+      }
+    ],
+    "limit": "41 selected feature, integration, test and config paths; not a complete transitive dependency closure or whole repository. This is historical scoped validation, not a final parity execution capture."
+  },
+  "build": {
+    "root": "tmp/S28-product-setup-dist-ready3",
+    "exitCode": 0,
+    "log": {
+      "path": "tmp/S28-product-setup-build-ready3.log",
+      "sha256": "0da6efa495f27b3ff83dc9846c0890b774ee7e6fe847c9bad6ca2ba4285459b4"
+    },
+    "postRunManifest": {
+      "path": "tmp/S28-product-setup-build-manifest.json",
+      "sha256": "26fb09f116f237c34e416aabccb50b4a36b268732ca752eb1ca73a68d94664e7"
+    },
+    "limit": "Frozen isolated production bundle with post-run file manifest. No automated pre/post entire-build capture is claimed."
+  },
+  "postBrowserTypeExtraction": {
+    "requestedByParent": true,
+    "files": [
+      {
+        "path": "src/product/contracts/playback.ts",
+        "sha256": "0fee2461ae120b80a8e1ab1fe5da2b0cead8106e00b23d10f4e47b7708965fa6"
+      },
+      {
+        "path": "src/product/persistence/product-setup.ts",
+        "sha256": "7f5117f1bd9b7b1999154f605db7bdae0ff6933693ddc05052fa1d6be4a1cc2a"
+      },
+      {
+        "path": "src/product/lab/views/playback-clock.ts",
+        "sha256": "ccca23b53f391eaa30d27624145df77a0dbed4c0adcdf2c0eb2708012bfa213f"
+      }
+    ],
+    "scope": "After browser exit and matching41-path capture, PlaybackSettings moved into a pure contracts/playback.ts type module; product-setup imports that type and playback-clock imports/re-exports it. Runtime bodies/defaults/math unchanged.",
+    "emittedBefore": {
+      "path": "tmp/S28-setup-type-erasure-before.json",
+      "sha256": "93f5aff70c5e6ffedbfc79f30d49c53d016eb2edfc753f8675814c22543b1551"
+    },
+    "emittedAfter": {
+      "path": "tmp/S28-setup-type-erasure-after.json",
+      "sha256": "93f5aff70c5e6ffedbfc79f30d49c53d016eb2edfc753f8675814c22543b1551"
+    },
+    "runtimeOutputIdentical": true,
+    "newContractEmitsRuntimeCode": false,
+    "uiRerun": "Not repeated after this verified type-only move, per parent instruction. Final complete-source integration capture must include the new type file."
+  },
+  "checks": {
+    "postTypeUnits": {
+      "path": "tmp/S28-product-setup-unit-post-type.json",
+      "sha256": "10eee18340f45e3b4633cf240b3868f7c5b884beb2326da3a7e37af1911f7c35",
+      "exitCode": 0,
+      "passed": 265,
+      "failed": 0,
+      "skipped": 0
+    },
+    "ready3WholeTypecheck": {
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/S28-product-setup-typecheck-ready3.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "postTypeScopedTypecheck": {
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/S28-product-setup-scoped-typecheck-post-type.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "config": {
+        "path": "tmp/tsconfig-S28-product-setup.json",
+        "sha256": "1be2c8efae38cdecbc0cf42b3b51ac29f5c9b54a66986b640461960b6db1ffdc"
+      }
+    },
+    "ready3TargetEslint": {
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/S28-product-setup-eslint-ready3.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "postTypeTargetEslint": {
+      "exitCode": 0,
+      "log": {
+        "path": "tmp/S28-product-setup-eslint-post-type.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "priorFailuresRetained": [
+    {
+      "path": "tmp/S28-product-setup-metadata-browser.json",
+      "sha256": "c6219b5e4aabe581b02caf2f463c2922de35a5fef31ce17b11b5e4d34254ab82",
+      "exitCode": 1,
+      "stats": {
+        "startTime": "2026-11-09T05:28:00.304Z",
+        "duration": 37613.559,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "finding": "Unchanged S04 guard exposed Learn eager registry/runtime chunk and library eager workspace importer. Parent separated pure ODE presentation metadata with native descriptor parity tests; library importer became explicit opt-in. Original guard/threshold unchanged."
+    },
+    {
+      "path": "tmp/S28-product-setup-browser.json",
+      "sha256": "99fef7e32a6ee17dc9b4dcf032081349051050bc96365755a931db523220c8df",
+      "exitCode": 1,
+      "stats": {
+        "startTime": "2026-11-09T05:34:25.458Z",
+        "duration": 221551.636,
+        "expected": 20,
+        "skipped": 0,
+        "unexpected": 4,
+        "flaky": 0
+      },
+      "sourceBeforeAfterMatched": true,
+      "finding": "20passed/4failed: both projects found keyboard-inaccessible scrollable JSON preview and failed-module retry using a cached rejected URL. Preview gained tabindex/region label; importer gained one bounded distinct statically bundled retry URL using the same source. No failing assertion, retry count, timeout or axe rule was loosened."
+    }
+  ],
+  "downloads": {
+    "manifest": {
+      "path": "tmp/S28-product-setup-download-manifest.json",
+      "sha256": "29f416bd5369a3fe4012b0e371580154021be283558b8bf3645d982788ab9d51"
+    },
+    "count": 22,
+    "source": "Exact actual final Playwright download attachment bodies decoded from base64.",
+    "files": [
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/86688797a4dc/before-pendulum-product-setup.json",
+        "sha256": "d857dcce9aa51537e799561ba3bbc5c48cba0a3e4b754cb408cb533845dd00b2",
+        "bytes": 1645,
+        "project": "chromium",
+        "title": "S28 public setup double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/86688797a4dc/reopened-pendulum-product-setup.json",
+        "sha256": "d857dcce9aa51537e799561ba3bbc5c48cba0a3e4b754cb408cb533845dd00b2",
+        "bytes": 1645,
+        "project": "chromium",
+        "title": "S28 public setup double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/b514370a7afd/before-pendulum-product-setup.json",
+        "sha256": "8a2afb21618a4f4d11df0fdd000c3e7559448c6d12199c4d36f8a26d44bb4a8d",
+        "bytes": 1654,
+        "project": "chromium",
+        "title": "S28 public setup compound-double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/b514370a7afd/reopened-pendulum-product-setup.json",
+        "sha256": "8a2afb21618a4f4d11df0fdd000c3e7559448c6d12199c4d36f8a26d44bb4a8d",
+        "bytes": 1654,
+        "project": "chromium",
+        "title": "S28 public setup compound-double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/433325b002f1/before-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "chromium",
+        "title": "S28 public setup triple shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/433325b002f1/reopened-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "chromium",
+        "title": "S28 public setup triple shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/13ae0b9e73fa/alternating-legacy-list-d74a9df358e63981.json",
+        "sha256": "abf8de422710a81aa08ea7e2411b5826633d0a5af01f5615353a7cbed571f10b",
+        "bytes": 17272,
+        "project": "chromium",
+        "title": "S28 public setup current alternating queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/68482518c56f/symmetric-legacy-list-48265c3cd193c630.json",
+        "sha256": "f2d680e248e72d6e3d16de8c1ecb47033c3661709b6bb0fc0d10a3dc30f4a277",
+        "bytes": 17269,
+        "project": "chromium",
+        "title": "S28 public setup current symmetric queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/2c43aadf6111/random-legacy-list-d1a9cd6361ae5afd.json",
+        "sha256": "7c45bf71b7f4d68185918bceb80cdc6c0120d2c27f0c7a2dfb120ed1711c6053",
+        "bytes": 17263,
+        "project": "chromium",
+        "title": "S28 public setup current random queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/59322607fcca/normalized-legacy-list-02523101a1938c8d.json",
+        "sha256": "a201e4e4576f60f83d02423e68ca3674970062e7bc20c9fa7b2065dfb4607837",
+        "bytes": 17366,
+        "project": "chromium",
+        "title": "S28 public setup current normalized queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/chromium/510c4e25e6e9/file-opened-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "chromium",
+        "title": "S28 public setup JSON preview requires confirmation and preserves current state on cancellation and invalid files",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/86688797a4dc/before-pendulum-product-setup.json",
+        "sha256": "d857dcce9aa51537e799561ba3bbc5c48cba0a3e4b754cb408cb533845dd00b2",
+        "bytes": 1645,
+        "project": "mobile-chrome",
+        "title": "S28 public setup double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/86688797a4dc/reopened-pendulum-product-setup.json",
+        "sha256": "d857dcce9aa51537e799561ba3bbc5c48cba0a3e4b754cb408cb533845dd00b2",
+        "bytes": 1645,
+        "project": "mobile-chrome",
+        "title": "S28 public setup double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/b514370a7afd/before-pendulum-product-setup.json",
+        "sha256": "8a2afb21618a4f4d11df0fdd000c3e7559448c6d12199c4d36f8a26d44bb4a8d",
+        "bytes": 1654,
+        "project": "mobile-chrome",
+        "title": "S28 public setup compound-double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/b514370a7afd/reopened-pendulum-product-setup.json",
+        "sha256": "8a2afb21618a4f4d11df0fdd000c3e7559448c6d12199c4d36f8a26d44bb4a8d",
+        "bytes": 1654,
+        "project": "mobile-chrome",
+        "title": "S28 public setup compound-double shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/433325b002f1/before-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "mobile-chrome",
+        "title": "S28 public setup triple shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/433325b002f1/reopened-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "mobile-chrome",
+        "title": "S28 public setup triple shares actual current controls and exact physical inputs across open/reload without storage writes",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/13ae0b9e73fa/alternating-legacy-list-d74a9df358e63981.json",
+        "sha256": "abf8de422710a81aa08ea7e2411b5826633d0a5af01f5615353a7cbed571f10b",
+        "bytes": 17272,
+        "project": "mobile-chrome",
+        "title": "S28 public setup current alternating queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/68482518c56f/symmetric-legacy-list-48265c3cd193c630.json",
+        "sha256": "f2d680e248e72d6e3d16de8c1ecb47033c3661709b6bb0fc0d10a3dc30f4a277",
+        "bytes": 17269,
+        "project": "mobile-chrome",
+        "title": "S28 public setup current symmetric queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/2c43aadf6111/random-legacy-list-d1a9cd6361ae5afd.json",
+        "sha256": "7c45bf71b7f4d68185918bceb80cdc6c0120d2c27f0c7a2dfb120ed1711c6053",
+        "bytes": 17263,
+        "project": "mobile-chrome",
+        "title": "S28 public setup current random queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/59322607fcca/normalized-legacy-list-02523101a1938c8d.json",
+        "sha256": "a201e4e4576f60f83d02423e68ca3674970062e7bc20c9fa7b2065dfb4607837",
+        "bytes": 17366,
+        "project": "mobile-chrome",
+        "title": "S28 public setup current normalized queue preserves every native member and executes real worker results",
+        "contentType": "application/json"
+      },
+      {
+        "path": "tmp/S28-product-setup-downloads/mobile-chrome/510c4e25e6e9/file-opened-pendulum-product-setup.json",
+        "sha256": "0548d7cd618dacfa7f46feaed00b4d7308b69424ed7e3ca0408827629e6c7216",
+        "bytes": 1498,
+        "project": "mobile-chrome",
+        "title": "S28 public setup JSON preview requires confirmation and preserves current state on cancellation and invalid files",
+        "contentType": "application/json"
+      }
+    ]
+  },
+  "coverage": [
+    "All3 classical models: actual current control edits, unified angle display with exact SI values, both query-clean share surfaces, exact ps1 and actual JSON bytes after reopen/reload; no local/session writes or audio autoactivation.",
+    "All4 native perturbation patterns prepare exact ordered native inputs and execute actual workers with four completed runs; final native states compared within unchanged S01 bounds.",
+    "JSON explicit preview/confirmation/cancel, duplicate/malformed/private/UTF8/oversized rejection, deferred cancel/replacement/disposal,320px overflow and component-scoped full WCAG axe; real screenshots visually inspected.",
+    "Unchanged S04 metadata loading/storage guard; opt-in importer cancellation, actual failed-load retry and sibling source preservation.",
+    "Historical v10/v11 sessions and actual runJson runtimeSnapshot adopt exact original mode/SPF using genuine issued confirmation; invalid SPF above current60 bound fails without clamping. Other controls remain explicit caller choices."
+  ],
+  "limitations": [
+    "Pixel5 is browser emulation; other engines and physical devices are not certified here.",
+    "Public full setup v1 applies to double/compound/triple only. pe1 remains available for other systems.",
+    "A larger public setup can be exported/previewed within256KiB, but current file opening uses a ps1 route and explicitly rejects a setup above32KiB URL capacity without applying it. No storage/session indirection bypasses that bound.",
+    "The one distinct importer retry URL recovers a failed entry URL; repeated/shared dependency failures remain explicit errors with current input preserved.",
+    "No native solver buffers, old result continuation, raw camera video, external authenticity, scientific/human review, complete134-row certification, S28 completion or cutover is claimed."
+  ]
+}

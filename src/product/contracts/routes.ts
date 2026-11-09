@@ -46,8 +46,8 @@ function validateToken(token: string): ContractResult<string> {
   if (token.length > MAX_SHARE_TOKEN_LENGTH) {
     return failure('payload-too-large', '$.stateToken', 'The share token exceeds the URL limit.', 'export-file');
   }
-  if (!/^pe1\.[A-Za-z0-9_-]+$/.test(token)) {
-    return failure('invalid-share-token', '$.stateToken', 'Expected a pe1 token with unpadded base64url data.');
+  if (!/^(?:pe1|ps1)\.[A-Za-z0-9_-]+$/.test(token)) {
+    return failure('invalid-share-token', '$.stateToken', 'Expected a pe1 or ps1 token with unpadded base64url data.');
   }
   return success(token);
 }

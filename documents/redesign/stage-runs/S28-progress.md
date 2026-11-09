@@ -173,3 +173,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 기존 Sobol/LHS/grid와 adaptive·boundary·uncertainty refinement를 실제 native studyPoint worker에 연결하고 입력·seed·정확한 원본 반환값·재개를 보존한다.
 - 소유 파일 pre/post SHA 일치와 실제 runner 28/28 exit0, 대상 ESLint exit0. 후속 미커밋 통합을 제외한 staged-index whole typecheck도 exit0이다. S28-CP3-D-native-design.json에 정확한 경로·시간·hash를 기록했다.
 - 중앙 화면 연결과 실제 브라우저 증거는 이 기반 commit의 인증이 아니며 별도 통합 checkpoint/최종 capture에서 검증한다. S28 완료·134행 parity·cutover·사용자/전문가 검토 주장이 아니다.
+
+
+### CP4-S — 전체 공개 설정·route 기반
+
+- 앞선 기반 CP4-Q `2b0311e76b4234463287fd065c62bc0003e90b36`, CP4-W `6f42052f5a6927e9bdfdb70437852aec50338522`, CP4-E `7a5c55fdf5d145f1e0e963e2d23667668f92b582`, CP3-D `02145d96755094de992cc939dc7186e059108db8`는 각각 일반 push exit0/live remote exact match를 확인했다.
+- 기존 pe1 공유를 유지하고, 현재 SI 조건과 재생·표시·섭동·관찰 단계의 closed DTO를 별도 ps1 버전으로 추가했다. URL·파일 한도, CRC, privacy, native 범위 재검증을 분리하며 원문 URL·메모·오디오 동의를 넣지 않는다. 진짜 세션 미리보기의 명시 채택에서 원본 mode/SPF만 검증해 적용한다.
+- 소유10파일을 포함한 대상265/265 cohort와 대상 lint, 후속 미커밋 UI를 제외한 staged-index whole typecheck exit0. 공유 타입 이동 전후 기존 두 runtime 파일의 emitted JS는 동일하다.
+- `S28-CP4-S-product-setup.json`은 별도의 전체 작업폴더 UI26 통과와 실제22다운로드도 기록하지만 이 기반 commit의 중앙 UI 연결 인증으로 세지 않는다. 이후 중앙 연결과 최종 source capture가 필요하다. 초기 지연 로딩2실패와 접근성/재시도4실패는 실제 source 수정 뒤 원래 assertion·timeout을 유지한 재실행으로 해결한 이력을 보존했다.
+- S28 완료·134행 인증·사용자/전문가 승인·기본 앱 전환을 주장하지 않는다.

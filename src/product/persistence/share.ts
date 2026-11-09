@@ -25,6 +25,9 @@ function checksum(text: string): string {
   }
   return ((crc ^ 0xffffffff) >>> 0).toString(16).padStart(8, '0');
 }
+/** Shared only by the product's pe1/ps1 wire codecs. Kept outside the native
+ * research chunk so metadata routes never load analysis/runtime modules. */
+export { checksum as shareChecksum };
 
 function base64url(bytes: Uint8Array): string {
   let binary = '';
