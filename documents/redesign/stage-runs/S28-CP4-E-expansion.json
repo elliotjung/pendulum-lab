@@ -1,0 +1,99 @@
+{
+  "schema": "pendulum-checkpoint-test-execution/v1",
+  "checkpoint": "S28-foundation-expansion",
+  "purpose": "Bounded exact-file foundation validation only; centralUI/E2E remain unbound until separately captured. Not final134-row parity.",
+  "command": [
+    "node",
+    "node_modules\\vitest\\vitest.mjs",
+    "run",
+    "tests/product/lab/experiments/legacy-expansion.test.ts",
+    "--reporter=json",
+    "--outputFile=tmp/S28-foundation-expansion-vitest.json"
+  ],
+  "startedAt": "2026-11-09T05:21:37.911Z",
+  "finishedAt": "2026-11-09T05:21:39.784Z",
+  "exitCode": 0,
+  "spawnError": null,
+  "valid": true,
+  "sourcePolicy": "exact-owned-files-pre-post/LF/v1",
+  "commitFiles": [
+    "src/product/lab/experiments/legacy-expansion.ts",
+    "src/product/lab/experiments/legacy-expansion-client.ts",
+    "src/product/lab/experiments/legacy-expansion.worker.ts",
+    "src/product/lab/experiments/legacy-expansion-view.ts",
+    "src/product/lab/experiments/legacy-expansion-panel.ts",
+    "tests/product/lab/experiments/legacy-expansion.test.ts"
+  ],
+  "before": [
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-client.ts",
+      "sha256": "88eac33b00521a9ab7aa7a71d9f19c6d688c62ea362b53202ee57e40ccf6d7da"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-panel.ts",
+      "sha256": "3e40a0f289d480ee1dd7ab90b438fb7e39a1657195170b02f7f6cb6cbde3926d"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-view.ts",
+      "sha256": "36a5a0e79e331290763edce54f926d8c293ed7fbbe06e89088f7ca30265abc0d"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion.ts",
+      "sha256": "76f9d24c0125b7e454b9f425bbf3756e6475f174234755b11174de16b852e3a4"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion.worker.ts",
+      "sha256": "1009618258fffe771c2a6a498d3dfcfcbdebf3c96b62c02613749a310172cebd"
+    },
+    {
+      "path": "tests/product/lab/experiments/legacy-expansion.test.ts",
+      "sha256": "069ae19a819a59dd2988fc1d68f424a73224cf2502752487486e54cea3064b75"
+    }
+  ],
+  "after": [
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-client.ts",
+      "sha256": "88eac33b00521a9ab7aa7a71d9f19c6d688c62ea362b53202ee57e40ccf6d7da"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-panel.ts",
+      "sha256": "3e40a0f289d480ee1dd7ab90b438fb7e39a1657195170b02f7f6cb6cbde3926d"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion-view.ts",
+      "sha256": "36a5a0e79e331290763edce54f926d8c293ed7fbbe06e89088f7ca30265abc0d"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion.ts",
+      "sha256": "76f9d24c0125b7e454b9f425bbf3756e6475f174234755b11174de16b852e3a4"
+    },
+    {
+      "path": "src/product/lab/experiments/legacy-expansion.worker.ts",
+      "sha256": "1009618258fffe771c2a6a498d3dfcfcbdebf3c96b62c02613749a310172cebd"
+    },
+    {
+      "path": "tests/product/lab/experiments/legacy-expansion.test.ts",
+      "sha256": "069ae19a819a59dd2988fc1d68f424a73224cf2502752487486e54cea3064b75"
+    }
+  ],
+  "sourceFingerprint": "02a3c39f2263b42addee45c291c96e8c2bda38f57d024c9fa398fbc0f261a96a",
+  "report": {
+    "path": "tmp/S28-foundation-expansion-vitest.json",
+    "sha256": "2d4ecbc7b7d9b050f9eeef390352be31adce0c772aa3e65d5e29ddc721a55078",
+    "total": 27,
+    "passed": 27,
+    "failed": 0,
+    "pending": 0
+  },
+  "verification": {
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp4e-index/tsconfig.json",
+      "exitCode": 0,
+      "scope": "Clean staged index checkout excludes all later unstaged integrations."
+    },
+    "targetedEslintExitCode": 0
+  },
+  "scopeDescription": "7개 기존 확장 모델과16개 native 방법을 전용 worker suite에 연결하고 전체 입력·결과·IEEE 비유한 tag·진행/취소/재개·원본 archive를 보존한다.",
+  "stage": 28,
+  "completionClaim": false
+}
