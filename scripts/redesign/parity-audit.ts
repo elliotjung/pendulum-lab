@@ -1,40 +1,56 @@
-/** S28 evidence inventory. Static traceability and preserved source are not executable parity. */
+/** S28 preservation ledger and source-bound unit/build/browser facet validation. */
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { catalog, allDefinitions } from '../../src/product/catalog';
-import { PLANAR_INTEGRATOR_IDS } from '../../src/product/adapters/physics/planar-schema';
 import { buildInventory, type Inventory, type InventoryItem } from './inventory';
 import { validateBaselineCoverage } from './catalog-coverage';
+import {
+  captureSourceTree,
+  digestFingerprint,
+  evidenceHash,
+  evidencePath,
+  type EvidenceDigest
+} from './parity-capture';
+import {
+  validateParityCertificates,
+  type ParityCertificateBundle,
+  type ParityCertificatePolicy,
+  type ParityCaseEvidence,
+  type ParityCertificateResult
+} from './parity-certificate';
+import { readPreservationLedger, locationOnlyObservation, type PreservationLedgerResult } from './parity-preservation';
 
 export const S01_INVENTORY_SHA256 = 'e98d3b4187e4aba8e8296df9a02f8ca84864d101e3a2b535136f5fb2acf45068';
 export const PARITY_MATRIX_PATH = 'documents/redesign/parity/S28-matrix.json';
+export const PARITY_CERTIFICATES_PATH = 'documents/redesign/parity/S28-certificates.json';
+export const PARITY_POLICY_PATH = 'documents/redesign/parity/S28-certificate-policy.json';
 const baselinePath = 'documents/redesign/baseline/inventory.json';
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 const normalized = (value: string) => value.replaceAll('\r\n', '\n');
 const definitions = allDefinitions(catalog);
-
-interface SourceDigest {
-  path: string;
-  sha256: string;
+const computed = new WeakSet<object>();
+function freezeData(value: unknown, seen = new Set<object>()): void {
+  if (!value || typeof value !== 'object' || seen.has(value)) return;
+  seen.add(value);
+  Object.freeze(value);
+  for (const child of Object.values(value)) freezeData(child, seen);
 }
+
 interface SourceReference {
   path: string;
   line: number;
-}
-interface Gap {
-  id: string;
-  reason: string;
-  inspected: SourceReference[];
-  absentRuntimeSymbol?: string;
 }
 interface FileRow {
   path: string;
   baselineSha256: string;
   currentProjectedSha256: string | null;
+  /** Exact legacy projection identity, never an exception or semantic-equivalence claim. */
   preserved: boolean;
   futureStage: number | null;
+  exceptionId: string | null;
+  exceptionCovered: boolean;
 }
 interface TraceRow {
   id: string;
@@ -45,19 +61,22 @@ interface TraceRow {
   catalogId: string | null;
   executableRowId: string | null;
   futureStage: number | null;
+  locationOnlyChange: boolean;
+  exceptionId: string | null;
+  exceptionCovered: boolean;
 }
 interface ExecutableRow {
   id: string;
   catalogId: string | null;
   candidateRoute: string | null;
-  status: 'gap' | 'unverified';
-  gapIds: string[];
+  status: 'verified' | 'unverified';
+  /** These are actual case bindings, not a catalog/test-filename checklist. */
   requiredEvidence: {
-    newUiAction: null;
-    resultComparison: null;
-    migrationOrRoundTrip: null;
-    testResults: never[];
-    exportArtifact: null;
+    newUiAction: readonly ParityCaseEvidence[];
+    resultComparison: readonly ParityCaseEvidence[];
+    migrationOrRoundTrip: readonly ParityCaseEvidence[];
+    testResults: readonly ParityCaseEvidence[];
+    exportArtifact: readonly ParityCaseEvidence[];
   };
 }
 export interface ParityAudit {
@@ -65,415 +84,357 @@ export interface ParityAudit {
   scope: string;
   baseline: { inventorySha256: string; sourceDigest: string; frozenSha256: string };
   sourceFingerprint: string;
-  sources: SourceDigest[];
+  sources: readonly EvidenceDigest[];
   integrityErrors: string[];
+  preservation: PreservationLedgerResult;
+  addedObservations: readonly { item: InventoryItem; exceptionId: string | null; exceptionCovered: boolean }[];
+  certification: {
+    mode: 'live-source-build-report-validation';
+    certificatePath: string;
+    policyPath: string;
+    /** Retained historical inputs remain distinct from current live replay validity. */
+    historicalInputs: {
+      certificate: EvidenceDigest | null;
+      policy: EvidenceDigest | null;
+      captures: readonly ({ readonly id: string } & EvidenceDigest)[];
+    };
+    result: ParityCertificateResult;
+    replayNote: string;
+  };
   summary: {
     baselineFiles: number;
     preservedFiles: number;
+    exceptionCoveredFiles: number;
+    preservationCoveredFiles: number;
     baselineCapabilities: number;
     preservedCapabilities: number;
+    exceptionCoveredCapabilities: number;
+    preservationCoveredCapabilities: number;
     baselineFacts: number;
     preservedFacts: number;
+    exceptionCoveredFacts: number;
+    preservationCoveredFacts: number;
+    addedObservations: number;
+    verifiedAddedObservations: number;
     executableRows: number;
-    verifiedExecutableRows: 0;
+    verifiedExecutableRows: number;
     knownGapRows: number;
     unverifiedRows: number;
-    parityPercent: 0;
-    cutoverAllowed: false;
+    parityPercent: number;
+    cutoverAllowed: boolean;
   };
   files: FileRow[];
   capabilities: TraceRow[];
   facts: TraceRow[];
   executable: ExecutableRow[];
-  gaps: Gap[];
+  /** Source-level absence is not inferred from a renamed legacy UI function. */
+  gaps: readonly never[];
 }
-
-function sourceFiles(root: string): SourceDigest[] {
-  const output: SourceDigest[] = [];
-  function visit(relative: string) {
-    const absolute = path.join(root, relative);
-    if (!existsSync(absolute)) return;
-    const entries = readdirSync(absolute, { withFileTypes: true });
-    for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name, 'en'))) {
-      const file = `${relative}/${entry.name}`;
-      if (entry.isDirectory()) visit(file);
-      else output.push({ path: file, sha256: hash(normalized(readFileSync(path.join(root, file), 'utf8'))) });
-    }
-  }
-  visit('src/product');
-  visit('css/product');
-  for (const file of [
+function sourceFiles(root: string): readonly EvidenceDigest[] {
+  return captureSourceTree(root, [
+    'src',
+    'css',
+    'public',
+    'config',
+    'data',
+    'content',
+    'scripts',
+    'tests',
+    'e2e',
     'next.html',
-    'scripts/redesign/parity-audit.ts',
-    'scripts/redesign/inventory.ts',
-    'scripts/redesign/inventory-map.ts',
-    'scripts/redesign/catalog-coverage.ts',
-    'tests/product/parity/audit.test.ts'
-  ])
-    if (existsSync(path.join(root, file)))
-      output.push({ path: file, sha256: hash(normalized(readFileSync(path.join(root, file), 'utf8'))) });
-  return output.sort((a, b) => a.path.localeCompare(b.path, 'en'));
+    'app.html',
+    'reviewer.html',
+    'package.json',
+    'package-lock.json',
+    'vite.config.ts',
+    'tsconfig.json'
+  ]);
 }
-
-function reference(root: string, file: string, anchor: string): SourceReference {
-  const source = normalized(readFileSync(path.join(root, file), 'utf8'));
-  const offset = source.indexOf(anchor);
-  if (offset < 0) throw new Error(`Parity audit inspection anchor disappeared: ${file}#${anchor}`);
-  return { path: file, line: source.slice(0, offset).split('\n').length };
-}
-
-/** Explicitly inspected deficiencies. A missing symbol search is a gap clue, never a proof of parity. */
-function inspectGaps(root: string, sources: SourceDigest[]): Gap[] {
-  const runtime = sources
-    .filter((source) => source.path.startsWith('src/product/') && !source.path.startsWith('src/product/catalog/'))
-    .map((source) => normalized(readFileSync(path.join(root, source.path), 'utf8')))
-    .join('\n');
-  const gaps: Gap[] = [];
-  function absent(id: string, symbol: string, reason: string, file: string, anchor: string) {
-    if (!runtime.includes(symbol))
-      gaps.push({ id, reason, inspected: [reference(root, file, anchor)], absentRuntimeSymbol: symbol });
+function readCertification(root: string, rowIds: readonly string[], inventorySha256: string) {
+  const certificate = evidencePath(root, PARITY_CERTIFICATES_PATH),
+    policyFile = evidencePath(root, PARITY_POLICY_PATH);
+  let bundle: ParityCertificateBundle | null = null,
+    policy: ParityCertificatePolicy | null = null;
+  let certificateDigest: EvidenceDigest | null = null,
+    policyDigest: EvidenceDigest | null = null;
+  const errors: string[] = [];
+  try {
+    if (!existsSync(certificate) || !existsSync(policyFile))
+      throw new Error('Final certificate bundle/policy is missing; no execution facets are certified.');
+    const bytes = readFileSync(certificate),
+      policyBytes = readFileSync(policyFile);
+    certificateDigest = { path: PARITY_CERTIFICATES_PATH, sha256: evidenceHash(bytes) };
+    policyDigest = { path: PARITY_POLICY_PATH, sha256: evidenceHash(policyBytes) };
+    bundle = JSON.parse(bytes.toString('utf8')) as ParityCertificateBundle;
+    policy = JSON.parse(policyBytes.toString('utf8')) as ParityCertificatePolicy;
+    if (
+      !policy ||
+      policy.inventorySha256 !== inventorySha256 ||
+      !Array.isArray(policy.rowIds) ||
+      JSON.stringify([...policy.rowIds].sort()) !== JSON.stringify([...rowIds].sort())
+    )
+      throw new Error('Certificate policy must cover the exact frozen134 baseline row IDs and inventory SHA-256.');
+  } catch (cause) {
+    errors.push(cause instanceof Error ? cause.message : 'Malformed certificate inputs.');
   }
-  absent(
-    'analysis:stochastic-resonance',
-    'stochasticResonanceCurve',
-    'Catalog metadata retains the quartic-SDE resonance curve, but no new-product runtime calls it.',
-    'src/product/catalog/analyses-physical.ts',
-    "id: 'analysis:stochastic-resonance'"
-  );
-  absent(
-    'control:audio',
-    'AudioSonifier',
-    'Motion/energy sonification is preserved in the legacy app but has no new-product runtime connection.',
-    'src/product/lab/views/core-workspace.ts',
-    'actions.append(start, pause, step, reset, cancel)'
-  );
-  absent(
-    'control:forcing-and-feedback',
-    'simulateOgyControl',
-    'Pyragas is connected; the separately preserved OGY map-control workflow is not connected to the new UI.',
-    'src/product/catalog/auxiliary.ts',
-    "'forcing-and-feedback'"
-  );
-  absent(
-    'control:search-and-commands',
-    'installCommandPalettes',
-    'System-library search exists; the legacy command palette has no new-product runtime connection.',
-    'src/product/app/shell.ts',
-    'navigation.append(learnLink, labLink)'
-  );
-  absent(
-    'control:locale-and-theme',
-    'installLocaleSelect',
-    'The new shell exposes theme selection, while product views use Korean labels without an equivalent locale selector.',
-    'src/product/app/shell.ts',
-    "createThemeControl(document, 'product-theme')"
-  );
-  absent(
-    'importer:imu',
-    'ImuMotionCaptureController',
-    'Sensor CSV import is available; live permission-aware IMU capture has no new-product runtime connection.',
-    'src/product/lab/research/observation-settings.ts',
-    "['sensor', '센서 CSV']"
-  );
-  absent(
-    'importer:video',
-    'VideoMarkerCaptureController',
-    'Recorded-video import is available; the legacy live camera capture controller has no new-product runtime connection.',
-    'src/product/observations/video.ts',
-    'export async function previewRecordedVideo'
-  );
-  absent(
-    'integrator:sde-multiplicative',
-    'milsteinStep',
-    'The new Langevin adapter only steps additive noise; multiplicative Milstein is catalog metadata without execution.',
-    'src/product/adapters/physics/field.ts',
-    'eulerMaruyamaStep('
-  );
-  absent(
-    'integrator:sde-matrix',
-    'commutativeMilsteinStep',
-    'Matrix-noise Milstein/Stratonovich Heun have no new-product execution path.',
-    'src/product/adapters/physics/field.ts',
-    'eulerMaruyamaStep('
-  );
-  absent(
-    'runtime:gpu',
-    'runDoublePendulumEnsemble',
-    'WebGPU ensemble acceleration/fallback is catalog metadata without a new-product runtime connection.',
-    'src/product/lab/experiments/execute.ts',
-    'export'
-  );
-  absent(
-    'runtime:wasm',
-    'runDoublePendulumEnsembleWasm',
-    'Wasm ensemble acceleration/fallback is catalog metadata without a new-product runtime connection.',
-    'src/product/lab/experiments/execute.ts',
-    'export'
-  );
-  absent(
-    'runtime:public-globals',
-    'publishPublicApi',
-    'The product bootstrap does not publish the preserved stable window.PendulumLab namespace or legacy aliases.',
-    'src/product/app/application.ts',
-    'export function mountApplication'
-  );
-  gaps.push(
-    {
-      id: 'control:precision',
-      reason:
-        'The new quantity parser only accepts SI decimal/scientific input; legacy pi expressions and display-angle units are not equivalent.',
-      inspected: [reference(root, 'src/product/design-system/quantity.ts', 'export function parseQuantityInput')]
-    },
-    {
-      id: 'control:run-and-history',
-      reason:
-        'New core controls run/pause/step/reset and set speed; legacy recording, rewind scrub and recorded playback are not connected.',
-      inspected: [
-        reference(root, 'src/product/lab/views/core-workspace.ts', 'actions.append(start, pause, step, reset, cancel)')
-      ]
-    }
-  );
-  const migration = 'src/product/persistence/legacy-migration.ts';
-  const sessionMigration = 'src/product/persistence/legacy-migration-session.ts';
-  gaps.push(
-    {
-      id: 'route:share',
-      reason:
-        'Legacy share v1-v4 is recognized and backed up, but explicitly returns recovery-required without a canonical experiment. The new canonical share codec does not establish legacy share parity.',
-      inspected: [reference(root, migration, "'legacy-share-recovery-required'")]
-    },
-    {
-      id: 'route:tabs',
-      reason:
-        'Legacy tab/query URLs are explicitly recovery-only. Opening the preserved legacy app is a valid recovery path, but does not preserve those routes in the new UI.',
-      inspected: [reference(root, migration, "'legacy-link-recovery-required'")]
-    },
-    {
-      id: 'route:deep-link',
-      reason:
-        'Legacy numeric-control/query links are explicitly recovery-only and do not apply their validated control values to the new Lab. Source preservation is not deep-link execution parity.',
-      inspected: [reference(root, migration, "'legacy-link-recovery-required'")]
-    },
-    {
-      id: 'importer:workspace',
-      reason:
-        'Legacy workspace payloads are backed up and sent to legacy recovery; the new UI does not execute the preserved atomic workspace import/apply/rollback workflow.',
-      inspected: [reference(root, migration, "'legacy-format-recovery-required'")]
-    },
-    {
-      id: 'storage-schema:workspace',
-      reason:
-        'Legacy research-workbench storage/workspace schemas are recovery-only rather than migrated into equivalent new projects, sessions, experiments and retained results.',
-      inspected: [reference(root, migration, "'legacy-format-recovery-required'")]
-    },
-    {
-      id: 'storage-schema:research-db',
-      reason:
-        'Legacy research database/archive payloads are recovery-only. The new project local ZIP storage has a separate schema and does not establish legacy IndexedDB project/run/artifact migration parity.',
-      inspected: [
-        reference(root, migration, "'legacy-format-recovery-required'"),
-        reference(root, 'src/product/lab/projects/storage.ts', 'export const PROJECT_STORAGE_KEY')
-      ]
-    },
-    {
-      id: 'storage-schema:session',
-      reason:
-        'Versioned session restart migration preserves supported values, but accepts only Euler/RK2/RK4. Legacy sessions using the other registered methods require legacy recovery, so full session parity is incomplete.',
-      inspected: [reference(root, sessionMigration, "'unsupported-legacy-integrator'")]
-    },
-    {
-      id: 'importer:saved-run',
-      reason:
-        'Saved-session import is partially adapted as a bounded restart, restricted to Euler/RK2/RK4. Unsupported legacy integrator identities are correctly retained for recovery, but are not imported into an equivalent new run.',
-      inspected: [reference(root, sessionMigration, "'unsupported-legacy-integrator'")]
-    }
-  );
-  for (const method of definitions.filter((entry) => entry.category === 'integrator')) {
-    if (!('legacyId' in method) || !method.legacyId || (PLANAR_INTEGRATOR_IDS as readonly string[]).includes(method.id))
-      continue;
-    gaps.push({
-      id: method.baselineIds[0]!,
-      reason: `${method.legacyId} is preserved and registered, but is not selectable in the free double/compound Lab. Focused numerical demos do not establish equivalent legacy run/restore semantics.`,
-      inspected: [
-        reference(root, 'src/product/adapters/physics/planar-schema.ts', 'export const PLANAR_INTEGRATOR_IDS')
-      ]
-    });
-  }
-  return gaps.sort((a, b) => a.id.localeCompare(b.id, 'en'));
+  const result: ParityCertificateResult =
+    !errors.length && bundle && policy
+      ? validateParityCertificates(root, bundle, policy)
+      : { valid: false, verifiedIds: [], missingIds: rowIds, errors };
+  return { bundle, certificateDigest, policyDigest, result };
 }
-
 export function buildParityAudit(
   root: string,
   baseline: Inventory,
   current: Inventory,
   inventoryText: string
 ): ParityAudit {
-  const sources = sourceFiles(root);
-  const inventorySha256 = hash(normalized(inventoryText));
+  const sources = sourceFiles(root),
+    inventorySha256 = hash(normalized(inventoryText));
+  const preservation = readPreservationLedger(root, baseline);
   const integrityErrors = [
     ...current.errors,
     ...validateBaselineCoverage(catalog, baseline),
+    ...preservation.errors,
     ...(inventorySha256 === S01_INVENTORY_SHA256 ? [] : ['Frozen S01 inventory SHA-256 mismatch']),
     ...(baseline.files.length === 883 && baseline.capabilities.length === 118 && baseline.facts.length === 6825
       ? []
       : ['Frozen S01 inventory counts changed'])
   ];
   const currentFiles = new Map(current.files.map((item) => [item.ownerFile, item]));
-  const files = baseline.files.map((item): FileRow => ({
-    path: item.ownerFile,
-    baselineSha256: item.sha256,
-    currentProjectedSha256: currentFiles.get(item.ownerFile)?.sha256 ?? null,
-    preserved: item.sha256 === currentFiles.get(item.ownerFile)?.sha256,
-    futureStage: item.futureStage
-  }));
-  const extraFiles = current.files.filter((item) => !baseline.files.some((f) => f.ownerFile === item.ownerFile));
-  if (extraFiles.length)
-    integrityErrors.push(`Unexpected legacy source files: ${extraFiles.map((item) => item.ownerFile).join(', ')}`);
-  const catalogFor = (id: string) => definitions.find((definition) => definition.baselineIds.includes(id));
-  const executableIds = new Set(
-    [...baseline.capabilities, ...baseline.facts.filter((item) => item.category === 'integrator')].map(
-      (item) => item.id
-    )
+  const files = baseline.files.map((item): FileRow => {
+    const exception = preservation.entries.find((entry) => entry.path === item.ownerFile);
+    return {
+      path: item.ownerFile,
+      baselineSha256: item.sha256,
+      currentProjectedSha256: currentFiles.get(item.ownerFile)?.sha256 ?? null,
+      preserved: item.sha256 === currentFiles.get(item.ownerFile)?.sha256,
+      futureStage: item.futureStage,
+      exceptionId: exception?.id ?? null,
+      exceptionCovered: exception?.status === 'verified'
+    };
+  });
+  const extraFiles = current.files.filter(
+    (item) => !baseline.files.some((original) => original.ownerFile === item.ownerFile)
   );
+  if (extraFiles.length)
+    integrityErrors.push('Unexpected legacy source files: ' + extraFiles.map((item) => item.ownerFile).join(', '));
+  const executableIds = [
+    ...new Set(
+      [...baseline.capabilities, ...baseline.facts.filter((item) => item.category === 'integrator')].map(
+        (item) => item.id
+      )
+    )
+  ].sort();
+  const catalogFor = (id: string) => definitions.find((definition) => definition.baselineIds.includes(id));
+  const addedObservations: { item: InventoryItem; exceptionId: string | null; exceptionCovered: boolean }[] = [];
   function trace(items: InventoryItem[], actual: InventoryItem[]): TraceRow[] {
-    const byId = new Map(actual.map((item) => [item.id, item]));
-    const baselineIds = new Set(items.map((item) => item.id));
-    const extras = actual.filter((item) => !baselineIds.has(item.id));
-    if (extras.length)
-      integrityErrors.push(`Unexpected legacy observations: ${extras.map((item) => item.id).join(', ')}`);
-    return items.map((item) => ({
-      id: item.id,
-      category: item.category,
-      legacy: { path: item.ownerFile, line: item.line },
-      preserved: JSON.stringify(item) === JSON.stringify(byId.get(item.id)),
-      semanticCapability: item.semanticCapability ?? null,
-      catalogId:
-        catalogFor(item.id)?.id ?? (item.semanticCapability ? (catalogFor(item.semanticCapability)?.id ?? null) : null),
-      executableRowId: executableIds.has(item.id) ? item.id : (item.semanticCapability ?? null),
-      futureStage: item.futureStage
-    }));
+    const byId = new Map(actual.map((item) => [item.id, item])),
+      baselineIds = new Set(items.map((item) => item.id));
+    for (const item of actual.filter((item) => !baselineIds.has(item.id))) {
+      const exception = preservation.entries.find(
+        (entry) => entry.path === item.ownerFile && entry.addedFactIds.includes(item.id)
+      );
+      addedObservations.push({
+        item,
+        exceptionId: exception?.id ?? null,
+        exceptionCovered: exception?.status === 'verified'
+      });
+      if (!exception) integrityErrors.push('Unexpected legacy observation: ' + item.id);
+    }
+    return items.map((item) => {
+      const value = byId.get(item.id),
+        preserved = JSON.stringify(item) === JSON.stringify(value);
+      const locationOnlyChange = !preserved && locationOnlyObservation(item, value);
+      const exception = preservation.entries.find(
+        (entry) => entry.path === item.ownerFile && entry.locationOnlyFactIds.includes(item.id)
+      );
+      return {
+        id: item.id,
+        category: item.category,
+        legacy: { path: item.ownerFile, line: item.line },
+        preserved,
+        locationOnlyChange,
+        exceptionId: exception?.id ?? null,
+        exceptionCovered: locationOnlyChange && exception?.status === 'verified',
+        semanticCapability: item.semanticCapability ?? null,
+        catalogId:
+          catalogFor(item.id)?.id ??
+          (item.semanticCapability ? (catalogFor(item.semanticCapability)?.id ?? null) : null),
+        executableRowId: executableIds.includes(item.id) ? item.id : (item.semanticCapability ?? null),
+        futureStage: item.futureStage
+      };
+    });
   }
-  const capabilities = trace(baseline.capabilities, current.capabilities);
-  const facts = trace(baseline.facts, current.facts);
-  const gaps = inspectGaps(root, sources);
-  const executable = [...baseline.capabilities, ...baseline.facts.filter((item) => item.category === 'integrator')]
-    .sort((a, b) => a.id.localeCompare(b.id, 'en'))
-    .map((item): ExecutableRow => ({
-      id: item.id,
-      catalogId: catalogFor(item.id)?.id ?? null,
-      candidateRoute: item.category === 'system' ? `./next.html#/lab/${item.id.slice(7)}` : null,
-      status: gaps.some((gap) => gap.id === item.id) ? 'gap' : 'unverified',
-      gapIds: gaps.filter((gap) => gap.id === item.id).map((gap) => gap.id),
+  const capabilities = trace(baseline.capabilities, current.capabilities),
+    facts = trace(baseline.facts, current.facts);
+  const certification = readCertification(root, executableIds, inventorySha256),
+    verified = new Set(certification.result.verifiedIds);
+  const executable = executableIds.map((id): ExecutableRow => {
+    const evidence = (Array.isArray(certification.bundle?.rows) ? certification.bundle.rows : []).find(
+      (row) => row && row.id === id
+    )?.evidence;
+    const checked = verified.has(id) && Array.isArray(evidence) ? evidence : [];
+    return {
+      id,
+      catalogId: catalogFor(id)?.id ?? null,
+      candidateRoute: id.startsWith('system:') ? './next.html#/lab/' + id.slice(7) : null,
+      status: verified.has(id) ? 'verified' : 'unverified',
       requiredEvidence: {
-        newUiAction: null,
-        resultComparison: null,
-        migrationOrRoundTrip: null,
-        testResults: [],
-        exportArtifact: null
+        newUiAction: checked.filter((item) => item.facet === 'ui'),
+        resultComparison: checked.filter((item) => item.facet === 'comparison'),
+        migrationOrRoundTrip: checked.filter((item) => item.facet === 'roundtrip'),
+        testResults: checked,
+        exportArtifact: checked.filter((item) => item.facet === 'export')
       }
-    }));
-  return {
+    };
+  });
+  const summary = {
+    baselineFiles: files.length,
+    preservedFiles: files.filter((row) => row.preserved).length,
+    exceptionCoveredFiles: files.filter((row) => !row.preserved && row.exceptionCovered).length,
+    preservationCoveredFiles: files.filter((row) => row.preserved || row.exceptionCovered).length,
+    baselineCapabilities: capabilities.length,
+    preservedCapabilities: capabilities.filter((row) => row.preserved).length,
+    exceptionCoveredCapabilities: capabilities.filter((row) => !row.preserved && row.exceptionCovered).length,
+    preservationCoveredCapabilities: capabilities.filter((row) => row.preserved || row.exceptionCovered).length,
+    baselineFacts: facts.length,
+    preservedFacts: facts.filter((row) => row.preserved).length,
+    exceptionCoveredFacts: facts.filter((row) => !row.preserved && row.exceptionCovered).length,
+    preservationCoveredFacts: facts.filter((row) => row.preserved || row.exceptionCovered).length,
+    addedObservations: addedObservations.length,
+    verifiedAddedObservations: addedObservations.filter((row) => row.exceptionCovered).length,
+    executableRows: executable.length,
+    verifiedExecutableRows: executable.filter((row) => row.status === 'verified').length,
+    knownGapRows: 0,
+    unverifiedRows: executable.filter((row) => row.status === 'unverified').length,
+    parityPercent: Number(((100 * verified.size) / Math.max(1, executable.length)).toFixed(6)),
+    cutoverAllowed: false
+  };
+  const covered =
+    summary.preservationCoveredFiles === summary.baselineFiles &&
+    summary.preservationCoveredCapabilities === summary.baselineCapabilities &&
+    summary.preservationCoveredFacts === summary.baselineFacts &&
+    summary.verifiedAddedObservations === summary.addedObservations;
+  summary.cutoverAllowed =
+    !integrityErrors.length &&
+    covered &&
+    certification.result.valid &&
+    summary.verifiedExecutableRows === summary.executableRows;
+  const audit: ParityAudit = {
     schemaVersion: 'pendulum-parity-audit/v1',
     scope:
-      'S01 preservation and S28 executable-parity audit; catalog coverage and source preservation are not runtime certification. No passing execution evidence is asserted by this audit.',
+      'Frozen S01 identities, explicit tested S28 exceptions, and actual source-bound unit/build/browser facets are separate. Catalog registration and declarations never grant execution certification.',
     baseline: { inventorySha256, sourceDigest: baseline.sourceDigest, frozenSha256: S01_INVENTORY_SHA256 },
-    sourceFingerprint: hash(sources.map((source) => `${source.path}\0${source.sha256}`).join('\n')),
+    sourceFingerprint: digestFingerprint(sources),
     sources,
     integrityErrors: [...new Set(integrityErrors)].sort(),
-    summary: {
-      baselineFiles: files.length,
-      preservedFiles: files.filter((item) => item.preserved).length,
-      baselineCapabilities: capabilities.length,
-      preservedCapabilities: capabilities.filter((item) => item.preserved).length,
-      baselineFacts: facts.length,
-      preservedFacts: facts.filter((item) => item.preserved).length,
-      executableRows: executable.length,
-      verifiedExecutableRows: 0,
-      knownGapRows: executable.filter((item) => item.status === 'gap').length,
-      unverifiedRows: executable.filter((item) => item.status === 'unverified').length,
-      parityPercent: 0,
-      cutoverAllowed: false
+    preservation,
+    addedObservations,
+    certification: {
+      mode: 'live-source-build-report-validation',
+      certificatePath: PARITY_CERTIFICATES_PATH,
+      policyPath: PARITY_POLICY_PATH,
+      historicalInputs: {
+        certificate: certification.certificateDigest,
+        policy: certification.policyDigest,
+        captures: Array.isArray(certification.bundle?.captures) ? certification.bundle.captures : []
+      },
+      result: certification.result,
+      replayNote:
+        'Pinned captured inputs are historical provenance. Live --certify also requires unchanged current sources and every retained tmp production-build byte. A fresh clone must rebuild/replay the recorded build or explicitly report live replay unavailable; archived hashes alone never certify the current checkout.'
     },
+    summary,
     files,
     capabilities,
     facts,
     executable,
-    gaps
+    gaps: []
   };
+  freezeData(audit);
+  computed.add(audit);
+  return audit;
 }
-
-/** Record-per-line output keeps the exhaustive ledger reviewable without hiding individual inventory rows. */
 export function serializeParityAudit(audit: ParityAudit): string {
-  return `{\n${Object.entries(audit)
-    .map(
-      ([key, value]) =>
-        `  ${JSON.stringify(key)}: ${
-          Array.isArray(value)
-            ? `[\n${value.map((row) => `    ${JSON.stringify(row)}`).join(',\n')}\n  ]`
-            : JSON.stringify(value)
-        }`
-    )
-    .join(',\n')}\n}\n`;
+  return (
+    '{\n' +
+    Object.entries(audit)
+      .map(
+        ([key, value]) =>
+          '  ' +
+          JSON.stringify(key) +
+          ': ' +
+          (Array.isArray(value)
+            ? '[\n' + value.map((row) => '    ' + JSON.stringify(row)).join(',\n') + '\n  ]'
+            : JSON.stringify(value))
+      )
+      .join(',\n') +
+    '\n}\n'
+  );
 }
-
-/** Recompute expected from the frozen input and current sources before trusting a stored manifest. */
 export function validateParityAudit(value: unknown, expected: ParityAudit): string[] {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return ['Parity audit must be an object'];
-  const actual = value as Record<string, unknown>;
-  const errors: string[] = [];
-  for (const key of Object.keys(actual)) if (!Object.hasOwn(expected, key)) errors.push(`Unknown audit field: ${key}`);
+  const actual = value as Record<string, unknown>,
+    errors: string[] = [];
+  for (const key of Object.keys(actual)) if (!Object.hasOwn(expected, key)) errors.push('Unknown audit field: ' + key);
   for (const [key, rows] of Object.entries(expected)) {
     if (Array.isArray(rows)) {
       const candidates = actual[key];
       if (!Array.isArray(candidates)) {
-        errors.push(`Missing audit rows: ${key}`);
+        errors.push('Missing audit rows: ' + key);
         continue;
       }
       const ids = candidates.map((row: unknown) =>
         row && typeof row === 'object'
-          ? ((row as Record<string, unknown>).id ?? (row as Record<string, unknown>).path)
+          ? ((row as Record<string, unknown>).id ?? (row as Record<string, unknown>).path ?? JSON.stringify(row))
           : null
       );
-      if (new Set(ids).size !== ids.length) errors.push(`Duplicate audit rows: ${key}`);
+      if (new Set(ids).size !== ids.length) errors.push('Duplicate audit rows: ' + key);
       if (JSON.stringify(candidates) !== JSON.stringify(rows))
-        errors.push(`Stale, missing, invented or changed audit rows: ${key}`);
+        errors.push('Stale, missing, invented or changed audit rows: ' + key);
     } else if (JSON.stringify(actual[key]) !== JSON.stringify(rows))
-      errors.push(`Stale or changed audit field: ${key}`);
+      errors.push('Stale or changed audit field: ' + key);
   }
   return errors;
 }
-
-/** This audit has no runtime attestation format: editing a status or adding a file path cannot grant a pass. */
+/** Serialized status edits cannot confer trust; CLI certification always uses a freshly recomputed audit. */
 export function certificationErrors(audit: ParityAudit): string[] {
-  const errors = [...audit.integrityErrors];
+  const errors = [...audit.integrityErrors, ...audit.preservation.errors, ...audit.certification.result.errors];
   if (
-    audit.files.some((row) => !row.preserved) ||
-    audit.capabilities.some((row) => !row.preserved) ||
-    audit.facts.some((row) => !row.preserved)
+    audit.files.some((row) => !row.preserved && !row.exceptionCovered) ||
+    audit.capabilities.some((row) => !row.preserved && !row.exceptionCovered) ||
+    audit.facts.some((row) => !row.preserved && !row.exceptionCovered) ||
+    audit.addedObservations.some((row) => !row.exceptionCovered)
   )
-    errors.push('Legacy source or observation preservation is incomplete');
-  const gaps = audit.executable.filter((row) => row.status === 'gap').length;
-  const unverified = audit.executable.filter((row) => row.status === 'unverified').length;
-  if (gaps) errors.push(`Executable parity has ${gaps} known gap rows`);
-  if (unverified) errors.push(`Executable parity has ${unverified} rows without complete runtime evidence`);
-  if (audit.executable.some((row) => row.status !== 'gap' && row.status !== 'unverified'))
     errors.push(
-      'Unsupported executable pass claim: this audit accepts no catalog-only or manually asserted runtime certification'
+      'Legacy source or observation preservation is incomplete; byte drift and unverified exceptions remain visible'
     );
+  const unverified = audit.executable.filter((row) => row.status === 'unverified').length;
+  if (unverified) errors.push('Executable parity has ' + unverified + ' rows without complete runtime evidence');
   if (
-    audit.summary.cutoverAllowed !== false ||
-    audit.summary.parityPercent !== 0 ||
-    audit.summary.verifiedExecutableRows !== 0
+    !computed.has(audit) &&
+    (audit.executable.some((row) => row.status !== 'unverified') ||
+      audit.summary.verifiedExecutableRows ||
+      audit.summary.parityPercent ||
+      audit.summary.cutoverAllowed)
+  )
+    errors.push('Unsupported executable pass claim: certification requires a freshly validated source-bound audit');
+  if (
+    audit.executable.some((row) => !['verified', 'unverified'].includes(row.status)) ||
+    audit.summary.verifiedExecutableRows !== audit.executable.filter((row) => row.status === 'verified').length ||
+    audit.summary.parityPercent !==
+      Number(((100 * audit.summary.verifiedExecutableRows) / Math.max(1, audit.executable.length)).toFixed(6)) ||
+    (audit.summary.cutoverAllowed && (!audit.certification.result.valid || unverified))
   )
     errors.push('Unsupported cutover/parity claim');
-  return errors;
+  if (!audit.summary.cutoverAllowed)
+    errors.push('S29 cutover is blocked; final live replay certification is incomplete');
+  return [...new Set(errors)];
 }
-
 export function readParityAudit(root: string): ParityAudit {
   const inventoryText = readFileSync(path.join(root, baselinePath), 'utf8');
   return buildParityAudit(root, JSON.parse(inventoryText) as Inventory, buildInventory(root), inventoryText);
 }
-
 function main() {
   const args = process.argv.slice(2);
   if (
@@ -481,11 +442,11 @@ function main() {
     args.filter((arg) => arg === '--write').length > 1 ||
     (args.includes('--write') && (args.includes('--check') || args.includes('--certify')))
   )
-    throw new Error('Use --write, --check, or --check --certify. Default execution is read-only.');
-  const root = process.cwd();
-  const audit = readParityAudit(root);
-  const target = path.join(root, PARITY_MATRIX_PATH);
-  const errors = [...audit.integrityErrors];
+    throw new Error('Use --write, --check, or --check --certify. Default is read-only.');
+  const root = process.cwd(),
+    audit = readParityAudit(root),
+    target = path.join(root, PARITY_MATRIX_PATH),
+    errors = [...audit.integrityErrors];
   if (args.includes('--write')) {
     if (errors.length) throw new Error(errors.join('\n'));
     mkdirSync(path.dirname(target), { recursive: true });
@@ -496,12 +457,22 @@ function main() {
   }
   if (args.includes('--certify')) errors.push(...certificationErrors(audit));
   console.log(
-    `S28 parity audit: ${audit.summary.preservedFiles}/${audit.summary.baselineFiles} projected files, ${audit.summary.preservedCapabilities}/${audit.summary.baselineCapabilities} capabilities, ${audit.summary.preservedFacts}/${audit.summary.baselineFacts} facts preserved; executable ${audit.summary.knownGapRows} gap/${audit.summary.unverifiedRows} unverified/0 certified. S29 blocked.`
+    'S28 parity audit: ' +
+      audit.summary.preservedFiles +
+      '/' +
+      audit.summary.baselineFiles +
+      ' exact projected file identities; ' +
+      audit.summary.exceptionCoveredFiles +
+      ' separately tested changed files; ' +
+      audit.summary.verifiedExecutableRows +
+      '/' +
+      audit.summary.executableRows +
+      ' source-bound executable rows. Live cutover ' +
+      (audit.summary.cutoverAllowed ? 'eligible (human review still separate).' : 'blocked.')
   );
   if (errors.length) {
-    console.error(errors.join('\n'));
+    console.error([...new Set(errors)].join('\n'));
     process.exitCode = 1;
   }
 }
-
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

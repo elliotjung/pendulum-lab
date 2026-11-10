@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP6-I-central-integration",
+  "activeStageCheckpoint": "CP7-V-source-bound-validator",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP7-V evidence-tool105/105 actual0 + cleanstagedindex wholetypecheck0. Strict actualrunner/source/build/artifact checks and explicit independentlytested nativeexceptions; no product134certification implied. CP6I a4e260d push0/liveexact. Finalcaptures/allR/statuspush pending; next28/review28 unapproved.",
     "S28 CP6-I centralintegration47paths:65/65targetunit+8/8currentproductionChromium/Pixel5, cleanstagedindex wholetypecheck0, wholelint/typecheck0. Actualcontrols/share/migration/nativeviews/research bindings connected; originaluserdata/nativekernels unchanged. Final134sourcecapture/allR/statuspush remainpending; next28/review28 unapproved.",
     "S28 CP5-M metadata/control foundation40/40unit, clean-stagedindex wholetypecheck0/targetlint0. ODElabels/warnings mirror unchangednativeregistry without eager physicschunk imports; commands/prefs remainmetadataonly, separateownkeys no startupwrite. CP6A4d451f9ab5572c53e5a824a660505ae6240ccfba push0/liveexact. Central/fullrelease/finalcapture stillpending; next28/review28 unapproved.",
     "S28 CP6-A API/capture foundation32/32units, targetlint0 andclean-stagedindex wholetypecheck0. Exact20ownedpaths match priorfrozen source. Original APIs/collectors/userstores unchanged; separateversionedproductadapter andexplicitdeviceopt-in. CP3T6dcdac8dada3f31eff2c421264d9f78c0e116a2c and CP6R851b350819adfcb4ebf1190192472507edc5eda9 eachpush0/liveexact. Central/fullrelease/final134sourcecapture pending; next28/review28 unapproved.",

@@ -1,0 +1,64 @@
+{
+  "schema": "pendulum-preservation-exceptions/v1",
+  "stage": 28,
+  "explanation": "Explicit session-authorized tested additive adapters. Frozen S01 source/facts are not rewritten. Current byte drift and added observations remain visible; null final capture means declared/unverified, not preserved-by-test or human approval.",
+  "exceptions": [
+    {
+      "id": "S28-native-clock-transaction-boundary",
+      "path": "src/app/SimulationClock.ts",
+      "stage": 28,
+      "kind": "additive-native-clock-api/v1",
+      "baselineSha256": "774773472c1b0fcc66fffc307cc72e1c0781400da38fa49d837501a9fcb723d7",
+      "before": {
+        "gitCommit": "6f42052f5a6927e9bdfdb70437852aec50338522",
+        "gitBlob": "965d58020a3511cf095868591407143baa4edea7",
+        "sourceSha256": "774773472c1b0fcc66fffc307cc72e1c0781400da38fa49d837501a9fcb723d7"
+      },
+      "currentSha256": "ed9ea75cd3409c195966adcf19652dd8bacc679062076d634c0205c7a2ee8cc5",
+      "reason": "S28 asynchronous product adapters need checkpoint/restore and frame accounting around unchanged native computation. The session explicitly authorized this additive clock API with independent characterization of the existing advance contract; physics equations and steppers are not replaced.",
+      "preservedContract": [
+        "Existing deterministic/wall-clock advance behavior, state/time/energy/drift output and timing debt remain characterized against the original native contract.",
+        "New checkpoint/restore/accountFrame methods use the versioned pendulum-simulation-clock-checkpoint/v1 shape; invalid/accessor inputs are rejected before state mutation."
+      ],
+      "addedFactIds": [
+        "exported-declaration:src/app/SimulationClock.ts#SimulationClockCheckpoint",
+        "exported-declaration:src/app/SimulationClock.ts#SimulationFrameAccounting",
+        "storage-schema:src/app/SimulationClock.ts#pendulum-simulation-clock-checkpoint/v1"
+      ],
+      "locationOnlyFactIds": [
+        "exported-declaration:src/app/SimulationClock.ts#SimulationClock"
+      ],
+      "requiredSources": [
+        "src/app/SimulationClock.ts"
+      ],
+      "capture": null,
+      "cases": []
+    },
+    {
+      "id": "S28-isolated-production-package-output",
+      "path": "scripts/copy-legacy-assets.mjs",
+      "stage": 28,
+      "kind": "additive-generated-output-option/v1",
+      "baselineSha256": "160fbc530dc74ba35c40c83f483c03f0833bb9b2bbaa077708b8c83a799c4e17",
+      "before": {
+        "gitCommit": "6f42052f5a6927e9bdfdb70437852aec50338522",
+        "gitBlob": "1e31f46f77a649e9d518f9015cc74ccba4a2bfe8",
+        "sourceSha256": "160fbc530dc74ba35c40c83f483c03f0833bb9b2bbaa077708b8c83a799c4e17"
+      },
+      "currentSha256": "79edfd3e761d7c03cc8384dbbc125f69586bef3f4b752ee84430efd88eb7d885",
+      "reason": "S28 source-bound evidence builds need the existing production asset copier to target a fresh generated directory. This delta adds validated --out-dir and parameterizes output paths; the public report inventory/privacy logic already existed before this S28 delta and is not attributed to this change.",
+      "preservedContract": [
+        "Without arguments the existing copier still targets dist and copies the same CSS, public report inventory, claim registry, optional paper and app-to-index output contracts.",
+        "The optional generated output must remain inside the repository, reject traversal/absolute/symlink paths, and copy the same default payload bytes into that selected output."
+      ],
+      "addedFactIds": [],
+      "locationOnlyFactIds": [],
+      "requiredSources": [
+        "scripts/copy-legacy-assets.mjs",
+        "config/public-report-inventory.json"
+      ],
+      "capture": null,
+      "cases": []
+    }
+  ]
+}

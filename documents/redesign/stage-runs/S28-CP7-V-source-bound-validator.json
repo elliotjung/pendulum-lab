@@ -1,0 +1,90 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP7-V-source-bound-validator",
+  "createdAt": "2026-11-10T01:19:24.1884848Z",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "rawWorkingSha256": "455742dac8ef0f4361b0d26b3f0d3d6ab8aa313dbc54cce94f3b274689d19d6a"
+    },
+    {
+      "path": "scripts/copy-legacy-assets.mjs",
+      "rawWorkingSha256": "79edfd3e761d7c03cc8384dbbc125f69586bef3f4b752ee84430efd88eb7d885"
+    },
+    {
+      "path": "scripts/redesign/parity-artifacts.ts",
+      "rawWorkingSha256": "30af48b065fb95c756f91f97534e32aa93430667bcb56a9d23a079864f0b769a"
+    },
+    {
+      "path": "scripts/redesign/parity-audit.ts",
+      "rawWorkingSha256": "f971a51e9db5379287662b3b23dfef1f906b39031a0d72ec9fc923a87272e2f2"
+    },
+    {
+      "path": "scripts/redesign/parity-build.ts",
+      "rawWorkingSha256": "09a8e2e2f054c081636740748835d9911f1ec0410f1f35faae8dbf7f65597b3c"
+    },
+    {
+      "path": "scripts/redesign/parity-capture.ts",
+      "rawWorkingSha256": "ea8011c9657277c7c9ac7e2ad142222453fed96446085e56207e0ba80987e446"
+    },
+    {
+      "path": "scripts/redesign/parity-certificate.ts",
+      "rawWorkingSha256": "a5f006c0e62bd6d1e1277a31561074c0b6f3053bac051301ef25a23ee10e58f4"
+    },
+    {
+      "path": "scripts/redesign/parity-preservation.ts",
+      "rawWorkingSha256": "122bf10a9288f55aa006990672b1d7da38479cd50b642e925a868d95a69a6bfd"
+    },
+    {
+      "path": "scripts/redesign/parity-runner-report.ts",
+      "rawWorkingSha256": "23170b49cb718a91096c1ce8ab83575fa91924ebae1725f55c18176d941fb529"
+    },
+    {
+      "path": "tests/product/parity/audit.test.ts",
+      "rawWorkingSha256": "7b232688bba08e4fa10648790dbc6df0daf86bd6b9eae21f685cb70f3f6b70e5"
+    },
+    {
+      "path": "tests/product/parity/capture.test.ts",
+      "rawWorkingSha256": "88e482a0d4e8eb9e207cfde83ab31f695f5c8e147b76441a403d9a0ae61e125c"
+    },
+    {
+      "path": "tests/product/parity/certificate.test.ts",
+      "rawWorkingSha256": "465226efc46bad247b2e27292a460f050d2f6d590b31b1793a50cb88bb4bda5f"
+    },
+    {
+      "path": "tests/product/parity/embedded-artifacts.test.ts",
+      "rawWorkingSha256": "89a13c51eb2350165e67ba6b144ab0df03f499db5d5a4f8ac9b6655bf34ed60d"
+    },
+    {
+      "path": "tests/product/parity/evidence-fixtures.ts",
+      "rawWorkingSha256": "ceabe2aaadf0d9e0e5de5e4e942ae4cff6fadbe7f7be30ac209c86137642fe64"
+    },
+    {
+      "path": "tests/product/parity/packaging.test.ts",
+      "rawWorkingSha256": "37abc1616d466bb945045d2f3d3c250bca9b204e3c43a37e37c546e726406d7d"
+    },
+    {
+      "path": "tests/product/parity/preservation.test.ts",
+      "rawWorkingSha256": "73320c7810f23490da7a2260850edde143aff871c5f7c047a00ab541df0f40c8"
+    },
+    {
+      "path": "documents/redesign/parity/S28-preservation-exceptions.json",
+      "rawWorkingSha256": "a5fd35e1f3f363ead1dab843c3d72f86e1a5f364c3a2973e9abbe311d89a9415"
+    }
+  ],
+  "validation": {
+    "unitReportSha256": "4f95db3cdd78d4019ec957e956673e2f0769ea32b0e77ad455ccf15e3ea84368",
+    "failed": 0,
+    "passed": 105,
+    "observedExit": 0,
+    "cleanStagedIndexTypecheckExit": 0,
+    "pending": 0,
+    "unitReport": "tmp/S28-parity-tools-final-unit-20261110-r1.json"
+  },
+  "limits": [
+    "This validates evidence tools, not134product rows. Final captures and exact per-facet evidence remain required.",
+    "Two declared additive source exceptions are explicit and unverified until their independent old-source characterization captures are bound.",
+    "No human review, cutover or completed S28 is asserted."
+  ]
+}

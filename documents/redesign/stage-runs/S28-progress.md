@@ -229,3 +229,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 게시된 native adapter를 실제 Lab 제어·기록·위상 표시·전체 설정·명시 이전·조건 목록·연구/API에 연결했다. 원본 query/tab 의도와 별도 제품 저장 공간을 보존하며 로딩/취소/재시도/해제 경계를 둔다. 복원된1.7배속을 간단 재생 메뉴에도 정확히 표시한다.
 - 최신 별도 production 빌드·privacy22, 대상65/65 단위 검사와 Chromium/Pixel5 설정·공유·재생8/8 실제 exit0. 후속 adaptive/심사 도구를 제외한47경로 staged-index whole typecheck0, whole lint/typecheck0. 기존 문서 폴더 링크를 실제 추적 파일로 고쳐 Markdown audit157문서372참조0도 확인했다.
 - 이 bounded checkpoint는 전체134행 인증이 아니다. 전체 gate와 새 source capture, 사람 science review0/86 및 사용자 review28 미승인을 구분한다. 기존 물리/저장소/기본 앱 전환을 변경하지 않는다.
+
+
+### CP7-V — source-bound 인증 도구
+
+- CP6-I a4e260d735838dceadf0a26583fe0c1402cae0af push exit0/live exact match 확인.
+- 실제 runner와 source/build 전후 digest에 결속하고 누락·실패·skip·변조·경로 이탈·오래된 출력·불명확한 첨부를 거부한다. 실제 embedded bytes의 SHA와 별도 보존 파일을 연결하며 사용하지 않는 중복 진단 이름은 정상 허용한다.
+- 대상105/105 실제 exit0, 후속 adaptive 변경을 제외한 staged-index whole typecheck0. immutable Git blob의 기존 copier와 기본 산출물 동일성도 포함한다. 별도 임시 output 옵션을 추가하되 기본 build 동작을 보존한다.
+- 도구 통과를134개 제품 기능 인증으로 세지 않는다. 최종 실제 capture/기능별 네 facet/전체 gate와 사람 review는 별도이며 next28을 유지한다.

@@ -31,3 +31,6 @@
 *.woff2 binary
 *.ttf   binary
 *.zip   binary
+
+# S28 captures, runner reports and retained exports pin exact byte digests.
+documents/redesign/parity/** -text
