@@ -1,0 +1,448 @@
+{
+  "schema": "pendulum-s28-readonly-trace-analysis/v1",
+  "scope": "Existing two timedOut cases only; no new browser/tests/source/golden/config execution or edits.",
+  "report": {
+    "path": "documents/redesign/parity/evidence/quantity-visual-review-r1.report.json",
+    "sha256": "16a5dccf4dc6022efc8ffc9c53d3bda6f0fb885726bdc4c838f02747d1115bfa"
+  },
+  "failures": [
+    {
+      "file": "redesign/core-diagnostics.spec.ts",
+      "title": "S18 common core diagnostics › keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+      "project": "mobile-chrome",
+      "runnerStatus": "timedOut",
+      "runnerDurationMs": 30747,
+      "runnerStartTime": "2026-11-10T05:55:29.382Z",
+      "unchangedTimeoutMs": 30000,
+      "trace": {
+        "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/trace.zip",
+        "sha256": "f81091d03dcd004234a8a37c2bff16035764f6865a972a5df70157e995f69300"
+      },
+      "traceWallClockNote": "Elapsed trace wall time includes worker-scoped launch time; runner test-budget time and trace elapsed time are not interchangeable.",
+      "longApiCalls": [
+        {
+          "id": "pw:api@28",
+          "elapsedTraceWallMs": 22.531,
+          "durationMs": 5188.995,
+          "title": "Launch browser",
+          "source": [],
+          "error": null
+        },
+        {
+          "id": "pw:api@32",
+          "elapsedTraceWallMs": 5233.32,
+          "durationMs": 15159.345,
+          "title": "Create context",
+          "source": [],
+          "error": null
+        },
+        {
+          "id": "pw:api@57",
+          "elapsedTraceWallMs": 22438.123,
+          "durationMs": 5041.233,
+          "title": "Create page",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@axe-core\\playwright\\dist\\index.mjs",
+              "line": 313,
+              "column": 37,
+              "function": "AxeBuilder.finishRun"
+            }
+          ],
+          "error": null
+        },
+        {
+          "id": "pw:api@75",
+          "elapsedTraceWallMs": 29301.722,
+          "durationMs": 5119.574,
+          "title": "Create page",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@axe-core\\playwright\\dist\\index.mjs",
+              "line": 313,
+              "column": 37,
+              "function": "AxeBuilder.finishRun"
+            }
+          ],
+          "error": null
+        }
+      ],
+      "screenshotAssertions": [
+        {
+          "id": "expect@65",
+          "elapsedTraceWallMs": 28168.935,
+          "durationMs": 288.701,
+          "title": "Expect \"toHaveScreenshot(s18-core-diagnostics-light.png)\"",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\core-diagnostics.spec.ts",
+              "line": 273,
+              "column": 53
+            }
+          ],
+          "error": null
+        },
+        {
+          "id": "expect@83",
+          "elapsedTraceWallMs": 34836.344,
+          "durationMs": 133.075,
+          "title": "Expect \"toHaveScreenshot(s18-core-diagnostics-dark.png)\"",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\core-diagnostics.spec.ts",
+              "line": 277,
+              "column": 53
+            }
+          ],
+          "error": null
+        }
+      ],
+      "actualScreenshotMatchedLogCount": 2,
+      "lastLibraryCalls": [
+        {
+          "id": "call@103",
+          "method": "setViewportSize",
+          "elapsedTraceWallMs": 34970.667,
+          "expressionPrefix": ""
+        },
+        {
+          "id": "call@105",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 34984.245,
+          "expressionPrefix": "() => {\n      document.documentElement.style.zoom = '2';\n    }"
+        },
+        {
+          "id": "call@107",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 35055.019,
+          "expressionPrefix": "() => document.documentElement.scrollWidth <= innerWidth"
+        },
+        {
+          "id": "call@109",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 35066.363,
+          "expressionPrefix": "(function axeFunction(window) {\n  var global = window;\n  var document = window.document;\n  'use strict';\n  function _typ"
+        },
+        {
+          "id": "call@111",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 35113.051,
+          "expressionPrefix": "typeof window.axe.runPartial === \"function\""
+        },
+        {
+          "id": "call@113",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 35120.982,
+          "expressionPrefix": "({\n  context\n}) => {\n  return window.axe.utils.getFrameContexts(context);\n}"
+        },
+        {
+          "id": "call@115",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 35132.172,
+          "expressionPrefix": "({\n  context,\n  options\n}) => {\n  return window.axe.runPartial(context, options);\n}"
+        },
+        {
+          "id": "call@118",
+          "method": "newPage",
+          "elapsedTraceWallMs": 35386.094,
+          "expressionPrefix": ""
+        }
+      ],
+      "unfinishedTestCalls": [
+        {
+          "id": "pw:api@95",
+          "elapsedTraceWallMs": 35385.806,
+          "durationMs": null,
+          "title": "Create page",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@axe-core\\playwright\\dist\\index.mjs",
+              "line": 313,
+              "column": 37,
+              "function": "AxeBuilder.finishRun"
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    {
+      "file": "redesign/core-pendulum.spec.ts",
+      "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+      "project": "chromium",
+      "runnerStatus": "timedOut",
+      "runnerDurationMs": 31415,
+      "runnerStartTime": "2026-11-10T05:50:11.550Z",
+      "unchangedTimeoutMs": 30000,
+      "trace": {
+        "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/trace.zip",
+        "sha256": "02bd72a5c39da910778e452ee1544d2d88b90305c84701165484056b29d6ed2c"
+      },
+      "traceWallClockNote": "Elapsed trace wall time includes worker-scoped launch time; runner test-budget time and trace elapsed time are not interchangeable.",
+      "longApiCalls": [
+        {
+          "id": "pw:api@23",
+          "elapsedTraceWallMs": 8.066,
+          "durationMs": 5105.228,
+          "title": "Create context",
+          "source": [],
+          "error": null
+        },
+        {
+          "id": "pw:api@25",
+          "elapsedTraceWallMs": 5115.761,
+          "durationMs": 5098.802,
+          "title": "Create page",
+          "source": [],
+          "error": null
+        },
+        {
+          "id": "expect@27",
+          "elapsedTraceWallMs": 10320.045,
+          "durationMs": 915.265,
+          "title": "Expect \"toHaveAttribute\"",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\core-pendulum.spec.ts",
+              "line": 13,
+              "column": 48,
+              "function": "openSystem"
+            }
+          ],
+          "error": null
+        },
+        {
+          "id": "pw:api@75",
+          "elapsedTraceWallMs": 15113.1,
+          "durationMs": 5119.111,
+          "title": "Create page",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@axe-core\\playwright\\dist\\index.mjs",
+              "line": 313,
+              "column": 37,
+              "function": "AxeBuilder.finishRun"
+            }
+          ],
+          "error": null
+        },
+        {
+          "id": "expect@88",
+          "elapsedTraceWallMs": 21403.951,
+          "durationMs": 1117.369,
+          "title": "Expect \"toHaveAttribute\"",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\core-pendulum.spec.ts",
+              "line": 174,
+              "column": 62
+            }
+          ],
+          "error": null
+        },
+        {
+          "id": "pw:api@101",
+          "elapsedTraceWallMs": 23362.779,
+          "durationMs": 5101.484,
+          "title": "Create page",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@axe-core\\playwright\\dist\\index.mjs",
+              "line": 313,
+              "column": 37,
+              "function": "AxeBuilder.finishRun"
+            }
+          ],
+          "error": null
+        }
+      ],
+      "screenshotAssertions": [
+        {
+          "id": "expect@123",
+          "elapsedTraceWallMs": 29385.677,
+          "durationMs": 535.607,
+          "title": "Expect \"toHaveScreenshot(compound-double-analysis-light.png)\"",
+          "source": [
+            {
+              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+              "line": 44,
+              "column": 24,
+              "function": "expectLegacyPanelScreenshot"
+            }
+          ],
+          "error": null
+        }
+      ],
+      "actualScreenshotMatchedLogCount": 1,
+      "lastLibraryCalls": [
+        {
+          "id": "call@821",
+          "method": "expectScreenshot",
+          "elapsedTraceWallMs": 29399.651,
+          "expressionPrefix": ""
+        },
+        {
+          "id": "call@823",
+          "method": "screencastSetOverlayVisible",
+          "elapsedTraceWallMs": 29915.785,
+          "expressionPrefix": ""
+        },
+        {
+          "id": "call@825",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 29925.248,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        },
+        {
+          "id": "call@828",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 29953.766,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        },
+        {
+          "id": "call@831",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 29978.084,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        },
+        {
+          "id": "call@834",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 29995.074,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        },
+        {
+          "id": "call@838",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 30029.557,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        },
+        {
+          "id": "call@841",
+          "method": "evaluateExpression",
+          "elapsedTraceWallMs": 30050.767,
+          "expressionPrefix": "(marker, original) => marker.replaceWith(original)"
+        }
+      ],
+      "unfinishedTestCalls": []
+    }
+  ],
+  "comparisons": [
+    {
+      "path": "documents/redesign/parity/evidence/legacy-visual-validation/runner.report.json",
+      "sha256": "3f600d51d37a9db72f233a0ba1deecff1924a27b212864718c57435235fbf61d",
+      "cases": [
+        {
+          "file": "redesign/core-pendulum.spec.ts",
+          "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+          "project": "chromium",
+          "status": "expected",
+          "actualResults": [
+            {
+              "status": "passed",
+              "duration": 11159,
+              "startTime": "2026-11-10T02:45:16.900Z"
+            }
+          ]
+        },
+        {
+          "file": "redesign/core-pendulum.spec.ts",
+          "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+          "project": "mobile-chrome",
+          "status": "expected",
+          "actualResults": [
+            {
+              "status": "passed",
+              "duration": 16409,
+              "startTime": "2026-11-10T02:46:25.735Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "documents/redesign/parity/evidence/final-browser-chromium-g04.report.json",
+      "sha256": "d27f79ad3dc54b41f81d2ba9c96358cd07ee3567287e89e631a412ba68f9bb2b",
+      "cases": [
+        {
+          "file": "redesign/core-diagnostics.spec.ts",
+          "title": "S18 common core diagnostics › keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+          "project": "chromium",
+          "status": "expected",
+          "actualResults": [
+            {
+              "status": "passed",
+              "duration": 14723,
+              "startTime": "2026-11-10T05:36:56.000Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "documents/redesign/parity/evidence/quantity-visual-review-r1.report.json",
+      "sha256": "16a5dccf4dc6022efc8ffc9c53d3bda6f0fb885726bdc4c838f02747d1115bfa",
+      "cases": [
+        {
+          "file": "redesign/core-diagnostics.spec.ts",
+          "title": "S18 common core diagnostics › keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+          "project": "chromium",
+          "status": "expected",
+          "actualResults": [
+            {
+              "status": "passed",
+              "duration": 17451,
+              "startTime": "2026-11-10T05:49:18.065Z"
+            }
+          ]
+        },
+        {
+          "file": "redesign/core-diagnostics.spec.ts",
+          "title": "S18 common core diagnostics › keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+          "project": "mobile-chrome",
+          "status": "unexpected",
+          "actualResults": [
+            {
+              "status": "timedOut",
+              "duration": 30747,
+              "startTime": "2026-11-10T05:55:29.382Z"
+            }
+          ]
+        },
+        {
+          "file": "redesign/core-pendulum.spec.ts",
+          "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+          "project": "chromium",
+          "status": "unexpected",
+          "actualResults": [
+            {
+              "status": "timedOut",
+              "duration": 31415,
+              "startTime": "2026-11-10T05:50:11.550Z"
+            }
+          ]
+        },
+        {
+          "file": "redesign/core-pendulum.spec.ts",
+          "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+          "project": "mobile-chrome",
+          "status": "expected",
+          "actualResults": [
+            {
+              "status": "passed",
+              "duration": 18877,
+              "startTime": "2026-11-10T05:56:44.122Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "conclusions": [
+    "Compound Chromium completed both analysis result assertions and its unchanged analysis PNG matched before the deadline. The 30s deadline arrived during the helper finally node restoration. Later cleanup/export events are not a passing test: actual runner status remains timedOut.",
+    "Compound Chromium spent ~5.105s creating context, ~5.099s creating its initial page and ~5.119s/~5.102s creating axe finishRun pages. These ~20.4s are browser/context/page initialization, not native Poincare/Lyapunov computation.",
+    "Mobile diagnostics matched both light and dark PNGs, passed 200% zoom reflow, and was still in the third axe audit finishRun newPage boundary at termination. Earlier context creation was ~15.159s and two axe pages ~5.041s/~5.120s. Browser launch ~5.189s is also visible but worker fixture time is distinct from the test budget.",
+    "Trace evidence narrows the delay to browser/context/axe auxiliary-page setup. It does not prove CPU contention, video initialization, or another external cause; retain those only as hypotheses.",
+    "Keep the original timeout, assertions and raw failed reports. Run the same cases in isolation before considering any implementation change; historical passes do not substitute for a fresh passing capture."
+  ]
+}

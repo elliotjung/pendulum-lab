@@ -1,0 +1,1997 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP8-V2-reviewed-quantity-and-runtime-evidence",
+  "createdAt": "2026-11-10T23:47:58.370Z",
+  "completion": false,
+  "scopeCompletion": true,
+  "parentCheckpoint": {
+    "commit": "c883250ece45a3d16aa8f3e387b6d2bdc834bf5b",
+    "pushExitCode": 0,
+    "liveRemoteVerified": true,
+    "observation": "Parent task directly verified its published checkpoint before this bounded documentation task. This producer performs no Git operation."
+  },
+  "scope": "Six individually reviewed quantity/resonance PNGs, their six unchanged production cases, two unchanged-timeout isolated rechecks, and five current new E2E sources actually executed by prior valid Chromium groups02/03. Not final1120/parity134 completion.",
+  "focusedValidation": {
+    "actualPassedCases": 8,
+    "uniqueExactIdentities": 8,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "retries": 0,
+    "runnerErrors": 0,
+    "executions": [
+      {
+        "capture": {
+          "path": "documents/redesign/parity/evidence/quantity-reviewed-r2.capture.json",
+          "sha256": "4939bc3e077f39a39d26ba1f85ce7d9a07b1d7961908bd5015fe37cd11419f44"
+        },
+        "report": {
+          "path": "documents/redesign/parity/evidence/quantity-reviewed-r2.report.json",
+          "sha256": "630866665cfb692817f5eafa6b65ea538c93486aadd4a8bd2c60fbc0544bca35"
+        },
+        "actualExitCode": 0,
+        "captureValid": true,
+        "sourcePrePostStable": true,
+        "startedAt": "2026-11-10T23:34:02.352Z",
+        "finishedAt": "2026-11-10T23:34:55.329Z",
+        "actualRunnerDurationMs": 52139.53999999999,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "runnerErrors": 0,
+        "config": {
+          "path": "tmp/s28-release-playwright.config.ts",
+          "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+          "rawReportConfigFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts"
+        },
+        "cases": [
+          {
+            "file": "e2e/redesign/constraint-pendulum.spec.ts",
+            "title": "S11 spring, rope and double-string laboratory › frozen light/dark spring and slack rope layouts",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/constraint-pendulum.spec.ts",
+            "title": "S11 spring, rope and double-string laboratory › frozen light/dark spring and slack rope layouts",
+            "project": "mobile-chrome",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/driven-pendulum.spec.ts",
+            "title": "S13 driven and controlled systems laboratory › frozen driven workspace, cart-pole controller and response layouts",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/driven-pendulum.spec.ts",
+            "title": "S13 driven and controlled systems laboratory › frozen driven workspace, cart-pole controller and response layouts",
+            "project": "mobile-chrome",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/field-pendulum.spec.ts",
+            "title": "S16 stochastic lattice and field laboratory › frozen spatial heatmaps ensemble and static diagnostic layouts",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/field-pendulum.spec.ts",
+            "title": "S16 stochastic lattice and field laboratory › frozen spatial heatmaps ensemble and static diagnostic layouts",
+            "project": "mobile-chrome",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "capture": {
+          "path": "documents/redesign/parity/evidence/timeout-recheck-compound-chromium.capture.json",
+          "sha256": "00e6bd85707b86fc977c796de1bb43cf5443c71dbf8e7b8ece6103e5718317a6"
+        },
+        "report": {
+          "path": "documents/redesign/parity/evidence/timeout-recheck-compound-chromium.report.json",
+          "sha256": "abfd027750bbd060412644924951070128336bb149d90c75b746fb14e7a39d49"
+        },
+        "actualExitCode": 0,
+        "captureValid": true,
+        "sourcePrePostStable": true,
+        "startedAt": "2026-11-10T23:41:23.014Z",
+        "finishedAt": "2026-11-10T23:41:36.450Z",
+        "actualRunnerDurationMs": 12790.385,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "runnerErrors": 0,
+        "config": {
+          "path": "tmp/s28-release-no-video-playwright.config.ts",
+          "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
+          "rawReportConfigFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-no-video-playwright.config.ts"
+        },
+        "cases": [
+          {
+            "file": "e2e/redesign/core-pendulum.spec.ts",
+            "title": "S07 real planar pendulum laboratory › compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+            "project": "chromium",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "capture": {
+          "path": "documents/redesign/parity/evidence/timeout-recheck-diagnostics-mobile.capture.json",
+          "sha256": "01b0638e94c3d4c4345744e57a1f53a9391af4548fc367a093bcd55f45545a15"
+        },
+        "report": {
+          "path": "documents/redesign/parity/evidence/timeout-recheck-diagnostics-mobile.report.json",
+          "sha256": "5fd6a3886ba7ef034f84937fa4eef6372db60194e8a5a8f5f66ded686a9e2f67"
+        },
+        "actualExitCode": 0,
+        "captureValid": true,
+        "sourcePrePostStable": true,
+        "startedAt": "2026-11-10T23:41:44.203Z",
+        "finishedAt": "2026-11-10T23:42:01.234Z",
+        "actualRunnerDurationMs": 16309.937,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "runnerErrors": 0,
+        "config": {
+          "path": "tmp/s28-release-no-video-playwright.config.ts",
+          "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
+          "rawReportConfigFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-no-video-playwright.config.ts"
+        },
+        "cases": [
+          {
+            "file": "e2e/redesign/core-diagnostics.spec.ts",
+            "title": "S18 common core diagnostics › keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+            "project": "mobile-chrome",
+            "status": "passed"
+          }
+        ]
+      }
+    ]
+  },
+  "retainedPreviousBrowserGroups": {
+    "actualPassedCases": 187,
+    "executions": [
+      {
+        "capture": {
+          "path": "documents/redesign/parity/evidence/final-browser-chromium-g02.capture.json",
+          "sha256": "1cd1e08c2e6e54d339ac6665eb29252a8a0374716e620f2edb20e9547d608cc5"
+        },
+        "report": {
+          "path": "documents/redesign/parity/evidence/final-browser-chromium-g02.report.json",
+          "sha256": "50dc9c27e1f81bac3ad5b053f1c441db432e30c1c4f4f373a57393baa0393117"
+        },
+        "actualExitCode": 0,
+        "captureValid": true,
+        "sourcePrePostStable": true,
+        "startedAt": "2026-11-10T05:05:43.545Z",
+        "finishedAt": "2026-11-10T05:19:36.651Z",
+        "actualRunnerDurationMs": 832218.419,
+        "passed": 94,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "runnerErrors": 0,
+        "config": {
+          "path": "tmp/s28-release-playwright.config.ts",
+          "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+          "rawReportConfigFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts"
+        },
+        "cases": [
+          {
+            "file": "e2e/redesign/native-design.spec.ts",
+            "title": "actual native multi-variable design and studyPoint UI › generates and refines actual native points, evaluates real workers and preserves full exported outputs",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/native-design.spec.ts",
+            "title": "actual native multi-variable design and studyPoint UI › refuses damping substitution and corrupt resumed inputs while preserving the completed state",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › preview confirmation recovers gravity and restores original observation lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › changed transformation invalidates pending preview and malformed input preserves confirmed original",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › sensor unit, time alignment and missing-data preview are explicit before import",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › coordinate CSV exposes physical unit and pivot calibration in its retained history",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › saved observation alone needs a new preview confirmation before parameter estimation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › malformed and unsupported saved JSON preserve an existing confirmed observation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › CSV upload preserves a UTF-8 BOM and rejects malformed encoding before confirmation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › light and dark observation previews retain explicit units and source lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › sobol executes native runs and exports its design and diagnostics",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › pce executes native runs and exports its design and diagnostics",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › long native uncertainty computation cancels without losing the confirmed observation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › local recorded video extracts actual colour markers and retains original media bytes",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/observations-inverse.spec.ts",
+            "title": "S22 observations, inverse problems and uncertainty › keyboard, narrow layout and 200 percent zoom preserve the complete import flow",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:rk4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:rk2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:euler: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:verlet: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:leapfrog: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:symplectic: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:yoshida4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:yoshida6: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:yoshida8: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:hmidpoint: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:gauss2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:rkf45: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:dopri5: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:dop853: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:gbs: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › double integrator:bdf2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:rk4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:rk2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:euler: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:verlet: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:leapfrog: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:symplectic: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:yoshida4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:yoshida6: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:yoshida8: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:hmidpoint: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:gauss2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:rkf45: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:dopri5: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:dop853: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:gbs: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › compound-double integrator:bdf2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:rk4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:rk2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:euler: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:verlet: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:leapfrog: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:symplectic: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:yoshida4: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:yoshida6: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:yoshida8: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:hmidpoint: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:gauss2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:rkf45: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:dopri5: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:dop853: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:gbs: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/ode-method-parity.spec.ts",
+            "title": "S28 all sixteen native ODE methods through the real free laboratory UI › triple integrator:bdf2: selects, steps and exports the exact native restart and result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-api.spec.ts",
+            "title": "S28 separately opted-in versioned research namespace over actual live providers › publishes only after separate opt-in and reads actual S22 preview and confirmed original provenance",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-api.spec.ts",
+            "title": "S28 separately opted-in versioned research namespace over actual live providers › uses displayed S21 settings and genuine native workers to prepare, run and compare the exact plan",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-api.spec.ts",
+            "title": "S28 separately opted-in versioned research namespace over actual live providers › cancels real queue ownership, explicitly resumes with native results and rejects in-flight API work on navigation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-api.spec.ts",
+            "title": "S28 separately opted-in versioned research namespace over actual live providers › captures actual S24 recorded run bytes, guards busy work and exports all six genuine versioned artifacts",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-api.spec.ts",
+            "title": "S28 separately opted-in versioned research namespace over actual live providers › preserves an unknown legacy alias and exposes clear migration contracts with keyboard and full axe at 320px",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/runtime-acceleration.spec.ts",
+            "title": "S28 actual native runtime capability and backend execution › double: actual backend, independent native oracle, explicit fallback and cancellation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/runtime-acceleration.spec.ts",
+            "title": "S28 actual native runtime capability and backend execution › triple: actual backend, independent native oracle, explicit fallback and cancellation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/runtime-acceleration.spec.ts",
+            "title": "S28 actual native runtime capability and backend execution › chain: actual backend, independent native oracle, explicit fallback and cancellation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/runtime-acceleration.spec.ts",
+            "title": "S28 actual native runtime capability and backend execution › compound-double: actual backend, independent native oracle, explicit fallback and cancellation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › planar: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › chain: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › constraint: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › spatial: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › driven: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › nonlinear: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › network: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › field: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › discrete: every workspace discovers stability tools with explained source requirements",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › loads the numerical workflow lazily and discards a late route load",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › native tools fixed-point, periodic-shooting, floquet, melnikov execute in workers with explicit sources and complete input lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › native tools continuation, pseudo-arclength, branch-switch, neimark-sacker execute in workers with explicit sources and complete input lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › native tools torus, arnold-tongue, codim-two execute in workers with explicit sources and complete input lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › saved fold branch reloads, restarts in the same direction and preserves original experiment/run",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › a converged physical solution flows into Floquet and continuation with preserved source lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › source compatibility and invalid inputs explain recovery without corrupting a result",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › worker startup errors recover on the next calculation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › nonconvergence preserves the last completed artifact",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › cancellation preserves the last completed artifact",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › keyboard, narrow layout and themes retain an accessible branch graph and convergence table",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stability-workflow.spec.ts",
+            "title": "S20 stability and bifurcation workflows › 200 percent zoom retains branch controls and accessible result tables",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/workspace-import-atomic.spec.ts",
+            "title": "Workspace restore rolls back every surface after a mid-apply failure, then commits on retry",
+            "project": "chromium",
+            "status": "passed"
+          }
+        ]
+      },
+      {
+        "capture": {
+          "path": "documents/redesign/parity/evidence/final-browser-chromium-g03.capture.json",
+          "sha256": "0c84291c107ad6d3ff173334ce881717b734a2dc5e4c9ff9df3ef26e4396d537"
+        },
+        "report": {
+          "path": "documents/redesign/parity/evidence/final-browser-chromium-g03.report.json",
+          "sha256": "a6293e85a9adb6d6778652a14e1916792b44191aae61d940af9cf94109d93abb"
+        },
+        "actualExitCode": 0,
+        "captureValid": true,
+        "sourcePrePostStable": true,
+        "startedAt": "2026-11-10T05:19:50.400Z",
+        "finishedAt": "2026-11-10T05:33:15.164Z",
+        "actualRunnerDurationMs": 803984.6780000001,
+        "passed": 93,
+        "failed": 0,
+        "skipped": 0,
+        "flaky": 0,
+        "retries": 0,
+        "runnerErrors": 0,
+        "config": {
+          "path": "tmp/s28-release-playwright.config.ts",
+          "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+          "rawReportConfigFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts"
+        },
+        "cases": [
+          {
+            "file": "e2e/accessibility.spec.ts",
+            "title": "core controls and canvases expose accessible names",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/accessibility.spec.ts",
+            "title": "dynamic canvases and rail controls receive stable accessible names",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/accessibility.spec.ts",
+            "title": "the 3D workspace deep link exposes an accessible canvas",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/accessibility.spec.ts",
+            "title": "diagnostics drawer manages keyboard focus and system accessibility preferences",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 command search reaches lessons, systems, exact analysis selectors and current actions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 command export preserves changed canonical physics while palette query DOM and handlers stay ephemeral",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 scientific entry and degree display preserve exact canonical values through unit changes and JSON",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 recorded native samples scrub, replay, export and restart as a new exact physical state",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 native renderer consumes display controls and exports settings without changing canonical physics",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/compatibility-controls.spec.ts",
+            "title": "S28 query handoff restores exact display/time settings and runs every native perturbation input after reload",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › standard-map: canonical save reload share and atomic import preserve the model",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › standard-map: ODE time controls and continuous analyses cannot be applied",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › quantum-kicked-rotor: canonical save reload share and atomic import preserve the model",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › quantum-kicked-rotor: ODE time controls and continuous analyses cannot be applied",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › unitary-floquet: canonical save reload share and atomic import preserve the model",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › unitary-floquet: ODE time controls and continuous analyses cannot be applied",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › standard-map: worker pause single iteration resume cancel and deterministic replay",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › quantum-kicked-rotor: worker pause single iteration resume cancel and deterministic replay",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › custom complex wavefunction survives save share import and gives identical evolution",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › zero-kick standard map wraps the angle while preserving unwrapped momentum",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › invalid complex dimensions normalization and grid drafts preserve applied data",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › known unitary matrix retains complex entries and reports physical quasi-energy convention",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › nonunitary operator preserves raw eigenvalue drift without projecting the input",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › standard-map: current complex state export restores an exact continuation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › quantum-kicked-rotor: current complex state export restores an exact continuation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › retained raw and downsampled iteration exports preserve both endpoints and disclose their stride",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › unsafe imports and corrupt local storage preserve originals and remain recoverable",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › route disposal terminates the real worker and late computation cannot replace the library",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › keyboard axe and 320px retain quantum controls: 작업 공간",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › keyboard axe and 320px retain quantum controls: 조건",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › keyboard axe and 320px retain quantum controls: 분석",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › keyboard axe and 320px retain quantum controls: 보관함",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › keyboard axe and 320px retain quantum controls: 내보내기",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › 200% zoom retains editable complex conditions without horizontal overflow",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family classical: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family flexible: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family spatial: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family driven-control: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family nonlinear: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family network: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family stochastic-field: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › complete family discrete-quantum: every catalog card opens actual conditions",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/discrete-quantum.spec.ts",
+            "title": "S17 discrete and quantum laboratory › phase cylinder wavefunction phase and quasi-energy figures have frozen distinct layouts",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab lab preserves its source and opens 작업 공간",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab compare preserves its source and opens 기준·근접 궤적 비교",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab lyap preserves its source and opens Lyapunov 분석",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab sweep preserves its source and opens 매개변수 sweep",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab bifurc preserves its source and opens 분기·연속추적",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab phase3d preserves its source and opens 3D 위상공간",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab density preserves its source and opens 위상 방문 누적",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab expansion preserves its source and opens 확장 모델 전체 suite",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab matrix preserves its source and opens 실험 조건·결과 행렬",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab validate preserves its source and opens 수치 검증",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab golden preserves its source and opens 기준 수치 검증",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab zeroone preserves its source and opens 0–1 chaos test",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab clv preserves its source and opens 공변 Lyapunov 벡터",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab basin preserves its source and opens 인력권 분석",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab rqa preserves its source and opens 재귀 정량화",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab ftle preserves its source and opens 유한시간 Lyapunov",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab architecture preserves its source and opens 실행 backend와 구조",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab research preserves its source and opens 연구 프로젝트",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab lab3d preserves its source and opens 3D 구속 진자",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab canonical preserves its source and opens 정준 좌표 진단",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab aplus preserves its source and opens 추가 수치 검증",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab docs preserves its source and opens 배우기 문서",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/legacy-tabs.spec.ts",
+            "title": "S28 legacy tab theory preserves its source and opens 식과 이론",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › captures real runs, composes a sourced figure and exports independently checked raw bytes",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › a fresh browser opens the verified ZIP only after preview and preserves its source identity",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › one project keeps distinct double and compound runs across library navigation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › real legacy research export opens through the compatibility adapter without losing any original member",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › an existing native analysis artifact joins the same run with its exact original bytes and lineage",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › batch: a native nested source must match its project run before association",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › model: a native nested source must match its project run before association",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › malformed, changed-checksum and traversal packages leave the adopted project intact",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › an explicitly missing source stays visible and cannot regenerate a misleading figure",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › separate local storage requires explicit validated restore and keeps legacy keys unchanged",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › the extracted reviewer opens offline in a new context without executing user text",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › the reviewer application verifies a package without fetching deployment reports",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › worker startup errors and cancellation preserve the current project and pending preview isolation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › keyboard, 320px and light/dark figure views retain accessible controls",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/research-project.spec.ts",
+            "title": "S24 research project and reproducible package › 200 percent zoom retains project editing, source descriptions and all controls",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › euler-maruyama: real worker execution, explicit interpretation and complete state/export round trip",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › milstein: real worker execution, explicit interpretation and complete state/export round trip",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › heun-stratonovich: real worker execution, explicit interpretation and complete state/export round trip",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › commutative-milstein: real worker execution, explicit interpretation and complete state/export round trip",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › standalone quartic resonance runs in a native worker, exports its full curve and cancels a later run",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/stochastic-methods.spec.ts",
+            "title": "S28 stochastic schemes and independent native resonance › malformed diffusion preview preserves the applied settings and allows explicit recovery",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/structure-diagnostics.spec.ts",
+            "title": "S28 native structure diagnostic production worker › double: exact native energy profile, independent source and guarded canonical scope",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/structure-diagnostics.spec.ts",
+            "title": "S28 native structure diagnostic production worker › compound-double: exact native energy profile, independent source and guarded canonical scope",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/structure-diagnostics.spec.ts",
+            "title": "S28 native structure diagnostic production worker › triple: exact native energy profile, independent source and guarded canonical scope",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/redesign/structure-diagnostics.spec.ts",
+            "title": "S28 native structure diagnostic production worker › chain: exact native energy profile, independent source and guarded canonical scope",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/smoke.spec.ts",
+            "title": "simulation runs, switches tabs, exports, and runs validation",
+            "project": "chromium",
+            "status": "passed"
+          },
+          {
+            "file": "e2e/smoke.spec.ts",
+            "title": "replay scrubber has a stable live sentinel and rewinds synchronously",
+            "project": "chromium",
+            "status": "passed"
+          }
+        ]
+      }
+    ],
+    "note": "Previously executed94+93 are retained actual successful source captures, not new executions or replacements for the failed group04."
+  },
+  "ownedNewTestSources": [
+    {
+      "path": "e2e/redesign/native-design.spec.ts",
+      "sha256": "7da9eeff945693340aecae9182eeda1ac5cf53d271986ebdb439ee162fe476db",
+      "currentMatchesBothRetainedSourceCaptures": true,
+      "actuallyExecutedIn": [
+        {
+          "capture": {
+            "path": "documents/redesign/parity/evidence/final-browser-chromium-g02.capture.json",
+            "sha256": "1cd1e08c2e6e54d339ac6665eb29252a8a0374716e620f2edb20e9547d608cc5"
+          },
+          "actualCases": [
+            {
+              "file": "e2e/redesign/native-design.spec.ts",
+              "title": "actual native multi-variable design and studyPoint UI › generates and refines actual native points, evaluates real workers and preserves full exported outputs",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/native-design.spec.ts",
+              "title": "actual native multi-variable design and studyPoint UI › refuses damping substitution and corrupt resumed inputs while preserving the completed state",
+              "project": "chromium",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "e2e/redesign/research-api.spec.ts",
+      "sha256": "083ef318ea08c491eb9a16c4fff5d996969731bca71a2876c34ab45cbd519dba",
+      "currentMatchesBothRetainedSourceCaptures": true,
+      "actuallyExecutedIn": [
+        {
+          "capture": {
+            "path": "documents/redesign/parity/evidence/final-browser-chromium-g02.capture.json",
+            "sha256": "1cd1e08c2e6e54d339ac6665eb29252a8a0374716e620f2edb20e9547d608cc5"
+          },
+          "actualCases": [
+            {
+              "file": "e2e/redesign/research-api.spec.ts",
+              "title": "S28 separately opted-in versioned research namespace over actual live providers › publishes only after separate opt-in and reads actual S22 preview and confirmed original provenance",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/research-api.spec.ts",
+              "title": "S28 separately opted-in versioned research namespace over actual live providers › uses displayed S21 settings and genuine native workers to prepare, run and compare the exact plan",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/research-api.spec.ts",
+              "title": "S28 separately opted-in versioned research namespace over actual live providers › cancels real queue ownership, explicitly resumes with native results and rejects in-flight API work on navigation",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/research-api.spec.ts",
+              "title": "S28 separately opted-in versioned research namespace over actual live providers › captures actual S24 recorded run bytes, guards busy work and exports all six genuine versioned artifacts",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/research-api.spec.ts",
+              "title": "S28 separately opted-in versioned research namespace over actual live providers › preserves an unknown legacy alias and exposes clear migration contracts with keyboard and full axe at 320px",
+              "project": "chromium",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "e2e/redesign/runtime-acceleration.spec.ts",
+      "sha256": "6b6a9449472e9bb591e0d3b733d1b8688ae06ce02cc1a6afe855d7e325d9d80c",
+      "currentMatchesBothRetainedSourceCaptures": true,
+      "actuallyExecutedIn": [
+        {
+          "capture": {
+            "path": "documents/redesign/parity/evidence/final-browser-chromium-g02.capture.json",
+            "sha256": "1cd1e08c2e6e54d339ac6665eb29252a8a0374716e620f2edb20e9547d608cc5"
+          },
+          "actualCases": [
+            {
+              "file": "e2e/redesign/runtime-acceleration.spec.ts",
+              "title": "S28 actual native runtime capability and backend execution › double: actual backend, independent native oracle, explicit fallback and cancellation",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/runtime-acceleration.spec.ts",
+              "title": "S28 actual native runtime capability and backend execution › triple: actual backend, independent native oracle, explicit fallback and cancellation",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/runtime-acceleration.spec.ts",
+              "title": "S28 actual native runtime capability and backend execution › chain: actual backend, independent native oracle, explicit fallback and cancellation",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/runtime-acceleration.spec.ts",
+              "title": "S28 actual native runtime capability and backend execution › compound-double: actual backend, independent native oracle, explicit fallback and cancellation",
+              "project": "chromium",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "e2e/redesign/legacy-tabs.spec.ts",
+      "sha256": "f45315e8678d5c5afaeb189aa071fc0bcc2364e6088a14ba3e3dbae0ff16d164",
+      "currentMatchesBothRetainedSourceCaptures": true,
+      "actuallyExecutedIn": [
+        {
+          "capture": {
+            "path": "documents/redesign/parity/evidence/final-browser-chromium-g03.capture.json",
+            "sha256": "0c84291c107ad6d3ff173334ce881717b734a2dc5e4c9ff9df3ef26e4396d537"
+          },
+          "actualCases": [
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab lab preserves its source and opens 작업 공간",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab compare preserves its source and opens 기준·근접 궤적 비교",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab lyap preserves its source and opens Lyapunov 분석",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab sweep preserves its source and opens 매개변수 sweep",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab bifurc preserves its source and opens 분기·연속추적",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab phase3d preserves its source and opens 3D 위상공간",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab density preserves its source and opens 위상 방문 누적",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab expansion preserves its source and opens 확장 모델 전체 suite",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab matrix preserves its source and opens 실험 조건·결과 행렬",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab validate preserves its source and opens 수치 검증",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab golden preserves its source and opens 기준 수치 검증",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab zeroone preserves its source and opens 0–1 chaos test",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab clv preserves its source and opens 공변 Lyapunov 벡터",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab basin preserves its source and opens 인력권 분석",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab rqa preserves its source and opens 재귀 정량화",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab ftle preserves its source and opens 유한시간 Lyapunov",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab architecture preserves its source and opens 실행 backend와 구조",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab research preserves its source and opens 연구 프로젝트",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab lab3d preserves its source and opens 3D 구속 진자",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab canonical preserves its source and opens 정준 좌표 진단",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab aplus preserves its source and opens 추가 수치 검증",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab docs preserves its source and opens 배우기 문서",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/legacy-tabs.spec.ts",
+              "title": "S28 legacy tab theory preserves its source and opens 식과 이론",
+              "project": "chromium",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "e2e/redesign/structure-diagnostics.spec.ts",
+      "sha256": "a3bc9cb1cbef3b979d2b72da7d5dd8368ff4a27428bd436e75dada9637c0515f",
+      "currentMatchesBothRetainedSourceCaptures": true,
+      "actuallyExecutedIn": [
+        {
+          "capture": {
+            "path": "documents/redesign/parity/evidence/final-browser-chromium-g03.capture.json",
+            "sha256": "0c84291c107ad6d3ff173334ce881717b734a2dc5e4c9ff9df3ef26e4396d537"
+          },
+          "actualCases": [
+            {
+              "file": "e2e/redesign/structure-diagnostics.spec.ts",
+              "title": "S28 native structure diagnostic production worker › double: exact native energy profile, independent source and guarded canonical scope",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/structure-diagnostics.spec.ts",
+              "title": "S28 native structure diagnostic production worker › compound-double: exact native energy profile, independent source and guarded canonical scope",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/structure-diagnostics.spec.ts",
+              "title": "S28 native structure diagnostic production worker › triple: exact native energy profile, independent source and guarded canonical scope",
+              "project": "chromium",
+              "status": "passed"
+            },
+            {
+              "file": "e2e/redesign/structure-diagnostics.spec.ts",
+              "title": "S28 native structure diagnostic production worker › chain: exact native energy profile, independent source and guarded canonical scope",
+              "project": "chromium",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "targetedEslint": {
+    "files": [
+      "e2e/redesign/native-design.spec.ts",
+      "e2e/redesign/research-api.spec.ts",
+      "e2e/redesign/runtime-acceleration.spec.ts",
+      "e2e/redesign/legacy-tabs.spec.ts",
+      "e2e/redesign/structure-diagnostics.spec.ts"
+    ],
+    "actualExitCode": 0,
+    "exitObservation": "Parent agent observed actual process completion before this report.",
+    "log": {
+      "path": "documents/redesign/parity/evidence/scoped-V2/eslint-20261111.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "intentionalVisuals": {
+    "newReviewedCount": 6,
+    "review": {
+      "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/review.json",
+      "sha256": "55533d9a2984a8b56f64ea1763329c80b8f7f77fe210d2ccad2f70c9e4f6a9a6"
+    },
+    "images": [
+      {
+        "path": "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-cartpole-controller-dark-chromium-win32.png",
+        "sha256": "6a6d64bd012e3b7b5c651b3cc0ab0e417354ea801109bfb7916988067ee4967b",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s13-cartpole-controller-dark-chromium-win32.png",
+          "sha256": "66391cb1dc371a238054cd1d85d21540ca40ba3c3dae413bca354ce684f6bf9a",
+          "width": 1280,
+          "height": 4100
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s13-cartpole-controller-dark-chromium-win32.png",
+          "sha256": "6a6d64bd012e3b7b5c651b3cc0ab0e417354ea801109bfb7916988067ee4967b",
+          "width": 1280,
+          "height": 4271
+        },
+        "baselineGitBlob": "16cbea035eb9067ac845aa62689f9176d2a31f6a",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-chromium-win32.png",
+        "sha256": "71a2edef087aabcda02306ca770112d601bf617f4894484780e4eec96e0667de",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s11-spring-inspector-dark-chromium-win32.png",
+          "sha256": "79d497b20723eac0d1f043a331ea6696f5d4c0217de5ba22f00ed9f20a8d69d0",
+          "width": 1280,
+          "height": 2767
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s11-spring-inspector-dark-chromium-win32.png",
+          "sha256": "71a2edef087aabcda02306ca770112d601bf617f4894484780e4eec96e0667de",
+          "width": 1280,
+          "height": 2857
+        },
+        "baselineGitBlob": "f62d7d07c1e61de075df3efd61bfc6c002b7d070",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      },
+      {
+        "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-mobile-chrome-win32.png",
+        "sha256": "5b001268b00d57bda681e6f30686c19a487f4332c1616ee16553f3de331d9403",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s11-spring-inspector-dark-mobile-chrome-win32.png",
+          "sha256": "a44f9e8b14e21782eee25487c544f20748ce2686591e0a7588ab8e9164cccf36",
+          "width": 393,
+          "height": 3928
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s11-spring-inspector-dark-mobile-chrome-win32.png",
+          "sha256": "5b001268b00d57bda681e6f30686c19a487f4332c1616ee16553f3de331d9403",
+          "width": 393,
+          "height": 4042
+        },
+        "baselineGitBlob": "4052f5d5a7aa8d3ffa49ee28d456ec1cf6e9b72d",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      },
+      {
+        "path": "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-chromium-win32.png",
+        "sha256": "5bfd7b9b3b80d213ec24962616040e071faed0bbe1b3b0bc9c5e56dfe72068cb",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s16-langevin-ensemble-light-chromium-win32.png",
+          "sha256": "0557d29c48cc9244814af50e294bbe0b8d4ef4664820b52dd9913fca73d957cd",
+          "width": 1280,
+          "height": 2967
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s16-langevin-ensemble-light-chromium-win32.png",
+          "sha256": "5bfd7b9b3b80d213ec24962616040e071faed0bbe1b3b0bc9c5e56dfe72068cb",
+          "width": 1280,
+          "height": 4700
+        },
+        "baselineGitBlob": "76049dd249b3389a5d82e3b15391bcb333647186",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      },
+      {
+        "path": "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-cartpole-controller-dark-mobile-chrome-win32.png",
+        "sha256": "cfe562b414e525f23f7dc688f468f4239577513e6c7c804e6fb849a7c6e76120",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s13-cartpole-controller-dark-mobile-chrome-win32.png",
+          "sha256": "8bfc94baa635ff544f8e6f9caf0b5232c1c018264227952cd213b243a9756f6a",
+          "width": 393,
+          "height": 7180
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s13-cartpole-controller-dark-mobile-chrome-win32.png",
+          "sha256": "cfe562b414e525f23f7dc688f468f4239577513e6c7c804e6fb849a7c6e76120",
+          "width": 393,
+          "height": 7408
+        },
+        "baselineGitBlob": "50a0f482989e5dd70967c2834db469302e84434f",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      },
+      {
+        "path": "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-mobile-chrome-win32.png",
+        "sha256": "8afdc7e9248a2b31f4e08346194728db2593249b742025a2d25320746cdc711f",
+        "currentMatchesValidatedSixCaseCapture": true,
+        "before": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/before/s16-langevin-ensemble-light-mobile-chrome-win32.png",
+          "sha256": "5cfc37db88cc47ac09ff05709ac1470b897f2acc6551c1611c0c90c07b2b89a7",
+          "width": 393,
+          "height": 3140
+        },
+        "after": {
+          "path": "documents/redesign/parity/evidence/intentional-quantity-visual-update/after/s16-langevin-ensemble-light-mobile-chrome-win32.png",
+          "sha256": "8afdc7e9248a2b31f4e08346194728db2593249b742025a2d25320746cdc711f",
+          "width": 393,
+          "height": 5095
+        },
+        "baselineGitBlob": "37d27bb6576cca365ddbf2a8f953563ff060ba58",
+        "rootTechnicalReview": true,
+        "independentAgentTechnicalReview": true,
+        "humanReviewed": false,
+        "classification": "Intentional S28 unit-control addition; baseline bytes remain archived and are not counted as raw preserved."
+      }
+    ],
+    "previousSeparateReviewedCount": 8,
+    "previousReview": {
+      "path": "documents/redesign/parity/evidence/intentional-inspector-visual-update/review.json",
+      "sha256": "6d6e0bdc7070e4f8eb7213e0be341261f00d05ef6bfcfdf56b28fca816df39aa"
+    },
+    "totalIntentionalProductPngs": 14,
+    "reviewLevel": "AI technical before/after/source review only",
+    "humanReviewed": false,
+    "scienceHumanReviewedUnits": 0,
+    "sciencePublishedUnits": 86,
+    "assertion": "All original image bytes remain separately archived. These14 PNG deltas remain explicit intentional changes, never raw-byte preservation or expert approval."
+  },
+  "diagnosticConfiguration": {
+    "old": {
+      "path": "tmp/s28-release-playwright.config.ts",
+      "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+      "video": "retain-on-failure"
+    },
+    "isolated": {
+      "path": "tmp/s28-release-no-video-playwright.config.ts",
+      "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
+      "video": "off"
+    },
+    "onlyInsertedText": "    video: 'off',\n",
+    "reverseInsertionRestoresExactOriginalBytes": true,
+    "oldConfigActualFocusedCases": 6,
+    "newConfigActualFocusedCases": 2,
+    "oldConfigRetainedEarlierGroups": 3,
+    "newConfigFutureGroups": 9,
+    "unchanged": [
+      "Original test assertions",
+      "30000ms test timeout and5000ms expect timeout plus existing per-test limits",
+      "Axe accessibility computations",
+      "Trace and failure screenshots",
+      "Screenshot threshold0.2/maxDiff100",
+      "worker1/retry0",
+      "Original numerical goldens",
+      "Same frozen348-file production build",
+      "All1120 original selected identities"
+    ],
+    "interpretation": "The two fresh actual rechecks pass with diagnostic video disabled. This does not prove ffmpeg, CPU contention or another external mechanism caused the historical delays. Each actual config is command/report/capture/current-SHA bound. The producer config precheck is separate from the unchanged core certificate validator."
+  },
+  "preservedFailureHistory": {
+    "originalFocusedCollection": 66,
+    "actualPassed": 59,
+    "actualFailed": 7,
+    "actualSkipped": 0,
+    "classification": {
+      "individuallyReviewedIntentionalVisualFailures": 5,
+      "unchangedTimeoutFailures": 2
+    },
+    "capture": {
+      "path": "documents/redesign/parity/evidence/quantity-visual-review-r1.capture.json",
+      "sha256": "66843d56ff966becd17132d1fc393b5a69a0aa26cf71eec1a551efcc9bc8df6a"
+    },
+    "report": {
+      "path": "documents/redesign/parity/evidence/quantity-visual-review-r1.report.json",
+      "sha256": "16a5dccf4dc6022efc8ffc9c53d3bda6f0fb885726bdc4c838f02747d1115bfa"
+    },
+    "earlierGroup04": {
+      "passed": 56,
+      "failed": 1,
+      "notRun": 36,
+      "capture": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g04.capture.json",
+        "sha256": "bf0ac995c0fa6a0937e6135c4fd94fcd644b9175fa5f89b392ddf9074b665278"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g04.report.json",
+        "sha256": "d27f79ad3dc54b41f81d2ba9c96358cd07ee3567287e89e631a412ba68f9bb2b"
+      }
+    },
+    "traceAnalysis": {
+      "path": "documents/redesign/parity/evidence/scoped-V2/quantity-timeout-trace-audit-r1.json",
+      "sha256": "0eb1ff4efc091c76f37580e54d486d6d1ea1a83e97790ea4919cf66b6670f5b3"
+    },
+    "note": "Failed raw captures/reports are unchanged and not certified. Isolated fresh successes are separately named actual executions."
+  },
+  "preservation": {
+    "report": {
+      "path": "documents/redesign/parity/evidence/scoped-V2/preservation-reviewed-ui-20261111-r1.json",
+      "sha256": "32b4e59e171d56add21b8470046c25eb0fd68e90e346cfa4f7bc22face775ef7"
+    },
+    "inspectedHead": "c883250ece45a3d16aa8f3e387b6d2bdc834bf5b",
+    "baselineCommit": "b78cdae4ea8e707e70ecd5a454173507f60aca2a",
+    "baselineFiles": 2175,
+    "equivalentFiles": 2101,
+    "intentionalChangedFiles": 74,
+    "unexpectedProtectedChanges": [],
+    "desktopRawHashesAllMatch": true,
+    "desktopTransportCopies": [
+      {
+        "name": "master-roadmap",
+        "repositoryPath": "documents/redesign/master-roadmap-ko.md",
+        "desktopPath": "<Desktop>/Pendulum_Lab_Complete_Redesign_Roadmap_KO.md",
+        "method": "raw-file SHA256 (read-only, no copying)",
+        "repositorySha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "desktopSha256": "1d46e04691d4119ced60dacb41945c75d9d1a20f66cbaed2b3664909f47f8995",
+        "matches": true,
+        "status": "matched"
+      },
+      {
+        "name": "execution-plan",
+        "repositoryPath": "documents/redesign/execution-plan-ko.md",
+        "desktopPath": "<Desktop>/Pendulum_Lab_Codex_Execution_Steps_KO.md",
+        "method": "raw-file SHA256 (read-only, no copying)",
+        "repositorySha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "desktopSha256": "803b191496edd95ebf2199a8983b920058109bb159d55f8bafeb0737fa735fc5",
+        "matches": true,
+        "status": "matched"
+      }
+    ],
+    "sourceFreezeCertified": false,
+    "basis": "Every S27 baseline blob compared to current working files via Git clean/EOL filters; symlinks compare link text. This is not raw CRLF byte equality.",
+    "limits": {
+      "testsExecuted": false,
+      "remoteVerified": false,
+      "humanOrExpertReviewCertified": false,
+      "modelSelectorObserved": false,
+      "sourceBoundParityCertified": false
+    }
+  },
+  "exactByteArchive": {
+    "manifest": {
+      "path": "documents/redesign/parity/evidence/scoped-V2/manifest.json",
+      "sha256": "7c65babad0c0d103d7fcd164163e6ee2bec0f2d06078e828d189ce2f498cee42"
+    },
+    "files": [
+      {
+        "source": "tmp/S28-quantity-timeout-trace-audit-r1.json",
+        "retained": {
+          "path": "documents/redesign/parity/evidence/scoped-V2/quantity-timeout-trace-audit-r1.json",
+          "sha256": "0eb1ff4efc091c76f37580e54d486d6d1ea1a83e97790ea4919cf66b6670f5b3"
+        },
+        "bytes": 17209,
+        "role": "Read-only actual failed trace analysis; no new test execution."
+      },
+      {
+        "source": "tmp/S28-preservation-reviewed-ui-20261111-r1.json",
+        "retained": {
+          "path": "documents/redesign/parity/evidence/scoped-V2/preservation-reviewed-ui-20261111-r1.json",
+          "sha256": "32b4e59e171d56add21b8470046c25eb0fd68e90e346cfa4f7bc22face775ef7"
+        },
+        "bytes": 755024,
+        "role": "Exact original S27 blob preservation audit at recorded inspectedHead; not a final source-freeze certificate."
+      },
+      {
+        "source": "tmp/S28-CP8-V2-eslint-20261111.log",
+        "retained": {
+          "path": "documents/redesign/parity/evidence/scoped-V2/eslint-20261111.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "bytes": 0,
+        "role": "Exact targeted ESLint log; actual exit0 observed by parent task."
+      },
+      {
+        "source": "tmp/S28-no-video-config-diff-proof.json",
+        "retained": {
+          "path": "documents/redesign/parity/evidence/scoped-V2/no-video-config-diff-proof.json",
+          "sha256": "bbe9900808916db04650fb794e663ba0a8cf6a64fe9a175e4c6b65590713271e"
+        },
+        "bytes": 1036,
+        "role": "Exact metadata-only byte reversal proof for the isolated diagnostic config."
+      }
+    ]
+  },
+  "remaining": {
+    "allFinalBrowserCases": 1120,
+    "finalGroupPlan": {
+      "path": "tmp/S28-final-browser-capture-plan-r2.json",
+      "sha256": "5a8f63e39284fc3eb2eeae38cd0b1da94d6431654d97c94270352185f0420ba6"
+    },
+    "pendingUnstartedBrowserGroups": 9,
+    "retainedSuccessfulBrowserGroups": 3,
+    "verifiedRetainedCases": 281,
+    "parityRows": 134,
+    "finalParityCertification": "PENDING",
+    "implementationCheckpointPush": "PENDING",
+    "finalStatusCommitAndPush": "PENDING",
+    "nextStage": 28,
+    "userReview28Approved": false,
+    "approvedReviewGates": [
+      7,
+      9,
+      17,
+      24
+    ],
+    "cutoverPerformed": false
+  },
+  "preservationImpact": "No native physics/runtime/source/helper/test assertions/config originals/user data or numerical goldens changed in this documentation task. Only the authorized explicit six product PNG deltas and scoped evidence/config adapter are recorded; no broad native byte-identity claim is added."
+}

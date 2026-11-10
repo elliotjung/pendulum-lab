@@ -1,0 +1,42 @@
+{
+  "schema": "pendulum-s28-scoped-exact-byte-archive/v1",
+  "checkpoint": "CP8-V2",
+  "files": [
+    {
+      "source": "tmp/S28-quantity-timeout-trace-audit-r1.json",
+      "retained": {
+        "path": "documents/redesign/parity/evidence/scoped-V2/quantity-timeout-trace-audit-r1.json",
+        "sha256": "0eb1ff4efc091c76f37580e54d486d6d1ea1a83e97790ea4919cf66b6670f5b3"
+      },
+      "bytes": 17209,
+      "role": "Read-only actual failed trace analysis; no new test execution."
+    },
+    {
+      "source": "tmp/S28-preservation-reviewed-ui-20261111-r1.json",
+      "retained": {
+        "path": "documents/redesign/parity/evidence/scoped-V2/preservation-reviewed-ui-20261111-r1.json",
+        "sha256": "32b4e59e171d56add21b8470046c25eb0fd68e90e346cfa4f7bc22face775ef7"
+      },
+      "bytes": 755024,
+      "role": "Exact original S27 blob preservation audit at recorded inspectedHead; not a final source-freeze certificate."
+    },
+    {
+      "source": "tmp/S28-CP8-V2-eslint-20261111.log",
+      "retained": {
+        "path": "documents/redesign/parity/evidence/scoped-V2/eslint-20261111.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "bytes": 0,
+      "role": "Exact targeted ESLint log; actual exit0 observed by parent task."
+    },
+    {
+      "source": "tmp/S28-no-video-config-diff-proof.json",
+      "retained": {
+        "path": "documents/redesign/parity/evidence/scoped-V2/no-video-config-diff-proof.json",
+        "sha256": "bbe9900808916db04650fb794e663ba0a8cf6a64fe9a175e4c6b65590713271e"
+      },
+      "bytes": 1036,
+      "role": "Exact metadata-only byte reversal proof for the isolated diagnostic config."
+    }
+  ]
+}

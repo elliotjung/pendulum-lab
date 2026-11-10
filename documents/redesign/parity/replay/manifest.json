@@ -1,0 +1,78 @@
+{
+  "schema": "pendulum-s28-replay-inputs/v1",
+  "purpose": "Exact task producer and reviewed planning inputs; not execution results or human approval.",
+  "files": [
+    {
+      "name": "s28-bind-final-certificates.ts",
+      "source": "tmp/s28-bind-final-certificates.ts",
+      "sha256": "e032f5749518c86a45b45d51a944aaf7e2edb7635e428d3ff9eb2a9d72bde04f",
+      "bytes": 20488
+    },
+    {
+      "name": "s28-source-closure.cjs",
+      "source": "tmp/s28-source-closure.cjs",
+      "sha256": "b4f5d44c42a6dbec1a27b5fa43756f191c28ccc834e9366957873206e8025226",
+      "bytes": 2144
+    },
+    {
+      "name": "S28-certificate-case-plan.json",
+      "source": "tmp/S28-certificate-case-plan.json",
+      "sha256": "b12b8f4c821a2d91bad734b262c8806e1b08fc371df25aa551ca216172e0cfb3",
+      "bytes": 5073441
+    },
+    {
+      "name": "S28-final-browser-capture-plan.json",
+      "source": "tmp/S28-final-browser-capture-plan.json",
+      "sha256": "7cb33d567ec1efd6b9937eedf25561dfcc0e4077839b8b86f228e2412849fdc1",
+      "bytes": 301525
+    },
+    {
+      "name": "s28-release-playwright.config.ts",
+      "source": "tmp/s28-release-playwright.config.ts",
+      "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+      "bytes": 3046
+    },
+    {
+      "name": "s28-run-browser-groups.ps1",
+      "source": "tmp/s28-run-browser-groups.ps1",
+      "sha256": "d6de5769ddaeb5a49656db55d674697dd633dba669ac7bbd3f3dec4c3aff05c1",
+      "bytes": 4319
+    },
+    {
+      "name": "s28-run-with-awake.ps1",
+      "source": "tmp/s28-run-with-awake.ps1",
+      "sha256": "1cc9e292d2c0f3b2c638a20fb4138d77e7bdcbe67371715f291c33085a33a9ab",
+      "bytes": 1169
+    },
+    {
+      "name": "S28-parity-unit-file-union.json",
+      "source": "tmp/S28-parity-unit-file-union.json",
+      "sha256": "626ef12e1a39524d6432bad53b5049a2a2505b572524996d4c1e6f637f3558e4",
+      "bytes": 46758
+    },
+    {
+      "name": "S28-final-parity-unit-command.json",
+      "source": "tmp/S28-final-parity-unit-command.json",
+      "sha256": "86414b62bb8e7f1746019b8e5ba34e4aceec3b9ef017f9e3ea1a7e660a24e605",
+      "bytes": 2274
+    },
+    {
+      "name": "S28-final-browser-capture-plan-r2.json",
+      "source": "tmp/S28-final-browser-capture-plan-r2.json",
+      "sha256": "5a8f63e39284fc3eb2eeae38cd0b1da94d6431654d97c94270352185f0420ba6",
+      "bytes": 307393
+    },
+    {
+      "name": "s28-run-browser-groups-r2.ps1",
+      "source": "tmp/s28-run-browser-groups-r2.ps1",
+      "sha256": "78489779f98f3fd25c7ad9ea8015c8bea035adc7a85102f82b72010674ca818f",
+      "bytes": 9649
+    },
+    {
+      "name": "s28-release-no-video-playwright.config.ts",
+      "source": "tmp/s28-release-no-video-playwright.config.ts",
+      "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
+      "bytes": 3064
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "pendulum-s28-intentional-visual-review/v1",
+  "reviewer": "AI independent technical visual/source review",
+  "humanReview": false,
+  "decision": "intentional-stochastic-description-and-independent-diagnostic-ui-acceptable-for-explicit-baseline-update",
+  "baselineUpdatedByThisReviewer": false,
+  "executionCertifiedByThisReview": false,
+  "project": "mobile-chrome",
+  "deviceBasis": "Pixel5 emulation;393px PNG, not320px or a physical device.",
+  "snapshot": "s16-langevin-ensemble-light.png",
+  "expected": {
+    "path": "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-mobile-chrome-win32.png",
+    "width": 393,
+    "height": 3140,
+    "bytes": 113795,
+    "sha256": "5cfc37db88cc47ac09ff05709ac1470b897f2acc6551c1611c0c90c07b2b89a7"
+  },
+  "actual": {
+    "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome/s16-langevin-ensemble-light-actual.png",
+    "width": 393,
+    "height": 5095,
+    "bytes": 171508,
+    "sha256": "8afdc7e9248a2b31f4e08346194728db2593249b742025a2d25320746cdc711f"
+  },
+  "observations": {
+    "bothWholeImagesViewedAtOriginalResolutionIndependentlyOfDesktopPair": true,
+    "heightDeltaPixels": 1955,
+    "quantityUnitControlChange": false,
+    "descriptionChange": {
+      "element": ".field-workspace .product-lead",
+      "before": "정규화 단일 진자에 가산 Itô 속도 잡음을 넣어 seed 기반 앙상블을 계산합니다.",
+      "after": "정규화 단일 진자에서 가산·곱셈·행렬 잡음과 확률 해석을 선택해 seed 기반 앙상블을 계산합니다.",
+      "layout": "The original two-line lead becomes three readable lines at393px. Subsequent existing execution/analysis content shifts down."
+    },
+    "existingContentPreserved": {
+      "execution": "Completed run;speed1x;tau0.2000;100.0%;21records;stride1;maximum1001times;1gridpoint;16members.",
+      "plot": "The compact ensemble plot retains its blue mean, brown upper and green lower spread curves and axes within the same mobile plot card. The compact layout omits large desktop ticks/legend in both original and actual; this is not a new loss. Mean/spread and finite-ensemble/non-probability-density explanations remain above and below, including21times,tau0–0.2,N1,fixed.",
+      "arrhenius": "Existing attemptRate1,activationEnergy0.25,kT0.05, calculate/download actions and output148.413159 remain readable; arrheniusMTTF/native approximation and floating-point caveats remain.",
+      "clippingOrOverlapObserved": false,
+      "oldControlsRemovedOrHiddenObserved": false
+    },
+    "addedPanel": {
+      "id": "field-stochastic-resonance",
+      "title": "확률 공명 · 독립 사차 이중 우물",
+      "location": "Appended after the preserved Arrhenius diagnostic inside the analysis card.",
+      "modelCaveatVisible": "Independent native overdamped quartic double-well Ito equation, normalized values, per-noise response/power/well occupancy/transitions, finite-sample maximum is not a universal optimum-noise claim.",
+      "fieldsVisuallyChecked": [
+        { "id": "field-resonance-amplitude", "value": "0.2" },
+        { "id": "field-resonance-driveOmega", "value": "1" },
+        { "id": "field-resonance-dt", "value": "0.02" },
+        { "id": "field-resonance-periods", "value": "4" },
+        { "id": "field-resonance-transientPeriods", "value": "2" },
+        { "id": "field-resonance-seed", "value": "28" },
+        { "id": "field-resonance-x0", "value": "-1" },
+        { "id": "field-resonance-sigmaMin", "value": "0" },
+        { "id": "field-resonance-sigmaMax", "value": "1.5" },
+        { "id": "field-resonance-sigmaCount", "value": "7" },
+        { "id": "field-resonance-realizations", "value": "4" }
+      ],
+      "actions": [
+        { "label": "확률 공명 곡선 계산", "state": "enabled" },
+        { "label": "확률 공명 계산 취소", "state": "disabled" },
+        { "label": "확률 공명 JSON 다운로드", "state": "disabled" }
+      ],
+      "progress": { "id": "field-resonance-progress", "visibleValue": "0% 완료" },
+      "status": "설정을 확인한 뒤 계산하세요. 이전 진자 run을 변경하지 않습니다.",
+      "newResultFabricated": false,
+      "mobileLayout": "All11inputs and range help use one column. Equation/caveat text wraps inside the card. Three action buttons wrap into distinct vertical rows within the card, not offscreen. The progress and initial status remain visible. Footer follows the longer section. No overlap, clipping, new horizontal content loss or substituted old result is visible."
+    },
+    "sourceCause": [
+      {
+        "path": "src/product/lab/views/field-workspace.ts",
+        "behavior": "Expanded actual stochastic-capability lead and appended independent resonance panel; disposal is paired."
+      },
+      {
+        "path": "src/product/lab/views/field-resonance-panel.ts",
+        "behavior": "Explicit calculate creates the separate native worker; initial output empty,progress0,cancel/download disabled."
+      },
+      {
+        "path": "src/product/adapters/physics/field-resonance.ts",
+        "behavior": "Visible defaults match FIELD_RESONANCE_DEFAULTS and bounded field definitions; native source stochasticResonanceCurve and independent-overdamped-quartic scope."
+      }
+    ],
+    "properResolution": "After the focused process exits, root may archive the original and update this exact reviewed mobile baseline from the actual bytes. Do not rewrite the actual-capability lead or alter old numeric content to match an obsolete snapshot. This is an explicit intentional UI update, not a blanket refresh."
+  },
+  "limitations": [
+    "This review covers only this mobile-chrome pair, without claiming pixel-byte identity or proving numerical equivalence from plot appearance.",
+    "AI inspection does not execute the independent resonance model, certify mathematical validity, approve cutover, represent expert/human review or certify physical-device/screen-reader behavior.",
+    "No runtime, tests, snapshot baselines, captured evidence or Git metadata was changed. Only this temporary JSON was created."
+  ]
+}

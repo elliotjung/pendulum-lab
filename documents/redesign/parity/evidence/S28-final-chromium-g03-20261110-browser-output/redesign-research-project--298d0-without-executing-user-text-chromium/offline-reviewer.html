@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Short double pendulum study · Offline Research Reviewer</title>
+<style>body{max-width:1000px;margin:0 auto;padding:24px;font:16px/1.6 system-ui,sans-serif;color:#14242c;background:#fff}h1{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f5f6;padding:16px;border:1px solid #cad5db}img{max-width:100%;height:auto}figure{margin:24px 0}summary{cursor:pointer}a{color:#155979}:focus-visible{outline:3px solid #b86212;outline-offset:4px}@media print{body{padding:0}details{display:block}}</style></head>
+<body><main><h1>Short double pendulum study</h1><p>오프라인 연구 검토 · pendulum-research-project/v1</p>
+<p>이 정적 보기는 export 시점의 보고서입니다. 파일을 실행하거나 체크섬을 다시 검증하지 않습니다. ZIP 전체의 SHA-256 검증은 Pendulum Lab reviewer.html#/project에서 수행하세요. 사람의 과학 검토는 별도로 필요합니다.</p>
+<figure><img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22480%22%20viewBox%3D%220%200%20800%20480%22%20role%3D%22img%22%20aria-label%3D%22Recorded%20theta1.%20Exact%20samples%20with%20angular%20units%3B%20no%20interpolation.%20%EA%B0%80%EB%A1%9C%EC%B6%95%20%EC%B6%95%20%5Bs%5D%2C%20%EC%84%B8%EB%A1%9C%EC%B6%95%20theta1%20%5Brad%5D.%20%EC%8B%A4%EC%A0%9C%20%EA%B8%B0%EB%A1%9D%205%ED%91%9C%EB%B3%B8%2C%20%EB%B3%B4%EA%B0%84%20%EC%97%86%EC%9D%8C.%20%EC%9B%90%20run%20run-a7e41489-1448-4562-8fb6-dd771f88d372%2C%20artifact%20artifact-43e37b4e9a0c7a2cda13c554-1.%22%3E%0A%3Crect%20width%3D%22800%22%20height%3D%22480%22%20fill%3D%22%23ffffff%22%2F%3E%0A%3Ctext%20x%3D%22400%22%20y%3D%2224%22%20text-anchor%3D%22middle%22%20font-size%3D%2215%22%20font-weight%3D%22bold%22%20fill%3D%22%23000000%22%20font-family%3D%22Georgia%2C%20serif%22%3ERecorded%20theta1%3C%2Ftext%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%2242%22%20x2%3D%2264%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%22416%22%20x2%3D%22780%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%2264%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%22420%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.191%3C%2Ftext%3E%0A%3Cline%20x1%3D%22207.2%22%20y1%3D%2242%22%20x2%3D%22207.2%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%22341.2%22%20x2%3D%22780%22%20y2%3D%22341.2%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%22207.2%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0.008%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%22345.2%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.193%3C%2Ftext%3E%0A%3Cline%20x1%3D%22350.4%22%20y1%3D%2242%22%20x2%3D%22350.4%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%22266.4%22%20x2%3D%22780%22%20y2%3D%22266.4%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%22350.4%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0.016%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%22270.4%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.195%3C%2Ftext%3E%0A%3Cline%20x1%3D%22493.6%22%20y1%3D%2242%22%20x2%3D%22493.6%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%22191.6%22%20x2%3D%22780%22%20y2%3D%22191.6%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%22493.6%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0.024%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%22195.6%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.197%3C%2Ftext%3E%0A%3Cline%20x1%3D%22636.8%22%20y1%3D%2242%22%20x2%3D%22636.8%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%22116.8%22%20x2%3D%22780%22%20y2%3D%22116.8%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%22636.8%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0.032%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%22120.8%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.199%3C%2Ftext%3E%0A%3Cline%20x1%3D%22780%22%20y1%3D%2242%22%20x2%3D%22780%22%20y2%3D%22416%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Cline%20x1%3D%2264%22%20y1%3D%2242%22%20x2%3D%22780%22%20y2%3D%2242%22%20stroke%3D%22%23cccccc%22%20stroke-width%3D%221%22%2F%3E%0A%3Ctext%20x%3D%22780%22%20y%3D%22434%22%20text-anchor%3D%22middle%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E0.04%3C%2Ftext%3E%0A%3Ctext%20x%3D%2256%22%20y%3D%2246%22%20text-anchor%3D%22end%22%20font-size%3D%2211%22%20fill%3D%22%23000000%22%3E1.2%3C%2Ftext%3E%0A%3Crect%20x%3D%2264%22%20y%3D%2242%22%20width%3D%22716%22%20height%3D%22374%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221%22%2F%3E%0A%3Cpath%20d%3D%22M64%2C62.036%20L243%2C82.886%20L422%2C145.454%20L601%2C249.787%20L780%2C395.964%22%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221.6%22%2F%3E%0A%3Ccircle%20cx%3D%2264%22%20cy%3D%2262.036%22%20r%3D%223.2%22%20fill%3D%22%23000000%22%2F%3E%3Ccircle%20cx%3D%22243%22%20cy%3D%2282.886%22%20r%3D%223.2%22%20fill%3D%22%23000000%22%2F%3E%3Ccircle%20cx%3D%22422%22%20cy%3D%22145.454%22%20r%3D%223.2%22%20fill%3D%22%23000000%22%2F%3E%3Ccircle%20cx%3D%22601%22%20cy%3D%22249.787%22%20r%3D%223.2%22%20fill%3D%22%23000000%22%2F%3E%3Ccircle%20cx%3D%22780%22%20cy%3D%22395.964%22%20r%3D%223.2%22%20fill%3D%22%23000000%22%2F%3E%0A%3Ctext%20x%3D%22422%22%20y%3D%22454%22%20text-anchor%3D%22middle%22%20font-size%3D%2212%22%20fill%3D%22%23000000%22%3E%EC%B6%95%20%5Bs%5D%3C%2Ftext%3E%0A%3Ctext%20x%3D%2216%22%20y%3D%22229%22%20text-anchor%3D%22middle%22%20font-size%3D%2212%22%20fill%3D%22%23000000%22%20transform%3D%22rotate(-90%2016%20229)%22%3Etheta1%20%5Brad%5D%3C%2Ftext%3E%0A%3Ctext%20x%3D%2264%22%20y%3D%22472%22%20font-size%3D%2210%22%20fill%3D%22%23000000%22%20opacity%3D%220.75%22%3EExact%20samples%20with%20angular%20units%3B%20no%20interpolation.%20%C2%B7%20%EA%B8%B0%EB%A1%9D%20%EC%8B%9C%EA%B3%84%EC%97%B4%20%C2%B7%20run%20run-a7e41489-1448-4562-8fb6-dd771f88d372%3C%2Ftext%3E%0A%3Cmetadata%3E%7B%26quot%3Bschema%26quot%3B%3A%26quot%3Bpendulum-research-figure%2Fv1%26quot%3B%2C%26quot%3BprojectId%26quot%3B%3A%26quot%3Bproject-1405fbae-e8f2-4996-879c-e2c468b17de7%26quot%3B%2C%26quot%3BfigureId%26quot%3B%3A%26quot%3Bfigure-mwa93ohv-4%26quot%3B%2C%26quot%3BrunId%26quot%3B%3A%26quot%3Brun-a7e41489-1448-4562-8fb6-dd771f88d372%26quot%3B%2C%26quot%3BsourceArtifactId%26quot%3B%3A%26quot%3Bartifact-43e37b4e9a0c7a2cda13c554-1%26quot%3B%2C%26quot%3BsourceSha256%26quot%3B%3A%26quot%3B43e37b4e9a0c7a2cda13c55442c1742cc3ac359460216289e98058533af8ae6d%26quot%3B%2C%26quot%3BsourcePath%26quot%3B%3A%26quot%3Bartifacts%2Fartifact-43e37b4e9a0c7a2cda13c554-1.json%26quot%3B%2C%26quot%3BxColumn%26quot%3B%3A-1%2C%26quot%3ByColumn%26quot%3B%3A0%2C%26quot%3BxLabel%26quot%3B%3A%26quot%3B%EC%B6%95%20%5Bs%5D%26quot%3B%2C%26quot%3ByLabel%26quot%3B%3A%26quot%3Btheta1%20%5Brad%5D%26quot%3B%2C%26quot%3BsampleCount%26quot%3B%3A5%2C%26quot%3Breduction%26quot%3B%3A%26quot%3Bnone%26quot%3B%2C%26quot%3Buncertainty%26quot%3B%3A%26quot%3Bnot-estimated%26quot%3B%7D%3C%2Fmetadata%3E%0A%3C%2Fsvg%3E" alt="Recorded theta1. Exact samples with angular units; no interpolation. 가로축 축 [s], 세로축 theta1 [rad]. 실제 기록 5표본, 보간 없음. 원 run run-a7e41489-1448-4562-8fb6-dd771f88d372, artifact artifact-43e37b4e9a0c7a2cda13c554-1."><figcaption>Recorded theta1. Exact samples with angular units; no interpolation. 가로축 축 [s], 세로축 theta1 [rad]. 실제 기록 5표본, 보간 없음. 원 run run-a7e41489-1448-4562-8fb6-dd771f88d372, artifact artifact-43e37b4e9a0c7a2cda13c554-1.</figcaption></figure><h2>연구 보고서</h2><pre># Short double pendulum study
+
+Can the original five recorded samples regenerate a figure without rerunning physics?
+
+Project: project-1405fbae-e8f2-4996-879c-e2c468b17de7
+Schema: pendulum-research-project/v1
+Software: @elliotjung/pendulum-lab 10.36.0
+Created: 2026-11-10T05:29:53.948Z
+Updated: 2026-11-10T05:29:55.091Z
+
+## 검증과 재현 범위
+
+SHA-256은 패키지 내부 바이트의 무결성을 확인합니다. 외부 출처·과학적 정확성·사람 검토를 인증하지 않습니다.
+원 run 설정·기록과 native 결과 파일을 보존합니다. 기록 캡처는 계산 checkpoint 재개 또는 모든 외부 환경의 bitwise 재현을 보장하지 않습니다.
+원본 결과 JSON은 해당 Lab 도구에서 다시 열어 재계산·재평가할 수 있습니다. legacy 파일은 기존 앱에서 열며 opaque 첨부는 실행하지 않습니다.
+
+## 세션과 run
+
+### 첫 실험 세션 · session-18a94c19-a93d-4b91-b959-309aab5bdf13
+
+### Replicate B · session-4c7edd25-1d20-4edb-bcd9-8b72affb487e
+
+- Recorded run A · run-a7e41489-1448-4562-8fb6-dd771f88d372 · completed · 2026-11-10T05:29:54.320Z
+  클릭 시점의 기록 표본 5개와 입력을 복사했습니다. 전체 궤적·새 계산·장기 재현성을 보장하지 않습니다.
+  System system:double · model planar-model-v1 · seed \(없음\)
+
+## Artifact와 누락 목록
+
+- 보존됨: experiment.json · artifact-42292fc08037bca4eadfd65f-0 · run run-a7e41489-1448-4562-8fb6-dd771f88d372
+  schema pendulum-experiment/v1 · 1397 bytes · SHA-256 42292fc08037bca4eadfd65fe328c82177c719b22e23e3c6db2f7fea572534f4
+  path artifacts/artifact-42292fc08037bca4eadfd65f-0.json · parents (없음)
+  캡처한 canonical 설정. SI 값·단위·seed·적분·model/schema version을 보존합니다.
+- 보존됨: series.json · artifact-43e37b4e9a0c7a2cda13c554-1 · run run-a7e41489-1448-4562-8fb6-dd771f88d372
+  schema pendulum-project-series/v1 · 2838 bytes · SHA-256 43e37b4e9a0c7a2cda13c55442c1742cc3ac359460216289e98058533af8ae6d
+  path artifacts/artifact-43e37b4e9a0c7a2cda13c554-1.json · parents artifact-42292fc08037bca4eadfd65f-0
+  실제 기록 표본을 순서·시간축·좌표·단위와 함께 복사했습니다. 보간·단위 재명명·재계산하지 않았습니다.
+
+## Notebook
+
+### Recorded observation
+
+These values are preserved observations from the existing engine.
+
+Artifact references: artifact-43e37b4e9a0c7a2cda13c554-1
+
+### Unsafe text remains text
+
+&amp;lt;img src=&quot;https://attacker.invalid/pixel&quot; onerror=&quot;alert\(1\)&quot;&amp;gt;&amp;lt;script&amp;gt;alert\(2\)&amp;lt;/script&amp;gt;
+
+Artifact references: (없음)
+
+## Figures
+
+### Recorded theta1
+
+Exact samples with angular units; no interpolation.
+
+Run run-a7e41489-1448-4562-8fb6-dd771f88d372 → artifact artifact-43e37b4e9a0c7a2cda13c554-1 → figure figure-mwa93ohv-4. 축 -1, 0.
+출력: figures/figure-mwa93ohv-4.svg · figures/figure-mwa93ohv-4.csv
+그림 생성 시 축·표본·표시 한도를 다시 확인하며 실패 사유는 unavailable.txt에 기록합니다.
+
+## Citations
+
+- S24 automated test fixture reference https://example.org/reference
+
+## Warnings
+
+- 체크섬은 파일 무결성만 확인하며 원본의 진위·과학적 정확성·사람 검토를 인증하지 않습니다.
+</pre>
+<details><summary>프로젝트 manifest · session/run/artifact/계보 전체 보기</summary><pre>{
+  &quot;schema&quot;: &quot;pendulum-research-project/v1&quot;,
+  &quot;id&quot;: &quot;project-1405fbae-e8f2-4996-879c-e2c468b17de7&quot;,
+  &quot;title&quot;: &quot;Short double pendulum study&quot;,
+  &quot;description&quot;: &quot;Can the original five recorded samples regenerate a figure without rerunning physics?&quot;,
+  &quot;createdAt&quot;: &quot;2026-11-10T05:29:53.948Z&quot;,
+  &quot;updatedAt&quot;: &quot;2026-11-10T05:29:55.091Z&quot;,
+  &quot;software&quot;: {
+    &quot;name&quot;: &quot;@elliotjung/pendulum-lab&quot;,
+    &quot;version&quot;: &quot;10.36.0&quot;
+  },
+  &quot;sessions&quot;: [
+    {
+      &quot;id&quot;: &quot;session-18a94c19-a93d-4b91-b959-309aab5bdf13&quot;,
+      &quot;title&quot;: &quot;첫 실험 세션&quot;,
+      &quot;createdAt&quot;: &quot;2026-11-10T05:29:53.949Z&quot;
+    },
+    {
+      &quot;id&quot;: &quot;session-4c7edd25-1d20-4edb-bcd9-8b72affb487e&quot;,
+      &quot;title&quot;: &quot;Replicate B&quot;,
+      &quot;createdAt&quot;: &quot;2026-11-10T05:29:54.079Z&quot;
+    }
+  ],
+  &quot;runs&quot;: [
+    {
+      &quot;id&quot;: &quot;run-a7e41489-1448-4562-8fb6-dd771f88d372&quot;,
+      &quot;sessionId&quot;: &quot;session-4c7edd25-1d20-4edb-bcd9-8b72affb487e&quot;,
+      &quot;label&quot;: &quot;Recorded run A&quot;,
+      &quot;createdAt&quot;: &quot;2026-11-10T05:29:54.320Z&quot;,
+      &quot;experiment&quot;: {
+        &quot;schema&quot;: &quot;pendulum-experiment/v1&quot;,
+        &quot;systemId&quot;: &quot;system:double&quot;,
+        &quot;modelVersion&quot;: &quot;planar-model-v1&quot;,
+        &quot;parameters&quot;: {
+          &quot;m1&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 1,
+            &quot;unit&quot;: &quot;kg&quot;
+          },
+          &quot;m2&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 1,
+            &quot;unit&quot;: &quot;kg&quot;
+          },
+          &quot;l1&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 1,
+            &quot;unit&quot;: &quot;m&quot;
+          },
+          &quot;l2&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 1,
+            &quot;unit&quot;: &quot;m&quot;
+          },
+          &quot;g&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 9.81,
+            &quot;unit&quot;: &quot;m/s^2&quot;
+          },
+          &quot;gamma&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 0,
+            &quot;unit&quot;: &quot;kg*m^2/s&quot;
+          }
+        },
+        &quot;initialConditions&quot;: {
+          &quot;theta1&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 1.2,
+            &quot;unit&quot;: &quot;rad&quot;
+          },
+          &quot;theta2&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 0.6,
+            &quot;unit&quot;: &quot;rad&quot;
+          },
+          &quot;omega1&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 0,
+            &quot;unit&quot;: &quot;rad/s&quot;
+          },
+          &quot;omega2&quot;: {
+            &quot;kind&quot;: &quot;scalar&quot;,
+            &quot;value&quot;: 0,
+            &quot;unit&quot;: &quot;rad/s&quot;
+          }
+        },
+        &quot;integrator&quot;: {
+          &quot;kind&quot;: &quot;selectable&quot;,
+          &quot;id&quot;: &quot;integrator:rk4&quot;,
+          &quot;version&quot;: &quot;planar-integrator-v1&quot;,
+          &quot;settings&quot;: {}
+        },
+        &quot;runtime&quot;: {
+          &quot;domain&quot;: &quot;time&quot;,
+          &quot;start&quot;: {
+            &quot;value&quot;: 0,
+            &quot;unit&quot;: &quot;s&quot;
+          },
+          &quot;duration&quot;: {
+            &quot;value&quot;: 0.04,
+            &quot;unit&quot;: &quot;s&quot;
+          },
+          &quot;step&quot;: {
+            &quot;value&quot;: 0.01,
+            &quot;unit&quot;: &quot;s&quot;
+          },
+          &quot;sampleEvery&quot;: 1
+        },
+        &quot;analyses&quot;: []
+      },
+      &quot;status&quot;: &quot;completed&quot;,
+      &quot;artifactIds&quot;: [
+        &quot;artifact-42292fc08037bca4eadfd65f-0&quot;,
+        &quot;artifact-43e37b4e9a0c7a2cda13c554-1&quot;
+      ],
+      &quot;note&quot;: &quot;클릭 시점의 기록 표본 5개와 입력을 복사했습니다. 전체 궤적·새 계산·장기 재현성을 보장하지 않습니다.&quot;
+    }
+  ],
+  &quot;artifacts&quot;: [
+    {
+      &quot;kind&quot;: &quot;configuration&quot;,
+      &quot;schema&quot;: &quot;pendulum-experiment/v1&quot;,
+      &quot;id&quot;: &quot;artifact-42292fc08037bca4eadfd65f-0&quot;,
+      &quot;runId&quot;: &quot;run-a7e41489-1448-4562-8fb6-dd771f88d372&quot;,
+      &quot;filename&quot;: &quot;experiment.json&quot;,
+      &quot;path&quot;: &quot;artifacts/artifact-42292fc08037bca4eadfd65f-0.json&quot;,
+      &quot;mediaType&quot;: &quot;application/json&quot;,
+      &quot;bytes&quot;: 1397,
+      &quot;sha256&quot;: &quot;42292fc08037bca4eadfd65fe328c82177c719b22e23e3c6db2f7fea572534f4&quot;,
+      &quot;status&quot;: &quot;present&quot;,
+      &quot;parentIds&quot;: [],
+      &quot;note&quot;: &quot;캡처한 canonical 설정. SI 값·단위·seed·적분·model/schema version을 보존합니다.&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;series&quot;,
+      &quot;schema&quot;: &quot;pendulum-project-series/v1&quot;,
+      &quot;id&quot;: &quot;artifact-43e37b4e9a0c7a2cda13c554-1&quot;,
+      &quot;runId&quot;: &quot;run-a7e41489-1448-4562-8fb6-dd771f88d372&quot;,
+      &quot;filename&quot;: &quot;series.json&quot;,
+      &quot;path&quot;: &quot;artifacts/artifact-43e37b4e9a0c7a2cda13c554-1.json&quot;,
+      &quot;mediaType&quot;: &quot;application/json&quot;,
+      &quot;bytes&quot;: 2838,
+      &quot;sha256&quot;: &quot;43e37b4e9a0c7a2cda13c55442c1742cc3ac359460216289e98058533af8ae6d&quot;,
+      &quot;status&quot;: &quot;present&quot;,
+      &quot;parentIds&quot;: [
+        &quot;artifact-42292fc08037bca4eadfd65f-0&quot;
+      ],
+      &quot;note&quot;: &quot;실제 기록 표본을 순서·시간축·좌표·단위와 함께 복사했습니다. 보간·단위 재명명·재계산하지 않았습니다.&quot;
+    }
+  ],
+  &quot;notebook&quot;: [
+    {
+      &quot;id&quot;: &quot;narrative-mwa93o8p-2&quot;,
+      &quot;title&quot;: &quot;Recorded observation&quot;,
+      &quot;text&quot;: &quot;These values are preserved observations from the existing engine.&quot;,
+      &quot;artifactIds&quot;: [
+        &quot;artifact-43e37b4e9a0c7a2cda13c554-1&quot;
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;narrative-mwa93onn-5&quot;,
+      &quot;title&quot;: &quot;Unsafe text remains text&quot;,
+      &quot;text&quot;: &quot;&lt;img src=\&quot;https://attacker.invalid/pixel\&quot; onerror=\&quot;alert(1)\&quot;&gt;&lt;script&gt;alert(2)&lt;/script&gt;&quot;,
+      &quot;artifactIds&quot;: []
+    }
+  ],
+  &quot;figures&quot;: [
+    {
+      &quot;id&quot;: &quot;figure-mwa93ohv-4&quot;,
+      &quot;title&quot;: &quot;Recorded theta1&quot;,
+      &quot;caption&quot;: &quot;Exact samples with angular units; no interpolation.&quot;,
+      &quot;runId&quot;: &quot;run-a7e41489-1448-4562-8fb6-dd771f88d372&quot;,
+      &quot;sourceArtifactId&quot;: &quot;artifact-43e37b4e9a0c7a2cda13c554-1&quot;,
+      &quot;xColumn&quot;: -1,
+      &quot;yColumn&quot;: 0,
+      &quot;theme&quot;: &quot;print&quot;
+    }
+  ],
+  &quot;citations&quot;: [
+    {
+      &quot;id&quot;: &quot;citation-mwa93ocd-3&quot;,
+      &quot;text&quot;: &quot;S24 automated test fixture reference&quot;,
+      &quot;url&quot;: &quot;https://example.org/reference&quot;
+    }
+  ],
+  &quot;warnings&quot;: [
+    &quot;체크섬은 파일 무결성만 확인하며 원본의 진위·과학적 정확성·사람 검토를 인증하지 않습니다.&quot;
+  ]
+}</pre></details>
+<p>패키지를 풀면 manifest/checksums.json과 원본 artifacts/ 파일, notebook.json, report.md, figures/가 함께 있습니다. 원본 첨부의 HTML/SVG/script는 이 화면에서 실행하지 않습니다.</p>
+</main></body></html>

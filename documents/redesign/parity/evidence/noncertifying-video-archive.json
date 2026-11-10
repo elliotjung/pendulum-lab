@@ -1,0 +1,80 @@
+{
+  "schema": "pendulum-s28-noncertifying-video-archive/v1",
+  "createdAt": "2026-11-10T23:46:07.3676946Z",
+  "scope": "Only diagnostic screen-recording videos from two failed, non-certifying task executions. Exact bytes remain in local ignored tmp. PNGs, traces, contexts and raw failed reports/captures remain in evidence. No valid capture or retained export path was moved; raw reports are unchanged.",
+  "verified": true,
+  "files": [
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-final-chromium-g04-20261110-browser-output/redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-final-chromium-g04-20261110-browser-output/redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium/video.webm",
+      "bytes": 317258,
+      "sha256": "e573560a0b059c9c80e890ed5b83042f50bb2c5c205adf54b0a26d44c38eb3ab"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium/video.webm",
+      "bytes": 150125,
+      "sha256": "9c2ea2fa0a99d26b4ab1b7ab532c817e9663a2609817a3cb777a1390d5680c2c"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome/video.webm",
+      "bytes": 142440,
+      "sha256": "21b4fdf10ed3c898ded7213bbfa09304a7aada43ced5b2a0bcbd4af7d022762b"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video-1.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video-1.webm",
+      "bytes": 4475,
+      "sha256": "6c5958b6b938953a069c56237e051439326c38b2004e2986e27a09aa33d5812b"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video-2.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video-2.webm",
+      "bytes": 4475,
+      "sha256": "c8e37853b40de2569efdb3c88ba7f9ecd2b94904e371d95f11d46e5e8a49e353"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome/video.webm",
+      "bytes": 400037,
+      "sha256": "ec12ec2ec051291e761ae010b93eb5c07df5f555b4c793c8d316dc84f4b1eae4"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video-1.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video-1.webm",
+      "bytes": 1924,
+      "sha256": "1e5bcc3d117cc0598db389e66fbb85f7b6e6fdc699664102a6ace1581056e96d"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video-2.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video-2.webm",
+      "bytes": 1924,
+      "sha256": "77983aab27da71c658f2c5c86b11f3a065a05763163ef7814a4dcd39ad07c2bd"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium/video.webm",
+      "bytes": 632783,
+      "sha256": "f805ecc39d8024f8a0c95c6dae139a6e25014ee81bb1c8ba69fcb638bfbbd15a"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome/video.webm",
+      "bytes": 330109,
+      "sha256": "bfbf904f2f4b201db8f8f0f51eca7f0eb5f81a0105b4c0f869eeffe75fecd071"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium/video.webm",
+      "bytes": 218293,
+      "sha256": "e172996dd9d322d96d51fc71bdf9eff90f835338e40655af9c95e49aafc0e231"
+    },
+    {
+      "originalPath": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome/video.webm",
+      "localArchivePath": "tmp/S28-noncertifying-videos-20261111-r1/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome/video.webm",
+      "bytes": 334191,
+      "sha256": "7e8f50e9f0ccaaf717b53773b67d262b1437c468b9e9de7a426746e0df21050a"
+    }
+  ]
+}

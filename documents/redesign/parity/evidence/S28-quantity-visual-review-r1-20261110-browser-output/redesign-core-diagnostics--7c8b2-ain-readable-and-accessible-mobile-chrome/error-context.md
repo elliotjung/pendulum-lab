@@ -1,0 +1,263 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: redesign\core-diagnostics.spec.ts >> S18 common core diagnostics >> keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible
+- Location: e2e\redesign\core-diagnostics.spec.ts:258:3
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#product-main"
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Pendulum Lab" [ref=e6] [cursor=pointer]:
+        - /url: "#/learn"
+      - generic [ref=e7]: 새 공간 미리보기
+    - navigation "주요 공간" [ref=e8]:
+      - link "배우기" [ref=e9] [cursor=pointer]:
+        - /url: "#/learn"
+      - link "실험실" [ref=e10] [cursor=pointer]:
+        - /url: "#/lab"
+    - generic [ref=e11]:
+      - generic [ref=e12]: 화면 테마
+      - combobox "화면 테마" [ref=e13]:
+        - option "밝게"
+        - option "어둡게" [selected]
+        - option "기기 설정"
+    - link "기존 앱 열기" [ref=e14] [cursor=pointer]:
+      - /url: ./app.html
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - link "시스템 라이브러리" [ref=e17] [cursor=pointer]:
+        - /url: "#/lab"
+      - paragraph [ref=e18]: LAB · 고전 진자
+      - heading "점질량 이중 진자" [level=1] [ref=e19]
+      - paragraph [ref=e20]: 두 질점과 질량 없는 두 막대의 평면 운동.
+      - paragraph [ref=e21]: 기존 물리 엔진으로 계산합니다. θ는 아래 수직선 기준 절대각입니다. 저장한 설정은 초기조건에서 재실행하며, 화면을 이동하면 계산을 멈춥니다.
+      - link "기존 앱 열기" [ref=e22] [cursor=pointer]:
+        - /url: ./app.html
+      - region "실행 제어" [ref=e23]:
+        - heading "실행 제어" [level=2] [ref=e24]
+        - generic [ref=e25]:
+          - status [ref=e26]: 일시정지
+          - generic [ref=e27]:
+            - button "실행 계속" [ref=e28] [cursor=pointer]
+            - button "일시정지" [disabled] [ref=e29]
+            - button "한 단계" [ref=e30] [cursor=pointer]
+            - button "처음으로" [ref=e31] [cursor=pointer]
+            - button "실행 취소" [ref=e32] [cursor=pointer]
+          - generic [ref=e33]: 재생 속도
+          - combobox "재생 속도" [ref=e34]:
+            - option "0.25×"
+            - option "1×" [selected]
+            - option "4×"
+          - status "현재 물리 시간" [ref=e35]: t = 0.0020 s
+          - generic [ref=e36]:
+            - generic [ref=e37]: 실행 진행
+            - progressbar "실행 진행" [ref=e38]
+            - paragraph [ref=e39]: 2개 기록 표본 · 0.0%
+          - group [ref=e40]:
+            - generic "실행 시계 · 프레임 예산" [ref=e41] [cursor=pointer]
+            - option "실제 시간에 맞추기" [selected]
+            - option "프레임마다 정해진 단계 실행"
+            - option "demo" [selected]
+            - option "education"
+            - option "research"
+            - option "benchmark"
+            - option "performance"
+            - option "recovery"
+      - generic [ref=e42]:
+        - tablist "실험실 패널" [ref=e43]:
+          - tab "작업 공간" [ref=e44] [cursor=pointer]
+          - tab "조건" [ref=e45] [cursor=pointer]
+          - tab "분석" [selected] [ref=e46] [cursor=pointer]
+          - tab "보관함" [ref=e47] [cursor=pointer]
+          - tab "내보내기" [ref=e48] [cursor=pointer]
+        - tabpanel "분석" [ref=e49]:
+          - region "분석" [ref=e50]:
+            - heading "분석" [level=2] [ref=e51]
+            - paragraph [ref=e52]: 상태·에너지·위상은 기록된 궤적을 사용합니다. Poincaré·Lyapunov는 현재 초기조건으로 별도 계산합니다.
+            - generic [ref=e53]:
+              - generic [ref=e54]: 분석 도구
+              - combobox "분석 도구" [ref=e55]:
+                - option "상태 / 시간" [selected]
+                - option "에너지"
+                - option "위상공간"
+                - option "Poincaré 단면"
+                - option "최대 Lyapunov"
+              - generic [ref=e57]:
+                - button "분석 계산" [ref=e58] [cursor=pointer]
+                - button "분석 취소" [disabled] [ref=e59]
+              - generic [ref=e60]:
+                - generic [ref=e61]: 분석 진행
+                - progressbar "분석 진행" [ref=e62]
+                - paragraph [ref=e63]: 0% 완료
+              - status [ref=e64]: 조건이 바뀌었습니다. 분석을 다시 계산하세요.
+              - img "상태 / 시간. 가로축 t (s), 세로축 θ (rad). 수치 데이터는 분석 결과 또는 궤적 CSV에서 확인할 수 있습니다." [ref=e66]:
+                - generic [ref=e69]: 상태 / 시간
+                - generic [ref=e70]: t (s)
+                - generic [ref=e71]: θ (rad)
+                - generic [ref=e72]: "0.000"
+                - generic [ref=e73]: "0.002000"
+                - generic [ref=e74]: "0.6000"
+                - generic [ref=e75]: "1.200"
+                - generic [ref=e77]: θ₁
+                - generic [ref=e79]: θ₂
+            - generic [ref=e80]:
+              - group [ref=e81]:
+                - generic "핵심 카오스 진단" [ref=e82] [cursor=pointer]
+                - generic [ref=e83]:
+                  - paragraph [ref=e84]: 현재 실험과 기록 표본을 별도 worker에서 분석합니다. 계산을 시작한 순간의 입력을 결과 파일에 보존합니다. 초기조건으로 다시 적분하는 도구와 기록 표본을 사용하는 도구를 구분하세요.
+                  - generic [ref=e85]: 핵심 진단 도구
+                  - combobox "핵심 진단 도구" [ref=e86]:
+                    - option "상태 / 시간" [selected]
+                    - option "에너지 변화"
+                    - option "위상공간"
+                    - option "FFT 스펙트럼"
+                    - option "NAFF 주파수"
+                    - option "Poincaré 단면"
+                    - option "Lyapunov spectrum"
+                    - option "SALI"
+                    - option "FLI"
+                    - option "0–1 검사"
+                    - option "궤도 신뢰 시간"
+                  - paragraph [ref=e87]: "system:double · 기록 2개 · 관측 축 시간 t (s). 0: theta1 (rad) · 1: theta2 (rad) · 2: omega1 (rad/s) · 3: omega2 (rad/s)"
+                  - generic [ref=e89]:
+                    - generic [ref=e90]: 관측 좌표 번호 (0부터)
+                    - textbox "관측 좌표 번호 (0부터)" [ref=e91]: "0"
+                    - paragraph [ref=e92]: 0–255의 정수이며 실제 기록 차원 이하여야 합니다. 위 관측 목록의 번호와 단위를 확인하세요. 기본값 0.
+                  - group [ref=e93]:
+                    - generic "sampling·과도 구간·접선 모델·비용 안내" [ref=e94] [cursor=pointer]
+                  - group [ref=e95]:
+                    - generic "모든 핵심 도구의 호환성과 거부 이유" [ref=e96] [cursor=pointer]
+                  - generic [ref=e97]:
+                    - button "핵심 진단 계산" [ref=e98] [cursor=pointer]
+                    - button "핵심 진단 취소" [disabled] [ref=e99]
+                    - button "기록 새로 읽기" [ref=e100] [cursor=pointer]
+                  - generic [ref=e101]:
+                    - generic [ref=e102]: 핵심 진단 진행
+                    - progressbar "핵심 진단 진행" [ref=e103]
+                    - paragraph [ref=e104]: 100% 완료
+                  - status [ref=e105]: 핵심 진단을 완료했습니다. 입력·설정·결과를 artifact 파일로 보존할 수 있습니다.
+                  - generic [ref=e106]:
+                    - heading "상태 / 시간 결과" [level=3] [ref=e107]
+                    - paragraph [ref=e108]: theta1 관측 2개
+                    - paragraph [ref=e109]: "계산법: native-observations"
+                    - paragraph [ref=e110]: 입력 snapshot · system:double · core-diagnostics-v1. 전체 run·생성 시각·계보는 아래 수치와 설정에 보존합니다.
+                    - img "상태 / 시간. 가로축 시간 (s), 세로축 theta1 (rad). 수치 데이터는 분석 결과 또는 궤적 CSV에서 확인할 수 있습니다." [ref=e111]:
+                      - generic [ref=e114]: 상태 / 시간
+                      - generic [ref=e115]: 시간 (s)
+                      - generic [ref=e116]: theta1 (rad)
+                      - generic [ref=e117]: "0.000"
+                      - generic [ref=e118]: "0.002000"
+                      - generic [ref=e119]: "1.200"
+                      - generic [ref=e120]: "1.200"
+                      - generic [ref=e122]: theta1
+                    - paragraph [ref=e123]: 각도 rad, 각속도 rad/s, 에너지 J입니다. 감쇠가 있으면 총역학에너지는 보존되지 않습니다.
+                    - group [ref=e124]:
+                      - generic "진단 결과·단위·설정·계보 수치 보기" [ref=e125] [cursor=pointer]
+                  - generic [ref=e126]:
+                    - button "진단 artifact JSON 다운로드" [ref=e127] [cursor=pointer]
+                    - generic [ref=e128]: 진단 artifact JSON 가져오기
+                    - button "진단 artifact JSON 가져오기" [ref=e129]
+                    - paragraph [ref=e130]: artifact는 입력 run·알고리즘·설정·기록·결과를 가진 별도 파일입니다. 가져오면 저장된 결과를 다시 표시하며 현재 실험 조건이나 기존 앱 자료는 바꾸지 않습니다.
+              - group [ref=e131]:
+                - generic "고급 카오스 · 수송 · 인력권 분석" [ref=e132] [cursor=pointer]
+              - group [ref=e133]:
+                - generic "고정점 · 주기궤도 · 분기와 안정성" [ref=e134] [cursor=pointer]
+              - group [ref=e135]:
+                - generic "관측 데이터 · 매개변수 추정 · 불확실성" [ref=e136] [cursor=pointer]
+              - group [ref=e137]:
+                - generic "데이터 기반 모델 · 대규모 고유해석" [ref=e138] [cursor=pointer]
+              - group [ref=e139]:
+                - generic "연구 프로젝트 · 재현 패키지" [ref=e140] [cursor=pointer]
+            - region "보존계 구조 · native 에너지·정준 진단" [ref=e141]:
+              - heading "보존계 구조 · native 에너지·정준 진단" [level=3] [ref=e142]
+              - generic [ref=e143]:
+                - paragraph [ref=e144]: 현재 적용된 초기 조건에서 독립 계산합니다. γ=0인 이중·복합·삼중·평면 사슬의 energyDriftProfile을 실행하며, 미수렴 native 단계를 거부합니다. 정준 RHS·한 단계와 별도의 고정 RK4 좌표 비교는 점질량 이중진자에만 적용합니다.
+                - generic [ref=e145]:
+                  - generic [ref=e146]:
+                    - generic [ref=e147]: 진단 간격 Δt (s)
+                    - spinbutton "진단 간격 Δt (s)" [ref=e148]: "0.01"
+                    - paragraph [ref=e149]: 0.000001–0.05
+                  - generic [ref=e150]:
+                    - generic [ref=e151]: 독립 관찰 시간 (s)
+                    - spinbutton "독립 관찰 시간 (s)" [ref=e152]: "1"
+                    - paragraph [ref=e153]: 시간/Δt는 에너지 표본 수로 나누어지는 정수여야 합니다. 정준 좌표 비교는 최대10초입니다.
+                  - generic [ref=e154]:
+                    - generic [ref=e155]: 에너지 표본 수
+                    - spinbutton "에너지 표본 수" [ref=e156]: "10"
+                    - paragraph [ref=e157]: 3–100
+                  - generic [ref=e158]:
+                    - generic [ref=e159]: 진단 잔차 허용오차
+                    - spinbutton "진단 잔차 허용오차" [ref=e160]: "1e-12"
+                    - paragraph [ref=e161]: 1e-15–1
+                  - generic [ref=e162]:
+                    - generic [ref=e163]: 정준 midpoint 최대 반복
+                    - spinbutton "정준 midpoint 최대 반복" [ref=e164]: "40"
+                    - paragraph [ref=e165]: 1–100
+                - generic [ref=e166]:
+                  - button "에너지 드리프트 프로필 계산" [ref=e167] [cursor=pointer]
+                  - button "정준 RHS·한 단계·좌표 비교" [ref=e168] [cursor=pointer]
+                  - button "구조 진단 취소" [disabled] [ref=e169]
+                  - button "에너지 프로필 JSON 다운로드" [disabled] [ref=e170]
+                  - button "정준 비교 JSON 다운로드" [disabled] [ref=e171]
+                - status [ref=e172]: 설정을 확인한 뒤 독립 진단을 실행하세요.
+                - region "native 에너지 드리프트 결과"
+                - region "native 정준 함수·좌표 비교 결과"
+            - region "선택 실행 · native GPU·Wasm·CPU 비교" [ref=e173]:
+              - heading "선택 실행 · native GPU·Wasm·CPU 비교" [level=3] [ref=e174]
+              - generic [ref=e175]:
+                - paragraph [ref=e176]: 현재 초기 조건의 독립 작업을 실행합니다. 점질량 이중진자는 native RK4 ensemble, 삼중·평면 사슬은 native N-chain Jacobian tape(SIMD 후보)를 CPU f64와 비교합니다. 완전한 tape는 backend당 최대4096 scalar이며 초과 조합은 계산 전에 거부합니다. API 사용 가능 여부와 실제 backend를 구분하며 원래 run은 변경하지 않습니다.
+                - generic [ref=e178]:
+                  - generic [ref=e179]: 독립 간격 Δt (s)
+                  - spinbutton "독립 간격 Δt (s)" [ref=e180]: "0.005"
+                  - paragraph [ref=e181]: 0.000001–0.02
+                - generic [ref=e182]:
+                  - generic [ref=e183]:
+                    - generic [ref=e184]: ensemble RK4 단계 수
+                    - spinbutton "ensemble RK4 단계 수" [ref=e185]: "10"
+                    - paragraph [ref=e186]: 1–1000
+                  - generic [ref=e187]:
+                    - generic [ref=e188]: 각도 격자 한 변 (총 N²개)
+                    - spinbutton "각도 격자 한 변 (총 N²개)" [ref=e189]: "3"
+                    - paragraph [ref=e190]: 2–8
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: 초기 각도 격자 반경 (rad)
+                    - spinbutton "초기 각도 격자 반경 (rad)" [ref=e193]: "0.001"
+                    - paragraph [ref=e194]: 0–0.1
+                - generic [ref=e195]:
+                  - checkbox "CPU f64만 사용 (비교·복구)" [ref=e196]
+                  - text: CPU f64만 사용 (비교·복구)
+                - generic [ref=e197]:
+                  - button "native backend 실행·CPU 비교" [ref=e198] [cursor=pointer]
+                  - button "backend 비교 취소" [disabled] [ref=e199]
+                  - button "backend 비교 JSON 다운로드" [disabled] [ref=e200]
+                - status [ref=e201]: 명시적으로 실행한 뒤 실제 backend·오차·한계를 확인하세요.
+                - region "실제 native backend 비교 결과"
+  - contentinfo [ref=e202]:
+    - paragraph [ref=e203]: Pendulum Lab · 움직임을 이해하고, 질문을 실험으로.
+    - link "컴포넌트 갤러리" [ref=e204] [cursor=pointer]:
+      - /url: ./next.html?gallery=components
+    - button "명령 검색 (Ctrl/⌘ K)" [ref=e206] [cursor=pointer]
+    - generic [ref=e207]:
+      - generic [ref=e208]: 표시 언어
+      - combobox "표시 언어" [ref=e209]:
+        - option "한국어" [selected]
+        - option "English"
+    - group [ref=e210]:
+      - generic "브라우저 스크립트 API" [ref=e211] [cursor=pointer]
+```

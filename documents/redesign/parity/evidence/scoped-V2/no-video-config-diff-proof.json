@@ -1,0 +1,23 @@
+{
+  "schema": "pendulum-s28-diagnostic-config-diff/v1",
+  "scope": "Metadata only; no browser, tests or old config edits.",
+  "original": {
+    "path": "tmp/s28-release-playwright.config.ts",
+    "sha256": "05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2",
+    "video": "retain-on-failure inherited from base"
+  },
+  "created": {
+    "path": "tmp/s28-release-no-video-playwright.config.ts",
+    "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
+    "video": "off"
+  },
+  "onlyInsertedText": "    video: 'off',\n",
+  "reversingInsertionRestoresExactOriginalBytes": true,
+  "plan": {
+    "path": "tmp/S28-final-browser-capture-plan-r2.json",
+    "beforeSha256": "fa2c5be2313452a7d44a614bd550f7ce0519517716c5e62f6eb0c1ed68c184d1",
+    "afterSha256": "5a8f63e39284fc3eb2eeae38cd0b1da94d6431654d97c94270352185f0420ba6",
+    "onlyChangedProperty": "configPath"
+  },
+  "unchanged": "Assertions, timeouts, axe, trace, screenshot thresholds, worker1/retry0, matching and all1120 exact identities."
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "pendulum-s28-intentional-visual-review/v1",
+  "reviewer": "AI technical visual/source review",
+  "humanReview": false,
+  "decision": "intentional-stochastic-description-and-independent-diagnostic-ui-acceptable-for-explicit-baseline-update",
+  "baselineUpdatedByThisReviewer": false,
+  "executionCertifiedByThisReview": false,
+  "project": "chromium",
+  "snapshot": "s16-langevin-ensemble-light.png",
+  "expected": {
+    "path": "e2e/redesign/field-pendulum.spec.ts-snapshots/s16-langevin-ensemble-light-chromium-win32.png",
+    "width": 1280,
+    "height": 2967,
+    "bytes": 155552,
+    "sha256": "0557d29c48cc9244814af50e294bbe0b8d4ef4664820b52dd9913fca73d957cd"
+  },
+  "actual": {
+    "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium/s16-langevin-ensemble-light-actual.png",
+    "width": 1280,
+    "height": 4700,
+    "bytes": 218700,
+    "sha256": "5bfd7b9b3b80d213ec24962616040e071faed0bbe1b3b0bc9c5e56dfe72068cb"
+  },
+  "observations": {
+    "wholeImagesViewedAtOriginalResolution": true,
+    "heightDeltaPixels": 1733,
+    "quantityUnitControlChange": false,
+    "descriptionChange": {
+      "element": ".field-workspace .product-lead",
+      "before": "정규화 단일 진자에 가산 Itô 속도 잡음을 넣어 seed 기반 앙상블을 계산합니다.",
+      "after": "정규화 단일 진자에서 가산·곱셈·행렬 잡음과 확률 해석을 선택해 seed 기반 앙상블을 계산합니다.",
+      "layout": "The expanded actual S28 capability description wraps onto a second line at1280px. Existing execution and analysis content moves down31px."
+    },
+    "addedPanel": {
+      "id": "field-stochastic-resonance",
+      "title": "확률 공명 · 독립 사차 이중 우물",
+      "location": "After the existing Arrhenius diagnostic within the analysis section.",
+      "modelCaveatVisible": "Explicitly independent native overdamped quartic double-well Ito model dx=(x−x^3+A cos Ωτ)dτ+σdW; all values normalized; finite-sample maximum is not a universal optimum noise claim.",
+      "fieldsVisuallyChecked": [
+        { "id": "field-resonance-amplitude", "value": "0.2" },
+        { "id": "field-resonance-driveOmega", "value": "1" },
+        { "id": "field-resonance-dt", "value": "0.02" },
+        { "id": "field-resonance-periods", "value": "4" },
+        { "id": "field-resonance-transientPeriods", "value": "2" },
+        { "id": "field-resonance-seed", "value": "28" },
+        { "id": "field-resonance-x0", "value": "-1" },
+        { "id": "field-resonance-sigmaMin", "value": "0" },
+        { "id": "field-resonance-sigmaMax", "value": "1.5" },
+        { "id": "field-resonance-sigmaCount", "value": "7" },
+        { "id": "field-resonance-realizations", "value": "4" }
+      ],
+      "actions": [
+        { "label": "확률 공명 곡선 계산", "state": "enabled" },
+        { "label": "확률 공명 계산 취소", "state": "disabled" },
+        { "label": "확률 공명 JSON 다운로드", "state": "disabled" }
+      ],
+      "progress": { "id": "field-resonance-progress", "visibleValue": "0% 완료" },
+      "status": "설정을 확인한 뒤 계산하세요. 이전 진자 run을 변경하지 않습니다.",
+      "newResultFabricated": false,
+      "layout": "Single-column labeled inputs and their visible bounded ranges are readable. The new panel extends the analysis section and moves its bottom/footer downward. It is a standalone S28 diagnostic, rather than a replacement for the old ensemble or Arrhenius calculation."
+    },
+    "existingContentPreserved": {
+      "execution": "Completed run; speed1x; tau0.2000;100.0%;21records;sample stride1;maximum1001times;1gridpoint;16members.",
+      "plot": "The existing ensemble mean and spread plot remains visible with normalized time0.000–0.2000, theta ticks0.4653–0.5144, blue mean, brown mean+standard-deviation and green mean−standard-deviation. Its finite-ensemble/non-probability-density caveat and21time/0–0.2/N1/fixed caption remain readable.",
+      "arrhenius": "Existing attemptRate1, activationEnergy0.25 and kT0.05; calculate/download actions; native arrheniusMTTF boundary; mean escape time148.413159 and all caveats remain visible.",
+      "clippingOrOverlapObserved": false,
+      "oldControlsRemovedOrHiddenObserved": false
+    },
+    "readOnlyPixelComparisons": [
+      {
+        "region": "old execution and navigation content",
+        "expectedBoxExclusiveMax": [60, 465, 1220, 1034],
+        "actualYOffset": 31,
+        "comparedPixels": 660040,
+        "differentPixels": 0
+      },
+      {
+        "region": "ensemble plot interior including axes/curves/labels",
+        "expectedBoxExclusiveMax": [100, 1370, 1180, 1890],
+        "actualYOffset": 31,
+        "comparedPixels": 561600,
+        "differentPixels": 190,
+        "maxAbsoluteRGBChannelDifference": 10,
+        "pixelsWithAnyChannelDifferenceAbove1": 34,
+        "pixelsWithAnyChannelDifferenceAbove8": 3,
+        "pixelsWithAnyChannelDifferenceAbove16": 0,
+        "interpretation": "The plot is not claimed byte-identical:190pixels have small rendering deltas. Visible ticks, labels and curve shapes agree. These small pixel deltas do not independently prove numerical identity or identify their internal rendering cause. Native numerical parity requires its separate actual tests."
+      }
+    ],
+    "sourceCause": [
+      {
+        "path": "src/product/lab/views/field-workspace.ts",
+        "location": "Langevin product-lead and analysis.body.append(resonance.element)",
+        "verifiedChange": "Description expands the supported stochastic choices and a new independently disposed resonance panel is appended after existing diagnostics."
+      },
+      {
+        "path": "src/product/lab/views/field-resonance-panel.ts",
+        "location": "createFieldResonancePanel",
+        "verifiedChange": "Separate native worker is created only by explicit calculate action; initial result is empty, progress0, cancel/download disabled, previous pendulum run preserved."
+      },
+      {
+        "path": "src/product/adapters/physics/field-resonance.ts",
+        "location": "FIELD_RESONANCE_DEFAULTS / fieldResonanceFields",
+        "verifiedChange": "The11visible initial inputs match the typed defaults and range definitions. Native source is stochasticResonanceCurve; scope is independent-overdamped-quartic."
+      },
+      {
+        "paths": ["src/product/lab/views/field-plots.ts", "src/product/lab/views/field-diagnostics.ts"],
+        "viewDiffAgainstS27": "No differences observed in git diff against b78cdae4ea8e707e70ecd5a454173507f60aca2a."
+      }
+    ],
+    "properResolution": "Root may archive the old PNG and explicitly update this exact reviewed snapshot after the focused run has exited. The new standalone resonance section could fit the historical-dock projection policy, but doing that would still leave the deliberately expanded capability description and its31px wrap. Do not rewrite the description to old capabilities, alter the old numeric plot or hide existing controls merely to match the old PNG. This review supports a documented intentional UI update, not a blanket snapshot refresh."
+  },
+  "limitations": [
+    "Only this Chromium Langevin ensemble pair is covered; mobile/other snapshots need independent inspection.",
+    "Screenshot pixel inspection and source reading do not execute stochastic resonance or certify mathematical equivalence, physical devices, user approval or expert review.",
+    "No runtime, tests, snapshot baselines, captured evidence or Git metadata were modified by this reviewer. Only this temporary review JSON was created."
+  ]
+}

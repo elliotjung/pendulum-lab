@@ -1,0 +1,982 @@
+{
+  "schema": "pendulum-selected-parity-unit-union/v1",
+  "purpose": "Fresh execution plan only. R4 counts are historical lookup; no new source-bound execution or certificate is asserted.",
+  "selectedUnitCaseCount": 133,
+  "selectedUnitFileCount": 29,
+  "mandatoryCharacterizationCaseCount": 16,
+  "mandatoryCharacterizationFileCount": 4,
+  "unionFileCount": 32,
+  "expectedCasesFromR4": 724,
+  "files": [
+    "tests/analysis-superpack.test.ts",
+    "tests/product/adapters/analysis/advanced/artifact.test.ts",
+    "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+    "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+    "tests/product/adapters/analysis/core/artifact.test.ts",
+    "tests/product/adapters/analysis/core/flow.test.ts",
+    "tests/product/adapters/analysis/core/signal.test.ts",
+    "tests/product/adapters/analysis/stability/artifact.test.ts",
+    "tests/product/adapters/analysis/stability/native.test.ts",
+    "tests/product/adapters/physics/chain.test.ts",
+    "tests/product/adapters/physics/constraint.test.ts",
+    "tests/product/adapters/physics/discrete.test.ts",
+    "tests/product/adapters/physics/driven.test.ts",
+    "tests/product/adapters/physics/field-resonance.test.ts",
+    "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+    "tests/product/adapters/physics/field.test.ts",
+    "tests/product/adapters/physics/network.test.ts",
+    "tests/product/adapters/physics/nonlinear.test.ts",
+    "tests/product/adapters/physics/planar.test.ts",
+    "tests/product/adapters/physics/spatial.test.ts",
+    "tests/product/analysis/data-driven/artifact.test.ts",
+    "tests/product/analysis/inverse/review-regressions.test.ts",
+    "tests/product/analysis/inverse/workflows.test.ts",
+    "tests/product/experiments/adaptive-replay-archive.test.ts",
+    "tests/product/lab/clock-legacy-differential.test.ts",
+    "tests/product/lab/experiments/native-parity.test.ts",
+    "tests/product/lab/field-diagnostic-roundtrip.test.ts",
+    "tests/product/lab/field-diagnostics.test.ts",
+    "tests/product/lab/legacy-navigation.test.ts",
+    "tests/product/lab/playback-transaction.test.ts",
+    "tests/product/parity/packaging.test.ts",
+    "tests/product/parity/public-vitest-report.test.ts"
+  ],
+  "fileCaseCounts": [
+    {
+      "file": "tests/analysis-superpack.test.ts",
+      "cases": 11
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "cases": 18
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+      "cases": 2
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "cases": 17
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "cases": 15
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "cases": 6
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/signal.test.ts",
+      "cases": 7
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "cases": 18
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "cases": 19
+    },
+    {
+      "file": "tests/product/adapters/physics/chain.test.ts",
+      "cases": 170
+    },
+    {
+      "file": "tests/product/adapters/physics/constraint.test.ts",
+      "cases": 50
+    },
+    {
+      "file": "tests/product/adapters/physics/discrete.test.ts",
+      "cases": 6
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "cases": 45
+    },
+    {
+      "file": "tests/product/adapters/physics/field-resonance.test.ts",
+      "cases": 28
+    },
+    {
+      "file": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "cases": 24
+    },
+    {
+      "file": "tests/product/adapters/physics/field.test.ts",
+      "cases": 7
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "cases": 21
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "cases": 26
+    },
+    {
+      "file": "tests/product/adapters/physics/planar.test.ts",
+      "cases": 52
+    },
+    {
+      "file": "tests/product/adapters/physics/spatial.test.ts",
+      "cases": 41
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "cases": 14
+    },
+    {
+      "file": "tests/product/analysis/inverse/review-regressions.test.ts",
+      "cases": 3
+    },
+    {
+      "file": "tests/product/analysis/inverse/workflows.test.ts",
+      "cases": 27
+    },
+    {
+      "file": "tests/product/experiments/adaptive-replay-archive.test.ts",
+      "cases": 16
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "cases": 19
+    },
+    {
+      "file": "tests/product/lab/experiments/native-parity.test.ts",
+      "cases": 5
+    },
+    {
+      "file": "tests/product/lab/field-diagnostic-roundtrip.test.ts",
+      "cases": 1
+    },
+    {
+      "file": "tests/product/lab/field-diagnostics.test.ts",
+      "cases": 23
+    },
+    {
+      "file": "tests/product/lab/legacy-navigation.test.ts",
+      "cases": 5
+    },
+    {
+      "file": "tests/product/lab/playback-transaction.test.ts",
+      "cases": 21
+    },
+    {
+      "file": "tests/product/parity/packaging.test.ts",
+      "cases": 5
+    },
+    {
+      "file": "tests/product/parity/public-vitest-report.test.ts",
+      "cases": 2
+    }
+  ],
+  "selectedCases": [
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 0.1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 1.7x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 4x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 0.1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 1.7x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 4x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "title": "S28 native additive, multiplicative and matrix stochastic integration euler-maruyama exactly matches native independent member streams and keeps ensemble prefixes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "title": "S28 native additive, multiplicative and matrix stochastic integration commutative-milstein exactly matches native independent member streams and keeps ensemble prefixes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "title": "S28 native additive, multiplicative and matrix stochastic integration heun-stratonovich exactly matches native independent member streams and keeps ensemble prefixes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+      "title": "S28 native additive, multiplicative and matrix stochastic integration milstein exactly matches native independent member streams and keeps ensemble prefixes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "title": "S13 original-engine and passive characterization system:cartpole keeps native legacy state and energy with default cosine drive/controller off",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/chain.test.ts",
+      "title": "S10 variable-DOF physical contract system:chain: reuses legacy RHS/energy through all exposed steppers",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "title": "S15 native equations, identity, and finite numerical fixtures chimera matches the existing midpoint/wrapping exploration, with its actual thresholds",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/planar.test.ts",
+      "title": "S07 legacy planar physics adapter system:compound-double integrator:rk4 exactly reuses the legacy step and damping",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "title": "S13 original-engine and passive characterization system:coupled keeps native legacy state and energy with default cosine drive/controller off",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/planar.test.ts",
+      "title": "S07 legacy planar physics adapter system:double integrator:rk4 exactly reuses the legacy step and damping",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/constraint.test.ts",
+      "title": "S11 original-engine characterization double string preserves original taut trajectory, tensions and all event values",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "title": "S13 original-engine and passive characterization system:driven keeps native legacy state and energy with default cosine drive/controller off",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 delegates native physical equations and reproduces known limits system:duffing native RK4 states and inherited energy are unchanged",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field.test.ts",
+      "title": "S16 native field and stochastic adapters FPUT states, Hamiltonian and harmonic modes match native Verlet through the complete horizon",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 delegates native physical equations and reproduces known limits friction native complementarity reproduces stick and break-away and marks initial motion as slip",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "title": "S15 native equations, identity, and finite numerical fixtures system:huygens-phase-pair matches native RK4 states at every step",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "title": "S13 original-engine and passive characterization system:inverted keeps native legacy state and energy with default cosine drive/controller off",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 delegates native physical equations and reproduces known limits system:kapitza native RK4 states and inherited energy are unchanged",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "title": "S15 native equations, identity, and finite numerical fixtures system:kuramoto matches native RK4 states at every step",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field.test.ts",
+      "title": "S16 native field and stochastic adapters seeded ensemble matches independent native Gaussian streams and preserves member prefix",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field.test.ts",
+      "title": "S16 native field and stochastic adapters lattice diagnostic preserves native squared frequencies and FK native stationary profile",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "title": "S15 native equations, identity, and finite numerical fixtures system:magnetic matches native RK4 states at every step",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 delegates native physical equations and reproduces known limits Mathieu trajectory uses the exact native coefficient and internal Floquet remains optional",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/driven.test.ts",
+      "title": "S13 original-engine and passive characterization system:parametric keeps native legacy state and energy with default cosine drive/controller off",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/network.test.ts",
+      "title": "S15 native equations, identity, and finite numerical fixtures system:pendulum-network matches native RK4 states at every step",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 Pyragas prehistory, bounded tape and continuation matches native batch RK4 with a nonintegral delay and a discontinuous prescribed history",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/discrete.test.ts",
+      "title": "S17 native discrete and complex evolution complex FFT evolution matches the native state, norm and momentum observable at every period",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/constraint.test.ts",
+      "title": "S11 original-engine characterization rope uses the original hybrid engine and SI mass scaling with damping=0.1",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field.test.ts",
+      "title": "S16 native field and stochastic adapters sine-Gordon periodic matches native time levels and restores exact continuation",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/spatial.test.ts",
+      "title": "S12 original-engine characterization and physical invariants system:spherical preserves native legacy states, mass-scaled energy and the true +y momentum",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/spatial.test.ts",
+      "title": "S12 original-engine characterization and physical invariants system:spherical-chain preserves native legacy states, mass-scaled energy and the true +y momentum",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/spatial.test.ts",
+      "title": "S12 original-engine characterization and physical invariants system:spherical-embedded preserves native legacy states, mass-scaled energy and the true +y momentum",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/spatial.test.ts",
+      "title": "S12 original-engine characterization and physical invariants system:spherical-embedded-chain preserves native legacy states, mass-scaled energy and the true +y momentum",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/constraint.test.ts",
+      "title": "S11 original-engine characterization spring integrator:rk4 preserves original derivative and energy at every step",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/discrete.test.ts",
+      "title": "S17 native discrete and complex evolution standard-map iteration preserves native angular wrapping and unwrapped momentum exactly",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/chain.test.ts",
+      "title": "S10 variable-DOF physical contract system:triple: reuses legacy RHS/energy through all exposed steppers",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/discrete.test.ts",
+      "title": "S17 native discrete and complex evolution known phases and nonunitary raw eigenvalues preserve the native evaluation contract",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/nonlinear.test.ts",
+      "title": "S14 delegates native physical equations and reproduces known limits system:van-der-pol native RK4 states and inherited energy are unchanged",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/legacy-navigation.test.ts",
+      "title": "S28 legacy navigation and native recipe adapters maps every serialized native tab intent to a concrete local destination with no invented external URL",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters a fixed point retains the real sine phase and agrees with the original product physical flow",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence fixed-point: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters periodic shooting uses the native primitive-cycle database rather than claiming a period-two fixed point",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence periodic-shooting: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters phase-zero section reproduces native driven shooting and Floquet Liouville determinant",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence floquet: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters Melnikov retains zero-damping undefined amplitude ratio explicitly and matches native analytic function",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence melnikov: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters natural continuation agrees with native phase-zero continuation and restarts from a saved solution",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence continuation: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery pseudo-arclength crosses a known fold and restart preserves the post-fold orientation",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence pseudo-arclength: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery pitchfork switching finds both nonzero symmetric branches, then restarts the selected branch",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence branch-switch: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery NS detects the analytic delayed-logistic crossing and restarts from the saved nonzero fixed point",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence neimark-sacker: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery torus saves full collocation curves and independently checks nonzero invariant circles",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence torus: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery circle-map rigid rotation is exact and finite locking plateaus are detected",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence arnold-tongue: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 native current-run stability adapters codim map matches native augmented-flow sign grid and keeps physical model snapshot",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence codim-two: reload preserves exact input, source, solution and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/native.test.ts",
+      "title": "S20 explicit stability benchmarks and recovery linear Floquet benchmark reproduces analytic damped oscillator modulus",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/stability/artifact.test.ts",
+      "title": "S20 solution and branch persistence keeps independent benchmark metadata separate from current-driven source fields",
+      "project": null
+    },
+    {
+      "file": "tests/analysis-superpack.test.ts",
+      "title": "automated bifurcation detection flags period doubling and chaos onset with bracketed parameters",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage sindy: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage dmd: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage havok: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage reservoir: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage hamiltonian: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage arnoldi: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage lanczos: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/data-driven/artifact.test.ts",
+      "title": "S23 immutable source/model/evaluation lineage general-eigensolver: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/inverse/workflows.test.ts",
+      "title": "S22 native inverse and uncertainty adapters recovers gravity from native RK4 observations and exactly matches native fitting",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/inverse/workflows.test.ts",
+      "title": "S22 native inverse and uncertainty adapters Sobol matches the existing native estimator evaluated through the same physical endpoint",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/inverse/workflows.test.ts",
+      "title": "S22 native inverse and uncertainty adapters fits and restores a native PCE model, reports held-out errors and supports bounded prediction",
+      "project": null
+    },
+    {
+      "file": "tests/product/analysis/inverse/review-regressions.test.ts",
+      "title": "S22 independent physical UQ review fits and independently validates a linear physical surrogate with exact variance fractions",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/experiments/native-parity.test.ts",
+      "title": "S21 preserved native research computation parity current Euler/RK2/RK4 comparison matches native expansion suite in an equivalent driven model",
+      "project": null
+    },
+    {
+      "file": "tests/product/experiments/adaptive-replay-archive.test.ts",
+      "title": "S28 complete native adaptive archives beyond the display projection '2.3' retains every native call, complete schedule and exact final state after JSON export/parse",
+      "project": null
+    },
+    {
+      "file": "tests/product/experiments/adaptive-replay-archive.test.ts",
+      "title": "S28 complete native adaptive archives beyond the display projection '2.7' retains every native call, complete schedule and exact final state after JSON export/parse",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts basin reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+      "title": "S28 independent native advanced grid parity basin labels, physical grid coordinates and entropy exactly match direct original native calls",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts clv reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure matches CLV exponents and vectors; unavailable hyperbolicity is explicit null",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts correlation-dimension reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure preserves native GP pair counts, fit and scaling curve",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact energy reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/signal.test.ts",
+      "title": "S18 observed core diagnostics and native parity keeps real energy units and physical loss warnings",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact fft reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/signal.test.ts",
+      "title": "S18 observed core diagnostics and native parity uses preserved physics FFT coefficients and reports an analytic real-tone amplitude",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts ftle reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure matches FTLE native RHS and Jacobian trust exactly",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts lcs-ridge reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+      "title": "S28 independent native advanced grid parity LCS candidate field, native trust metadata and every ridge mask cell match direct original native calls",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact lyapunov reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "title": "S18 native continuous core diagnostics parity preserves the entire spectrum, uncertainties, tangent trust, and physical work progress",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts multifractal reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure preserves native multifractal output at the exported actual box sizes",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact naff reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/signal.test.ts",
+      "title": "S18 observed core diagnostics and native parity preserves exact native NAFF components and angular-frequency units",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact poincare reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "title": "S18 native continuous core diagnostics parity retains refined Poincare root certification and every crossing",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts recurrence-network reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure constructs exactly the native recurrence graph after explicit Theiler exclusion",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts rqa reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure matches native RQA exactly and includes explicit block uncertainty/selection",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact sali reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact fli reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "title": "S18 native continuous core diagnostics parity preserves SALI values and native timestamp convention",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "title": "S18 native continuous core diagnostics parity preserves FLI values and native timestamp convention",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact shadowing reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/flow.test.ts",
+      "title": "S18 native continuous core diagnostics parity keeps native reference uncertainty while encoding horizon non-exceedance explicitly",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts topological-entropy reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure uses an independent named tent benchmark, exactly reproducing log2 across dyadic resolutions",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts transfer-operator reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure preserves native Ulam eigenvalues with exact transition matrix and meaningful nonfinite rate reason",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/artifact.test.ts",
+      "title": "S19 versioned advanced artifacts wada reload preserves source, settings, native results, units and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+      "title": "S19 native advanced adapters: parity, interpretation and bounded failure requires three distinct labels rather than max(label)+1: 0",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/artifact.test.ts",
+      "title": "S18 versioned core diagnostic artifact zero-one reload preserves native result, input experiment, settings, units, and lineage",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/analysis/core/signal.test.ts",
+      "title": "S18 observed core diagnostics and native parity preserves the native seeded 0–1 estimate and its bootstrap uncertainty",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/field-diagnostics.test.ts",
+      "title": "S16 bounded independent native diagnostic controls matches native diatomic branches, band gap and finite-difference group velocity",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/field-diagnostics.test.ts",
+      "title": "S16 bounded independent native diagnostic controls matches native site/bond pinning energies and flags bounded Newton nonconvergence",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/field-diagnostics.test.ts",
+      "title": "S16 bounded independent native diagnostic controls matches native Arrhenius values and explicitly reports overflow limits",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/field-diagnostics.test.ts",
+      "title": "S16 bounded independent native diagnostic controls exports independent diagnostic settings, units and explicit numeric limits without null loss",
+      "project": null
+    },
+    {
+      "file": "tests/product/adapters/physics/field-resonance.test.ts",
+      "title": "S28 independent native quartic stochastic resonance worker aggregation matches the complete native curve exactly, including uint32 seed wrap",
+      "project": null
+    },
+    {
+      "file": "tests/product/lab/field-diagnostic-roundtrip.test.ts",
+      "title": "S28 independent field diagnostic persistence diatomic: complete exported settings, units and native scientific rows reconstruct exactly through JSON",
+      "project": null
+    }
+  ],
+  "mandatoryCases": [
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 0.1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 1.7x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential deterministic 4x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 0.1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 1x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 1.7x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/clock-legacy-differential.test.ts",
+      "title": "S28 immutable pre-extension clock differential wall-clock 4x preserves old frame counts, real native states, debt/drop and both reset modes",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/playback-transaction.test.ts",
+      "title": "S28 additive native clock checkpoint boundary restores finite versioned primitive state atomically without aliases or invoking accessors",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/playback-transaction.test.ts",
+      "title": "S28 additive native clock checkpoint boundary accounts zero actual worker steps without weakening old advance zero-budget validation",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/lab/playback-transaction.test.ts",
+      "title": "S28 additive native clock checkpoint boundary rejects impossible accounting atomically and retains native dropped-time bounds",
+      "project": null,
+      "exceptionPath": "src/app/SimulationClock.ts"
+    },
+    {
+      "file": "tests/product/parity/packaging.test.ts",
+      "title": "S28 packaged build evidence matches every default output byte of the immutable pre-S28 native copier on identical inputs",
+      "project": null,
+      "exceptionPath": "scripts/copy-legacy-assets.mjs"
+    },
+    {
+      "file": "tests/product/parity/packaging.test.ts",
+      "title": "S28 packaged build evidence copies every legacy supporting asset into the selected frozen build without touching another dist",
+      "project": null,
+      "exceptionPath": "scripts/copy-legacy-assets.mjs"
+    },
+    {
+      "file": "tests/product/parity/packaging.test.ts",
+      "title": "S28 packaged build evidence rejects traversal, source directories and a junction before any copy",
+      "project": null,
+      "exceptionPath": "scripts/copy-legacy-assets.mjs"
+    },
+    {
+      "file": "tests/product/parity/public-vitest-report.test.ts",
+      "title": "S28 public Vitest label privacy adapter preserves every benign default output byte of the immutable original CLI",
+      "project": null,
+      "exceptionPath": "scripts/public-vitest-report.mjs"
+    },
+    {
+      "file": "tests/product/parity/public-vitest-report.test.ts",
+      "title": "S28 public Vitest label privacy adapter redacts UNC and escaped-whitespace fixtures before the unchanged public privacy audit",
+      "project": null,
+      "exceptionPath": "scripts/public-vitest-report.mjs"
+    }
+  ],
+  "historicalLookup": {
+    "path": "documents/redesign/parity/evidence/final-unit-r4.report.json",
+    "sha256": "2df1499b4b17e1162c2242f82e0d0b1ea248f378e9d846ad3cd09e25a2e65b5b"
+  },
+  "capturePath": "documents/redesign/parity/evidence/final-parity-unit.capture.json",
+  "reportPath": "documents/redesign/parity/evidence/final-parity-unit.report.json",
+  "runnerArgs": [
+    "tests/analysis-superpack.test.ts",
+    "tests/product/adapters/analysis/advanced/artifact.test.ts",
+    "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+    "tests/product/adapters/analysis/advanced/native-parity.test.ts",
+    "tests/product/adapters/analysis/core/artifact.test.ts",
+    "tests/product/adapters/analysis/core/flow.test.ts",
+    "tests/product/adapters/analysis/core/signal.test.ts",
+    "tests/product/adapters/analysis/stability/artifact.test.ts",
+    "tests/product/adapters/analysis/stability/native.test.ts",
+    "tests/product/adapters/physics/chain.test.ts",
+    "tests/product/adapters/physics/constraint.test.ts",
+    "tests/product/adapters/physics/discrete.test.ts",
+    "tests/product/adapters/physics/driven.test.ts",
+    "tests/product/adapters/physics/field-resonance.test.ts",
+    "tests/product/adapters/physics/field-stochastic-parity.test.ts",
+    "tests/product/adapters/physics/field.test.ts",
+    "tests/product/adapters/physics/network.test.ts",
+    "tests/product/adapters/physics/nonlinear.test.ts",
+    "tests/product/adapters/physics/planar.test.ts",
+    "tests/product/adapters/physics/spatial.test.ts",
+    "tests/product/analysis/data-driven/artifact.test.ts",
+    "tests/product/analysis/inverse/review-regressions.test.ts",
+    "tests/product/analysis/inverse/workflows.test.ts",
+    "tests/product/experiments/adaptive-replay-archive.test.ts",
+    "tests/product/lab/clock-legacy-differential.test.ts",
+    "tests/product/lab/experiments/native-parity.test.ts",
+    "tests/product/lab/field-diagnostic-roundtrip.test.ts",
+    "tests/product/lab/field-diagnostics.test.ts",
+    "tests/product/lab/legacy-navigation.test.ts",
+    "tests/product/lab/playback-transaction.test.ts",
+    "tests/product/parity/packaging.test.ts",
+    "tests/product/parity/public-vitest-report.test.ts",
+    "--maxWorkers=1",
+    "--reporter=json",
+    "--outputFile=documents/redesign/parity/evidence/final-parity-unit.report.json"
+  ]
+}

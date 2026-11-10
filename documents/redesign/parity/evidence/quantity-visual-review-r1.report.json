@@ -1,0 +1,3043 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-playwright.config.ts",
+      "--project=chromium",
+      "--project=mobile-chrome",
+      "--max-failures=0",
+      "--update-snapshots=none",
+      "--grep",
+      "(?:^| )(?:S07 real planar pendulum laboratory compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results|S07 real planar pendulum laboratory compound-double: reviews a deterministic real workspace and dark inspector|S07 real planar pendulum laboratory double: computes trajectory projections and genuine Poincare/Lyapunov worker results|S07 real planar pendulum laboratory double: reviews a deterministic real workspace and dark inspector|S10 triple and N-chain laboratory frozen N-chain workspace and maximum-link inspector|S10 triple and N-chain laboratory frozen light/dark workspace, inspector and selected-link plots|S11 spring, rope and double-string laboratory frozen light/dark spring and slack rope layouts|S12 spatial systems laboratory frozen spatial workspace, embedded inspector and numerical layouts|S13 driven and controlled systems laboratory frozen driven workspace, cart-pole controller and response layouts|S14 nonlinear and delay systems laboratory frozen nonlinear potential, limit cycle, friction and delay-history layouts|S15 magnetic and synchronization network laboratory frozen magnetic graph and parameter inspector dark layout|S15 magnetic and synchronization network laboratory frozen network topology and selected-node workspace layout|S15 magnetic and synchronization network laboratory frozen topology, aggregate order, individual phase, local coherence and basin layouts|S16 stochastic lattice and field laboratory frozen spatial heatmaps ensemble and static diagnostic layouts|S17 discrete and quantum laboratory phase cylinder wavefunction phase and quasi-energy figures have frozen distinct layouts|S18 common core diagnostics keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible|S19 advanced chaos geometry keyboard, 320 px, zoom, light and dark advanced tools stay readable and accessible|S20 stability and bifurcation workflows keyboard, narrow layout and themes retain an accessible branch graph and convergence table|S22 observations, inverse problems and uncertainty light and dark observation previews retain explicit units and source lineage|S23 data-driven models and Krylov tools keyboard, 320px, 200 percent zoom and light/dark result views remain accessible|S24 research project and reproducible package keyboard, 320px and light/dark figure views retain accessible controls|S27 bifurcation extended systems and reproducible research curricula visual 6\\.6 dark|S27 bifurcation extended systems and reproducible research curricula visual 6\\.6 light|S27 bifurcation extended systems and reproducible research curricula visual 6\\.9 dark|S27 bifurcation extended systems and reproducible research curricula visual 6\\.9 light|S27 bifurcation extended systems and reproducible research curricula visual 7\\.13 dark|S27 bifurcation extended systems and reproducible research curricula visual 7\\.13 light|S27 bifurcation extended systems and reproducible research curricula visual 7\\.7 dark|S27 bifurcation extended systems and reproducible research curricula visual 7\\.7 light|S27 bifurcation extended systems and reproducible research curricula visual 8\\.12 dark|S27 bifurcation extended systems and reproducible research curricula visual 8\\.12 light|S27 bifurcation extended systems and reproducible research curricula visual 8\\.8 dark|S27 bifurcation extended systems and reproducible research curricula visual 8\\.8 light)$",
+      "e2e/redesign/advanced-diagnostics.spec.ts",
+      "e2e/redesign/chain-pendulum.spec.ts",
+      "e2e/redesign/constraint-pendulum.spec.ts",
+      "e2e/redesign/core-diagnostics.spec.ts",
+      "e2e/redesign/core-pendulum.spec.ts",
+      "e2e/redesign/curriculum-six-eight.spec.ts",
+      "e2e/redesign/data-driven.spec.ts",
+      "e2e/redesign/discrete-quantum.spec.ts",
+      "e2e/redesign/driven-pendulum.spec.ts",
+      "e2e/redesign/field-pendulum.spec.ts",
+      "e2e/redesign/network-pendulum.spec.ts",
+      "e2e/redesign/nonlinear-pendulum.spec.ts",
+      "e2e/redesign/observations-inverse.spec.ts",
+      "e2e/redesign/research-project.spec.ts",
+      "e2e/redesign/spatial-pendulum.spec.ts",
+      "e2e/redesign/stability-workflow.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "none",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\advanced-diagnostics.spec.ts",
+      "file": "redesign/advanced-diagnostics.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S19 advanced chaos geometry",
+          "file": "redesign/advanced-diagnostics.spec.ts",
+          "line": 56,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard, 320 px, zoom, light and dark advanced tools stay readable and accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23327,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:48:20.729Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-6db823129018d9c011c8",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 221,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320 px, zoom, light and dark advanced tools stay readable and accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25625,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:54:42.228Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-d73e5cfb1249d3a87aaa",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 221,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\chain-pendulum.spec.ts",
+      "file": "redesign/chain-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S10 triple and N-chain laboratory",
+          "file": "redesign/chain-pendulum.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen light/dark workspace, inspector and selected-link plots",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15923,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:48:45.509Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-d49313362ea1b40c6422",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "frozen N-chain workspace and maximum-link inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9081,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:49:01.459Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-7ec74de1ee9b306df152",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 292,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark workspace, inspector and selected-link plots",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9681,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:55:09.189Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-e8d086d8a8d666d8ee2e",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "frozen N-chain workspace and maximum-link inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4667,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:55:18.893Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-138c65a43ed3c277ecaf",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 292,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\constraint-pendulum.spec.ts",
+      "file": "redesign/constraint-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S11 spring, rope and double-string laboratory",
+          "file": "redesign/constraint-pendulum.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen light/dark spring and slack rope layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6239,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts:437:5",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2767px, received 1280px by 2857px. 165317 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts:437:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:49:10.591Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s11-spring-inspector-dark-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts-snapshots\\s11-spring-inspector-dark-chromium-win32.png"
+                        },
+                        {
+                          "name": "s11-spring-inspector-dark-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\s11-spring-inspector-dark-actual.png"
+                        },
+                        {
+                          "name": "s11-spring-inspector-dark-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\s11-spring-inspector-dark-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-4e4c1a4eda56c8e6344a",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 432,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark spring and slack rope layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4713,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts:437:5",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\n\n  Snapshot: s11-spring-inspector-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s11-spring-inspector-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3928px, received 393px by 4042px. 77475 pixels (ratio 0.05 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts:437:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:55:23.610Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s11-spring-inspector-dark-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\constraint-pendulum.spec.ts-snapshots\\s11-spring-inspector-dark-mobile-chrome-win32.png"
+                        },
+                        {
+                          "name": "s11-spring-inspector-dark-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\s11-spring-inspector-dark-actual.png"
+                        },
+                        {
+                          "name": "s11-spring-inspector-dark-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\s11-spring-inspector-dark-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-998a648c83e5c93a3f82",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 432,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\core-diagnostics.spec.ts",
+      "file": "redesign/core-diagnostics.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S18 common core diagnostics",
+          "file": "redesign/core-diagnostics.spec.ts",
+          "line": 59,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17451,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:49:18.065Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-e3a0a014c910ef5400d5",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 258,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30747,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:55:29.382Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\video.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\video-2.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-diagnostics--7c8b2-ain-readable-and-accessible-mobile-chrome\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-964d95751bb22968c353",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 258,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\core-pendulum.spec.ts",
+      "file": "redesign/core-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S07 real planar pendulum laboratory",
+          "file": "redesign/core-pendulum.spec.ts",
+          "line": 72,
+          "column": 6,
+          "specs": [
+            {
+              "title": "double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20921,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:49:36.451Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-f8d2111e296da47dfef3",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14142,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:49:57.390Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-019f360a5256e67447f7",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 31415,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:50:11.550Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\video-2.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-core-pendulum-S07-3de47-are-Lyapunov-worker-results-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-24b097c79ce459c4cbda",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "compound-double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16188,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:50:45.318Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-0549d129a39c0e35c42d",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19200,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:56:07.107Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-6eba3792af495135eb8b",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16789,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:56:27.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-ace13ac24214a59156eb",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18877,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:56:44.122Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-d96dc6e61e971273bd39",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "compound-double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10792,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:03.016Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-69c7b32b4f71404c4517",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\curriculum-six-eight.spec.ts",
+      "file": "redesign/curriculum-six-eight.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S27 bifurcation extended systems and reproducible research curricula",
+          "file": "redesign/curriculum-six-eight.spec.ts",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "visual 6.6 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7970,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:03.567Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-d1be73d96fa25636d032",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.6 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7790,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:11.560Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-3f5562e0c48eb114e689",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3457,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:19.367Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-cc13197cdbd624668936",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7967,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:22.845Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-4438144bf2c17850ae3e",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7453,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:30.830Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-3e2079cf48de490cd43e",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3043,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:38.295Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-f46487340ea749720e9b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3194,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:41.352Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-a2153c4a16c3e97a1cdd",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7510,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:44.567Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-9c22c32fa5d2d84283b0",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3164,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:52.096Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-246351b75b3394588d80",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8213,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:51:55.275Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-bcce32bf4c5366b00a3c",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3064,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:03.503Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-723945d43cd4c47d8a58",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7544,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:06.580Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-bc98e9523c7b84acca5b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.6 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6864,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:14.326Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-81ba95e8555f43d3ba66",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.6 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2586,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:21.197Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-011d8b70a80dc11251c7",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2677,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:23.789Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-ee01084932d4654f13bf",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11807,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:26.472Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-b11460c77ecd80228fb0",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2997,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:38.296Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-c516319b006bbbaf224f",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7427,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:41.310Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-351d416e2c976e26b235",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11797,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:57:48.757Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-a94196187ff3a3901fa2",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3069,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:00.588Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-c04b8d9e3e93871596b1",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7692,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:03.674Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-ac5e3cd7af15ce8efc3a",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11702,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:11.395Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-b124958284cc74eb4b91",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3083,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:23.117Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-68221a51dfc3174f6ffa",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7190,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:26.217Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-79e26834dc52204d5ada",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\data-driven.spec.ts",
+      "file": "redesign/data-driven.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S23 data-driven models and Krylov tools",
+          "file": "redesign/data-driven.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard, 320px, 200 percent zoom and light/dark result views remain accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16056,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:14.173Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-c82838e7a5036c630190",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 261,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320px, 200 percent zoom and light/dark result views remain accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:33.442Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-64cd92b37e6c5e7229e8",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 261,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\discrete-quantum.spec.ts",
+      "file": "redesign/discrete-quantum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S17 discrete and quantum laboratory",
+          "file": "redesign/discrete-quantum.spec.ts",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "phase cylinder wavefunction phase and quasi-energy figures have frozen distinct layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6818,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:30.284Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "29cc8c8ae80880a09ab4-547af1b187b1c4912dee",
+              "file": "redesign/discrete-quantum.spec.ts",
+              "line": 455,
+              "column": 3
+            },
+            {
+              "title": "phase cylinder wavefunction phase and quasi-energy figures have frozen distinct layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10966,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:58:51.745Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "29cc8c8ae80880a09ab4-dafd2a63dead14ee3210",
+              "file": "redesign/discrete-quantum.spec.ts",
+              "line": 455,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\driven-pendulum.spec.ts",
+      "file": "redesign/driven-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S13 driven and controlled systems laboratory",
+          "file": "redesign/driven-pendulum.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen driven workspace, cart-pole controller and response layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10629,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:37.137Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-53c210564dea67cd1b11",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 371,
+              "column": 3
+            },
+            {
+              "title": "frozen driven workspace, cart-pole controller and response layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7194,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts:379:5",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 7180px, received 393px by 7408px. 202591 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts:379:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:02.757Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s13-cartpole-controller-dark-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts-snapshots\\s13-cartpole-controller-dark-mobile-chrome-win32.png"
+                        },
+                        {
+                          "name": "s13-cartpole-controller-dark-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\s13-cartpole-controller-dark-actual.png"
+                        },
+                        {
+                          "name": "s13-cartpole-controller-dark-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\s13-cartpole-controller-dark-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-c24118fd5fce6c219655",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 371,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\field-pendulum.spec.ts",
+      "file": "redesign/field-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S16 stochastic lattice and field laboratory",
+          "file": "redesign/field-pendulum.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen spatial heatmaps ensemble and static diagnostic layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7501,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts:359:7",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 2967px, received 1280px by 4700px. 174184 pixels (ratio 0.03 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts:359:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:47.821Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s16-langevin-ensemble-light-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts-snapshots\\s16-langevin-ensemble-light-chromium-win32.png"
+                        },
+                        {
+                          "name": "s16-langevin-ensemble-light-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\s16-langevin-ensemble-light-actual.png"
+                        },
+                        {
+                          "name": "s16-langevin-ensemble-light-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\s16-langevin-ensemble-light-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-6e3a38d703a1999b4c7c",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 344,
+              "column": 3
+            },
+            {
+              "title": "frozen spatial heatmaps ensemble and static diagnostic layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 16674,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts:359:7",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\n\n  Snapshot: s16-langevin-ensemble-light.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s16-langevin-ensemble-light.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 393px by 3140px, received 393px by 5095px. 103816 pixels (ratio 0.06 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts:359:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:12.261Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s16-langevin-ensemble-light-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\field-pendulum.spec.ts-snapshots\\s16-langevin-ensemble-light-mobile-chrome-win32.png"
+                        },
+                        {
+                          "name": "s16-langevin-ensemble-light-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\s16-langevin-ensemble-light-actual.png"
+                        },
+                        {
+                          "name": "s16-langevin-ensemble-light-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\s16-langevin-ensemble-light-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-quantity-visual-review-r1-20261110-browser-output\\redesign-field-pendulum-S1-34c0c-d-static-diagnostic-layouts-mobile-chrome\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-376188cf6bfed8436721",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 344,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\network-pendulum.spec.ts",
+      "file": "redesign/network-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S15 magnetic and synchronization network laboratory",
+          "file": "redesign/network-pendulum.spec.ts",
+          "line": 66,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen network topology and selected-node workspace layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9607,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:52:56.864Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-98c8b1a646aaaff9aefc",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 473,
+              "column": 3
+            },
+            {
+              "title": "frozen magnetic graph and parameter inspector dark layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8318,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:53:11.761Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-2882d57ab9b3ef3b0b6f",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "frozen topology, aggregate order, individual phase, local coherence and basin layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14871,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:53:20.103Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-bbe732ee809865413d71",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 497,
+              "column": 3
+            },
+            {
+              "title": "frozen network topology and selected-node workspace layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5682,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:31.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-e5c8a8e1b40fc8cc248d",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 473,
+              "column": 3
+            },
+            {
+              "title": "frozen magnetic graph and parameter inspector dark layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7507,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:38.082Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-9d6d1cdbc46809a7061a",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "frozen topology, aggregate order, individual phase, local coherence and basin layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13426,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:45.609Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-fe2e0443ee94c759d50e",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 497,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\nonlinear-pendulum.spec.ts",
+      "file": "redesign/nonlinear-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S14 nonlinear and delay systems laboratory",
+          "file": "redesign/nonlinear-pendulum.spec.ts",
+          "line": 53,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen nonlinear potential, limit cycle, friction and delay-history layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22792,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:53:35.036Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "229955b475b618a6ad98-029053d43408edfd8e33",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 383,
+              "column": 3
+            },
+            {
+              "title": "frozen nonlinear potential, limit cycle, friction and delay-history layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22252,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:59:59.083Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "229955b475b618a6ad98-1451b2f6609f81a5f6ae",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 383,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\observations-inverse.spec.ts",
+      "file": "redesign/observations-inverse.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S22 observations, inverse problems and uncertainty",
+          "file": "redesign/observations-inverse.spec.ts",
+          "line": 72,
+          "column": 6,
+          "specs": [
+            {
+              "title": "light and dark observation previews retain explicit units and source lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3293,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:53:58.394Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1ed7097f347bb503c3aa-d9e28d22a69e5541d61f",
+              "file": "redesign/observations-inverse.spec.ts",
+              "line": 210,
+              "column": 3
+            },
+            {
+              "title": "light and dark observation previews retain explicit units and source lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3860,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T06:00:21.733Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1ed7097f347bb503c3aa-c6f4299ae465213797cb",
+              "file": "redesign/observations-inverse.spec.ts",
+              "line": 210,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\research-project.spec.ts",
+      "file": "redesign/research-project.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S24 research project and reproducible package",
+          "file": "redesign/research-project.spec.ts",
+          "line": 105,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard, 320px and light/dark figure views retain accessible controls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7207,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:54:02.346Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s24-visual-geometry-light",
+                          "contentType": "application/json",
+                          "body": "ewogICJzY3JvbGxZIjogODczMCwKICAiZGV2aWNlUGl4ZWxSYXRpbyI6IDEsCiAgImZvbnRTdGF0dXMiOiAibG9hZGVkIiwKICAiZmlndXJlIjogewogICAgIngiOiA1MiwKICAgICJ5IjogMTM0LjUxNTYyNSwKICAgICJ3aWR0aCI6IDIxNiwKICAgICJoZWlnaHQiOiA1MzEuOTM3NQogIH0sCiAgImRlc2NyaXB0aW9uIjogewogICAgIngiOiA2NSwKICAgICJ5IjogMzQzLjA3ODEyNSwKICAgICJ3aWR0aCI6IDE5MCwKICAgICJoZWlnaHQiOiAxOTAuMzc1CiAgfSwKICAic3VtbWFyeSI6IHsKICAgICJ4IjogMzcsCiAgICAieSI6IC01Mzg3LjYyNSwKICAgICJ3aWR0aCI6IDI0NiwKICAgICJoZWlnaHQiOiAxODguNjU2MjUKICB9LAogICJzdW1tYXJ5VGV4dCI6ICJTaG9ydCBkb3VibGUgcGVuZHVsdW0gc3R1ZHlwcm9qZWN0LXMyNC12aXN1YWwgwrcg7IS47IWYIDEgwrcgcnVuIDEgwrcgYXJ0aWZhY3QgMiDCtyDrhbjtirjrtoEgMSDCtyDqt7jrprwgMSDCtyDriITrnb0gMCIsCiAgImZvbnQiOiB7CiAgICAiZmFtaWx5IjogIlwiU2Vnb2UgVUlcIiwgXCJNYWxndW4gR290aGljXCIsIFwiQXBwbGUgU0QgR290aGljIE5lb1wiLCBzYW5zLXNlcmlmIiwKICAgICJzaXplIjogIjE0cHgiLAogICAgImxpbmVIZWlnaHQiOiAiMjMuOHB4IgogIH0sCiAgImxpbmVzIjogWwogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM0NS4wNzgxMjUsCiAgICAgICJ3aWR0aCI6IDE0MC41OTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM2OC44NzUsCiAgICAgICJ3aWR0aCI6IDE4Ny4yMDMxMjUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiAzOTIuNjcxODc1LAogICAgICAid2lkdGgiOiAxNjcuNDIxODc1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDE2LjQ2ODc1LAogICAgICAid2lkdGgiOiAxODQuNDY4NzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiA0NDAuMjY1NjI1LAogICAgICAid2lkdGgiOiAxNzcuODI4MTI1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDY0LjA2MjUsCiAgICAgICJ3aWR0aCI6IDE2My4wOTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDQ4Ny44NTkzNzUsCiAgICAgICJ3aWR0aCI6IDE4My4xNTYyNSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDUxMS42NTYyNSwKICAgICAgIndpZHRoIjogMTAuNTkzNzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfQogIF0KfQ=="
+                        },
+                        {
+                          "name": "s24-visual-geometry-dark",
+                          "contentType": "application/json",
+                          "body": "ewogICJzY3JvbGxZIjogODczMCwKICAiZGV2aWNlUGl4ZWxSYXRpbyI6IDEsCiAgImZvbnRTdGF0dXMiOiAibG9hZGVkIiwKICAiZmlndXJlIjogewogICAgIngiOiA1MiwKICAgICJ5IjogMTM0LjUxNTYyNSwKICAgICJ3aWR0aCI6IDIxNiwKICAgICJoZWlnaHQiOiA1MzEuOTM3NQogIH0sCiAgImRlc2NyaXB0aW9uIjogewogICAgIngiOiA2NSwKICAgICJ5IjogMzQzLjA3ODEyNSwKICAgICJ3aWR0aCI6IDE5MCwKICAgICJoZWlnaHQiOiAxOTAuMzc1CiAgfSwKICAic3VtbWFyeSI6IHsKICAgICJ4IjogMzcsCiAgICAieSI6IC01Mzg3LjYyNSwKICAgICJ3aWR0aCI6IDI0NiwKICAgICJoZWlnaHQiOiAxODguNjU2MjUKICB9LAogICJzdW1tYXJ5VGV4dCI6ICJTaG9ydCBkb3VibGUgcGVuZHVsdW0gc3R1ZHlwcm9qZWN0LXMyNC12aXN1YWwgwrcg7IS47IWYIDEgwrcgcnVuIDEgwrcgYXJ0aWZhY3QgMiDCtyDrhbjtirjrtoEgMSDCtyDqt7jrprwgMSDCtyDriITrnb0gMCIsCiAgImZvbnQiOiB7CiAgICAiZmFtaWx5IjogIlwiU2Vnb2UgVUlcIiwgXCJNYWxndW4gR290aGljXCIsIFwiQXBwbGUgU0QgR290aGljIE5lb1wiLCBzYW5zLXNlcmlmIiwKICAgICJzaXplIjogIjE0cHgiLAogICAgImxpbmVIZWlnaHQiOiAiMjMuOHB4IgogIH0sCiAgImxpbmVzIjogWwogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM0NS4wNzgxMjUsCiAgICAgICJ3aWR0aCI6IDE0MC41OTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM2OC44NzUsCiAgICAgICJ3aWR0aCI6IDE4Ny4yMDMxMjUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiAzOTIuNjcxODc1LAogICAgICAid2lkdGgiOiAxNjcuNDIxODc1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDE2LjQ2ODc1LAogICAgICAid2lkdGgiOiAxODQuNDY4NzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiA0NDAuMjY1NjI1LAogICAgICAid2lkdGgiOiAxNzcuODI4MTI1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDY0LjA2MjUsCiAgICAgICJ3aWR0aCI6IDE2My4wOTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDQ4Ny44NTkzNzUsCiAgICAgICJ3aWR0aCI6IDE4My4xNTYyNSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDUxMS42NTYyNSwKICAgICAgIndpZHRoIjogMTAuNTkzNzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfQogIF0KfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "43eb50b3f4f1e63552f0-b42403fec50fa9e4fe87",
+              "file": "redesign/research-project.spec.ts",
+              "line": 611,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320px and light/dark figure views retain accessible controls",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7307,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T06:00:26.095Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s24-visual-geometry-light",
+                          "contentType": "application/json",
+                          "body": "ewogICJzY3JvbGxZIjogODczMCwKICAiZGV2aWNlUGl4ZWxSYXRpbyI6IDIuNzUsCiAgImZvbnRTdGF0dXMiOiAibG9hZGVkIiwKICAiZmlndXJlIjogewogICAgIngiOiA1MiwKICAgICJ5IjogMTM0LjUxNTYyNSwKICAgICJ3aWR0aCI6IDIxNiwKICAgICJoZWlnaHQiOiA1MzEuOTM3NQogIH0sCiAgImRlc2NyaXB0aW9uIjogewogICAgIngiOiA2NSwKICAgICJ5IjogMzQzLjA3ODEyNSwKICAgICJ3aWR0aCI6IDE5MCwKICAgICJoZWlnaHQiOiAxOTAuMzc1CiAgfSwKICAic3VtbWFyeSI6IHsKICAgICJ4IjogMzcsCiAgICAieSI6IC01Mzg3LjYyNSwKICAgICJ3aWR0aCI6IDI0NiwKICAgICJoZWlnaHQiOiAxODguNjU2MjUKICB9LAogICJzdW1tYXJ5VGV4dCI6ICJTaG9ydCBkb3VibGUgcGVuZHVsdW0gc3R1ZHlwcm9qZWN0LXMyNC12aXN1YWwgwrcg7IS47IWYIDEgwrcgcnVuIDEgwrcgYXJ0aWZhY3QgMiDCtyDrhbjtirjrtoEgMSDCtyDqt7jrprwgMSDCtyDriITrnb0gMCIsCiAgImZvbnQiOiB7CiAgICAiZmFtaWx5IjogIlwiU2Vnb2UgVUlcIiwgXCJNYWxndW4gR290aGljXCIsIFwiQXBwbGUgU0QgR290aGljIE5lb1wiLCBzYW5zLXNlcmlmIiwKICAgICJzaXplIjogIjE0cHgiLAogICAgImxpbmVIZWlnaHQiOiAiMjMuOHB4IgogIH0sCiAgImxpbmVzIjogWwogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM0NS4wNzgxMjUsCiAgICAgICJ3aWR0aCI6IDE0MC41OTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM2OC44NzUsCiAgICAgICJ3aWR0aCI6IDE4Ny4yMDMxMjUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiAzOTIuNjcxODc1LAogICAgICAid2lkdGgiOiAxNjcuNDIxODc1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDE2LjQ2ODc1LAogICAgICAid2lkdGgiOiAxODQuNDY4NzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiA0NDAuMjY1NjI1LAogICAgICAid2lkdGgiOiAxNzcuODI4MTI1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDY0LjA2MjUsCiAgICAgICJ3aWR0aCI6IDE2My4wOTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDQ4Ny44NTkzNzUsCiAgICAgICJ3aWR0aCI6IDE4My4xNTYyNSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDUxMS42NTYyNSwKICAgICAgIndpZHRoIjogMTAuNTkzNzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfQogIF0KfQ=="
+                        },
+                        {
+                          "name": "s24-visual-geometry-dark",
+                          "contentType": "application/json",
+                          "body": "ewogICJzY3JvbGxZIjogODczMCwKICAiZGV2aWNlUGl4ZWxSYXRpbyI6IDIuNzUsCiAgImZvbnRTdGF0dXMiOiAibG9hZGVkIiwKICAiZmlndXJlIjogewogICAgIngiOiA1MiwKICAgICJ5IjogMTM0LjUxNTYyNSwKICAgICJ3aWR0aCI6IDIxNiwKICAgICJoZWlnaHQiOiA1MzEuOTM3NQogIH0sCiAgImRlc2NyaXB0aW9uIjogewogICAgIngiOiA2NSwKICAgICJ5IjogMzQzLjA3ODEyNSwKICAgICJ3aWR0aCI6IDE5MCwKICAgICJoZWlnaHQiOiAxOTAuMzc1CiAgfSwKICAic3VtbWFyeSI6IHsKICAgICJ4IjogMzcsCiAgICAieSI6IC01Mzg3LjYyNSwKICAgICJ3aWR0aCI6IDI0NiwKICAgICJoZWlnaHQiOiAxODguNjU2MjUKICB9LAogICJzdW1tYXJ5VGV4dCI6ICJTaG9ydCBkb3VibGUgcGVuZHVsdW0gc3R1ZHlwcm9qZWN0LXMyNC12aXN1YWwgwrcg7IS47IWYIDEgwrcgcnVuIDEgwrcgYXJ0aWZhY3QgMiDCtyDrhbjtirjrtoEgMSDCtyDqt7jrprwgMSDCtyDriITrnb0gMCIsCiAgImZvbnQiOiB7CiAgICAiZmFtaWx5IjogIlwiU2Vnb2UgVUlcIiwgXCJNYWxndW4gR290aGljXCIsIFwiQXBwbGUgU0QgR290aGljIE5lb1wiLCBzYW5zLXNlcmlmIiwKICAgICJzaXplIjogIjE0cHgiLAogICAgImxpbmVIZWlnaHQiOiAiMjMuOHB4IgogIH0sCiAgImxpbmVzIjogWwogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM0NS4wNzgxMjUsCiAgICAgICJ3aWR0aCI6IDE0MC41OTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDM2OC44NzUsCiAgICAgICJ3aWR0aCI6IDE4Ny4yMDMxMjUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiAzOTIuNjcxODc1LAogICAgICAid2lkdGgiOiAxNjcuNDIxODc1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDE2LjQ2ODc1LAogICAgICAid2lkdGgiOiAxODQuNDY4NzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfSwKICAgIHsKICAgICAgIngiOiA2NSwKICAgICAgInkiOiA0NDAuMjY1NjI1LAogICAgICAid2lkdGgiOiAxNzcuODI4MTI1LAogICAgICAiaGVpZ2h0IjogMTkKICAgIH0sCiAgICB7CiAgICAgICJ4IjogNjUsCiAgICAgICJ5IjogNDY0LjA2MjUsCiAgICAgICJ3aWR0aCI6IDE2My4wOTM3NSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDQ4Ny44NTkzNzUsCiAgICAgICJ3aWR0aCI6IDE4My4xNTYyNSwKICAgICAgImhlaWdodCI6IDE5CiAgICB9LAogICAgewogICAgICAieCI6IDY1LAogICAgICAieSI6IDUxMS42NTYyNSwKICAgICAgIndpZHRoIjogMTAuNTkzNzUsCiAgICAgICJoZWlnaHQiOiAxOQogICAgfQogIF0KfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "43eb50b3f4f1e63552f0-caee6d60dc3415d28149",
+              "file": "redesign/research-project.spec.ts",
+              "line": 611,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\spatial-pendulum.spec.ts",
+      "file": "redesign/spatial-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S12 spatial systems laboratory",
+          "file": "redesign/spatial-pendulum.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen spatial workspace, embedded inspector and numerical layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9146,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:54:09.601Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-e4382fa65d46dc7f61a5",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 357,
+              "column": 3
+            },
+            {
+              "title": "frozen spatial workspace, embedded inspector and numerical layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9539,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T06:00:33.466Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-d8f8ea7d9e2131c4aa73",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 357,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\stability-workflow.spec.ts",
+      "file": "redesign/stability-workflow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S20 stability and bifurcation workflows",
+          "file": "redesign/stability-workflow.spec.ts",
+          "line": 46,
+          "column": 6,
+          "specs": [
+            {
+              "title": "keyboard, narrow layout and themes retain an accessible branch graph and convergence table",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22268,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:54:18.785Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "092bcfa960dd76089c4c-dad009146523ba4f42fe",
+              "file": "redesign/stability-workflow.spec.ts",
+              "line": 262,
+              "column": 3
+            },
+            {
+              "title": "keyboard, narrow layout and themes retain an accessible branch graph and convergence table",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20083,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T06:00:43.065Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "092bcfa960dd76089c4c-bf20e12fed8d97a4d545",
+              "file": "redesign/stability-workflow.spec.ts",
+              "line": 262,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T05:48:17.823Z",
+    "duration": 767300.914,
+    "expected": 59,
+    "skipped": 0,
+    "unexpected": 7,
+    "flaky": 0
+  }
+}

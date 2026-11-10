@@ -1,0 +1,2937 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-playwright.config.ts",
+      "--project=chromium",
+      "--max-failures=1",
+      "e2e/redesign/browser-api.spec.ts",
+      "e2e/redesign/core-diagnostics.spec.ts",
+      "e2e/redesign/driven-pendulum.spec.ts",
+      "e2e/redesign/locale.spec.ts",
+      "e2e/redesign/migration.spec.ts",
+      "e2e/redesign/product-setup.spec.ts",
+      "e2e/redesign/shell.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g04-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g04-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\browser-api.spec.ts",
+      "file": "redesign/browser-api.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 explicit native browser public namespace",
+          "file": "redesign/browser-api.spec.ts",
+          "line": 29,
+          "column": 6,
+          "specs": [
+            {
+              "title": "double: connects state patches, actual scheduler and commands to the live workspace and exports native manifest",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4912,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:33:28.501Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6c6973e582ae66a1e479-44a99bdd5541fcf2b0aa",
+              "file": "redesign/browser-api.spec.ts",
+              "line": 31,
+              "column": 5
+            },
+            {
+              "title": "compound-double: connects state patches, actual scheduler and commands to the live workspace and exports native manifest",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7872,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:33:34.431Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6c6973e582ae66a1e479-0d360fb4ee41fb9fed21",
+              "file": "redesign/browser-api.spec.ts",
+              "line": 31,
+              "column": 5
+            },
+            {
+              "title": "triple: connects state patches, actual scheduler and commands to the live workspace and exports native manifest",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3360,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:33:42.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6c6973e582ae66a1e479-6559db2b1ab1aa5ea0ed",
+              "file": "redesign/browser-api.spec.ts",
+              "line": 31,
+              "column": 5
+            },
+            {
+              "title": "keeps direct native physics, native validation reports and genuine module-worker commands",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7788,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:33:45.689Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6c6973e582ae66a1e479-9db21e02a26c1a1a9f74",
+              "file": "redesign/browser-api.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "unbinds old workspaces on navigation and refuses unknown user namespaces without mutation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8936,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:33:53.490Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6c6973e582ae66a1e479-519f3d668bd9d1966a07",
+              "file": "redesign/browser-api.spec.ts",
+              "line": 143,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\core-diagnostics.spec.ts",
+      "file": "redesign/core-diagnostics.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S18 common core diagnostics",
+          "file": "redesign/core-diagnostics.spec.ts",
+          "line": 59,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads the diagnostic chunk only on demand and ignores a late load after route disposal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7907,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:02.551Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-7423205058258b20a44f",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 71,
+              "column": 3
+            },
+            {
+              "title": "planar: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8336,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:10.477Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-87c2918d1ea4ebce7b24",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "chain: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7693,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:18.832Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-0b24cda3e322b4ca6208",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "constraint: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12403,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:26.539Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-de1da283502c3785e504",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "spatial: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5214,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:38.957Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-8f15bdb2746f5100d92c",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "driven: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5598,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:44.187Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-245e63ba2f3c6f4aa98c",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "nonlinear: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6740,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:49.801Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-25e4e2b44cc0d717f876",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "network: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9345,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:34:56.555Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-8580acfdc9079b5e8677",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "field: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9521,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:05.915Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-6dc9e2ba3432b54adbc0",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "discrete: every route exposes all eleven diagnostics and an explicit compatibility reason",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4422,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:15.453Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-eadf97435b7563657943",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "double: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3477,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:19.890Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-1fcc9978d12011f7b244",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "triple: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:23.382Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-1310cfe60d8791af1664",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "spring: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3487,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:31.221Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-8a85e244d2166a0113b8",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "spherical: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12006,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:34.718Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-95aa01e6a7ac89998eb5",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "driven: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7686,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:46.737Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-17d2ec288337be048352",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "duffing: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7797,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:35:54.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-ab43ec31eae795960bd9",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "pendulum-network: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3418,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:02.251Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-2bd92fc9fb3ed9061d00",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "fput: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7401,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:05.691Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-8082b4752245a1b67abc",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "standard-map: a real recorded trajectory produces a worker artifact with declared axes and units",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8018,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:13.103Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-d74fe3ca63be0e82d0a9",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "all eleven diagnostics execute through the common worker and artifact reload preserves the current experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24647,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:21.133Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-65f29f907445fed65f67",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 153,
+              "column": 3
+            },
+            {
+              "title": "invalid sampling settings explain refusal and noisy hybrid delay or discrete flows remain incompatible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:45.798Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-0d6c968948b6ae86ab2e",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 188,
+              "column": 3
+            },
+            {
+              "title": "reports real progress, cancels without artifacts, and retries after worker startup failure",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3706,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:52.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-f946f2e7ccb0c58c335c",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 209,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320 px, zoom, light and dark diagnostics remain readable and accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14723,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:36:56.000Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "024f6610e5dada1dc8de-e3a0a014c910ef5400d5",
+              "file": "redesign/core-diagnostics.spec.ts",
+              "line": 258,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\driven-pendulum.spec.ts",
+      "file": "redesign/driven-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S13 driven and controlled systems laboratory",
+          "file": "redesign/driven-pendulum.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "driven: worker run, pause, step, progress, cancel and numerical exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8231,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:10.777Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-1b794984a6d32629c16d",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 58,
+              "column": 5
+            },
+            {
+              "title": "driven: atomic edits, save, reload, share and canonical state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4137,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:19.020Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-c09af36abcd78d336768",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "coupled: worker run, pause, step, progress, cancel and numerical exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8424,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:23.171Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-4e6767f15e0590b4d245",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 58,
+              "column": 5
+            },
+            {
+              "title": "coupled: atomic edits, save, reload, share and canonical state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8664,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:31.607Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-3864155cf4f493082d86",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "inverted: worker run, pause, step, progress, cancel and numerical exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:40.284Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-57608d0d40d0bf08f713",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 58,
+              "column": 5
+            },
+            {
+              "title": "inverted: atomic edits, save, reload, share and canonical state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8682,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:44.857Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-f1d1030cfafc32b87400",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "cartpole: worker run, pause, step, progress, cancel and numerical exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:53.552Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-f58fef30087298da77d8",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 58,
+              "column": 5
+            },
+            {
+              "title": "cartpole: atomic edits, save, reload, share and canonical state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4828,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:37:57.696Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-c86350566ee924cfe289",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "parametric: worker run, pause, step, progress, cancel and numerical exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8148,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:02.542Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-45b2cbc2c712bbef8c69",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 58,
+              "column": 5
+            },
+            {
+              "title": "parametric: atomic edits, save, reload, share and canonical state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13357,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:10.706Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-ebda1e5ae07df2744f8d",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "driven: forcing waveform, angular frequency and phase survive save/share/import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8654,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:24.078Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-83b163adfe7d1f513819",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "parametric: forcing waveform, angular frequency and phase survive save/share/import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4365,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:32.746Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-186f7f355399fa6f00a6",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "cartpole: forcing waveform, angular frequency and phase survive save/share/import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4687,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:37.125Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-84f09ffcb288309b9909",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "controller is offered only for compatible inverted and cart-pole plants",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2923,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:41.830Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-bf74ab287607f1c0ba92",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "inverted: separate controller settings, saturated output and invalid gain recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3901,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:44.766Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-31730d733a88581c8674",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 174,
+              "column": 5
+            },
+            {
+              "title": "cartpole: separate controller settings, saturated output and invalid gain recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8008,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:48.679Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-1252304fb8a2bd19e893",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 174,
+              "column": 5
+            },
+            {
+              "title": "closed-loop safe limit stops at the last finite state and can be corrected",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12791,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:38:56.702Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-45313a7895e493c3ab8c",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 211,
+              "column": 3
+            },
+            {
+              "title": "bounded resonance sweep runs and cancels without changing the experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3843,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:09.514Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-def4322b7a3849bc28e3",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 239,
+              "column": 3
+            },
+            {
+              "title": "unsupported, unsafe and oversized imports preserve the valid experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7508,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:13.376Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-7c963c5a007de5aa0ad5",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 270,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved settings remain intact when saving is attempted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2387,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:20.896Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-54efe6e41c911fae7944",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 286,
+              "column": 3
+            },
+            {
+              "title": "worker startup error recovers and leaving the route terminates execution",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7188,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:23.297Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-6373f3a21f6702d09173",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 297,
+              "column": 3
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve control access: 작업 공간",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17453,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:30.497Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-eca96aee823d23f909c4",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 323,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve control access: 조건",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:39:47.962Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-14f4bc3bb80756085ff1",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 323,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve control access: 분석",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3919,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:05.876Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-6e7913ac71537a34715e",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 323,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve control access: 보관함",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8514,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:09.807Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-dbf4c7987647c7a30d8e",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 323,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve control access: 내보내기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9197,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:18.335Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-a6644d9a19c39cc16f63",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 323,
+              "column": 5
+            },
+            {
+              "title": "accessibility and 200% zoom preserve forcing and controller access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9188,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:27.543Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-093063dfc4e971c0c698",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 335,
+              "column": 3
+            },
+            {
+              "title": "full rotations keep downward and upright plant bobs within the scene",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3228,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:36.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-11a7c6103e1ae6dcd67a",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 347,
+              "column": 3
+            },
+            {
+              "title": "frozen driven workspace, cart-pole controller and response layouts",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11449,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts:379:5",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                          "column": 24,
+                          "line": 44
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39mredesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                            "column": 24,
+                            "line": 44
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\n\n  Snapshot: s13-cartpole-controller-dark.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(s13-cartpole-controller-dark.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - Expected an image 1280px by 4100px, received 1280px by 4271px. 354707 pixels (ratio 0.07 of all image pixels) are different.\u001b[22m\n\n\n   at redesign\\legacy-layout.ts:44\n\n  42 |       );\n  43 |     }\n> 44 |     await expect(page).toHaveScreenshot(name, { fullPage: true });\n     |                        ^\n  45 |   } finally {\n  46 |     for (let i = 0; i < placeholders.length; i++) {\n  47 |       await placeholders[i]!.evaluate((marker, original) => marker.replaceWith(original), docks[i]!);\n    at expectLegacyPanelScreenshot (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts:44:24)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts:379:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:40:39.987Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "s13-cartpole-controller-dark-expected.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\driven-pendulum.spec.ts-snapshots\\s13-cartpole-controller-dark-chromium-win32.png"
+                        },
+                        {
+                          "name": "s13-cartpole-controller-dark-actual.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\s13-cartpole-controller-dark-actual.png"
+                        },
+                        {
+                          "name": "s13-cartpole-controller-dark-diff.png",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\s13-cartpole-controller-dark-diff.png"
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g04-20261110-browser-output\\redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\legacy-layout.ts",
+                        "column": 24,
+                        "line": 44
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-53c210564dea67cd1b11",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 371,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\locale.spec.ts",
+      "file": "redesign/locale.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 independent product locale preference",
+          "file": "redesign/locale.spec.ts",
+          "line": 21,
+          "column": 6,
+          "specs": [
+            {
+              "title": "combines locale and theme changes without serializing view preferences into canonical or full setup",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ae3be06edaf41bf229b0-befddc2dde74d8bb7521",
+              "file": "redesign/locale.spec.ts",
+              "line": 22,
+              "column": 3
+            },
+            {
+              "title": "keeps initial storage untouched, uses a separate preference and preserves original science language",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ae3be06edaf41bf229b0-8674fb33733a3448c310",
+              "file": "redesign/locale.spec.ts",
+              "line": 87,
+              "column": 3
+            },
+            {
+              "title": "translates a loaded actual unit and accessible math while preserving formulas and lab state across language changes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ae3be06edaf41bf229b0-9eaf9b119d229568a57e",
+              "file": "redesign/locale.spec.ts",
+              "line": 131,
+              "column": 3
+            },
+            {
+              "title": "supports keyboard/320px language changes, keeps authored input and fallback user prose untouched, and passes axe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ae3be06edaf41bf229b0-abf2e0111e778889bd45",
+              "file": "redesign/locale.spec.ts",
+              "line": 166,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\migration.spec.ts",
+      "file": "redesign/migration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S28 previews exact UTF-8 backup, explicitly adopts a restart and restores the untouched legacy snapshot",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "ec0c9caf5bcc8bab1544-6e9f8341c79d61e76947",
+          "file": "redesign/migration.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "S28 preserves unsupported and malicious input, invalidates edited previews and supports keyboard cancellation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "ec0c9caf5bcc8bab1544-0b843d3cbbd1cf5a5f02",
+          "file": "redesign/migration.spec.ts",
+          "line": 118,
+          "column": 1
+        },
+        {
+          "title": "S28 keeps legacy share, expansion and Landing links recoverable without redirecting or dropping options",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "ec0c9caf5bcc8bab1544-36666af07bceb4a88680",
+          "file": "redesign/migration.spec.ts",
+          "line": 148,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "redesign\\product-setup.spec.ts",
+      "file": "redesign/product-setup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S28 public setup double shares actual current controls and exact physical inputs across open/reload without storage writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-9d696c798a943c8fe269",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 176,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup compound-double shares actual current controls and exact physical inputs across open/reload without storage writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-33a256db79c904685f6b",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 176,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup triple shares actual current controls and exact physical inputs across open/reload without storage writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-3ea8bd81181f708044c1",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 176,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup current alternating queue preserves every native member and executes real worker results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-41a1ff60c5ccd4997589",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 259,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup current symmetric queue preserves every native member and executes real worker results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-0a1773dca4636eb0fa7a",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 259,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup current random queue preserves every native member and executes real worker results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-13abc576d0db01f3f1ab",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 259,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup current normalized queue preserves every native member and executes real worker results",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-3250bf2464f5e439c15e",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 259,
+          "column": 3
+        },
+        {
+          "title": "S28 public setup JSON preview requires confirmation and preserves current state on cancellation and invalid files",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-9fae2bdf78c74984bde6",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 331,
+          "column": 1
+        },
+        {
+          "title": "S28 public setup invalid, mismatched and oversized routes stay intact without loading a native runtime",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-98bc0d7bd980772f232d",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 392,
+          "column": 1
+        },
+        {
+          "title": "S28 public setup canceled, replaced and disposed file reads cannot restore a stale confirmation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-7fb6755a348fabc1454e",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 421,
+          "column": 1
+        },
+        {
+          "title": "S28 public setup library importer loads only on explicit expansion and cancellation ignores its late module",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-415ed399fbcb90926fe3",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 499,
+          "column": 1
+        },
+        {
+          "title": "S28 public setup library importer exposes a recoverable load error and retries without losing current input",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d8fa6a5c1931ea5119b2-45df304ddfdeddbc3f76",
+          "file": "redesign/product-setup.spec.ts",
+          "line": 535,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "redesign\\shell.spec.ts",
+      "file": "redesign/shell.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S04 parallel application shell",
+          "file": "redesign/shell.spec.ts",
+          "line": 43,
+          "column": 6,
+          "specs": [
+            {
+              "title": "retains a deep URL and recovery guidance when the entry script cannot load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-ebba35985d56c8d5c0c8",
+              "file": "redesign/shell.spec.ts",
+              "line": 44,
+              "column": 3
+            },
+            {
+              "title": "opens Learn by default and preserves browser back, forward and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f7a482080385534cf864",
+              "file": "redesign/shell.spec.ts",
+              "line": 61,
+              "column": 3
+            },
+            {
+              "title": "opens and reloads every route family without pretending future content is available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-5f01313995abdc73cbf9",
+              "file": "redesign/shell.spec.ts",
+              "line": 89,
+              "column": 3
+            },
+            {
+              "title": "validates shared experiment routes without starting or persisting an experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-5072033929ca150fa3d3",
+              "file": "redesign/shell.spec.ts",
+              "line": 114,
+              "column": 3
+            },
+            {
+              "title": "keeps unknown and malformed URLs intact and offers working navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-3a7875d5d91f8b17f228",
+              "file": "redesign/shell.spec.ts",
+              "line": 132,
+              "column": 3
+            },
+            {
+              "title": "keeps user storage unchanged and never loads the legacy runtime",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f23fbb333be17822b890",
+              "file": "redesign/shell.spec.ts",
+              "line": 147,
+              "column": 3
+            },
+            {
+              "title": "supports skip navigation and keyboard space changes with route focus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-cbfae913944da6d9bcd2",
+              "file": "redesign/shell.spec.ts",
+              "line": 209,
+              "column": 3
+            },
+            {
+              "title": "passes full axe checks on both spaces and invalid route recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-87d7d6665f268e7825f3",
+              "file": "redesign/shell.spec.ts",
+              "line": 229,
+              "column": 3
+            },
+            {
+              "title": "keeps navigation and content within a 320px viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-16d016f176fcfc4e1002",
+              "file": "redesign/shell.spec.ts",
+              "line": 246,
+              "column": 3
+            },
+            {
+              "title": "contains bootstrap chunk failure and recovers through a real reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-90f0ec63f517f3303dd8",
+              "file": "redesign/shell.spec.ts",
+              "line": 259,
+              "column": 3
+            },
+            {
+              "title": "contains lazy chunk failure while keeping the common navigation usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-a9fe879f1b9aee8a2e11",
+              "file": "redesign/shell.spec.ts",
+              "line": 273,
+              "column": 3
+            },
+            {
+              "title": "contains an application initialization exception before the shell mounts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-fb3e5e00e80a5091f9e7",
+              "file": "redesign/shell.spec.ts",
+              "line": 287,
+              "column": 3
+            },
+            {
+              "title": "contains a view rendering exception and allows navigation to the other space",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-b966c4b8a1bc4fce4c32",
+              "file": "redesign/shell.spec.ts",
+              "line": 304,
+              "column": 3
+            },
+            {
+              "title": "shows loading and ignores a late chunk after the user changes spaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-0538e2dbb11904f682bd",
+              "file": "redesign/shell.spec.ts",
+              "line": 323,
+              "column": 3
+            },
+            {
+              "title": "cancels a pending view without allowing its late completion to replace the cancellation screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-3633d107a012aaf40174",
+              "file": "redesign/shell.spec.ts",
+              "line": 360,
+              "column": 3
+            },
+            {
+              "title": "contains uncaught browser errors and rejected event work after mounting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-ec6b8282fe62f2610b64",
+              "file": "redesign/shell.spec.ts",
+              "line": 401,
+              "column": 3
+            },
+            {
+              "title": "continues to open the existing application alongside the new entrypoint",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-1ea4a37701161c015a27",
+              "file": "redesign/shell.spec.ts",
+              "line": 421,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-10T05:33:27.207Z",
+    "duration": 445181.47500000003,
+    "expected": 56,
+    "skipped": 36,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,6 +1,6 @@
 # S28 — 저장·공유 migration과 기능 동등성 심사
 
-- 상태: in-progress / CP3 (2026-11-06 재개)
+- 상태: in-progress / CP8 최종 source-bound 브라우저 검증 (2026-11-10)
 - 시작일: 2026-11-05 (Asia/Seoul)
 - 기준 HEAD / fetched origin/codex/redesign: `b78cdae4ea8e707e70ecd5a454173507f60aca2a`
 - 작업 branch/upstream: `codex/redesign` / `origin/codex/redesign`; 시작 시 clean, ahead/behind 0/0.
@@ -33,6 +33,8 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 예정 경로: `src/product/persistence/`, product app/compatibility integration, `tests/product/`, `tests/fixtures/`, `e2e/redesign/`, `scripts/redesign/`, `documents/redesign/parity/`, 본 progress와 status. 구현 조사 결과에 맞추어 구체 경로와 checkpoint 크기를 갱신한다.
 
 ## 검증 및 증거
+
+아래 CP0부터의 기록은 작성 당시의 판정과 실패 이력이다. 초기 35 gap·99 unverified·0인증과 지원 범위 설명을 현재 구현의 최종 판정으로 읽지 않는다. 최신 상태는 마지막 CP8 기록과 `status.json`, 최종 실행 후 갱신할 matrix·검토 보고서에서 확인한다.
 
 - 선행 완료: status 1..27 연속, next28; fetched remote S27 status `b78cdae`, 구현 `3d34cde`, evidence `2f4c806`이 history에 존재한다. 필수 artifact/실행 증거는 CP0 조사에서 추가 검증한다.
 - CP0 선행 증거: S27 필수 progress/verification/preservation 파일 존재, 구현 `3d34cde`와 evidence `2f4c806`이 HEAD의 ancestor임을 Git으로 검증했다. 전체 연속 단계 기록도 확인했다.
@@ -267,3 +269,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - CP7-VIS `66fa05a4625ab1f9fc533e272e1492709deebacf` push exit0/live exact match 확인.
 - 동결 production build를 사용한 첫 Chromium7파일94/94 실제 exit0. 수집한 예상 identity와 실제 결과가 정확히 같고 실패·skip·retry0이다. 신규 legacy expansion/live capture/playback3파일의 현재 SHA도 capture와 일치한다. 대상 ESLint exit0.
 - 나머지11개 그룹은 같은 동결 source/build로 계속한다. 첫94건을 전체1120건이나134행 인증으로 표시하지 않는다. S28완료·사용자/전문가 review·cutover는 미완료이며 next28을 유지한다.
+
+### CP8-V2 — 단위·확률 공명 화면 및 실행 증거 검증 완료
+
+- CP8-E1 `c883250ece45a3d16aa8f3e387b6d2bdc834bf5b` push exit0/live exact match를 부모 실행에서 확인했다. Chromium g02 94/94와 g03 93/93의 실제 성공 capture 및 현재 source SHA가 신규 native-design/research-api/runtime-acceleration/legacy-tabs/structure-diagnostics 5파일의 실행을 입증한다. 대상 5파일 ESLint actual exit0이며, 앞선 g01을 포함한 세 묶음의 보존된 실제 통과 수는281건이다.
+- g04는56통과·cart-pole 조건 PNG1실패·36미실행으로 중단했다. 이후 전체 시각 callback66건은59통과·7실패였다.7개는 개별 대조한 시각 차이5개와30초 timeout2개로 구분하며 원래 capture/report/trace를 그대로 보존한다. cart-pole Chromium1개와 후속5개를 합한 추가6PNG의 실제 단위 선택기·native 확률 공명 panel/설명을 root와 독립 agent가 원본/실제와 대조했다. 기존8개 Inspector와 합계14개는 AI 기술 검토이며 사람·물리 전문가 승인이 아니다. 원본 PNG를 별도 보관하고 실제 inline control을 숨기거나 수치 golden/한도를 바꾸지 않았다.
+- 갱신된6PNG가 속한 원래 production6case가 같은 frozen348파일 build와 원래 video-on config에서6/6 actual exit0/valid다. 두 timeout case는 원래30초·assertion·axe·trace·screenshot 한도를 유지한 채 별도 config의 video만 끄고 각각1/1 actual exit0/valid로 통과했다. 총8개의 정확한 identity와 capture/report/config/source SHA를 `S28-CP8-V2-reviewed-quantity-and-runtime-evidence.json`에 기록했다. 실제 시간은 raw runner report를 기준으로 하며 이전 실패를 소급 통과로 표시하지 않는다.
+- trace 조사에서 두 검사 모두 PNG가 일치했고, 긴 지연은 browser/context 또는 axe의 임시 page 생성에 집중되었다. ffmpeg·CPU 경합 등 정확한 외부 원인은 확정하지 않는다. 새 config는 원래 SHA05ea4ef…를 그대로 보존하고 `use.video: 'off'` 한 줄만 추가한 SHA1d7120e4…다. 먼저 통과한 세 묶음은 실제 원래 command/config를 유지하며 앞으로9묶음만 새 config로 실행한다. matcher·전체1120identity·worker1/retry0는 동일하다.
+- 현재 보존 감사 actual exit0은 S27의2175파일 중2101동등·74명시 변경·예상 밖 보호 변경0, 두 Desktop 전달 사본 raw SHA일치를 기록한다. 이는 최종 source-freeze 인증이 아니다. 원시 timeout 분석/보존 보고서와 관련 로그·단일 config 차이 증거를 `parity/evidence/scoped-V2/`에 byte 그대로 복사하고 manifest로 결속했다.
+- snapshot 폴더 전체를 각 case의 sourcePaths에 연결한 임시 binder를 유지하고, 실제 command/configFile/captured/current config SHA를 별도 producer precheck 영수증으로 기록한다. 기존 core validator가 현재 tmp config를 다시 검사한다고 주장하지 않는다. 원래 계획·progress·실패 출력은 보존한다. 실패한 g04의 새 r2와 미실행9묶음, 전체1120건 및134행 인증, 이 checkpoint push와 최종 status commit/push는 아직 PENDING이다. next28 및 사용자 review28 미승인을 유지하며 S29는 시작하지 않는다.

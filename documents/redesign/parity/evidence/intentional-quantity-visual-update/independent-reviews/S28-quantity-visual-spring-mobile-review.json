@@ -1,0 +1,76 @@
+{
+  "schema": "pendulum-s28-quantity-visual-review/v1",
+  "reviewer": "AI independent technical visual/source review",
+  "humanReview": false,
+  "decision": "intentional-inline-display-unit-ui-acceptable-for-explicit-baseline-update",
+  "baselineUpdatedByThisReviewer": false,
+  "executionCertifiedByThisReview": false,
+  "project": "mobile-chrome",
+  "deviceBasis": "Pixel5 emulation; actual PNG393px wide, not a320px screenshot or physical-device certification.",
+  "snapshot": "s11-spring-inspector-dark.png",
+  "expected": {
+    "path": "e2e/redesign/constraint-pendulum.spec.ts-snapshots/s11-spring-inspector-dark-mobile-chrome-win32.png",
+    "width": 393,
+    "height": 3928,
+    "bytes": 124205,
+    "sha256": "a44f9e8b14e21782eee25487c544f20748ce2686591e0a7588ab8e9164cccf36"
+  },
+  "actual": {
+    "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-constraint-pendul-62c1a-ring-and-slack-rope-layouts-mobile-chrome/s11-spring-inspector-dark-actual.png",
+    "width": 393,
+    "height": 4042,
+    "bytes": 126591,
+    "sha256": "5b001268b00d57bda681e6f30686c19a487f4332c1616ee16553f3de331d9403"
+  },
+  "observations": {
+    "bothWholeImagesViewedAtOriginalResolutionIndependentlyOfDesktopPair": true,
+    "heightDeltaPixels": 114,
+    "addedElements": [
+      {
+        "id": "constraint-theta-display-unit",
+        "role": "combobox",
+        "visibleValue": "rad",
+        "location": "After the existing0.4rad initial-angle input and unchanged SI help text."
+      },
+      {
+        "id": "constraint-omega-display-unit",
+        "role": "combobox",
+        "visibleValue": "rad/s",
+        "location": "After the existing0rad/s angular-rate input and unchanged SI help text."
+      }
+    ],
+    "layoutChange": "The mobile inspector is a single-column form. Each added inline select occupies its own full-width row after the existing help text; the later radial-rate field shifts after the first select, and the runtime/integrator/warning/footer shift after both. Full-page height increases114px. Existing header, title, execution controls, tab buttons, preset and all earlier physical fields retain their arrangement.",
+    "oldValuesVisuallyPreserved": [
+      { "id": "constraint-preset", "value": "기본 설정" },
+      { "id": "constraint-mass", "value": "1", "unit": "kg" },
+      { "id": "constraint-stiffness", "value": "40", "unit": "N/m" },
+      { "id": "constraint-restLength", "value": "1", "unit": "m" },
+      { "id": "constraint-g", "value": "9.81", "unit": "m/s^2" },
+      { "id": "constraint-r", "value": "1.3", "unit": "m" },
+      { "id": "constraint-theta", "value": "0.4", "unit": "rad" },
+      { "id": "constraint-rDot", "value": "0", "unit": "m/s" },
+      { "id": "constraint-omega", "value": "0", "unit": "rad/s" },
+      { "id": "constraint-duration", "value": "8", "unit": "s" },
+      { "id": "constraint-step", "value": "0.002", "unit": "s" },
+      { "id": "constraint-sampleEvery", "value": "1", "unit": "1" },
+      { "id": "constraint-integrator", "value": "RK4" }
+    ],
+    "executionPreserved": "Ready state; time0.0000s; speed1x;0.0%;one sample; stride2steps(0.004000s);maximum2001samples. Existing run/pause/step/reset/cancel controls are retained.",
+    "readability": "Labels, all numbers, help/range/default text and selects remain within the visible393px page. Long SI explanations and final warning wrap inside their original card. The warning still explains downward-vertical radians, origin-based metres, joules/newtons, negative compressive spring force and stopping near the coordinate singularity. No new clipping, overlap or horizontal content loss is visible. The preexisting two-line workspace/export tab labels are retained.",
+    "clippingOrOverlapObserved": false,
+    "oldControlsRemovedOrHiddenObserved": false,
+    "sourceCause": {
+      "path": "src/product/design-system/quantity.ts",
+      "lines": "99–114",
+      "behavior": "Adds a real rad/deg display-unit select to existing rad/rad/s controls. Canonical numeric values are handled separately from display-unit text.",
+      "viewPath": "src/product/lab/views/constraint-inspector.ts",
+      "viewSourceBasis": "Same unchanged theta/omega field definitions and constraint-prefixed IDs reviewed in the desktop pair; no S27 diff in this view source."
+    },
+    "properResolution": "After the running focused browser process has exited, root may retain the original mobile PNG and explicitly update only this reviewed baseline from the listed actual bytes. Do not detach or hide these real inline unit controls in the historical screenshot helper. Actual screenshot passing and numerical correctness require separate execution evidence."
+  },
+  "limitations": [
+    "Only this spring mobile-chrome snapshot pair is covered; other images need their own review.",
+    "AI visual/source inspection is not user or physics-expert approval, a fresh test run, screen-reader review or physical-device certification.",
+    "No runtime, tests, snapshot baselines, captured evidence or Git metadata were modified by this reviewer. Only this temporary review JSON was created."
+  ]
+}

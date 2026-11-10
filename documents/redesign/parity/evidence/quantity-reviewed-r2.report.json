@@ -1,0 +1,369 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-playwright.config.ts",
+      "--project=chromium",
+      "--project=mobile-chrome",
+      "--max-failures=1",
+      "--update-snapshots=none",
+      "--grep",
+      "(?:frozen light/dark spring and slack rope layouts|frozen driven workspace, cart-pole controller and response layouts|frozen spatial heatmaps ensemble and static diagnostic layouts)$",
+      "e2e/redesign/constraint-pendulum.spec.ts",
+      "e2e/redesign/driven-pendulum.spec.ts",
+      "e2e/redesign/field-pendulum.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-quantity-reviewed-r2-20261111-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-quantity-reviewed-r2-20261111-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "none",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\constraint-pendulum.spec.ts",
+      "file": "redesign/constraint-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S11 spring, rope and double-string laboratory",
+          "file": "redesign/constraint-pendulum.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen light/dark spring and slack rope layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6364,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:04.566Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-4e4c1a4eda56c8e6344a",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 432,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark spring and slack rope layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4844,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:29.650Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-998a648c83e5c93a3f82",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 432,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\driven-pendulum.spec.ts",
+      "file": "redesign/driven-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S13 driven and controlled systems laboratory",
+          "file": "redesign/driven-pendulum.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen driven workspace, cart-pole controller and response layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4385,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:13.276Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-53c210564dea67cd1b11",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 371,
+              "column": 3
+            },
+            {
+              "title": "frozen driven workspace, cart-pole controller and response layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3752,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:35.385Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "52eb9d1a23947d5a89de-c24118fd5fce6c219655",
+              "file": "redesign/driven-pendulum.spec.ts",
+              "line": 371,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\field-pendulum.spec.ts",
+      "file": "redesign/field-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S16 stochastic lattice and field laboratory",
+          "file": "redesign/field-pendulum.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen spatial heatmaps ensemble and static diagnostic layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10893,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:17.698Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-6e3a38d703a1999b4c7c",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 344,
+              "column": 3
+            },
+            {
+              "title": "frozen spatial heatmaps ensemble and static diagnostic layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15064,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T23:34:39.174Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-376188cf6bfed8436721",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 344,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T23:34:03.010Z",
+    "duration": 52139.53999999999,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

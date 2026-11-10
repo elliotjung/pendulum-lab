@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP8-E1-browser-evidence",
+  "activeStageCheckpoint": "CP8-V2-validated-quantity-and-runtime-evidence",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,8 @@
     24
   ],
   "notes": [
+    "S28 CP8-V2 validated: six reviewed quantity/resonance production cases passed6/6 with original video-on config; two isolated unchanged30s cases passed1/1+1/1 with a separately pinned video-off-only config. All8 exact identities, current6PNG/source/config/frozenbuild bindings and targeted5-fileESLint0 are recorded. Prior Chromiumg02/g03 actual94+93 source captures close5newE2E files; g01..03 retain281actual passes. Originalfocused66 remains59pass/7fail(5reviewedvisual+2timeout), raw failures unchanged. Preservation2175/2101equivalent/74intentional/unexpected0/Desktophashesmatch;14intentionalPNG remainAItechnicalreviewonly. Final12group1120/134certification/statuscompletion and this checkpoint push remainPENDING; next28/review28 unapproved.",
+    "S28 Chromium g01..g03 actual281/281 valid. g04 stopped at56pass/1intentional-cartpole-layout-mismatch/36notrun, originalevidencepreserved. Individuallyreviewed actualquantity/resonance PNG updates and focused66originalvisualcases underway; source/native/helper/build unchanged. Newr2plan retains exactvalidearlierclosures and rerunsfullfailedgroup. Final1120/134cert/statuspush pending; next28/review28 unapproved.",
     "S28 CP8-E1 first final Chromium group actual94/94 exit0 with exact collected identities and frozen build/source binding. Three new legacy expansion/live capture/playback E2E files match that capture; targeted ESLint0. Eleven browser groups/final134certification/statuspush remainpending; next28/review28 unapproved.",
     "S28 CP7-VIS actual12/12productionlegacyvisual andfresh724/724selectednative/parity units passed. Ten helper/spec/8reviewedPNG paths match formalcurrentunitcapture; old14workspace/analysisPNGandnumericalgoldens unchanged,8oldPNGbytes archived, no UItextforging. AItechnicalreview only.1120groupedbrowser/final134certification/statuspush stillpending; next28/review28 unapproved.",
     "S28 CP7-P tested source/units match whole7308/7308(416files) actualcapture0;3explicitnative/tool exceptions with immutableoriginalreplay/publicprivacy/nativecomparisons. Clock newmessage-only compression51pass keeps445436<=445440gzip. Candidate134facetscomplete but1120productionbrowsercapture/certification/statuscompletion pending; next28/review28 unapproved.",

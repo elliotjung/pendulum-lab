@@ -1,0 +1,82 @@
+{
+  "schema": "pendulum-s28-quantity-visual-review/v1",
+  "reviewer": "AI independent technical visual/source review",
+  "humanReview": false,
+  "decision": "intentional-inline-display-unit-ui-acceptable-for-explicit-baseline-update",
+  "baselineUpdatedByThisReviewer": false,
+  "executionCertifiedByThisReview": false,
+  "project": "mobile-chrome",
+  "deviceBasis": "Pixel5 emulation;393px PNG, not320px or a physical device.",
+  "snapshot": "s13-cartpole-controller-dark.png",
+  "expected": {
+    "path": "e2e/redesign/driven-pendulum.spec.ts-snapshots/s13-cartpole-controller-dark-mobile-chrome-win32.png",
+    "width": 393,
+    "height": 7180,
+    "bytes": 248733,
+    "sha256": "8bfc94baa635ff544f8e6f9caf0b5232c1c018264227952cd213b243a9756f6a"
+  },
+  "actual": {
+    "path": "documents/redesign/parity/evidence/S28-quantity-visual-review-r1-20261110-browser-output/redesign-driven-pendulum-S-9fa34-roller-and-response-layouts-mobile-chrome/s13-cartpole-controller-dark-actual.png",
+    "width": 393,
+    "height": 7408,
+    "bytes": 253441,
+    "sha256": "cfe562b414e525f23f7dc688f468f4239577513e6c7c804e6fb849a7c6e76120"
+  },
+  "observations": {
+    "bothWholeImagesViewedIndependentlyOfDesktopPair": true,
+    "viewingLimit": "The image tool displayed these two tall originals with proportional reductions to a maximum6000px height; original file dimensions and hashes were read independently from PNG bytes. Visible content was also checked against unchanged driven-inspector source.",
+    "heightDeltaPixels": 228,
+    "addedElements": [
+      { "id": "driven-state-1-display-unit", "visibleValue": "rad" },
+      { "id": "driven-state-3-display-unit", "visibleValue": "rad/s" },
+      { "id": "driven-frequency-display-unit", "visibleValue": "rad/s" },
+      { "id": "driven-phase-display-unit", "visibleValue": "rad" }
+    ],
+    "layoutChange": "Four real display-unit selects add four full-width rows to the single-column existing initial-condition and forcing fieldsets, increasing the complete page height228px. Controller/runtime/actions/warning/footer move downward. The earlier header/execution/tab/plant arrangement is retained. These are existing form controls' inline additions, not independently detachable docks.",
+    "oldValuesVisuallyPreserved": [
+      { "id": "driven-cartMass", "value": "1" },
+      { "id": "driven-poleMass", "value": "0.16" },
+      { "id": "driven-length", "value": "0.75" },
+      { "id": "driven-g", "value": "9.81" },
+      { "id": "driven-force", "value": "0" },
+      { "id": "driven-friction", "value": "0" },
+      { "id": "driven-state-0", "value": "0" },
+      { "id": "driven-state-1", "value": "0.12" },
+      { "id": "driven-state-2", "value": "0" },
+      { "id": "driven-state-3", "value": "0" },
+      { "id": "driven-waveform", "value": "정현파 · sine" },
+      { "id": "driven-amplitude", "value": "0" },
+      { "id": "driven-frequency", "value": "1" },
+      { "id": "driven-phase", "value": "1.5707963267948966" },
+      { "id": "driven-controller-enabled", "value": "checked" },
+      { "id": "driven-kp", "value": "40" },
+      { "id": "driven-kd", "value": "10" },
+      { "id": "driven-kx", "value": "1" },
+      { "id": "driven-kv", "value": "2" },
+      { "id": "driven-reference", "value": "0" },
+      { "id": "driven-maxOutput", "value": "50" },
+      { "id": "driven-duration", "value": "8" },
+      { "id": "driven-step", "value": "0.002" },
+      { "id": "driven-sampleEvery", "value": "1" },
+      { "id": "driven-integrator", "value": "RK4" }
+    ],
+    "executionPreserved": "Ready; time0.0000s;speed1x;0.0%;one sample;stride2steps(0.004000s);maximum2001samples. Apply/cancel-edits/default-preset actions and applied-condition notice remain visible.",
+    "readability": "The four new selects and existing numeric inputs remain within their fieldsets. Labels, ranges and explanatory text wrap inside393px. Existing controller checkbox and gains remain accessible visually. The long final warning remains inside the amber card, including SI/radians, angular frequency notHz, saved phase versus offset, cart absolute clock, energy-work caveat, approximate cartpole inertia, local-only stability, saturation and safe stopping abovepi/2. No clipping, overlap or new horizontal content loss is visible. Existing wrapped workspace/export tab labels remain.",
+    "clippingOrOverlapObserved": false,
+    "oldControlsRemovedOrHiddenObserved": false,
+    "numericalPlot": "This is a conditions/controller screenshot, not a numerical plot. Existing physical/controller values are visually checked; numerical equivalence is the separate actual-test responsibility.",
+    "sourceCause": {
+      "path": "src/product/design-system/quantity.ts",
+      "lines": "99–114",
+      "behavior": "The shared QuantityControl appends explicit display-unit selects to existing rad/rad/s fields.",
+      "viewPath": "src/product/lab/views/driven-inspector.ts",
+      "viewDiffAgainstS27": "No diff observed against b78cdae4ea8e707e70ecd5a454173507f60aca2a in the desktop source review."
+    },
+    "properResolution": "After the focused run exits, root may archive the original PNG and update only this reviewed baseline using the listed actual bytes. Do not hide real inline unit controls in expectLegacyPanelScreenshot."
+  },
+  "limitations": [
+    "Only this mobile-chrome cartpole pair is reviewed.",
+    "AI visual/source review does not establish user/expert approval, physical devices, screen-reader behavior, a fresh execution pass or mathematical correctness.",
+    "No runtime, test, snapshot baseline, captured evidence or Git metadata was changed. Only this temporary JSON was created."
+  ]
+}
