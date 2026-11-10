@@ -1,0 +1,115 @@
+{
+  "schema": "pendulum-checkpoint-foundation/v1",
+  "stage": 28,
+  "checkpoint": "CP6-A-api-capture-foundation",
+  "recordedAt": "2026-11-10T00:44:12.764Z",
+  "scope": "Explicit base browser namespace, separate versioned15-method product research adapter, and opt-in unchanged native IMU/camera collectors over actual product providers.",
+  "sources": [
+    {
+      "path": "src/product/app/browser-api-binding.ts",
+      "sha256": "a5562411937c305c6f54fcc9adfec90935f099b16226e164bd2225460bcd0a30"
+    },
+    {
+      "path": "src/product/app/browser-api-provider.ts",
+      "sha256": "e9af7c500fa3a8d7d7077569ece99b56ebe29a3993a70752619a1e441f7615f0"
+    },
+    {
+      "path": "src/product/app/browser-api-publication.ts",
+      "sha256": "09f0f77bf1467d52e6d32feba2e92a9e1668f155c2096e16a059c37e7bf0c8cc"
+    },
+    {
+      "path": "src/product/app/browser-api-runtime.ts",
+      "sha256": "82fa6730d54a9dc38db832e5213efa7896e3f3444f45ee21136bf4593ba7e83d"
+    },
+    {
+      "path": "src/product/app/browser-api-worker-url.d.ts",
+      "sha256": "be66757330776215ca14aafe6cbf143d08aea055ee5bba70aca70698b9219961"
+    },
+    {
+      "path": "src/product/app/browser-api.ts",
+      "sha256": "81e70aa1e9e7a0ef083a0999bf0881e0ef1ddeef3810df95a131ef7d74c7463a"
+    },
+    {
+      "path": "src/product/app/research-api-binding.ts",
+      "sha256": "2d4a4f0f3e1597e62f0fd5591fa85a4fc4eb1803c386ebd3f18566ab2ffb06d5"
+    },
+    {
+      "path": "src/product/app/research-api-export.ts",
+      "sha256": "4128f26eaf546175f50154a175d04b5d898456932a5370e63b3da3ef83094b13"
+    },
+    {
+      "path": "src/product/app/research-api-runtime.ts",
+      "sha256": "774b11f5fe3e917bf93abd7079275d129355dc4d67848989b4af091f27cb0a33"
+    },
+    {
+      "path": "src/product/lab/research/capture/artifact.ts",
+      "sha256": "7bb2ed41b5ee00d09fb7b1eb0bba8e2baef750a1fb4b281d8a9b05eb08af1f75"
+    },
+    {
+      "path": "src/product/lab/research/capture/camera.ts",
+      "sha256": "413d1df9c95d65f2aad0c2e92c947b0fa1fd5b774870bb89309a2f84ba8b972d"
+    },
+    {
+      "path": "src/product/lab/research/capture/contracts.ts",
+      "sha256": "5ea0cd8d1c77aaa255f79b2ea550c0faf24dca676a8741b6eedbd8da297631de"
+    },
+    {
+      "path": "src/product/lab/research/capture/imu.ts",
+      "sha256": "fce8d25b9688f4334fd20292686c4a72b8410353116deec8fa25856cd14485a7"
+    },
+    {
+      "path": "src/product/lab/research/capture/index.ts",
+      "sha256": "21984e9f5f62b3d65039d69770c7ab71010ce684d54b2eddd7f8af1805e7f647"
+    },
+    {
+      "path": "src/product/lab/research/capture/panel.ts",
+      "sha256": "3f9b3b7da56e7fa15ff33c0112961b6d6a893d328b39b0ebda53278f2c9dbf11"
+    },
+    {
+      "path": "src/product/lab/research/panel.ts",
+      "sha256": "322575408526e0457fe2c78a00a8e103038b0b6ce8ce5a9ecfcdc3db224b9cce"
+    },
+    {
+      "path": "tests/product/app/browser-api-provider.test.ts",
+      "sha256": "e7bbeb1879f52d7f2a56d75a82f92567be7637fd912535d0ea0ebcde74ddfca2"
+    },
+    {
+      "path": "tests/product/app/browser-api.test.ts",
+      "sha256": "f869872a7280c8d3f5ed3cb6600fe03f499d0f21e51322bf186150c02fe60824"
+    },
+    {
+      "path": "tests/product/app/research-api.test.ts",
+      "sha256": "b972cff876d6bbc630b658cd23f95bbf39953cfb181b0789457ae914d4e16c66"
+    },
+    {
+      "path": "tests/product/observations/live-capture.test.ts",
+      "sha256": "c4dbb8ab00fc8d72c5657623e8fe3dc32ed5aaa281a871901a54b972f55de395"
+    }
+  ],
+  "verification": {
+    "unit": {
+      "path": "tmp/S28-research-api-unit.json",
+      "sha256": "a6ff63a5c91f3ceac32a4a4a875144f9f2d086ef820a2589d0edc3769219160c",
+      "stats": {
+        "success": true,
+        "numTotalTests": 32,
+        "numPassedTests": 32,
+        "numFailedTests": 0,
+        "numPendingTests": 0
+      },
+      "childObservedExitCode": 0
+    },
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp6a-index/tsconfig.json",
+      "exitCode": 0
+    },
+    "targetedEslintExitCode": 0
+  },
+  "evidenceBinding": "Current exact owned staging snapshot. Broader local UI/provider/notebook evidence is recorded separately; central S21/S24/workspace/shell publication and final source-captured certification remain pending.",
+  "preservation": "Original native globals, public library/API implementations, physics/chaos/research/runtime/workers and legacy stores are not replaced. Native derived camera CSV is sensor data, not retained video.",
+  "limits": [
+    "Device permission fixtures do not certify physical cameras/IMUs.",
+    "Product research results are explicitly versioned and do not impersonate old DB/PNG structures.",
+    "No S28 completion,134-row certification, human review or cutover claim."
+  ]
+}

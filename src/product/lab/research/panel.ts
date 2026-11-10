@@ -16,6 +16,8 @@ import { createObservationSettings } from './observation-settings';
 import { createWorkflowSettings } from './workflow-settings';
 import { dataTable } from './controls';
 import { batchMetricMetadata } from '../experiments/metadata';
+import { createLiveObservationCapture } from './capture';
+import { bindProductResearch } from '../../app/research-api-binding';
 
 export function createResearchPanel(document: Document, options: DiagnosticsOptions, container: HTMLDetailsElement) {
   const body = element(document, 'div', 'research-body');
@@ -30,6 +32,18 @@ export function createResearchPanel(document: Document, options: DiagnosticsOpti
   error.hidden = true;
   error.setAttribute('role', 'alert');
   const importSettings = createObservationSettings(document, observationsChanged);
+  const liveCapture = createLiveObservationCapture(document, {
+    onPreview(next) {
+      if (disposed || busy) throw new Error('기존 관측 작업이 끝난 뒤 다시 미리보기를 보내세요.');
+      generation++;
+      preview = next;
+      previewArea.replaceChildren(observationView(next.artifact, '2. 실시간 채집 확정 전 미리보기'));
+      container.dataset.researchStatus = 'preview';
+      status.textContent = '채집 원본·native 보정·시간축을 확인하고 관측 가져오기 확정을 누르세요.';
+      error.hidden = true;
+      update();
+    }
+  });
   const workflow = createWorkflowSettings(document, workflowChanged);
   const previewArea = element(document, 'div', 'research-output');
   previewArea.id = 'research-preview';
@@ -88,6 +102,7 @@ export function createResearchPanel(document: Document, options: DiagnosticsOpti
   body.append(
     source,
     importSettings.element,
+    liveCapture.element,
     actions,
     progress.element,
     status,
@@ -441,18 +456,29 @@ export function createResearchPanel(document: Document, options: DiagnosticsOpti
     downloadResult.disabled = !!busy || !result;
     input.disabled = !!busy;
     importSettings.setDisabled(!!busy);
+    liveCapture.setDisabled(!!busy);
     workflow.setDisabled(!!busy || !snapshot);
   }
   refreshSource();
   update();
+  const unbindResearch = bindProductResearch(document, 'observation', {
+    snapshot: () =>
+      structuredClone({
+        ...(preview ? { preview } : {}),
+        ...(observation ? { confirmed: observation } : {}),
+        ...(result ? { result } : {})
+      })
+  });
   return {
     update,
     dispose() {
       disposed = true;
+      unbindResearch();
       generation++;
       controller?.abort();
       job?.dispose();
       importSettings.dispose();
+      liveCapture.dispose();
       for (const timer of timers) clearTimeout(timer);
       for (const url of urls) URL.revokeObjectURL(url);
       timers.clear();

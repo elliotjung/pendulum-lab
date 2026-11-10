@@ -205,3 +205,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - Opt-in native GPU/CPU ensemble and Wasm/SIMD/CPU tape comparison. Actual backend and fallback are reported; no hardware promotion or speedup claim.
 - 소유6파일과 대상51/51 실제 exit0, 대상 lint0, 후속 미커밋 통합을 제외한 staged-index whole typecheck0. 현재 source SHA와 runner digest를 별도 기반 보고서에 기록했다.
 - 기존 native 구현은 수정하지 않는다. 중앙 화면/E2E 게시와 전체 릴리스·134행 source-captured 인증은 별도 gate다. S28 완료·사용자/전문가 review·cutover를 주장하지 않는다.
+
+
+### CP6-A — 공개 API·장치 관찰 기반
+
+- CP3-T `6dcdac8dada3f31eff2c421264d9f78c0e116a2c`, CP6-R `851b350819adfcb4ebf1190192472507edc5eda9` 각각 push exit0/live exact match 확인.
+- 기본 browser namespace와 별도 동의의15-method versioned product research adapter를 추가한다. 실제 S21/S22/S24 provider를 사용하며 기존 API 구현·저장소를 대체하지 않는다. 원래 native IMU/camera collector는 직접 동의 뒤만 시작하고 숨김/취소/해제에서 정리한다. camera 파생 CSV를 보존하며 원본 video를 보관한 것처럼 표시하지 않는다.
+- 소유20경로 hash 일치와 관찰된32/32 단위 검사, 대상 lint0, 후속 미커밋 연결을 제외한 staged-index whole typecheck0. 별도 local UI/provider/notebook 증거를 이 기반 commit의 중앙 연결 인증으로 세지 않는다.
+- S28 완료·134행 인증·실기기/사람 검토·cutover는 별도 gate다.

@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP6-R-backend-foundation",
+  "activeStageCheckpoint": "CP6-A-api-capture-foundation",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP6-A API/capture foundation32/32units, targetlint0 andclean-stagedindex wholetypecheck0. Exact20ownedpaths match priorfrozen source. Original APIs/collectors/userstores unchanged; separateversionedproductadapter andexplicitdeviceopt-in. CP3T6dcdac8dada3f31eff2c421264d9f78c0e116a2c and CP6R851b350819adfcb4ebf1190192472507edc5eda9 eachpush0/liveexact. Central/fullrelease/final134sourcecapture pending; next28/review28 unapproved.",
     "S28 CP6-R-backend-foundation bounded foundation passed51/51 withactualexit0, targetedlint0 andcleanstagedindex wholetypecheck0. Native governingkernels unchanged; currentexactownedsource snapshot isnotfinal134-row certification. CentralUI/fullrelease/sourcecapture pending; next28/review28 unapproved.",
     "S28 CP3-T-structure-foundation bounded foundation passed96/96 withactualexit0, targetedlint0 andcleanstagedindex wholetypecheck0. Native governingkernels unchanged; currentexactownedsource snapshot isnotfinal134-row certification. CentralUI/fullrelease/sourcecapture pending; next28/review28 unapproved.",
     "S28 CP6-T playback/presentation foundation:275selectedbackend cases fromobserved291/291 exit0,19immutableoldclock differentialcases, cleanstagedindex wholetypecheck/targetlint0. ExplicitnativeClock additiveversionedexception disclosed; no governingequations/steppers changed. CentralUI/finalcapture stillpending. CP4S aff0e7ad454463c38a474e841015a0c5fd3dd71a push0; initialDNS verificationfailure recoveredbounded liveexact0. next28/review28 unapproved.",
