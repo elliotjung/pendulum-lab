@@ -14,7 +14,7 @@
         "gitBlob": "965d58020a3511cf095868591407143baa4edea7",
         "sourceSha256": "774773472c1b0fcc66fffc307cc72e1c0781400da38fa49d837501a9fcb723d7"
       },
-      "currentSha256": "ed9ea75cd3409c195966adcf19652dd8bacc679062076d634c0205c7a2ee8cc5",
+      "currentSha256": "f1198ad55f87fde974c0119bccd58c4f6e4e73d8cd648a900879b8f5a8bc6327",
       "reason": "S28 asynchronous product adapters need checkpoint/restore and frame accounting around unchanged native computation. The session explicitly authorized this additive clock API with independent characterization of the existing advance contract; physics equations and steppers are not replaced.",
       "preservedContract": [
         "Existing deterministic/wall-clock advance behavior, state/time/energy/drift output and timing debt remain characterized against the original native contract.",
@@ -45,7 +45,7 @@
         "gitBlob": "1e31f46f77a649e9d518f9015cc74ccba4a2bfe8",
         "sourceSha256": "160fbc530dc74ba35c40c83f483c03f0833bb9b2bbaa077708b8c83a799c4e17"
       },
-      "currentSha256": "79edfd3e761d7c03cc8384dbbc125f69586bef3f4b752ee84430efd88eb7d885",
+      "currentSha256": "b216624c9097dcd6a7a31b7008f37f1a88069bdababe6fb2bfc4886241d1bd41",
       "reason": "S28 source-bound evidence builds need the existing production asset copier to target a fresh generated directory. This delta adds validated --out-dir and parameterizes output paths; the public report inventory/privacy logic already existed before this S28 delta and is not attributed to this change.",
       "preservedContract": [
         "Without arguments the existing copier still targets dist and copies the same CSS, public report inventory, claim registry, optional paper and app-to-index output contracts.",
@@ -56,6 +56,32 @@
       "requiredSources": [
         "scripts/copy-legacy-assets.mjs",
         "config/public-report-inventory.json"
+      ],
+      "capture": null,
+      "cases": []
+    },
+    {
+      "id": "S28-public-test-label-privacy-boundary",
+      "path": "scripts/public-vitest-report.mjs",
+      "stage": 28,
+      "kind": "versioned-public-report-privacy/v1",
+      "baselineSha256": "da24ac815b49997ee79d4278ec6f26f0e8d508dc2895655b6b2269630beb45e8",
+      "before": {
+        "gitCommit": "b78cdae4ea8e707e70ecd5a454173507f60aca2a",
+        "gitBlob": "396bf1b6a5ab27b9a81588156a519daea68a70aa",
+        "sourceSha256": "da24ac815b49997ee79d4278ec6f26f0e8d508dc2895655b6b2269630beb45e8"
+      },
+      "currentSha256": "f9830bcf4746607297e6c88aae95ac56a634ad9b67c7cdda9163a91b01afdfee",
+      "reason": "The actual S28 build/public privacy gate found decoded UNC and literal escaped-whitespace path fixtures in public test labels. The session explicitly authorized one narrow public-label redaction adapter, with unchanged raw test results, unchanged public schema/counts, exact benign default output comparison against the immutable original Git blob, and the existing unchanged public privacy auditor. This necessary build repair does not execute future stage30 work.",
+      "preservedContract": [
+        "The actual original and current CLI produce identical complete default output bytes for benign Unicode, relative Windows paths, real whitespace and existing absolute-path redaction fixtures.",
+        "Raw scientific/test reports, native numerical outputs, counters, schema and input bytes remain unchanged; only unsafe decoded public labels are redacted before publication."
+      ],
+      "addedFactIds": [],
+      "locationOnlyFactIds": [],
+      "requiredSources": [
+        "scripts/public-vitest-report.mjs",
+        "scripts/audit-public-artifacts.ts"
       ],
       "capture": null,
       "cases": []

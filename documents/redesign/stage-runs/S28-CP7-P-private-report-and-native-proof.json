@@ -1,0 +1,93 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP7-P-private-report-and-native-proof",
+  "createdAt": "2026-11-10T02:20:52.780Z",
+  "sourceSnapshot": [
+    {
+      "path": "scripts/copy-legacy-assets.mjs",
+      "sha256": "b216624c9097dcd6a7a31b7008f37f1a88069bdababe6fb2bfc4886241d1bd41"
+    },
+    {
+      "path": "scripts/public-vitest-report.mjs",
+      "sha256": "f9830bcf4746607297e6c88aae95ac56a634ad9b67c7cdda9163a91b01afdfee"
+    },
+    {
+      "path": "scripts/redesign/parity-artifacts.ts",
+      "sha256": "d4bdc22152f488ce81a7934bd2d7c9cb84bb71a67e41dfe6e589a8c5dee76315"
+    },
+    {
+      "path": "scripts/redesign/parity-certificate.ts",
+      "sha256": "bf6bb7c30a9d635e72bd61b29ccc568fa5b96a95b3f4483e4f1f7f8e5a7f41b1"
+    },
+    {
+      "path": "scripts/redesign/parity-preservation.ts",
+      "sha256": "509a5afa6c9dfa72826d83bf95cd5db66f0b4c8663178c7db63276aa2a46967b"
+    },
+    {
+      "path": "scripts/redesign/parity-runner-report.ts",
+      "sha256": "e98aa766d77c64fe35e217b2657bf737a4c9bd429f1d8e4f872d5f8f57648a64"
+    },
+    {
+      "path": "src/app/SimulationClock.ts",
+      "sha256": "f1198ad55f87fde974c0119bccd58c4f6e4e73d8cd648a900879b8f5a8bc6327"
+    },
+    {
+      "path": "tests/characterization/inventory-original-replay.ts",
+      "sha256": "103f25419d0809211789be2932f35802926d00e5a43e30acc9f7c0e15f05b26c"
+    },
+    {
+      "path": "tests/characterization/inventory.test.ts",
+      "sha256": "431621a0eb8f74697dfbd38e2358b156e1a2677e8fe788532763b5d6478b2884"
+    },
+    {
+      "path": "tests/product/adapters/analysis/advanced/native-grid-parity.test.ts",
+      "sha256": "b908170ccdcb15a9b667fddd54ae6615924107baed2064d31bfe3afcadcc4321"
+    },
+    {
+      "path": "tests/product/analysis/data-driven/artifact.test.ts",
+      "sha256": "bdaf154cc768bacf8e5671060085cc9c71a4b8df6daaa110d5ec8020eba97757"
+    },
+    {
+      "path": "tests/product/lab/field-diagnostic-roundtrip.test.ts",
+      "sha256": "db09ca8cd30569f7d628a828f8b4999936daf75a5db243f63d26f87d7ad2382a"
+    },
+    {
+      "path": "tests/product/parity/certificate.test.ts",
+      "sha256": "67b662c48744084d4bff7e1082e13c587160f43ffa2321e2a214d171f28c1332"
+    },
+    {
+      "path": "tests/product/parity/preservation.test.ts",
+      "sha256": "0690eece4576f94a57088599939a5f29b66449086ac6f09c85d332f124141d9d"
+    },
+    {
+      "path": "tests/product/parity/public-vitest-report.test.ts",
+      "sha256": "0bcea888089f95dc0ebaace2c14fd4e94efd025f717097d5076d418f52b182b8"
+    },
+    {
+      "path": "tests/product/provenance/inventory-projection.test.ts",
+      "sha256": "00ca1dbd2cc5c0fb8f487a48d0c7f5093a4d3e9016c8bd39ac1eb89444a076ad"
+    }
+  ],
+  "wholeUnit": {
+    "path": "documents/redesign/parity/evidence/final-unit-r4.capture.json",
+    "sha256": "1bb9368b0edfe264cd1bd6d0ab68d0afab1183e2a1c9fd31356b833732e93f09",
+    "passed": 7308,
+    "files": 416,
+    "observedExit": 0,
+    "sourcePrePostExact": true
+  },
+  "changes": [
+    "Preserve every original scanner input through an explicit immutable Git-blob replay while exposing three separately tested native/tool exceptions.",
+    "Require unambiguous claimed runner identities while retaining unrelated duplicate parameterized cases.",
+    "Complete eight native learned-model artifact reconstructions and independent basin/LCS/diatomic comparisons.",
+    "Redact UNC/control-fixture path labels in public derived reports without rewriting raw execution evidence or weakening the privacy audit.",
+    "Compress only new Clock error messages;51targeted cases pass, original math/guards/olderrors unchanged; standalone445436bytes remains below unchanged445440cap."
+  ],
+  "limits": [
+    "This publishes tested code/units, not the pending1120browsercases or134-row certification.",
+    "Auxiliary audit-test summary mutation is separately pending its post-certification focused check; it is excluded from this source cohort and every selected runtime case closure.",
+    "Three preexisting lazy-worker budget rows remain over target; no fullR/CIgreen is claimed. S29manifest is unchanged.",
+    "Human science review0/86; userreview28 is not approved."
+  ]
+}

@@ -12,9 +12,12 @@ import {
 import type { Inventory, InventoryItem } from '../../../scripts/redesign/inventory';
 import { cleanEvidenceFixtures, evidenceFixture } from './evidence-fixtures';
 afterEach(cleanEvidenceFixtures);
-function fixture() {
+function fixture(file = 'src/app/SimulationClock.ts') {
   const f = evidenceFixture(),
-    file = 'src/app/SimulationClock.ts';
+    kind =
+      file === 'scripts/public-vitest-report.mjs'
+        ? 'versioned-public-report-privacy/v1'
+        : 'additive-native-clock-api/v1';
   f.write(file, '// Synthetic native characterization fixture only.\n');
   const requirements = requiredPreservationCases(file);
   for (const required of requirements)
@@ -39,8 +42,9 @@ function fixture() {
     Reflect.set(report, 'numPassedTests', 1 + requirements.length);
   });
   f.rewriteCapture('unit', (capture) => {
-    const sources = captureSourceTree(f.root, ['src', 'tests']);
+    const sources = captureSourceTree(f.root, ['src', 'scripts', 'tests']);
     Reflect.set(capture, 'sources', sources);
+    Reflect.set(capture, 'sourceRoots', ['src', 'scripts', 'tests']);
     Reflect.set(capture, 'sourceFingerprint', digestFingerprint(sources));
   });
   const reference = f.bundle.captures.find((capture) => capture.id === 'unit')!;
@@ -57,7 +61,7 @@ function fixture() {
     id: 'synthetic-clock-exception',
     path: file,
     stage: 28,
-    kind: 'additive-native-clock-api/v1',
+    kind,
     baselineSha256: 'c'.repeat(64),
     before: { gitCommit: 'a'.repeat(40), gitBlob: 'b'.repeat(40), sourceSha256: 'c'.repeat(64) },
     currentSha256: sourceHash(f.root, file),
@@ -99,6 +103,19 @@ describe('S28 explicit preservation exception validation', () => {
     const result = validatePreservationLedger(f.root, f.ledger, f.baseline);
     expect(result.entries[0]!.status).toBe('declared-unverified');
     expect(result.entries[0]!.proofErrors.join(' ')).toContain('Missing required native/default characterization case');
+  });
+  it('requires both immutable benign-byte and unsafe-label characterization for the explicit public-report adapter', () => {
+    const f = fixture('scripts/public-vitest-report.mjs');
+    expect(requiredPreservationCases(f.file)).toHaveLength(2);
+    expect(validatePreservationLedger(f.root, f.ledger, f.baseline).entries[0]!.status).toBe('verified');
+    Reflect.set(f.entry, 'cases', [f.entry.cases[0]]);
+    const missing = validatePreservationLedger(f.root, f.ledger, f.baseline);
+    expect(missing.entries[0]!.status).toBe('declared-unverified');
+    expect(missing.entries[0]!.proofErrors.join(' ')).toContain(
+      'Missing required native/default characterization case'
+    );
+    Reflect.set(f.entry, 'cases', [f.binding]);
+    expect(validatePreservationLedger(f.root, f.ledger, f.baseline).entries[0]!.status).toBe('declared-unverified');
   });
   it.each(['source', 'test', 'report', 'capture', 'case', 'closure'] as const)(
     'rejects changed %s characterization provenance',

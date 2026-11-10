@@ -245,3 +245,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 대상150/150 단위, scoped typecheck/대상 lint0. 재배치 후 production Chromium/Pixel5 실제4/4 exit0,958개 source와 build 전후 해시 일치. 같은 browser의 native 전체 결과는 exact, 독립 Node schedule replay 최대 오차1.665e-15는 변경하지 않은 S01 한도 안이다.
 - 초기 cross-runtime controller schedule assertion4실패와 S01 범위에 잘못 놓인 테스트 fixture의 재배치 이력을 보존했다. 현재 fixture는 e2e/redesign 아래에 있다. 원본 scanner/수치 fixture를 바꾸지 않았으며 전체 인벤토리 검사는 별도 원본 replay 보완 뒤21/21 통과했다.
 - 이 checkpoint는 전체134행/릴리스/사람 검토 완료가 아니다. next28 및 review28 미승인을 유지한다.
+
+### CP7-P — 원본 재현·공개 보고서·독립 비교
+
+- CP3-A `a137a92f7dc9b89d8c4ee132c93cafbef35ebc77` push exit0/live exact match 확인.
+- 전체7308/7308(416files), 실패·pending0 및 전후 source 일치 capture exit0. 이 checkpoint의 source/단위 파일은 그 capture와 현재 SHA가 정확히 같다.
+- 원본883경로를 유지한3개 명시적 예외의 immutable Git-blob 재현, 실제 public publisher byte 비교와 UNC/escape privacy,8개 모델 왕복 및 basin/LCS/diatomic 독립 비교를 닫았다. 원본 scanner/S01/원시 실행 보고서를 바꾸지 않는다.
+- Clock의 새 오류 문구11개와 해당 줄 포맷만 조정했다. 기존 계산·guard·오류는 byte 보존 증거와51/51 검사가 확인하며 standalone gzip445436/445440을 지킨다. 큰 lazy worker의3개 예산 초과는 실제 S27 비교에도 존재하며 S29/S30 전체R에서 다룰 위험으로 기록한다. 예산과 S29 standalone manifest는 바꾸지 않는다.
+- 실제 동결 build348파일/publicprivacy23과1120개의 Chromium/Pixel5 브라우저 검증은 별도 capture다.134행의 후보/정책은 전부 준비됐으나 아직 인증·S28완료·사람review·cutover를 주장하지 않는다.

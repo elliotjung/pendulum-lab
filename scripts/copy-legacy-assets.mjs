@@ -55,7 +55,8 @@ for (const report of reviewerReports) {
   }
 }
 try {
-  await copyFile('config/claim-registry.json', output('reports', 'claim-registry.json'));
+  if (outputRelative === 'dist') await copyFile('config/claim-registry.json', 'dist/reports/claim-registry.json');
+  else await copyFile('config/claim-registry.json', output('reports', 'claim-registry.json'));
 } catch {
   // The registry is optional only for deliberately minimal source builds.
 }

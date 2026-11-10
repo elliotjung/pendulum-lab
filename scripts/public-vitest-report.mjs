@@ -20,6 +20,8 @@ const relativeTestPath = (value) => {
 const publicTestLabel = (value) =>
   String(value ?? '')
     .replace(/\b[A-Za-z]:[\\/][^\r\n"'<>]*/g, '[absolute-path]')
+    // Labels are decoded strings here; JSON serialization doubles each slash.
+    .replace(/(?<![A-Za-z0-9._\\-])\\+[^\\\s"'<>]+(?:\\+[^\\\s"'<>]+)+/g, '[absolute-path]')
     .replace(/file:\/\/\/[^\s"'<>]+/gi, '[absolute-path]')
     .replace(/(?<![A-Za-z0-9.])\/(?:home|Users)\/[A-Za-z0-9._-]+\/[^\s"'<>]*/g, '[absolute-path]')
     .replace(

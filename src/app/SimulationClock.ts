@@ -49,24 +49,22 @@ function finiteNonNegative(name: string, value: number): number {
 }
 
 function readCheckpoint(input: unknown): SimulationClockCheckpoint {
-  if (!input || typeof input !== 'object' || Array.isArray(input))
-    throw new TypeError('Clock checkpoint must be plain data.');
+  if (!input || typeof input !== 'object' || Array.isArray(input)) throw new TypeError('Invalid clock checkpoint');
   const prototype = Object.getPrototypeOf(input);
-  if (prototype !== Object.prototype && prototype !== null) throw new TypeError('Clock checkpoint must be plain data.');
+  if (prototype !== Object.prototype && prototype !== null) throw new TypeError('Invalid clock checkpoint');
   const descriptors = Object.getOwnPropertyDescriptors(input),
     keys = Reflect.ownKeys(descriptors);
   const expected = ['schemaVersion', 'lastWallClockMs', 'timingDebtSeconds', 'droppedSimulationSeconds'];
   if (keys.length !== expected.length || keys.some((key) => typeof key !== 'string' || !expected.includes(key)))
-    throw new TypeError('Clock checkpoint fields are unsupported.');
+    throw new TypeError('Invalid clock checkpoint');
   const values: Record<string, unknown> = {};
   for (const key of expected) {
     const descriptor = descriptors[key];
-    if (!descriptor || !('value' in descriptor) || !descriptor.enumerable)
-      throw new TypeError('Clock checkpoint accessors are unsupported.');
+    if (!descriptor || !('value' in descriptor) || !descriptor.enumerable) throw new TypeError('Invalid accessors');
     values[key] = descriptor.value;
   }
   if (values.schemaVersion !== 'pendulum-simulation-clock-checkpoint/v1')
-    throw new TypeError('Clock checkpoint version is unsupported.');
+    throw new TypeError('Invalid clock checkpoint');
   const last = values.lastWallClockMs,
     debt = values.timingDebtSeconds,
     dropped = values.droppedSimulationSeconds;
@@ -80,7 +78,7 @@ function readCheckpoint(input: unknown): SimulationClockCheckpoint {
     !Number.isFinite(dropped) ||
     dropped < 0
   )
-    throw new RangeError('Clock checkpoint values are outside finite timing bounds.');
+    throw new RangeError('Invalid clock checkpoint');
   return {
     schemaVersion: 'pendulum-simulation-clock-checkpoint/v1',
     lastWallClockMs: last,
@@ -133,17 +131,16 @@ export class SimulationClock {
     if (mode !== 'deterministic' && mode !== 'wall-clock') throw new RangeError('timing mode is unsupported');
     const requested = finiteNonNegative('stepsPerFrame', options.stepsPerFrame);
     if (requested > MAX_FRAME_STEPS) throw new RangeError(`stepsPerFrame must be at most ${MAX_FRAME_STEPS}`);
-    if (!Number.isFinite(options.dt) || options.dt <= 0)
-      throw new RangeError('accountFrame dt must be finite and positive.');
+    if (!Number.isFinite(options.dt) || options.dt <= 0) throw new RangeError('Invalid clock dt');
     if (!Number.isSafeInteger(options.actualSteps) || options.actualSteps < 0 || options.actualSteps > MAX_FRAME_STEPS)
-      throw new RangeError('actualSteps must be a bounded non-negative integer.');
+      throw new RangeError('Invalid actualSteps budget');
     const before = this.checkpoint();
     try {
       if (mode === 'wall-clock') {
         const speed = finiteNonNegative('speedMultiplier', options.speedMultiplier ?? 1);
         const limit = options.maxWallClockSteps ?? Math.max(1, Math.round(requested * Math.max(1, speed)));
         if (!Number.isSafeInteger(limit) || limit < 1 || limit > MAX_FRAME_STEPS || options.actualSteps > limit)
-          throw new RangeError('actualSteps exceeds the valid frame budget.');
+          throw new RangeError('Invalid actualSteps budget');
         const advanced = this.wallClockSteps(
           {
             dt: options.dt,
@@ -154,10 +151,8 @@ export class SimulationClock {
           },
           true
         );
-        if (advanced !== options.actualSteps)
-          throw new RangeError('actualSteps exceeds the available wall-clock interval.');
-      } else if (options.actualSteps > Math.round(requested))
-        throw new RangeError('actualSteps exceeds the deterministic frame budget.');
+        if (advanced !== options.actualSteps) throw new RangeError('actualSteps unavailable');
+      } else if (options.actualSteps > Math.round(requested)) throw new RangeError('Invalid actualSteps budget');
       this.checkpoint(); // New accounting never publishes a non-finite checkpoint.
     } catch (cause) {
       this.restore(before);

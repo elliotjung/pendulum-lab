@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { modelRequest } from './fixtures';
+import { modelRequest, oscillatorData } from './fixtures';
+import { learningDefaults } from '../../../../src/product/adapters/analysis/data-driven/learning-contracts';
+import type { DataDrivenRequest } from '../../../../src/product/adapters/analysis/data-driven/contracts';
 import {
   runDataDriven,
   reevaluateDataDriven,
@@ -20,6 +22,76 @@ import {
 } from '../../../../src/product/adapters/analysis/data-driven/safe';
 
 describe('S23 immutable source/model/evaluation lineage', () => {
+  for (const method of [
+    'sindy',
+    'dmd',
+    'havok',
+    'reservoir',
+    'hamiltonian',
+    'arnoldi',
+    'lanczos',
+    'general-eigensolver'
+  ] as const)
+    it(`${method}: complete versioned artifact roundtrip reconstructs identical native outputs and evaluation lineage`, async () => {
+      const data = oscillatorData();
+      const input: DataDrivenRequest['input'] =
+        method === 'arnoldi' || method === 'lanczos' || method === 'general-eigensolver'
+          ? {
+              kind: 'eigen',
+              operator: {
+                kind: 'dense',
+                matrix:
+                  method === 'general-eigensolver'
+                    ? [
+                        [0, -1],
+                        [1, 0]
+                      ]
+                    : Array.from({ length: 8 }, (_, i) => Array.from({ length: 8 }, (_, j) => (i === j ? 8 - i : 0)))
+              },
+              settings: {
+                method,
+                k: method === 'general-eigensolver' ? 1 : 2,
+                krylovDim: method === 'general-eigensolver' ? 2 : 8,
+                maxRestarts: 20,
+                tolerance: 1e-8,
+                seed: 's28-artifact-replay',
+                which: 'LA'
+              }
+            }
+          : {
+              kind: 'learning',
+              data,
+              settings: { ...learningDefaults(data, method), polynomialDegree: method === 'hamiltonian' ? 2 : 1 }
+            };
+      const request: DataDrivenRequest = {
+        schema: 'pendulum-data-driven-request/v1',
+        id: `s28-${method}`,
+        mode: 'train',
+        input
+      };
+      const original = await runDataDriven(request);
+      expect(original.output.rows.length).toBeGreaterThan(0);
+      expect(original.output.rows.flat().every(Number.isFinite)).toBe(true);
+      if (method === 'general-eigensolver')
+        expect(original.output.rows.map((row) => row.slice(1))).toEqual([
+          [0, 1],
+          [0, -1]
+        ]);
+      else if (method === 'arnoldi' || method === 'lanczos') {
+        expect(original.output.rows[0]![1]).toBeCloseTo(8, 7);
+        expect(original.output.rows[1]![1]).toBeCloseTo(7, 7);
+      }
+      const restored = await parseDataDrivenResult(await serializeDataDrivenResult(original));
+      expect(restored).toEqual(original);
+      expect(restored.request.input).toEqual(input);
+      const evaluated = await reevaluateDataDriven(restored);
+      expect(evaluated.request.mode).toBe('evaluate');
+      expect(evaluated.request.parentId).toBe(restored.id);
+      expect(evaluated.inputId).toBe(original.inputId);
+      expect(evaluated.output).toEqual(original.output);
+      expect(await parseDataDrivenResult(await serializeDataDrivenResult(evaluated))).toEqual(evaluated);
+      expect((await runDataDriven(restored.request)).output).toEqual(original.output);
+    });
   it('restores exact model/data/settings and can retrain or evaluate with explicit parent lineage', async () => {
     const request = modelRequest(),
       result = await runDataDriven(request);

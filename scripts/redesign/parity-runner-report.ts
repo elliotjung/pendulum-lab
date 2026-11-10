@@ -129,7 +129,10 @@ export function parseRunnerReport(root: string, kind: 'vitest' | 'playwright', i
           });
         }
       }
-      if (input.numTotalTests !== cases.length || input.numPassedTests !== cases.length)
+      if (
+        input.numTotalTests !== cases.length ||
+        input.numPassedTests !== cases.filter((item) => item.status === 'passed').length
+      )
         errors.push('Vitest aggregate counts disagree with actual cases.');
     } else {
       const stats = record(input.stats) ? input.stats : {},
@@ -183,15 +186,14 @@ export function parseRunnerReport(root: string, kind: 'vitest' | 'playwright', i
         for (const child of list(value.suites)) visit(child, next);
       }
       for (const suite of list(input.suites)) visit(suite, [], true);
-      if (stats.expected !== cases.length) errors.push('Playwright aggregate counts disagree with actual cases.');
+      if (stats.expected !== cases.filter((item) => item.status === 'passed').length)
+        errors.push('Playwright aggregate counts disagree with actual cases.');
     }
   } catch (cause) {
     errors.push(cause instanceof Error ? cause.message : 'Cannot parse runner report.');
   }
   if (!cases.length || cases.some((item) => !item.file || !item.title || (kind === 'playwright' && !item.project)))
     errors.push('Runner report has empty cases or identifiers.');
-  if (new Set(cases.map(runnerCaseKey)).size !== cases.length)
-    errors.push('Runner report contains duplicate exact case identifiers.');
   if (!Number.isFinite(startedAtMs) || !Number.isFinite(finishedAtMs) || finishedAtMs < startedAtMs)
     errors.push('Runner report times are invalid.');
   return { cases, errors, startedAtMs, finishedAtMs };

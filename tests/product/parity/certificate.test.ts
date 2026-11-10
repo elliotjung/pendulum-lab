@@ -107,6 +107,24 @@ describe('S28 source-bound certificate validator (synthetic validator fixtures o
     });
     expect(validate(f).valid).toBe(false);
   });
+  it('accepts unrelated duplicate parameterized titles while rejecting an ambiguous claimed identity', () => {
+    const f = evidenceFixture();
+    f.rewriteReport('unit', (report) => {
+      const suites = report.testResults as { assertionResults: Record<string, unknown>[] }[];
+      const unrelated = { ...suites[0]!.assertionResults[0], fullName: 'unclaimed parameterized legacy case' };
+      suites[0]!.assertionResults.push(unrelated, { ...unrelated });
+      Reflect.set(report, 'numTotalTests', 3);
+      Reflect.set(report, 'numPassedTests', 3);
+    });
+    expect(validate(f).valid).toBe(true);
+    f.rewriteReport('unit', (report) => {
+      const suites = report.testResults as { assertionResults: Record<string, unknown>[] }[];
+      suites[0]!.assertionResults.push({ ...suites[0]!.assertionResults[0] });
+      Reflect.set(report, 'numTotalTests', 4);
+      Reflect.set(report, 'numPassedTests', 4);
+    });
+    expect(validate(f).errors.join('\n')).toContain('ambiguous');
+  });
   it.each(['file', 'title', 'project'] as const)('requires the exact %s identity of a passed case', (field) => {
     const f = evidenceFixture();
     Reflect.set(f.bundle.rows[0]!.evidence[0]!, field, 'wrong');

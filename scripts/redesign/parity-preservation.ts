@@ -7,7 +7,8 @@ import { validatePreservationCases, type PreservationCaseBinding } from './parit
 export const PRESERVATION_LEDGER_PATH = 'documents/redesign/parity/S28-preservation-exceptions.json';
 const allowed = new Map([
   ['src/app/SimulationClock.ts', 'additive-native-clock-api/v1'],
-  ['scripts/copy-legacy-assets.mjs', 'additive-generated-output-option/v1']
+  ['scripts/copy-legacy-assets.mjs', 'additive-generated-output-option/v1'],
+  ['scripts/public-vitest-report.mjs', 'versioned-public-report-privacy/v1']
 ]);
 export interface PreservationException {
   readonly id: string;
@@ -65,6 +66,14 @@ export function requiredPreservationCases(file: string): readonly { readonly fil
     ].map((title) => ({
       file: 'tests/product/parity/packaging.test.ts',
       title: `S28 packaged build evidence ${title}`
+    }));
+  if (file === 'scripts/public-vitest-report.mjs')
+    return [
+      'preserves every benign default output byte of the immutable original CLI',
+      'redacts UNC and escaped-whitespace fixtures before the unchanged public privacy audit'
+    ].map((title) => ({
+      file: 'tests/product/parity/public-vitest-report.test.ts',
+      title: `S28 public Vitest label privacy adapter ${title}`
     }));
   return [];
 }

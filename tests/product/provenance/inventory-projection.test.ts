@@ -10,6 +10,7 @@ import {
   legacySourceText,
   serializeInventory
 } from '../../../scripts/redesign/inventory';
+import { replayOriginalInventoryInputs } from '../../characterization/inventory-original-replay';
 
 const mainPath = 'src/reviewer/main.ts';
 const source = readFileSync(mainPath, 'utf8').replaceAll('\r\n', '\n');
@@ -108,13 +109,15 @@ describe('S24 exact additive reviewer projection preserves the frozen legacy sca
     expect(buildInventory(root, []).sourceDigest).not.toBe(first.sourceDigest);
   });
 
-  it('reproduces the entire existing JSON and Markdown baseline without rewriting either file', () => {
+  it('replays the entire immutable original JSON and Markdown while separately checking declared current S28 drifts', () => {
     const beforeJson = readFileSync('documents/redesign/baseline/inventory.json');
     const beforeMarkdown = readFileSync('documents/redesign/baseline/inventory.md');
     const inventory = buildInventory(process.cwd());
     expect(inventory.errors).toEqual([]);
-    expect(serializeInventory(inventory)).toBe(baselineJson);
-    expect(inventoryMarkdown(inventory)).toBe(baselineMarkdown);
+    const original = replayOriginalInventoryInputs(process.cwd(), fixture({}), inventory);
+    expect(original.errors).toEqual([]);
+    expect(serializeInventory(original)).toBe(baselineJson);
+    expect(inventoryMarkdown(original)).toBe(baselineMarkdown);
     expect(readFileSync('documents/redesign/baseline/inventory.json')).toEqual(beforeJson);
     expect(readFileSync('documents/redesign/baseline/inventory.md')).toEqual(beforeMarkdown);
   });

@@ -337,9 +337,10 @@ export function validateParityCertificates(
           identity = JSON.stringify([item.facet, item.captureId, key]);
         if (identities.has(identity)) throw new Error('Duplicate exact facet/case binding.');
         identities.add(identity);
-        const test = execution.report.cases.find((candidate) => runnerCaseKey(candidate) === key);
-        if (!test || test.status !== 'passed')
-          throw new Error('Exact test file/title/project is absent or not passed.');
+        const matchingTests = execution.report.cases.filter((candidate) => runnerCaseKey(candidate) === key);
+        const test = matchingTests[0];
+        if (matchingTests.length !== 1 || !test || test.status !== 'passed')
+          throw new Error('Exact test file/title/project is absent, ambiguous or not passed.');
         if (
           !item.sourcePaths.some(
             (source) => source.startsWith('src/product/') && !source.startsWith('src/product/catalog/')
@@ -530,8 +531,9 @@ export function validatePreservationCases(
       const key = runnerCaseKey(binding);
       if (identities.has(key)) throw new Error('Duplicate preservation case identity.');
       identities.add(key);
-      if (!report.cases.some((test) => runnerCaseKey(test) === key && test.status === 'passed'))
-        throw new Error('Exact preservation test file/title is absent or not passed.');
+      const matches = report.cases.filter((test) => runnerCaseKey(test) === key);
+      if (matches.length !== 1 || matches[0]!.status !== 'passed')
+        throw new Error('Exact preservation test file/title is absent, ambiguous or not passed.');
       for (const source of new Set([binding.file, ...binding.sourcePaths])) {
         const digest = capture.sources.find((entry) => entry.path === source);
         if (!digest || sourceHash(root, source) !== digest.sha256)

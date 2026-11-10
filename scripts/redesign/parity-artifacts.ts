@@ -37,7 +37,8 @@ export function extractEmbeddedArtifact(
   const raw = JSON.parse(reportBytes.toString('utf8')) as unknown;
   const parsed = parseRunnerReport(root, capture.kind as 'vitest' | 'playwright', raw);
   if (parsed.errors.length) throw new Error(parsed.errors.join('\n'));
-  const selected = parsed.cases.find((test) => runnerCaseKey(test) === runnerCaseKey(identity));
+  const selectedCases = parsed.cases.filter((test) => runnerCaseKey(test) === runnerCaseKey(identity));
+  const selected = selectedCases.length === 1 ? selectedCases[0] : undefined;
   const matches = selected?.attachments.filter((item) => item.name === attachmentName);
   if (!selected || selected.status !== 'passed' || matches?.length !== 1 || !matches[0]?.embeddedSha256)
     throw new Error('Exact passed case has no unique named embedded attachment.');

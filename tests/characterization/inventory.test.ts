@@ -10,6 +10,7 @@ import {
   serializeInventory
 } from '../../scripts/redesign/inventory';
 import { capabilitySeeds } from '../../scripts/redesign/inventory-map';
+import { replayOriginalInventoryInputs } from './inventory-original-replay';
 
 const temporaryRoots: string[] = [];
 function fixture(files: Record<string, string>): string {
@@ -33,7 +34,7 @@ afterEach(() => {
 });
 
 describe('S01 read-only capability inventory', () => {
-  it('reproduces the complete recorded baseline with owner declarations and no broken imports', () => {
+  it('checks current inputs and replays the immutable original baseline with only explicitly declared S28 copies replaced', () => {
     const inventory = buildInventory(process.cwd());
     expect(inventory.errors).toEqual([]);
     expect(inventory.summary.orphans).toBe(0);
@@ -52,10 +53,12 @@ describe('S01 read-only capability inventory', () => {
     ]) {
       expect(inventory.files.find((file) => file.ownerFile === ownerFile)).toBeDefined();
     }
-    expect(serializeInventory(inventory)).toBe(
+    const original = replayOriginalInventoryInputs(process.cwd(), fixture({}), inventory);
+    expect(original.errors).toEqual([]);
+    expect(serializeInventory(original)).toBe(
       readFileSync('documents/redesign/baseline/inventory.json', 'utf8').replaceAll('\r\n', '\n')
     );
-    expect(inventoryMarkdown(inventory)).toBe(
+    expect(inventoryMarkdown(original)).toBe(
       readFileSync('documents/redesign/baseline/inventory.md', 'utf8').replaceAll('\r\n', '\n')
     );
   });
