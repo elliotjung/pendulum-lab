@@ -253,3 +253,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 원본883경로를 유지한3개 명시적 예외의 immutable Git-blob 재현, 실제 public publisher byte 비교와 UNC/escape privacy,8개 모델 왕복 및 basin/LCS/diatomic 독립 비교를 닫았다. 원본 scanner/S01/원시 실행 보고서를 바꾸지 않는다.
 - Clock의 새 오류 문구11개와 해당 줄 포맷만 조정했다. 기존 계산·guard·오류는 byte 보존 증거와51/51 검사가 확인하며 standalone gzip445436/445440을 지킨다. 큰 lazy worker의3개 예산 초과는 실제 S27 비교에도 존재하며 S29/S30 전체R에서 다룰 위험으로 기록한다. 예산과 S29 standalone manifest는 바꾸지 않는다.
 - 실제 동결 build348파일/publicprivacy23과1120개의 Chromium/Pixel5 브라우저 검증은 별도 capture다.134행의 후보/정책은 전부 준비됐으나 아직 인증·S28완료·사람review·cutover를 주장하지 않는다.
+
+### CP7-VIS — 명시적 화면 보존·의도된 Inspector 변경
+
+- CP7-P `a1d320b8e2b0186580126be852a74a0e0100bc5c` push exit0/live exact match 확인.
+- 실제 대조한 Inspector8개만 새 단위/16ODE/허용오차 UI로 갱신하고 원본 PNG를 보존했다. 기존 workspace/analysis PNG14개와 numerical golden은 그대로다. old-panel helper는 독립된 S28 추가 dock/footer만 잠시 분리하고 정확한 노드를 finally에서 복원한다. 기존 폼/문구를 가려 과거3방법 UI를 만들지 않는다.
+- 원래 분석 출력 컨테이너로5개 선택자를 한정했다. Chromium/Pixel5 기존12개 검사 전부 실제 통과, skip/flaky/retry0 및 source/PNG/frozen348파일 전후 일치. 보완 후32파일724개 기능/보존 단위검사도 formal source capture exit0이다. 이 checkpoint10파일은 그 capture의 현재 SHA와 일치한다.
+- 시각 검토는 AI 기술 검토이며 사람·과학 전문가 승인이 아니다. 모바일 PNG393px와 별도320px 기능/axe 검사를 구분한다. 전체1120 browser 검사는 별도12개 그룹에서 계속하며134행 최종 인증·S28완료·review28 승인은 아직 부여하지 않는다.

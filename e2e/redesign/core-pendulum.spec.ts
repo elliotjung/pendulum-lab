@@ -175,7 +175,9 @@ test.describe('S07 real planar pendulum laboratory', () => {
         await expect(page.locator('#lab-analysis-progress')).toHaveAttribute('value', '100');
         const progress = await readAnalysisProgress(page);
         expect(progress.some((message) => /운동방정식 평가 [1-9][0-9]*회/.test(message))).toBe(true);
-        const result = JSON.parse((await page.locator('.core-result-json').textContent())!) as PlanarAnalysisResult;
+        const result = JSON.parse(
+          (await page.locator('#core-analysis .core-analysis-result .core-result-json').textContent())!
+        ) as PlanarAnalysisResult;
         expect(result.kind).toBe(kind);
         if (result.kind === 'poincare') {
           expect(result.data.points.length).toBeGreaterThan(0);
@@ -342,13 +344,15 @@ test.describe('S07 real planar pendulum laboratory', () => {
     await expect(page.getByRole('button', { name: '한 단계', exact: true })).toBeDisabled();
     await page.getByRole('button', { name: '분석 취소', exact: true }).click();
     await expect(page.locator('[data-analysis-status]')).toHaveAttribute('data-analysis-status', 'cancelled');
-    await expect(page.locator('.core-result-json')).toHaveCount(0);
+    await expect(page.locator('#core-analysis .core-analysis-result .core-result-json')).toHaveCount(0);
     await expect(page.getByRole('button', { name: '분석 계산', exact: true })).toBeEnabled();
     await audit(page);
     await page.getByLabel('분석 기간 (s)', { exact: true }).fill('0.1');
     await page.getByRole('button', { name: '분석 계산', exact: true }).click();
     await expect(page.locator('[data-analysis-status]')).toHaveAttribute('data-analysis-status', 'completed');
-    const result = JSON.parse((await page.locator('.core-result-json').textContent())!) as PlanarAnalysisResult;
+    const result = JSON.parse(
+      (await page.locator('#core-analysis .core-analysis-result .core-result-json').textContent())!
+    ) as PlanarAnalysisResult;
     expect(result.settings.duration).toBe(0.1);
     expect(result.kind).toBe('lyapunov');
   });
@@ -375,14 +379,16 @@ test.describe('S07 real planar pendulum laboratory', () => {
     await expect(page.locator('[data-analysis-status]')).toHaveAttribute('data-analysis-status', 'error');
     await expect(page.getByRole('alert')).toContainText('worker');
     await expect(page.locator('#core-analysis')).not.toContainText('S07 worker policy failure fixture');
-    await expect(page.locator('.core-result-json')).toHaveCount(0);
+    await expect(page.locator('#core-analysis .core-analysis-result .core-result-json')).toHaveCount(0);
     await audit(page);
     const workerStarted = page.waitForEvent('worker');
     await page.getByRole('button', { name: '분석 계산', exact: true }).click();
     await workerStarted;
     await expect(page.locator('[data-analysis-status]')).toHaveAttribute('data-analysis-status', 'completed');
     await expect(page.getByRole('alert')).not.toBeVisible();
-    const result = JSON.parse((await page.locator('.core-result-json').textContent())!) as PlanarAnalysisResult;
+    const result = JSON.parse(
+      (await page.locator('#core-analysis .core-analysis-result .core-result-json').textContent())!
+    ) as PlanarAnalysisResult;
     expect(result.settings.duration).toBe(0.2);
   });
 });

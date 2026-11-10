@@ -1,0 +1,555 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "e2e/redesign/chain-pendulum.spec.ts",
+      "e2e/redesign/core-pendulum.spec.ts",
+      "--config",
+      "tmp/s28-release-playwright.config.ts",
+      "--grep",
+      "frozen|reviews a deterministic|computes trajectory projections"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-legacy-visual-projection-r3-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-legacy-visual-projection-r3-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "tmp/S28-legacy-visual-projection-r3-browser.report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\chain-pendulum.spec.ts",
+      "file": "redesign/chain-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S10 triple and N-chain laboratory",
+          "file": "redesign/chain-pendulum.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "frozen light/dark workspace, inspector and selected-link plots",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5548,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:44:40.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-d49313362ea1b40c6422",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "frozen N-chain workspace and maximum-link inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8674,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:44:46.639Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-7ec74de1ee9b306df152",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 292,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark workspace, inspector and selected-link plots",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9911,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:45:39.622Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-e8d086d8a8d666d8ee2e",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "frozen N-chain workspace and maximum-link inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7348,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:45:54.664Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-138c65a43ed3c277ecaf",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 292,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\core-pendulum.spec.ts",
+      "file": "redesign/core-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S07 real planar pendulum laboratory",
+          "file": "redesign/core-pendulum.spec.ts",
+          "line": 72,
+          "column": 6,
+          "specs": [
+            {
+              "title": "double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16017,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:44:55.345Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-f8d2111e296da47dfef3",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5520,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:45:11.371Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-019f360a5256e67447f7",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11159,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:45:16.900Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-24b097c79ce459c4cbda",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "compound-double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10399,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:45:28.068Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-0549d129a39c0e35c42d",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12126,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:46:02.050Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-6eba3792af495135eb8b",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11532,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:46:14.188Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-ace13ac24214a59156eb",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16409,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:46:25.735Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-d96dc6e61e971273bd39",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "compound-double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6620,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T02:46:42.155Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-69c7b32b4f71404c4517",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T02:44:39.169Z",
+    "duration": 130668.977,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
