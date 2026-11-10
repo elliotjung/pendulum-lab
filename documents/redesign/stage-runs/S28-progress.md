@@ -191,3 +191,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 실제 완료 worker 단계와 계산 시간을 사용하고 요청/실효 예산을 구분한다. 실제 바로 전 표본으로 보간하며 표시 RAF·관찰자·DPR·body class를 닫기/해제에서 정리한다. 내부 chain snapshot은 명시적v2다.
 - 관찰된291/291 runner 중 backend10파일275/275를 별도 식별했다(테마16은 제외). 소유13파일 snapshot, staged-index whole typecheck·대상 lint exit0.12파일은 이전T/C 동결 hash와 같고 playback-clock.test.ts는 사후 snapshot임을 구분한다. 중앙 UI 및 최종134행 인증으로 세지 않는다.
 - S28 active/next28과 사용자 review28 미승인 상태를 유지한다.
+
+
+### CP3-T-structure-foundation
+
+- Conservative native energy-drift and canonical diagnostics with explicit accepted-step, system and damping guards.
+- 소유6파일과 대상96/96 실제 exit0, 대상 lint0, 후속 미커밋 통합을 제외한 staged-index whole typecheck0. 현재 source SHA와 runner digest를 별도 기반 보고서에 기록했다.
+- 기존 native 구현은 수정하지 않는다. 중앙 화면/E2E 게시와 전체 릴리스·134행 source-captured 인증은 별도 gate다. S28 완료·사용자/전문가 review·cutover를 주장하지 않는다.

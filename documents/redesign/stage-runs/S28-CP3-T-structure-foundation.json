@@ -1,0 +1,54 @@
+{
+  "schema": "pendulum-checkpoint-foundation/v1",
+  "stage": 28,
+  "checkpoint": "CP3-T-structure-foundation",
+  "recordedAt": "2026-11-10T00:34:05.260Z",
+  "scope": "Conservative native energy-drift and canonical diagnostics with explicit accepted-step, system and damping guards.",
+  "verification": {
+    "unit": {
+      "path": "tmp/S28-structure-foundation-final-vitest.json",
+      "sha256": "d11e821d1117ce98ffd9695d301e3233b675c3cc8859c82915f68b1ef0c06213",
+      "passed": 96,
+      "failed": 0,
+      "pending": 0,
+      "observedExitCode": 0
+    },
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp3t-index/tsconfig.json",
+      "exitCode": 0
+    },
+    "targetedEslintExitCode": 0
+  },
+  "sources": [
+    {
+      "path": "src/product/adapters/physics/structure-diagnostics.ts",
+      "sha256": "26d2cfbb8cdd14ab81dfe275770ef1c3d062fb22c4414c22ea99b050d25379e6"
+    },
+    {
+      "path": "src/product/adapters/physics/structure-diagnostics-worker-protocol.ts",
+      "sha256": "a15c8068f1e0f1c821e79e2c6f97dbb9b3c75698c08355d82024bfd46567d6d1"
+    },
+    {
+      "path": "src/product/adapters/physics/structure-diagnostics.worker.ts",
+      "sha256": "051b25a453100c92ad1374634d45e2b9fca108571f8a7257c28ab858519d5c15"
+    },
+    {
+      "path": "src/product/adapters/physics/structure-diagnostics-client.ts",
+      "sha256": "238050de5c41a388186c78aba82dc97a19469de98df1167a6658c5222488914b"
+    },
+    {
+      "path": "src/product/lab/views/structure-diagnostics-panel.ts",
+      "sha256": "97094f2a66d95cbeb3a147916b11593562070f406781c2d742d8a21900f8a734"
+    },
+    {
+      "path": "tests/product/adapters/physics/structure-diagnostics.test.ts",
+      "sha256": "79c87dccc32111ca8ef425eb9480514ed3b756c4cc5dd3b5edf061484dd4d9fd"
+    }
+  ],
+  "evidenceBinding": "Current exact owned source snapshot after successful bounded verification; original broader local UI evidence is separate, not final134-row source-captured certification.",
+  "preserved": "No native physics/chaos/research/runtime/worker implementation was changed by this foundation.",
+  "remaining": [
+    "Central UI/E2E integration publication and final release gates.",
+    "S28 completeness, user review28 and human science review are not granted."
+  ]
+}
