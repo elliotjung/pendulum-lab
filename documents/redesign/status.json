@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP6-A-api-capture-foundation",
+  "activeStageCheckpoint": "CP5-M-metadata-controls-foundation",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP5-M metadata/control foundation40/40unit, clean-stagedindex wholetypecheck0/targetlint0. ODElabels/warnings mirror unchangednativeregistry without eager physicschunk imports; commands/prefs remainmetadataonly, separateownkeys no startupwrite. CP6A4d451f9ab5572c53e5a824a660505ae6240ccfba push0/liveexact. Central/fullrelease/finalcapture stillpending; next28/review28 unapproved.",
     "S28 CP6-A API/capture foundation32/32units, targetlint0 andclean-stagedindex wholetypecheck0. Exact20ownedpaths match priorfrozen source. Original APIs/collectors/userstores unchanged; separateversionedproductadapter andexplicitdeviceopt-in. CP3T6dcdac8dada3f31eff2c421264d9f78c0e116a2c and CP6R851b350819adfcb4ebf1190192472507edc5eda9 eachpush0/liveexact. Central/fullrelease/final134sourcecapture pending; next28/review28 unapproved.",
     "S28 CP6-R-backend-foundation bounded foundation passed51/51 withactualexit0, targetedlint0 andcleanstagedindex wholetypecheck0. Native governingkernels unchanged; currentexactownedsource snapshot isnotfinal134-row certification. CentralUI/fullrelease/sourcecapture pending; next28/review28 unapproved.",
     "S28 CP3-T-structure-foundation bounded foundation passed96/96 withactualexit0, targetedlint0 andcleanstagedindex wholetypecheck0. Native governingkernels unchanged; currentexactownedsource snapshot isnotfinal134-row certification. CentralUI/fullrelease/sourcecapture pending; next28/review28 unapproved.",

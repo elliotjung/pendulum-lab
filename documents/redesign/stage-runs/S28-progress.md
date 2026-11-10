@@ -213,3 +213,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 기본 browser namespace와 별도 동의의15-method versioned product research adapter를 추가한다. 실제 S21/S22/S24 provider를 사용하며 기존 API 구현·저장소를 대체하지 않는다. 원래 native IMU/camera collector는 직접 동의 뒤만 시작하고 숨김/취소/해제에서 정리한다. camera 파생 CSV를 보존하며 원본 video를 보관한 것처럼 표시하지 않는다.
 - 소유20경로 hash 일치와 관찰된32/32 단위 검사, 대상 lint0, 후속 미커밋 연결을 제외한 staged-index whole typecheck0. 별도 local UI/provider/notebook 증거를 이 기반 commit의 중앙 연결 인증으로 세지 않는다.
 - S28 완료·134행 인증·실기기/사람 검토·cutover는 별도 gate다.
+
+
+### CP5-M — metadata·명령·표시 환경 기반
+
+- CP6-A `4d451f9ab5572c53e5a824a660505ae6240ccfba` push exit0/live exact match 확인.
+- 명령 검색과 별도 제품 언어·테마 환경, native와 대조한16개 ODE 표시 정보를 추가했다. Native registry를 직접 import하면 Vite 전체 physics chunk가 metadata 페이지에 합쳐지므로 표시용 데이터만 분리하고 이름·심플렉틱 한정을 원본과 검증한다. 수치 알고리즘·registry는 수정하지 않는다.
+- 대상40/40 실제 exit0, 대상 lint0, 후속 미커밋 연결을 제외한 staged-index whole typecheck0. 저장은 사용자 선택 뒤 별도 제품 key에만 시도하고 실패해도 활성 선택을 유지한다.
+- 중앙 shell/route 연결·전체 source-captured UI·134행 인증은 뒤의 gate이며 S28 완료·사람 검토·cutover는 부여하지 않는다.

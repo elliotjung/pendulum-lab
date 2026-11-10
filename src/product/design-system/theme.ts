@@ -1,6 +1,11 @@
 import { element } from '../app/dom';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
+export const THEME_STORAGE_KEY = 'pendulum-product/theme/v1';
+
+export function resolveThemePreference(value: unknown): ThemePreference | null {
+  return value === 'light' || value === 'dark' || value === 'system' ? value : null;
+}
 
 /** A view preference only. Never reads or writes legacy user storage. */
 export function createThemeControl(document: Document, id: string) {
@@ -18,9 +23,23 @@ export function createThemeControl(document: Document, id: string) {
     option.value = value;
     select.append(option);
   }
-  select.value = document.documentElement.dataset.theme ?? 'light';
+  let preference = resolveThemePreference(document.documentElement.dataset.theme) ?? 'light';
+  try {
+    preference = resolveThemePreference(document.defaultView?.localStorage.getItem(THEME_STORAGE_KEY)) ?? preference;
+  } catch {
+    /* Storage availability does not prevent a view choice. */
+  }
+  select.value = preference;
+  document.documentElement.dataset.theme = preference;
   const apply = () => {
-    document.documentElement.dataset.theme = select.value;
+    const next = resolveThemePreference(select.value);
+    if (!next) return;
+    document.documentElement.dataset.theme = next;
+    try {
+      document.defaultView?.localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch {
+      /* Keep the active choice when persistence is unavailable. */
+    }
   };
   select.addEventListener('change', apply);
   wrapper.append(label, select);

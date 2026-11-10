@@ -1,0 +1,69 @@
+{
+  "schema": "pendulum-checkpoint-foundation/v1",
+  "stage": 28,
+  "checkpoint": "CP5-M-metadata-controls-foundation",
+  "recordedAt": "2026-11-10T00:56:11.319Z",
+  "scope": "Pure command discovery, separate product locale/theme preferences and runtime-free native ODE presentation metadata. Shell/central UI integration is separate.",
+  "verification": {
+    "unit": {
+      "path": "tmp/S28-metadata-controls-foundation-vitest.json",
+      "sha256": "2230bdf5824e490c5d8cd49d47cf3245173ef3b465131f1f2b70620742a61011",
+      "passed": 40,
+      "failed": 0,
+      "pending": 0,
+      "observedExitCode": 0
+    },
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp5m-index/tsconfig.json",
+      "exitCode": 0
+    },
+    "targetedEslintExitCode": 0
+  },
+  "sources": [
+    {
+      "path": "src/product/app/command-index.ts",
+      "sha256": "322be44579c8c55b2a9fcb6685f46bbe8626935b6f7a1c9c854bea0dd0cdbb9e"
+    },
+    {
+      "path": "src/product/app/command-palette.ts",
+      "sha256": "93793540a4c512c2a4400281bcd35b6dbd425e4422891d70fb6b6abc9130d03f"
+    },
+    {
+      "path": "src/product/app/locale-data.ts",
+      "sha256": "f9f72b5c609a4bfb0ee1edd807111f2be6d0f1e4dde0d4b63301efc761a03ea2"
+    },
+    {
+      "path": "src/product/app/locale.ts",
+      "sha256": "6d9dd8262cc7c234f0600ad082f2cf4b86cf6cab84b9a334eebf7a7af850ca50"
+    },
+    {
+      "path": "src/product/design-system/theme.ts",
+      "sha256": "c6ce67f3f721e2c7630823b94223b53f8c9b43fd59d32b62a221fde1cac0c69c"
+    },
+    {
+      "path": "src/product/adapters/physics/planar-integrators.ts",
+      "sha256": "495fcbf861841b83794a617277539aba5ec540cb4d8594d518caeca7658dc905"
+    },
+    {
+      "path": "tests/product/app/command-index.test.ts",
+      "sha256": "3a036741fc3c066be6ffc0908f6d1aca3fde610d7b71c403ec198572813fb6fe"
+    },
+    {
+      "path": "tests/product/app/locale.test.ts",
+      "sha256": "d3d3524a0c09c43037ea5eeba37554f39ce0ec0e66eaf0adb9b50704ff6ec6b8"
+    },
+    {
+      "path": "tests/product/design-system/theme.test.ts",
+      "sha256": "197b6904db3d9d7f46aa46ba55157ccbe452a9fe63ec72826da784a6027ec87d"
+    },
+    {
+      "path": "tests/product/adapters/physics/ode-presentation.test.ts",
+      "sha256": "7b017dede5ddffe06b5ccb063cb87689ccbfea3717247dc0c6e38ca36867b2c6"
+    }
+  ],
+  "preservation": "Original native ODE registry and kernels remain unchanged. Every presented name and symplectic qualification is compared against that registry. Metadata entry no longer imports Vite physics chunks. Theme/locale use separate product keys, no startup write, and no legacy preference access.",
+  "remaining": [
+    "Central shell/route controls and actual final source-captured UI assertions.",
+    "Full release gates,134-row certification and S28/user-review completion."
+  ]
+}

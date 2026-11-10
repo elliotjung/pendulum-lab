@@ -1,4 +1,3 @@
-import { integratorRegistry } from '../../../physics/integratorRegistry';
 import type { IntegratorId } from '../../../types/domain';
 import type { QuantityMap } from '../../contracts/quantities';
 import { issue, type ContractIssue } from '../../contracts/validation';
@@ -27,6 +26,38 @@ export const ODE_TOLERANCE_MIN = 1e-15;
 export const ODE_TOLERANCE_MAX = 1;
 export const ODE_MONITORED_METHODS = new Set<IntegratorId>(['rkf45', 'dopri5', 'dop853', 'gbs']);
 
+// Presentation metadata only: importing the native registry here joins Vite's
+// entire physics chunk even on the learning index. Tests compare every label
+// and warning category against that unchanged registry; steppers stay native.
+const nativeNames: Readonly<Record<IntegratorId, string>> = Object.freeze({
+  euler: 'Explicit Euler',
+  rk2: 'Midpoint RK2',
+  rk4: 'Runge-Kutta 4',
+  verlet: 'Velocity Verlet Alias',
+  leapfrog: 'Leapfrog Approximation',
+  symplectic: 'Semi-Implicit Euler',
+  yoshida4: 'Yoshida 4 Composition',
+  yoshida6: 'Yoshida 6 Composition',
+  yoshida8: 'Yoshida 8 Composition',
+  hmidpoint: 'Implicit Midpoint',
+  gauss2: 'Gauss-Legendre 4 (2-stage)',
+  rkf45: 'RKF45 embedded (monitored fixed-step)',
+  dopri5: 'Dormand-Prince 5(4)',
+  dop853: 'DOP853 8(5,3)',
+  gbs: 'GBS extrapolation (fixed macro-step)',
+  bdf2: 'TR-BDF2 (stiff, L-stable)'
+});
+const qualifiedSplitting = new Set<IntegratorId>([
+  'verlet',
+  'leapfrog',
+  'symplectic',
+  'yoshida4',
+  'yoshida6',
+  'yoshida8',
+  'hmidpoint',
+  'gauss2'
+]);
+
 export function nativeOdeMethod(id: LegacyOdeIntegratorId): IntegratorId {
   return id.slice('integrator:'.length) as IntegratorId;
 }
@@ -34,7 +65,7 @@ export function odeIntegratorLabel(id: LegacyOdeIntegratorId): string {
   if (id === 'integrator:rk4') return 'RK4 (4차)';
   if (id === 'integrator:rk2') return 'RK2 (2차)';
   if (id === 'integrator:euler') return '명시적 Euler (1차)';
-  return integratorRegistry[nativeOdeMethod(id)].name;
+  return nativeNames[nativeOdeMethod(id)];
 }
 export function validateOdeTolerance(value: unknown, issues: ContractIssue[], path = '$.tolerance'): void {
   if (
@@ -81,10 +112,9 @@ export function readOdeTolerance(settings: QuantityMap, issues: ContractIssue[])
   return q.value;
 }
 export function odeIntegratorWarnings(id: LegacyOdeIntegratorId, tolerance?: number): string[] {
-  const method = nativeOdeMethod(id),
-    meta = integratorRegistry[method];
+  const method = nativeOdeMethod(id);
   return [
-    ...(meta.symplectic !== 'no'
+    ...(qualifiedSplitting.has(method)
       ? [
           '이 θ/ω 좌표의 분할 적분은 근사입니다. 심플렉틱 보장은 분리 가능한 정준계에만 적용되며 속도 결합·감쇠에서는 일반 보존을 보장하지 않습니다.'
         ]
