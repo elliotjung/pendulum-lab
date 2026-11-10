@@ -124,7 +124,6 @@ export function createExtendedRuntime(unit: LearnUnit, options: ExtendedRuntimeO
       status = 'running';
       progress = 0;
       error = null;
-      result = null;
       const token = epoch;
       emit();
       try {

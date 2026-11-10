@@ -95,6 +95,29 @@ describe('S25 unit-scoped workers and S21 queue lifecycle', () => {
     expect(runtime.getSnapshot()).toEqual(before);
     runtime.dispose();
   });
+  it('preserves the complete prior adaptive result and input when a same-input retry exceeds the archive cap', () => {
+    const jobs = controlledExecutor(),
+      runtime = createExtendedRuntime(lesson('2.3'), { executor: jobs.executor });
+    runtime.run();
+    jobs.complete(0);
+    const before = runtime.getSnapshot();
+    expect(before.result?.adaptiveArchive?.runs).toHaveLength(1);
+    runtime.run();
+    const retry = jobs.requests[1]!;
+    retry.callback({
+      type: 'error',
+      id: retry.request.id,
+      message: '전체 적응형 기록이 8,192 수락 단계 한도를 넘었습니다.'
+    });
+    const failed = runtime.getSnapshot();
+    expect(failed.status).toBe('error');
+    expect(failed.error).toContain('8,192');
+    expect(failed.fields).toEqual(before.fields);
+    expect(failed.result).toEqual(before.result);
+    runtime.restart();
+    expect(runtime.getSnapshot().result).toBeNull();
+    runtime.dispose();
+  });
   it('handles a synchronous executor result and detaches its disposed job exactly once', () => {
     const dispose = vi.fn(),
       unit = lesson();

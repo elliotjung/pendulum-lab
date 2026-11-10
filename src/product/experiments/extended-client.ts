@@ -4,6 +4,8 @@ import { validateExtendedCanonical, extendedConfig } from './extended-config';
 import { extendedBatchPlan } from './extended-science';
 import type { ExtendedResult } from './extended-results';
 import type { ExtendedExecutor, ExtendedRequest, ExtendedWorker } from './extended-worker';
+import { validateAdaptiveReplayArchive } from './adaptive-replay-archive';
+import { createPlanarSimulation } from '../adapters/physics/planar';
 
 /** A worker is an untrusted boundary: enforce finite, bounded results and exact input lineage. */
 export function validateExtendedResult(input: unknown, request: ExtendedRequest): ExtendedResult {
@@ -25,7 +27,8 @@ export function validateExtendedResult(input: unknown, request: ExtendedRequest)
           'trace',
           'warnings',
           'companions',
-          'batch'
+          'batch',
+          'adaptiveArchive'
         ].includes(k)
     )
   )
@@ -242,6 +245,44 @@ export function validateExtendedResult(input: unknown, request: ExtendedRequest)
     )
       throw new Error('S21 비교 결과가 원본과 다릅니다.');
   } else if (result.batch !== undefined) throw new Error('이 단원에 선언되지 않은 다중 run 결과입니다.');
+  if (request.unitId === '2.3' || request.unitId === '2.7') {
+    if (source.family !== 'planar') throw new Error('적응형 단원의 모형이 다릅니다.');
+    validateAdaptiveReplayArchive(
+      result.adaptiveArchive,
+      request.unitId,
+      source.config,
+      request.fields.tolerance!,
+      createPlanarSimulation(source.config).derivative
+    );
+    const main = result.adaptiveArchive!.runs[0]!.result,
+      projection = main.acceptedSteps.slice(0, 400).map((s) => [s.index, s.startTime, s.endTime, s.dt, s.errorNorm]),
+      displayed = result.tables.find((table) => table.id === 'adaptive-steps');
+    if (stableBatchJson(displayed?.rows) !== stableBatchJson(projection))
+      throw new Error('적응형 표시 표가 전체 기록의 처음 400단계와 다릅니다.');
+    for (const [id, value] of [
+      ['adaptive-accepted', main.accepted],
+      ['adaptive-rejected', main.rejected],
+      ['adaptive-rhs-evaluations', 7 * main.steps]
+    ] as const)
+      if (result.metrics.find((metric) => metric.id === id)?.value !== value)
+        throw new Error('적응형 진단 카운터가 전체 기록과 다릅니다.');
+    if (request.unitId === '2.7') {
+      const reference = result.adaptiveArchive!.runs[1]!.result.y,
+        costs = result
+          .adaptiveArchive!.runs.slice(2)
+          .map((run) => [
+            run.options.absTol,
+            run.result.accepted,
+            run.result.rejected,
+            7 * run.result.steps,
+            Math.hypot(...run.result.y.map((value, i) => value - reference[i]!))
+          ]);
+      if (
+        stableBatchJson(result.tables.find((table) => table.id === 'tolerance-cost')?.rows) !== stableBatchJson(costs)
+      )
+        throw new Error('허용오차 비교 표가 전체 적응형 기록과 다릅니다.');
+    }
+  } else if (result.adaptiveArchive !== undefined) throw new Error('이 단원에는 적응형 아카이브가 없습니다.');
   return result;
 }
 export const EXTENDED_WORKER_TIMEOUT_MS = 30000;

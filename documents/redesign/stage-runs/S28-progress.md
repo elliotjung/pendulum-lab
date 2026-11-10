@@ -237,3 +237,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 실제 runner와 source/build 전후 digest에 결속하고 누락·실패·skip·변조·경로 이탈·오래된 출력·불명확한 첨부를 거부한다. 실제 embedded bytes의 SHA와 별도 보존 파일을 연결하며 사용하지 않는 중복 진단 이름은 정상 허용한다.
 - 대상105/105 실제 exit0, 후속 adaptive 변경을 제외한 staged-index whole typecheck0. immutable Git blob의 기존 copier와 기본 산출물 동일성도 포함한다. 별도 임시 output 옵션을 추가하되 기본 build 동작을 보존한다.
 - 도구 통과를134개 제품 기능 인증으로 세지 않는다. 최종 실제 capture/기능별 네 facet/전체 gate와 사람 review는 별도이며 next28을 유지한다.
+
+### CP3-A — 적응형 승인 단계 전체 보존
+
+- CP7-V d3f6fc86767d35c37bf246bc0ad0f5e479a7b011 push exit0/live exact match 확인.
+- Focus2.3/2.7의 실제 native 호출 전체와 승인 schedule·설정·최종 상태를 versioned archive로 보존한다. 표는 기존400행을 유지하며 전체8192단계/16MiB 한도 초과는 명시 실패한다. 같은 입력의 재실행 실패에도 직전 완료 결과를 보존한다.
+- 대상150/150 단위, scoped typecheck/대상 lint0. 재배치 후 production Chromium/Pixel5 실제4/4 exit0,958개 source와 build 전후 해시 일치. 같은 browser의 native 전체 결과는 exact, 독립 Node schedule replay 최대 오차1.665e-15는 변경하지 않은 S01 한도 안이다.
+- 초기 cross-runtime controller schedule assertion4실패와 S01 범위에 잘못 놓인 테스트 fixture의 재배치 이력을 보존했다. 현재 fixture는 e2e/redesign 아래에 있다. 원본 scanner/수치 fixture를 바꾸지 않았으며 전체 인벤토리 검사는 별도 원본 replay 보완 뒤21/21 통과했다.
+- 이 checkpoint는 전체134행/릴리스/사람 검토 완료가 아니다. next28 및 review28 미승인을 유지한다.

@@ -1,5 +1,11 @@
 import { integrateAdaptive, replayAcceptedSteps } from '../../physics/adaptive';
 import {
+  adaptiveReplaySpecifications,
+  appendAdaptiveReplayRun,
+  createAdaptiveReplayArchive,
+  type AdaptiveReplayArchiveV1
+} from './adaptive-replay-archive';
+import {
   omegaToMomentum,
   implicitMidpointCanonical,
   canonicalRhs,
@@ -26,6 +32,7 @@ export interface NumericalDiagnostics {
   tables: ExtendedTable[];
   companions: ExtendedCompanion[];
   warnings: string[];
+  adaptiveArchive?: AdaptiveReplayArchiveV1;
 }
 const distance = (a: ArrayLike<number>, b: ArrayLike<number>) =>
   Math.hypot(...Array.from({ length: a.length }, (_, i) => Number(a[i]) - Number(b[i])));
@@ -329,15 +336,12 @@ export function numericalDiagnostics(
       rhs(x, out);
     };
     const tolerance = fields.tolerance!,
-      r = integrateAdaptive(Float64Array.from(c.initialState), c.duration, counted, {
-        absTol: tolerance,
-        relTol: tolerance,
-        initialDt: c.step,
-        maxDt: 0.1,
-        minDt: 1e-8,
-        maxIterations: 20000
-      });
+      specifications = adaptiveReplaySpecifications(id, c.step, tolerance),
+      main = specifications[0]!,
+      archive = createAdaptiveReplayArchive(),
+      r = integrateAdaptive(Float64Array.from(c.initialState), c.duration, counted, main.options);
     if (!r.reachedTarget) throw new Error(`적응형 계산이 끝나지 않았습니다: ${r.terminationReason}`);
+    appendAdaptiveReplayRun(archive, main.id, c.initialState, main.options, r);
     const replay = replayAcceptedSteps(Float64Array.from(c.initialState), rhs, r.acceptedSteps),
       fixed = measuredEndpoint(c);
     output.metrics.push(
@@ -356,30 +360,20 @@ export function numericalDiagnostics(
     });
     if (id === '2.7') {
       const rows: (number | string)[][] = [];
-      const ref = integrateAdaptive(Float64Array.from(c.initialState), c.duration, rhs, {
-        absTol: 1e-11,
-        relTol: 1e-11,
-        initialDt: c.step,
-        maxDt: 0.05,
-        minDt: 1e-9,
-        maxIterations: 20000
-      });
+      const reference = specifications[1]!,
+        ref = integrateAdaptive(Float64Array.from(c.initialState), c.duration, rhs, reference.options);
       if (!ref.reachedTarget) throw new Error('정밀 adaptive 기준이 끝나지 않았습니다.');
-      for (const tol of [Math.min(1e-3, tolerance * 10), tolerance, Math.max(1e-10, tolerance / 10)]) {
+      appendAdaptiveReplayRun(archive, reference.id, c.initialState, reference.options, ref);
+      for (const specification of specifications.slice(2)) {
+        const tol = specification.options.absTol;
         let calls = 0;
         const measured: Derivative = (x, out) => {
           calls++;
           rhs(x, out);
         };
-        const a = integrateAdaptive(Float64Array.from(c.initialState), c.duration, measured, {
-          absTol: tol,
-          relTol: tol,
-          initialDt: c.step,
-          maxDt: 0.1,
-          minDt: 1e-8,
-          maxIterations: 20000
-        });
+        const a = integrateAdaptive(Float64Array.from(c.initialState), c.duration, measured, specification.options);
         if (!a.reachedTarget) throw new Error('오차-비용 비교가 종료되지 않았습니다.');
+        appendAdaptiveReplayRun(archive, specification.id, c.initialState, specification.options, a);
         rows.push([tol, a.accepted, a.rejected, calls, distance(a.y, ref.y)]);
       }
       output.tables.push({
@@ -389,6 +383,7 @@ export function numericalDiagnostics(
         rows
       });
     }
+    output.adaptiveArchive = archive;
     output.companions.push({
       id: 'adaptive-dopri5',
       settings: {
@@ -400,7 +395,8 @@ export function numericalDiagnostics(
         maxIterations: 20000,
         coordinateScaling: 'rad and rad/s as SI numerical components'
       },
-      description: '기존 adaptive.ts의 Dormand–Prince5(4) reject/retry. 수락 단계는 표와 JSON에 기록합니다.'
+      description:
+        '기존 adaptive.ts의 Dormand–Prince5(4) reject/retry. 표는 처음 400단계, JSON의 adaptiveArchive는 모든 적응형 계산의 전체 수락 단계·최종 상태를 보존합니다.'
     });
     output.warnings.push(
       '허용치는 SI 수치 성분별 absTol+relTol*max(|y|)로 정규화합니다. 국소 오차 수락이 전역 오차 보증은 아닙니다. 실험실 전달은 baseline의 고정 간격 RK4이며 adaptive 설정은 이 단원과 JSON 보고서에 남습니다.'

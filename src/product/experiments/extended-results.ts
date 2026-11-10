@@ -1,6 +1,7 @@
 import type { ExperimentStateV1 } from '../contracts/experiment';
 import type { ExtendedFields } from './extended-config';
 import type { BatchSnapshot } from '../lab/experiments/contracts';
+import type { AdaptiveReplayArchiveV1 } from './adaptive-replay-archive';
 export interface ExtendedMetric {
   readonly id: string;
   readonly label: string;
@@ -43,6 +44,7 @@ export interface ExtendedResult {
   readonly warnings: readonly string[];
   readonly companions: readonly ExtendedCompanion[];
   readonly batch?: BatchSnapshot;
+  readonly adaptiveArchive?: AdaptiveReplayArchiveV1;
 }
 export const extendedMetric = (id: string, label: string, value: number, unit: string): ExtendedMetric => {
   if (!Number.isFinite(value)) throw new Error(`${label}의 진단값이 유한하지 않습니다.`);

@@ -1,0 +1,195 @@
+{
+  "schema": "pendulum-redesign-scoped-evidence/v1",
+  "stage": 28,
+  "checkpoint": "adaptive-complete-archive",
+  "completion": false,
+  "scope": "S28 additive product adapter for Focus2.3/2.7, not a final R/parity certificate or human review",
+  "implementation": {
+    "artifact": "pendulum-adaptive-replay/v1",
+    "allNativeCalls": {
+      "2.3": [
+        "main"
+      ],
+      "2.7": [
+        "main",
+        "reference",
+        "tolerance-0",
+        "tolerance-1",
+        "tolerance-2"
+      ]
+    },
+    "nativeFields": "All native AdaptiveIntegrationResult fields, including complete acceptedSteps and final y; initialState and actual options retained. Native defaults remain those of the preserved source.",
+    "projection": "Existing adaptive-steps table remains first400 entries; archived schedule is never truncated.",
+    "bounds": {
+      "totalAcceptedAcrossAllRuns": 8192,
+      "wholeResultBytes": 16777216,
+      "nativeMaxIterationsUnchangedPerCall": 20000
+    },
+    "overflow": "Explicit whole-output failure before completed-result publication. Prior completed result survives a same-input failed retry; input edits/restart retain their existing clearing contract.",
+    "workerBoundary": "Descriptor-safe existing file envelope, closed archive/run/settings/result/step fields, exact source/settings/counters/projection, every schedule entry and native full replay against final y.",
+    "integrityLimit": "Replay verifies schedule/final state. Stored errorNorm is finite within native acceptance range; rejected attempts and every error estimate are not independently re-estimated at the boundary."
+  },
+  "files": [
+    {
+      "path": "src/product/experiments/adaptive-replay-archive.ts",
+      "sha256": "d148b2cd71a693ef98ae99a2b9d74eab4f288b35142511d2e21c2d3fd6220afc"
+    },
+    {
+      "path": "src/product/experiments/extended-client.ts",
+      "sha256": "2954f3287de5dde41a7cbf649b1d07b130afff6287f1a042030eee3678135a0a"
+    },
+    {
+      "path": "src/product/experiments/extended-numerical.ts",
+      "sha256": "065a382b48c1bd64f9afc9868c3ea738cfdcf1d28dfff4107f8dd98df6490fb0"
+    },
+    {
+      "path": "src/product/experiments/extended-results.ts",
+      "sha256": "7c3c58d93f9b732982612d2533cca045955141d0719a3a73dffe9ec37fbe431d"
+    },
+    {
+      "path": "src/product/experiments/extended-runtime.ts",
+      "sha256": "4a01b47fae3e07ed73a922d308f784521951fdc0bc4e6920baf091476c1a349e"
+    },
+    {
+      "path": "src/product/experiments/extended-science.ts",
+      "sha256": "11dd090069cf217d99aee3139ec07657b7d9cab3c9cdfe125b6e3f1853bb1fc0"
+    },
+    {
+      "path": "tests/product/experiments/adaptive-replay-archive.test.ts",
+      "sha256": "6cfad5afb69a598d87d240ea595e0a6feabba37c0624db0e7a78b41daab49b74"
+    },
+    {
+      "path": "tests/product/experiments/extended-runtime.test.ts",
+      "sha256": "3bbda0f5a42a46a21ddcb74dc41b737d028d8486a54c1048c9f53131ed8aaa09"
+    },
+    {
+      "path": "e2e/redesign/adaptive-archive.spec.ts",
+      "sha256": "dce56aa9dfc506d37bdc295c0778c6f66667c04e5432e06c5597ab3b6b52f53a"
+    },
+    {
+      "path": "e2e/redesign/fixtures/adaptive-native-reference.ts",
+      "sha256": "2a0b2b488f005d89c488b810f1a5a2155e3907d3bd627c799c1cc0e89f0e8adb"
+    }
+  ],
+  "validation": {
+    "unit": {
+      "exitCode": 0,
+      "passed": 150,
+      "total": 150,
+      "report": {
+        "path": "tmp/S28-adaptive-archive-unit-final.json",
+        "sha256": "d338d421201ac49ae04719fd84eb27c4ccc000a39bc143167902d7ed20626f81"
+      }
+    },
+    "scopedTypecheck": {
+      "exitCode": 0,
+      "log": "tmp/S28-adaptive-archive-typecheck-final-r2.log"
+    },
+    "eslint": {
+      "exitCode": 0,
+      "logs": [
+        "tmp/S28-adaptive-archive-eslint-final.log",
+        "tmp/S28-adaptive-archive-browser-eslint-final.log"
+      ]
+    },
+    "browser": {
+      "exitCode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "retries": 0,
+      "projects": [
+        "chromium",
+        "mobile-chrome"
+      ],
+      "report": {
+        "path": "tmp/S28-adaptive-archive-browser-final-r2.json",
+        "sha256": "7fb8a2fef38e25d5631a6e39a0abd3ddec776b7d9dc1e427d58a0624b519c79c"
+      },
+      "timing": {
+        "startTime": "2026-11-10T01:27:48.697Z",
+        "duration": 42287.227999999996,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "exactNativeEvidence": "Direct same-runtime unit comparisons and same-browser independent native-import reference compare every native field/step/errorNorm/settings/counter; full accepted schedule replay is exact.",
+    "crossRuntimeReplay": {
+      "originalS01Absolute": 1e-11,
+      "originalS01Relative": 1e-10,
+      "maximumAbsolute": 1.6653345369377348e-15
+    },
+    "actualBrowserCounts": {
+      "2.3": [
+        613
+      ],
+      "2.7": [
+        613,
+        1542,
+        388,
+        613,
+        972
+      ]
+    },
+    "source": {
+      "paths": 958,
+      "prePostMatched": true,
+      "scope": "all src plus selected tests/config/S01fixture, not all repository inputs",
+      "before": {
+        "path": "tmp/S28-adaptive-archive-source-final-r2-before.json",
+        "sha256": "59a271e24987c9e94a5e02d3cc77e8925bdecff9065238502e5edc639331e2a2"
+      },
+      "after": {
+        "path": "tmp/S28-adaptive-archive-source-final-r2-after.json",
+        "sha256": "59a271e24987c9e94a5e02d3cc77e8925bdecff9065238502e5edc639331e2a2"
+      }
+    },
+    "build": {
+      "isolatedPath": "tmp/S28-adaptive-archive-dist-r2",
+      "viteExit": 0,
+      "assetCopyExit": 0,
+      "prePostMatched": true,
+      "before": {
+        "path": "tmp/S28-adaptive-archive-build-final-r2-before.json",
+        "sha256": "f58108a7d9c1685efa13ebe1dee0c939f868e5625793798ea6da31558c11cf5f"
+      },
+      "after": {
+        "path": "tmp/S28-adaptive-archive-build-final-r2-after.json",
+        "sha256": "f58108a7d9c1685efa13ebe1dee0c939f868e5625793798ea6da31558c11cf5f"
+      }
+    },
+    "retainedDownloads": "tmp/S28-adaptive-archive-download-manifest.json",
+    "unboundCaseLookup": "tmp/S28-adaptive-archive-case-lookup.json"
+  },
+  "initialFailurePreserved": {
+    "report": {
+      "path": "tmp/S28-adaptive-archive-browser.json",
+      "sha256": "82d2e1234264cc17c013b812d624cd6c179ec92ed13221b3105dc4e6c8aeb07c"
+    },
+    "log": "tmp/S28-adaptive-archive-browser.log",
+    "traces": "tmp/S28-adaptive-archive-browser-results",
+    "failed": 4,
+    "cause": "New test incorrectly demanded original S01 numeric bounds for independently recomputed browser-vs-Node adaptive controller schedules/errorNorm; first observed difference4.16802126146365e-9 exceeded6.645709931489946e-11.",
+    "correction": "Changed the new test to exact same-browser native schedule/full-result equality via three-line test-only native-import fixture, while preserving original S01 bounds for Node replay of the exported accepted schedule/final state. No native fixture, tolerance, timeout or production source changed for this correction."
+  },
+  "fixtureRelocation": {
+    "cause": "The first passing fixture under e2e/fixtures entered the frozen S01 inventory. Moved only this new test fixture into e2e/redesign/fixtures and changed its import paths; no baseline or golden changes.",
+    "priorPassingBrowser4Retained": "tmp/S28-adaptive-archive-browser-final.json",
+    "afterMoveBrowser": "Fresh isolated build-r2, all4 passed again; exact958 source hashes and build-tree pre/post match.",
+    "inventoryCheck": {
+      "passed": 20,
+      "failed": 2,
+      "total": 22,
+      "report": "tmp/S28-adaptive-inventory-unit.json",
+      "errors": [],
+      "remaining": "Exact frozen baseline equality still differs only for the separately root-owned intentional SimulationClock and asset-copier changes; no added/missing inventoried file. This is not reported as a passing full inventory gate.",
+      "diff": "tmp/S28-adaptive-inventory-diff.json"
+    }
+  },
+  "executionCaution": "Root reported possible brief overlap with release-library/standalone build work. This browser run is functional evidence, not a performance measurement; no assertion or timeout was changed.",
+  "preservation": "No native/governing kernel, public API existing fields, source golden fixture, dependency or lockfile changes by this owned group.",
+  "remaining": "Final current-source full R gates/parity capture, checkpoint commit/push and human review remain root-owned. No later-stage work or stage completion claimed."
+}

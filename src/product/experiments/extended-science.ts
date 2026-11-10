@@ -29,6 +29,7 @@ import {
   type ExtendedConfig
 } from './extended-config';
 import { numericalDiagnostics } from './extended-numerical';
+import { ADAPTIVE_ARCHIVE_LIMITS } from './adaptive-replay-archive';
 import {
   extendedMetric as metric,
   type ExtendedMetric,
@@ -436,18 +437,20 @@ export function executeExtendedExperiment(
     trace,
     warnings: [...new Set(warnings)],
     companions: numerical.companions,
+    ...(numerical.adaptiveArchive ? { adaptiveArchive: numerical.adaptiveArchive } : {}),
     ...(batch ? { batch } : {})
   };
   // Native signed zeros are physically identical; the JSON artifact has one finite representation.
-  return JSON.parse(
-    JSON.stringify(result, (_key, value: unknown) => {
-      if (typeof value === 'number') {
-        if (!Number.isFinite(value)) throw new Error('전용 실험 결과에 유한하지 않은 수가 있습니다.');
-        return value === 0 ? 0 : value;
-      }
-      return value;
-    })
-  ) as ExtendedResult;
+  const serialized = JSON.stringify(result, (_key, value: unknown) => {
+    if (typeof value === 'number') {
+      if (!Number.isFinite(value)) throw new Error('전용 실험 결과에 유한하지 않은 수가 있습니다.');
+      return value === 0 ? 0 : value;
+    }
+    return value;
+  });
+  if (result.adaptiveArchive && new TextEncoder().encode(serialized).length > ADAPTIVE_ARCHIVE_LIMITS.bytes)
+    throw new Error('전체 적응형 진단 결과가 16 MiB 한도를 넘었습니다. 결과를 줄여 저장하지 않았습니다.');
+  return JSON.parse(serialized) as ExtendedResult;
 }
 export function batchTable(batch: BatchSnapshot): ExtendedTable {
   return {
