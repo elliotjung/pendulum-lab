@@ -1,0 +1,59 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP8-E1-browser-evidence",
+  "createdAt": "2026-11-10T05:15:12.375Z",
+  "completion": false,
+  "scope": "First actual final browser group only. Remaining eleven groups, matrix certification and final status push are pending; no user review approval.",
+  "inspectedHead": "66fa05a4625ab1f9fc533e272e1492709deebacf",
+  "files": [
+    {
+      "path": "e2e/redesign/legacy-expansion.spec.ts",
+      "sha256": "e9abf3c6765e21bab58a4c3eb235d830426585a6d8180fc8e96d0fd57a84e3b4"
+    },
+    {
+      "path": "e2e/redesign/live-capture.spec.ts",
+      "sha256": "08c545d7b6e5f4a23a22472cfdd932d91d964dd55f8bbe0183e86dbbe536fb62"
+    },
+    {
+      "path": "e2e/redesign/playback-timing.spec.ts",
+      "sha256": "8a9051d5a17576cdb381f51b8b42e6f4a6e64594116957bd103c279371e3969f"
+    }
+  ],
+  "capture": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g01.capture.json",
+    "sha256": "aff526d20f5ea30362720967ade4fd6b25e9be5c7ac0943ce6d3fc3a5bb42872"
+  },
+  "report": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g01.report.json",
+    "sha256": "9d1542b8d7aa1ccefb16a0d850e5047e685681478eb89a244b8f1b9a41bb8937"
+  },
+  "browser": {
+    "project": "chromium",
+    "actualCases": 94,
+    "ownedFileCases": 11,
+    "files": [
+      "e2e/redesign/chain-pendulum.spec.ts",
+      "e2e/redesign/curriculum-six-eight.spec.ts",
+      "e2e/redesign/data-driven.spec.ts",
+      "e2e/redesign/legacy-expansion.spec.ts",
+      "e2e/redesign/live-capture.spec.ts",
+      "e2e/redesign/playback-timing.spec.ts",
+      "e2e/trust-inspector.spec.ts"
+    ],
+    "failed": 0,
+    "skipped": 0,
+    "retries": 0,
+    "actualExitCode": 0,
+    "exactExpectedCaseIdentityMatch": true
+  },
+  "static": {
+    "eslint": {
+      "actualExitCode": 0,
+      "log": "tmp/S28-CP8-E1-eslint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "preservation": "No product/native/runtime source changed. New test files and exact actual runner evidence only.",
+  "nextValidStage": 28
+}

@@ -1,0 +1,3472 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-playwright.config.ts",
+      "--project=chromium",
+      "--max-failures=1",
+      "e2e/redesign/chain-pendulum.spec.ts",
+      "e2e/redesign/curriculum-six-eight.spec.ts",
+      "e2e/redesign/data-driven.spec.ts",
+      "e2e/redesign/legacy-expansion.spec.ts",
+      "e2e/redesign/live-capture.spec.ts",
+      "e2e/redesign/playback-timing.spec.ts",
+      "e2e/trust-inspector.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g01-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g01-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\chain-pendulum.spec.ts",
+      "file": "redesign/chain-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S10 triple and N-chain laboratory",
+          "file": "redesign/chain-pendulum.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "triple: worker run/pause/step/cancel and full variable-DOF CSV/SVG",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16772,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:02.582Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-ee12085046a078a2ea37",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "triple: comparison settings survive route return and stay isolated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4022,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:21.773Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-2faec6470d7cde26a798",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "triple: edit/save/reload/share/import preserve SI vectors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9195,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:25.848Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-acc721e1fb8ce08b19cb",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "chain: worker run/pause/step/cancel and full variable-DOF CSV/SVG",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8109,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:35.062Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-c61bbbbd3e709f1c9a4b",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 41,
+              "column": 5
+            },
+            {
+              "title": "chain: comparison settings survive route return and stay isolated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8271,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:43.187Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-128a3726982f9a10b9bf",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "chain: edit/save/reload/share/import preserve SI vectors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4787,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:51.472Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-ec1de832664f8b76e944",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 98,
+              "column": 5
+            },
+            {
+              "title": "middle insertion/deletion and bulk preserve all matching link values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8848,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:49:56.282Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-8868197d335e4032352c",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 130,
+              "column": 3
+            },
+            {
+              "title": "N boundaries run in worker, responsive cancellation and preset recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3380,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:05.153Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "N128 UI timing",
+                          "contentType": "application/json",
+                          "body": "eyJmaXJzdFNhbXBsZU1zIjoyNTYsImNhbmNlbE1zIjoxMDR9"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-1e3a4e30968030e95caf",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 154,
+              "column": 3
+            },
+            {
+              "title": "invalid edits and malicious/oversized/wrong-system imports preserve source settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12336,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:08.549Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-7cc9131b6ddbc5807b4a",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved configuration remains intact and refuses overwrite",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2939,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:20.901Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-6431a78ea9757b6b7dde",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "worker startup failure is recoverable and route departure terminates active work",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7369,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:23.857Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-bb99dba24765d09a0117",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 215,
+              "column": 3
+            },
+            {
+              "title": "unsupported canonical version has a recoverable error view",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2687,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:31.240Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-734372850ad20bd0cd7d",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 239,
+              "column": 3
+            },
+            {
+              "title": "keyboard, axe, 320px and 200% zoom preserve editing and numeric access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28943,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:50:33.940Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-8d878b241f021fbf1b51",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 252,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark workspace, inspector and selected-link plots",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5434,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:02.900Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-d49313362ea1b40c6422",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 279,
+              "column": 3
+            },
+            {
+              "title": "frozen N-chain workspace and maximum-link inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4531,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:08.349Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "96418f58e2d38d6b041c-7ec74de1ee9b306df152",
+              "file": "redesign/chain-pendulum.spec.ts",
+              "line": 292,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\curriculum-six-eight.spec.ts",
+      "file": "redesign/curriculum-six-eight.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S27 bifurcation extended systems and reproducible research curricula",
+          "file": "redesign/curriculum-six-eight.spec.ts",
+          "line": 55,
+          "column": 6,
+          "specs": [
+            {
+              "title": "6.1: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11439,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:13.425Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-4c7a9858acc9d2d18f39",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.2: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11991,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:24.879Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-9a6cbf652d2e576191ab",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.3: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11918,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:36.886Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-bb7612111d1d0dcac3ea",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.4: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19312,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:51:48.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-359336efa199895e92dc",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.5: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8150,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:52:08.149Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-68ccb928e5228cc5fc6b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.6: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11810,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:52:16.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-0b833e5f17ce358d902c",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.7: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15912,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:52:28.142Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-1f0eab34563655746de3",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.8: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12259,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:52:44.068Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-496f1e65218e79f14e98",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.9: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12462,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:52:56.341Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-9aa1b342e54ea2f174ce",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.10: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6974,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:53:08.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-8a0d98f81f06718f4488",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.11: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11487,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:53:15.807Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-5add78d20f253cca7068",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "6.12: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17180,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:53:27.319Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-783093e6fe8b67dd6864",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.1: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15812,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:53:44.516Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-4d97621f2567adb4149e",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.2: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11616,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:54:00.343Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-2c7d1d485812a4c82ec2",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.3: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11688,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:54:11.973Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-51dd2426c07100379fc1",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.4: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18220,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:54:23.674Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-3c2c64485066863273e6",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.5: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16767,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:54:41.911Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-36581dd38a50a1c14b57",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.6: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9746,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:54:58.689Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-66978eac0a473753e953",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.7: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9011,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:55:08.449Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-c8b0f770f20e90b4b1b6",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.8: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11766,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:55:17.476Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-7635bf1ded2030058f62",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.9: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7845,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:55:29.256Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-5c29190f586ee2b22520",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.10: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9003,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:55:37.112Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-04df5c8135f6a360f49f",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.11: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20606,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:55:46.129Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-d111f7b9e5d1380772ee",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.12: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14608,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:56:06.745Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-6965dd975a616c3a712a",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "7.13: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12161,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:56:21.364Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-7baf27c1f8b3b917d6e4",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.1: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6123,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:56:33.547Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-ab48885235ce2a90e07f",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.2: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17375,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:56:39.684Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-04e3453e59c16ed7af21",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.3: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17003,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:56:57.070Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-0d426b8c3ea047c1d0c8",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.4: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8142,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:57:14.085Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-49fb5fbf04c57bdfa31d",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.5: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12004,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:57:22.241Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-0d72d467e8fca5ebd4f2",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.6: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18045,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:57:34.259Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-91b461b32f4c88b330bd",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.7: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16954,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:57:52.320Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-96dad3721c537f733c84",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.8: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12723,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:58:09.290Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-e5d2b0143e0e71ab6720",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.9: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7975,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:58:22.034Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-82599dce4f3800e75eca",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.10: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12523,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:58:30.039Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-da52671a2c8e88551191",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.11: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12073,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:58:42.574Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-501e0b2b9ae7e19f63a8",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "8.12: real calculation, scientific report, exact Lab transfer, back and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19221,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:58:54.662Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-8726f6899c909d8fcd1b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 57,
+              "column": 5
+            },
+            {
+              "title": "restores both independent stability sources with exact settings and persists only valid user edits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9353,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:13.893Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-c6c90042edb7d8319530",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 113,
+              "column": 3
+            },
+            {
+              "title": "keeps imported parent-run settings separate from the current physical restart",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3886,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:23.259Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-13898491a7cc5f64b408",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 143,
+              "column": 3
+            },
+            {
+              "title": "preserves invalid and corrupt drafts, supports cancellation and restart",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5914,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:27.159Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-25cecae00504ee4ba8af",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 182,
+              "column": 3
+            },
+            {
+              "title": "shows recoverable worker start failure without losing inputs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4721,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:33.086Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-6b8825382081f16d66e8",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 202,
+              "column": 3
+            },
+            {
+              "title": "keeps controls keyboard accessible at320px and200percent zoom",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15788,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:37.823Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-74a3bd9d6c100e9f41d1",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "visual 6.6 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11646,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T04:59:53.625Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-d1be73d96fa25636d032",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.6 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3253,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:05.284Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-3f5562e0c48eb114e689",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7754,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:08.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-cc13197cdbd624668936",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 6.9 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12327,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:16.337Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-4438144bf2c17850ae3e",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3331,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:28.681Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-3e2079cf48de490cd43e",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.7 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7663,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:32.032Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-f46487340ea749720e9b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7482,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:39.712Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-a2153c4a16c3e97a1cdd",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 7.13 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3087,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:47.206Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-9c22c32fa5d2d84283b0",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3569,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:50.313Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-246351b75b3394588d80",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.8 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8325,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:00:53.895Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-bcce32bf4c5366b00a3c",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 light",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3165,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:02.244Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-723945d43cd4c47d8a58",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "visual 8.12 dark",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7333,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:05.423Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5cb449dee45ba71143f-bc98e9523c7b84acca5b",
+              "file": "redesign/curriculum-six-eight.spec.ts",
+              "line": 234,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\data-driven.spec.ts",
+      "file": "redesign/data-driven.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S23 data-driven models and Krylov tools",
+          "file": "redesign/data-driven.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "sindy: real native fitting retains split, model and validation lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15816,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:12.812Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-7c3e89d4466dc89d5ab5",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "dmd: real native fitting retains split, model and validation lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6914,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:28.653Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-5e09d239fc8f360697f2",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "havok: real native fitting retains split, model and validation lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11239,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:35.591Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-8f77ab28416bda755b8b",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "reservoir: real native fitting retains split, model and validation lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19598,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:01:46.846Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-8f168cc501af21d7d925",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "hamiltonian: real native fitting retains split, model and validation lineage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15240,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:02:06.465Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-47cdbc33d54fd6eecf4e",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "arnoldi: serialized operator produces independently checked spectral output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15731,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:02:21.719Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-b78ae4aa5cefcdb20e23",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 97,
+              "column": 5
+            },
+            {
+              "title": "lanczos: serialized operator produces independently checked spectral output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10933,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:02:37.466Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-91c52c80beefe7e703ac",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 97,
+              "column": 5
+            },
+            {
+              "title": "general-eigensolver: serialized operator produces independently checked spectral output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11043,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:02:48.412Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-0874a34c4b8d9fd77fa9",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 97,
+              "column": 5
+            },
+            {
+              "title": "download, preview, adoption, retraining and fixed-model reevaluation preserve the saved source",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10313,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:02:59.468Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-b7277ecf3b0663789294",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 138,
+              "column": 3
+            },
+            {
+              "title": "invalid split, unsafe files and nonsymmetric Lanczos input preserve previous result",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5292,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:03:09.793Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-a9e1daef16324e623d63",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 166,
+              "column": 3
+            },
+            {
+              "title": "current recorded Lab data is copied through preview without changing the live experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13293,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:03:15.097Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-858846efa074b8fc83f5",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 198,
+              "column": 3
+            },
+            {
+              "title": "worker startup failure and pending-job cancellation preserve confirmed data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5602,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:03:28.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-b79e88f9a87dc7d15e8d",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 220,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320px, 200 percent zoom and light/dark result views remain accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23326,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:03:34.013Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f363c2b40e9929097ed5-c82838e7a5036c630190",
+              "file": "redesign/data-driven.spec.ts",
+              "line": 261,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\legacy-expansion.spec.ts",
+      "file": "redesign/legacy-expansion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "complete native expansion compatibility consumer",
+          "file": "redesign/legacy-expansion.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "executes all16 original methods, plots complete diagnostics, and previews/adopts exact exported outputs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8674,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:03:57.385Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "native-expansion-export",
+                          "contentType": "application/json",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g01-20261110-browser-output\\redesign-legacy-expansion--9b8f2-opts-exact-exported-outputs-chromium\\attachments\\native-expansion-export-9698ccc8881f4ebe211cfb20c3fc3ef725c6b9a5.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d47764325795eabd5f8-a3f6bf6ed12efe63604b",
+              "file": "redesign/legacy-expansion.spec.ts",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "keeps imported outputs pending and rejects changed checksums without replacing completed results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3688,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:06.075Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9d47764325795eabd5f8-e2726380a4720a3f4e87",
+              "file": "redesign/legacy-expansion.spec.ts",
+              "line": 84,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\live-capture.spec.ts",
+      "file": "redesign/live-capture.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 opt-in native live capture with deterministic permission and media fixtures",
+          "file": "redesign/live-capture.spec.ts",
+          "line": 122,
+          "column": 6,
+          "specs": [
+            {
+              "title": "requests no hardware automatically and sends exact native IMU CSV through separate S22 preview and confirmation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8122,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:09.799Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5fcd8fd60aeafa1195dc-b62d44f75f2fc8de8e4c",
+              "file": "redesign/live-capture.spec.ts",
+              "line": 131,
+              "column": 3
+            },
+            {
+              "title": "excludes calibration samples and cancels late IMU permission without attaching live listeners",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8729,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:17.938Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5fcd8fd60aeafa1195dc-4efb9cda99a2950546f7",
+              "file": "redesign/live-capture.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "tracks actual Canvas MediaStream pixels through the native camera controller and preserves derived-source provenance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10121,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:26.688Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5fcd8fd60aeafa1195dc-36a46914712b97e04358",
+              "file": "redesign/live-capture.spec.ts",
+              "line": 197,
+              "column": 3
+            },
+            {
+              "title": "recovers from camera denial and releases late permission tracks after stop and route disposal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9280,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:36.822Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5fcd8fd60aeafa1195dc-edd394f8d5b3151d92b1",
+              "file": "redesign/live-capture.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "supports keyboard, narrow-screen access and full axe while closing the tool releases active sensors",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9947,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:46.123Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5fcd8fd60aeafa1195dc-359442ff199b4f9fb10e",
+              "file": "redesign/live-capture.spec.ts",
+              "line": 268,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\playback-timing.spec.ts",
+      "file": "redesign/playback-timing.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 measured physics and actual native playback accounting",
+          "file": "redesign/playback-timing.spec.ts",
+          "line": 18,
+          "column": 6,
+          "specs": [
+            {
+              "title": "double: measures actual steps, retains requested budget, runs60x4 and resets metrics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "s28-actual-playback-timing",
+                      "description": "{\"system\":\"double\",\"stepCompute\":0.5,\"compute\":0.5999999977648258,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8951,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:04:56.132Z",
+                      "annotations": [
+                        {
+                          "type": "s28-actual-playback-timing",
+                          "description": "{\"system\":\"double\",\"stepCompute\":0.5,\"compute\":0.5999999977648258,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ed51e74c39aa2f79edb1-c106f2fb6d9cd028c509",
+              "file": "redesign/playback-timing.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "compound-double: measures actual steps, retains requested budget, runs60x4 and resets metrics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "s28-actual-playback-timing",
+                      "description": "{\"system\":\"compound-double\",\"stepCompute\":0.3999999985098839,\"compute\":0.6000000014901161,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3571,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:05:05.103Z",
+                      "annotations": [
+                        {
+                          "type": "s28-actual-playback-timing",
+                          "description": "{\"system\":\"compound-double\",\"stepCompute\":0.3999999985098839,\"compute\":0.6000000014901161,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ed51e74c39aa2f79edb1-04e0d9aa198a0c8b9c10",
+              "file": "redesign/playback-timing.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "triple: measures actual steps, retains requested budget, runs60x4 and resets metrics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "s28-actual-playback-timing",
+                      "description": "{\"system\":\"triple\",\"stepCompute\":1,\"compute\":0.6000000014901161,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8364,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:05:08.683Z",
+                      "annotations": [
+                        {
+                          "type": "s28-actual-playback-timing",
+                          "description": "{\"system\":\"triple\",\"stepCompute\":1,\"compute\":0.6000000014901161,\"requested\":60,\"effective\":60,\"pageErrors\":0}"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ed51e74c39aa2f79edb1-a76cd20d87c64d7e6514",
+              "file": "redesign/playback-timing.spec.ts",
+              "line": 20,
+              "column": 5
+            },
+            {
+              "title": "rejected core interval retains its full native timing debt and physical state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "s28-rejected-playback-timing",
+                      "description": "{\"compute\":2,\"actualSteps\":0,\"debtSeconds\":0.25,\"pageErrors\":0}"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2652,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T05:05:17.058Z",
+                      "annotations": [
+                        {
+                          "type": "s28-rejected-playback-timing",
+                          "description": "{\"compute\":2,\"actualSteps\":0,\"debtSeconds\":0.25,\"pageErrors\":0}"
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ed51e74c39aa2f79edb1-451908fc931477aadbe4",
+              "file": "redesign/playback-timing.spec.ts",
+              "line": 112,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "trust-inspector.spec.ts",
+      "file": "trust-inspector.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Trust Inspector opens from result badges and exposes reproducibility fields",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8244,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-10T05:05:19.786Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9c29a9990e4d6d5a72f3-159f10a9b14b40b43147",
+          "file": "trust-inspector.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T04:48:53.848Z",
+    "duration": 996631.914,
+    "expected": 94,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

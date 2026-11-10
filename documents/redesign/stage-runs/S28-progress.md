@@ -260,3 +260,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 실제 대조한 Inspector8개만 새 단위/16ODE/허용오차 UI로 갱신하고 원본 PNG를 보존했다. 기존 workspace/analysis PNG14개와 numerical golden은 그대로다. old-panel helper는 독립된 S28 추가 dock/footer만 잠시 분리하고 정확한 노드를 finally에서 복원한다. 기존 폼/문구를 가려 과거3방법 UI를 만들지 않는다.
 - 원래 분석 출력 컨테이너로5개 선택자를 한정했다. Chromium/Pixel5 기존12개 검사 전부 실제 통과, skip/flaky/retry0 및 source/PNG/frozen348파일 전후 일치. 보완 후32파일724개 기능/보존 단위검사도 formal source capture exit0이다. 이 checkpoint10파일은 그 capture의 현재 SHA와 일치한다.
 - 시각 검토는 AI 기술 검토이며 사람·과학 전문가 승인이 아니다. 모바일 PNG393px와 별도320px 기능/axe 검사를 구분한다. 전체1120 browser 검사는 별도12개 그룹에서 계속하며134행 최종 인증·S28완료·review28 승인은 아직 부여하지 않는다.
+
+
+### CP8-E1 — 최종 브라우저 첫 묶음
+
+- CP7-VIS `66fa05a4625ab1f9fc533e272e1492709deebacf` push exit0/live exact match 확인.
+- 동결 production build를 사용한 첫 Chromium7파일94/94 실제 exit0. 수집한 예상 identity와 실제 결과가 정확히 같고 실패·skip·retry0이다. 신규 legacy expansion/live capture/playback3파일의 현재 SHA도 capture와 일치한다. 대상 ESLint exit0.
+- 나머지11개 그룹은 같은 동결 source/build로 계속한다. 첫94건을 전체1120건이나134행 인증으로 표시하지 않는다. S28완료·사용자/전문가 review·cutover는 미완료이며 next28을 유지한다.

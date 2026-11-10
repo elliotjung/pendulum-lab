@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP7-VIS-reviewed-inspector-and-legacy-layout",
+  "activeStageCheckpoint": "CP8-E1-browser-evidence",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP8-E1 first final Chromium group actual94/94 exit0 with exact collected identities and frozen build/source binding. Three new legacy expansion/live capture/playback E2E files match that capture; targeted ESLint0. Eleven browser groups/final134certification/statuspush remainpending; next28/review28 unapproved.",
     "S28 CP7-VIS actual12/12productionlegacyvisual andfresh724/724selectednative/parity units passed. Ten helper/spec/8reviewedPNG paths match formalcurrentunitcapture; old14workspace/analysisPNGandnumericalgoldens unchanged,8oldPNGbytes archived, no UItextforging. AItechnicalreview only.1120groupedbrowser/final134certification/statuspush stillpending; next28/review28 unapproved.",
     "S28 CP7-P tested source/units match whole7308/7308(416files) actualcapture0;3explicitnative/tool exceptions with immutableoriginalreplay/publicprivacy/nativecomparisons. Clock newmessage-only compression51pass keeps445436<=445440gzip. Candidate134facetscomplete but1120productionbrowsercapture/certification/statuscompletion pending; next28/review28 unapproved.",
     "S28 CP3-A bounded150/150unit+4/4freshproduction UI, scopedtsc/lint0,958source/build prepostexact. Complete accepted-step archives for allnative2.3/2.7calls preserve tail/replay; overflowexplicit, oldresultretained. S01fixturemistake correctedbyrelocation, immutablebaseline notregenerated. Wholeunitr2/final134source-boundR pending; next28/review28 unapproved.",
