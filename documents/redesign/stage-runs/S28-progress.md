@@ -198,3 +198,10 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - Conservative native energy-drift and canonical diagnostics with explicit accepted-step, system and damping guards.
 - 소유6파일과 대상96/96 실제 exit0, 대상 lint0, 후속 미커밋 통합을 제외한 staged-index whole typecheck0. 현재 source SHA와 runner digest를 별도 기반 보고서에 기록했다.
 - 기존 native 구현은 수정하지 않는다. 중앙 화면/E2E 게시와 전체 릴리스·134행 source-captured 인증은 별도 gate다. S28 완료·사용자/전문가 review·cutover를 주장하지 않는다.
+
+
+### CP6-R-backend-foundation
+
+- Opt-in native GPU/CPU ensemble and Wasm/SIMD/CPU tape comparison. Actual backend and fallback are reported; no hardware promotion or speedup claim.
+- 소유6파일과 대상51/51 실제 exit0, 대상 lint0, 후속 미커밋 통합을 제외한 staged-index whole typecheck0. 현재 source SHA와 runner digest를 별도 기반 보고서에 기록했다.
+- 기존 native 구현은 수정하지 않는다. 중앙 화면/E2E 게시와 전체 릴리스·134행 source-captured 인증은 별도 gate다. S28 완료·사용자/전문가 review·cutover를 주장하지 않는다.

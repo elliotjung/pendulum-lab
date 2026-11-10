@@ -1,0 +1,54 @@
+{
+  "schema": "pendulum-checkpoint-foundation/v1",
+  "stage": 28,
+  "checkpoint": "CP6-R-backend-foundation",
+  "recordedAt": "2026-11-10T00:38:14.306Z",
+  "scope": "Opt-in native GPU/CPU ensemble and Wasm/SIMD/CPU tape comparison. Actual backend and fallback are reported; no hardware promotion or speedup claim.",
+  "verification": {
+    "unit": {
+      "path": "tmp/S28-runtime-finish-vitest.json",
+      "sha256": "7290b189cb1279458fc1af5ad913182e23b76bf51cae107bc340e83909b3ed95",
+      "passed": 51,
+      "failed": 0,
+      "pending": 0,
+      "observedExitCode": 0
+    },
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp6r-index/tsconfig.json",
+      "exitCode": 0
+    },
+    "targetedEslintExitCode": 0
+  },
+  "sources": [
+    {
+      "path": "src/product/adapters/physics/runtime-acceleration.ts",
+      "sha256": "2bc0196d8236b41a76853fc3d0d15f0555c2284e1782ead3a583c84102fbd47c"
+    },
+    {
+      "path": "src/product/adapters/physics/runtime-acceleration-client.ts",
+      "sha256": "3a8966e07b3441143823d37258a325ce9080db757c89ce70d27ac5d40150abc1"
+    },
+    {
+      "path": "src/product/adapters/physics/runtime-acceleration-worker-protocol.ts",
+      "sha256": "2dcdfd7a0debd97cc28e3675314d1be10f80f9d13933472e5a5497ad7316daf4"
+    },
+    {
+      "path": "src/product/adapters/physics/runtime-acceleration.worker.ts",
+      "sha256": "00921bb369e424b880193d27c48753d24a3de7066f2d8561f205324618f117cd"
+    },
+    {
+      "path": "src/product/lab/views/runtime-acceleration-panel.ts",
+      "sha256": "06a81858a44786b0efb25d37c35ccbc786c4f567c6827574a790cbe35cad4143"
+    },
+    {
+      "path": "tests/product/adapters/physics/runtime-acceleration.test.ts",
+      "sha256": "47bae266cb07906875d21a3610b4a997a9335ca917bc8dfaa7f12e177f552b58"
+    }
+  ],
+  "evidenceBinding": "Current exact owned source snapshot after successful bounded verification; original broader local UI evidence is separate, not final134-row source-captured certification.",
+  "preserved": "No native physics/chaos/research/runtime/worker implementation was changed by this foundation.",
+  "remaining": [
+    "Central UI/E2E integration publication and final release gates.",
+    "S28 completeness, user review28 and human science review are not granted."
+  ]
+}
