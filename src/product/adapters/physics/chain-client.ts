@@ -1,6 +1,7 @@
 import type { ChainConfig, ChainSample } from './chain';
 import {
   CHAIN_WORKER_MAX_STEPS,
+  CHAIN_WORKER_SNAPSHOT_SCHEMA,
   chainSampleStride,
   type ChainWorkerEvent,
   type ChainWorkerRequest,
@@ -68,7 +69,13 @@ export function createChainWorkerClient(
   const validSnapshot = (snapshot: ChainWorkerSnapshot, failed = false): boolean => {
     if (
       !snapshot ||
+      snapshot.schemaVersion !== CHAIN_WORKER_SNAPSHOT_SCHEMA ||
       !validSample(snapshot.sample) ||
+      !validSample(snapshot.previousSample) ||
+      snapshot.previousSample.step !== Math.max(0, snapshot.sample.step - 1) ||
+      !Number.isFinite(snapshot.computationMs) ||
+      snapshot.computationMs < 0 ||
+      (sequence === 0 && snapshot.computationMs !== 0) ||
       snapshot.sampleStride !== stride ||
       !Number.isInteger(snapshot.advanced) ||
       snapshot.advanced < 0 ||

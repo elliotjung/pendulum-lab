@@ -41,7 +41,7 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP4-S-public-setup-foundation",
+  "activeStageCheckpoint": "CP6-T-playback-foundation",
   "reviewGates": [
     7,
     9,
@@ -56,6 +56,7 @@
     24
   ],
   "notes": [
+    "S28 CP6-T playback/presentation foundation:275selectedbackend cases fromobserved291/291 exit0,19immutableoldclock differentialcases, cleanstagedindex wholetypecheck/targetlint0. ExplicitnativeClock additiveversionedexception disclosed; no governingequations/steppers changed. CentralUI/finalcapture stillpending. CP4S aff0e7ad454463c38a474e841015a0c5fd3dd71a push0; initialDNS verificationfailure recoveredbounded liveexact0. next28/review28 unapproved.",
     "S28 CP4-S public ps1 setup/route/session-adoption foundation validated in265-case focused cohort, targetedlint and clean staged-index whole typecheck exit0. pe1 creator/bytes stayunchanged; pure PlaybackSettings type extraction emitsidenticalexistingruntimeJS. Report also records separate broader localUI26pass beforetype-only extraction; centralconsumer/wiring isnotpublishedbythisfoundationcommit. CP3D02145d96755094de992cc939dc7186e059108db8 push0/liveexact. next28/review28 unapproved.",
     "S28 CP3-D-native-design foundation validated28/28 with exactowned pre/post SHA, targetedlint and clean staged-index whole typecheck exit0. CentralUI/browser evidence remains explicitly unbound until its separate integration checkpoint and finalcapture. Native engines/userdata preserved; next28/review28 unapproved.",
     "S28 CP4-E-expansion foundation validated27/27 with exactowned pre/post SHA, targetedlint and clean staged-index whole typecheck exit0. CentralUI/browser evidence remains explicitly unbound until its separate integration checkpoint and finalcapture. Native engines/userdata preserved; next28/review28 unapproved.",

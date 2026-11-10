@@ -182,3 +182,12 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 소유10파일을 포함한 대상265/265 cohort와 대상 lint, 후속 미커밋 UI를 제외한 staged-index whole typecheck exit0. 공유 타입 이동 전후 기존 두 runtime 파일의 emitted JS는 동일하다.
 - `S28-CP4-S-product-setup.json`은 별도의 전체 작업폴더 UI26 통과와 실제22다운로드도 기록하지만 이 기반 commit의 중앙 UI 연결 인증으로 세지 않는다. 이후 중앙 연결과 최종 source capture가 필요하다. 초기 지연 로딩2실패와 접근성/재시도4실패는 실제 source 수정 뒤 원래 assertion·timeout을 유지한 재실행으로 해결한 이력을 보존했다.
 - S28 완료·134행 인증·사용자/전문가 승인·기본 앱 전환을 주장하지 않는다.
+
+
+### CP6-T — 실제 시간·계산 예산·표시 기반
+
+- CP4-S `aff0e7ad454463c38a474e841015a0c5fd3dd71a` push exit0. 이후 DNS 검증 실패가 있었으나 시스템 복귀 후20초 제한의 별도 read-only 원격 조회 exit0/live exact match로 복구했다.
+- 기존 SimulationClock에 버전 있는 checkpoint/restore/accountFrame 경계만 추가했다. 기존 native Git blob을 독립 VM에서 실행한19개 차등 검사가 기존 advance/reset/진단의 상태·에너지·좌표·부채·예외를 정확히 비교한다. 운동방정식·stepper는 수정하지 않는다.
+- 실제 완료 worker 단계와 계산 시간을 사용하고 요청/실효 예산을 구분한다. 실제 바로 전 표본으로 보간하며 표시 RAF·관찰자·DPR·body class를 닫기/해제에서 정리한다. 내부 chain snapshot은 명시적v2다.
+- 관찰된291/291 runner 중 backend10파일275/275를 별도 식별했다(테마16은 제외). 소유13파일 snapshot, staged-index whole typecheck·대상 lint exit0.12파일은 이전T/C 동결 hash와 같고 playback-clock.test.ts는 사후 snapshot임을 구분한다. 중앙 UI 및 최종134행 인증으로 세지 않는다.
+- S28 active/next28과 사용자 review28 미승인 상태를 유지한다.

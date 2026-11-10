@@ -22,6 +22,23 @@ export interface SimulationFrameResult {
 
 export type SimulationTimingMode = 'deterministic' | 'wall-clock';
 
+export interface SimulationClockCheckpoint {
+  readonly schemaVersion: 'pendulum-simulation-clock-checkpoint/v1';
+  readonly lastWallClockMs: number | null;
+  readonly timingDebtSeconds: number;
+  readonly droppedSimulationSeconds: number;
+}
+
+export interface SimulationFrameAccounting {
+  readonly dt: number;
+  readonly stepsPerFrame: number;
+  readonly actualSteps: number;
+  readonly mode?: SimulationTimingMode;
+  readonly timestampMs?: number;
+  readonly speedMultiplier?: number;
+  readonly maxWallClockSteps?: number;
+}
+
 const MAX_FRAME_STEPS = 1_000_000;
 const MAX_WALL_CLOCK_ELAPSED_SECONDS = 0.25;
 const MAX_WALL_CLOCK_DEBT_SECONDS = 2;
@@ -29,6 +46,47 @@ const MAX_WALL_CLOCK_DEBT_SECONDS = 2;
 function finiteNonNegative(name: string, value: number): number {
   if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be finite and non-negative`);
   return value;
+}
+
+function readCheckpoint(input: unknown): SimulationClockCheckpoint {
+  if (!input || typeof input !== 'object' || Array.isArray(input))
+    throw new TypeError('Clock checkpoint must be plain data.');
+  const prototype = Object.getPrototypeOf(input);
+  if (prototype !== Object.prototype && prototype !== null) throw new TypeError('Clock checkpoint must be plain data.');
+  const descriptors = Object.getOwnPropertyDescriptors(input),
+    keys = Reflect.ownKeys(descriptors);
+  const expected = ['schemaVersion', 'lastWallClockMs', 'timingDebtSeconds', 'droppedSimulationSeconds'];
+  if (keys.length !== expected.length || keys.some((key) => typeof key !== 'string' || !expected.includes(key)))
+    throw new TypeError('Clock checkpoint fields are unsupported.');
+  const values: Record<string, unknown> = {};
+  for (const key of expected) {
+    const descriptor = descriptors[key];
+    if (!descriptor || !('value' in descriptor) || !descriptor.enumerable)
+      throw new TypeError('Clock checkpoint accessors are unsupported.');
+    values[key] = descriptor.value;
+  }
+  if (values.schemaVersion !== 'pendulum-simulation-clock-checkpoint/v1')
+    throw new TypeError('Clock checkpoint version is unsupported.');
+  const last = values.lastWallClockMs,
+    debt = values.timingDebtSeconds,
+    dropped = values.droppedSimulationSeconds;
+  if (
+    (last !== null && (typeof last !== 'number' || !Number.isFinite(last) || last < 0)) ||
+    typeof debt !== 'number' ||
+    !Number.isFinite(debt) ||
+    debt < 0 ||
+    debt > MAX_WALL_CLOCK_DEBT_SECONDS ||
+    typeof dropped !== 'number' ||
+    !Number.isFinite(dropped) ||
+    dropped < 0
+  )
+    throw new RangeError('Clock checkpoint values are outside finite timing bounds.');
+  return {
+    schemaVersion: 'pendulum-simulation-clock-checkpoint/v1',
+    lastWallClockMs: last,
+    timingDebtSeconds: debt,
+    droppedSimulationSeconds: dropped
+  };
 }
 
 export class SimulationClock {
@@ -46,6 +104,71 @@ export class SimulationClock {
     return {
       timingDebtSeconds: this.wallClockRemainderSec,
       droppedSimulationSeconds: this.totalDroppedSimulationSec
+    };
+  }
+
+  /** Additive transaction boundary for asynchronous adapters; no solver state is stored. */
+  checkpoint(): SimulationClockCheckpoint {
+    return Object.freeze(
+      readCheckpoint({
+        schemaVersion: 'pendulum-simulation-clock-checkpoint/v1',
+        lastWallClockMs: this.lastWallClockMs,
+        timingDebtSeconds: this.wallClockRemainderSec,
+        droppedSimulationSeconds: this.totalDroppedSimulationSec
+      })
+    );
+  }
+
+  restore(input: unknown): void {
+    const checked = readCheckpoint(input);
+    this.lastWallClockMs = checked.lastWallClockMs;
+    this.wallClockRemainderSec = checked.timingDebtSeconds;
+    this.totalDroppedSimulationSec = checked.droppedSimulationSeconds;
+  }
+
+  /** Account for work an external worker actually completed, including zero.
+   * Existing advance() still owns its original positive wall-clock budget validation. */
+  accountFrame(options: SimulationFrameAccounting) {
+    const mode = options.mode ?? 'deterministic';
+    if (mode !== 'deterministic' && mode !== 'wall-clock') throw new RangeError('timing mode is unsupported');
+    const requested = finiteNonNegative('stepsPerFrame', options.stepsPerFrame);
+    if (requested > MAX_FRAME_STEPS) throw new RangeError(`stepsPerFrame must be at most ${MAX_FRAME_STEPS}`);
+    if (!Number.isFinite(options.dt) || options.dt <= 0)
+      throw new RangeError('accountFrame dt must be finite and positive.');
+    if (!Number.isSafeInteger(options.actualSteps) || options.actualSteps < 0 || options.actualSteps > MAX_FRAME_STEPS)
+      throw new RangeError('actualSteps must be a bounded non-negative integer.');
+    const before = this.checkpoint();
+    try {
+      if (mode === 'wall-clock') {
+        const speed = finiteNonNegative('speedMultiplier', options.speedMultiplier ?? 1);
+        const limit = options.maxWallClockSteps ?? Math.max(1, Math.round(requested * Math.max(1, speed)));
+        if (!Number.isSafeInteger(limit) || limit < 1 || limit > MAX_FRAME_STEPS || options.actualSteps > limit)
+          throw new RangeError('actualSteps exceeds the valid frame budget.');
+        const advanced = this.wallClockSteps(
+          {
+            dt: options.dt,
+            stepsPerFrame: requested,
+            ...(options.timestampMs === undefined ? {} : { timestampMs: options.timestampMs }),
+            speedMultiplier: speed,
+            maxWallClockSteps: options.actualSteps
+          },
+          true
+        );
+        if (advanced !== options.actualSteps)
+          throw new RangeError('actualSteps exceeds the available wall-clock interval.');
+      } else if (options.actualSteps > Math.round(requested))
+        throw new RangeError('actualSteps exceeds the deterministic frame budget.');
+      this.checkpoint(); // New accounting never publishes a non-finite checkpoint.
+    } catch (cause) {
+      this.restore(before);
+      throw cause;
+    }
+    return {
+      stepsAdvanced: options.actualSteps,
+      timingMode: mode,
+      ...(mode === 'wall-clock'
+        ? this.diagnostics()
+        : { timingDebtSeconds: 0, droppedSimulationSeconds: this.totalDroppedSimulationSec })
     };
   }
 
@@ -94,15 +217,17 @@ export class SimulationClock {
     };
   }
 
-  private wallClockSteps(options: {
-    sim: LabSimulation;
-    stepsPerFrame: number;
-    timestampMs?: number;
-    speedMultiplier?: number;
-    maxWallClockSteps?: number;
-  }): number {
+  private wallClockSteps(
+    options: ({ sim: LabSimulation } | { dt: number }) & {
+      stepsPerFrame: number;
+      timestampMs?: number;
+      speedMultiplier?: number;
+      maxWallClockSteps?: number;
+    },
+    allowZeroLimit = false
+  ): number {
     const timestampMs = finiteNonNegative('timestampMs', options.timestampMs ?? now());
-    const dt = Math.max(Number.EPSILON, options.sim.config.dt);
+    const dt = Math.max(Number.EPSILON, 'sim' in options ? options.sim.config.dt : options.dt);
     const speed = finiteNonNegative('speedMultiplier', options.speedMultiplier ?? 1);
     // In wall-clock mode `stepsPerFrame` is the adaptive per-frame physics
     // budget.  Previously it was used only to seed the first elapsed-time
@@ -113,8 +238,14 @@ export class SimulationClock {
     // reduce work predictably.
     const requestedMaxSteps =
       options.maxWallClockSteps ?? Math.max(1, Math.round(options.stepsPerFrame * Math.max(1, speed)));
-    if (!Number.isSafeInteger(requestedMaxSteps) || requestedMaxSteps < 1 || requestedMaxSteps > MAX_FRAME_STEPS) {
-      throw new RangeError(`maxWallClockSteps must be a safe integer in [1, ${MAX_FRAME_STEPS}]`);
+    if (
+      !Number.isSafeInteger(requestedMaxSteps) ||
+      requestedMaxSteps < (allowZeroLimit ? 0 : 1) ||
+      requestedMaxSteps > MAX_FRAME_STEPS
+    ) {
+      throw new RangeError(
+        `maxWallClockSteps must be a safe integer in [${allowZeroLimit ? 0 : 1}, ${MAX_FRAME_STEPS}]`
+      );
     }
     const maxSteps = requestedMaxSteps;
     const fallbackElapsedSec = options.stepsPerFrame * dt;

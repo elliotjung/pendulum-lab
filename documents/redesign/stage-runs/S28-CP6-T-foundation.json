@@ -1,0 +1,124 @@
+{
+  "schema": "pendulum-checkpoint-foundation/v1",
+  "stage": 28,
+  "checkpoint": "CP6-T-playback-foundation",
+  "recordedAt": "2026-11-10T00:23:13.948Z",
+  "scope": "Transactional product playback/native presentation foundation. Central UI consumers and E2E are published/verified separately.",
+  "preservationException": {
+    "path": "src/app/SimulationClock.ts",
+    "beforeNormalizedSha256": "774773472c1b0fcc66fffc307cc72e1c0781400da38fa49d837501a9fcb723d7",
+    "oldGitBlob": "965d58020a3511cf095868591407143baa4edea7",
+    "kind": "additive-versioned-clock-checkpoint-and-frame-accounting/v1",
+    "independentOldClockDifferentialCases": 19,
+    "governingEquationsChanged": false,
+    "existingAdvanceBehaviorChanged": false
+  },
+  "verification": {
+    "report": "tmp/S28-semantic-vitest.json",
+    "sha256": "0c4f8f202b50892254be564e74862c9d961323ed75eb1303a285afb33bad21e4",
+    "actualFullRunnerExitCode": 0,
+    "fullPassed": 291,
+    "backendSubgroupPassed": 275,
+    "backendFiles": [
+      "tests/lab-runtime-budget.test.ts",
+      "tests/lab-schedulers.test.ts",
+      "tests/render-interpolation.test.ts",
+      "tests/product/lab/clock-legacy-differential.test.ts",
+      "tests/product/lab/core-model.test.ts",
+      "tests/product/lab/native-display.test.ts",
+      "tests/product/lab/playback-clock.test.ts",
+      "tests/product/lab/playback-transaction.test.ts",
+      "tests/product/adapters/physics/chain-worker.test.ts",
+      "tests/product/adapters/physics/planar-integrator-parity.test.ts"
+    ],
+    "excludedSeparateThemeTests": 16,
+    "selectedBackendCases": 275,
+    "stagedIndexWholeTypecheck": {
+      "project": "tmp/S28-cp6t-index/tsconfig.json",
+      "exitCode": 0
+    },
+    "targetedEslintExitCode": 0
+  },
+  "sources": [
+    {
+      "path": "src/app/SimulationClock.ts",
+      "sha256": "ed9ea75cd3409c195966adcf19652dd8bacc679062076d634c0205c7a2ee8cc5",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/adapters/physics/chain-client.ts",
+      "sha256": "a326bd8ece7abd5819cccefa95b0f2b20895521ef7aaa5cd7af75d3e5f5cef18",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/adapters/physics/chain-worker-protocol.ts",
+      "sha256": "c05a77f46d8bc0260d0b51804917ed02f111de09e64e189373e36906d6060752",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/core-model.ts",
+      "sha256": "b5ef5c2639c946eb0bdd38321c5b5050f4b918932e3423ce1b9e1fbcf5f1cff1",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/chain-model.ts",
+      "sha256": "a229ec70ecc35109f971e249580c4d9090f4d5ab7662cc6582d81347889df2e3",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/playback-clock.ts",
+      "sha256": "ccca23b53f391eaa30d27624145df77a0dbed4c0adcdf2c0eb2708012bfa213f",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/playback-controls.ts",
+      "sha256": "7d9c8f522e808a6cc5e241b625424f9fd4b211b26e2f84afce9cfaf26726f7f3",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/native-display.ts",
+      "sha256": "fe0d33b593c8de925369d71f2a9835b4cbae50133454347e777c498e5930f481",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "src/product/lab/views/native-display-renderer.ts",
+      "sha256": "dfebe23bddc9bbbf8211d6462ea1e2650c60b0981d768a840dd5a304376523c2",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "tests/product/lab/playback-clock.test.ts",
+      "sha256": "1c5a5cd3732fe48be807da95cfbd7e787b9faedddcf5dbfeab96b2bdbacb5a19",
+      "matchesEarlierSnapshot": null
+    },
+    {
+      "path": "tests/product/lab/playback-transaction.test.ts",
+      "sha256": "0c620f1ca09767d5b43391e1786417d76bcedc78fbbfa3184f15457d30eff949",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "tests/product/lab/native-display.test.ts",
+      "sha256": "5f087b3684533934e5721cd4f6e8a6a4c4d1f02b9700b5849cb432bc8322fffa",
+      "matchesEarlierSnapshot": true
+    },
+    {
+      "path": "tests/product/lab/clock-legacy-differential.test.ts",
+      "sha256": "482c65fe712058f251b9a3808a8793bd67feed7f83d0663cac96e46adfefb734",
+      "matchesEarlierSnapshot": true
+    }
+  ],
+  "evidenceBinding": "Current13-path staging snapshot.12 paths match earlier bounded T/C snapshots; playback-clock.test.ts has a post-run snapshot only. This does not grant final source-captured certification.",
+  "contracts": [
+    "pendulum-simulation-clock-checkpoint/v1",
+    "pendulum-product-chain-snapshot/v2"
+  ],
+  "behavior": [
+    "Actual completed worker steps commit timing debt; failure/cancel/zero work cannot fabricate progress.",
+    "Measured physics/render/side-plot/long-task data feed unchanged native quality policy; requested and effective budgets remain distinct.",
+    "Rendering uses the actual preceding native sample, one RAF, and releases observer/frame/DPR/body classes on close/disposal."
+  ],
+  "remaining": [
+    "Central workspace wiring and published actual browser assertions.",
+    "Final full release gates and134-row source-bound parity certification.",
+    "User review28 and human science review are not granted."
+  ]
+}

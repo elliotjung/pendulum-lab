@@ -12,6 +12,7 @@ import {
   type ChainWorkerSnapshot
 } from '../../adapters/physics/chain-worker-protocol';
 import type { AnalysisState } from '../../contracts/experiment';
+import { createPlaybackClock, validatePlayback, type PlaybackSettings } from './playback-clock';
 
 export type ChainStatus = 'ready' | 'running' | 'paused' | 'completed' | 'cancelled' | 'error';
 
@@ -28,11 +29,16 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
   const initialSimulation = createChainSimulation(initial);
   let config = initialSimulation.config;
   let sample = immutableSample(initialSimulation.snapshot());
+  let previousSample = sample;
   let samples: readonly ChainSample[] = Object.freeze([sample]);
   let status: ChainStatus = 'ready';
   let valid = true;
   let error = '';
   let speed = 1;
+  let playback: PlaybackSettings | null = null;
+  let effectiveStepsPerFrame: number | null = null;
+  let physicsMs = 0;
+  const playbackClock = createPlaybackClock();
   let busy = false;
   let pendingTime = 0;
   let singleStep = false;
@@ -52,6 +58,7 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
   const stop = () => {
     generation++;
     haltTimer();
+    playbackClock.cancelPending();
     client?.dispose();
     client = undefined;
     busy = false;
@@ -63,9 +70,12 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
   };
   const retainFinal = () => append([sample]);
   const accept = (snapshot: ChainWorkerSnapshot) => {
+    playbackClock.commit(snapshot.advanced);
+    physicsMs = snapshot.computationMs;
     const elapsed = (snapshot.sample.step - sample.step) * config.step;
     pendingTime = Math.max(0, pendingTime - Math.min(elapsed, config.duration - sample.step * config.step));
     sample = immutableSample(snapshot.sample);
+    previousSample = immutableSample(snapshot.previousSample);
     append(snapshot.samples);
   };
   const ensureClient = () => {
@@ -109,17 +119,28 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
       if (!busy) {
         const remaining = config.duration - sample.step * config.step;
         const tolerance = 8 * Number.EPSILON * Math.max(1, config.duration);
-        const count = Math.min(
-          CHAIN_WORKER_MAX_STEPS,
-          pendingTime + tolerance >= remaining
-            ? Math.ceil(remaining / config.step - 8 * Number.EPSILON * (remaining / config.step))
-            : Math.floor((pendingTime + tolerance) / config.step)
-        );
+        const count = playback
+          ? playbackClock.plan(
+              { ...playback, stepsPerFrame: effectiveStepsPerFrame ?? playback.stepsPerFrame },
+              config.step,
+              Math.max(0, Math.ceil(remaining / config.step - 8 * Number.EPSILON)),
+              performance.now(),
+              CHAIN_WORKER_MAX_STEPS
+            )
+          : Math.min(
+              CHAIN_WORKER_MAX_STEPS,
+              pendingTime + tolerance >= remaining
+                ? Math.ceil(remaining / config.step - 8 * Number.EPSILON * (remaining / config.step))
+                : Math.floor((pendingTime + tolerance) / config.step)
+            );
         if (count > 0) {
           busy = true;
-          client!.advance(count);
+          if (!client!.advance(count)) {
+            busy = false;
+            playbackClock.cancelPending();
+          }
           notify();
-        }
+        } else if (playback) playbackClock.commit(0);
       }
       if (!disposed && current === generation && status === 'running') schedule();
     }, 16);
@@ -128,8 +149,12 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
     if (disposed) return;
     stop();
     sample = immutableSample(createChainSimulation(config).snapshot());
+    previousSample = sample;
     samples = Object.freeze([sample]);
     pendingTime = 0;
+    physicsMs = 0;
+    effectiveStepsPerFrame = playback?.stepsPerFrame ?? null;
+    playbackClock.reset();
     status = 'ready';
     error = '';
     notify();
@@ -140,11 +165,16 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
       return {
         config: structuredClone(config),
         sample,
+        previousSample,
         samples: visibleSamples,
         status,
         error,
         valid,
         speed,
+        playback,
+        effectiveStepsPerFrame,
+        physicsMs,
+        timingDiagnostics: playbackClock.diagnostics(),
         busy,
         sampleStride: chainSampleStride(config),
         maxSamples: CHAIN_MAX_SAMPLES,
@@ -155,11 +185,14 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
       if (!disposed) listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    configure(next: ChainConfig) {
+    configure(next: ChainConfig, execution?: PlaybackSettings) {
       if (disposed) return;
       const checked = validateChainConfig(next);
       if (!checked.ok) throw new Error(checked.issues.map((entry) => entry.message).join(' '));
+      const timing = execution ? validatePlayback(execution) : playback;
       config = checked.value;
+      playback = timing;
+      if (timing) speed = timing.speed;
       valid = true;
       reset();
     },
@@ -181,10 +214,29 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
       notify();
     },
     setSpeed(next: number) {
-      if (!disposed && [0.25, 1, 4].includes(next)) {
+      if (!disposed && Number.isFinite(next) && next >= 0.1 && next <= 4) {
         speed = next;
+        if (playback) playback = validatePlayback({ ...playback, speed });
         notify();
       }
+    },
+    setPlayback(next: PlaybackSettings) {
+      const checked = validatePlayback(next);
+      if (disposed) return;
+      playback = checked;
+      speed = checked.speed;
+      effectiveStepsPerFrame = checked.stepsPerFrame;
+      playbackClock.reset();
+      notify();
+    },
+    setEffectivePlaybackBudget(next: number) {
+      if (disposed) return false;
+      if (!playback || !Number.isSafeInteger(next) || next < 1 || next > playback.stepsPerFrame)
+        throw new RangeError('실제 frame 예산은 요청한 단계 수 이내의 양의 정수여야 합니다.');
+      if (next === effectiveStepsPerFrame) return false;
+      effectiveStepsPerFrame = next;
+      notify();
+      return true;
     },
     run() {
       if (disposed || !valid || isRunning()) return;
@@ -200,6 +252,7 @@ export function createChainModel(initial: ChainConfig, workerFactory?: ChainWork
     pause() {
       if (!disposed && status === 'running') {
         haltTimer();
+        playbackClock.reset();
         status = 'paused';
         // Any current chunk settles while paused. The same worker retains exact state for resume.
         notify();

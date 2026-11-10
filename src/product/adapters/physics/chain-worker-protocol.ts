@@ -3,6 +3,7 @@ import { createChainSimulation, type ChainConfig, type ChainSample } from './cha
 export const CHAIN_WORKER_MAX_STEPS = 64;
 export const CHAIN_WORKER_TIME_BUDGET_MS = 8;
 export const CHAIN_MAX_SAMPLES = 2001;
+export const CHAIN_WORKER_SNAPSHOT_SCHEMA = 'pendulum-product-chain-snapshot/v2';
 
 export function chainSampleStride(config: ChainConfig): number {
   const requested = config.sampleEvery ?? 1;
@@ -17,11 +18,16 @@ export type ChainWorkerRequest =
   | { type: 'cancel'; id: string; sequence: number };
 
 export interface ChainWorkerSnapshot {
+  schemaVersion: typeof CHAIN_WORKER_SNAPSHOT_SCHEMA;
   sample: ChainSample;
+  /** Exact immediately preceding native step, independent of retained plot stride. */
+  previousSample: ChainSample;
   /** Only newly retained samples; the worker never stores the full trajectory. */
   samples: readonly ChainSample[];
   sampleStride: number;
   advanced: number;
+  /** Worker-local stepping/sampling duration; never message roundtrip latency. */
+  computationMs: number;
   done: boolean;
 }
 
@@ -37,11 +43,14 @@ export function createChainWorkerSession(now: () => number = () => performance.n
   let sequence = -1;
   let closed = false;
   let stride = 1;
+  let sample: ChainSample | undefined;
+  let previousSample: ChainSample | undefined;
   return {
     handle(request: ChainWorkerRequest): ChainWorkerEvent {
       const id = typeof request?.id === 'string' ? request.id : '';
       const nextSequence = Number.isSafeInteger(request?.sequence) ? request.sequence : -1;
       let advanced = 0;
+      let started: number | undefined;
       const samples: ChainSample[] = [];
       try {
         if (closed) throw new Error('이미 종료한 실행입니다. 새 실행을 시작하세요.');
@@ -53,14 +62,19 @@ export function createChainWorkerSession(now: () => number = () => performance.n
           runId = id;
           simulation = createChainSimulation(request.config);
           stride = chainSampleStride(simulation.config);
+          sample = simulation.snapshot();
+          previousSample = sample;
           return {
             type: 'ready',
             id,
             sequence,
-            sample: simulation.snapshot(),
+            schemaVersion: CHAIN_WORKER_SNAPSHOT_SCHEMA,
+            sample,
+            previousSample,
             samples,
             sampleStride: stride,
             advanced,
+            computationMs: 0,
             done: simulation.done
           };
         }
@@ -77,28 +91,44 @@ export function createChainWorkerSession(now: () => number = () => performance.n
           request.count > CHAIN_WORKER_MAX_STEPS
         )
           throw new Error(`계산 묶음은 1–${CHAIN_WORKER_MAX_STEPS} 단계여야 합니다.`);
-        const started = now();
+        started = now();
         while (advanced < request.count && !simulation.done) {
-          const sample = simulation.step();
+          const next = simulation.step();
+          previousSample = sample!;
+          sample = next;
           advanced++;
           if (sample.step % stride === 0 || simulation.done) samples.push(sample);
           // A single legacy step is indivisible; termination can interrupt it.
           if (now() - started >= CHAIN_WORKER_TIME_BUDGET_MS) break;
         }
+        const computationMs = Math.max(0, now() - started);
         return {
           type: 'progress',
           id,
           sequence,
-          sample: simulation.snapshot(),
+          schemaVersion: CHAIN_WORKER_SNAPSHOT_SCHEMA,
+          sample: sample!,
+          previousSample: previousSample!,
           samples,
           sampleStride: stride,
           advanced,
+          computationMs,
           done: simulation.done
         };
       } catch (cause) {
-        const snapshot = simulation
-          ? { sample: simulation.snapshot(), samples, sampleStride: stride, advanced, done: simulation.done }
-          : undefined;
+        const snapshot: ChainWorkerSnapshot | undefined =
+          simulation && sample && previousSample
+            ? {
+                schemaVersion: CHAIN_WORKER_SNAPSHOT_SCHEMA,
+                sample,
+                previousSample,
+                samples,
+                sampleStride: stride,
+                advanced,
+                computationMs: started === undefined ? 0 : Math.max(0, now() - started),
+                done: simulation.done
+              }
+            : undefined;
         closed = true;
         simulation = undefined;
         return {
