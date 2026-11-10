@@ -18,6 +18,21 @@ import { createCoreFiles } from './core-files';
 import { createScene } from './core-plots';
 import { loadCoreConfig } from './core-storage';
 import { focusSource } from '../../experiments/transfer';
+import { createCompatibilityTools } from '../compatibility-tools';
+import { createRunHistory } from './run-history';
+import { createPlaybackControls } from './playback-controls';
+import { bindProductRuntime } from '../../app/browser-api-binding';
+import { createWorkspaceRuntimeProvider, type ProductRuntimeTiming } from '../../app/browser-api-provider';
+import { DEFAULT_PLAYBACK } from './playback-clock';
+import { createNativeDisplay } from './native-display';
+import { createNativeDesignPanel } from '../experiments/native-design-panel';
+import { prepareLegacyLinkContext, createLegacyLinkContextPanel } from './legacy-link-context';
+import { createStructureDiagnosticsPanel } from './structure-diagnostics-panel';
+import { createPhaseSpace3D } from './native-phase-space';
+import { createPhaseDensity } from './phase-density';
+import { createRuntimeAccelerationPanel } from './runtime-acceleration-panel';
+import type { ProductSetupV1 } from '../../persistence/product-setup';
+import { createNativeSetupPanel } from './native-setup-panel';
 
 const sessions = new WeakMap<Document, Map<string, CoreModel>>();
 const labels: Record<CoreStatus, string> = {
@@ -29,7 +44,12 @@ const labels: Record<CoreStatus, string> = {
   error: '실행 오류'
 };
 
-export function createCoreWorkspace(document: Document, system: SystemDefinition, experiment?: ExperimentStateV1) {
+export function createCoreWorkspace(
+  document: Document,
+  system: SystemDefinition,
+  experiment?: ExperimentStateV1,
+  setup?: ProductSetupV1
+) {
   const view = element(document, 'div', 'product-page product-lab-page lab-workspace core-workspace');
   view.append(
     link(document, '시스템 라이브러리', '#/lab'),
@@ -65,13 +85,16 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     session = new Map();
     sessions.set(document, session);
   }
-  const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id;
+  const key = experiment ? `${system.id}:${JSON.stringify(setup ?? experiment)}` : system.id;
   let cached = session.get(key);
   if (!cached) {
     cached = createCoreModel(initial);
     session.set(key, cached);
   }
   const model = cached;
+  const priorAngleUnit = document.documentElement.dataset.productAngleUnit;
+  const legacyContext = prepareLegacyLinkContext(document, setup ? undefined : experiment);
+  if (setup) document.documentElement.dataset.productAngleUnit = setup.controls.angleUnit;
   const sourceUnit = experiment ? focusSource(experiment) : null;
   if (sourceUnit) {
     const source = element(document, 'aside', 'learn-notice');
@@ -102,6 +125,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     link(document, '기존 앱 열기', './app.html')
   );
   if (storageWarning) view.append(element(document, 'p', 'lab-preview-note', storageWarning));
+  if (legacyContext.warning) view.append(element(document, 'p', 'lab-preview-note', legacyContext.warning));
   if (experiment)
     view.append(
       element(
@@ -143,6 +167,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     variant: 'secondary',
     onClick() {
       dock.invalidate();
+      compatibility.invalidate();
       model.reset();
     }
   });
@@ -170,8 +195,11 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
   time.setAttribute('aria-label', '현재 물리 시간');
   time.setAttribute('aria-live', 'off');
   const progress = createProgress(document, { id: 'lab-run-progress', label: '실행 진행', max: 100, value: 0 });
+  const playback = createPlaybackControls(document, model);
+  if (legacyContext.settings) model.setPlayback({ ...model.state.playback!, ...legacyContext.settings.playback });
+  if (setup) model.setPlayback(setup.controls.playback);
   progress.element.querySelector('[role="status"]')?.removeAttribute('role');
-  run.body.append(status, error, actions, speedLabel, speed, time, progress.element);
+  run.body.append(status, error, actions, speedLabel, speed, time, progress.element, playback.element);
   view.append(run.element);
   const workspace = createSection(document, {
     id: 'core-preview',
@@ -179,6 +207,7 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     description: '현재 자세와 수치 상태를 함께 확인하세요.'
   });
   const scene = createScene(document);
+  const compatibility = createCompatibilityTools(document, () => toCanonicalPlanar(model.state.config));
   const values = element(document, 'dl', 'product-detail-list');
   const energy = element(document, 'dd', ''),
     angularVelocity = element(document, 'dd', ''),
@@ -191,12 +220,17 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     element(document, 'dt', '', '초기 총에너지 대비 변화 (J)'),
     drift
   );
-  workspace.body.append(scene.element, values);
+  workspace.body.append(scene.element, values, compatibility.element);
   const dock = createCoreAnalysis(document, model);
-  const inspector = createCoreInspector(document, model, () => dock.invalidate());
-  function restore(config: PlanarConfig) {
+  const inspector = createCoreInspector(document, model, () => {
     dock.invalidate();
-    model.configure(config);
+    compatibility.invalidate();
+  });
+  function restore(config: PlanarConfig, timing?: ProductRuntimeTiming) {
+    if (dock.busy) throw new Error('진행 중인 분석을 먼저 취소하세요. 현재 실험은 변경하지 않았습니다.');
+    compatibility.invalidate();
+    dock.invalidate();
+    model.configure(config, timing ? { ...(model.state.playback ?? DEFAULT_PLAYBACK), ...timing } : undefined);
     inspector.sync();
     dock.sync();
   }
@@ -204,8 +238,48 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     document,
     model,
     restore,
-    () => model.state.valid && model.state.status !== 'running' && dock.valid && !dock.busy
+    () => model.state.valid && model.state.status !== 'running' && dock.valid && !dock.busy,
+    () => nativeSetup.shareRoute()
   );
+  const history = createRunHistory(document, {
+    config: () => model.state.config,
+    samples: () => model.state.samples,
+    pause: () => model.pause(),
+    restart: restore
+  });
+  const nativeDisplay = createNativeDisplay(document, model, setup?.controls.render ?? legacyContext.settings?.display);
+  const nativeSetup = createNativeSetupPanel(document, {
+    experiment: () => toCanonicalPlanar(model.state.config),
+    canUse: () => model.state.valid && model.state.status !== 'running' && !dock.busy,
+    playback: () => model.state.playback ?? DEFAULT_PLAYBACK,
+    render: () => nativeDisplay.settings(),
+    angleUnit: () => (document.documentElement.dataset.productAngleUnit === 'deg' ? 'deg' : 'rad'),
+    initial: setup?.controls ?? legacyContext.settings
+  });
+  const angleChange = (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement) || !target.id.endsWith('-display-unit')) return;
+    const unit = target.value === 'deg' ? 'deg' : 'rad';
+    document.documentElement.dataset.productAngleUnit = unit;
+    inspector.setDisplayUnit(unit);
+  };
+  inspector.element.addEventListener('change', angleChange);
+  const phaseSpace = createPhaseSpace3D(document, {
+    samples: () => model.state.samples,
+    sample: () => model.state.sample,
+    experiment: () => toCanonicalPlanar(model.state.config)
+  });
+  const phaseDensity = createPhaseDensity(document, {
+    samples: () => model.state.samples,
+    sample: () => model.state.sample,
+    experiment: () => toCanonicalPlanar(model.state.config)
+  });
+  const legacyPanel = experiment ? createLegacyLinkContextPanel(document, legacyContext, experiment) : undefined;
+  workspace.body.append(history.element, nativeDisplay.element);
+  workspace.body.append(nativeSetup.element);
+  workspace.body.append(phaseSpace.element);
+  workspace.body.append(phaseDensity.element);
+  if (legacyPanel) workspace.body.append(legacyPanel.element);
   const coreDiagnostics = createDiagnostics(document, {
     experiment: () => toCanonicalPlanar(model.state.config),
     samples: () => model.state.samples,
@@ -217,7 +291,23 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     }
   });
   dock.element.append(coreDiagnostics.element);
+  const structure = createStructureDiagnosticsPanel(document, {
+    experiment: () => toCanonicalPlanar(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
+  });
+  dock.element.append(structure.element);
+  const acceleration = createRuntimeAccelerationPanel(document, {
+    experiment: () => toCanonicalPlanar(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
+  });
+  dock.element.append(acceleration.element);
   files.tray.append(coreDiagnostics.experiments);
+  const nativeDesign = createNativeDesignPanel(document, {
+    experiment: () => toCanonicalPlanar(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !dock.busy
+  });
+  nativeDesign.element.id = 'native-experiment-design';
+  files.tray.append(nativeDesign.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -232,6 +322,15 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
   view.append(tabs.element);
   function update() {
     const state = model.state;
+    const currentSpeed = String(state.speed);
+    if (![...speed.options].some((option) => option.value === currentSpeed)) {
+      for (const option of speed.querySelectorAll('[data-custom-speed]')) option.remove();
+      const option = element(document, 'option', '', `${currentSpeed}×`);
+      option.value = currentSpeed;
+      option.dataset.customSpeed = 'true';
+      speed.append(option);
+    }
+    speed.value = currentSpeed;
     view.dataset.labStatus = state.status;
     const text = state.valid ? labels[state.status] : '입력한 조건을 수정하세요.';
     if (status.textContent !== text) status.textContent = text;
@@ -251,6 +350,11 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     );
     progress.setValue(fraction, `${state.samples.length}개 기록 표본 · ${fraction.toFixed(1)}%`);
     scene.update(state.sample, state.config);
+    compatibility.updateAudio({
+      running: state.status === 'running',
+      omega1: state.sample.state[2],
+      omega2: state.sample.state[3]
+    });
     angularVelocity.textContent = `ω₁ ${state.sample.state[2]!.toFixed(5)} · ω₂ ${state.sample.state[3]!.toFixed(5)}`;
     energy.textContent = `${state.sample.energy.KE.toFixed(6)} / ${state.sample.energy.PE.toFixed(6)} / ${state.sample.energy.total.toFixed(6)}`;
     drift.textContent = `${(state.sample.energy.total - state.samples[0]!.energy.total).toExponential(4)}${state.config.gamma > 0 ? ' (감쇠에 의한 소산 포함)' : ''}`;
@@ -258,8 +362,31 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     dock.update();
     files.update();
     coreDiagnostics.update();
+    history.update();
+    playback.update();
+    nativeDisplay.update();
+    nativeSetup.update();
+    phaseSpace.update();
+    phaseDensity.update();
   }
   const unsubscribe = model.subscribe(update);
+  const unbindRuntime = bindProductRuntime(
+    document,
+    createWorkspaceRuntimeProvider({
+      model,
+      readTiming: () => ({
+        ...(model.state.playback ?? DEFAULT_PLAYBACK),
+        stepsPerFrame: model.state.effectiveStepsPerFrame ?? (model.state.playback ?? DEFAULT_PLAYBACK).stepsPerFrame
+      }),
+      restore,
+      reset() {
+        if (dock.busy) throw new Error('진행 중인 분석을 먼저 취소하세요.');
+        dock.invalidate();
+        compatibility.invalidate();
+        model.reset();
+      }
+    })
+  );
   const unsubscribeDock = dock.subscribe(update);
   dock.sync();
   update();
@@ -267,10 +394,25 @@ export function createCoreWorkspace(document: Document, system: SystemDefinition
     element: view,
     dispose() {
       unsubscribe();
+      unbindRuntime();
       unsubscribeDock();
       model.cancel();
       dock.dispose();
       coreDiagnostics.dispose();
+      nativeDesign.dispose();
+      structure.dispose();
+      acceleration.dispose();
+      compatibility.dispose();
+      history.dispose();
+      nativeDisplay.dispose();
+      nativeSetup.dispose();
+      inspector.element.removeEventListener('change', angleChange);
+      phaseSpace.dispose();
+      phaseDensity.dispose();
+      legacyPanel?.dispose();
+      legacyContext.dispose();
+      if (priorAngleUnit === undefined) delete document.documentElement.dataset.productAngleUnit;
+      else document.documentElement.dataset.productAngleUnit = priorAngleUnit;
       files.dispose();
       tabs.dispose();
     }

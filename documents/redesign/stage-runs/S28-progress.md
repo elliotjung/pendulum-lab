@@ -221,3 +221,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 명령 검색과 별도 제품 언어·테마 환경, native와 대조한16개 ODE 표시 정보를 추가했다. Native registry를 직접 import하면 Vite 전체 physics chunk가 metadata 페이지에 합쳐지므로 표시용 데이터만 분리하고 이름·심플렉틱 한정을 원본과 검증한다. 수치 알고리즘·registry는 수정하지 않는다.
 - 대상40/40 실제 exit0, 대상 lint0, 후속 미커밋 연결을 제외한 staged-index whole typecheck0. 저장은 사용자 선택 뒤 별도 제품 key에만 시도하고 실패해도 활성 선택을 유지한다.
 - 중앙 shell/route 연결·전체 source-captured UI·134행 인증은 뒤의 gate이며 S28 완료·사람 검토·cutover는 부여하지 않는다.
+
+
+### CP6-I — 중앙 화면·이전·전체 설정 연결
+
+- CP5-M `bd4a25ae1ffc7d1227f5e515b76fc686b55abf8c` push exit0/live exact match 확인.
+- 게시된 native adapter를 실제 Lab 제어·기록·위상 표시·전체 설정·명시 이전·조건 목록·연구/API에 연결했다. 원본 query/tab 의도와 별도 제품 저장 공간을 보존하며 로딩/취소/재시도/해제 경계를 둔다. 복원된1.7배속을 간단 재생 메뉴에도 정확히 표시한다.
+- 최신 별도 production 빌드·privacy22, 대상65/65 단위 검사와 Chromium/Pixel5 설정·공유·재생8/8 실제 exit0. 후속 adaptive/심사 도구를 제외한47경로 staged-index whole typecheck0, whole lint/typecheck0. 기존 문서 폴더 링크를 실제 추적 파일로 고쳐 Markdown audit157문서372참조0도 확인했다.
+- 이 bounded checkpoint는 전체134행 인증이 아니다. 전체 gate와 새 source capture, 사람 science review0/86 및 사용자 review28 미승인을 구분한다. 기존 물리/저장소/기본 앱 전환을 변경하지 않는다.

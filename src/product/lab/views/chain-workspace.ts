@@ -17,6 +17,19 @@ import { createChainScene, chainTrajectoryPlot } from './chain-plots';
 import { createChainFiles } from './chain-files';
 import { loadChainConfig } from './chain-storage';
 import { createLearnSourceNotice } from './learn-source';
+import { createPlaybackControls } from './playback-controls';
+import { bindProductRuntime } from '../../app/browser-api-binding';
+import { createWorkspaceRuntimeProvider, type ProductRuntimeTiming } from '../../app/browser-api-provider';
+import { DEFAULT_PLAYBACK } from './playback-clock';
+import { createNativeDisplay } from './native-display';
+import { createNativeDesignPanel } from '../experiments/native-design-panel';
+import { prepareLegacyLinkContext, createLegacyLinkContextPanel } from './legacy-link-context';
+import { createStructureDiagnosticsPanel } from './structure-diagnostics-panel';
+import { createPhaseSpace3D } from './native-phase-space';
+import { createPhaseDensity } from './phase-density';
+import { createRuntimeAccelerationPanel } from './runtime-acceleration-panel';
+import type { ProductSetupV1 } from '../../persistence/product-setup';
+import { createNativeSetupPanel } from './native-setup-panel';
 
 const labels: Record<ChainStatus, string> = {
   ready: '실행 준비 완료',
@@ -28,7 +41,12 @@ const labels: Record<ChainStatus, string> = {
 };
 // Only settings and comparison configurations survive route disposal, never workers/results.
 const sessions = new WeakMap<Document, Map<string, { config: ChainConfig; tray: ChainConfig[] }>>();
-export function createChainWorkspace(document: Document, system: SystemDefinition, experiment?: ExperimentStateV1) {
+export function createChainWorkspace(
+  document: Document,
+  system: SystemDefinition,
+  experiment?: ExperimentStateV1,
+  setup?: ProductSetupV1
+) {
   const view = element(document, 'div', 'product-page product-lab-page lab-workspace chain-workspace');
   view.append(
     link(document, '시스템 라이브러리', '#/lab'),
@@ -65,11 +83,14 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     session = new Map();
     sessions.set(document, session);
   }
-  const key = experiment ? `${system.id}:${JSON.stringify(experiment)}` : system.id;
+  const key = experiment ? `${system.id}:${JSON.stringify(setup ?? experiment)}` : system.id;
   const retained = session.get(key);
   initial = retained?.config ?? initial;
   const tray = retained?.tray ?? [];
   const model = createChainModel(initial);
+  const priorAngleUnit = document.documentElement.dataset.productAngleUnit;
+  const legacyContext = prepareLegacyLinkContext(document, setup ? undefined : experiment);
+  if (setup) document.documentElement.dataset.productAngleUnit = setup.controls.angleUnit;
   view.append(
     element(
       document,
@@ -80,6 +101,7 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     link(document, '기존 앱 열기', './app.html')
   );
   if (warning) view.append(element(document, 'p', 'lab-preview-note', warning));
+  if (legacyContext.warning) view.append(element(document, 'p', 'lab-preview-note', legacyContext.warning));
   if (experiment)
     view.append(element(document, 'p', 'lab-preview-note', '공유한 초기조건·적분기·분석 설정을 복원했습니다.'));
   const run = createSection(document, { id: 'chain-run', title: '실행 제어' });
@@ -113,8 +135,11 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
   const progress = createProgress(document, { id: 'chain-progress', label: '실행 진행', max: 100, value: 0 });
   progress.element.querySelector('[role="status"]')?.removeAttribute('role');
   const sampling = element(document, 'p', 'lab-muted');
+  const playback = createPlaybackControls(document, model);
+  if (legacyContext.settings) model.setPlayback({ ...model.state.playback!, ...legacyContext.settings.playback });
+  if (setup) model.setPlayback(setup.controls.playback);
   sampling.id = 'chain-sampling';
-  run.body.append(status, error, actions, speedLabel, speed, time, progress.element, sampling);
+  run.body.append(status, error, actions, speedLabel, speed, time, progress.element, sampling, playback.element);
   view.append(run.element);
   const workspace = createSection(document, {
     id: 'chain-preview',
@@ -123,6 +148,31 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
   });
   const scene = createChainScene(document),
     energy = element(document, 'p', 'chain-energy');
+  const nativeDisplay =
+    initial.systemId === 'system:triple'
+      ? createNativeDisplay(document, model, setup?.controls.render ?? legacyContext.settings?.display)
+      : undefined;
+  const nativeSetup = nativeDisplay
+    ? createNativeSetupPanel(document, {
+        experiment: () => toCanonicalChain(model.state.config),
+        canUse: () => model.state.valid && model.state.status !== 'running' && !model.state.busy,
+        playback: () => model.state.playback ?? DEFAULT_PLAYBACK,
+        render: () => nativeDisplay.settings(),
+        angleUnit: () => (document.documentElement.dataset.productAngleUnit === 'deg' ? 'deg' : 'rad'),
+        initial: setup?.controls ?? legacyContext.settings
+      })
+    : undefined;
+  const phaseSpace = createPhaseSpace3D(document, {
+    samples: () => model.state.samples,
+    sample: () => model.state.sample,
+    experiment: () => toCanonicalChain(model.state.config)
+  });
+  const phaseDensity = createPhaseDensity(document, {
+    samples: () => model.state.samples,
+    sample: () => model.state.sample,
+    experiment: () => toCanonicalChain(model.state.config)
+  });
+  const legacyPanel = experiment ? createLegacyLinkContextPanel(document, legacyContext, experiment) : undefined;
   const details = element(document, 'details', 'lab-details');
   details.append(element(document, 'summary', '', '모든 링크 수치 상태'));
   const table = element(document, 'table', 'chain-state-table');
@@ -139,6 +189,11 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
   table.append(head, body);
   details.append(table);
   workspace.body.append(scene.element, energy, details);
+  if (nativeDisplay) workspace.body.append(nativeDisplay.element);
+  if (nativeSetup) workspace.body.append(nativeSetup.element);
+  workspace.body.append(phaseSpace.element);
+  workspace.body.append(phaseDensity.element);
+  if (legacyPanel) workspace.body.append(legacyPanel.element);
   const analysis = createSection(document, {
     id: 'chain-analysis',
     title: '분석',
@@ -222,17 +277,28 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     lastStep = -1;
     updatePlot();
   });
+  const angleChange = (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement) || !target.id.endsWith('-display-unit')) return;
+    const unit = target.value === 'deg' ? 'deg' : 'rad';
+    document.documentElement.dataset.productAngleUnit = unit;
+    inspector.setDisplayUnit(unit);
+  };
+  inspector.element.addEventListener('change', angleChange);
+  function restore(c: ChainConfig, timing?: ProductRuntimeTiming) {
+    if (model.state.busy) throw new Error('현재 worker 작업이 끝나거나 취소된 뒤 상태를 적용하세요.');
+    model.configure(c, timing ? { ...(model.state.playback ?? DEFAULT_PLAYBACK), ...timing } : undefined);
+    inspector.sync();
+    lastStep = -1;
+    updatePlot();
+  }
   const files = createChainFiles(
     document,
     model,
-    (c) => {
-      model.configure(c);
-      inspector.sync();
-      lastStep = -1;
-      updatePlot();
-    },
+    restore,
     () => model.state.valid && model.state.status !== 'running' && !model.state.busy,
-    tray
+    tray,
+    nativeSetup ? () => nativeSetup.shareRoute() : undefined
   );
   const coreDiagnostics = createDiagnostics(document, {
     experiment: () => toCanonicalChain(model.state.config),
@@ -240,7 +306,23 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
   });
   analysis.body.append(coreDiagnostics.element);
+  const structure = createStructureDiagnosticsPanel(document, {
+    experiment: () => toCanonicalChain(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(structure.element);
+  const acceleration = createRuntimeAccelerationPanel(document, {
+    experiment: () => toCanonicalChain(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  analysis.body.append(acceleration.element);
   files.tray.append(coreDiagnostics.experiments);
+  const nativeDesign = createNativeDesignPanel(document, {
+    experiment: () => toCanonicalChain(model.state.config),
+    canRun: () => model.state.valid && model.state.status !== 'running' && !model.state.busy
+  });
+  nativeDesign.element.id = 'native-experiment-design';
+  files.tray.append(nativeDesign.element);
   const tabs = createTabs(document, {
     id: 'lab-panels',
     label: '실험실 패널',
@@ -257,6 +339,15 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
   function update() {
     const s = model.state,
       n = s.config.parameters.masses.length;
+    const currentSpeed = String(s.speed);
+    if (![...speed.options].some((option) => option.value === currentSpeed)) {
+      for (const option of speed.querySelectorAll('[data-custom-speed]')) option.remove();
+      const option = element(document, 'option', '', `${currentSpeed}×`);
+      option.value = currentSpeed;
+      option.dataset.customSpeed = 'true';
+      speed.append(option);
+    }
+    speed.value = currentSpeed;
     view.dataset.labStatus = s.status;
     view.dataset.busy = String(s.busy);
     const text = s.valid
@@ -292,10 +383,30 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
     }
     inspector.update();
     files.update();
+    playback.update();
+    nativeDisplay?.update();
+    nativeSetup?.update();
+    phaseSpace.update();
+    phaseDensity.update();
     coreDiagnostics.update();
     if (tabs.selectedId === 'analysis') updatePlot();
   }
   const unsubscribe = model.subscribe(update);
+  const unbindRuntime = bindProductRuntime(
+    document,
+    createWorkspaceRuntimeProvider({
+      model,
+      readTiming: () => ({
+        ...(model.state.playback ?? DEFAULT_PLAYBACK),
+        stepsPerFrame: model.state.effectiveStepsPerFrame ?? (model.state.playback ?? DEFAULT_PLAYBACK).stepsPerFrame
+      }),
+      restore,
+      reset() {
+        if (model.state.busy) throw new Error('현재 worker 작업을 먼저 취소하세요.');
+        model.reset();
+      }
+    })
+  );
   update();
   updatePlot();
   return {
@@ -305,8 +416,21 @@ export function createChainWorkspace(document: Document, system: SystemDefinitio
       session!.set(key, { config: model.state.config, tray });
       while (session!.size > 8) session!.delete(session!.keys().next().value!);
       unsubscribe();
+      unbindRuntime();
+      nativeDisplay?.dispose();
+      nativeSetup?.dispose();
+      inspector.element.removeEventListener('change', angleChange);
+      phaseSpace.dispose();
+      phaseDensity.dispose();
+      legacyPanel?.dispose();
+      legacyContext.dispose();
+      if (priorAngleUnit === undefined) delete document.documentElement.dataset.productAngleUnit;
+      else document.documentElement.dataset.productAngleUnit = priorAngleUnit;
       model.dispose();
       coreDiagnostics.dispose();
+      nativeDesign.dispose();
+      structure.dispose();
+      acceleration.dispose();
       files.dispose();
       tabs.dispose();
     }

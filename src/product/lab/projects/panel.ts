@@ -16,6 +16,7 @@ import { projectItemId, type ProjectEditorContext } from './context';
 import { createProjectEditor } from './editor';
 import { createProjectFigures } from './figures';
 import { renderProjectArtifactList, renderProjectPreview, renderProjectRunList } from './output';
+import { bindProductResearch } from '../../app/research-api-binding';
 
 export function createResearchProjectPanel(
   document: Document,
@@ -409,33 +410,37 @@ export function createResearchProjectPanel(
     refresh();
   }
   function captureRun() {
-    if (!bundle || busy || !options.canRun()) return;
     try {
-      const experiment = options.experiment();
-      if (!experiment.ok) throw new Error('현재 실험 입력을 수정한 뒤 다시 보존하세요.');
-      const label = requiredText(editor.runLabel, 160);
-      const samples = options.samples();
-      if (samples.length > CORE_DIAGNOSTIC_LIMITS.samples)
-        throw new Error(
-          '연구 run은 최대 8192기록 표본입니다. 관찰 기간이나 기록 간격을 줄여 다시 실행하세요. 원본을 자동 축약하지 않았습니다.'
-        );
-      const series = createDiagnosticSeries(experiment.value, samples);
-      if (series.states.length * series.labels.length > CORE_DIAGNOSTIC_LIMITS.scalars)
-        throw new Error('연구 기록은 최대 100만 scalar입니다. 자유도·관찰 기간·기록 간격을 줄여 다시 실행하세요.');
-      runPackage({
-        id: projectItemId('capture'),
-        operation: 'capture',
-        bundle,
-        options: {
-          experiment: experiment.value,
-          label,
-          sessionId: editor.sessionSelect.value,
-          series
-        }
-      });
+      captureRunStrict();
     } catch (cause) {
       fail(cause);
     }
+  }
+  function captureRunStrict() {
+    if (!bundle || busy || disposed || !options.canRun())
+      throw new Error('활성 연구 프로젝트와 유효한 실험이 필요합니다. 진행 중인 작업을 먼저 끝내세요.');
+    const experiment = options.experiment();
+    if (!experiment.ok) throw new Error('현재 실험 입력을 수정한 뒤 다시 보존하세요.');
+    const label = requiredText(editor.runLabel, 160);
+    const samples = options.samples();
+    if (samples.length > CORE_DIAGNOSTIC_LIMITS.samples)
+      throw new Error(
+        '연구 run은 최대 8192기록 표본입니다. 관찰 기간이나 기록 간격을 줄여 다시 실행하세요. 원본을 자동 축약하지 않았습니다.'
+      );
+    const series = createDiagnosticSeries(experiment.value, samples);
+    if (series.states.length * series.labels.length > CORE_DIAGNOSTIC_LIMITS.scalars)
+      throw new Error('연구 기록은 최대 100만 scalar입니다. 자유도·관찰 기간·기록 간격을 줄여 다시 실행하세요.');
+    runPackage({
+      id: projectItemId('capture'),
+      operation: 'capture',
+      bundle,
+      options: {
+        experiment: experiment.value,
+        label,
+        sessionId: editor.sessionSelect.value,
+        series
+      }
+    });
   }
   async function readFile(file: File, max: number, consume: (bytes: Uint8Array, token: number) => void) {
     if (busy || disposed) return;
@@ -492,11 +497,21 @@ export function createResearchProjectPanel(
     );
   }
   refresh();
+  const unbindResearch = bindProductResearch(document, 'project', {
+    snapshot: () => ({ ...(bundle ? { bundle: structuredClone(bundle) } : {}), busy }),
+    saveCurrentExperiment: captureRunStrict,
+    exportBundle() {
+      if (!bundle || busy || disposed)
+        throw new Error('내보낼 연구 프로젝트가 필요하며 진행 중인 작업을 먼저 끝내야 합니다.');
+      exportPackage('download');
+    }
+  });
   return {
     update: refresh,
     dispose() {
       saveResearchProjectSession(document, { bundle, previous, pending });
       disposed = true;
+      unbindResearch();
       generation += 1;
       job?.dispose();
       for (const timer of timers) clearTimeout(timer);

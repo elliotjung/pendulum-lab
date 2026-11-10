@@ -9,6 +9,7 @@ import { createBatchQueue } from './queue';
 import { parseBatch, serializeBatch } from './artifact';
 import { createBatchSettings, batchKindNames } from './settings';
 import { batchResultView } from './result-view';
+import { bindProductResearch, type ProductStudyRunOptions } from '../../app/research-api-binding';
 
 export function createExperimentPanel(document: Document, options: DiagnosticsOptions, container: HTMLDetailsElement) {
   const body = element(document, 'div', 'batch-body');
@@ -107,6 +108,7 @@ export function createExperimentPanel(document: Document, options: DiagnosticsOp
     renderSignature = '';
   const urls = new Set<string>();
   const timers = new Set<ReturnType<typeof setTimeout>>();
+  const apiPending = new Set<(cause: Error) => void>();
   const busy = () => queueState?.status === 'running';
   function showError(message: string) {
     error.hidden = false;
@@ -154,6 +156,7 @@ export function createExperimentPanel(document: Document, options: DiagnosticsOp
     clearTimeout(outputTimer);
     outputTimer = undefined;
     unsubscribe?.();
+    for (const reject of [...apiPending]) reject(new Error('새 계획으로 교체되어 이전 API 실행 대기를 종료했습니다.'));
     queue?.dispose();
     queue = next;
     queueState = next.state;
@@ -167,12 +170,8 @@ export function createExperimentPanel(document: Document, options: DiagnosticsOp
     renderQueue();
   }
   function prepareBatch() {
-    if (busy() || !snapshot || !options.canRun()) return;
     try {
-      const plan = buildBatch(snapshot, settings.getSettings());
-      attachQueue(createBatchQueue(plan));
-      error.hidden = true;
-      status.textContent = '입력을 확인했습니다. 개별 run의 조건과 전체 비용을 확인하고 실행하세요.';
+      prepareStrict();
     } catch (cause) {
       showError(
         `다중 실험 준비 실패: ${cause instanceof Error ? cause.message : '설정을 확인하세요.'} 이전 결과와 현재 실험은 보존했습니다.`
@@ -180,6 +179,49 @@ export function createExperimentPanel(document: Document, options: DiagnosticsOp
       container.dataset.batchStatus = 'error';
     }
     update();
+  }
+  function prepareStrict() {
+    if (disposed || busy() || !snapshot || !options.canRun())
+      throw new Error('현재 실험과 다중 실험 입력을 확인하고 진행 중인 작업을 먼저 끝내세요.');
+    const plan = buildBatch(snapshot, settings.getSettings());
+    attachQueue(createBatchQueue(plan));
+    error.hidden = true;
+    status.textContent = '입력을 확인했습니다. 개별 run의 조건과 전체 비용을 확인하고 실행하세요.';
+    update();
+  }
+  function runFromApi(input: ProductStudyRunOptions): Promise<BatchSnapshot> {
+    if (disposed || !queue || busy() || dirty || !options.canRun())
+      return Promise.reject(new Error('실행 가능한 준비된 다중 실험이 필요합니다. 입력을 바꿨다면 다시 준비하세요.'));
+    if (queue.state.status === 'cancelled' && !input.resume && !input.failedOnly)
+      return Promise.reject(new Error('취소한 목록은 resume 옵션으로 명시적으로 재개하세요.'));
+    const selected = queue;
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      let unsubscribe = () => {};
+      const fail = (cause: Error) => {
+        if (settled) return;
+        settled = true;
+        unsubscribe();
+        apiPending.delete(fail);
+        reject(cause);
+      };
+      const finish = (state: BatchSnapshot) => {
+        if (settled || state.status === 'running' || state.status === 'ready') return;
+        settled = true;
+        unsubscribe();
+        apiPending.delete(fail);
+        resolve(structuredClone(state));
+      };
+      apiPending.add(fail);
+      unsubscribe = selected.subscribe(finish);
+      try {
+        const started = input.failedOnly ? selected.retryFailed() : input.resume ? selected.resume() : selected.start();
+        if (!started) fail(new Error('실행할 미완료 또는 실패 run이 없습니다.'));
+        else finish(selected.state);
+      } catch (cause) {
+        fail(cause instanceof Error ? cause : new Error(String(cause)));
+      }
+    });
   }
   function renderQueue() {
     if (!queueState || disposed || rendering) return;
@@ -315,10 +357,26 @@ export function createExperimentPanel(document: Document, options: DiagnosticsOp
     settings.setDisabled(running || !snapshot);
   }
   refreshSource();
+  const unbindResearch = bindProductResearch(document, 'batch', {
+    snapshot: () => (queue ? structuredClone(queue.state) : undefined),
+    prepare: prepareStrict,
+    run: runFromApi,
+    cancel() {
+      queue?.cancel();
+    },
+    comparison() {
+      if (!queue) throw new Error('먼저 다중 실험을 준비하세요.');
+      return structuredClone(queue.state.aggregate);
+    }
+  });
   return {
     update,
     dispose() {
       disposed = true;
+      unbindResearch();
+      for (const reject of [...apiPending])
+        reject(new Error('화면을 떠나 다중 실험 worker를 종료했습니다. 보관한 계획과 완료 결과로 다시 준비하세요.'));
+      apiPending.clear();
       generation++;
       unsubscribe?.();
       queue?.dispose();

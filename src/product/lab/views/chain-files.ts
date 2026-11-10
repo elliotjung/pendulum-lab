@@ -17,7 +17,8 @@ export function createChainFiles(
   model: ChainModel,
   restore: (config: ChainConfig) => void,
   canUse: () => boolean,
-  entries: ChainConfig[]
+  entries: ChainConfig[],
+  fullShareRoute?: () => ReturnType<typeof createExperimentRoute>
 ) {
   const tray = createSection(document, {
     id: 'chain-tray',
@@ -185,12 +186,15 @@ export function createChainFiles(
     variant: 'secondary',
     onClick() {
       const state = toCanonicalChain(model.state.config);
-      const route = state.ok ? createExperimentRoute(state.value) : state;
+      const route = fullShareRoute ? fullShareRoute() : state.ok ? createExperimentRoute(state.value) : state;
       if (!route.ok) {
         message.textContent = '공유 링크를 만들 수 없습니다. 상태 JSON을 내려받으세요.';
         return;
       }
-      share.href = route.value;
+      const url = new URL(document.defaultView!.location.href);
+      url.search = '';
+      url.hash = route.value;
+      share.href = url.href;
       share.hidden = false;
       message.textContent = '공유 설정 링크를 만들었습니다. 링크 주소를 복사해 사용할 수 있습니다.';
     }

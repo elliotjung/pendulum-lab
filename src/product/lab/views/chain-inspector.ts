@@ -345,5 +345,12 @@ export function createChainInspector(document: Document, model: ChainModel, onCh
     warning.textContent = chainWarnings(state.config).join(' ');
   }
   sync();
-  return { element: section.element, update, sync };
+  return {
+    element: section.element,
+    update,
+    sync,
+    setDisplayUnit(unit: 'rad' | 'deg') {
+      for (const control of controls.values()) control.setDisplayUnit(unit);
+    }
+  };
 }

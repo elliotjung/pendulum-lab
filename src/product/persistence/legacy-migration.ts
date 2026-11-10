@@ -2,7 +2,7 @@ import type { ExperimentStateV1 } from '../contracts/experiment';
 import { isRecord } from '../contracts/contract-checks';
 import { failure, success, type ContractIssue, type ContractResult } from '../contracts/validation';
 import { parseContractJson } from './json';
-import { canonicalJson, DATA_LIMITS, type JsonValue } from './safe-data';
+import { canonicalJson, DATA_LIMITS, inspectSafeData, type JsonValue } from './safe-data';
 import { migrateLegacySession, type MigratedLegacySession } from './legacy-migration-session';
 import {
   migrateLegacyLink,
@@ -13,7 +13,10 @@ import {
   type LegacyLinkCompatibilityV1
 } from './legacy-link';
 import type { LegacyLinkOptions } from './legacy-link-contracts';
-import { defaultPlanarConfig, toCanonicalPlanar } from '../adapters/physics/planar';
+import { defaultPlanarConfig, fromCanonicalPlanar, toCanonicalPlanar } from '../adapters/physics/planar';
+import { defaultChainConfig, fromCanonicalChain, toCanonicalChain } from '../adapters/physics/chain';
+import { validateExperimentState } from '../contracts/experiment-validation';
+import { hashBytes } from '../../research/zipBundle';
 
 export const LEGACY_MIGRATION_PREVIEW_SCHEMA = 'pendulum-legacy-migration-preview/v1';
 export type LegacyMigrationSourceKind =
@@ -54,14 +57,65 @@ function freezeTree<T>(value: T): T {
   }
   return value;
 }
-function previewId(text: string, duration: number | undefined): string {
+function previewId(text: string, duration: number | undefined, baseIdentity?: string): string {
   let hash = 0x811c9dc5;
   const input = `${duration === undefined ? 'unspecified' : duration}\n${text}`;
   for (let index = 0; index < input.length; index++) {
     hash ^= input.charCodeAt(index);
     hash = Math.imul(hash, 0x01000193);
   }
-  return `legacy-v1-${(hash >>> 0).toString(16).padStart(8, '0')}-${text.length}`;
+  // The base suffix is an opaque correlation hash, not authentication. The
+  // storage boundary still compares the full input and refuses any collision.
+  return `legacy-v1-${(hash >>> 0).toString(16).padStart(8, '0')}-${text.length}${baseIdentity ? `-base-${baseIdentity}` : ''}`;
+}
+
+/** A query base must be a complete, supported canonical snapshot. Inspect its
+ * descriptors before reading fields; programmatic getters are never evaluated. */
+export function validateLegacyMigrationBase(input: unknown): ContractResult<ExperimentStateV1> {
+  const checked = validateExperimentState(input);
+  if (!checked.ok) return checked;
+  const base = checked.value;
+  if (!['system:double', 'system:compound-double', 'system:triple'].includes(base.systemId))
+    return failure(
+      'unsupported-legacy-query-base',
+      '$.queryBase.systemId',
+      '기존 query의 base는 이중·복합·삼중 진자 canonical 설정이어야 합니다. 다른 모델의 값을 이식하지 않았습니다.',
+      'keep-original'
+    );
+  const adapter = base.systemId === 'system:triple' ? fromCanonicalChain(base) : fromCanonicalPlanar(base);
+  return adapter.ok ? success(base) : adapter;
+}
+
+function migrationOptions(input: unknown): ContractResult<{
+  durationSeconds?: number;
+  queryBase?: ExperimentStateV1;
+  baseIdentity?: string;
+}> {
+  const checked = inspectSafeData(input === undefined ? {} : input);
+  if (!checked.ok) return checked;
+  const value = checked.value;
+  if (
+    !isRecord(value) ||
+    Object.keys(value).some((key) => !['durationSeconds', 'queryBase'].includes(key)) ||
+    (Object.hasOwn(value, 'durationSeconds') && typeof value.durationSeconds !== 'number')
+  )
+    return failure(
+      'invalid-legacy-migration-options',
+      '$.options',
+      '관찰 시간과 명시적인 canonical base만 지정하세요.',
+      'keep-original'
+    );
+  const base = Object.hasOwn(value, 'queryBase') ? validateLegacyMigrationBase(value.queryBase) : undefined;
+  if (base && !base.ok) return base;
+  return success({
+    ...(typeof value.durationSeconds === 'number' ? { durationSeconds: value.durationSeconds } : {}),
+    ...(base?.ok
+      ? {
+          queryBase: base.value,
+          baseIdentity: hashBytes(new TextEncoder().encode(canonicalJson(base.value as unknown as JsonValue)))
+        }
+      : {})
+  });
 }
 
 /**
@@ -71,13 +125,16 @@ function previewId(text: string, duration: number | undefined): string {
  */
 export function previewLegacyMigration(sourceText: string, options?: LegacyMigrationOptions): LegacyMigrationPreview {
   if (typeof sourceText !== 'string') throw new TypeError('Legacy migration requires raw text.');
-  const duration = options?.durationSeconds;
-  const id = previewId(sourceText, duration);
+  const checkedOptions = migrationOptions(options);
+  const duration = checkedOptions.ok ? checkedOptions.value.durationSeconds : undefined;
+  const queryBase = checkedOptions.ok ? checkedOptions.value.queryBase : undefined;
+  const id = previewId(sourceText, duration, checkedOptions.ok ? checkedOptions.value.baseIdentity : undefined);
   let sourceKind: LegacyMigrationSourceKind = 'unknown';
   let result: ContractResult<MigratedLegacySession>;
   let compatibility: LegacyLinkCompatibilityV1 | undefined;
   const trimmed = sourceText.trim();
-  if (sourceText.length > DATA_LIMITS.bytes || new TextEncoder().encode(sourceText).length > DATA_LIMITS.bytes) {
+  if (!checkedOptions.ok) result = checkedOptions;
+  else if (sourceText.length > DATA_LIMITS.bytes || new TextEncoder().encode(sourceText).length > DATA_LIMITS.bytes) {
     result = failure(
       'legacy-source-size-limit',
       '$',
@@ -99,7 +156,7 @@ export function previewLegacyMigration(sourceText: string, options?: LegacyMigra
     const linked = migrateLegacyLink(sourceText, {
       sourceId: id,
       ...(duration === undefined ? {} : { durationSeconds: duration }),
-      ...(options?.queryBase === undefined ? {} : { queryBase: options.queryBase })
+      ...(queryBase === undefined ? {} : { queryBase })
     });
     if (!linked.ok) result = linked;
     else {
@@ -232,8 +289,19 @@ export function exportLegacyMigrationBackup(preview: LegacyMigrationPreview): Le
   return { ...preview.backup };
 }
 
-export function defaultLegacyMigrationBase(): ExperimentStateV1 {
-  const result = toCanonicalPlanar(defaultPlanarConfig('system:double'));
+export function defaultLegacyMigrationBase(
+  system:
+    'double' | 'compound-double' | 'triple' | 'system:double' | 'system:compound-double' | 'system:triple' = 'double'
+): ExperimentStateV1 {
+  if (typeof system !== 'string') throw new TypeError('명시적인 이중·복합·삼중 시스템 ID가 필요합니다.');
+  const id = system.startsWith('system:') ? system : `system:${system}`;
+  const result =
+    id === 'system:triple'
+      ? toCanonicalChain(defaultChainConfig('system:triple'))
+      : id === 'system:double' || id === 'system:compound-double'
+        ? toCanonicalPlanar(defaultPlanarConfig(id))
+        : undefined;
+  if (!result) throw new Error('지원하는 query base 시스템이 아닙니다.');
   if (!result.ok) throw new Error('Default query base is invalid.');
   return result.value;
 }

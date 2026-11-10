@@ -8,6 +8,7 @@ import { createCheckpoints } from './checkpoint-view';
 import { loadLearnUnit } from './loader';
 import { mountFocus } from './focus-mount';
 import type { LearnCourse, UnitSummary } from './schema';
+import { registerLoadedLocaleText } from '../app/locale';
 
 const actionClass = 'ds-button ds-button--secondary';
 const unitHref = (unit: UnitSummary) => `#/learn/${unit.courseId}/${unit.id}`;
@@ -186,6 +187,7 @@ export function createLearnView(context: ResolvedRoute, document: Document): Rou
     if (result.status === 'ready') {
       body.dataset.contentState = 'ready';
       const unit = result.unit;
+      registerLoadedLocaleText(document, unit);
       const notice = element(document, 'aside', 'learn-notice');
       notice.append(
         element(document, 'h2', '', unit.kind === 'sample' ? '단원 프레임 샘플' : '이번 단원의 질문'),

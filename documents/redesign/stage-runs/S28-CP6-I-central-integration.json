@@ -1,0 +1,247 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP6-I-central-integration",
+  "createdAt": "2026-11-10T01:14:17.116Z",
+  "implementationBase": "bd4a25ae1ffc7d1227f5e515b76fc686b55abf8c",
+  "scope": "Connect the published native adapters to actual product controls, strict migration, current full setup/share, exact native condition lists, diagnostics, research and opt-in APIs. No S29 cutover.",
+  "sourceSnapshot": [
+    {
+      "path": "documents/redesign/state-contract-ko.md",
+      "sha256": "493536f21040a0ea9216efd6aabedd007f289dbaa1d74a2f58933e87ef072b1e"
+    },
+    {
+      "path": "e2e/redesign/compatibility-controls.spec.ts",
+      "sha256": "f0f9ac6c1e4fb8d68fcfc6590bb6dec7d7f3208ebbe179c0ed75a32947272760"
+    },
+    {
+      "path": "e2e/redesign/product-setup.spec.ts",
+      "sha256": "300daa37dcece6ab1459e104dc50d25ef4a1c2fda90dd3c12efe3f55663223c1"
+    },
+    {
+      "path": "src/product/app/shell.ts",
+      "sha256": "dd7b4213373c58435f5b7f8e092e491e227d848912f8357ac1615130729d5922"
+    },
+    {
+      "path": "src/product/app/types.ts",
+      "sha256": "1db51fc951f7fc5385f4ffb1580ddd60be2d51a622a1f67607bff76b9747057c"
+    },
+    {
+      "path": "src/product/app/views/chain-lab.ts",
+      "sha256": "4eebbcbb1a51f09070a30725b520d9f9c3b0b575b6e0860002f1066e7ebce558"
+    },
+    {
+      "path": "src/product/app/views/core-lab.ts",
+      "sha256": "19d28f9b1b6cf3a038ec8a72d3301c4f21cc4c16203c1c9bec74d1b1a79f5f47"
+    },
+    {
+      "path": "src/product/app/views/lab.ts",
+      "sha256": "f865906a29fe37d5b4916de9d03433106469123043ec9a9252eb4f44214724ec"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/audio.ts",
+      "sha256": "b1335a02ed4da79a76469aeb4433745639ff401f0539455c02a2bc51ec803d6d"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/contracts.ts",
+      "sha256": "d9a712c4f7c4d17aaab7eccc66b8727dd7665b5c42a4f839fe4cf54121852816"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/export.ts",
+      "sha256": "23a880293bbce299d29ea1fc04a8297ce7ad98ccb7422cecaa8f60347af36b0b"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/index.ts",
+      "sha256": "0850025d1783af2481869f7cc3feb0c0d8fa447eeff1cb08fb2e5c636c5eab2d"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/ogy-client.ts",
+      "sha256": "199dea395660d2e69578dcacdac92136a49b6d8813c34d16ccec9478fd67f49b"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/ogy.ts",
+      "sha256": "894de384ef20a988ac5785baed75fb47b64a804c83551a2751140213bad262cf"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/ogy.worker.ts",
+      "sha256": "1cebc7d8e2fd44f119f94797c41389a56071def9c362bb32a6bfa4b1dde7108a"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/panel.ts",
+      "sha256": "6ea803d90e06978fc2f740ca6fab8ba26d703aabc05af26858d754d761fce785"
+    },
+    {
+      "path": "src/product/lab/compatibility-tools/request.ts",
+      "sha256": "4dde4951862fd7478e7bee073afd070d3c6ffd3f82c38511512625e38f89a92d"
+    },
+    {
+      "path": "src/product/lab/experiments/panel.ts",
+      "sha256": "a2d7a5128ae8bae4fb4beb972acb87266e9b2b9d72e9f29a7786b9265016821d"
+    },
+    {
+      "path": "src/product/lab/projects/panel.ts",
+      "sha256": "bb1985e3272ddeee73474639231b069cae39e8d98ff6fd9330445f1e4e774e0a"
+    },
+    {
+      "path": "src/product/lab/views/chain-files.ts",
+      "sha256": "d11d755c3e1cbad439209cbe2c1b3b47ecd14e0057b5f1dc9f9a404364c03836"
+    },
+    {
+      "path": "src/product/lab/views/chain-inspector.ts",
+      "sha256": "56c3db44556cfbc75ef97fed1b23537f033471945481ed6cf56f065f7eaa1412"
+    },
+    {
+      "path": "src/product/lab/views/chain-workspace.ts",
+      "sha256": "35d4416a14863d2c5dd9ba5e65877cb686a1165b0b0e026df7bc4565eec2c45c"
+    },
+    {
+      "path": "src/product/lab/views/core-files.ts",
+      "sha256": "cb6c8a6ffdecfce8f2c3de2b683bfe873406ce1b28bf89f85c4e6cc7139c7b57"
+    },
+    {
+      "path": "src/product/lab/views/core-inspector.ts",
+      "sha256": "532270bd403ddca7bec70dfaed7751bc46c877d01d88df02835632512ed3b6c6"
+    },
+    {
+      "path": "src/product/lab/views/core-workspace.ts",
+      "sha256": "aa49c507beeba81af6b149f14bee21a9403c609d2f873c58797cd9e1f0960ed3"
+    },
+    {
+      "path": "src/product/lab/views/legacy-link-context.ts",
+      "sha256": "c9f228561cbad69072c92b414bfccf8f72c4bab20a223c1b4145293158234f49"
+    },
+    {
+      "path": "src/product/lab/views/legacy-navigation.ts",
+      "sha256": "0fca2609e4457cff17864a485044be599d4770837f8fcfe452ae0a300737600d"
+    },
+    {
+      "path": "src/product/lab/views/legacy-workflow.ts",
+      "sha256": "bba27a080324f4635183cd9b4474af8a8ef90e4e01a121ccabe84a9084d6e2b2"
+    },
+    {
+      "path": "src/product/lab/views/native-phase-space.ts",
+      "sha256": "fae9d617a592a910c56c297dd2daad2631c4c5ec7b32dde34b44482c9df3f1c8"
+    },
+    {
+      "path": "src/product/lab/views/native-setup-panel.ts",
+      "sha256": "d4a7c7d90a08651a5adf8b5a79bccb9797634ad075b0d7744295cb5c71f22d58"
+    },
+    {
+      "path": "src/product/lab/views/phase-density.ts",
+      "sha256": "55aab964df9efb0b5c715c76d8fe1adea5dc3a33c869c5676b9a6b049f5cb6c2"
+    },
+    {
+      "path": "src/product/lab/views/run-history.ts",
+      "sha256": "b1eca60d8e3312e38602678e1a5c80c04b21d814e9a3dea0e5eb67d09ca4a25c"
+    },
+    {
+      "path": "src/product/learn/views.ts",
+      "sha256": "7a624216d4f24af180723b626a3d2241cfd7bf9c6e550c3ce696ce5265435452"
+    },
+    {
+      "path": "src/product/persistence/legacy-link-consumer.ts",
+      "sha256": "2aa0fbfbfa1b4ce8f8da76e066fb7826263afe519dc333cd18613808204863d9"
+    },
+    {
+      "path": "src/product/persistence/legacy-migration-panel.ts",
+      "sha256": "db5860d80041fa45dee69a35d565907604d3f6dad4d7a9bf51ea792f3e03118c"
+    },
+    {
+      "path": "src/product/persistence/legacy-migration.ts",
+      "sha256": "9114e073bd243a83cf91134c9064e4f3a6b1670d5c94ab6c2ce47ae0e1ef2c64"
+    },
+    {
+      "path": "src/product/persistence/legacy-query-base-control.ts",
+      "sha256": "bd4eefced3214ad7a8f101edf7b2d929864e0ecc41ee00f7af51316777b29107"
+    },
+    {
+      "path": "src/product/persistence/legacy-workspace-retry.d.ts",
+      "sha256": "dcb57924710931d7ef3431f2827d8bc77e80362c06c88c019359e8677335cb3c"
+    },
+    {
+      "path": "src/product/persistence/product-setup-file-control.ts",
+      "sha256": "ad5e30e9f6e510805403194c90473d372f28c6193aacb4894ce91dc0e7f46991"
+    },
+    {
+      "path": "tests/product/compatibility-tools/audio.test.ts",
+      "sha256": "ba170d989944f5d4f45848841302da8ae661c82362f84c7e2a7976c56df341d8"
+    },
+    {
+      "path": "tests/product/compatibility-tools/client.test.ts",
+      "sha256": "6170f4b325d815eb1ad9c71bef456841011d7bfb5ab1b56b09f83444c09c063f"
+    },
+    {
+      "path": "tests/product/compatibility-tools/ogy.test.ts",
+      "sha256": "990d6bc9c8ad8eac6246c6b26fe60d1c4d392a571d764a5c93a2ee26e81708a7"
+    },
+    {
+      "path": "tests/product/lab/legacy-navigation.test.ts",
+      "sha256": "e4a9b335ecb681169ad1de39efe1f5a4132725c5d2abd14ffeb4510c3df1c734"
+    },
+    {
+      "path": "tests/product/lab/phase-views.test.ts",
+      "sha256": "007ae69ac296c355187ec619c87aa09db551bc7e98456f4eb39f749ad05c205a"
+    },
+    {
+      "path": "tests/product/lab/run-history.test.ts",
+      "sha256": "b32bda46fad7cbbb51133b9aa6fecfe6203fe05917ac5ff9b60c831e4eb59eeb"
+    },
+    {
+      "path": "tests/product/persistence/legacy-link-consumer.test.ts",
+      "sha256": "ab8b349311d3ac29cd821d395d72d3cd3b06c943f7a2beace6ddbbbe343fa358"
+    },
+    {
+      "path": "tests/product/persistence/legacy-query-base.test.ts",
+      "sha256": "178b2ed6f77694a56efbbef88d1822a12875a4aa1b2bb18e03f02ccdd80124d1"
+    }
+  ],
+  "validation": {
+    "unit": {
+      "path": "tmp/S28-central-controls-unit-r1.json",
+      "sha256": "0e0a6818b7f7753dcbfff7f01ea85d226e597436603ce0cd3752b6aef6d0dd33",
+      "passed": 65,
+      "failed": 0,
+      "pending": 0,
+      "observedProcessExit": 0
+    },
+    "browser": {
+      "path": "tmp/S28-central-controls-browser-r1.json",
+      "sha256": "49659adf70c796223f752154e524231cf6488f87f17c869d572f5fdd2502780e",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "projects": [
+        "chromium",
+        "mobile-chrome"
+      ],
+      "observedProcessExit": 0
+    },
+    "production": {
+      "root": "tmp/S28-central-integration-dist-20261110-r1",
+      "log": "tmp/S28-central-integration-build-r1.log",
+      "logSha256": "b2f9638b14ee9d577ca7a5c07a8953332d5fccab857273851fd61c5187ecfe6a",
+      "observedProcessExit": 0,
+      "privacyTextArtifacts": 22
+    },
+    "stagedIndexTypecheck": {
+      "root": "tmp/S28-central-index-20261110-r1",
+      "observedProcessExit": 0
+    },
+    "wholeTypecheckObservedExit": 0,
+    "wholeLintObservedExit": 0,
+    "markdownLinkRecheckObservedExit": 0
+  },
+  "evidenceLimit": "Bounded integration checks, not final pre/post source-bound 134-row certification. The compiled tree contains unrelated adaptive draft code which is excluded from this checkpoint; no certification of that draft is asserted.",
+  "preservation": "No governing equations, native worker algorithms, storage or public package APIs changed here. Previously declared additive native Clock and copier exceptions remain separately tested/disclosed. Migration writes only explicit separate product stores; original backups remain recoverable.",
+  "humanReview": {
+    "scienceReviewed": 0,
+    "publicUnits": 86,
+    "userGate28Approved": false
+  },
+  "pending": [
+    "fresh final source captures",
+    "all required migration/parity/release gates",
+    "validated final status commit and remote push"
+  ]
+}

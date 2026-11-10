@@ -4,6 +4,7 @@ import { createExperimentRoute } from './share-route';
 import { serializeExperiment } from './serialization';
 import { DATA_LIMITS } from './safe-data';
 import type { LegacyMigrationPreview } from './legacy-migration';
+import { createLegacyQueryBaseControl } from './legacy-query-base-control';
 
 /** Opt-in import only. Never enumerates, reads or writes the user's stored sessions. */
 export function createLegacyMigrationPanel(document: Document) {
@@ -49,11 +50,19 @@ export function createLegacyMigrationPanel(document: Document) {
   });
   duration.input.min = '0.001';
   duration.input.step = 'any';
+  const queryBase = createLegacyQueryBaseControl(document, {
+    onChange: invalidate,
+    onBusyChange(busy) {
+      if (!disposed) inspect.disabled = busy;
+    },
+    onError: showError
+  });
   const notice = element(document, 'p', 'lab-muted');
   notice.setAttribute('role', 'status');
   notice.setAttribute('aria-atomic', 'true');
   const result = element(document, 'div', 'lab-import-preview');
   result.setAttribute('aria-label', '가져오기 미리보기');
+  result.setAttribute('role', 'region');
   const error = element(document, 'p', 'ds-field__error');
   error.setAttribute('role', 'alert');
   error.hidden = true;
@@ -64,14 +73,21 @@ export function createLegacyMigrationPanel(document: Document) {
   let fileSourceText: string | undefined;
   let generation = 0;
   let disposed = false;
+  let expansion:
+    ReturnType<typeof import('../lab/experiments/legacy-expansion-panel').createLegacyExpansionPanel> | undefined;
 
   function invalidate() {
     generation++;
+    queryBase.cancelPending();
+    expansion?.dispose();
+    expansion = undefined;
     preview = undefined;
     result.replaceChildren();
     backup.disabled = true;
     canonical.disabled = true;
+    compatibility.disabled = true;
     adopt.disabled = true;
+    adopt.textContent = '확인하고 새 실험실에서 열기';
     inspect.disabled = false;
     error.hidden = true;
     notice.textContent = '입력과 관찰 시간을 확인한 뒤 미리보기를 실행하세요.';
@@ -119,17 +135,47 @@ export function createLegacyMigrationPanel(document: Document) {
       const loaded = await import('./legacy-migration');
       if (disposed || generation !== pending) return;
       migration = loaded;
+      const base = queryBase.read(migration);
+      if (!base.ok) {
+        showError(base.message);
+        notice.textContent = 'base 설정을 확인한 뒤 다시 미리보기하세요.';
+        return;
+      }
       preview = migration.previewLegacyMigration(fileSourceText ?? source.value, {
-        durationSeconds: duration.input.valueAsNumber
+        durationSeconds: duration.input.valueAsNumber,
+        ...(base.value ? { queryBase: base.value } : {})
       });
       backup.disabled = false;
+      compatibility.disabled = !preview.compatibility;
       const ready = preview.status === 'ready';
       canonical.disabled = !ready;
-      adopt.disabled = !ready;
+      adopt.disabled = !ready && !(preview.canonical && preview.compatibility);
+      adopt.textContent =
+        preview.compatibility && preview.canonical ? '호환 작업공간에서 전달 설정 확인' : '확인하고 새 실험실에서 열기';
       const summary = element(document, 'ul', '');
       for (const message of preview.summary) summary.append(element(document, 'li', '', message));
+      if (ready && (preview.sourceKind === 'session' || preview.sourceKind === 'modern-run'))
+        summary.append(
+          element(
+            document,
+            'li',
+            '',
+            '새 실험 열기는 원본 mode·프레임 단계 예산을 전체 설정으로 전달합니다(지원1–60; 초과는 보정 없이 복구 안내). 원본에 없는 표시·실시간 시계·속도는 rad·balanced·wall-clock·1배 기본값이며 실행 전에 편집할 수 있습니다. 상태 JSON은 물리 조건만 담고 원본 전체는 백업으로 보존하세요.'
+          )
+        );
       result.append(
-        element(document, 'h2', '', ready ? '새 실험 설정을 확인했습니다' : '원본을 보존하고 복구가 필요합니다'),
+        element(
+          document,
+          'h2',
+          '',
+          preview.compatibility?.sourceKind === 'expansion'
+            ? '확장 suite의 전체 설정을 확인했습니다'
+            : ready
+              ? '새 실험 설정을 확인했습니다'
+              : preview.status === 'needs-transfer'
+                ? '물리 설정을 변환했습니다 · 추가 설정 전달 확인이 필요합니다'
+                : '원본을 보존하고 복구가 필요합니다'
+        ),
         summary
       );
       if (preview.canonical) {
@@ -155,6 +201,18 @@ export function createLegacyMigrationPanel(document: Document) {
               : '시스템 내부 방식'
           )
         );
+        for (const [name, setting] of Object.entries(state.integrator.settings)) {
+          const value =
+            setting.kind === 'scalar'
+              ? String(setting.value)
+              : setting.kind === 'vector'
+                ? setting.values.join(', ')
+                : `Re [${setting.re.join(', ')}], Im [${setting.im.join(', ')}]`;
+          values.append(
+            element(document, 'dt', '', `적분기 설정 · ${name}`),
+            element(document, 'dd', '', `${value} ${setting.unit}`)
+          );
+        }
         if (state.runtime.domain === 'time')
           values.append(
             element(document, 'dt', '', '시간 간격 / 시작 시각 / 관찰 시간'),
@@ -175,9 +233,32 @@ export function createLegacyMigrationPanel(document: Document) {
       for (const issue of preview.issues)
         result.append(element(document, 'p', 'ds-field__error', `${issue.path}: ${issue.message}`));
       for (const warning of preview.warnings) result.append(element(document, 'p', 'lab-muted', warning));
+      if (preview.compatibility) {
+        const pending = element(document, 'ul', '');
+        for (const requirement of preview.compatibility.transferRequirements)
+          pending.append(element(document, 'li', '', `${requirement.kind}: ${requirement.message}`));
+        result.append(element(document, 'h3', '', '추가 실행·표시·workflow 전달 항목'), pending);
+      }
       notice.textContent = ready
         ? '미리보기만 생성했습니다. 원본 백업을 내려받고 설정을 확인한 뒤 새 실험실에서 여세요.'
         : '새 실험실에 적용하지 않았습니다. 원본 백업을 내려받아 기존 앱에서 열 수 있습니다.';
+      if (preview.compatibility?.sourceKind === 'expansion') {
+        const envelope = preview.compatibility;
+        const module = await import('../lab/experiments/legacy-expansion-panel');
+        if (disposed || generation !== pending) return;
+        expansion = module.createLegacyExpansionPanel(
+          document,
+          (
+            envelope.resolved as unknown as {
+              config: import('../../physics/expandedModels-types').ExpansionSuiteConfig;
+            }
+          ).config,
+          { sourceText: envelope.sourceText }
+        );
+        result.append(expansion.element);
+        notice.textContent =
+          '전체 native 확장 suite를 아래에서 직접 실행·내보내기·재가져오기할 수 있습니다. 원본과 기존 저장소는 변경하지 않습니다.';
+      }
     } catch {
       if (!disposed && generation === pending)
         showError('미리보기를 불러오지 못했습니다. 원본 입력을 보관하고 다시 시도하거나 기존 앱에서 복구하세요.');
@@ -208,11 +289,29 @@ export function createLegacyMigrationPanel(document: Document) {
       download(serialized.value, 'pendulum-migrated-experiment.json', 'application/json');
     }
   });
+  const compatibility = createButton(document, {
+    label: '전체 호환 설정 JSON 다운로드',
+    variant: 'secondary',
+    disabled: true,
+    onClick() {
+      if (!preview || !migration) return;
+      const file = migration.exportLegacyMigrationCompatibility(preview);
+      download(file.text, file.fileName, file.mediaType);
+    }
+  });
   const adopt = createButton(document, {
     label: '확인하고 새 실험실에서 열기',
     disabled: true,
     onClick() {
       if (!preview || !migration) return;
+      if (preview.compatibility && preview.canonical) {
+        void openTransferredLink(preview, migration, generation);
+        return;
+      }
+      if (preview.sourceKind === 'session' || preview.sourceKind === 'modern-run') {
+        void openSessionSetup(preview, generation);
+        return;
+      }
       const confirmed = migration.confirmLegacyMigration(preview, preview.id);
       if (!confirmed.ok) return showError('설정 확인이 만료되었습니다. 미리보기를 다시 실행하세요.');
       const route = createExperimentRoute(confirmed.value);
@@ -225,6 +324,50 @@ export function createLegacyMigrationPanel(document: Document) {
     variant: 'secondary',
     onClick: invalidate
   });
+  async function openSessionSetup(value: LegacyMigrationPreview, pending: number) {
+    try {
+      const [{ productSetupFromLegacyPreview }, { DEFAULT_PLAYBACK }, { DEFAULT_NATIVE_DISPLAY }] = await Promise.all([
+        import('./product-setup-legacy'),
+        import('../lab/views/playback-clock'),
+        import('../lab/views/native-display')
+      ]);
+      if (disposed || generation !== pending || preview !== value) return;
+      const setup = productSetupFromLegacyPreview(value, value.id, {
+        angleUnit: 'rad',
+        playback: DEFAULT_PLAYBACK,
+        render: DEFAULT_NATIVE_DISPLAY,
+        ensemble: { count: 0, spec: { variable: 'th1', pattern: 'alternating', epsilon: 1e-4, seed: 1 } },
+        workflow: { goal: 'sensitive-dependence', step: 'choose', trajectoryStage: 'reference' }
+      });
+      if (!setup.ok) throw new Error(setup.issues.map((issue) => issue.message).join(' '));
+      const { createProductSetupRoute } = await import('./share-route');
+      if (disposed || generation !== pending || preview !== value) return;
+      const route = createProductSetupRoute(setup.value);
+      if (!route.ok) throw new Error(route.issues.map((issue) => issue.message).join(' '));
+      document.defaultView!.location.hash = route.value;
+    } catch (cause) {
+      if (!disposed && generation === pending)
+        showError(cause instanceof Error ? cause.message : '실행 설정을 전달하지 못했습니다. 원본 백업을 보존하세요.');
+    }
+  }
+  async function openTransferredLink(
+    value: LegacyMigrationPreview,
+    module: typeof import('./legacy-migration'),
+    pending: number
+  ) {
+    try {
+      const transfer = module.confirmLegacyLinkTransfer(value, value.id),
+        route = createExperimentRoute(transfer.canonical);
+      if (!route.ok) throw new Error('공유 주소를 만들지 못했습니다. 원본과 전체 호환 설정을 보존하세요.');
+      const session = await import('./legacy-link-session');
+      if (disposed || generation !== pending || preview !== value) return;
+      session.saveLegacyLinkSession(document.defaultView!.localStorage, transfer);
+      document.defaultView!.location.hash = route.value;
+    } catch (cause) {
+      if (!disposed && generation === pending)
+        showError(cause instanceof Error ? cause.message : '링크 전달 설정을 보관하지 못했습니다. 원본은 유지됩니다.');
+    }
+  }
   source.addEventListener('input', () => {
     fileSourceText = undefined;
     invalidate();
@@ -256,13 +399,14 @@ export function createLegacyMigrationPanel(document: Document) {
     }
   });
   const actions = element(document, 'div', 'lab-inline-actions');
-  actions.append(inspect, backup, canonical, adopt, cancel);
+  actions.append(inspect, backup, canonical, compatibility, adopt, cancel);
   body.append(
     label,
     source,
     fileLabel,
     file,
     duration.element,
+    queryBase.element,
     actions,
     notice,
     error,
@@ -274,6 +418,8 @@ export function createLegacyMigrationPanel(document: Document) {
     dispose() {
       disposed = true;
       generation++;
+      queryBase.dispose();
+      expansion?.dispose();
       for (const timer of timers) clearTimeout(timer);
       timers.clear();
       for (const url of urls) URL.revokeObjectURL(url);

@@ -127,6 +127,9 @@ export function createCoreInspector(document: Document, model: CoreModel, onChan
   );
   return {
     element: section.element,
+    setDisplayUnit(unit: 'rad' | 'deg') {
+      for (const control of controls.values()) control.setDisplayUnit(unit);
+    },
     update() {
       const busy = model.state.status === 'running';
       for (const control of controls.values()) control.input.disabled = busy;
