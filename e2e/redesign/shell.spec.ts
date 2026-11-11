@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { createExperimentRoute } from '../../src/product/persistence/share-route';
+import { defaultPlanarConfig, toCanonicalPlanar } from '../../src/product/adapters/physics/planar';
 import { experimentFixture } from '../../tests/product/contracts/fixtures';
 
 function productChunk(name: 'application' | 'learn' | 'lab'): (url: URL) => boolean {
@@ -38,6 +39,123 @@ async function audit(page: Page): Promise<void> {
       targets: item.nodes.map((node) => node.target)
     }))
   ).toEqual([]);
+}
+
+async function captureStorageBeforeMount(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    (window as unknown as { __s28ShellStorageBeforeMount: unknown }).__s28ShellStorageBeforeMount = {
+      local: Object.fromEntries(
+        Object.keys(localStorage)
+          .sort()
+          .map((key) => [key, localStorage.getItem(key)])
+      ),
+      session: Object.fromEntries(
+        Object.keys(sessionStorage)
+          .sort()
+          .map((key) => [key, sessionStorage.getItem(key)])
+      )
+    };
+  });
+}
+
+async function expectStorageUnchanged(page: Page): Promise<void> {
+  const state = await page.evaluate(() => ({
+    before: (window as unknown as { __s28ShellStorageBeforeMount: unknown }).__s28ShellStorageBeforeMount,
+    after: {
+      local: Object.fromEntries(
+        Object.keys(localStorage)
+          .sort()
+          .map((key) => [key, localStorage.getItem(key)])
+      ),
+      session: Object.fromEntries(
+        Object.keys(sessionStorage)
+          .sort()
+          .map((key) => [key, sessionStorage.getItem(key)])
+      )
+    }
+  }));
+  expect(state.before).toBeDefined();
+  expect(state.after).toEqual(state.before);
+}
+
+async function expectNativeLaboratory(page: Page, slug: 'double' | 'quantum-kicked-rotor', initialTime = 0) {
+  const core = slug === 'double';
+  const workspace = page.locator(core ? '.core-workspace' : '.discrete-workspace');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(core ? '점질량 이중 진자' : '양자 킥 회전자');
+  await expect(workspace).toHaveAttribute('data-lab-status', 'ready');
+  await expect(page.locator('#product-main .lab-workspace')).toHaveCount(1);
+  await expect(page.locator('#product-main .lab-flow-preview')).toHaveCount(0);
+  const run = workspace.locator(core ? '#lab-run-bar' : '#discrete-run');
+  await expect(run.getByRole('button', { name: '실행', exact: true })).toBeEnabled();
+  await expect(run.getByRole('button', { name: '한 단계', exact: true })).toBeEnabled();
+  await expect(run.getByRole('button', { name: '일시정지', exact: true })).toBeDisabled();
+  await expect(run.getByRole('button', { name: '실행 취소', exact: true })).toBeDisabled();
+  await expect(workspace.getByRole('tab', { name: '작업 공간', exact: true })).toHaveAttribute('aria-selected', 'true');
+  await expect(workspace.getByRole('tab', { name: '조건', exact: true })).toBeEnabled();
+  const clock = workspace.locator(core ? '#lab-time' : '#discrete-iteration');
+  await expect(clock).toHaveAttribute(core ? 'data-time' : 'data-iteration', String(initialTime));
+  if (core) {
+    await expect(workspace.getByRole('img', { name: '진자 애니메이션', exact: true })).toBeVisible();
+  } else {
+    await expect(workspace).toHaveAttribute('data-busy', 'false');
+    await expect(
+      workspace.locator('#discrete-preview').getByRole('img', { name: /^운동량 확률 분포\./ })
+    ).toBeVisible();
+    await expect(workspace.locator('#discrete-summary')).toHaveAttribute('data-norm', '1');
+  }
+  await page.evaluate(
+    () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+  );
+  await expect(workspace).toHaveAttribute('data-lab-status', 'ready');
+  await expect(clock).toHaveAttribute(core ? 'data-time' : 'data-iteration', String(initialTime));
+}
+
+async function expectPublishedRoute(page: Page, hash: string): Promise<void> {
+  const main = page.locator('#product-main');
+  if (hash === '#/learn') {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('움직임을 이해하는 배우기');
+    await expect(main.locator('.learn-course-card')).toHaveCount(8);
+    await expect(main).toContainText('현재 8개 과정의 86개 단원');
+    await expect(main.getByRole('link', { name: '첫 단원 시작하기', exact: true })).toHaveAttribute(
+      'href',
+      '#/learn/course-1/1.1'
+    );
+  } else if (hash === '#/learn/course-1') {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('이중진자의 모델과 운동방정식');
+    await expect(main.locator('.learn-unit-list > li')).toHaveCount(8);
+    await expect(main.locator('.learn-unit-state')).toHaveText(
+      Array.from({ length: 8 }, () => '단원 읽기 · 전용 실험 · 실험실에서 계속')
+    );
+    for (let unit = 1; unit <= 8; unit++)
+      await expect(main.locator(`.learn-unit-list a[href="#/learn/course-1/1.${unit}"]`)).toBeVisible();
+  } else if (hash === '#/learn/course-8/8.12') {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('notebook·figure·report·검토 패키지');
+    await expect(main.locator('.learn-unit')).toHaveAttribute('data-content-state', 'ready');
+    await expect(main.getByRole('heading', { name: '이번 단원의 질문', exact: true })).toBeVisible();
+    await expect(main.locator('.focus-mount')).toHaveAttribute('data-focus-load', 'ready');
+    const focus = main.locator('.focus-experiment');
+    await expect(focus).toHaveAttribute('data-focus-unit', '8.12');
+    await expect(focus).toHaveAttribute('data-focus-status', 'idle');
+    await expect(focus.locator('#focus-time')).toHaveAttribute('data-time', '0');
+    await expect(focus.getByRole('button', { name: '실험 실행', exact: true })).toBeEnabled();
+    await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();
+    await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');
+    const progress = main.getByLabel('단원 확인 진도', { exact: true });
+    await expect(progress).toHaveJSProperty('tagName', 'PROGRESS');
+    await expect(progress).toHaveJSProperty('max', 2);
+    await expect(progress).toHaveJSProperty('value', 0);
+    await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');
+    await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');
+  } else if (hash === '#/lab') {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('질문을 직접 시험하는 실험실');
+    await expect(main.locator('.lab-library')).toBeVisible();
+    await expect(main.locator('.lab-system-grid a[href="#/lab/double"]')).toBeVisible();
+    await expect(main.locator('.lab-system-grid a[href="#/lab/quantum-kicked-rotor"]')).toBeVisible();
+    await expect(main.locator('canvas')).toHaveCount(0);
+  } else if (hash === '#/lab/double') await expectNativeLaboratory(page, 'double');
+  else if (hash === '#/lab/quantum-kicked-rotor') await expectNativeLaboratory(page, 'quantum-kicked-rotor');
+  else throw new Error('Every selected route must have an explicit current published-content contract.');
+  await expectStorageUnchanged(page);
 }
 
 test.describe('S04 parallel application shell', () => {
@@ -87,6 +205,7 @@ test.describe('S04 parallel application shell', () => {
   });
 
   test('opens and reloads every route family without pretending future content is available', async ({ page }) => {
+    await captureStorageBeforeMount(page);
     for (const [hash, space] of [
       ['#/learn', 'learn'],
       ['#/learn/course-1', 'learn'],
@@ -98,35 +217,82 @@ test.describe('S04 parallel application shell', () => {
       await test.step(hash, async () => {
         await page.goto(`/next.html${hash}`);
         await ready(page, space);
+        await expectPublishedRoute(page, hash);
         const heading = await page.getByRole('heading', { level: 1 }).textContent();
         await page.reload();
         await ready(page, space);
         expect(new URL(page.url()).hash).toBe(hash);
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading!);
-        if (hash !== '#/learn' && hash !== '#/lab') {
-          await expect(page.locator('#product-main')).toContainText(/준비|예정|아직|제공/);
-          await expect(page.locator('#product-main canvas')).toHaveCount(0);
-        }
+        // These registered routes are published/native by S28. Unknown or
+        // malformed routes still require the explicit recovery checks below.
+        await expectPublishedRoute(page, hash);
       });
     }
   });
 
   test('validates shared experiment routes without starting or persisting an experiment', async ({ page }) => {
-    const shared = createExperimentRoute(experimentFixture());
-    if (!shared.ok) throw new Error('The existing S03 fixture must produce a valid share.');
+    await captureStorageBeforeMount(page);
+    const config = {
+      ...defaultPlanarConfig(),
+      parameters: { m1: 1.25, m2: 0.75, l1: 1.1, l2: 0.8, g: 9.8 },
+      initialState: [0.125, -0.25, 0.5, -0.75] as const,
+      gamma: 0.025,
+      startTime: 1.25,
+      duration: 0.04,
+      step: 0.002
+    };
+    const canonical = toCanonicalPlanar(config);
+    if (!canonical.ok) throw new Error('The native planar setup must produce a canonical experiment.');
+    const shared = createExperimentRoute(canonical.value);
+    if (!shared.ok) throw new Error('The native canonical experiment must produce a valid share.');
     await page.goto(`/next.html${shared.value}`);
     await ready(page, 'lab');
     await expect(page.locator('#product-main')).toContainText(/공유/);
     expect(new URL(page.url()).hash).toBe(shared.value);
+    await expectNativeLaboratory(page, 'double', config.startTime);
+    await expectStorageUnchanged(page);
     await page.reload();
     await ready(page, 'lab');
     expect(new URL(page.url()).hash).toBe(shared.value);
+    await expectNativeLaboratory(page, 'double', config.startTime);
+    await page.getByRole('tab', { name: '조건', exact: true }).click();
+    for (const [key, value] of Object.entries({
+      ...config.parameters,
+      gamma: config.gamma,
+      theta1: config.initialState[0],
+      theta2: config.initialState[1],
+      omega1: config.initialState[2],
+      omega2: config.initialState[3],
+      duration: config.duration,
+      step: config.step
+    }))
+      await expect(page.locator(`#lab-field-${key}`)).toHaveValue(String(value));
+    await expect(page.locator('#lab-integrator')).toHaveValue(config.integratorId);
+    await expectStorageUnchanged(page);
+
+    // The S03 wire-contract fixture predates the native planar model fields.
+    // Preserve its URL and reject unsupported execution rather than silently
+    // falling back to a different/default experiment.
+    const unsupported = createExperimentRoute(experimentFixture());
+    if (!unsupported.ok) throw new Error('The existing S03 fixture must retain its valid share format.');
+    await page.goto(`/next.html${unsupported.value}`);
+    await ready(page, 'lab');
+    expect(new URL(page.url()).hash).toBe(unsupported.value);
+    await expect(page.getByRole('alert')).toContainText('이 공유 설정을 실행할 수 없습니다.');
+    await expect(page.getByRole('link', { name: '기본 설정으로 시작', exact: true })).toHaveAttribute(
+      'href',
+      '#/lab/double'
+    );
+    await expect(page.locator('#lab-run-bar')).toHaveCount(0);
+    await expect(page.locator('#lab-time')).toHaveCount(0);
+    await expectStorageUnchanged(page);
 
     const mismatch = shared.value.replace('#/lab/double?', '#/lab/compound-double?');
     await page.goto(`/next.html${mismatch}`);
     await expect(page.locator('#product-main')).toHaveAttribute('data-product-state', 'invalid-route');
     expect(new URL(page.url()).hash).toBe(mismatch);
     await expect(page.locator('#product-main')).not.toContainText(shared.value.split('state=')[1]!);
+    await expectStorageUnchanged(page);
   });
 
   test('keeps unknown and malformed URLs intact and offers working navigation', async ({ page }) => {

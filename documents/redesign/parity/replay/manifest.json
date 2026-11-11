@@ -5,7 +5,7 @@
     {
       "name": "s28-bind-final-certificates.ts",
       "source": "tmp/s28-bind-final-certificates.ts",
-      "sha256": "e032f5749518c86a45b45d51a944aaf7e2edb7635e428d3ff9eb2a9d72bde04f",
+      "sha256": "366a23f3a150f17c0c00e0de9f0ecb9afedd53c3707b97e246f667093caea78a",
       "bytes": 20488
     },
     {
@@ -73,6 +73,12 @@
       "source": "tmp/s28-release-no-video-playwright.config.ts",
       "sha256": "1d7120e437a7bd59d6c298a8cf945b81875a6e2e5e9d36a47aa250a43fab40e8",
       "bytes": 3064
+    },
+    {
+      "name": "S28-final-browser-capture-plan-r3.json",
+      "source": "tmp/S28-final-browser-capture-plan-r3.json",
+      "sha256": "3f73a9902796198c467724c09fdd90c13b90084cb38485e224c0707370aa8fdf",
+      "bytes": 307393
     }
   ]
 }

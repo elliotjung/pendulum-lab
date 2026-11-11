@@ -2,7 +2,9 @@
 
 이 폴더는 실제 실행에 사용한 임시 생산 도구와 검토된 입력 계획의 원본 바이트를 보존한다. `manifest.json`은 각 파일의 SHA-256과 크기를 기록한다. 계획의 `executionStatus: unexecuted`는 수집 당시 상태이며 실행 성공 기록이 아니다. 최종 실행 결과와 판정은 이 폴더 밖의 실제 capture/report와 독립 인증 검사에서 확인한다.
 
-최신 기본 입력은 `S28-final-browser-capture-plan-r2.json`과 `s28-run-browser-groups-r2.ps1`이다. 원래 계획·실행기는 역사적 입력으로 그대로 보존한다. r2 계획은 Chromium g04의 capture/report/runName 세 필드를 새 시도 경로로 바꾸고, 향후 실행용 `configPath`를 별도 no-video config로 지정한다. 원래 실패 capture/report를 수정하거나 성공으로 바꾸지 않는다. r2 실행기의 기본 progress도 별도 `tmp/S28-final-browser-group-progress-r2.json`이며, 기존 성공 실행은 원래 capture의 시작·종료 시각과 결과를 `retained-existing-actual-execution`으로 기록한다. 재사용을 새 실행으로 세지 않는다.
+최신 binder 기본 입력은 `S28-final-browser-capture-plan-r3.json`이다. 원래 계획·r2 계획·실행기와 실패 증거는 역사적 입력으로 그대로 보존한다. r2 계획은 Chromium g04의 capture/report/runName 세 필드를 새 시도 경로로 바꾸고, 향후 실행용 `configPath`를 별도 no-video config로 지정했다. r3는 r2에서 g04의 capture/report/runName 세 필드만 다시 새 경로로 바꾸며 config와 모든1,120개 identity는 같다. 원래 실패 capture/report를 수정하거나 성공으로 바꾸지 않는다.
+
+기존 `s28-run-browser-groups-r2.ps1`를 재사용하되 `-PlanPath tmp/S28-final-browser-capture-plan-r3.json -ProgressPath tmp/S28-final-browser-group-progress-r3.json`을 명시한다. 실행기 자체의 기본 PlanPath는 여전히 역사적 r2이므로 r3를 생략해서 실행하지 않는다. 기존 성공 실행은 원래 capture의 시작·종료 시각과 결과를 `retained-existing-actual-execution`으로 기록하며 재사용을 새 실행으로 세지 않는다.
 
 `s28-release-no-video-playwright.config.ts`는 원래 release config의 정확한 사본에 `use.video: 'off'` 한 줄만 추가한다. 원래 config SHA `05ea4ef1d46ac868aad6889f21f99326cda022d1742f1193f9b74acaa0048be2`는 보존한다. 먼저 통과한 3개 Chromium 그룹은 원래 `retain-on-failure` 영상 설정과 실제 원래 command를 유지하며, 나머지 9개 그룹은 새 config로 진단 영상만 끈다. assertion·timeout·axe·trace·실패 screenshot·PNG 비교 한도·worker 1·retry 0·선택된 case 목록은 바꾸지 않는다. 과거 성공 12건도 영상이 켜진 원래 설정이므로 no-video 성공으로 다시 기록하지 않는다. 별도 config는 초기화 지연의 원인을 확정했다는 주장도 아니다.
 
@@ -30,7 +32,7 @@ Windows에서 원시 Playwright 첨부 경로가 기본 Git 경로 길이를 넘
 
 ```powershell
 $env:S28_CERTIFICATE_OUTPUT = 'tmp/S28-certificate-replay-review'
-$env:S28_BROWSER_CAPTURE_PLAN = 'tmp/S28-final-browser-capture-plan-r2.json'
+$env:S28_BROWSER_CAPTURE_PLAN = 'tmp/S28-final-browser-capture-plan-r3.json'
 node node_modules/tsx/dist/cli.mjs tmp/s28-bind-final-certificates.ts
 ```
 
@@ -62,7 +64,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Fresh unit execution failed.' }
 
 build 명령의 `--package-legacy yes`는 원래 copier·공개 보고서 privacy 경계까지 포함한다. build와 모든 browser 실행 동안 캡처되는 소스·테스트·config·build 바이트를 고정한다. 실패하면 원인을 고치고 새로운 attempt 경로로 다시 실행한다. timeout·assertion·skip·retry·수치 golden을 성공 표시를 위해 바꾸지 않는다.
 
-복원된 browser 계획들은 기존 증거 경로를 가리킨다. `S28-final-browser-capture-plan-r2.json`을 기준으로 새 실행용 별도 JSON 사본에서 다음 필드만 새 namespace로 바꾸고 원본 계획은 보존한다.
+복원된 browser 계획들은 기존 증거 경로를 가리킨다. `S28-final-browser-capture-plan-r3.json`을 기준으로 새 실행용 별도 JSON 사본에서 다음 필드만 새 namespace로 바꾸고 원본 계획은 보존한다.
 
 - `frozenBuildRoot`, `buildCapturePath`: 방금 만든 새 build와 capture.
 - 각 group의 `capturePath`, `reportPath`, `runName`: 겹치지 않는 새 경로와 이름. `id`, `project`, `files`, `expectedCases`, `expectedCaseIdentities` 및 전체 수는 그대로 둔다.

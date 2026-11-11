@@ -278,3 +278,11 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - trace 조사에서 두 검사 모두 PNG가 일치했고, 긴 지연은 browser/context 또는 axe의 임시 page 생성에 집중되었다. ffmpeg·CPU 경합 등 정확한 외부 원인은 확정하지 않는다. 새 config는 원래 SHA05ea4ef…를 그대로 보존하고 `use.video: 'off'` 한 줄만 추가한 SHA1d7120e4…다. 먼저 통과한 세 묶음은 실제 원래 command/config를 유지하며 앞으로9묶음만 새 config로 실행한다. matcher·전체1120identity·worker1/retry0는 동일하다.
 - 현재 보존 감사 actual exit0은 S27의2175파일 중2101동등·74명시 변경·예상 밖 보호 변경0, 두 Desktop 전달 사본 raw SHA일치를 기록한다. 이는 최종 source-freeze 인증이 아니다. 원시 timeout 분석/보존 보고서와 관련 로그·단일 config 차이 증거를 `parity/evidence/scoped-V2/`에 byte 그대로 복사하고 manifest로 결속했다.
 - snapshot 폴더 전체를 각 case의 sourcePaths에 연결한 임시 binder를 유지하고, 실제 command/configFile/captured/current config SHA를 별도 producer precheck 영수증으로 기록한다. 기존 core validator가 현재 tmp config를 다시 검사한다고 주장하지 않는다. 원래 계획·progress·실패 출력은 보존한다. 실패한 g04의 새 r2와 미실행9묶음, 전체1120건 및134행 인증, 이 checkpoint push와 최종 status commit/push는 아직 PENDING이다. next28 및 사용자 review28 미승인을 유지하며 S29는 시작하지 않는다.
+
+### CP8-S — 게시된 화면에 맞춘 shell 계약 재검증
+
+- `19fc695f00b2ff983281ee3b270aa0e68fc8e243`의 push와 live remote 일치를 확인했다. 이번 재개에서도 fetch 후 HEAD와 origin이 동일했다.
+- Chromium g04 r2는 78통과·1실패·14미실행이었다. 실제로 게시된 Lab에서 canvas가 없어야 한다는 S04의 옛 전제를 발견했다. shell 테스트의 17개 제목과 6개 경로, 기존 제한·axe·URL·복구 검사를 유지하며 현재 Learn과 native Lab의 정확한 준비 상태·설정·비실행·저장소 불변 계약으로 교체했다. 제품 소스·동결 build·수치 golden은 변경하지 않았다.
+- 전체 shell 34건의 첫 보완 실행은 32통과·2실패였다. 같은 진도 locator 실패 두 건에 대해 실제 label 연결을 읽고 PROGRESS/max2/value0을 검사하도록 수정했다. 현재 소스 SHA `59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a`의 해당 두 프로젝트 검사는 2/2, exit0, validtrue, skip/flaky/retry/runner error0으로 통과했다. 34/34의 새 실행으로 합산하지 않는다. 현재 파일 ESLint와 Prettier check도 각각 actual0이다.
+- 원본 실패 capture/report와 실제 첨부를 보존했다. 참조되지 않는 임시 Playwright cache는 성공 증거로 세지 않는다. 처음 세 그룹의 실제 281건은 관련 source/helper/PNG hash가 모두 일치해 유지하며 R3 계획으로 실패한 93건과 나머지 그룹을 실행한다.
+- 상세: `S28-CP8-S-current-shell-contracts.json`, `parity/evidence/scoped-S/`. 최종 1120건·134행 인증과 전체 최종 품질 검사, 구현/완료 status push는 아직 남아 있다. next28과 review28 미승인을 유지하며 S29를 시작하지 않는다.

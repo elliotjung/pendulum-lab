@@ -1,0 +1,1469 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--project=mobile-chrome",
+      "--max-failures=0",
+      "--update-snapshots=none",
+      "e2e/redesign/shell.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-no-video-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-shell-contract-r1-20261111-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-shell-contract-r1-20261111-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "none",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\shell.spec.ts",
+      "file": "redesign/shell.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S04 parallel application shell",
+          "file": "redesign/shell.spec.ts",
+          "line": 158,
+          "column": 6,
+          "specs": [
+            {
+              "title": "retains a deep URL and recovery guidance when the entry script cannot load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4511,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:13.088Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-ebba35985d56c8d5c0c8",
+              "file": "redesign/shell.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "opens Learn by default and preserves browser back, forward and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2900,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:19.892Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f7a482080385534cf864",
+              "file": "redesign/shell.spec.ts",
+              "line": 176,
+              "column": 3
+            },
+            {
+              "title": "opens and reloads every route family without pretending future content is available",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12305,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                          "column": 84,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                            "column": 84,
+                            "line": 143
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n\n  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "#/learn",
+                          "duration": 591
+                        },
+                        {
+                          "title": "#/learn/course-1",
+                          "duration": 398
+                        },
+                        {
+                          "title": "#/learn/course-8/8.12",
+                          "duration": 5239,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7",
+                            "location": {
+                              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                              "column": 84,
+                              "line": 143
+                            },
+                            "snippet": "  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {"
+                          }
+                        }
+                      ],
+                      "startTime": "2026-11-11T04:32:22.817Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                        "column": 84,
+                        "line": 143
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-5f01313995abdc73cbf9",
+              "file": "redesign/shell.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "validates shared experiment routes without starting or persisting an experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9564,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:36.493Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-5072033929ca150fa3d3",
+              "file": "redesign/shell.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "keeps unknown and malformed URLs intact and offers working navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2496,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "#/missing",
+                          "duration": 382
+                        },
+                        {
+                          "title": "#/learn/course-9",
+                          "duration": 146
+                        },
+                        {
+                          "title": "#/lab/%64ouble",
+                          "duration": 111
+                        },
+                        {
+                          "title": "#/lab/double?state=pe1.bm90LWpzb24",
+                          "duration": 155
+                        }
+                      ],
+                      "startTime": "2026-11-11T04:32:46.956Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-3a7875d5d91f8b17f228",
+              "file": "redesign/shell.spec.ts",
+              "line": 295,
+              "column": 3
+            },
+            {
+              "title": "keeps user storage unchanged and never loads the legacy runtime",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6650,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:49.470Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f23fbb333be17822b890",
+              "file": "redesign/shell.spec.ts",
+              "line": 310,
+              "column": 3
+            },
+            {
+              "title": "supports skip navigation and keyboard space changes with route focus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2158,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:56.130Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-cbfae913944da6d9bcd2",
+              "file": "redesign/shell.spec.ts",
+              "line": 372,
+              "column": 3
+            },
+            {
+              "title": "passes full axe checks on both spaces and invalid route recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15415,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:32:58.301Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "Learn shell",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-25a57--and-invalid-route-recovery-chromium\\attachments\\Learn-shell-52e82b5458fb91b49603bde4e4f8029f70ce8e4e.png"
+                        },
+                        {
+                          "name": "Lab shell",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-25a57--and-invalid-route-recovery-chromium\\attachments\\Lab-shell-1e49892ccdd4149c254144b2296bb0f0c66e2d98.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-87d7d6665f268e7825f3",
+              "file": "redesign/shell.spec.ts",
+              "line": 392,
+              "column": 3
+            },
+            {
+              "title": "keeps navigation and content within a 320px viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5004,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:13.728Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-16d016f176fcfc4e1002",
+              "file": "redesign/shell.spec.ts",
+              "line": 409,
+              "column": 3
+            },
+            {
+              "title": "contains bootstrap chunk failure and recovers through a real reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7595,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:18.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-90f0ec63f517f3303dd8",
+              "file": "redesign/shell.spec.ts",
+              "line": 422,
+              "column": 3
+            },
+            {
+              "title": "contains lazy chunk failure while keeping the common navigation usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3572,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:26.348Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-a9fe879f1b9aee8a2e11",
+              "file": "redesign/shell.spec.ts",
+              "line": 436,
+              "column": 3
+            },
+            {
+              "title": "contains an application initialization exception before the shell mounts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6417,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:29.933Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-fb3e5e00e80a5091f9e7",
+              "file": "redesign/shell.spec.ts",
+              "line": 450,
+              "column": 3
+            },
+            {
+              "title": "contains a view rendering exception and allows navigation to the other space",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2269,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:36.373Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-b966c4b8a1bc4fce4c32",
+              "file": "redesign/shell.spec.ts",
+              "line": 467,
+              "column": 3
+            },
+            {
+              "title": "shows loading and ignores a late chunk after the user changes spaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2271,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:38.652Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-0538e2dbb11904f682bd",
+              "file": "redesign/shell.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "cancels a pending view without allowing its late completion to replace the cancellation screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3459,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:40.934Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-3633d107a012aaf40174",
+              "file": "redesign/shell.spec.ts",
+              "line": 523,
+              "column": 3
+            },
+            {
+              "title": "contains uncaught browser errors and rejected event work after mounting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6652,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:44.402Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-ec6b8282fe62f2610b64",
+              "file": "redesign/shell.spec.ts",
+              "line": 564,
+              "column": 3
+            },
+            {
+              "title": "continues to open the existing application alongside the new entrypoint",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12222,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:33:51.063Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-1ea4a37701161c015a27",
+              "file": "redesign/shell.spec.ts",
+              "line": 584,
+              "column": 3
+            },
+            {
+              "title": "retains a deep URL and recovery guidance when the entry script cannot load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12347,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:04.662Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-ddc1024b64721ede6c79",
+              "file": "redesign/shell.spec.ts",
+              "line": 159,
+              "column": 3
+            },
+            {
+              "title": "opens Learn by default and preserves browser back, forward and reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10964,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:18.015Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-86844bf1b0416b02a2a8",
+              "file": "redesign/shell.spec.ts",
+              "line": 176,
+              "column": 3
+            },
+            {
+              "title": "opens and reloads every route family without pretending future content is available",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8181,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7",
+                        "location": {
+                          "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                          "column": 84,
+                          "line": 143
+                        },
+                        "snippet": "  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                            "column": 84,
+                            "line": 143
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n\n  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "#/learn",
+                          "duration": 542
+                        },
+                        {
+                          "title": "#/learn/course-1",
+                          "duration": 528
+                        },
+                        {
+                          "title": "#/learn/course-8/8.12",
+                          "duration": 5234,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveJSProperty\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\nExpected: \u001b[32m0\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveJSProperty\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })\u001b[22m\n\n    at expectPublishedRoute (C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:143:84)\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:217:9\n    at C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts:214:7",
+                            "location": {
+                              "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                              "column": 84,
+                              "line": 143
+                            },
+                            "snippet": "  141 |     await expect(focus.getByRole('button', { name: '실험 취소', exact: true })).toBeDisabled();\n  142 |     await expect(focus.locator('[data-focus-results]')).toContainText('아직 계산 결과가 없습니다.');\n> 143 |     await expect(main.getByRole('progressbar', { name: '단원 확인 진도', exact: true })).toHaveJSProperty('value', 0);\n      |                                                                                    ^\n  144 |     await expect(main.locator('.learn-review-status')).toContainText('출처: 대조 완료');\n  145 |     await expect(main.locator('.learn-review-status')).toContainText('사람·전문가: 검토 전');\n  146 |   } else if (hash === '#/lab') {"
+                          }
+                        }
+                      ],
+                      "startTime": "2026-11-11T04:34:28.990Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-mobile-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-mobile-chrome\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-026a4-future-content-is-available-mobile-chrome\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\redesign\\shell.spec.ts",
+                        "column": 84,
+                        "line": 143
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-40d472924db8a66b4ce6",
+              "file": "redesign/shell.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "validates shared experiment routes without starting or persisting an experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4550,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:38.410Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-d00a4190ad6016d01cd4",
+              "file": "redesign/shell.spec.ts",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "keeps unknown and malformed URLs intact and offers working navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6871,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "#/missing",
+                          "duration": 383
+                        },
+                        {
+                          "title": "#/learn/course-9",
+                          "duration": 140
+                        },
+                        {
+                          "title": "#/lab/%64ouble",
+                          "duration": 153
+                        },
+                        {
+                          "title": "#/lab/double?state=pe1.bm90LWpzb24",
+                          "duration": 119
+                        }
+                      ],
+                      "startTime": "2026-11-11T04:34:43.796Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-1df959d8f7bc47098112",
+              "file": "redesign/shell.spec.ts",
+              "line": 295,
+              "column": 3
+            },
+            {
+              "title": "keeps user storage unchanged and never loads the legacy runtime",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2428,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:50.676Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-586824406724379dab7e",
+              "file": "redesign/shell.spec.ts",
+              "line": 310,
+              "column": 3
+            },
+            {
+              "title": "supports skip navigation and keyboard space changes with route focus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6638,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:53.114Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-6d67fc8bf841a7809b46",
+              "file": "redesign/shell.spec.ts",
+              "line": 372,
+              "column": 3
+            },
+            {
+              "title": "passes full axe checks on both spaces and invalid route recovery",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12298,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:34:59.763Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "Learn shell",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-25a57--and-invalid-route-recovery-mobile-chrome\\attachments\\Learn-shell-0f334d20a81b9a48281720ac20596b461bc63e15.png"
+                        },
+                        {
+                          "name": "Lab shell",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-shell-contract-r1-20261111-browser-output\\redesign-shell-S04-paralle-25a57--and-invalid-route-recovery-mobile-chrome\\attachments\\Lab-shell-b5b3dff0f4a35494cf260c7203f2e22c908f3bb5.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-475058338838083a0e46",
+              "file": "redesign/shell.spec.ts",
+              "line": 392,
+              "column": 3
+            },
+            {
+              "title": "keeps navigation and content within a 320px viewport",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13917,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:12.072Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-7220b7b0c9fefe487eb1",
+              "file": "redesign/shell.spec.ts",
+              "line": 409,
+              "column": 3
+            },
+            {
+              "title": "contains bootstrap chunk failure and recovers through a real reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3380,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:26.003Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-80710690fc9af909dcd8",
+              "file": "redesign/shell.spec.ts",
+              "line": 422,
+              "column": 3
+            },
+            {
+              "title": "contains lazy chunk failure while keeping the common navigation usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3609,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:29.396Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-a448f46038ced78f1e82",
+              "file": "redesign/shell.spec.ts",
+              "line": 436,
+              "column": 3
+            },
+            {
+              "title": "contains an application initialization exception before the shell mounts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2099,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:33.016Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-035b84b578fd19779fb3",
+              "file": "redesign/shell.spec.ts",
+              "line": 450,
+              "column": 3
+            },
+            {
+              "title": "contains a view rendering exception and allows navigation to the other space",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6662,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:35.127Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f60e103606aec3e3415b",
+              "file": "redesign/shell.spec.ts",
+              "line": 467,
+              "column": 3
+            },
+            {
+              "title": "shows loading and ignores a late chunk after the user changes spaces",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11040,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:41.797Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-9502d2aa90ede654a44c",
+              "file": "redesign/shell.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "cancels a pending view without allowing its late completion to replace the cancellation screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3306,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:52.846Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-89c19d1a20c1a44aaafd",
+              "file": "redesign/shell.spec.ts",
+              "line": 523,
+              "column": 3
+            },
+            {
+              "title": "contains uncaught browser errors and rejected event work after mounting",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2187,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:56.164Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-1d161cebfb2c3f981abd",
+              "file": "redesign/shell.spec.ts",
+              "line": 564,
+              "column": 3
+            },
+            {
+              "title": "continues to open the existing application alongside the new entrypoint",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "mobile-chrome",
+                  "projectName": "mobile-chrome",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3935,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T04:35:58.360Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2e1a52c019c5974ea5a1-f733005998b5e0f08b88",
+              "file": "redesign/shell.spec.ts",
+              "line": 584,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T04:32:10.519Z",
+    "duration": 232956.36800000002,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

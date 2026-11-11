@@ -1,0 +1,13 @@
+{
+  "progress": "<progress class=\"\" id=\"learn-check-progress\" max=\"2\" value=\"0\"></progress>",
+  "labels": [
+    "<label class=\"\" for=\"learn-check-progress\" lang=\"ko\">단원 확인 진도</label>"
+  ],
+  "matchingLabels": [
+    "<label class=\"\" for=\"learn-check-progress\" lang=\"ko\">단원 확인 진도</label>"
+  ],
+  "idCount": 1,
+  "roleCount": 2,
+  "namedRoleCount": 0,
+  "labelCount": 1
+}

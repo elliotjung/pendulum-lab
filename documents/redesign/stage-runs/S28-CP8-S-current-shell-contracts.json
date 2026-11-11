@@ -1,0 +1,473 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP8-S-current-shell-contracts",
+  "createdAt": "2026-11-11T13:50:59.470417+09:00",
+  "draftOnly": false,
+  "completion": false,
+  "scopeCompletion": true,
+  "scope": "Replace obsolete S04 placeholder assumptions for already published Learn/native Lab routes; current two-project route-family recheck is successful. Historical whole34 remains failed and is not rewritten. Final93-group/1120/parity134/status publication remain pending.",
+  "parentCheckpoint": {
+    "commit": "19fc695f00b2ff983281ee3b270aa0e68fc8e243",
+    "pushExitCodeObservedByParent": 0,
+    "liveExactRemoteMatchObservedByParent": true,
+    "remoteOperationByThisProducer": false
+  },
+  "sourceSnapshot": [
+    {
+      "path": "e2e/redesign/shell.spec.ts",
+      "sha256": "59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a"
+    }
+  ],
+  "ownedChangedPaths": ["e2e/redesign/shell.spec.ts"],
+  "preservedTestContract": {
+    "testCount": 17,
+    "bothProjectsCases": 34,
+    "titlesUnchanged": true,
+    "sixSelectedRouteIdentitiesUnchanged": true,
+    "timeoutsChanged": false,
+    "skipRetryAxeAssertionsUrlBackReloadStorageRecoveryRemoved": false,
+    "productionRuntimeBuildConfigOrPngChanged": false,
+    "noZeroWorkerConstructionRuleInvented": true
+  },
+  "changeIntent": [
+    "Published Learn now asserts8courses/86units/course1eightpublishedunits and8.12realreadycontent/idleFocus/time0/progress0/sourcechecked-humanreviewpending.",
+    "Actual double/QKR Lab asserts exactnativeheading,workspaceidentity,ready,timeoriterationunchangedacrosstwoRAFs,accessiblecontrolsandscene,run/stepenabled,pause/canceldisabled.",
+    "Full local/session storage snapshots beforemount and afterready/reload must match.",
+    "Valid native canonical share restores exact custom physicalinitialconditions/integrator/starttime1.25 without starting/saving. The original S03 wirefixture retains recoverable native-model refusal instead of silent fallback; mismatch rejection is retained.",
+    "Root narrowed one locator to the actuallylabelled native PROGRESS element and checks tagName=PROGRESS,max=2,value=0. No production accessibility changes or weaker genericexists check."
+  ],
+  "historicalMainGroup": {
+    "capture": {
+      "path": "documents/redesign/parity/evidence/final-browser-chromium-g04-r2.capture.json",
+      "sha256": "235a39d6a0a6b0e2397fe5f16f70026cb613e9e81ae947c020d9d2a52e7ad80a"
+    },
+    "report": {
+      "path": "documents/redesign/parity/evidence/final-browser-chromium-g04-r2.report.json",
+      "sha256": "1e7de781b89ab770a51312e87744ae61cdf55d47186433a3fc0910869beb7a7e"
+    },
+    "actualExitCode": 1,
+    "captureValid": false,
+    "captureErrors": [
+      "Actual child runner exited 1.",
+      "Runner report: Playwright report has skipped/failed/flaky cases or runner errors.",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › opens and reloads every route family without pretending future content is available",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › validates shared experiment routes without starting or persisting an experiment",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › keeps unknown and malformed URLs intact and offers working navigation",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › keeps user storage unchanged and never loads the legacy runtime",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › supports skip navigation and keyboard space changes with route focus",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › passes full axe checks on both spaces and invalid route recovery",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › keeps navigation and content within a 320px viewport",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › contains bootstrap chunk failure and recovers through a real reload",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › contains lazy chunk failure while keeping the common navigation usable",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › contains an application initialization exception before the shell mounts",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › contains a view rendering exception and allows navigation to the other space",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › shows loading and ignores a late chunk after the user changes spaces",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › cancels a pending view without allowing its late completion to replace the cancellation screen",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › contains uncaught browser errors and rejected event work after mounting",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › continues to open the existing application alongside the new entrypoint"
+    ],
+    "startedAt": "2026-11-10T23:53:52.982Z",
+    "finishedAt": "2026-11-11T00:00:02.631Z",
+    "actualRunnerDurationMs": 368847.54600000003,
+    "passed": 78,
+    "failed": 1,
+    "skippedOrNotRun": 14,
+    "flaky": 0,
+    "runnerErrors": [
+      {
+        "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+      }
+    ],
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--max-failures=1",
+      "e2e/redesign/browser-api.spec.ts",
+      "e2e/redesign/core-diagnostics.spec.ts",
+      "e2e/redesign/driven-pendulum.spec.ts",
+      "e2e/redesign/locale.spec.ts",
+      "e2e/redesign/migration.spec.ts",
+      "e2e/redesign/product-setup.spec.ts",
+      "e2e/redesign/shell.spec.ts",
+      "--reporter=line,json"
+    ],
+    "shellSource": [
+      {
+        "path": "e2e/redesign/shell.spec.ts",
+        "sha256": "6525315171f0b0a9316ab7115fb60e0869a97b15e2250a374f479b55afb075ea"
+      }
+    ],
+    "frozenBuildFingerprint": "ff8857238f503c24220cdb44f41dc29f1047f2bd54207965c2d87d764bb1ea3e",
+    "buildCapture": {
+      "path": "documents/redesign/parity/evidence/final-build.capture.json",
+      "sha256": "d4ab64653a1d24fe9b5926d2c26195d322a8af0d07f00d9fe49c505097938353"
+    },
+    "cases": [
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "opens and reloads every route family without pretending future content is available",
+        "project": "chromium",
+        "status": "unexpected",
+        "results": [
+          {
+            "status": "failed",
+            "durationMs": 8898,
+            "errorExcerpt": [
+              "Error: expect(locator).toHaveCount(expected) failed",
+              "",
+              "Locator:  locator('#product-main canvas')",
+              "Expected: 0",
+              "Received: 2",
+              "Timeout:  5000ms",
+              "",
+              "Call log:",
+              "  - Expect \"toHaveCount\" with timeout 5000ms",
+              "  - waiting for locator('#product-main canvas')",
+              "    14 × locator resolved to 2 elements",
+              "       - unexpected value \"2\""
+            ]
+          }
+        ]
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "validates shared experiment routes without starting or persisting an experiment",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "keeps unknown and malformed URLs intact and offers working navigation",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "keeps user storage unchanged and never loads the legacy runtime",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "supports skip navigation and keyboard space changes with route focus",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "passes full axe checks on both spaces and invalid route recovery",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "keeps navigation and content within a 320px viewport",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "contains bootstrap chunk failure and recovers through a real reload",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "contains lazy chunk failure while keeping the common navigation usable",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "contains an application initialization exception before the shell mounts",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "contains a view rendering exception and allows navigation to the other space",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "shows loading and ignores a late chunk after the user changes spaces",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "cancels a pending view without allowing its late completion to replace the cancellation screen",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "contains uncaught browser errors and rejected event work after mounting",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "continues to open the existing application alongside the new entrypoint",
+        "project": "chromium",
+        "status": "skipped",
+        "results": []
+      }
+    ],
+    "certifiedAsSuccessful": false
+  },
+  "historicalWholeShell": {
+    "capture": {
+      "path": "documents/redesign/parity/evidence/shell-contract-r1.capture.json",
+      "sha256": "0ae4b3d0ff3328f06f12573e3cd40a152cfd274ad82c1412397f90e8752a64eb"
+    },
+    "report": {
+      "path": "documents/redesign/parity/evidence/shell-contract-r1.report.json",
+      "sha256": "9d329b9342612dcfd1b6beed0b7a98b053b44b113f84fbd0f080268c46120db0"
+    },
+    "actualExitCode": 1,
+    "captureValid": false,
+    "captureErrors": [
+      "Actual child runner exited 1.",
+      "Runner report: Playwright report has skipped/failed/flaky cases or runner errors.",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › opens and reloads every route family without pretending future content is available",
+      "Runner report: Playwright case did not pass once without retry: S04 parallel application shell › opens and reloads every route family without pretending future content is available"
+    ],
+    "startedAt": "2026-11-11T04:32:09.887Z",
+    "finishedAt": "2026-11-11T04:36:03.675Z",
+    "actualRunnerDurationMs": 232956.36800000002,
+    "passed": 32,
+    "failed": 2,
+    "skippedOrNotRun": 0,
+    "flaky": 0,
+    "runnerErrors": [],
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--project=mobile-chrome",
+      "--max-failures=0",
+      "--update-snapshots=none",
+      "e2e/redesign/shell.spec.ts",
+      "--reporter=line,json"
+    ],
+    "shellSource": [
+      {
+        "path": "e2e/redesign/shell.spec.ts",
+        "sha256": "51acef444dc0ac60ede389219741c6ff2974c7caccbfd6b3e1d3b39df41fca08"
+      }
+    ],
+    "frozenBuildFingerprint": "ff8857238f503c24220cdb44f41dc29f1047f2bd54207965c2d87d764bb1ea3e",
+    "buildCapture": {
+      "path": "documents/redesign/parity/evidence/final-build.capture.json",
+      "sha256": "d4ab64653a1d24fe9b5926d2c26195d322a8af0d07f00d9fe49c505097938353"
+    },
+    "cases": [
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "opens and reloads every route family without pretending future content is available",
+        "project": "chromium",
+        "status": "unexpected",
+        "results": [
+          {
+            "status": "failed",
+            "durationMs": 12305,
+            "errorExcerpt": [
+              "Error: expect(locator).toHaveJSProperty(expected) failed",
+              "",
+              "Locator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })",
+              "Expected: 0",
+              "Timeout: 5000ms",
+              "Error: element(s) not found",
+              "",
+              "Call log:",
+              "  - Expect \"toHaveJSProperty\" with timeout 5000ms",
+              "  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })"
+            ]
+          }
+        ]
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "opens and reloads every route family without pretending future content is available",
+        "project": "mobile-chrome",
+        "status": "unexpected",
+        "results": [
+          {
+            "status": "failed",
+            "durationMs": 8181,
+            "errorExcerpt": [
+              "Error: expect(locator).toHaveJSProperty(expected) failed",
+              "",
+              "Locator: locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })",
+              "Expected: 0",
+              "Timeout: 5000ms",
+              "Error: element(s) not found",
+              "",
+              "Call log:",
+              "  - Expect \"toHaveJSProperty\" with timeout 5000ms",
+              "  - waiting for locator('#product-main').getByRole('progressbar', { name: '단원 확인 진도', exact: true })"
+            ]
+          }
+        ]
+      }
+    ],
+    "certifiedAsSuccessful": false,
+    "epochMeaning": "All34 actual cases ran on shellSHA51acef...,32passed and only route-family bothproject casesfailed at the ambiguous progressbar role locator."
+  },
+  "currentTargetedRecheck": {
+    "capture": {
+      "path": "documents/redesign/parity/evidence/shell-routes-r2.capture.json",
+      "sha256": "e0ce0cae0d623a16da7d3a4d5f1f186e0e792ef65998740ce9c202f8a978054d"
+    },
+    "report": {
+      "path": "documents/redesign/parity/evidence/shell-routes-r2.report.json",
+      "sha256": "167a05275aa3fafc3f7372349548ee62b1176bb75f49aff4fdf56c6db5cb8237"
+    },
+    "actualExitCode": 0,
+    "captureValid": true,
+    "captureErrors": [],
+    "startedAt": "2026-11-11T04:41:56.187Z",
+    "finishedAt": "2026-11-11T04:42:25.829Z",
+    "actualRunnerDurationMs": 28962.99,
+    "passed": 2,
+    "failed": 0,
+    "skippedOrNotRun": 0,
+    "flaky": 0,
+    "runnerErrors": [],
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--project=mobile-chrome",
+      "--max-failures=0",
+      "--update-snapshots=none",
+      "--grep",
+      "opens and reloads every route family without pretending future content is available$",
+      "e2e/redesign/shell.spec.ts",
+      "--reporter=line,json"
+    ],
+    "shellSource": [
+      {
+        "path": "e2e/redesign/shell.spec.ts",
+        "sha256": "59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a"
+      }
+    ],
+    "frozenBuildFingerprint": "ff8857238f503c24220cdb44f41dc29f1047f2bd54207965c2d87d764bb1ea3e",
+    "buildCapture": {
+      "path": "documents/redesign/parity/evidence/final-build.capture.json",
+      "sha256": "d4ab64653a1d24fe9b5926d2c26195d322a8af0d07f00d9fe49c505097938353"
+    },
+    "cases": [
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "opens and reloads every route family without pretending future content is available",
+        "project": "chromium",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 7131,
+            "errorExcerpt": []
+          }
+        ]
+      },
+      {
+        "file": "redesign/shell.spec.ts",
+        "title": "opens and reloads every route family without pretending future content is available",
+        "project": "mobile-chrome",
+        "status": "expected",
+        "results": [
+          {
+            "status": "passed",
+            "durationMs": 11985,
+            "errorExcerpt": []
+          }
+        ]
+      }
+    ],
+    "currentShellShaMatchesActualCapture": true,
+    "testRetries": 0,
+    "meaning": "Exactly2 fresh current-source route-family cases passed, oneChromium/onePixel5. This does not relabel the prior whole34 report or imply a new34/34run."
+  },
+  "currentScopedQuality": {
+    "parentReceipt": {
+      "path": "tmp/S28-shell-current-quality-20261111-r2.json",
+      "sha256": "c84979e7c0a1ebd46070a6cbcf09419f0f54f9509846076523a5cca518a09896"
+    },
+    "exactParentReceipt": {
+      "schema": "pendulum-s28-observed-quality-receipt/v1",
+      "source": "e2e/redesign/shell.spec.ts",
+      "sourceSha256": "59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a",
+      "observedAtUtc": "2026-11-11T04:49:39.1510931Z",
+      "observations": [
+        {
+          "command": ["node", "node_modules/eslint/bin/eslint.js", "e2e/redesign/shell.spec.ts"],
+          "actualExitCode": 0,
+          "basis": "Parent directly observed command exit status in tool result."
+        },
+        {
+          "command": ["node", "node_modules/prettier/bin/prettier.cjs", "--check", "e2e/redesign/shell.spec.ts"],
+          "actualExitCode": 0,
+          "basis": "Parent directly observed command exit status and All matched files use Prettier code style."
+        }
+      ],
+      "scope": "Not a fresh whole typecheck or full34 browser pass."
+    },
+    "wholeTypecheck": {
+      "actualExitCodeObservedByParent": 0,
+      "epoch": "Before the narrow progress locator/tagName/max/value fix, source51acef...; no freshcurrentwhole-typecheck claim."
+    }
+  },
+  "policyClosure": {
+    "newStaticImport": "../../src/product/adapters/physics/planar (defaultPlanarConfig,toCanonicalPlanar)",
+    "reportedReadOnlyAudit": "Staticclosure113paths was alreadycovered by existinglocale-theme269paths; root/replayagentperformexact finalread-onlyclosurecheck.",
+    "firstRetained281CasesAffected": false,
+    "policyModifiedByThisProducer": false
+  },
+  "remaining": {
+    "mainGroupPlan": "tmp/S28-final-browser-capture-plan-r3.json",
+    "mainGroup04ExpectedCases": 93,
+    "mainGroup04R3Result": "PENDING",
+    "allSelectedBrowserCases": 1120,
+    "allSelectedBrowserFinalResult": "PENDING",
+    "finalCertifiedParityRows": 134,
+    "finalCertification": "PENDING",
+    "finalPositiveParityTests": "PENDING",
+    "finalQualitySecretAndSourceFreeze": "PENDING",
+    "implementationCheckpointCommitPush": "PENDING",
+    "finalStatusCommitPush": "PENDING",
+    "nextStage": 28,
+    "userGate28Approved": false,
+    "approvedReviewGates": [7, 9, 17, 24]
+  },
+  "limits": {
+    "newTestBrowserBuildExecutedByThisProducer": false,
+    "sourceChangedByThisProducer": false,
+    "gitWrites": false,
+    "humanExpertReviewCertified": false,
+    "modelSelectorObserved": false
+  }
+}

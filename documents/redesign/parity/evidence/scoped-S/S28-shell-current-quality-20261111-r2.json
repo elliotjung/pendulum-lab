@@ -1,0 +1,28 @@
+{
+  "schema": "pendulum-s28-observed-quality-receipt/v1",
+  "source": "e2e/redesign/shell.spec.ts",
+  "sourceSha256": "59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a",
+  "observedAtUtc": "2026-11-11T04:49:39.1510931Z",
+  "observations": [
+    {
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "e2e/redesign/shell.spec.ts"
+      ],
+      "actualExitCode": 0,
+      "basis": "Parent directly observed command exit status in tool result."
+    },
+    {
+      "command": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        "e2e/redesign/shell.spec.ts"
+      ],
+      "actualExitCode": 0,
+      "basis": "Parent directly observed command exit status and All matched files use Prettier code style."
+    }
+  ],
+  "scope": "Not a fresh whole typecheck or full34 browser pass."
+}

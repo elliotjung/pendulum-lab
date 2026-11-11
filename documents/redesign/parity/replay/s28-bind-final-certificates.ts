@@ -20,7 +20,7 @@ const plan=read('tmp/S28-certificate-case-plan.json');
 const policy=read('documents/redesign/parity/S28-certificate-policy.json') as ParityCertificatePolicy;
 if(plan.missing.length||plan.summary.rowsWithAllFourFacets!==134||policy.rowIds.length!==134)
  throw Error('The reviewed candidate/policy plan is incomplete.');
-const executionPlanPath=process.env.S28_BROWSER_CAPTURE_PLAN??'tmp/S28-final-browser-capture-plan-r2.json';
+const executionPlanPath=process.env.S28_BROWSER_CAPTURE_PLAN??'tmp/S28-final-browser-capture-plan-r3.json';
 const executionPlan=read(executionPlanPath);
 const browserGroups=executionPlan.groups;
 if(executionPlan.schema!=='pendulum-s28-browser-capture-plan/v1'||!Array.isArray(browserGroups)||!browserGroups.length||
