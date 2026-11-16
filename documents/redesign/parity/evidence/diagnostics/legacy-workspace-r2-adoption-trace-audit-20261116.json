@@ -1,0 +1,52 @@
+{
+  "schema": "pendulum-s28-readonly-adoption-trace-analysis/v1",
+  "readOnly": true,
+  "report": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g06-r2.report.json",
+    "sha256": "a13bf7054b045c4890ea24775265cbcb20b9c7104285dc357c728e9cdf03cefa"
+  },
+  "capture": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g06-r2.capture.json",
+    "sha256": "c2e8214ac3afe5e4b4d0464defb610ca68c027b646f55ed8b033855ca776d640"
+  },
+  "actualStats": {
+    "startTime": "2026-11-11T05:11:40.928Z",
+    "duration": 311870.477,
+    "expected": 59,
+    "skipped": 33,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "failedCases": [
+    {
+      "file": "e2e/redesign/legacy-workspace.spec.ts",
+      "title": "imports all native research DB stores, reads exact backup and typed assets, then restores adoption after reload",
+      "project": "chromium",
+      "actualStatus": "failed",
+      "actualDurationMs": 12825,
+      "trace": {
+        "path": "documents/redesign/parity/evidence/S28-final-chromium-g06-r2-20261111-browser-output/redesign-legacy-workspace--2d40b-tores-adoption-after-reload-chromium/trace.zip",
+        "sha256": "f66caa6ec9fb7a815738e76e9cfbbec0c5ef2af4b2891f58337bca2ad9a11dfe"
+      },
+      "errorContext": {
+        "path": "documents/redesign/parity/evidence/S28-final-chromium-g06-r2-20261111-browser-output/redesign-legacy-workspace--2d40b-tores-adoption-after-reload-chromium/error-context.md",
+        "sha256": "af6dd0af16b79f14fca7c95272d47ca2ff1ea873863fb59da498e47980775b59"
+      },
+      "adoptClick": {
+        "startTraceElapsedMs": 7205.145,
+        "durationMs": 33.3
+      },
+      "reload": {
+        "startTraceElapsedMs": 7238.813,
+        "gapAfterClickCompletionMs": 0.368
+      },
+      "missingOldSynchronization": "No completed-adoption status expectation between click and reload.",
+      "actualFailure": "Saved archive option expected1 but observed0 for existing5000ms expectation; UI status says separate product archive0.",
+      "newTestBoundary": "Wait for visible status containing 별도 product DB에 보관 before reload, matching first workspace test.",
+      "sourceProof": "Panel awaits store.save before adopted/adoptPart/render and completion status. Store save awaits tx.oncomplete. Panel dispose aborts controller and closes store.",
+      "interpretation": "Source plus0.368ms immediate reload supports cancellation before adoption completion; trace does not itself record the IndexedDB transaction-abort event, so this is not proof of a product persistence defect."
+    }
+  ],
+  "testsRun": 0,
+  "sourceEdits": 0
+}

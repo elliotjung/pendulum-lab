@@ -5,7 +5,7 @@
     {
       "name": "s28-bind-final-certificates.ts",
       "source": "tmp/s28-bind-final-certificates.ts",
-      "sha256": "366a23f3a150f17c0c00e0de9f0ecb9afedd53c3707b97e246f667093caea78a",
+      "sha256": "81eda60e8c61956589fe215d82447f1dee60e99abe6ccf8e2b237338df41a0e6",
       "bytes": 20488
     },
     {
@@ -79,6 +79,18 @@
       "source": "tmp/S28-final-browser-capture-plan-r3.json",
       "sha256": "3f73a9902796198c467724c09fdd90c13b90084cb38485e224c0707370aa8fdf",
       "bytes": 307393
+    },
+    {
+      "name": "S28-final-browser-capture-plan-r4.json",
+      "source": "tmp/S28-final-browser-capture-plan-r4.json",
+      "sha256": "0bcf983a6701b2313bc39c9c53bbf2edba998cbbd62e06db7368ea1584b99ff5",
+      "bytes": 307402
+    },
+    {
+      "name": "S28-final-browser-capture-plan-r5.json",
+      "source": "tmp/S28-final-browser-capture-plan-r5.json",
+      "sha256": "55e008e933bac8e53a45282f17cc55ccf2d4a573b1910c904c8953165d4009bb",
+      "bytes": 307402
     }
   ]
 }

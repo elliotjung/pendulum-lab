@@ -15,10 +15,11 @@
   ],
   "blockedStage": null,
   "activeStage": 28,
-  "activeStageCheckpoint": "CP8-S-current-shell-contracts",
+  "activeStageCheckpoint": "CP8-W-workspace-commit-boundary",
   "reviewGates": [7, 9, 17, 24, 28],
   "approvedReviewGates": [7, 9, 17, 24],
   "notes": [
+    "S28 CP8-W: current workspace/researchDB E2E10/10 actual0 valid after awaiting the existing committed-save status before reload; scoped ESLint/format0. Product/native/frozenbuild/config/timeouts unchanged. Main Chromiumg04r3 andg05 each93/93 valid; retained5groups467actual passes. Failedg06first0/1/92 andr2 59/1/33 raw outcomes preserved. R5 reruns wholefailed93+mobile560;1120/134 certification/finalquality/statuspush remainpending. next28/review28 unapproved.",
     "S28 CP8-S current shell contract: obsolete S04 placeholder assumptions replaced with published/native readiness, exact share restoration and storage invariance. Historical full34 remains32pass/2fail; narrowed labelled PROGRESS recheck passed2/2 actual0 on current59d884 source, current scoped ESLint/format0. g04r2 original78pass/1fail/14notrun preserved; g01..03 retained281 current-dependency passes. Main R3 full93/remaining groups,1120/134 certification/final status push pending; next28/review28 unapproved.",
     "S28 CP8-V2 validated: six reviewed quantity/resonance production cases passed6/6 with original video-on config; two isolated unchanged30s cases passed1/1+1/1 with a separately pinned video-off-only config. All8 exact identities, current6PNG/source/config/frozenbuild bindings and targeted5-fileESLint0 are recorded. Prior Chromiumg02/g03 actual94+93 source captures close5newE2E files; g01..03 retain281actual passes. Originalfocused66 remains59pass/7fail(5reviewedvisual+2timeout), raw failures unchanged. Preservation2175/2101equivalent/74intentional/unexpected0/Desktophashesmatch;14intentionalPNG remainAItechnicalreviewonly. Final12group1120/134certification/statuscompletion and this checkpoint push remainPENDING; next28/review28 unapproved.",
     "S28 Chromium g01..g03 actual281/281 valid. g04 stopped at56pass/1intentional-cartpole-layout-mismatch/36notrun, originalevidencepreserved. Individuallyreviewed actualquantity/resonance PNG updates and focused66originalvisualcases underway; source/native/helper/build unchanged. Newr2plan retains exactvalidearlierclosures and rerunsfullfailedgroup. Final1120/134cert/statuspush pending; next28/review28 unapproved.",

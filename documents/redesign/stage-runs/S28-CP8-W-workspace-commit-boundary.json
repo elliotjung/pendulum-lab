@@ -1,0 +1,133 @@
+{
+  "schema": "pendulum-s28-bounded-checkpoint/v1",
+  "stage": 28,
+  "checkpoint": "CP8-W-workspace-commit-boundary",
+  "createdAtUtc": "2026-11-16T05:12:47.528534+00:00",
+  "completion": false,
+  "scopeCompletion": true,
+  "parentCheckpoint": {
+    "commit": "6a7a9f42e9d818a4379d02f13fa35642536ba321",
+    "pushExitCode": 0,
+    "liveRemoteVerifiedByParent": true
+  },
+  "scope": "One E2E completion-status synchronization; current workspace/research DB whole10 actual cases and two whole93 production groups. Product/native/build/config unchanged. Not final1120/134 completion.",
+  "sourceSnapshot": [
+    {
+      "path": "e2e/redesign/legacy-workspace.spec.ts",
+      "sha256": "e44e7ca8ee343f80de95035e19ba317ef56a1648f94eb550d1271729174a0b5a"
+    }
+  ],
+  "executions": [
+    {
+      "capture": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g04-r3.capture.json",
+        "sha256": "d6fd16c6c3865fe902f564fc71cf6b4ddc54338ac15cf6f14c5ab59b55fcf868"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g04-r3.report.json",
+        "sha256": "66b2bc31218c362a7f137aa53c73e8bbb3719205385a1d4d8cc223b255aeea68"
+      },
+      "actualExitCode": 0,
+      "valid": true,
+      "passed": 93,
+      "failed": 0,
+      "notRunOrSkipped": 0,
+      "flaky": 0,
+      "startedAt": "2026-11-11T04:52:59.533Z",
+      "finishedAt": "2026-11-11T05:00:52.057Z"
+    },
+    {
+      "capture": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g05.capture.json",
+        "sha256": "bc3a823d0b0d05b4d11b27c67482ec373bd9bdc4cb43561242b0e496327cf00f"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g05.report.json",
+        "sha256": "bb5666dcc159ca3ec56d727f9c88d80cdbeb9874f2d0e91bc06eb50f58f6908d"
+      },
+      "actualExitCode": 0,
+      "valid": true,
+      "passed": 93,
+      "failed": 0,
+      "notRunOrSkipped": 0,
+      "flaky": 0,
+      "startedAt": "2026-11-11T05:00:59.422Z",
+      "finishedAt": "2026-11-11T05:09:44.412Z"
+    },
+    {
+      "capture": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g06.capture.json",
+        "sha256": "01ce63e450af3f226b0bbdb4a7ff8fe420015ce0cd5e4075b84f5d053e4b9c34"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g06.report.json",
+        "sha256": "3f8e10c03b60e8d8e5e6418e96a5fec7b1da70e5111e6a676a291cc6a3c03160"
+      },
+      "actualExitCode": 1,
+      "valid": false,
+      "passed": 0,
+      "failed": 1,
+      "notRunOrSkipped": 92,
+      "flaky": 0,
+      "startedAt": "2026-11-11T05:09:52.547Z",
+      "finishedAt": "2026-11-11T05:10:06.701Z"
+    },
+    {
+      "capture": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g06-r2.capture.json",
+        "sha256": "c2e8214ac3afe5e4b4d0464defb610ca68c027b646f55ed8b033855ca776d640"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/final-browser-chromium-g06-r2.report.json",
+        "sha256": "a13bf7054b045c4890ea24775265cbcb20b9c7104285dc357c728e9cdf03cefa"
+      },
+      "actualExitCode": 1,
+      "valid": false,
+      "passed": 59,
+      "failed": 1,
+      "notRunOrSkipped": 33,
+      "flaky": 0,
+      "startedAt": "2026-11-11T05:11:40.516Z",
+      "finishedAt": "2026-11-11T05:16:53.994Z"
+    },
+    {
+      "capture": {
+        "path": "documents/redesign/parity/evidence/workspace-adoption-r3.capture.json",
+        "sha256": "c25fac2dfa940624b786139cceda544eaec85645fd375f72f1966e1a5be2d32d"
+      },
+      "report": {
+        "path": "documents/redesign/parity/evidence/workspace-adoption-r3.report.json",
+        "sha256": "b689ba007caf3b86162c6a28a14bfa760ac37fdca96abf7f33bb9b75538c7204"
+      },
+      "actualExitCode": 0,
+      "valid": true,
+      "passed": 10,
+      "failed": 0,
+      "notRunOrSkipped": 0,
+      "flaky": 0,
+      "startedAt": "2026-11-16T05:09:52.126Z",
+      "finishedAt": "2026-11-16T05:11:33.460Z"
+    }
+  ],
+  "quality": {
+    "scopedEslintActualExitCodeObservedByParent": 0,
+    "scopedPrettierCheckActualExitCodeObservedByParent": 0,
+    "freshWholeTypecheck": false
+  },
+  "diagnosis": {
+    "observed": "Prior adopt click ended0.368ms before reload started; no completed-save wait. Panel emits completed status only after store.save and IndexedDB tx.oncomplete. Await that existing success boundary before reload, like the first workspace test.",
+    "limit": "Trace did not directly record the transaction abort, so no definitive underlying product storage defect is asserted.",
+    "assertionsRemoved": false,
+    "timeoutsRetriesOrProductionSourcesChanged": false
+  },
+  "retainedMainExecution": {
+    "groups": 5,
+    "actualPassed": 467,
+    "remainingCases": 653,
+    "requiredTotal": 1120,
+    "finalCertification": "PENDING"
+  },
+  "preservation": "Original data, native kernels, APIs, numerical goldens and348file frozen build unchanged by this test synchronization. All prior failed raw outcomes preserved.",
+  "review28Approved": false,
+  "nextStage": 28
+}

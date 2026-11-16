@@ -1,6 +1,6 @@
 # S28 — 저장·공유 migration과 기능 동등성 심사
 
-- 상태: in-progress / CP8 최종 source-bound 브라우저 검증 (2026-11-10)
+- 상태: in-progress / CP8 최종 source-bound 브라우저 검증 (2026-11-11)
 - 시작일: 2026-11-05 (Asia/Seoul)
 - 기준 HEAD / fetched origin/codex/redesign: `b78cdae4ea8e707e70ecd5a454173507f60aca2a`
 - 작업 branch/upstream: `codex/redesign` / `origin/codex/redesign`; 시작 시 clean, ahead/behind 0/0.
@@ -286,3 +286,19 @@ S29 기본 app.html 전환, audience UI 제거, master merge, force push, releas
 - 전체 shell 34건의 첫 보완 실행은 32통과·2실패였다. 같은 진도 locator 실패 두 건에 대해 실제 label 연결을 읽고 PROGRESS/max2/value0을 검사하도록 수정했다. 현재 소스 SHA `59d8840edc949e4f333cf6467bbce872d0a58301d1cfabf16ff7710d79ea045a`의 해당 두 프로젝트 검사는 2/2, exit0, validtrue, skip/flaky/retry/runner error0으로 통과했다. 34/34의 새 실행으로 합산하지 않는다. 현재 파일 ESLint와 Prettier check도 각각 actual0이다.
 - 원본 실패 capture/report와 실제 첨부를 보존했다. 참조되지 않는 임시 Playwright cache는 성공 증거로 세지 않는다. 처음 세 그룹의 실제 281건은 관련 source/helper/PNG hash가 모두 일치해 유지하며 R3 계획으로 실패한 93건과 나머지 그룹을 실행한다.
 - 상세: `S28-CP8-S-current-shell-contracts.json`, `parity/evidence/scoped-S/`. 최종 1120건·134행 인증과 전체 최종 품질 검사, 구현/완료 status push는 아직 남아 있다. next28과 review28 미승인을 유지하며 S29를 시작하지 않는다.
+
+- CP8-S 게시: `6a7a9f42e9d818a4379d02f13fa35642536ba321` 일반 push exit0, live `ls-remote` exact match를 확인했다. R3 단일 runner를 시작했으며 처음 세 실제 capture를 유지하고 Chromium g04의 새 전체 실행부터 진행한다.
+
+
+### CP8 브라우저 R3 → R4 실행 이력
+
+- R3 Chromium g04와 g05는 각각 93/93, exit0/validtrue로 완주했다. 처음 다섯 실제 그룹은 총467건이다. 이전 실패 보고서를 성공으로 바꾼 결과가 아니라 새 g04 r3 실행과 새 g05 실제 실행이다.
+- g06 첫 시도는 0통과·1실패·92미실행이었다. trace에서 첫 audience-mode 테스트의 마지막 student 설정 assertion까지 오류 없이 끝났고 AfterHooks의 context.close가 `Test ended`로 실패했다. 기존 60초 test 제한을 초과한 실패는 아니며, 외부/리소스/제품 정리 원인은 확정하지 않는다. 원래 raw capture/report와 첨부를 보존한다.
+- 제품·test·timeout·retry·config는 수정하지 않았다. R4 계획은 R3에서 g06의 capture/report/runName 세 필드만 새 시도 경로로 변경한다. 유효한467건의 실제 시작·종료·결과를 유지하고, 실패한 전체93건과 모바일6그룹을 단일 runner로 계속 검증한다. 최종1120/134인증/완료status push는 아직 남아 있다.
+
+### CP8-W — 연구 DB 채택 완료 경계 검증
+
+- 2026-11-16 재개: fetch 후 HEAD와 origin/codex/redesign이 `6a7a9f42e9d818a4379d02f13fa35642536ba321`로 일치했고 계획 검사도 통과했다. 이전의 workspace spend cap으로 실행되지 못한 fetch는 이번에 실제로 성공했다.
+- g06 r2는 59통과·1실패·33미실행이었다. 연구 DB 채택 클릭 완료 후0.368ms 만에 reload가 시작됐으며 저장 완료 상태를 기다리지 않았다. 제품의 완료 표시는 store.save와 IndexedDB tx.oncomplete 뒤에 나온다. 기존 첫 workspace 테스트처럼 이 표시를 기다리는 assertion 한 줄만 추가했다. trace가 transaction abort를 직접 기록한 것은 아니므로 제품 저장 결함으로 단정하지 않는다.
+- 현 소스 SHA `e44e7ca8ee343f80de95035e19ba317ef56a1648f94eb550d1271729174a0b5a`의 전체 workspace/연구DB 이전 10건(Chromium5+Pixel5 5)이99.930초 actual exit0/validtrue로 통과했다. skip/flaky/retry/runner error0, scoped ESLint/Prettier check 각각0이다. 저장 완료 후 재접속·전체 원문/typed 이미지 backup·취소·quota 복구·native 실행 목록을 검증했다. 제품 소스·build·원래 제한은 변경하지 않았다.
+- g04 r3와 g05의 실제93+93도 함께 보존한다. 유효한 본 검증은467건이고 남은653건은 R5의 실패 그룹 전체93건과 모바일560건이다. R5는 R4에서 g06의 새 capture/report/runName3필드만 바꾸며 이전 실패 기록은 유지한다. 상세는 `S28-CP8-W-workspace-commit-boundary.json`이다. 최종1120/134인증/최종품질/완료status push는 여전히 남아 있다. next28과 review28 미승인을 유지한다.

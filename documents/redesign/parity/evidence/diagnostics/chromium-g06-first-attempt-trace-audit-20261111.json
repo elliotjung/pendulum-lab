@@ -1,0 +1,136 @@
+{
+  "schema": "pendulum-s28-readonly-teardown-trace-analysis/v1",
+  "readOnly": true,
+  "report": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g06.report.json",
+    "sha256": "3f8e10c03b60e8d8e5e6418e96a5fec7b1da70e5111e6a676a291cc6a3c03160"
+  },
+  "capture": {
+    "path": "documents/redesign/parity/evidence/final-browser-chromium-g06.capture.json",
+    "sha256": "01ce63e450af3f226b0bbdb4a7ff8fe420015ce0cd5e4075b84f5d053e4b9c34"
+  },
+  "actualRunStats": {
+    "startTime": "2026-11-11T05:09:53.004Z",
+    "duration": 13457.494999999999,
+    "expected": 0,
+    "skipped": 92,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "runnerErrors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "failures": [
+    {
+      "file": "e2e/audience-mode.spec.ts",
+      "title": "first visit offers a mode chooser with visual choices",
+      "project": "chromium",
+      "actualStatus": "failed",
+      "actualResultDurationMs": 5306,
+      "actualStartTime": "2026-11-11T05:09:54.519Z",
+      "unchangedExistingTimeoutMs": 60000,
+      "errorFirstLine": "Error: browserContext.close: Test ended.",
+      "trace": {
+        "path": "documents/redesign/parity/evidence/S28-final-chromium-g06-20261110-browser-output/audience-mode-first-visit--74b91-chooser-with-visual-choices-chromium/trace.zip",
+        "sha256": "837a746f6d011b00d568976e4ac1ecd4f33999ef67fefe00567747781b7be2ab"
+      },
+      "errorContext": {
+        "path": "documents/redesign/parity/evidence/S28-final-chromium-g06-20261110-browser-output/audience-mode-first-visit--74b91-chooser-with-visual-choices-chromium/error-context.md",
+        "sha256": "2e7206653f448e32d1bc6bd51e2a48521eddc26b2376b68cbc4be9929547ea7f"
+      },
+      "traceMembers": [
+        "resources/src@3560cf42a073d364300735725db3ed12d13699fa.txt",
+        "resources/src@85f714777be48ee6de1e3305650c4b1dfcc42e4f.txt",
+        "resources/36fc4c9873b493f7b8f7c59330be0128576006a2",
+        "resources/c9e0b9983d6881f1a36401ce265ab1cfcac5ef68",
+        "test.trace"
+      ],
+      "allRecordedProductAssertionsCompletedWithoutError": true,
+      "recordedProductAssertionCount": 8,
+      "lastProductAssertion": {
+        "id": "expect@48",
+        "title": "Expect \"toHaveValue\"",
+        "elapsedTraceWallMs": 5981.267,
+        "traceWallUtc": "2026-11-11T05:10:00.500267+00:00",
+        "durationMs": 36.539,
+        "errorFirstLine": null,
+        "source": [
+          {
+            "file": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\e2e\\audience-mode.spec.ts",
+            "line": 42,
+            "column": 47
+          }
+        ]
+      },
+      "failedTraceSteps": [
+        {
+          "id": "hook@49",
+          "title": "After Hooks",
+          "elapsedTraceWallMs": 6018.32,
+          "traceWallUtc": "2026-11-11T05:10:00.537320+00:00",
+          "durationMs": 254.185,
+          "errorFirstLine": "Error: browserContext.close: Test ended.",
+          "source": []
+        },
+        {
+          "id": "fixture@51",
+          "title": "Fixture \"context\"",
+          "elapsedTraceWallMs": 6021.286,
+          "traceWallUtc": "2026-11-11T05:10:00.540286+00:00",
+          "durationMs": 237.085,
+          "errorFirstLine": "Error: browserContext.close: Test ended.",
+          "source": []
+        },
+        {
+          "id": "pw:api@52",
+          "title": "Close context",
+          "elapsedTraceWallMs": 6168.131,
+          "traceWallUtc": "2026-11-11T05:10:00.687131+00:00",
+          "durationMs": 89.816,
+          "errorFirstLine": "Error: browserContext.close: Test ended.",
+          "source": []
+        }
+      ],
+      "startupApiTimings": [
+        {
+          "id": "pw:api@27",
+          "title": "Launch browser",
+          "elapsedTraceWallMs": 19.3,
+          "traceWallUtc": "2026-11-11T05:09:54.538300+00:00",
+          "durationMs": 930.184,
+          "errorFirstLine": null,
+          "source": []
+        },
+        {
+          "id": "pw:api@31",
+          "title": "Create context",
+          "elapsedTraceWallMs": 951.043,
+          "traceWallUtc": "2026-11-11T05:09:55.470043+00:00",
+          "durationMs": 2369.471,
+          "errorFirstLine": null,
+          "source": []
+        },
+        {
+          "id": "pw:api@33",
+          "title": "Create page",
+          "elapsedTraceWallMs": 3327.804,
+          "traceWallUtc": "2026-11-11T05:09:57.846804+00:00",
+          "durationMs": 848.765,
+          "errorFirstLine": null,
+          "source": []
+        }
+      ],
+      "actualEventClassification": "Fixture context teardown failure after all recorded product assertions; not a test timeout or product expectation mismatch. Underlying context/browser close failure cause remains undetermined.",
+      "limits": [
+        "Only test.trace is retained, with no browser/CDP trace stream to prove a crash or resource cause.",
+        "Browser logs record launch/pid only; no external resource diagnosis is inferred.",
+        "Actual failed capture remains invalid; completed assertions do not turn this into a passing run."
+      ]
+    }
+  ],
+  "nextAttemptMeaning": "A new separately named actual whole93-case attempt, preserving this failed raw report; no automatic retry, timeout/assertion change, test skip or source change is authorized by this analysis.",
+  "testsRun": 0,
+  "sourceChanges": 0
+}

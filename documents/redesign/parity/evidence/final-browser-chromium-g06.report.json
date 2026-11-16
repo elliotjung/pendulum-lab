@@ -1,0 +1,2126 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--max-failures=1",
+      "e2e/audience-mode.spec.ts",
+      "e2e/redesign/adaptive-archive.spec.ts",
+      "e2e/redesign/constraint-pendulum.spec.ts",
+      "e2e/redesign/field-pendulum.spec.ts",
+      "e2e/redesign/legacy-workspace.spec.ts",
+      "e2e/redesign/nonlinear-pendulum.spec.ts",
+      "e2e/redesign/phase-views.spec.ts",
+      "e2e/research-bundle-zip.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-no-video-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g06-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g06-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "audience-mode.spec.ts",
+      "file": "audience-mode.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "first visit offers a mode chooser with visual choices",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5306,
+                  "error": {
+                    "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\junge\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1228\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\junge\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-8mIu2S --remote-debugging-pipe --no-startup-window\n<launched> pid=33400",
+                    "stack": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\junge\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1228\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\junge\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-8mIu2S --remote-debugging-pipe --no-startup-window\n<launched> pid=33400"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserContext.close: Test ended.\nBrowser logs:\n\n<launching> C:\\Users\\junge\\AppData\\Local\\ms-playwright\\chromium_headless_shell-1228\\chrome-headless-shell-win64\\chrome-headless-shell.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=C:\\Users\\junge\\AppData\\Local\\Temp\\playwright_chromiumdev_profile-8mIu2S --remote-debugging-pipe --no-startup-window\n<launched> pid=33400"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:09:54.519Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g06-20261110-browser-output\\audience-mode-first-visit--74b91-chooser-with-visual-choices-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g06-20261110-browser-output\\audience-mode-first-visit--74b91-chooser-with-visual-choices-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\documents\\redesign\\parity\\evidence\\S28-final-chromium-g06-20261110-browser-output\\audience-mode-first-visit--74b91-chooser-with-visual-choices-chromium\\trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4062f04cd207e86de510-a7469e7a37550e40c335",
+          "file": "audience-mode.spec.ts",
+          "line": 17,
+          "column": 1
+        },
+        {
+          "title": "invalid URL and stored modes are quarantined as an unselected first visit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-bc78ff5036f5adf639ca",
+          "file": "audience-mode.spec.ts",
+          "line": 45,
+          "column": 1
+        },
+        {
+          "title": "the active mode survives when browser storage is unavailable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-144a684bfab6fdd0d69b",
+          "file": "audience-mode.spec.ts",
+          "line": 56,
+          "column": 1
+        },
+        {
+          "title": "returning sessions open the saved mode and can reopen the chooser from Home",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-0934e887f4f825f9f248",
+          "file": "audience-mode.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "pendulum Home chooser Explore mode enters the real Lab and canonicalizes its URL",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-8de7d664d8ea2aaee4b7",
+          "file": "audience-mode.spec.ts",
+          "line": 120,
+          "column": 1
+        },
+        {
+          "title": "tab routes follow rail navigation and browser back/forward",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-a646a74c6f984decfa89",
+          "file": "audience-mode.spec.ts",
+          "line": 141,
+          "column": 1
+        },
+        {
+          "title": "lazy workspace replacement does not manufacture a history entry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-5d6f255c3dea5a33aa90",
+          "file": "audience-mode.spec.ts",
+          "line": 163,
+          "column": 1
+        },
+        {
+          "title": "lazy workspace push commits only after mount and supports back/forward",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-ae22d80f06780ce97266",
+          "file": "audience-mode.spec.ts",
+          "line": 185,
+          "column": 1
+        },
+        {
+          "title": "rail uses task-centered labels and icons",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-5cd7c0cb0858e86a89a9",
+          "file": "audience-mode.spec.ts",
+          "line": 209,
+          "column": 1
+        },
+        {
+          "title": "beginner mode turns the lab into a focused simulator",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-72e6aa6f9dbf76de3f2f",
+          "file": "audience-mode.spec.ts",
+          "line": 230,
+          "column": 1
+        },
+        {
+          "title": "student mode keeps analysis and validation without research governance",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4062f04cd207e86de510-6f8fe853740a3c7fdd47",
+          "file": "audience-mode.spec.ts",
+          "line": 258,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "redesign\\adaptive-archive.spec.ts",
+      "file": "redesign/adaptive-archive.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 complete adaptive controller export",
+          "file": "redesign/adaptive-archive.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "2.3: exports every accepted native step beyond400 and replays every adaptive call",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fff2f5b9843eec562dc3-68078bfbf1f01c0feb9c",
+              "file": "redesign/adaptive-archive.spec.ts",
+              "line": 54,
+              "column": 5
+            },
+            {
+              "title": "2.7: exports every accepted native step beyond400 and replays every adaptive call",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "fff2f5b9843eec562dc3-00ed9616cb046c11be28",
+              "file": "redesign/adaptive-archive.spec.ts",
+              "line": 54,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\constraint-pendulum.spec.ts",
+      "file": "redesign/constraint-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S11 spring, rope and double-string laboratory",
+          "file": "redesign/constraint-pendulum.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "spring: worker run/pause/step/cancel and numeric exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-aa3c9d8ec6d2d24a88b6",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 44,
+              "column": 5
+            },
+            {
+              "title": "spring: edit/save/reload/share/import preserve initial conditions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-619cb5ab7d9778a83153",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 83,
+              "column": 5
+            },
+            {
+              "title": "spring: comparison settings survive route return and remain isolated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-85c209aa88f08af5cf9f",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 116,
+              "column": 5
+            },
+            {
+              "title": "rope: worker run/pause/step/cancel and numeric exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-1bebf972cac9f162fdb9",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 44,
+              "column": 5
+            },
+            {
+              "title": "rope: edit/save/reload/share/import preserve initial conditions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-83d0c3c6cb4cd6e9081b",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 83,
+              "column": 5
+            },
+            {
+              "title": "rope: comparison settings survive route return and remain isolated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-2d725136e1d1c6b45103",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 116,
+              "column": 5
+            },
+            {
+              "title": "double-string: worker run/pause/step/cancel and numeric exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-5bc3b0c83bcf4b21ae18",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 44,
+              "column": 5
+            },
+            {
+              "title": "double-string: edit/save/reload/share/import preserve initial conditions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-029fc5ea7e5aeb37fb77",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 83,
+              "column": 5
+            },
+            {
+              "title": "double-string: comparison settings survive route return and remain isolated",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-371941a366825962bf78",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 116,
+              "column": 5
+            },
+            {
+              "title": "rope: release preset, capture timeline, compatible analyses and event exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-3214fc838ceda6810dd4",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 155,
+              "column": 5
+            },
+            {
+              "title": "double-string: release preset, capture timeline, compatible analyses and event exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-7659f058c7223ebbca4a",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 155,
+              "column": 5
+            },
+            {
+              "title": "spring canonical near-origin settings import, reload and remain editable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-6e87515bdc3d593adee8",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 216,
+              "column": 3
+            },
+            {
+              "title": "plots refresh when initial conditions change and reset discards computed samples",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-17ab6f4e655d1a1e9f34",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 244,
+              "column": 3
+            },
+            {
+              "title": "invalid form edits can recover from JSON or retained comparison settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-06ebbeffff893d9978ae",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 262,
+              "column": 3
+            },
+            {
+              "title": "invalid edits and unsafe, oversized or unsupported imports preserve valid settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-2549a2d0370720da8301",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 289,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved settings remain intact and cannot be overwritten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-54ff6d3d881c5bcf5cb9",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 316,
+              "column": 3
+            },
+            {
+              "title": "worker startup failure recovers and route departure stops active work",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-581b5dfa17cfc840d5b0",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 330,
+              "column": 3
+            },
+            {
+              "title": "spring singularity stops at the last valid sample and a preset recovers execution",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-35422ad4d847e961648d",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 355,
+              "column": 3
+            },
+            {
+              "title": "keyboard, axe, 320px and 200% zoom retain numeric and event access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-771c455db212becceae5",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 393,
+              "column": 3
+            },
+            {
+              "title": "frozen light/dark spring and slack rope layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7ae0f0f1403209fc0a15-4e4c1a4eda56c8e6344a",
+              "file": "redesign/constraint-pendulum.spec.ts",
+              "line": 432,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\field-pendulum.spec.ts",
+      "file": "redesign/field-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S16 stochastic lattice and field laboratory",
+          "file": "redesign/field-pendulum.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "langevin: canonical settings save reload share and atomic import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-f4bc791daebfb66fbbcc",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "fput: canonical settings save reload share and atomic import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-fe0cb5f9a664ad15e7ce",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "lattice-fk-limit: canonical settings save reload share and atomic import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-81b54791073557d22b0c",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "sine-gordon: canonical settings save reload share and atomic import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-94e060ff5ca22f804d81",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "frenkel-kontorova: canonical settings save reload share and atomic import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-92d12d36af58c62f1ecf",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "langevin: worker pause step resume cancel and finite data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-2d5f387c16d2b0ff3f62",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 88,
+              "column": 5
+            },
+            {
+              "title": "fput: worker pause step resume cancel and finite data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-b80e64157b096cbdf1a0",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 88,
+              "column": 5
+            },
+            {
+              "title": "sine-gordon: worker pause step resume cancel and finite data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-7ae76171286a596a20e8",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 88,
+              "column": 5
+            },
+            {
+              "title": "seeded ensemble repeats exactly and exports member provenance",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-151edea7064569a8e39c",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 121,
+              "column": 3
+            },
+            {
+              "title": "sine-Gordon fixed and periodic boundaries survive canonical round trips",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-317df217241679874ea0",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 145,
+              "column": 3
+            },
+            {
+              "title": "invalid grids and CFL settings preserve applied state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-441f26b02b3251e67285",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 163,
+              "column": 3
+            },
+            {
+              "title": "retained raw and downsampled exports disclose different sample counts and preserve endpoints",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-521aacf023d80f1602a7",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 181,
+              "column": 3
+            },
+            {
+              "title": "64-member worker stays responsive and cancellation prevents late samples",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-3ed3d127786ab6a3849a",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 208,
+              "column": 3
+            },
+            {
+              "title": "unsafe imports and corrupt stored data preserve originals",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-7bfcf60639e816d867e3",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 234,
+              "column": 3
+            },
+            {
+              "title": "worker failure recovers and route disposal terminates active computation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-893107f965e189cc9c71",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 254,
+              "column": 3
+            },
+            {
+              "title": "langevin: independent native diagnostic validates inputs and exports settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-0b6fc4792d23eceb9650",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 291,
+              "column": 5
+            },
+            {
+              "title": "lattice-fk-limit: independent native diagnostic validates inputs and exports settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-817a8047227060ea5094",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 291,
+              "column": 5
+            },
+            {
+              "title": "frenkel-kontorova: independent native diagnostic validates inputs and exports settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-feef35caecc5990fb5f8",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 291,
+              "column": 5
+            },
+            {
+              "title": "keyboard axe and 320px preserve controls: 작업 공간",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-c63e7451a6aeaf69ba52",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 317,
+              "column": 5
+            },
+            {
+              "title": "keyboard axe and 320px preserve controls: 조건",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-99f2d8441674f77f645f",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 317,
+              "column": 5
+            },
+            {
+              "title": "keyboard axe and 320px preserve controls: 분석",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-d9fbc82db26016a33568",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 317,
+              "column": 5
+            },
+            {
+              "title": "keyboard axe and 320px preserve controls: 보관함",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-b4622f7d70119d6ac6e0",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 317,
+              "column": 5
+            },
+            {
+              "title": "keyboard axe and 320px preserve controls: 내보내기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-4c9b2543d971ec58de17",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 317,
+              "column": 5
+            },
+            {
+              "title": "200% zoom preserves seed and ensemble settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-e0b103b34b78453942c2",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 329,
+              "column": 3
+            },
+            {
+              "title": "frozen spatial heatmaps ensemble and static diagnostic layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "63a827bc7ff236a3a68e-6e3a38d703a1999b4c7c",
+              "file": "redesign/field-pendulum.spec.ts",
+              "line": 344,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\legacy-workspace.spec.ts",
+      "file": "redesign/legacy-workspace.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "source-preserving workspace migration and adoption",
+          "file": "redesign/legacy-workspace.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "previews typed records, adopts actual multipart projects, reopens a canonical run and survives reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4ca03c83c13621d6bf14-8df90274ea0e8dabc7b0",
+              "file": "redesign/legacy-workspace.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "imports all native research DB stores, reads exact backup and typed assets, then restores adoption after reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4ca03c83c13621d6bf14-d83fea8f3aca4ce13812",
+              "file": "redesign/legacy-workspace.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "discards stale file reads and cancelled previews",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4ca03c83c13621d6bf14-f1059c8bb677e0fc5900",
+              "file": "redesign/legacy-workspace.spec.ts",
+              "line": 127,
+              "column": 3
+            },
+            {
+              "title": "quota failure leaves the product archive index empty and canonical reopen disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4ca03c83c13621d6bf14-9668fb10148b94105f5d",
+              "file": "redesign/legacy-workspace.spec.ts",
+              "line": 152,
+              "column": 3
+            },
+            {
+              "title": "runs the saved parameter-study snapshot in a native worker and imports its exact completed part",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4ca03c83c13621d6bf14-104c968457f51d816195",
+              "file": "redesign/legacy-workspace.spec.ts",
+              "line": 176,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\nonlinear-pendulum.spec.ts",
+      "file": "redesign/nonlinear-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S14 nonlinear and delay systems laboratory",
+          "file": "redesign/nonlinear-pendulum.spec.ts",
+          "line": 53,
+          "column": 6,
+          "specs": [
+            {
+              "title": "duffing: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-3f310f448a55b1dd8f4c",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "duffing: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-657b66a224c80f974ed8",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "van-der-pol: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-dcb550d91b1b96e12747",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "van-der-pol: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-f73a1a298adfc817ee1c",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "kapitza: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-eafaba70a0c41e8e4e23",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "kapitza: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-0938e82f1e977adb6320",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "mathieu: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-db61c3e9d4b910e60e4b",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "mathieu: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-32bf5514d692f134e027",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "friction: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-fa3a6754f57055f0f29c",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "friction: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-a1f3a8c9fbdf22821668",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "pyragas: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-41cc73c4b4651e831f27",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "pyragas: atomic edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-7a4b2ad84ee92236de5a",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "each model applies its own phenomenon preset and exposes compatible diagnostics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-6e921701fcc2fcacadd5",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 133,
+              "column": 3
+            },
+            {
+              "title": "Pyragas linear prehistory and continued delay tape survive save, share and import exactly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-86fd8644b5634ae74438",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 170,
+              "column": 3
+            },
+            {
+              "title": "unsafe, future, unsupported and malformed delay imports preserve the current experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-6a3a78b6ad37b470ec3c",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 232,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved settings remain intact when a save is attempted",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-37a4366d8947db381c32",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 269,
+              "column": 3
+            },
+            {
+              "title": "an unconfined Duffing trajectory stops at its last finite state and recovers after correction",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-4619d62f02dcdf26d5f4",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 282,
+              "column": 3
+            },
+            {
+              "title": "worker startup errors recover and leaving a running route terminates its worker",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-80e6c661cc2559e4c5d9",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 312,
+              "column": 3
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve nonlinear control access: 작업 공간",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-a11edf89ae7b53a22edb",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 354,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve nonlinear control access: 조건",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-8ea08deb5f0b8236f7cb",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 354,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve nonlinear control access: 분석",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-320c00047e5626e63ea6",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 354,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve nonlinear control access: 보관함",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-19d5eda1d045b740b953",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 354,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve nonlinear control access: 내보내기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-f87a37cf16bc7bbf4d6e",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 354,
+              "column": 5
+            },
+            {
+              "title": "200% zoom preserves prehistory and model-specific parameter editing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-884bb9cab9ef4b2a841a",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 368,
+              "column": 3
+            },
+            {
+              "title": "frozen nonlinear potential, limit cycle, friction and delay-history layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "229955b475b618a6ad98-029053d43408edfd8e33",
+              "file": "redesign/nonlinear-pendulum.spec.ts",
+              "line": 383,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\phase-views.spec.ts",
+      "file": "redesign/phase-views.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S28 double recorded phase views preserve raw native CSV, projection and read-only route replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "bf1d9e1eb65e866fb311-952f6fb6f0d524749983",
+          "file": "redesign/phase-views.spec.ts",
+          "line": 26,
+          "column": 3
+        },
+        {
+          "title": "S28 compound-double recorded phase views preserve raw native CSV, projection and read-only route replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "bf1d9e1eb65e866fb311-08373a75bb36ab0eb24b",
+          "file": "redesign/phase-views.spec.ts",
+          "line": 26,
+          "column": 3
+        },
+        {
+          "title": "S28 triple recorded phase views preserve raw native CSV, projection and read-only route replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "bf1d9e1eb65e866fb311-af3d3d5ce2b3f9d2a591",
+          "file": "redesign/phase-views.spec.ts",
+          "line": 26,
+          "column": 3
+        },
+        {
+          "title": "S28 chain recorded phase views preserve raw native CSV, projection and read-only route replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "bf1d9e1eb65e866fb311-7dad3e53148edf30256f",
+          "file": "redesign/phase-views.spec.ts",
+          "line": 26,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "research-bundle-zip.spec.ts",
+      "file": "research-bundle-zip.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "ZIP research bundle downloads with expected layout, binary PNGs, and valid checksums",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "625d57529864527e4d02-ff82ba90778efbdcc5c9",
+          "file": "research-bundle-zip.spec.ts",
+          "line": 6,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-11-11T05:09:53.004Z",
+    "duration": 13457.494999999999,
+    "expected": 0,
+    "skipped": 92,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

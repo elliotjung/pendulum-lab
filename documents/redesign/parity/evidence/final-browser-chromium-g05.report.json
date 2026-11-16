@@ -1,0 +1,3440 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=tmp/s28-release-no-video-playwright.config.ts",
+      "--project=chromium",
+      "--max-failures=1",
+      "e2e/redesign/advanced-diagnostics.spec.ts",
+      "e2e/redesign/compatibility-tools.spec.ts",
+      "e2e/redesign/core-pendulum.spec.ts",
+      "e2e/redesign/migration-base.spec.ts",
+      "e2e/redesign/network-pendulum.spec.ts",
+      "e2e/redesign/spatial-pendulum.spec.ts",
+      "e2e/research-storage.spec.ts",
+      "--reporter=line,json"
+    ],
+    "configFile": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular\\tmp\\s28-release-no-video-playwright.config.ts",
+    "rootDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": {},
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g05-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/junge/Desktop/pendulum_lab_modular/documents/redesign/parity/evidence/S28-final-chromium-g05-20261110-browser-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "C:/Users/junge/Desktop/pendulum_lab_modular/e2e",
+        "testIgnore": [
+          "**/pwa-production-lifecycle.spec.ts",
+          "**/visual-regression.spec.ts",
+          "**/webgpu-hardware-reductions.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": {
+      "cwd": "C:\\Users\\junge\\Desktop\\pendulum_lab_modular",
+      "command": "node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 57531 --strictPort --outDir \"tmp/S28-final-production-dist-20261110-r1\"",
+      "url": "http://127.0.0.1:57531/app.html",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "redesign\\advanced-diagnostics.spec.ts",
+      "file": "redesign/advanced-diagnostics.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S19 advanced chaos geometry",
+          "file": "redesign/advanced-diagnostics.spec.ts",
+          "line": 56,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads advanced tools on demand and discards a late route load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4080,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:01.102Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-af3252930b4f87a923b9",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "planar: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7049,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:05.956Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-96828571631fa525bde3",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "chain: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2841,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:13.016Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-7884e3dd11d20bd6a982",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "constraint: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:15.869Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-d63e6c3edf9b6d36758f",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "spatial: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7558,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:18.705Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-c87bfaf9631566de8ee3",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "driven: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3346,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:26.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-7f7183c382e449da0ee0",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "nonlinear: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3777,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:29.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-dfea24d92159a013afd3",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "network: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3725,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:33.420Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-bf4022b07198085de6c3",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "field: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3629,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:37.156Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-02e9523d4b895e0eedc2",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "discrete: tools are discoverable with explained source compatibility on every route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2889,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:40.799Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-a24b0c9a8a7669464f2f",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "all twelve native tools execute in a dedicated worker with provenance and strict artifact reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16091,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:43.699Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-8b3fa325b9b2975a5641",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 106,
+              "column": 3
+            },
+            {
+              "title": "independent scalar benchmarks state their source and never imply standard-map entropy",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2820,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:01:59.799Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-a80ff91751389f1b0d6a",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 146,
+              "column": 3
+            },
+            {
+              "title": "empty invalid and resource conditions refuse calculation with recovery instructions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8445,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:02.631Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-aab82a9fa3c4cfff11b2",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 164,
+              "column": 3
+            },
+            {
+              "title": "worker startup errors recover and cancellation never publishes partial artifacts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2956,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:11.091Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-757630eb7d48d4d2588b",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 186,
+              "column": 3
+            },
+            {
+              "title": "keyboard, 320 px, zoom, light and dark advanced tools stay readable and accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13211,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:14.068Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "197df545425a4c536168-6db823129018d9c011c8",
+              "file": "redesign/advanced-diagnostics.spec.ts",
+              "line": 221,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\compatibility-tools.spec.ts",
+      "file": "redesign/compatibility-tools.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S28 native sonification and independent OGY tools",
+          "file": "redesign/compatibility-tools.spec.ts",
+          "line": 23,
+          "column": 6,
+          "specs": [
+            {
+              "title": "OGY uses real workers and exact native outputs, preserves source and exports full finite records",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2929,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:27.457Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d93c40f776e6d97f17-730133f08e8a5c18ea76",
+              "file": "redesign/compatibility-tools.spec.ts",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "cancels a pending native worker, rejects non-saddle/invalid settings and permits a fresh retry",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3075,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:30.398Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d93c40f776e6d97f17-8ed5c5b8646765e4c9e0",
+              "file": "redesign/compatibility-tools.spec.ts",
+              "line": 56,
+              "column": 3
+            },
+            {
+              "title": "reports worker startup failure without stale export and recovers by a new calculation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2372,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:33.485Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d93c40f776e6d97f17-f5dd29a406b3b7a3c0ee",
+              "file": "redesign/compatibility-tools.spec.ts",
+              "line": 102,
+              "column": 3
+            },
+            {
+              "title": "creates the real Web Audio graph only after opt-in, silences on pause and closes on route exit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [
+                    {
+                      "type": "s28-audio-session-omission",
+                      "description": "{\"realGraph\":true,\"reloadedConsent\":false,\"reloadedContexts\":0,\"fullSetupSchema\":\"pendulum-product-setup/v1\",\"canonicalEqualsSetupExperiment\":true,\"runtimeHandlesAndPermissionsOmitted\":true}"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4555,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:35.868Z",
+                      "annotations": [
+                        {
+                          "type": "s28-audio-session-omission",
+                          "description": "{\"realGraph\":true,\"reloadedConsent\":false,\"reloadedContexts\":0,\"fullSetupSchema\":\"pendulum-product-setup/v1\",\"canonicalEqualsSetupExperiment\":true,\"runtimeHandlesAndPermissionsOmitted\":true}"
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "s28-audio-full-setup.json",
+                          "contentType": "application/json",
+                          "body": "eyJjb250cm9scyI6eyJhbmdsZVVuaXQiOiJyYWQiLCJlbnNlbWJsZSI6eyJjb3VudCI6MCwic3BlYyI6eyJlcHNpbG9uIjowLjAwMDEsInBhdHRlcm4iOiJhbHRlcm5hdGluZyIsInNlZWQiOjEsInZhcmlhYmxlIjoidGgxIn19LCJwbGF5YmFjayI6eyJtb2RlIjoiZGVtbyIsInNwZWVkIjoxLCJzdGVwc1BlckZyYW1lIjo2LCJ0aW1pbmdNb2RlIjoid2FsbC1jbG9jayJ9LCJyZW5kZXIiOnsiYXV0b1F1YWxpdHkiOnRydWUsImdsb3ciOmZhbHNlLCJpbnRlcnBvbGF0ZSI6dHJ1ZSwibG9uZ0V4cG9zdXJlIjpmYWxzZSwicGhhc2VBeGlzIjoiYm90aCIsInF1YWxpdHlNb2RlIjoiYmFsYW5jZWQiLCJ0cmFpbExlbmd0aCI6MTIwMCwidHJhaWxNb2RlIjoicmFpbmJvdyJ9LCJ3b3JrZmxvdyI6eyJnb2FsIjoic2Vuc2l0aXZlLWRlcGVuZGVuY2UiLCJzdGVwIjoiY2hvb3NlIiwidHJhamVjdG9yeVN0YWdlIjoicmVmZXJlbmNlIn19LCJleHBlcmltZW50Ijp7ImFuYWx5c2VzIjpbXSwiaW5pdGlhbENvbmRpdGlvbnMiOnsib21lZ2ExIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0IjoicmFkL3MiLCJ2YWx1ZSI6MH0sIm9tZWdhMiI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6InJhZC9zIiwidmFsdWUiOjB9LCJ0aGV0YTEiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJyYWQiLCJ2YWx1ZSI6MS4yfSwidGhldGEyIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0IjoicmFkIiwidmFsdWUiOjAuNn19LCJpbnRlZ3JhdG9yIjp7ImlkIjoiaW50ZWdyYXRvcjpyazQiLCJraW5kIjoic2VsZWN0YWJsZSIsInNldHRpbmdzIjp7fSwidmVyc2lvbiI6InBsYW5hci1pbnRlZ3JhdG9yLXYxIn0sIm1vZGVsVmVyc2lvbiI6InBsYW5hci1tb2RlbC12MSIsInBhcmFtZXRlcnMiOnsiZyI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6Im0vc14yIiwidmFsdWUiOjkuODF9LCJnYW1tYSI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6ImtnKm1eMi9zIiwidmFsdWUiOjB9LCJsMSI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6Im0iLCJ2YWx1ZSI6MX0sImwyIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0IjoibSIsInZhbHVlIjoxfSwibTEiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJrZyIsInZhbHVlIjoxfSwibTIiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJrZyIsInZhbHVlIjoxfX0sInJ1bnRpbWUiOnsiZG9tYWluIjoidGltZSIsImR1cmF0aW9uIjp7InVuaXQiOiJzIiwidmFsdWUiOjEwfSwic2FtcGxlRXZlcnkiOjEsInN0YXJ0Ijp7InVuaXQiOiJzIiwidmFsdWUiOjB9LCJzdGVwIjp7InVuaXQiOiJzIiwidmFsdWUiOjAuMDAyfX0sInNjaGVtYSI6InBlbmR1bHVtLWV4cGVyaW1lbnQvdjEiLCJzeXN0ZW1JZCI6InN5c3RlbTpkb3VibGUifSwic2NoZW1hIjoicGVuZHVsdW0tcHJvZHVjdC1zZXR1cC92MSJ9"
+                        },
+                        {
+                          "name": "s28-audio-canonical.json",
+                          "contentType": "application/json",
+                          "body": "eyJhbmFseXNlcyI6W10sImluaXRpYWxDb25kaXRpb25zIjp7Im9tZWdhMSI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6InJhZC9zIiwidmFsdWUiOjB9LCJvbWVnYTIiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJyYWQvcyIsInZhbHVlIjowfSwidGhldGExIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0IjoicmFkIiwidmFsdWUiOjEuMn0sInRoZXRhMiI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6InJhZCIsInZhbHVlIjowLjZ9fSwiaW50ZWdyYXRvciI6eyJpZCI6ImludGVncmF0b3I6cms0Iiwia2luZCI6InNlbGVjdGFibGUiLCJzZXR0aW5ncyI6e30sInZlcnNpb24iOiJwbGFuYXItaW50ZWdyYXRvci12MSJ9LCJtb2RlbFZlcnNpb24iOiJwbGFuYXItbW9kZWwtdjEiLCJwYXJhbWV0ZXJzIjp7ImciOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJtL3NeMiIsInZhbHVlIjo5LjgxfSwiZ2FtbWEiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJrZyptXjIvcyIsInZhbHVlIjowfSwibDEiOnsia2luZCI6InNjYWxhciIsInVuaXQiOiJtIiwidmFsdWUiOjF9LCJsMiI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6Im0iLCJ2YWx1ZSI6MX0sIm0xIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0Ijoia2ciLCJ2YWx1ZSI6MX0sIm0yIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0Ijoia2ciLCJ2YWx1ZSI6MX19LCJydW50aW1lIjp7ImRvbWFpbiI6InRpbWUiLCJkdXJhdGlvbiI6eyJ1bml0IjoicyIsInZhbHVlIjoxMH0sInNhbXBsZUV2ZXJ5IjoxLCJzdGFydCI6eyJ1bml0IjoicyIsInZhbHVlIjowfSwic3RlcCI6eyJ1bml0IjoicyIsInZhbHVlIjowLjAwMn19LCJzY2hlbWEiOiJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwic3lzdGVtSWQiOiJzeXN0ZW06ZG91YmxlIn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d93c40f776e6d97f17-b065acbe9d2c720bca95",
+              "file": "redesign/compatibility-tools.spec.ts",
+              "line": 113,
+              "column": 3
+            },
+            {
+              "title": "keeps keyboard, 320px and 200% controls accessible without starting sound",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8226,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:40.434Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "40d93c40f776e6d97f17-c946ad23bfb078862aa8",
+              "file": "redesign/compatibility-tools.spec.ts",
+              "line": 224,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\core-pendulum.spec.ts",
+      "file": "redesign/core-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S07 real planar pendulum laboratory",
+          "file": "redesign/core-pendulum.spec.ts",
+          "line": 72,
+          "column": 6,
+          "specs": [
+            {
+              "title": "double: runs, pauses, steps, cancels and resets a real trajectory with finite CSV and SVG exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9033,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:48.691Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-29f2d638bb7f19fc4b44",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 87,
+              "column": 5
+            },
+            {
+              "title": "double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7619,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:02:57.734Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-f8d2111e296da47dfef3",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "double: preserves canonical settings through save, reload, tray restore and JSON round trip",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5323,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:05.366Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-4f5ede7d6478709f75bd",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 204,
+              "column": 5
+            },
+            {
+              "title": "double: rejects invalid SI values and incompatible time steps before execution",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4133,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:10.700Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-f265a8c7330b4c37a207",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 268,
+              "column": 5
+            },
+            {
+              "title": "double: supports keyboard operation, 320px and 200% reflow with accessible panels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25196,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:14.845Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-6381ff58abe3d92ce277",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 294,
+              "column": 5
+            },
+            {
+              "title": "double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6341,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:40.051Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-019f360a5256e67447f7",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "compound-double: runs, pauses, steps, cancels and resets a real trajectory with finite CSV and SVG exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5054,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:46.402Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-db70b26d3e8ead59095e",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 87,
+              "column": 5
+            },
+            {
+              "title": "compound-double: computes trajectory projections and genuine Poincare/Lyapunov worker results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11521,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:03:51.467Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-24b097c79ce459c4cbda",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "compound-double: preserves canonical settings through save, reload, tray restore and JSON round trip",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9707,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:02.999Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-8ce230bf616255558b1f",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 204,
+              "column": 5
+            },
+            {
+              "title": "compound-double: rejects invalid SI values and incompatible time steps before execution",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3982,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:12.716Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-a639c747ff3a61109345",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 268,
+              "column": 5
+            },
+            {
+              "title": "compound-double: supports keyboard operation, 320px and 200% reflow with accessible panels",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20883,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:16.708Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-a0335d01242b1ca473d7",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 294,
+              "column": 5
+            },
+            {
+              "title": "compound-double: reviews a deterministic real workspace and dark inspector",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10365,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:37.602Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-0549d129a39c0e35c42d",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 324,
+              "column": 5
+            },
+            {
+              "title": "cancels a long worker analysis, discards partial results and permits a new calculation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8532,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:47.979Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-314003f48e3519f0ae7b",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 335,
+              "column": 3
+            },
+            {
+              "title": "contains a worker startup failure and retries with the same valid settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8027,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:04:56.523Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "dc572033029871d0dc54-29e158911506031ce511",
+              "file": "redesign/core-pendulum.spec.ts",
+              "line": 360,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\migration-base.spec.ts",
+      "file": "redesign/migration-base.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "S28 explicitly selects each default query family while preserving the original double checkbox path",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3124,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:05:04.919Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "legacy-v1-36b0cbf7-18-base-f775402e2571349d-compatibility.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAicGVuZHVsdW0tbGVnYWN5LWxpbmstY29tcGF0aWJpbGl0eS92MSIsCiAgInNvdXJjZVRleHQiOiAiP3RoMT0wLjEyNSZ0YWI9bGFiIiwKICAic291cmNlS2luZCI6ICJsZWdhY3ktdXJsIiwKICAic291cmNlVmVyc2lvbiI6ICJsZWdhY3ktcXVlcnkvdjEiLAogICJkZWNvZGVkIjogewogICAgInRoMSI6ICIwLjEyNSIsCiAgICAidGFiIjogImxhYiIKICB9LAogICJyZXNvbHZlZCI6IHsKICAgICJ2YWx1ZXMiOiB7CiAgICAgICJ0aDEiOiAwLjEyNQogICAgfSwKICAgICJzeXN0ZW0iOiBudWxsLAogICAgIm1ldGhvZCI6IG51bGwsCiAgICAidGFiIjogImxhYiIsCiAgICAiYmFzZUV4cGVyaW1lbnQiOiB7CiAgICAgICJzY2hlbWEiOiAicGVuZHVsdW0tZXhwZXJpbWVudC92MSIsCiAgICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06ZG91YmxlIiwKICAgICAgIm1vZGVsVmVyc2lvbiI6ICJwbGFuYXItbW9kZWwtdjEiLAogICAgICAicGFyYW1ldGVycyI6IHsKICAgICAgICAibTEiOiB7CiAgICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICAgInZhbHVlIjogMSwKICAgICAgICAgICJ1bml0IjogImtnIgogICAgICAgIH0sCiAgICAgICAgIm0yIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDEsCiAgICAgICAgICAidW5pdCI6ICJrZyIKICAgICAgICB9LAogICAgICAgICJsMSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICAgInVuaXQiOiAibSIKICAgICAgICB9LAogICAgICAgICJsMiI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICAgInVuaXQiOiAibSIKICAgICAgICB9LAogICAgICAgICJnIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDkuODEsCiAgICAgICAgICAidW5pdCI6ICJtL3NeMiIKICAgICAgICB9LAogICAgICAgICJnYW1tYSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICAgInVuaXQiOiAia2cqbV4yL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW5pdGlhbENvbmRpdGlvbnMiOiB7CiAgICAgICAgInRoZXRhMSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLjIsCiAgICAgICAgICAidW5pdCI6ICJyYWQiCiAgICAgICAgfSwKICAgICAgICAidGhldGEyIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDAuNiwKICAgICAgICAgICJ1bml0IjogInJhZCIKICAgICAgICB9LAogICAgICAgICJvbWVnYTEiOiB7CiAgICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAgICJ1bml0IjogInJhZC9zIgogICAgICAgIH0sCiAgICAgICAgIm9tZWdhMiI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW50ZWdyYXRvciI6IHsKICAgICAgICAia2luZCI6ICJzZWxlY3RhYmxlIiwKICAgICAgICAiaWQiOiAiaW50ZWdyYXRvcjpyazQiLAogICAgICAgICJ2ZXJzaW9uIjogInBsYW5hci1pbnRlZ3JhdG9yLXYxIiwKICAgICAgICAic2V0dGluZ3MiOiB7fQogICAgICB9LAogICAgICAicnVudGltZSI6IHsKICAgICAgICAiZG9tYWluIjogInRpbWUiLAogICAgICAgICJzdGFydCI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgICAidW5pdCI6ICJzIgogICAgICAgIH0sCiAgICAgICAgImR1cmF0aW9uIjogewogICAgICAgICAgInZhbHVlIjogMTAsCiAgICAgICAgICAidW5pdCI6ICJzIgogICAgICAgIH0sCiAgICAgICAgInN0ZXAiOiB7CiAgICAgICAgICAidmFsdWUiOiAwLjAwMiwKICAgICAgICAgICJ1bml0IjogInMiCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlRXZlcnkiOiAxCiAgICAgIH0sCiAgICAgICJhbmFseXNlcyI6IFtdCiAgICB9CiAgfSwKICAiY2Fub25pY2FsIjogewogICAgInNjaGVtYSI6ICJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwKICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06ZG91YmxlIiwKICAgICJtb2RlbFZlcnNpb24iOiAicGxhbmFyLW1vZGVsLXYxIiwKICAgICJwYXJhbWV0ZXJzIjogewogICAgICAibTEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogImtnIgogICAgICB9LAogICAgICAibTIiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogImtnIgogICAgICB9LAogICAgICAibDEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogIm0iCiAgICAgIH0sCiAgICAgICJsMiI6IHsKICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICJ2YWx1ZSI6IDEsCiAgICAgICAgInVuaXQiOiAibSIKICAgICAgfSwKICAgICAgImciOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiA5LjgxLAogICAgICAgICJ1bml0IjogIm0vc14yIgogICAgICB9LAogICAgICAiZ2FtbWEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogImtnKm1eMi9zIgogICAgICB9CiAgICB9LAogICAgImluaXRpYWxDb25kaXRpb25zIjogewogICAgICAidGhldGExIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogMC4xMjUsCiAgICAgICAgInVuaXQiOiAicmFkIgogICAgICB9LAogICAgICAidGhldGEyIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogMC42LAogICAgICAgICJ1bml0IjogInJhZCIKICAgICAgfSwKICAgICAgIm9tZWdhMSI6IHsKICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgIH0sCiAgICAgICJvbWVnYTIiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogInJhZC9zIgogICAgICB9CiAgICB9LAogICAgImludGVncmF0b3IiOiB7CiAgICAgICJraW5kIjogInNlbGVjdGFibGUiLAogICAgICAiaWQiOiAiaW50ZWdyYXRvcjpyazQiLAogICAgICAidmVyc2lvbiI6ICJwbGFuYXItaW50ZWdyYXRvci12MSIsCiAgICAgICJzZXR0aW5ncyI6IHt9CiAgICB9LAogICAgInJ1bnRpbWUiOiB7CiAgICAgICJkb21haW4iOiAidGltZSIsCiAgICAgICJzdGFydCI6IHsKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJkdXJhdGlvbiI6IHsKICAgICAgICAidmFsdWUiOiAwLjAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzdGVwIjogewogICAgICAgICJ2YWx1ZSI6IDAuMDAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzYW1wbGVFdmVyeSI6IDEKICAgIH0sCiAgICAiYW5hbHlzZXMiOiBbXSwKICAgICJwcm92ZW5hbmNlIjogewogICAgICAiY3JlYXRlZEJ5VmVyc2lvbiI6ICJsZWdhY3ktbGlua3MtdjEiLAogICAgICAic291cmNlIjogewogICAgICAgICJraW5kIjogImltcG9ydCIsCiAgICAgICAgImlkIjogImxlZ2FjeS12MS0zNmIwY2JmNy0xOC1iYXNlLWY3NzU0MDJlMjU3MTM0OWQiCiAgICAgIH0sCiAgICAgICJwYXJlbnRFeHBlcmltZW50SWRzIjogW10KICAgIH0KICB9LAogICJmaWVsZE1hcHBpbmdzIjogWwogICAgewogICAgICAic291cmNlUGF0aCI6ICIkLnF1ZXJ5LnRoMSIsCiAgICAgICJ0YXJnZXRQYXRoIjogIiQuY2Fub25pY2FsLmluaXRpYWxDb25kaXRpb25zLnRoZXRhMSIsCiAgICAgICJ0cmFuc2Zvcm0iOiAicmFkLCBpbmRlcGVuZGVudCBvZiBhbmdsZVVuaXQgZGlzcGxheSBwcmVmZXJlbmNlIgogICAgfQogIF0sCiAgImRlY2xhcmVkRGVmYXVsdHMiOiBbCiAgICB7CiAgICAgICJwYXRoIjogIiQuY2Fub25pY2FsLnJ1bnRpbWUuc3RhcnQiLAogICAgICAidmFsdWUiOiAwLAogICAgICAib3JpZ2luIjogIkxlZ2FjeSBzZXR1cCBVUkwgc3RhcnRzIGEgbmV3IHJ1biBhdCB0PTA7IG5vIHByZXZpb3VzIHJ1bnRpbWUgY2xvY2sgd2FzIHNlcmlhbGl6ZWQuIgogICAgfQogIF0sCiAgImluaGVyaXRlZEZyb21CYXNlIjogWwogICAgIiQucGFyYW1ldGVycy5tMSIsCiAgICAiJC5wYXJhbWV0ZXJzLm0yIiwKICAgICIkLnBhcmFtZXRlcnMubDEiLAogICAgIiQucGFyYW1ldGVycy5sMiIsCiAgICAiJC5wYXJhbWV0ZXJzLmciLAogICAgIiQucGFyYW1ldGVycy5nYW1tYSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy50aGV0YTIiLAogICAgIiQuaW5pdGlhbENvbmRpdGlvbnMub21lZ2ExIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLm9tZWdhMiIsCiAgICAiJC5ydW50aW1lLnNhbXBsZUV2ZXJ5IiwKICAgICIkLmFuYWx5c2VzIiwKICAgICIkLnJ1bnRpbWUuc3RlcCIsCiAgICAiJC5pbnRlZ3JhdG9yIgogIF0sCiAgInRyYW5zZmVyUmVxdWlyZW1lbnRzIjogWwogICAgewogICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgInNvdXJjZVBhdGhzIjogWwogICAgICAgICIkLnF1ZXJ5LnRhYiIKICAgICAgXSwKICAgICAgIm1lc3NhZ2UiOiAi6riw7KG0IOuqqeyggSB0YWI9bGFi66W8IOyDiCDrtoTshJ0v7ZWZ7Iq1L+yXsOq1rCB2aWV37J2YIOyLpOygnCDrj5nsnpHsl5Ag7Jew6rKw7ZW07JW8IO2VqeuLiOuLpC4g66qF7Iuc7KCBIHRhYuydtCBMYW5kaW5nIGdvYWzrs7Tri6Qg7Jqw7ISg7ZWp64uI64ukLiIKICAgIH0KICBdLAogICJkZWNvZGVyRGlhZ25vc3RpY3MiOiBbXQp9Cg=="
+                    },
+                    {
+                      "name": "legacy-v1-36b0cbf7-18-base-37e8e9d65786c0cf-compatibility.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAicGVuZHVsdW0tbGVnYWN5LWxpbmstY29tcGF0aWJpbGl0eS92MSIsCiAgInNvdXJjZVRleHQiOiAiP3RoMT0wLjEyNSZ0YWI9bGFiIiwKICAic291cmNlS2luZCI6ICJsZWdhY3ktdXJsIiwKICAic291cmNlVmVyc2lvbiI6ICJsZWdhY3ktcXVlcnkvdjEiLAogICJkZWNvZGVkIjogewogICAgInRoMSI6ICIwLjEyNSIsCiAgICAidGFiIjogImxhYiIKICB9LAogICJyZXNvbHZlZCI6IHsKICAgICJ2YWx1ZXMiOiB7CiAgICAgICJ0aDEiOiAwLjEyNQogICAgfSwKICAgICJzeXN0ZW0iOiBudWxsLAogICAgIm1ldGhvZCI6IG51bGwsCiAgICAidGFiIjogImxhYiIsCiAgICAiYmFzZUV4cGVyaW1lbnQiOiB7CiAgICAgICJzY2hlbWEiOiAicGVuZHVsdW0tZXhwZXJpbWVudC92MSIsCiAgICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06Y29tcG91bmQtZG91YmxlIiwKICAgICAgIm1vZGVsVmVyc2lvbiI6ICJwbGFuYXItbW9kZWwtdjEiLAogICAgICAicGFyYW1ldGVycyI6IHsKICAgICAgICAibTEiOiB7CiAgICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICAgInZhbHVlIjogMSwKICAgICAgICAgICJ1bml0IjogImtnIgogICAgICAgIH0sCiAgICAgICAgIm0yIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDEsCiAgICAgICAgICAidW5pdCI6ICJrZyIKICAgICAgICB9LAogICAgICAgICJsMSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICAgInVuaXQiOiAibSIKICAgICAgICB9LAogICAgICAgICJsMiI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICAgInVuaXQiOiAibSIKICAgICAgICB9LAogICAgICAgICJnIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDkuODEsCiAgICAgICAgICAidW5pdCI6ICJtL3NeMiIKICAgICAgICB9LAogICAgICAgICJnYW1tYSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICAgInVuaXQiOiAia2cqbV4yL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW5pdGlhbENvbmRpdGlvbnMiOiB7CiAgICAgICAgInRoZXRhMSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxLjIsCiAgICAgICAgICAidW5pdCI6ICJyYWQiCiAgICAgICAgfSwKICAgICAgICAidGhldGEyIjogewogICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICJ2YWx1ZSI6IDAuNiwKICAgICAgICAgICJ1bml0IjogInJhZCIKICAgICAgICB9LAogICAgICAgICJvbWVnYTEiOiB7CiAgICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAgICJ1bml0IjogInJhZC9zIgogICAgICAgIH0sCiAgICAgICAgIm9tZWdhMiI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW50ZWdyYXRvciI6IHsKICAgICAgICAia2luZCI6ICJzZWxlY3RhYmxlIiwKICAgICAgICAiaWQiOiAiaW50ZWdyYXRvcjpyazQiLAogICAgICAgICJ2ZXJzaW9uIjogInBsYW5hci1pbnRlZ3JhdG9yLXYxIiwKICAgICAgICAic2V0dGluZ3MiOiB7fQogICAgICB9LAogICAgICAicnVudGltZSI6IHsKICAgICAgICAiZG9tYWluIjogInRpbWUiLAogICAgICAgICJzdGFydCI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgICAidW5pdCI6ICJzIgogICAgICAgIH0sCiAgICAgICAgImR1cmF0aW9uIjogewogICAgICAgICAgInZhbHVlIjogMTAsCiAgICAgICAgICAidW5pdCI6ICJzIgogICAgICAgIH0sCiAgICAgICAgInN0ZXAiOiB7CiAgICAgICAgICAidmFsdWUiOiAwLjAwMiwKICAgICAgICAgICJ1bml0IjogInMiCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlRXZlcnkiOiAxCiAgICAgIH0sCiAgICAgICJhbmFseXNlcyI6IFtdCiAgICB9CiAgfSwKICAiY2Fub25pY2FsIjogewogICAgInNjaGVtYSI6ICJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwKICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06Y29tcG91bmQtZG91YmxlIiwKICAgICJtb2RlbFZlcnNpb24iOiAicGxhbmFyLW1vZGVsLXYxIiwKICAgICJwYXJhbWV0ZXJzIjogewogICAgICAibTEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogImtnIgogICAgICB9LAogICAgICAibTIiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogImtnIgogICAgICB9LAogICAgICAibDEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAxLAogICAgICAgICJ1bml0IjogIm0iCiAgICAgIH0sCiAgICAgICJsMiI6IHsKICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICJ2YWx1ZSI6IDEsCiAgICAgICAgInVuaXQiOiAibSIKICAgICAgfSwKICAgICAgImciOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiA5LjgxLAogICAgICAgICJ1bml0IjogIm0vc14yIgogICAgICB9LAogICAgICAiZ2FtbWEiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogImtnKm1eMi9zIgogICAgICB9CiAgICB9LAogICAgImluaXRpYWxDb25kaXRpb25zIjogewogICAgICAidGhldGExIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogMC4xMjUsCiAgICAgICAgInVuaXQiOiAicmFkIgogICAgICB9LAogICAgICAidGhldGEyIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogMC42LAogICAgICAgICJ1bml0IjogInJhZCIKICAgICAgfSwKICAgICAgIm9tZWdhMSI6IHsKICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgIH0sCiAgICAgICJvbWVnYTIiOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogInJhZC9zIgogICAgICB9CiAgICB9LAogICAgImludGVncmF0b3IiOiB7CiAgICAgICJraW5kIjogInNlbGVjdGFibGUiLAogICAgICAiaWQiOiAiaW50ZWdyYXRvcjpyazQiLAogICAgICAidmVyc2lvbiI6ICJwbGFuYXItaW50ZWdyYXRvci12MSIsCiAgICAgICJzZXR0aW5ncyI6IHt9CiAgICB9LAogICAgInJ1bnRpbWUiOiB7CiAgICAgICJkb21haW4iOiAidGltZSIsCiAgICAgICJzdGFydCI6IHsKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJkdXJhdGlvbiI6IHsKICAgICAgICAidmFsdWUiOiAwLjAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzdGVwIjogewogICAgICAgICJ2YWx1ZSI6IDAuMDAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzYW1wbGVFdmVyeSI6IDEKICAgIH0sCiAgICAiYW5hbHlzZXMiOiBbXSwKICAgICJwcm92ZW5hbmNlIjogewogICAgICAiY3JlYXRlZEJ5VmVyc2lvbiI6ICJsZWdhY3ktbGlua3MtdjEiLAogICAgICAic291cmNlIjogewogICAgICAgICJraW5kIjogImltcG9ydCIsCiAgICAgICAgImlkIjogImxlZ2FjeS12MS0zNmIwY2JmNy0xOC1iYXNlLTM3ZThlOWQ2NTc4NmMwY2YiCiAgICAgIH0sCiAgICAgICJwYXJlbnRFeHBlcmltZW50SWRzIjogW10KICAgIH0KICB9LAogICJmaWVsZE1hcHBpbmdzIjogWwogICAgewogICAgICAic291cmNlUGF0aCI6ICIkLnF1ZXJ5LnRoMSIsCiAgICAgICJ0YXJnZXRQYXRoIjogIiQuY2Fub25pY2FsLmluaXRpYWxDb25kaXRpb25zLnRoZXRhMSIsCiAgICAgICJ0cmFuc2Zvcm0iOiAicmFkLCBpbmRlcGVuZGVudCBvZiBhbmdsZVVuaXQgZGlzcGxheSBwcmVmZXJlbmNlIgogICAgfQogIF0sCiAgImRlY2xhcmVkRGVmYXVsdHMiOiBbCiAgICB7CiAgICAgICJwYXRoIjogIiQuY2Fub25pY2FsLnJ1bnRpbWUuc3RhcnQiLAogICAgICAidmFsdWUiOiAwLAogICAgICAib3JpZ2luIjogIkxlZ2FjeSBzZXR1cCBVUkwgc3RhcnRzIGEgbmV3IHJ1biBhdCB0PTA7IG5vIHByZXZpb3VzIHJ1bnRpbWUgY2xvY2sgd2FzIHNlcmlhbGl6ZWQuIgogICAgfQogIF0sCiAgImluaGVyaXRlZEZyb21CYXNlIjogWwogICAgIiQucGFyYW1ldGVycy5tMSIsCiAgICAiJC5wYXJhbWV0ZXJzLm0yIiwKICAgICIkLnBhcmFtZXRlcnMubDEiLAogICAgIiQucGFyYW1ldGVycy5sMiIsCiAgICAiJC5wYXJhbWV0ZXJzLmciLAogICAgIiQucGFyYW1ldGVycy5nYW1tYSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy50aGV0YTIiLAogICAgIiQuaW5pdGlhbENvbmRpdGlvbnMub21lZ2ExIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLm9tZWdhMiIsCiAgICAiJC5ydW50aW1lLnNhbXBsZUV2ZXJ5IiwKICAgICIkLmFuYWx5c2VzIiwKICAgICIkLnJ1bnRpbWUuc3RlcCIsCiAgICAiJC5pbnRlZ3JhdG9yIgogIF0sCiAgInRyYW5zZmVyUmVxdWlyZW1lbnRzIjogWwogICAgewogICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgInNvdXJjZVBhdGhzIjogWwogICAgICAgICIkLnF1ZXJ5LnRhYiIKICAgICAgXSwKICAgICAgIm1lc3NhZ2UiOiAi6riw7KG0IOuqqeyggSB0YWI9bGFi66W8IOyDiCDrtoTshJ0v7ZWZ7Iq1L+yXsOq1rCB2aWV37J2YIOyLpOygnCDrj5nsnpHsl5Ag7Jew6rKw7ZW07JW8IO2VqeuLiOuLpC4g66qF7Iuc7KCBIHRhYuydtCBMYW5kaW5nIGdvYWzrs7Tri6Qg7Jqw7ISg7ZWp64uI64ukLiIKICAgIH0KICBdLAogICJkZWNvZGVyRGlhZ25vc3RpY3MiOiBbXQp9Cg=="
+                    },
+                    {
+                      "name": "legacy-v1-36b0cbf7-18-base-25e13c6363256ebf-compatibility.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAicGVuZHVsdW0tbGVnYWN5LWxpbmstY29tcGF0aWJpbGl0eS92MSIsCiAgInNvdXJjZVRleHQiOiAiP3RoMT0wLjEyNSZ0YWI9bGFiIiwKICAic291cmNlS2luZCI6ICJsZWdhY3ktdXJsIiwKICAic291cmNlVmVyc2lvbiI6ICJsZWdhY3ktcXVlcnkvdjEiLAogICJkZWNvZGVkIjogewogICAgInRoMSI6ICIwLjEyNSIsCiAgICAidGFiIjogImxhYiIKICB9LAogICJyZXNvbHZlZCI6IHsKICAgICJ2YWx1ZXMiOiB7CiAgICAgICJ0aDEiOiAwLjEyNQogICAgfSwKICAgICJzeXN0ZW0iOiBudWxsLAogICAgIm1ldGhvZCI6IG51bGwsCiAgICAidGFiIjogImxhYiIsCiAgICAiYmFzZUV4cGVyaW1lbnQiOiB7CiAgICAgICJzY2hlbWEiOiAicGVuZHVsdW0tZXhwZXJpbWVudC92MSIsCiAgICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06dHJpcGxlIiwKICAgICAgIm1vZGVsVmVyc2lvbiI6ICJjaGFpbi1tb2RlbC12MSIsCiAgICAgICJwYXJhbWV0ZXJzIjogewogICAgICAgICJtYXNzZXMiOiB7CiAgICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICAgInZhbHVlcyI6IFsKICAgICAgICAgICAgMSwKICAgICAgICAgICAgMSwKICAgICAgICAgICAgMQogICAgICAgICAgXSwKICAgICAgICAgICJ1bml0IjogImtnIgogICAgICAgIH0sCiAgICAgICAgImxlbmd0aHMiOiB7CiAgICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICAgInZhbHVlcyI6IFsKICAgICAgICAgICAgMSwKICAgICAgICAgICAgMSwKICAgICAgICAgICAgMQogICAgICAgICAgXSwKICAgICAgICAgICJ1bml0IjogIm0iCiAgICAgICAgfSwKICAgICAgICAiZyI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiA5LjgxLAogICAgICAgICAgInVuaXQiOiAibS9zXjIiCiAgICAgICAgfSwKICAgICAgICAiZ2FtbWEiOiB7CiAgICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAgICJ1bml0IjogImtnKm1eMi9zIgogICAgICAgIH0KICAgICAgfSwKICAgICAgImluaXRpYWxDb25kaXRpb25zIjogewogICAgICAgICJ0aGV0YSI6IHsKICAgICAgICAgICJraW5kIjogInZlY3RvciIsCiAgICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgICAwLjQsCiAgICAgICAgICAgIDAuMjY2NjY2NjY2NjY3LAogICAgICAgICAgICAwLjEzMzMzMzMzMzMzMwogICAgICAgICAgXSwKICAgICAgICAgICJ1bml0IjogInJhZCIKICAgICAgICB9LAogICAgICAgICJvbWVnYSI6IHsKICAgICAgICAgICJraW5kIjogInZlY3RvciIsCiAgICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgICAwLAogICAgICAgICAgICAwLAogICAgICAgICAgICAwCiAgICAgICAgICBdLAogICAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW50ZWdyYXRvciI6IHsKICAgICAgICAia2luZCI6ICJzZWxlY3RhYmxlIiwKICAgICAgICAiaWQiOiAiaW50ZWdyYXRvcjpyazQiLAogICAgICAgICJ2ZXJzaW9uIjogImNoYWluLWludGVncmF0b3ItdjEiLAogICAgICAgICJzZXR0aW5ncyI6IHt9CiAgICAgIH0sCiAgICAgICJydW50aW1lIjogewogICAgICAgICJkb21haW4iOiAidGltZSIsCiAgICAgICAgInN0YXJ0IjogewogICAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAgICJ1bml0IjogInMiCiAgICAgICAgfSwKICAgICAgICAiZHVyYXRpb24iOiB7CiAgICAgICAgICAidmFsdWUiOiAxMCwKICAgICAgICAgICJ1bml0IjogInMiCiAgICAgICAgfSwKICAgICAgICAic3RlcCI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDAuMDAyLAogICAgICAgICAgInVuaXQiOiAicyIKICAgICAgICB9LAogICAgICAgICJzYW1wbGVFdmVyeSI6IDEKICAgICAgfSwKICAgICAgImFuYWx5c2VzIjogW10KICAgIH0KICB9LAogICJjYW5vbmljYWwiOiB7CiAgICAic2NoZW1hIjogInBlbmR1bHVtLWV4cGVyaW1lbnQvdjEiLAogICAgInN5c3RlbUlkIjogInN5c3RlbTp0cmlwbGUiLAogICAgIm1vZGVsVmVyc2lvbiI6ICJjaGFpbi1tb2RlbC12MSIsCiAgICAicGFyYW1ldGVycyI6IHsKICAgICAgIm1hc3NlcyI6IHsKICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICJ2YWx1ZXMiOiBbCiAgICAgICAgICAxLAogICAgICAgICAgMSwKICAgICAgICAgIDEKICAgICAgICBdLAogICAgICAgICJ1bml0IjogImtnIgogICAgICB9LAogICAgICAibGVuZ3RocyI6IHsKICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICJ2YWx1ZXMiOiBbCiAgICAgICAgICAxLAogICAgICAgICAgMSwKICAgICAgICAgIDEKICAgICAgICBdLAogICAgICAgICJ1bml0IjogIm0iCiAgICAgIH0sCiAgICAgICJnIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogOS44MSwKICAgICAgICAidW5pdCI6ICJtL3NeMiIKICAgICAgfSwKICAgICAgImdhbW1hIjogewogICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgInZhbHVlIjogMCwKICAgICAgICAidW5pdCI6ICJrZyptXjIvcyIKICAgICAgfQogICAgfSwKICAgICJpbml0aWFsQ29uZGl0aW9ucyI6IHsKICAgICAgInRoZXRhIjogewogICAgICAgICJraW5kIjogInZlY3RvciIsCiAgICAgICAgInZhbHVlcyI6IFsKICAgICAgICAgIDAuMTI1LAogICAgICAgICAgMC4yNjY2NjY2NjY2NjcsCiAgICAgICAgICAwLjEzMzMzMzMzMzMzMwogICAgICAgIF0sCiAgICAgICAgInVuaXQiOiAicmFkIgogICAgICB9LAogICAgICAib21lZ2EiOiB7CiAgICAgICAgImtpbmQiOiAidmVjdG9yIiwKICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgMCwKICAgICAgICAgIDAsCiAgICAgICAgICAwCiAgICAgICAgXSwKICAgICAgICAidW5pdCI6ICJyYWQvcyIKICAgICAgfQogICAgfSwKICAgICJpbnRlZ3JhdG9yIjogewogICAgICAia2luZCI6ICJzZWxlY3RhYmxlIiwKICAgICAgImlkIjogImludGVncmF0b3I6cms0IiwKICAgICAgInZlcnNpb24iOiAiY2hhaW4taW50ZWdyYXRvci12MSIsCiAgICAgICJzZXR0aW5ncyI6IHt9CiAgICB9LAogICAgInJ1bnRpbWUiOiB7CiAgICAgICJkb21haW4iOiAidGltZSIsCiAgICAgICJzdGFydCI6IHsKICAgICAgICAidmFsdWUiOiAwLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJkdXJhdGlvbiI6IHsKICAgICAgICAidmFsdWUiOiAwLjAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzdGVwIjogewogICAgICAgICJ2YWx1ZSI6IDAuMDAyLAogICAgICAgICJ1bml0IjogInMiCiAgICAgIH0sCiAgICAgICJzYW1wbGVFdmVyeSI6IDEKICAgIH0sCiAgICAiYW5hbHlzZXMiOiBbXSwKICAgICJwcm92ZW5hbmNlIjogewogICAgICAiY3JlYXRlZEJ5VmVyc2lvbiI6ICJsZWdhY3ktbGlua3MtdjEiLAogICAgICAic291cmNlIjogewogICAgICAgICJraW5kIjogImltcG9ydCIsCiAgICAgICAgImlkIjogImxlZ2FjeS12MS0zNmIwY2JmNy0xOC1iYXNlLTI1ZTEzYzYzNjMyNTZlYmYiCiAgICAgIH0sCiAgICAgICJwYXJlbnRFeHBlcmltZW50SWRzIjogW10KICAgIH0KICB9LAogICJmaWVsZE1hcHBpbmdzIjogWwogICAgewogICAgICAic291cmNlUGF0aCI6ICIkLnF1ZXJ5LnRoMSIsCiAgICAgICJ0YXJnZXRQYXRoIjogIiQuY2Fub25pY2FsLmluaXRpYWxDb25kaXRpb25zLnRoZXRhWzBdIiwKICAgICAgInRyYW5zZm9ybSI6ICJyYWQsIGluZGVwZW5kZW50IG9mIGFuZ2xlVW5pdCBkaXNwbGF5IHByZWZlcmVuY2UiCiAgICB9CiAgXSwKICAiZGVjbGFyZWREZWZhdWx0cyI6IFsKICAgIHsKICAgICAgInBhdGgiOiAiJC5jYW5vbmljYWwucnVudGltZS5zdGFydCIsCiAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICJvcmlnaW4iOiAiTGVnYWN5IHNldHVwIFVSTCBzdGFydHMgYSBuZXcgcnVuIGF0IHQ9MDsgbm8gcHJldmlvdXMgcnVudGltZSBjbG9jayB3YXMgc2VyaWFsaXplZC4iCiAgICB9CiAgXSwKICAiaW5oZXJpdGVkRnJvbUJhc2UiOiBbCiAgICAiJC5wYXJhbWV0ZXJzLm1hc3Nlc1swXSIsCiAgICAiJC5wYXJhbWV0ZXJzLm1hc3Nlc1sxXSIsCiAgICAiJC5wYXJhbWV0ZXJzLm1hc3Nlc1syXSIsCiAgICAiJC5wYXJhbWV0ZXJzLmxlbmd0aHNbMF0iLAogICAgIiQucGFyYW1ldGVycy5sZW5ndGhzWzFdIiwKICAgICIkLnBhcmFtZXRlcnMubGVuZ3Roc1syXSIsCiAgICAiJC5wYXJhbWV0ZXJzLmciLAogICAgIiQucGFyYW1ldGVycy5nYW1tYSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy50aGV0YVsxXSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy50aGV0YVsyXSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy5vbWVnYVswXSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy5vbWVnYVsxXSIsCiAgICAiJC5pbml0aWFsQ29uZGl0aW9ucy5vbWVnYVsyXSIsCiAgICAiJC5ydW50aW1lLnNhbXBsZUV2ZXJ5IiwKICAgICIkLmFuYWx5c2VzIiwKICAgICIkLnJ1bnRpbWUuc3RlcCIsCiAgICAiJC5pbnRlZ3JhdG9yIgogIF0sCiAgInRyYW5zZmVyUmVxdWlyZW1lbnRzIjogWwogICAgewogICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgInNvdXJjZVBhdGhzIjogWwogICAgICAgICIkLnF1ZXJ5LnRhYiIKICAgICAgXSwKICAgICAgIm1lc3NhZ2UiOiAi6riw7KG0IOuqqeyggSB0YWI9bGFi66W8IOyDiCDrtoTshJ0v7ZWZ7Iq1L+yXsOq1rCB2aWV37J2YIOyLpOygnCDrj5nsnpHsl5Ag7Jew6rKw7ZW07JW8IO2VqeuLiOuLpC4g66qF7Iuc7KCBIHRhYuydtCBMYW5kaW5nIGdvYWzrs7Tri6Qg7Jqw7ISg7ZWp64uI64ukLiIKICAgIH0KICBdLAogICJkZWNvZGVyRGlhZ25vc3RpY3MiOiBbXQp9Cg=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e395482fb73b1e73ccc5-5b57d3daa0a94fa86892",
+          "file": "redesign/migration-base.spec.ts",
+          "line": 56,
+          "column": 1
+        },
+        {
+          "title": "S28 uploaded nondefault triple base preserves exact source settings through confirmation, native execution and exports",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "native-cross-runtime-max-absolute-error",
+                  "description": "0"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3809,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:05:08.057Z",
+                  "annotations": [
+                    {
+                      "type": "native-cross-runtime-max-absolute-error",
+                      "description": "0"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "legacy-v1-a5edaec1-33-base-220399ddbc17be6b-compatibility.json",
+                      "contentType": "application/json",
+                      "body": "ewogICJzY2hlbWEiOiAicGVuZHVsdW0tbGVnYWN5LWxpbmstY29tcGF0aWJpbGl0eS92MSIsCiAgInNvdXJjZVRleHQiOiAiP3N5c1R5cGU9dHJpcGxlJnRoMT0wLjEyNSZ0YWI9bGFiIiwKICAic291cmNlS2luZCI6ICJsZWdhY3ktdXJsIiwKICAic291cmNlVmVyc2lvbiI6ICJsZWdhY3ktcXVlcnkvdjEiLAogICJkZWNvZGVkIjogewogICAgInN5c1R5cGUiOiAidHJpcGxlIiwKICAgICJ0aDEiOiAiMC4xMjUiLAogICAgInRhYiI6ICJsYWIiCiAgfSwKICAicmVzb2x2ZWQiOiB7CiAgICAidmFsdWVzIjogewogICAgICAidGgxIjogMC4xMjUKICAgIH0sCiAgICAic3lzdGVtIjogInRyaXBsZSIsCiAgICAibWV0aG9kIjogbnVsbCwKICAgICJ0YWIiOiAibGFiIiwKICAgICJiYXNlRXhwZXJpbWVudCI6IHsKICAgICAgInNjaGVtYSI6ICJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwKICAgICAgInN5c3RlbUlkIjogInN5c3RlbTp0cmlwbGUiLAogICAgICAibW9kZWxWZXJzaW9uIjogImNoYWluLW1vZGVsLXYxIiwKICAgICAgInBhcmFtZXRlcnMiOiB7CiAgICAgICAgIm1hc3NlcyI6IHsKICAgICAgICAgICJraW5kIjogInZlY3RvciIsCiAgICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgICAxLjMsCiAgICAgICAgICAgIDAuNywKICAgICAgICAgICAgMi4xCiAgICAgICAgICBdLAogICAgICAgICAgInVuaXQiOiAia2ciCiAgICAgICAgfSwKICAgICAgICAibGVuZ3RocyI6IHsKICAgICAgICAgICJraW5kIjogInZlY3RvciIsCiAgICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgICAwLjgsCiAgICAgICAgICAgIDEuMSwKICAgICAgICAgICAgMC42NQogICAgICAgICAgXSwKICAgICAgICAgICJ1bml0IjogIm0iCiAgICAgICAgfSwKICAgICAgICAiZyI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiA5LjcsCiAgICAgICAgICAidW5pdCI6ICJtL3NeMiIKICAgICAgICB9LAogICAgICAgICJnYW1tYSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAwLjA0LAogICAgICAgICAgInVuaXQiOiAia2cqbV4yL3MiCiAgICAgICAgfQogICAgICB9LAogICAgICAiaW5pdGlhbENvbmRpdGlvbnMiOiB7CiAgICAgICAgInRoZXRhIjogewogICAgICAgICAgImtpbmQiOiAidmVjdG9yIiwKICAgICAgICAgICJ2YWx1ZXMiOiBbCiAgICAgICAgICAgIDAuNCwKICAgICAgICAgICAgLTAuMjUsCiAgICAgICAgICAgIDAuMTUKICAgICAgICAgIF0sCiAgICAgICAgICAidW5pdCI6ICJyYWQiCiAgICAgICAgfSwKICAgICAgICAib21lZ2EiOiB7CiAgICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICAgInZhbHVlcyI6IFsKICAgICAgICAgICAgMC4xMjUsCiAgICAgICAgICAgIC0wLjA2MjUsCiAgICAgICAgICAgIDAuMDIKICAgICAgICAgIF0sCiAgICAgICAgICAidW5pdCI6ICJyYWQvcyIKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJpbnRlZ3JhdG9yIjogewogICAgICAgICJraW5kIjogInNlbGVjdGFibGUiLAogICAgICAgICJpZCI6ICJpbnRlZ3JhdG9yOmdhdXNzMiIsCiAgICAgICAgInZlcnNpb24iOiAiY2hhaW4taW50ZWdyYXRvci12MSIsCiAgICAgICAgInNldHRpbmdzIjogewogICAgICAgICAgInRvbGVyYW5jZSI6IHsKICAgICAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAgICAgInZhbHVlIjogMWUtOSwKICAgICAgICAgICAgInVuaXQiOiAiMSIKICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0sCiAgICAgICJydW50aW1lIjogewogICAgICAgICJkb21haW4iOiAidGltZSIsCiAgICAgICAgInN0YXJ0IjogewogICAgICAgICAgInZhbHVlIjogMy41LAogICAgICAgICAgInVuaXQiOiAicyIKICAgICAgICB9LAogICAgICAgICJkdXJhdGlvbiI6IHsKICAgICAgICAgICJ2YWx1ZSI6IDAuMDIsCiAgICAgICAgICAidW5pdCI6ICJzIgogICAgICAgIH0sCiAgICAgICAgInN0ZXAiOiB7CiAgICAgICAgICAidmFsdWUiOiAwLjAwMiwKICAgICAgICAgICJ1bml0IjogInMiCiAgICAgICAgfSwKICAgICAgICAic2FtcGxlRXZlcnkiOiAxCiAgICAgIH0sCiAgICAgICJhbmFseXNlcyI6IFtdCiAgICB9CiAgfSwKICAiY2Fub25pY2FsIjogewogICAgInNjaGVtYSI6ICJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwKICAgICJzeXN0ZW1JZCI6ICJzeXN0ZW06dHJpcGxlIiwKICAgICJtb2RlbFZlcnNpb24iOiAiY2hhaW4tbW9kZWwtdjEiLAogICAgInBhcmFtZXRlcnMiOiB7CiAgICAgICJtYXNzZXMiOiB7CiAgICAgICAgImtpbmQiOiAidmVjdG9yIiwKICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgMS4zLAogICAgICAgICAgMC43LAogICAgICAgICAgMi4xCiAgICAgICAgXSwKICAgICAgICAidW5pdCI6ICJrZyIKICAgICAgfSwKICAgICAgImxlbmd0aHMiOiB7CiAgICAgICAgImtpbmQiOiAidmVjdG9yIiwKICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgMC44LAogICAgICAgICAgMS4xLAogICAgICAgICAgMC42NQogICAgICAgIF0sCiAgICAgICAgInVuaXQiOiAibSIKICAgICAgfSwKICAgICAgImciOiB7CiAgICAgICAgImtpbmQiOiAic2NhbGFyIiwKICAgICAgICAidmFsdWUiOiA5LjcsCiAgICAgICAgInVuaXQiOiAibS9zXjIiCiAgICAgIH0sCiAgICAgICJnYW1tYSI6IHsKICAgICAgICAia2luZCI6ICJzY2FsYXIiLAogICAgICAgICJ2YWx1ZSI6IDAuMDQsCiAgICAgICAgInVuaXQiOiAia2cqbV4yL3MiCiAgICAgIH0KICAgIH0sCiAgICAiaW5pdGlhbENvbmRpdGlvbnMiOiB7CiAgICAgICJ0aGV0YSI6IHsKICAgICAgICAia2luZCI6ICJ2ZWN0b3IiLAogICAgICAgICJ2YWx1ZXMiOiBbCiAgICAgICAgICAwLjEyNSwKICAgICAgICAgIC0wLjI1LAogICAgICAgICAgMC4xNQogICAgICAgIF0sCiAgICAgICAgInVuaXQiOiAicmFkIgogICAgICB9LAogICAgICAib21lZ2EiOiB7CiAgICAgICAgImtpbmQiOiAidmVjdG9yIiwKICAgICAgICAidmFsdWVzIjogWwogICAgICAgICAgMC4xMjUsCiAgICAgICAgICAtMC4wNjI1LAogICAgICAgICAgMC4wMgogICAgICAgIF0sCiAgICAgICAgInVuaXQiOiAicmFkL3MiCiAgICAgIH0KICAgIH0sCiAgICAiaW50ZWdyYXRvciI6IHsKICAgICAgImtpbmQiOiAic2VsZWN0YWJsZSIsCiAgICAgICJpZCI6ICJpbnRlZ3JhdG9yOmdhdXNzMiIsCiAgICAgICJ2ZXJzaW9uIjogImNoYWluLWludGVncmF0b3ItdjEiLAogICAgICAic2V0dGluZ3MiOiB7CiAgICAgICAgInRvbGVyYW5jZSI6IHsKICAgICAgICAgICJraW5kIjogInNjYWxhciIsCiAgICAgICAgICAidmFsdWUiOiAxZS05LAogICAgICAgICAgInVuaXQiOiAiMSIKICAgICAgICB9CiAgICAgIH0KICAgIH0sCiAgICAicnVudGltZSI6IHsKICAgICAgImRvbWFpbiI6ICJ0aW1lIiwKICAgICAgInN0YXJ0IjogewogICAgICAgICJ2YWx1ZSI6IDAsCiAgICAgICAgInVuaXQiOiAicyIKICAgICAgfSwKICAgICAgImR1cmF0aW9uIjogewogICAgICAgICJ2YWx1ZSI6IDAuMDIsCiAgICAgICAgInVuaXQiOiAicyIKICAgICAgfSwKICAgICAgInN0ZXAiOiB7CiAgICAgICAgInZhbHVlIjogMC4wMDIsCiAgICAgICAgInVuaXQiOiAicyIKICAgICAgfSwKICAgICAgInNhbXBsZUV2ZXJ5IjogMQogICAgfSwKICAgICJhbmFseXNlcyI6IFtdLAogICAgInByb3ZlbmFuY2UiOiB7CiAgICAgICJjcmVhdGVkQnlWZXJzaW9uIjogImxlZ2FjeS1saW5rcy12MSIsCiAgICAgICJzb3VyY2UiOiB7CiAgICAgICAgImtpbmQiOiAiaW1wb3J0IiwKICAgICAgICAiaWQiOiAibGVnYWN5LXYxLWE1ZWRhZWMxLTMzLWJhc2UtMjIwMzk5ZGRiYzE3YmU2YiIKICAgICAgfSwKICAgICAgInBhcmVudEV4cGVyaW1lbnRJZHMiOiBbXQogICAgfQogIH0sCiAgImZpZWxkTWFwcGluZ3MiOiBbCiAgICB7CiAgICAgICJzb3VyY2VQYXRoIjogIiQucXVlcnkudGgxIiwKICAgICAgInRhcmdldFBhdGgiOiAiJC5jYW5vbmljYWwuaW5pdGlhbENvbmRpdGlvbnMudGhldGFbMF0iLAogICAgICAidHJhbnNmb3JtIjogInJhZCwgaW5kZXBlbmRlbnQgb2YgYW5nbGVVbml0IGRpc3BsYXkgcHJlZmVyZW5jZSIKICAgIH0KICBdLAogICJkZWNsYXJlZERlZmF1bHRzIjogWwogICAgewogICAgICAicGF0aCI6ICIkLmNhbm9uaWNhbC5ydW50aW1lLnN0YXJ0IiwKICAgICAgInZhbHVlIjogMCwKICAgICAgIm9yaWdpbiI6ICJMZWdhY3kgc2V0dXAgVVJMIHN0YXJ0cyBhIG5ldyBydW4gYXQgdD0wOyBubyBwcmV2aW91cyBydW50aW1lIGNsb2NrIHdhcyBzZXJpYWxpemVkLiIKICAgIH0KICBdLAogICJpbmhlcml0ZWRGcm9tQmFzZSI6IFsKICAgICIkLnBhcmFtZXRlcnMubWFzc2VzWzBdIiwKICAgICIkLnBhcmFtZXRlcnMubWFzc2VzWzFdIiwKICAgICIkLnBhcmFtZXRlcnMubWFzc2VzWzJdIiwKICAgICIkLnBhcmFtZXRlcnMubGVuZ3Roc1swXSIsCiAgICAiJC5wYXJhbWV0ZXJzLmxlbmd0aHNbMV0iLAogICAgIiQucGFyYW1ldGVycy5sZW5ndGhzWzJdIiwKICAgICIkLnBhcmFtZXRlcnMuZyIsCiAgICAiJC5wYXJhbWV0ZXJzLmdhbW1hIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLnRoZXRhWzFdIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLnRoZXRhWzJdIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLm9tZWdhWzBdIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLm9tZWdhWzFdIiwKICAgICIkLmluaXRpYWxDb25kaXRpb25zLm9tZWdhWzJdIiwKICAgICIkLnJ1bnRpbWUuc2FtcGxlRXZlcnkiLAogICAgIiQuYW5hbHlzZXMiLAogICAgIiQucnVudGltZS5zdGVwIiwKICAgICIkLmludGVncmF0b3IiCiAgXSwKICAidHJhbnNmZXJSZXF1aXJlbWVudHMiOiBbCiAgICB7CiAgICAgICJraW5kIjogIm5hdmlnYXRpb24iLAogICAgICAic291cmNlUGF0aHMiOiBbCiAgICAgICAgIiQucXVlcnkudGFiIgogICAgICBdLAogICAgICAibWVzc2FnZSI6ICLquLDsobQg66qp7KCBIHRhYj1sYWLrpbwg7IOIIOu2hOyEnS/tlZnsirUv7Jew6rWsIHZpZXfsnZgg7Iuk7KCcIOuPmeyekeyXkCDsl7DqsrDtlbTslbwg7ZWp64uI64ukLiDrqoXsi5zsoIEgdGFi7J20IExhbmRpbmcgZ29hbOuztOuLpCDsmrDshKDtlanri4jri6QuIgogICAgfQogIF0sCiAgImRlY29kZXJEaWFnbm9zdGljcyI6IFtdCn0K"
+                    },
+                    {
+                      "name": "pendulum-triple.json",
+                      "contentType": "application/json",
+                      "body": "eyJhbmFseXNlcyI6W10sImluaXRpYWxDb25kaXRpb25zIjp7Im9tZWdhIjp7ImtpbmQiOiJ2ZWN0b3IiLCJ1bml0IjoicmFkL3MiLCJ2YWx1ZXMiOlswLjEyNSwtMC4wNjI1LDAuMDJdfSwidGhldGEiOnsia2luZCI6InZlY3RvciIsInVuaXQiOiJyYWQiLCJ2YWx1ZXMiOlswLjEyNSwtMC4yNSwwLjE1XX19LCJpbnRlZ3JhdG9yIjp7ImlkIjoiaW50ZWdyYXRvcjpnYXVzczIiLCJraW5kIjoic2VsZWN0YWJsZSIsInNldHRpbmdzIjp7InRvbGVyYW5jZSI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6IjEiLCJ2YWx1ZSI6MWUtOX19LCJ2ZXJzaW9uIjoiY2hhaW4taW50ZWdyYXRvci12MSJ9LCJtb2RlbFZlcnNpb24iOiJjaGFpbi1tb2RlbC12MSIsInBhcmFtZXRlcnMiOnsiZyI6eyJraW5kIjoic2NhbGFyIiwidW5pdCI6Im0vc14yIiwidmFsdWUiOjkuN30sImdhbW1hIjp7ImtpbmQiOiJzY2FsYXIiLCJ1bml0Ijoia2cqbV4yL3MiLCJ2YWx1ZSI6MC4wNH0sImxlbmd0aHMiOnsia2luZCI6InZlY3RvciIsInVuaXQiOiJtIiwidmFsdWVzIjpbMC44LDEuMSwwLjY1XX0sIm1hc3NlcyI6eyJraW5kIjoidmVjdG9yIiwidW5pdCI6ImtnIiwidmFsdWVzIjpbMS4zLDAuNywyLjFdfX0sInByb3ZlbmFuY2UiOnsiY3JlYXRlZEJ5VmVyc2lvbiI6ImxlZ2FjeS1saW5rcy12MSIsInBhcmVudEV4cGVyaW1lbnRJZHMiOltdLCJzb3VyY2UiOnsiaWQiOiJsZWdhY3ktdjEtYTVlZGFlYzEtMzMtYmFzZS0yMjAzOTlkZGJjMTdiZTZiIiwia2luZCI6ImltcG9ydCJ9fSwicnVudGltZSI6eyJkb21haW4iOiJ0aW1lIiwiZHVyYXRpb24iOnsidW5pdCI6InMiLCJ2YWx1ZSI6MC4wMn0sInNhbXBsZUV2ZXJ5IjoxLCJzdGFydCI6eyJ1bml0IjoicyIsInZhbHVlIjowfSwic3RlcCI6eyJ1bml0IjoicyIsInZhbHVlIjowLjAwMn19LCJzY2hlbWEiOiJwZW5kdWx1bS1leHBlcmltZW50L3YxIiwic3lzdGVtSWQiOiJzeXN0ZW06dHJpcGxlIn0="
+                    },
+                    {
+                      "name": "pendulum-triple.csv",
+                      "contentType": "text/csv",
+                      "body": "dGltZV9zLHRoZXRhMV9yYWQsdGhldGEyX3JhZCx0aGV0YTNfcmFkLG9tZWdhMV9yYWRfcyxvbWVnYTJfcmFkX3Msb21lZ2EzX3JhZF9zLGtpbmV0aWNfSixwb3RlbnRpYWxfSix0b3RhbF9KDQowLDAuMTI1LC0wLjI1LDAuMTUsMC4xMjUsLTAuMDYyNSwwLjAyLDAuMDEwMzgyNzk2MzQ0NTAxNDU1LC03My42MDY4MTE5NDkwMDc3MiwtNzMuNTk2NDI5MTUyNjYzMjINCjAuMDAyLDAuMTI1MjM2ODE4MjM2NTAyODIsLTAuMjUwMTAxNjQzOTMxMTgyMSwwLjE1MDAxNTM0NzQ4NTUzNTgsMC4xMTE4MTc5NjUyMzIyMTMyNCwtMC4wMzkxNDYxNTY2NDE1NzY4NzYsLTAuMDA0NjQ3NTQ3NDQ5MDQxODA5LDAuMDA4NjU5MzgwNjkxMDM5NzU0LC03My42MDUwODk4NzUxOTcxLC03My41OTY0MzA0OTQ1MDYwNQ0K"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e395482fb73b1e73ccc5-99dda14b89b7fb2b3dd4",
+          "file": "redesign/migration-base.spec.ts",
+          "line": 80,
+          "column": 1
+        },
+        {
+          "title": "S28 canonical base files reject missing, malformed, oversized and unsupported inputs with keyboard and 320px access",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:05:11.875Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e395482fb73b1e73ccc5-b8f01073697bf4b323e6",
+          "file": "redesign/migration-base.spec.ts",
+          "line": 143,
+          "column": 1
+        },
+        {
+          "title": "S28 canceled, edited, replaced and disposed canonical base reads cannot restore stale previews",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3450,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:05:21.314Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e395482fb73b1e73ccc5-fbc2dfe65b268948b47c",
+          "file": "redesign/migration-base.spec.ts",
+          "line": 189,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "redesign\\network-pendulum.spec.ts",
+      "file": "redesign/network-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S15 magnetic and synchronization network laboratory",
+          "file": "redesign/network-pendulum.spec.ts",
+          "line": 66,
+          "column": 6,
+          "specs": [
+            {
+              "title": "magnetic: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3145,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:24.786Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-0b42010aab10068b2c42",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "magnetic: atomic graph/state edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3937,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:27.945Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-55a42ba67ff295aeb1e4",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 121,
+              "column": 5
+            },
+            {
+              "title": "pendulum-network: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7116,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:31.895Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-f22489950865d212190b",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "pendulum-network: atomic graph/state edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4001,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:39.030Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-7d2fb744f1de11b08a2f",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 121,
+              "column": 5
+            },
+            {
+              "title": "huygens-phase-pair: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7338,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:43.041Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-aae3eb5983029eb99a1d",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "huygens-phase-pair: atomic graph/state edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3929,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:50.389Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-3d0d7e737c0265ce9980",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 121,
+              "column": 5
+            },
+            {
+              "title": "kuramoto: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7581,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:05:54.328Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-fd014a8add2f91b5259a",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "kuramoto: atomic graph/state edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3951,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:01.926Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-0419d2663b6cce546dc7",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 121,
+              "column": 5
+            },
+            {
+              "title": "chimera-exploration: real worker run, pause, step, progress, cancel and finite exports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3305,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:05.889Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-3779b5c5df67070b249c",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "chimera-exploration: atomic graph/state edits, save, reload, share and canonical import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4323,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:09.206Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-aab08c4142d857bc7d64",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 121,
+              "column": 5
+            },
+            {
+              "title": "invalid graph drafts and topology files cannot mutate the applied experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10712,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:13.539Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-9538c8fc5f2a33bc00b6",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 158,
+              "column": 3
+            },
+            {
+              "title": "seed regeneration repeats exactly while explicit imported phases remain authoritative",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10915,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:24.263Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-a18b6b0ee3dd4b7e1d5b",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 210,
+              "column": 3
+            },
+            {
+              "title": "aggregate and individual views expose selected-node state and native coherence diagnostics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8591,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:35.195Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-5de25336a690b7ff8aa9",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 248,
+              "column": 3
+            },
+            {
+              "title": "128-node execution shows its cost, remains interactive and cancels without late frames",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7333,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:43.798Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-158613c4547fbaa48c45",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 288,
+              "column": 3
+            },
+            {
+              "title": "magnetic seed grid cancels within a cell and exports deterministic nearest labels with convergence masks",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3368,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:51.142Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-abe97ff0fc82291fcb81",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 313,
+              "column": 3
+            },
+            {
+              "title": "unsafe, future and malformed state imports preserve the applied experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3506,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:54.522Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-6976473d9deab4e607c4",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 373,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved network settings remain intact after a save attempt",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2136,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:06:58.040Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-6f7e289a36d134715fbd",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 391,
+              "column": 3
+            },
+            {
+              "title": "worker startup errors recover and leaving a running route terminates its worker",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2298,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:00.185Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-9d209685b1c889374c8b",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 404,
+              "column": 3
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve network controls: 작업 공간",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7764,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:02.493Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-2540d6c1a3d77c35346c",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 444,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve network controls: 조건",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3570,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:10.268Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-172ff5ff0210fa8926b7",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 444,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve network controls: 분석",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3465,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:13.849Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-e0e5d342a78ac4ae74fa",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 444,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve network controls: 보관함",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3523,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:17.325Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-339a5a50f9571977113e",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 444,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve network controls: 내보내기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3416,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:20.861Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-42e37c533919eb32c7f0",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 444,
+              "column": 5
+            },
+            {
+              "title": "200% zoom preserves graph, seed and physical parameter editing",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3788,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:24.291Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-f87a80bff598903345d8",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 457,
+              "column": 3
+            },
+            {
+              "title": "frozen network topology and selected-node workspace layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3084,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:28.091Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-98c8b1a646aaaff9aefc",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 473,
+              "column": 3
+            },
+            {
+              "title": "frozen magnetic graph and parameter inspector dark layout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2700,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:31.190Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-2882d57ab9b3ef3b0b6f",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 486,
+              "column": 3
+            },
+            {
+              "title": "frozen topology, aggregate order, individual phase, local coherence and basin layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9257,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:33.904Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "255eacdeb7fcdef3b133-bbe732ee809865413d71",
+              "file": "redesign/network-pendulum.spec.ts",
+              "line": 497,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "redesign\\spatial-pendulum.spec.ts",
+      "file": "redesign/spatial-pendulum.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "S12 spatial systems laboratory",
+          "file": "redesign/spatial-pendulum.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "spherical: real worker run, pause, step, cancellation and numerical export",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3278,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:43.199Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-6cf85de9df6019e7fd54",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 45,
+              "column": 5
+            },
+            {
+              "title": "spherical: atomic editing, save, reload, share and state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3089,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:46.486Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-b1daeab5a4a844c82425",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "spherical-chain: real worker run, pause, step, cancellation and numerical export",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3317,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:49.591Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-58a57b79fc52af42c737",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 45,
+              "column": 5
+            },
+            {
+              "title": "spherical-chain: atomic editing, save, reload, share and state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3206,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:52.921Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-763ef228c067d88d84cd",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "spherical-embedded: real worker run, pause, step, cancellation and numerical export",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2918,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:56.138Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-a447c75b89171fe2c4e7",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 45,
+              "column": 5
+            },
+            {
+              "title": "spherical-embedded: atomic editing, save, reload, share and state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3553,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:07:59.069Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-8cde3229b73add0039fb",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "spherical-embedded-chain: real worker run, pause, step, cancellation and numerical export",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3798,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:02.635Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-adff2e90f322fc6fc479",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 45,
+              "column": 5
+            },
+            {
+              "title": "spherical-embedded-chain: atomic editing, save, reload, share and state import",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3426,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:06.448Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-3ad051fcd9ef25544356",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "unsafe imports and unsupported versions preserve valid 3D conditions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6870,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:09.888Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-bb5bb23cb4d1c86528d4",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 113,
+              "column": 3
+            },
+            {
+              "title": "worker startup error recovers and route departure terminates the run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2370,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:16.768Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-468f55b2a5affbeda712",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 131,
+              "column": 3
+            },
+            {
+              "title": "camera keyboard, pointer touch and overlays preserve the experiment",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2793,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:19.148Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-a0aeca20daec302cc675",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 156,
+              "column": 3
+            },
+            {
+              "title": "no WebGL still runs the native engine and exports numerical results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2293,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:21.953Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-58f9cb89642a91057c08",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 204,
+              "column": 3
+            },
+            {
+              "title": "browser touch input rotates the camera without moving physical state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6485,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:24.258Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-da7c8180c3f353071580",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 223,
+              "column": 3
+            },
+            {
+              "title": "WebGL context loss retains scene controls and numerical execution",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2235,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:30.756Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-e6076a56f1e59d8979f5",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 242,
+              "column": 3
+            },
+            {
+              "title": "native pole state is restored without angular conversion and warns clearly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2537,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:33.003Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-565734775f49a3cce757",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 253,
+              "column": 3
+            },
+            {
+              "title": "corrupt saved state cannot be overwritten",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6470,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:35.554Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-bbb694e2df3adaab6ea8",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 272,
+              "column": 3
+            },
+            {
+              "title": "chain resizing preserves surviving native links and completes at the supported boundary",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3172,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:42.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-a157238e7fe0e183758d",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 285,
+              "column": 3
+            },
+            {
+              "title": "wide camera viewport keeps the WebGL and SVG coordinate frames aligned",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1886,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:45.218Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-573d7864ac946dc68f97",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 310,
+              "column": 3
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve numerical access: 작업 공간",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7625,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:47.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-7f0c6aab59c6d8e24d92",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 334,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve numerical access: 조건",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3455,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:54.760Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-b859c756243d9f4d770e",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 334,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve numerical access: 분석",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7504,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:08:58.225Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-049445af6bc01f9bdcc4",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 334,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve numerical access: 보관함",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:09:05.746Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-936634fd3e78dbb97089",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 334,
+              "column": 5
+            },
+            {
+              "title": "keyboard, accessibility and 320px preserve numerical access: 내보내기",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7618,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:09:09.013Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-eee1ae07fe42dc99e8c6",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 334,
+              "column": 5
+            },
+            {
+              "title": "accessibility and 200% zoom preserve numerical access",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7866,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:09:16.645Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-d1f4b40c396478a1f6dd",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 346,
+              "column": 3
+            },
+            {
+              "title": "frozen spatial workspace, embedded inspector and numerical layouts",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3442,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-11T05:09:24.524Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3656c5adf8ae3589c642-e4382fa65d46dc7f61a5",
+              "file": "redesign/spatial-pendulum.spec.ts",
+              "line": 357,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "research-storage.spec.ts",
+      "file": "research-storage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "IndexedDB store mirrors experiments and recovers them after localStorage loss",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3686,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:09:27.991Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9c397139b18a04e0aeca-0b1f7ae2928134c04aa9",
+          "file": "research-storage.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "full DB archive exports as validated JSON",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3587,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:09:31.688Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9c397139b18a04e0aeca-d18dc9a36b9b6817a20c",
+          "file": "research-storage.spec.ts",
+          "line": 38,
+          "column": 1
+        },
+        {
+          "title": "age-based cleanup previews eligible records before any deletion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7093,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-11T05:09:35.287Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9c397139b18a04e0aeca-59fb9135d943618e04b5",
+          "file": "research-storage.spec.ts",
+          "line": 61,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-11T05:00:59.809Z",
+    "duration": 524412.107,
+    "expected": 93,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
